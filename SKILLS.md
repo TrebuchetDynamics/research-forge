@@ -17,7 +17,10 @@ Production code changes that skip the red step are not accepted unless they are 
 
 | Skill | Use for |
 |---|---|
+| [`research-forge-workflow-orchestration-tdd`](./skills/research-forge-workflow-orchestration-tdd/SKILL.md) | Milestone breakdown, slice sequencing, handoffs, acceptance criteria, routing to specialist skills |
+| [`research-forge-architecture-tdd`](./skills/research-forge-architecture-tdd/SKILL.md) | Package boundaries, ADRs, shared core, service interfaces, adapter seams, dependency direction |
 | [`research-forge-foundation-tdd`](./skills/research-forge-foundation-tdd/SKILL.md) | Go module, `rforge` CLI, project workspace, manifest, lockfile, provenance, SQLite, doctor, CI |
+| [`research-forge-test-fixtures-tdd`](./skills/research-forge-test-fixtures-tdd/SKILL.md) | Mock APIs, fake projects, golden files, generated PDFs, TEI, fake git repos, analysis/report fixtures |
 | [`research-forge-scholarly-ingestion-tdd`](./skills/research-forge-scholarly-ingestion-tdd/SKILL.md) | OpenAlex, Crossref, arXiv, Unpaywall, `PaperRecord`, dedupe, import/export, library workflows |
 | [`research-forge-oss-intelligence-tdd`](./skills/research-forge-oss-intelligence-tdd/SKILL.md) | OSS repository catalog, clone workspace, license checks, study notes, OSS reports |
 | [`research-forge-document-pipeline-tdd`](./skills/research-forge-document-pipeline-tdd/SKILL.md) | Legal PDF acquisition, GROBID parsing, passage extraction, indexing, retrieval |
@@ -26,18 +29,23 @@ Production code changes that skip the red step are not accepted unless they are 
 | [`research-forge-meta-analysis-tdd`](./skills/research-forge-meta-analysis-tdd/SKILL.md) | Effect sizes, R/metafor adapter, analysis inputs, plots, heterogeneity, reproducibility |
 | [`research-forge-reporting-tdd`](./skills/research-forge-reporting-tdd/SKILL.md) | Markdown/HTML/LaTeX reports, PRISMA diagrams, evidence/citation tables, audit appendix |
 | [`research-forge-fyne-ui-tdd`](./skills/research-forge-fyne-ui-tdd/SKILL.md) | Fyne desktop UI screens, view models, background jobs, CLI/UI parity |
+| [`research-forge-data-governance-tdd`](./skills/research-forge-data-governance-tdd/SKILL.md) | Schemas, migrations, archives, privacy defaults, copyright/OA policy, provenance retention, compatibility |
+| [`research-forge-quality-security-tdd`](./skills/research-forge-quality-security-tdd/SKILL.md) | Threat modeling, secrets, path safety, external commands, fuzzing, dependency scans, CI hardening |
+| [`research-forge-performance-tdd`](./skills/research-forge-performance-tdd/SKILL.md) | Benchmarks, large-library performance, indexing throughput, caching, UI responsiveness, memory use |
+| [`research-forge-release-packaging-tdd`](./skills/research-forge-release-packaging-tdd/SKILL.md) | Versioning, cross-platform builds, Fyne packaging, checksums, install smoke tests, release notes |
+| [`research-forge-developer-docs-tdd`](./skills/research-forge-developer-docs-tdd/SKILL.md) | CLI docs, architecture docs, ADR index, contributor guides, examples, tutorials, generated help |
 
 ## Recommended usage order
 
-1. Foundation TDD
-2. Scholarly ingestion TDD
-3. OSS intelligence TDD
-4. Document pipeline TDD
-5. Screening TDD
-6. Evidence extraction TDD
-7. Meta-analysis TDD
-8. Reporting TDD
-9. Fyne UI TDD alongside each milestone for parity
+1. Workflow orchestration TDD to pick the smallest vertical slice.
+2. Architecture TDD only when a seam or ADR-sensitive decision is needed.
+3. Test fixtures TDD before external-data/service-heavy behavior.
+4. Foundation TDD for Milestone 0.
+5. Scholarly ingestion TDD and OSS intelligence TDD for Milestones 1-2.
+6. Document pipeline TDD, screening TDD, and evidence extraction TDD for Milestones 3-5.
+7. Meta-analysis TDD and reporting TDD for Milestones 6-7.
+8. Fyne UI TDD alongside each milestone for parity.
+9. Data governance, quality/security, performance, docs, and release skills whenever the slice crosses those concerns.
 
 ## Development handoff format
 
