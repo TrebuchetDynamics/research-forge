@@ -73,7 +73,7 @@ See also:
 - [x] Write `rforge.lock.json` lockfile.
 - [x] Initialize local project data directories.
 - [ ] Initialize SQLite local database.
-- [ ] Add project path validation and traversal tests.
+- [x] Add project path validation and traversal tests.
 - [ ] Add archive-safe project metadata.
 
 ### 1.4 Manifest, lockfile, provenance
@@ -84,10 +84,10 @@ See also:
 - [x] Add lockfile read/write tests.
 - [x] Add append-only provenance event log.
 - [x] Add event IDs, timestamps, actor, action, target, inputs, outputs, and warnings.
-- [ ] Add event replay/query helpers.
+- [x] Add event replay/query helpers.
 - [x] Record project-create event.
 - [ ] Record CLI command provenance where relevant.
-- [ ] Add deterministic test clock/ID generator.
+- [x] Add deterministic test clock/ID generator.
 
 ### 1.5 Storage foundation
 

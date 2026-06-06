@@ -77,6 +77,56 @@ func TestCreateWritesManifestLockfileAndProvenance(t *testing.T) {
 	}
 }
 
+func TestCreateRejectsUnsafeProjectPaths(t *testing.T) {
+	for _, path := range []string{"", "   ", "../escape", "safe/../escape"} {
+		t.Run(path, func(t *testing.T) {
+			if _, err := Create(path, CreateOptions{Title: "Unsafe"}); err == nil {
+				t.Fatalf("Create(%q) returned nil error, want validation error", path)
+			}
+		})
+	}
+}
+
+func TestCreateUsesInjectedEventID(t *testing.T) {
+	dir := filepath.Join(t.TempDir(), "demo")
+	_, err := Create(dir, CreateOptions{
+		Title:   "Demo Review",
+		EventID: func(time.Time) string { return "evt_test" },
+	})
+	if err != nil {
+		t.Fatalf("Create returned error: %v", err)
+	}
+	events, err := ReadEvents(dir)
+	if err != nil {
+		t.Fatalf("ReadEvents returned error: %v", err)
+	}
+	if events[0].ID != "evt_test" {
+		t.Fatalf("event ID = %q, want evt_test", events[0].ID)
+	}
+}
+
+func TestReadEventsReturnsProjectCreateEvent(t *testing.T) {
+	dir := filepath.Join(t.TempDir(), "demo")
+	_, err := Create(dir, CreateOptions{Title: "Demo Review"})
+	if err != nil {
+		t.Fatalf("Create returned error: %v", err)
+	}
+
+	events, err := ReadEvents(dir)
+	if err != nil {
+		t.Fatalf("ReadEvents returned error: %v", err)
+	}
+	if len(events) != 1 {
+		t.Fatalf("len(events) = %d, want 1", len(events))
+	}
+	if events[0].Action != "project.create" {
+		t.Fatalf("Action = %q, want project.create", events[0].Action)
+	}
+	if events[0].Target != dir {
+		t.Fatalf("Target = %q, want %q", events[0].Target, dir)
+	}
+}
+
 func TestInspectReadsCreatedProject(t *testing.T) {
 	dir := filepath.Join(t.TempDir(), "demo")
 	_, err := Create(dir, CreateOptions{Title: "Demo Review"})

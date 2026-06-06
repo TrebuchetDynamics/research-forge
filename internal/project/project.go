@@ -1,6 +1,7 @@
 package project
 
 import (
+	"bufio"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -19,16 +20,30 @@ type Project struct {
 	StorageMode string
 }
 
+// Event is a provenance event recorded in a ResearchForge project.
+type Event struct {
+	SchemaVersion string         `json:"schemaVersion"`
+	ID            string         `json:"id"`
+	Timestamp     string         `json:"timestamp"`
+	Actor         string         `json:"actor"`
+	Action        string         `json:"action"`
+	Target        string         `json:"target"`
+	Inputs        map[string]any `json:"inputs"`
+	Outputs       map[string]any `json:"outputs"`
+	Warnings      []string       `json:"warnings"`
+}
+
 // CreateOptions configures project creation.
 type CreateOptions struct {
-	Title string
-	Clock func() time.Time
+	Title   string
+	Clock   func() time.Time
+	EventID func(time.Time) string
 }
 
 // Create initializes a ResearchForge project workspace.
 func Create(path string, opts CreateOptions) (Project, error) {
-	if strings.TrimSpace(path) == "" {
-		return Project{}, fmt.Errorf("project path is required")
+	if err := ValidatePath(path); err != nil {
+		return Project{}, err
 	}
 	title := strings.TrimSpace(opts.Title)
 	if title == "" {
@@ -66,9 +81,13 @@ func Create(path string, opts CreateOptions) (Project, error) {
 	}
 
 	now := clock().UTC()
+	eventID := opts.EventID
+	if eventID == nil {
+		eventID = func(t time.Time) string { return "evt_" + t.Format("20060102T150405Z") }
+	}
 	event := map[string]any{
 		"schemaVersion": schemaVersion,
-		"id":            "evt_" + now.Format("20060102T150405Z"),
+		"id":            eventID(now),
 		"timestamp":     now.Format(time.RFC3339),
 		"actor":         "rforge",
 		"action":        "project.create",
@@ -94,6 +113,46 @@ func Create(path string, opts CreateOptions) (Project, error) {
 	}
 
 	return Project{Path: path, Title: title, StorageMode: "sqlite"}, nil
+}
+
+// ValidatePath rejects empty paths and parent-directory traversal segments.
+func ValidatePath(path string) error {
+	if strings.TrimSpace(path) == "" {
+		return fmt.Errorf("project path is required")
+	}
+	for _, part := range strings.FieldsFunc(path, func(r rune) bool { return r == '/' || r == '\\' }) {
+		if part == ".." {
+			return fmt.Errorf("project path must not contain parent traversal")
+		}
+	}
+	return nil
+}
+
+// ReadEvents reads provenance events from a ResearchForge project.
+func ReadEvents(path string) ([]Event, error) {
+	file, err := os.Open(filepath.Join(path, "provenance", "events.jsonl"))
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	events := []Event{}
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line := strings.TrimSpace(scanner.Text())
+		if line == "" {
+			continue
+		}
+		var event Event
+		if err := json.Unmarshal([]byte(line), &event); err != nil {
+			return nil, err
+		}
+		events = append(events, event)
+	}
+	if err := scanner.Err(); err != nil {
+		return nil, err
+	}
+	return events, nil
 }
 
 // Inspect reads a ResearchForge project workspace.
