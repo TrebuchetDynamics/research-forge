@@ -60,7 +60,7 @@ See also:
 - [ ] Add consistent JSON output envelope.
 - [ ] Add consistent error format and exit codes.
 - [ ] Add shell completion if framework supports it.
-- [ ] Add CLI command tests.
+- [x] Add CLI command tests.
 
 ### 1.3 Project workspace
 
