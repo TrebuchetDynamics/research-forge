@@ -12,7 +12,7 @@ ResearchForge is intended to help researchers discover papers, map citation grap
 
 This repository currently contains the product requirements document and early project planning. Implementation has not started yet.
 
-See [RESEARCH-FORGE-PRD.md](./RESEARCH-FORGE-PRD.md) for the full product requirements, [DEVELOPMENT_PLAN.md](./DEVELOPMENT_PLAN.md) for the implementation roadmap, and [SKILLS.md](./SKILLS.md) for the TDD-only project development skills.
+See [RESEARCH-FORGE-PRD.md](./RESEARCH-FORGE-PRD.md) for the full product requirements, [DEVELOPMENT_PLAN.md](./DEVELOPMENT_PLAN.md) for the implementation plan, [ROADMAP.md](./ROADMAP.md) for milestone sequencing, [TODO.md](./TODO.md) for the end-to-end task checklist, and [SKILLS.md](./SKILLS.md) for the TDD-only project development skills.
 
 ## Goals
 
