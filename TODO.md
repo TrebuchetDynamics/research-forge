@@ -39,23 +39,23 @@ See also:
 
 ### 1.1 Go module and tooling
 
-- [ ] Add `go.mod` with module path.
-- [ ] Add initial package layout.
-- [ ] Add `cmd/rforge/main.go`.
-- [ ] Add build/version metadata variables.
-- [ ] Add `Makefile` or task runner.
+- [x] Add `go.mod` with module path.
+- [x] Add initial package layout.
+- [x] Add `cmd/rforge/main.go`.
+- [x] Add build/version metadata variables.
+- [x] Add `Makefile` or task runner.
 - [x] Add `.gitignore` for builds, temp projects, SQLite files, and local clones.
-- [ ] Add formatting/lint/test commands.
-- [ ] Add GitHub Actions CI.
-- [ ] Add `go test ./...` gate.
-- [ ] Add `go vet ./...` gate.
+- [x] Add formatting/lint/test commands.
+- [x] Add GitHub Actions CI.
+- [x] Add `go test ./...` gate.
+- [x] Add `go vet ./...` gate.
 - [ ] Add `govulncheck` gate when feasible.
 
 ### 1.2 CLI skeleton
 
 - [ ] Choose CLI framework with ADR if needed.
-- [ ] Add root `rforge --help`.
-- [ ] Add `rforge version`.
+- [x] Add root `rforge --help`.
+- [x] Add `rforge version`.
 - [ ] Add global flags: `--project`, `--config`, `--json`, `--log-level`.
 - [ ] Add consistent JSON output envelope.
 - [ ] Add consistent error format and exit codes.
@@ -64,28 +64,28 @@ See also:
 
 ### 1.3 Project workspace
 
-- [ ] Define `ResearchProject` domain type.
-- [ ] Define project directory layout.
-- [ ] Add `rforge project create <path> --title <title>`.
-- [ ] Add `rforge project open/inspect <path>`.
+- [x] Define `ResearchProject` domain type.
+- [x] Define project directory layout.
+- [x] Add `rforge project create <path> --title <title>`.
+- [x] Add `rforge project open/inspect <path>`.
 - [ ] Add `rforge project list`.
-- [ ] Write `rforge.project.toml` manifest.
-- [ ] Write `rforge.lock.json` lockfile.
-- [ ] Initialize local project data directories.
+- [x] Write `rforge.project.toml` manifest.
+- [x] Write `rforge.lock.json` lockfile.
+- [x] Initialize local project data directories.
 - [ ] Initialize SQLite local database.
 - [ ] Add project path validation and traversal tests.
 - [ ] Add archive-safe project metadata.
 
 ### 1.4 Manifest, lockfile, provenance
 
-- [ ] Define manifest schema and version.
-- [ ] Define lockfile schema and version.
-- [ ] Add manifest read/write tests.
-- [ ] Add lockfile read/write tests.
-- [ ] Add append-only provenance event log.
+- [x] Define manifest schema and version.
+- [x] Define lockfile schema and version.
+- [x] Add manifest read/write tests.
+- [x] Add lockfile read/write tests.
+- [x] Add append-only provenance event log.
 - [ ] Add event IDs, timestamps, actor, action, target, inputs, outputs, and warnings.
 - [ ] Add event replay/query helpers.
-- [ ] Record project-create event.
+- [x] Record project-create event.
 - [ ] Record CLI command provenance where relevant.
 - [ ] Add deterministic test clock/ID generator.
 
