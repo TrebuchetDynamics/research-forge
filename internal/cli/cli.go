@@ -4,6 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"os"
+	"path/filepath"
+	"runtime"
 
 	"github.com/TrebuchetDynamics/research-forge/internal/project"
 )
@@ -42,9 +45,41 @@ func Execute(args []string, stdout, stderr io.Writer) int {
 		return 0
 	case "project":
 		return executeProject(remaining[1:], stdout, stderr, opts)
+	case "doctor":
+		return executeDoctor(stdout, stderr, opts)
 	default:
 		return writeError(stdout, stderr, opts, 2, "unknown_command", fmt.Sprintf("unknown command %q", remaining[0]))
 	}
+}
+
+func executeDoctor(stdout, stderr io.Writer, opts globalOptions) int {
+	checks := []map[string]any{
+		{"name": "go_runtime", "ok": runtime.Version() != "", "message": runtime.Version()},
+	}
+	if opts.Project != "" {
+		checks = append(checks,
+			fileCheck("project_manifest", filepath.Join(opts.Project, "rforge.project.toml")),
+			fileCheck("project_lockfile", filepath.Join(opts.Project, "rforge.lock.json")),
+		)
+	}
+	if opts.JSON {
+		return writeJSON(stdout, 0, map[string]any{"checks": checks})
+	}
+	for _, check := range checks {
+		status := "fail"
+		if check["ok"] == true {
+			status = "pass"
+		}
+		fmt.Fprintf(stdout, "%s: %s (%s)\n", check["name"], status, check["message"])
+	}
+	return 0
+}
+
+func fileCheck(name, path string) map[string]any {
+	if _, err := os.Stat(path); err != nil {
+		return map[string]any{"name": name, "ok": false, "message": err.Error()}
+	}
+	return map[string]any{"name": name, "ok": true, "message": path}
 }
 
 func executeProject(args []string, stdout, stderr io.Writer, opts globalOptions) int {
@@ -185,6 +220,7 @@ func printHelp(w io.Writer) {
 	fmt.Fprintln(w)
 	fmt.Fprintln(w, "Usage:")
 	fmt.Fprintln(w, "  rforge version")
+	fmt.Fprintln(w, "  rforge doctor")
 	fmt.Fprintln(w, "  rforge project create <path> --title <title>")
 	fmt.Fprintln(w, "  rforge project inspect <path>")
 	fmt.Fprintln(w, "  rforge project list <root>")

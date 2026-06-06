@@ -102,9 +102,9 @@ See also:
 
 ### 1.6 Doctor command
 
-- [ ] Add `rforge doctor`.
-- [ ] Check Go/runtime version where useful.
-- [ ] Check project manifest/lockfile validity.
+- [x] Add `rforge doctor`.
+- [x] Check Go/runtime version where useful.
+- [x] Check project manifest/lockfile validity.
 - [ ] Check SQLite availability.
 - [ ] Check optional GROBID endpoint.
 - [ ] Check optional OpenSearch endpoint.

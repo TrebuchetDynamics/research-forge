@@ -126,6 +126,44 @@ func TestExecuteUnknownCommandJSONErrorEnvelope(t *testing.T) {
 	}
 }
 
+func TestExecuteDoctorJSONChecksRuntimeAndProject(t *testing.T) {
+	dir := filepath.Join(t.TempDir(), "demo")
+	if code := Execute([]string{"project", "create", dir, "--title", "Demo Review"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("project create exit code = %d", code)
+	}
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+
+	code := Execute([]string{"--json", "--project", dir, "doctor"}, stdout, stderr)
+	if code != 0 {
+		t.Fatalf("exit code = %d, stderr = %s", code, stderr.String())
+	}
+	var envelope map[string]any
+	if err := json.Unmarshal(stdout.Bytes(), &envelope); err != nil {
+		t.Fatalf("stdout is not JSON: %v\n%s", err, stdout.String())
+	}
+	data := envelope["data"].(map[string]any)
+	checks := data["checks"].([]any)
+	if len(checks) < 3 {
+		t.Fatalf("len(checks) = %d, want at least 3", len(checks))
+	}
+	var sawRuntime, sawManifest, sawLockfile bool
+	for _, raw := range checks {
+		check := raw.(map[string]any)
+		switch check["name"] {
+		case "go_runtime":
+			sawRuntime = check["ok"] == true
+		case "project_manifest":
+			sawManifest = check["ok"] == true
+		case "project_lockfile":
+			sawLockfile = check["ok"] == true
+		}
+	}
+	if !sawRuntime || !sawManifest || !sawLockfile {
+		t.Fatalf("missing passing checks: runtime=%v manifest=%v lockfile=%v checks=%#v", sawRuntime, sawManifest, sawLockfile, checks)
+	}
+}
+
 func TestExecuteProjectListJSON(t *testing.T) {
 	root := t.TempDir()
 	if code := Execute([]string{"project", "create", filepath.Join(root, "alpha"), "--title", "Alpha"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
