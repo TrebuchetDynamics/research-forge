@@ -83,7 +83,7 @@ See also:
 - [x] Add manifest read/write tests.
 - [x] Add lockfile read/write tests.
 - [x] Add append-only provenance event log.
-- [ ] Add event IDs, timestamps, actor, action, target, inputs, outputs, and warnings.
+- [x] Add event IDs, timestamps, actor, action, target, inputs, outputs, and warnings.
 - [ ] Add event replay/query helpers.
 - [x] Record project-create event.
 - [ ] Record CLI command provenance where relevant.
