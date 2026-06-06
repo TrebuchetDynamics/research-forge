@@ -1,0 +1,57 @@
+name: TDD implementation slice
+description: Plan one test-first ResearchForge implementation slice.
+title: "[TDD] "
+labels: ["tdd", "implementation"]
+body:
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Behavior
+      description: What single observable behavior should this slice add or change?
+      placeholder: "rforge project create writes a manifest and provenance event."
+    validations:
+      required: true
+  - type: dropdown
+    id: milestone
+    attributes:
+      label: Milestone
+      options:
+        - "0 - Foundation"
+        - "1 - Scholarly metadata and library"
+        - "2 - OSS repository intelligence"
+        - "3 - Full-text, parsing, and retrieval"
+        - "4 - Screening workflow"
+        - "5 - Evidence extraction"
+        - "6 - Meta-analysis"
+        - "7 - Reports"
+        - "8 - Hardening and release"
+    validations:
+      required: true
+  - type: input
+    id: skill
+    attributes:
+      label: Primary skill
+      placeholder: "research-forge-foundation-tdd"
+    validations:
+      required: true
+  - type: textarea
+    id: red
+    attributes:
+      label: Red test
+      description: What failing test/golden fixture/benchmark must be created first?
+    validations:
+      required: true
+  - type: textarea
+    id: green
+    attributes:
+      label: Minimal green implementation
+      description: What is the smallest implementation expected to pass the red test?
+    validations:
+      required: true
+  - type: textarea
+    id: validation
+    attributes:
+      label: Validation commands
+      placeholder: "go test ./..."
+    validations:
+      required: true

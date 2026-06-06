@@ -1,0 +1,35 @@
+# Build outputs
+/bin/
+/dist/
+/build/
+*.exe
+*.test
+*.out
+
+# Go workspace/cache artifacts
+/vendor/
+coverage.out
+
+# Local ResearchForge projects and temp data
+/tmp/
+tmp/
+*.sqlite
+*.sqlite3
+*.db
+*.db-shm
+*.db-wal
+
+# External repository study clones
+/opensource/clones/
+
+# Logs and local state
+*.log
+.DS_Store
+Thumbs.db
+
+# Secrets and local environment
+.env
+.env.*
+!.env.example
+*.pem
+*.key

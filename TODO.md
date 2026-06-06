@@ -27,12 +27,12 @@ See also:
 - [x] Add README.
 - [x] Add development plan.
 - [x] Add TDD-only project development skills.
-- [ ] Add issue templates.
-- [ ] Add pull request template with TDD receipt section.
-- [ ] Add contribution guide.
-- [ ] Add code of conduct if public contributions are expected.
+- [x] Add issue templates.
+- [x] Add pull request template with TDD receipt section.
+- [x] Add contribution guide.
+- [x] Add code of conduct if public contributions are expected.
 - [ ] Add license after owner decision.
-- [ ] Add `CONTEXT.md` glossary when first domain terms are finalized.
+- [x] Add `CONTEXT.md` glossary when first domain terms are finalized.
 - [ ] Add `docs/adr/` and ADR index when first ADR is accepted.
 
 ## 1. Milestone 0 — Go/Fyne/CLI foundation
@@ -44,7 +44,7 @@ See also:
 - [ ] Add `cmd/rforge/main.go`.
 - [ ] Add build/version metadata variables.
 - [ ] Add `Makefile` or task runner.
-- [ ] Add `.gitignore` for builds, temp projects, SQLite files, and local clones.
+- [x] Add `.gitignore` for builds, temp projects, SQLite files, and local clones.
 - [ ] Add formatting/lint/test commands.
 - [ ] Add GitHub Actions CI.
 - [ ] Add `go test ./...` gate.

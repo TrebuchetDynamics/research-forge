@@ -1,0 +1,41 @@
+name: Bug report
+description: Report broken ResearchForge behavior with a reproducible test target.
+title: "[Bug] "
+labels: ["bug", "needs-repro"]
+body:
+  - type: textarea
+    id: observed
+    attributes:
+      label: Observed behavior
+      description: What happened?
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What should have happened?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduction steps
+      description: Include commands, fixture/project setup, and relevant output.
+      placeholder: |
+        1. Run `...`
+        2. Observe `...`
+    validations:
+      required: true
+  - type: textarea
+    id: regression_test
+    attributes:
+      label: Regression test plan
+      description: What failing test should be added before the fix?
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: OS, Go version, ResearchForge version/commit, optional services.
