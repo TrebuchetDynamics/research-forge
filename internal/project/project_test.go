@@ -98,3 +98,29 @@ func TestInspectReadsCreatedProject(t *testing.T) {
 		t.Fatalf("StorageMode = %q, want sqlite", inspected.StorageMode)
 	}
 }
+
+func TestListReadsProjectsUnderRoot(t *testing.T) {
+	root := t.TempDir()
+	_, err := Create(filepath.Join(root, "b"), CreateOptions{Title: "Beta"})
+	if err != nil {
+		t.Fatalf("Create beta: %v", err)
+	}
+	_, err = Create(filepath.Join(root, "a"), CreateOptions{Title: "Alpha"})
+	if err != nil {
+		t.Fatalf("Create alpha: %v", err)
+	}
+	if err := os.WriteFile(filepath.Join(root, "not-a-project.txt"), []byte("ignore"), 0o644); err != nil {
+		t.Fatalf("write non-project: %v", err)
+	}
+
+	projects, err := List(root)
+	if err != nil {
+		t.Fatalf("List returned error: %v", err)
+	}
+	if len(projects) != 2 {
+		t.Fatalf("len(projects) = %d, want 2: %#v", len(projects), projects)
+	}
+	if projects[0].Title != "Alpha" || projects[1].Title != "Beta" {
+		t.Fatalf("projects not sorted by path/title as expected: %#v", projects)
+	}
+}

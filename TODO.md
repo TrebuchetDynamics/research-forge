@@ -56,9 +56,9 @@ See also:
 - [ ] Choose CLI framework with ADR if needed.
 - [x] Add root `rforge --help`.
 - [x] Add `rforge version`.
-- [ ] Add global flags: `--project`, `--config`, `--json`, `--log-level`.
-- [ ] Add consistent JSON output envelope.
-- [ ] Add consistent error format and exit codes.
+- [x] Add global flags: `--project`, `--config`, `--json`, `--log-level`.
+- [x] Add consistent JSON output envelope.
+- [x] Add consistent error format and exit codes.
 - [ ] Add shell completion if framework supports it.
 - [x] Add CLI command tests.
 
@@ -68,7 +68,7 @@ See also:
 - [x] Define project directory layout.
 - [x] Add `rforge project create <path> --title <title>`.
 - [x] Add `rforge project open/inspect <path>`.
-- [ ] Add `rforge project list`.
+- [x] Add `rforge project list`.
 - [x] Write `rforge.project.toml` manifest.
 - [x] Write `rforge.lock.json` lockfile.
 - [x] Initialize local project data directories.

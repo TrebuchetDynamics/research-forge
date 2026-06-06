@@ -2,6 +2,7 @@ package cli
 
 import (
 	"bytes"
+	"encoding/json"
 	"os"
 	"path/filepath"
 	"strings"
@@ -52,5 +53,105 @@ func TestExecuteProjectInspect(t *testing.T) {
 	}
 	if !strings.Contains(stdout.String(), "Demo Review") {
 		t.Fatalf("stdout missing project title: %q", stdout.String())
+	}
+}
+
+func TestExecuteVersionJSONEnvelope(t *testing.T) {
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+
+	code := Execute([]string{"--json", "--log-level", "debug", "version"}, stdout, stderr)
+	if code != 0 {
+		t.Fatalf("exit code = %d, stderr = %s", code, stderr.String())
+	}
+	var envelope map[string]any
+	if err := json.Unmarshal(stdout.Bytes(), &envelope); err != nil {
+		t.Fatalf("stdout is not JSON: %v\n%s", err, stdout.String())
+	}
+	if envelope["ok"] != true {
+		t.Fatalf("ok = %#v, want true", envelope["ok"])
+	}
+	data, ok := envelope["data"].(map[string]any)
+	if !ok {
+		t.Fatalf("data missing or wrong type: %#v", envelope["data"])
+	}
+	if data["name"] != "rforge" {
+		t.Fatalf("data.name = %#v, want rforge", data["name"])
+	}
+}
+
+func TestExecuteProjectInspectJSONEnvelope(t *testing.T) {
+	dir := filepath.Join(t.TempDir(), "demo")
+	if code := Execute([]string{"project", "create", dir, "--title", "Demo Review"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("project create exit code = %d", code)
+	}
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+
+	code := Execute([]string{"--json", "--project", dir, "project", "inspect", dir}, stdout, stderr)
+	if code != 0 {
+		t.Fatalf("exit code = %d, stderr = %s", code, stderr.String())
+	}
+	var envelope map[string]any
+	if err := json.Unmarshal(stdout.Bytes(), &envelope); err != nil {
+		t.Fatalf("stdout is not JSON: %v\n%s", err, stdout.String())
+	}
+	data := envelope["data"].(map[string]any)
+	if data["title"] != "Demo Review" {
+		t.Fatalf("data.title = %#v, want Demo Review", data["title"])
+	}
+}
+
+func TestExecuteUnknownCommandJSONErrorEnvelope(t *testing.T) {
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+
+	code := Execute([]string{"--json", "unknown"}, stdout, stderr)
+	if code != 2 {
+		t.Fatalf("exit code = %d, want 2", code)
+	}
+	if stderr.Len() != 0 {
+		t.Fatalf("stderr = %q, want empty for JSON errors", stderr.String())
+	}
+	var envelope map[string]any
+	if err := json.Unmarshal(stdout.Bytes(), &envelope); err != nil {
+		t.Fatalf("stdout is not JSON: %v\n%s", err, stdout.String())
+	}
+	if envelope["ok"] != false {
+		t.Fatalf("ok = %#v, want false", envelope["ok"])
+	}
+	errorBody := envelope["error"].(map[string]any)
+	if errorBody["code"] != "unknown_command" {
+		t.Fatalf("error.code = %#v, want unknown_command", errorBody["code"])
+	}
+}
+
+func TestExecuteProjectListJSON(t *testing.T) {
+	root := t.TempDir()
+	if code := Execute([]string{"project", "create", filepath.Join(root, "alpha"), "--title", "Alpha"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("project create alpha exit code = %d", code)
+	}
+	if code := Execute([]string{"project", "create", filepath.Join(root, "beta"), "--title", "Beta"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("project create beta exit code = %d", code)
+	}
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+
+	code := Execute([]string{"--json", "project", "list", root}, stdout, stderr)
+	if code != 0 {
+		t.Fatalf("exit code = %d, stderr = %s", code, stderr.String())
+	}
+	var envelope map[string]any
+	if err := json.Unmarshal(stdout.Bytes(), &envelope); err != nil {
+		t.Fatalf("stdout is not JSON: %v\n%s", err, stdout.String())
+	}
+	data := envelope["data"].(map[string]any)
+	projects := data["projects"].([]any)
+	if len(projects) != 2 {
+		t.Fatalf("len(projects) = %d, want 2", len(projects))
+	}
+	first := projects[0].(map[string]any)
+	if first["title"] != "Alpha" {
+		t.Fatalf("first title = %#v, want Alpha", first["title"])
 	}
 }

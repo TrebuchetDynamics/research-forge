@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 	"time"
 )
@@ -107,6 +108,31 @@ func Inspect(path string) (Project, error) {
 		Title:       values["title"],
 		StorageMode: values["storage_mode"],
 	}, nil
+}
+
+// List reads ResearchForge projects directly under root.
+func List(root string) ([]Project, error) {
+	entries, err := os.ReadDir(root)
+	if err != nil {
+		return nil, err
+	}
+	projects := []Project{}
+	for _, entry := range entries {
+		if !entry.IsDir() {
+			continue
+		}
+		path := filepath.Join(root, entry.Name())
+		proj, err := Inspect(path)
+		if err != nil {
+			if os.IsNotExist(err) {
+				continue
+			}
+			return nil, err
+		}
+		projects = append(projects, proj)
+	}
+	sort.Slice(projects, func(i, j int) bool { return projects[i].Path < projects[j].Path })
+	return projects, nil
 }
 
 func parseSimpleTOML(content string) map[string]string {
