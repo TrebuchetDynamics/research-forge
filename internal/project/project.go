@@ -9,6 +9,8 @@ import (
 	"sort"
 	"strings"
 	"time"
+
+	"github.com/TrebuchetDynamics/research-forge/internal/storage"
 )
 
 const schemaVersion = "1"
@@ -58,6 +60,14 @@ func Create(path string, opts CreateOptions) (Project, error) {
 		return Project{}, err
 	}
 	if err := os.MkdirAll(filepath.Join(path, "data"), 0o755); err != nil {
+		return Project{}, err
+	}
+
+	store, err := storage.Initialize(filepath.Join(path, "data", "rforge.sqlite"))
+	if err != nil {
+		return Project{}, err
+	}
+	if err := store.Close(); err != nil {
 		return Project{}, err
 	}
 

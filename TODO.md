@@ -33,7 +33,7 @@ See also:
 - [x] Add code of conduct if public contributions are expected.
 - [ ] Add license after owner decision.
 - [x] Add `CONTEXT.md` glossary when first domain terms are finalized.
-- [ ] Add `docs/adr/` and ADR index when first ADR is accepted.
+- [x] Add `docs/adr/` and ADR index when first ADR is accepted.
 
 ## 1. Milestone 0 — Go/Fyne/CLI foundation
 
@@ -72,7 +72,7 @@ See also:
 - [x] Write `rforge.project.toml` manifest.
 - [x] Write `rforge.lock.json` lockfile.
 - [x] Initialize local project data directories.
-- [ ] Initialize SQLite local database.
+- [x] Initialize SQLite local database.
 - [x] Add project path validation and traversal tests.
 - [ ] Add archive-safe project metadata.
 
@@ -91,11 +91,11 @@ See also:
 
 ### 1.5 Storage foundation
 
-- [ ] Decide SQLite-first vs PostgreSQL-first; recommended SQLite-first.
-- [ ] Add storage interface.
-- [ ] Add SQLite implementation.
-- [ ] Add migration mechanism.
-- [ ] Add migration tests.
+- [x] Decide SQLite-first vs PostgreSQL-first; recommended SQLite-first.
+- [x] Add storage interface.
+- [x] Add SQLite implementation.
+- [x] Add migration mechanism.
+- [x] Add migration tests.
 - [ ] Add database backup before migrations.
 - [ ] Add storage health check.
 - [ ] Prepare PostgreSQL adapter seam for later.
@@ -105,7 +105,7 @@ See also:
 - [x] Add `rforge doctor`.
 - [x] Check Go/runtime version where useful.
 - [x] Check project manifest/lockfile validity.
-- [ ] Check SQLite availability.
+- [x] Check SQLite availability.
 - [ ] Check optional GROBID endpoint.
 - [ ] Check optional OpenSearch endpoint.
 - [ ] Check optional Qdrant endpoint.

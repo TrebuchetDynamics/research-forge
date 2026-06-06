@@ -147,7 +147,7 @@ func TestExecuteDoctorJSONChecksRuntimeAndProject(t *testing.T) {
 	if len(checks) < 3 {
 		t.Fatalf("len(checks) = %d, want at least 3", len(checks))
 	}
-	var sawRuntime, sawManifest, sawLockfile bool
+	var sawRuntime, sawManifest, sawLockfile, sawSQLite bool
 	for _, raw := range checks {
 		check := raw.(map[string]any)
 		switch check["name"] {
@@ -157,10 +157,12 @@ func TestExecuteDoctorJSONChecksRuntimeAndProject(t *testing.T) {
 			sawManifest = check["ok"] == true
 		case "project_lockfile":
 			sawLockfile = check["ok"] == true
+		case "sqlite":
+			sawSQLite = check["ok"] == true
 		}
 	}
-	if !sawRuntime || !sawManifest || !sawLockfile {
-		t.Fatalf("missing passing checks: runtime=%v manifest=%v lockfile=%v checks=%#v", sawRuntime, sawManifest, sawLockfile, checks)
+	if !sawRuntime || !sawManifest || !sawLockfile || !sawSQLite {
+		t.Fatalf("missing passing checks: runtime=%v manifest=%v lockfile=%v sqlite=%v checks=%#v", sawRuntime, sawManifest, sawLockfile, sawSQLite, checks)
 	}
 }
 

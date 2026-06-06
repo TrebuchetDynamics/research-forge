@@ -9,6 +9,7 @@ import (
 	"runtime"
 
 	"github.com/TrebuchetDynamics/research-forge/internal/project"
+	"github.com/TrebuchetDynamics/research-forge/internal/storage"
 )
 
 var (
@@ -60,6 +61,7 @@ func executeDoctor(stdout, stderr io.Writer, opts globalOptions) int {
 		checks = append(checks,
 			fileCheck("project_manifest", filepath.Join(opts.Project, "rforge.project.toml")),
 			fileCheck("project_lockfile", filepath.Join(opts.Project, "rforge.lock.json")),
+			sqliteCheck(filepath.Join(opts.Project, "data", "rforge.sqlite")),
 		)
 	}
 	if opts.JSON {
@@ -73,6 +75,18 @@ func executeDoctor(stdout, stderr io.Writer, opts globalOptions) int {
 		fmt.Fprintf(stdout, "%s: %s (%s)\n", check["name"], status, check["message"])
 	}
 	return 0
+}
+
+func sqliteCheck(path string) map[string]any {
+	store, err := storage.Initialize(path)
+	if err != nil {
+		return map[string]any{"name": "sqlite", "ok": false, "message": err.Error()}
+	}
+	defer store.Close()
+	if err := store.HealthCheck(); err != nil {
+		return map[string]any{"name": "sqlite", "ok": false, "message": err.Error()}
+	}
+	return map[string]any{"name": "sqlite", "ok": true, "message": path}
 }
 
 func fileCheck(name, path string) map[string]any {

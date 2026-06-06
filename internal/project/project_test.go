@@ -36,6 +36,10 @@ func TestCreateWritesManifestLockfileAndProvenance(t *testing.T) {
 		}
 	}
 
+	if _, err := os.Stat(filepath.Join(dir, "data", "rforge.sqlite")); err != nil {
+		t.Fatalf("sqlite database not initialized: %v", err)
+	}
+
 	lockBytes, err := os.ReadFile(filepath.Join(dir, "rforge.lock.json"))
 	if err != nil {
 		t.Fatalf("read lockfile: %v", err)
