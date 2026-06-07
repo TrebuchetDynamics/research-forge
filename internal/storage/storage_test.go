@@ -49,6 +49,22 @@ func TestInitializeBacksUpExistingDatabaseBeforeMigrations(t *testing.T) {
 	}
 }
 
+func TestOpenUsesSQLiteDriverAndNamesPostgresFutureAdapter(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "rforge.sqlite")
+	store, err := Open(Config{Driver: DriverSQLite, Path: path})
+	if err != nil {
+		t.Fatalf("Open returned error: %v", err)
+	}
+	defer store.Close()
+	if err := store.HealthCheck(); err != nil {
+		t.Fatalf("HealthCheck returned error: %v", err)
+	}
+
+	if _, err := Open(Config{Driver: DriverPostgres, Path: "postgres://example"}); err == nil {
+		t.Fatalf("Open with postgres driver returned nil error, want future adapter error")
+	}
+}
+
 func TestInitializeCreatesSQLiteDatabaseAndMigrationRecord(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "rforge.sqlite")
 

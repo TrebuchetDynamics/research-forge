@@ -98,7 +98,7 @@ See also:
 - [x] Add migration tests.
 - [x] Add database backup before migrations.
 - [x] Add storage health check.
-- [ ] Prepare PostgreSQL adapter seam for later.
+- [x] Prepare PostgreSQL adapter seam for later.
 
 ### 1.6 Doctor command
 

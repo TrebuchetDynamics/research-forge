@@ -10,6 +10,22 @@ import (
 	_ "modernc.org/sqlite"
 )
 
+// Driver names a storage adapter.
+type Driver string
+
+const (
+	// DriverSQLite stores project data in a local SQLite database.
+	DriverSQLite Driver = "sqlite"
+	// DriverPostgres reserves the future PostgreSQL adapter seam.
+	DriverPostgres Driver = "postgres"
+)
+
+// Config selects a storage adapter and location.
+type Config struct {
+	Driver Driver
+	Path   string
+}
+
 // Handle is the storage boundary used by application services.
 type Handle interface {
 	HealthCheck() error
@@ -22,6 +38,18 @@ type Store struct {
 }
 
 var _ Handle = (*Store)(nil)
+
+// Open opens a storage adapter from config.
+func Open(config Config) (*Store, error) {
+	switch config.Driver {
+	case "", DriverSQLite:
+		return Initialize(config.Path)
+	case DriverPostgres:
+		return nil, fmt.Errorf("postgres storage adapter is not implemented yet")
+	default:
+		return nil, fmt.Errorf("unsupported storage driver %q", config.Driver)
+	}
+}
 
 // Initialize opens or creates a SQLite database and applies migrations.
 func Initialize(path string) (*Store, error) {
