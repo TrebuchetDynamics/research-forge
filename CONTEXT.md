@@ -68,6 +68,10 @@ A generated research report export with citations, evidence tables, screening su
 
 A ResearchForge record of an open-source project studied for possible integration or design reference, including metadata, license, risks, notes, and integration decisions.
 
+### OSS study disposition
+
+The classification for how ResearchForge may use an OSS repository study: `pattern-reference` by default, or explicitly escalated to `adapter-only`, `integrate`, `needs-license-review`, or `avoid` before any dependency, code, schema, fixture, or asset is used.
+
 ### Retrieval-first, provenance-first, statistics-first, LLM-assisted
 
 The core ResearchForge principle: retrieve and cite source material first, preserve provenance, use auditable statistical methods, and allow LLMs only as assistants for tasks such as query expansion or extraction suggestions.
