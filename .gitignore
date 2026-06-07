@@ -18,6 +18,7 @@ tmp/
 *.db
 *.db-shm
 *.db-wal
+*.pre-migration.bak
 
 # External repository study clones
 /opensource/clones/

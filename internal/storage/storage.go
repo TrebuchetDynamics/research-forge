@@ -3,6 +3,8 @@ package storage
 import (
 	"database/sql"
 	"fmt"
+	"io"
+	"os"
 	"path/filepath"
 
 	_ "modernc.org/sqlite"
@@ -27,6 +29,9 @@ func Initialize(path string) (*Store, error) {
 		return nil, fmt.Errorf("database path is required")
 	}
 	if err := ensureParent(path); err != nil {
+		return nil, err
+	}
+	if err := backupBeforeMigrations(path); err != nil {
 		return nil, err
 	}
 	db, err := sql.Open("sqlite", path)
@@ -56,6 +61,33 @@ func (s *Store) Close() error {
 		return nil
 	}
 	return s.db.Close()
+}
+
+func backupBeforeMigrations(path string) error {
+	info, err := os.Stat(path)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return nil
+		}
+		return err
+	}
+	if info.IsDir() || info.Size() == 0 {
+		return nil
+	}
+
+	source, err := os.Open(path)
+	if err != nil {
+		return err
+	}
+	defer source.Close()
+
+	backup, err := os.OpenFile(path+".pre-migration.bak", os.O_CREATE|os.O_WRONLY|os.O_TRUNC, info.Mode())
+	if err != nil {
+		return err
+	}
+	defer backup.Close()
+	_, err = io.Copy(backup, source)
+	return err
 }
 
 func (s *Store) migrate() error {

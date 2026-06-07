@@ -96,7 +96,7 @@ See also:
 - [x] Add SQLite implementation.
 - [x] Add migration mechanism.
 - [x] Add migration tests.
-- [ ] Add database backup before migrations.
+- [x] Add database backup before migrations.
 - [x] Add storage health check.
 - [ ] Prepare PostgreSQL adapter seam for later.
 
