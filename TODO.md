@@ -106,7 +106,7 @@ See also:
 - [x] Check Go/runtime version where useful.
 - [x] Check project manifest/lockfile validity.
 - [x] Check SQLite availability.
-- [ ] Check optional GROBID endpoint.
+- [x] Check optional GROBID endpoint.
 - [ ] Check optional OpenSearch endpoint.
 - [ ] Check optional Qdrant endpoint.
 - [ ] Check optional R/metafor.

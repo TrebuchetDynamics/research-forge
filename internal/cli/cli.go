@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"net/url"
+	"os"
 	"runtime"
 
 	"github.com/TrebuchetDynamics/research-forge/internal/project"
@@ -57,6 +59,9 @@ func executeDoctor(stdout, stderr io.Writer, opts globalOptions) int {
 	if opts.Project != "" {
 		checks = append(checks, project.CheckHealth(opts.Project).Checks...)
 	}
+	if endpoint := os.Getenv("RFORGE_GROBID_URL"); endpoint != "" {
+		checks = append(checks, optionalHTTPEndpointCheck("grobid_endpoint", endpoint, "Set RFORGE_GROBID_URL to a valid GROBID HTTP endpoint, or unset it to skip this optional check."))
+	}
 	if opts.JSON {
 		return writeJSON(stdout, 0, map[string]any{"checks": checks})
 	}
@@ -68,6 +73,14 @@ func executeDoctor(stdout, stderr io.Writer, opts globalOptions) int {
 		fmt.Fprintf(stdout, "%s: %s (%s) action: %s\n", check.Name, status, check.Message, check.Action)
 	}
 	return 0
+}
+
+func optionalHTTPEndpointCheck(name, endpoint, failureAction string) project.HealthCheck {
+	parsed, err := url.Parse(endpoint)
+	if err != nil || parsed.Scheme == "" || parsed.Host == "" || (parsed.Scheme != "http" && parsed.Scheme != "https") {
+		return project.HealthCheck{Name: name, OK: false, Message: endpoint, Action: failureAction}
+	}
+	return project.HealthCheck{Name: name, OK: true, Message: endpoint, Action: "No action needed."}
 }
 
 func executeProject(args []string, stdout, stderr io.Writer, opts globalOptions) int {

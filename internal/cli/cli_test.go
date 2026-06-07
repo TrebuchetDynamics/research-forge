@@ -170,6 +170,36 @@ func TestExecuteDoctorJSONChecksRuntimeAndProject(t *testing.T) {
 	}
 }
 
+func TestExecuteDoctorJSONChecksConfiguredGROBIDEndpoint(t *testing.T) {
+	t.Setenv("RFORGE_GROBID_URL", "http://localhost:8070")
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+
+	code := Execute([]string{"--json", "doctor"}, stdout, stderr)
+	if code != 0 {
+		t.Fatalf("exit code = %d, stderr = %s", code, stderr.String())
+	}
+	var envelope map[string]any
+	if err := json.Unmarshal(stdout.Bytes(), &envelope); err != nil {
+		t.Fatalf("stdout is not JSON: %v\n%s", err, stdout.String())
+	}
+	data := envelope["data"].(map[string]any)
+	checks := data["checks"].([]any)
+	for _, raw := range checks {
+		check := raw.(map[string]any)
+		if check["name"] == "grobid_endpoint" {
+			if check["ok"] != true {
+				t.Fatalf("grobid endpoint check failed: %#v", check)
+			}
+			if check["message"] != "http://localhost:8070" {
+				t.Fatalf("grobid endpoint message = %#v", check["message"])
+			}
+			return
+		}
+	}
+	t.Fatalf("missing grobid_endpoint check: %#v", checks)
+}
+
 func TestExecuteProjectListJSON(t *testing.T) {
 	root := t.TempDir()
 	if code := Execute([]string{"project", "create", filepath.Join(root, "alpha"), "--title", "Alpha"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
