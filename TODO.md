@@ -97,7 +97,7 @@ See also:
 - [x] Add migration mechanism.
 - [x] Add migration tests.
 - [ ] Add database backup before migrations.
-- [ ] Add storage health check.
+- [x] Add storage health check.
 - [ ] Prepare PostgreSQL adapter seam for later.
 
 ### 1.6 Doctor command
@@ -110,7 +110,7 @@ See also:
 - [ ] Check optional OpenSearch endpoint.
 - [ ] Check optional Qdrant endpoint.
 - [ ] Check optional R/metafor.
-- [ ] Output actionable JSON and human-readable results.
+- [x] Output actionable JSON and human-readable results.
 
 ### 1.7 Fyne app shell
 

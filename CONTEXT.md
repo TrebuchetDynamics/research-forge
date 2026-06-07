@@ -24,6 +24,10 @@ The human-readable project configuration that describes a ResearchForge project'
 
 The machine-written record of tool versions, external-service parameters, parser/model versions, and analysis settings needed to reproduce project outputs.
 
+### Project health report
+
+An actionable summary of Research project invariants such as project manifest, Workflow lockfile, and local storage availability, intended for CLI and future Fyne status displays.
+
 ### Provenance
 
 The audit trail that records where research data came from, which actions were taken, which tools and parameters were used, and which source material supports claims.

@@ -150,6 +150,10 @@ func TestExecuteDoctorJSONChecksRuntimeAndProject(t *testing.T) {
 	var sawRuntime, sawManifest, sawLockfile, sawSQLite bool
 	for _, raw := range checks {
 		check := raw.(map[string]any)
+		action, ok := check["action"].(string)
+		if !ok || action == "" {
+			t.Fatalf("check missing actionable guidance: %#v", check)
+		}
 		switch check["name"] {
 		case "go_runtime":
 			sawRuntime = check["ok"] == true
