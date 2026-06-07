@@ -178,7 +178,24 @@ See also:
 - [ ] Add `rforge oa lookup <doi>`.
 - [ ] Ensure email/API configuration does not leak.
 
-### 2.7 Deduplication
+### 2.7 Additional scholarly source backlog
+
+- [ ] Add PubMed / Europe PMC connector backlog and terms review.
+- [ ] Add Semantic Scholar connector backlog and API terms review.
+- [ ] Add NASA ADS connector backlog for physics/astronomy workflows.
+- [ ] Add DOAJ / CORE connector backlog for open-access discovery.
+- [ ] Record source-specific outbound data and credential requirements.
+
+### 2.8 Search strategy builder
+
+- [ ] Define saved search strategy model.
+- [ ] Add Boolean query construction tests.
+- [ ] Add synonym/concept expansion scaffold.
+- [ ] Add field-specific search representation.
+- [ ] Version search strategies in provenance.
+- [ ] Add watched-search schedule metadata.
+
+### 2.9 Deduplication
 
 - [ ] Define duplicate scoring model.
 - [ ] Deduplicate exact DOI matches.
@@ -189,7 +206,7 @@ See also:
 - [ ] Add duplicate review/report command.
 - [ ] Add tests for false positive boundaries.
 
-### 2.8 Imports and exports
+### 2.10 Imports and exports
 
 - [ ] Add BibTeX parser and fixtures.
 - [ ] Add RIS parser and fixtures.
@@ -201,7 +218,7 @@ See also:
 - [ ] Add JSON export golden tests.
 - [ ] Add `rforge import` and `rforge export`.
 
-### 2.9 Search/library UI
+### 2.11 Search/library UI
 
 - [ ] Add search form view model.
 - [ ] Add search result table view model.
@@ -210,6 +227,16 @@ See also:
 - [ ] Add Fyne library screen.
 - [ ] Add loading/error/empty states.
 - [ ] Ensure UI calls shared services.
+
+### 2.12 Automatic paper discovery
+
+- [ ] Define watched search domain type.
+- [ ] Add `rforge watch add`.
+- [ ] Add `rforge watch run`.
+- [ ] Add new-paper inbox storage.
+- [ ] Add `rforge inbox`.
+- [ ] Add approval workflow before automatic PDF downloads.
+- [ ] Record watched-search refresh provenance.
 
 ## 3. Milestone 2 — OSS repository intelligence MVP
 
@@ -268,6 +295,16 @@ See also:
 - [ ] Add optional Qdrant adapter seam.
 - [ ] Add embeddings adapter seam if needed.
 - [ ] Add Fyne PDF/section/passages view model and screen.
+
+### 4.4 Citation graph
+
+- [ ] Define citation graph model.
+- [ ] Add backward citation storage.
+- [ ] Add forward citation storage.
+- [ ] Add co-citation cluster scaffold.
+- [ ] Add bibliographic coupling scaffold.
+- [ ] Add citation graph export.
+- [ ] Add Fyne citation graph view model.
 
 ## 5. Milestone 4 — Screening workflow
 
@@ -358,6 +395,10 @@ See also:
 - [ ] Add archive extraction safety tests.
 - [ ] Add external command argument safety tests.
 - [ ] Add API key redaction tests.
+- [ ] Add shareable-report redaction tests for local paths, reviewer names, and private notes.
+- [ ] Add per-project data-retention policy tests.
+- [ ] Add outbound API data-flow documentation.
+- [ ] Add external-tool version and container digest lockfile tests.
 - [ ] Add HTTP timeout tests.
 - [ ] Add bounded response-size tests where needed.
 - [ ] Add fuzz tests for import parsers.
@@ -382,6 +423,7 @@ See also:
 - [ ] Add CLI command reference.
 - [ ] Add project format documentation.
 - [ ] Add external service setup docs.
+- [ ] Add CLI external service start/stop/check documentation.
 - [ ] Add privacy/copyright documentation.
 - [ ] Add developer setup guide.
 - [ ] Add architecture overview.
