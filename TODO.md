@@ -34,6 +34,7 @@ See also:
 - [ ] Add license after owner decision.
 - [x] Add `CONTEXT.md` glossary when first domain terms are finalized.
 - [x] Add `docs/adr/` and ADR index when first ADR is accepted.
+- [ ] Reconcile PRD `rforge.project.yaml` example with current `rforge.project.toml` implementation via ADR or PRD update.
 
 ## 1. Milestone 0 — Go/Fyne/CLI foundation
 
@@ -61,6 +62,10 @@ See also:
 - [x] Add consistent error format and exit codes.
 - [ ] Add shell completion if framework supports it.
 - [x] Add CLI command tests.
+- [ ] Add external service command group design.
+- [ ] Add `rforge service check <name>`.
+- [ ] Add `rforge service start <name>` where safe/local.
+- [ ] Add `rforge service stop <name>` where safe/local.
 
 ### 1.3 Project workspace
 
@@ -204,6 +209,9 @@ See also:
 - [ ] Merge source provenance safely.
 - [ ] Preserve all source identifiers.
 - [ ] Add duplicate review/report command.
+- [ ] Add manual duplicate merge command.
+- [ ] Add manual duplicate split command.
+- [ ] Add merge/split provenance events.
 - [ ] Add tests for false positive boundaries.
 
 ### 2.10 Imports and exports
@@ -233,8 +241,10 @@ See also:
 - [ ] Define watched search domain type.
 - [ ] Add `rforge watch add`.
 - [ ] Add `rforge watch run`.
+- [ ] Add scheduled watched-search refresh runner semantics.
 - [ ] Add new-paper inbox storage.
 - [ ] Add `rforge inbox`.
+- [ ] Add `rforge fetch pdfs --open-access-only`.
 - [ ] Add approval workflow before automatic PDF downloads.
 - [ ] Record watched-search refresh provenance.
 
@@ -258,6 +268,9 @@ See also:
 - [ ] Add topic scan metadata workflow.
 - [ ] Add `rforge oss scan --topic`.
 - [ ] Add `rforge oss report --area`.
+- [ ] Add OSS metadata refresh command.
+- [ ] Add scheduled OSS refresh metadata model.
+- [ ] Add stale/archived repository detection.
 - [ ] Add Fyne OSS dashboard view model and screen.
 - [ ] Ensure external source code is not copied into production code without review.
 
@@ -303,7 +316,9 @@ See also:
 - [ ] Add forward citation storage.
 - [ ] Add co-citation cluster scaffold.
 - [ ] Add bibliographic coupling scaffold.
+- [ ] Add research lineage view model.
 - [ ] Add citation graph export.
+- [ ] Add graph export format interoperability tests.
 - [ ] Add Fyne citation graph view model.
 
 ## 5. Milestone 4 — Screening workflow
@@ -360,6 +375,9 @@ See also:
 - [ ] Register forest plot artifacts.
 - [ ] Register funnel plot artifacts where applicable.
 - [ ] Parse heterogeneity metrics.
+- [ ] Add meta-regression scaffold.
+- [ ] Add subgroup analysis scaffold.
+- [ ] Add publication bias check scaffold.
 - [ ] Add sensitivity-analysis scaffold.
 - [ ] Add `rforge analysis prepare`.
 - [ ] Add `rforge analysis run`.
@@ -376,6 +394,7 @@ See also:
 - [ ] Add evidence tables.
 - [ ] Add screening summary.
 - [ ] Add PRISMA diagram output.
+- [ ] Add reproducible notebook generation scaffold.
 - [ ] Add analysis result section.
 - [ ] Add forest/funnel plot references.
 - [ ] Add audit appendix.
