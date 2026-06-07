@@ -112,7 +112,7 @@ See also:
 - [x] Check project manifest/lockfile validity.
 - [x] Check SQLite availability.
 - [x] Check optional GROBID endpoint.
-- [ ] Check optional OpenSearch endpoint.
+- [x] Check optional OpenSearch endpoint.
 - [ ] Check optional Qdrant endpoint.
 - [ ] Check optional R/metafor.
 - [x] Output actionable JSON and human-readable results.

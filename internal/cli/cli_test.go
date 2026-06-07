@@ -200,6 +200,36 @@ func TestExecuteDoctorJSONChecksConfiguredGROBIDEndpoint(t *testing.T) {
 	t.Fatalf("missing grobid_endpoint check: %#v", checks)
 }
 
+func TestExecuteDoctorJSONChecksConfiguredOpenSearchEndpoint(t *testing.T) {
+	t.Setenv("RFORGE_OPENSEARCH_URL", "http://localhost:9200")
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+
+	code := Execute([]string{"--json", "doctor"}, stdout, stderr)
+	if code != 0 {
+		t.Fatalf("exit code = %d, stderr = %s", code, stderr.String())
+	}
+	var envelope map[string]any
+	if err := json.Unmarshal(stdout.Bytes(), &envelope); err != nil {
+		t.Fatalf("stdout is not JSON: %v\n%s", err, stdout.String())
+	}
+	data := envelope["data"].(map[string]any)
+	checks := data["checks"].([]any)
+	for _, raw := range checks {
+		check := raw.(map[string]any)
+		if check["name"] == "opensearch_endpoint" {
+			if check["ok"] != true {
+				t.Fatalf("opensearch endpoint check failed: %#v", check)
+			}
+			if check["message"] != "http://localhost:9200" {
+				t.Fatalf("opensearch endpoint message = %#v", check["message"])
+			}
+			return
+		}
+	}
+	t.Fatalf("missing opensearch_endpoint check: %#v", checks)
+}
+
 func TestExecuteProjectListJSON(t *testing.T) {
 	root := t.TempDir()
 	if code := Execute([]string{"project", "create", filepath.Join(root, "alpha"), "--title", "Alpha"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {

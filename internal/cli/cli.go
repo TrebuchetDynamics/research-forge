@@ -62,6 +62,9 @@ func executeDoctor(stdout, stderr io.Writer, opts globalOptions) int {
 	if endpoint := os.Getenv("RFORGE_GROBID_URL"); endpoint != "" {
 		checks = append(checks, optionalHTTPEndpointCheck("grobid_endpoint", endpoint, "Set RFORGE_GROBID_URL to a valid GROBID HTTP endpoint, or unset it to skip this optional check."))
 	}
+	if endpoint := os.Getenv("RFORGE_OPENSEARCH_URL"); endpoint != "" {
+		checks = append(checks, optionalHTTPEndpointCheck("opensearch_endpoint", endpoint, "Set RFORGE_OPENSEARCH_URL to a valid OpenSearch HTTP endpoint, or unset it to skip this optional check."))
+	}
 	if opts.JSON {
 		return writeJSON(stdout, 0, map[string]any{"checks": checks})
 	}
