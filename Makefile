@@ -1,4 +1,4 @@
-.PHONY: fmt test vet check external-e2e-artificial-photosynthesis
+.PHONY: fmt test vet vuln check external-e2e-artificial-photosynthesis
 
 fmt:
 	gofmt -w cmd internal
@@ -8,6 +8,9 @@ test:
 
 vet:
 	go vet ./...
+
+vuln:
+	govulncheck ./...
 
 check: test vet
 	git diff --check

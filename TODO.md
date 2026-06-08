@@ -51,7 +51,7 @@ See also:
 - [x] Add GitHub Actions CI.
 - [x] Add `go test ./...` gate.
 - [x] Add `go vet ./...` gate.
-- [ ] Add `govulncheck` gate when feasible.
+- [x] Add `govulncheck` gate when feasible.
 
 ### 1.2 CLI skeleton
 
