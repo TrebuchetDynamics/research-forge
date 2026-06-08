@@ -17,14 +17,15 @@ const schemaVersion = "1"
 
 // Project is a local ResearchForge workspace.
 type Project struct {
-	Path           string
-	Title          string
-	StorageMode    string
-	SchemaVersion  string
-	ManifestPath   string
-	LockfilePath   string
-	ProvenancePath string
-	StoragePath    string
+	Path                string
+	Title               string
+	StorageMode         string
+	SchemaVersion       string
+	ManifestPath        string
+	LockfilePath        string
+	ProvenancePath      string
+	StoragePath         string
+	ArchiveMetadataPath string
 }
 
 // Asset is a pre-existing local research asset discovered before import.
@@ -72,6 +73,7 @@ func Create(path string, opts CreateOptions) (Project, error) {
 	lockfilePath := filepath.Join(path, "rforge.lock.json")
 	provenancePath := filepath.Join(path, "provenance", "events.jsonl")
 	storagePath := filepath.Join(path, "data", "rforge.sqlite")
+	archiveMetadataPath := filepath.Join(path, "rforge.archive.json")
 
 	if err := os.MkdirAll(filepath.Join(path, "provenance"), 0o755); err != nil {
 		return Project{}, err
@@ -104,6 +106,24 @@ func Create(path string, opts CreateOptions) (Project, error) {
 	}
 	lockBytes = append(lockBytes, '\n')
 	if err := os.WriteFile(lockfilePath, lockBytes, 0o644); err != nil {
+		return Project{}, err
+	}
+
+	archiveMetadata := map[string]any{
+		"schemaVersion": schemaVersion,
+		"title":         title,
+		"storageMode":   "sqlite",
+		"manifest":      "rforge.project.toml",
+		"lockfile":      "rforge.lock.json",
+		"provenance":    "provenance/events.jsonl",
+		"storage":       "data/rforge.sqlite",
+	}
+	archiveBytes, err := json.MarshalIndent(archiveMetadata, "", "  ")
+	if err != nil {
+		return Project{}, err
+	}
+	archiveBytes = append(archiveBytes, '\n')
+	if err := os.WriteFile(archiveMetadataPath, archiveBytes, 0o644); err != nil {
 		return Project{}, err
 	}
 
@@ -140,14 +160,15 @@ func Create(path string, opts CreateOptions) (Project, error) {
 	}
 
 	return Project{
-		Path:           path,
-		Title:          title,
-		StorageMode:    "sqlite",
-		SchemaVersion:  schemaVersion,
-		ManifestPath:   manifestPath,
-		LockfilePath:   lockfilePath,
-		ProvenancePath: provenancePath,
-		StoragePath:    storagePath,
+		Path:                path,
+		Title:               title,
+		StorageMode:         "sqlite",
+		SchemaVersion:       schemaVersion,
+		ManifestPath:        manifestPath,
+		LockfilePath:        lockfilePath,
+		ProvenancePath:      provenancePath,
+		StoragePath:         storagePath,
+		ArchiveMetadataPath: archiveMetadataPath,
 	}, nil
 }
 
@@ -350,14 +371,15 @@ func Inspect(path string) (Project, error) {
 	}
 	values := parseSimpleTOML(string(manifestBytes))
 	return Project{
-		Path:           path,
-		Title:          values["title"],
-		StorageMode:    values["storage_mode"],
-		SchemaVersion:  values["schema_version"],
-		ManifestPath:   filepath.Join(path, "rforge.project.toml"),
-		LockfilePath:   filepath.Join(path, "rforge.lock.json"),
-		ProvenancePath: filepath.Join(path, "provenance", "events.jsonl"),
-		StoragePath:    filepath.Join(path, "data", "rforge.sqlite"),
+		Path:                path,
+		Title:               values["title"],
+		StorageMode:         values["storage_mode"],
+		SchemaVersion:       values["schema_version"],
+		ManifestPath:        filepath.Join(path, "rforge.project.toml"),
+		LockfilePath:        filepath.Join(path, "rforge.lock.json"),
+		ProvenancePath:      filepath.Join(path, "provenance", "events.jsonl"),
+		StoragePath:         filepath.Join(path, "data", "rforge.sqlite"),
+		ArchiveMetadataPath: filepath.Join(path, "rforge.archive.json"),
 	}, nil
 }
 

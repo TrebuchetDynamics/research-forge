@@ -193,14 +193,15 @@ func executeProject(args []string, stdout, stderr io.Writer, opts globalOptions)
 
 func projectData(proj project.Project) map[string]any {
 	return map[string]any{
-		"path":           proj.Path,
-		"title":          proj.Title,
-		"storageMode":    proj.StorageMode,
-		"schemaVersion":  proj.SchemaVersion,
-		"manifestPath":   proj.ManifestPath,
-		"lockfilePath":   proj.LockfilePath,
-		"provenancePath": proj.ProvenancePath,
-		"storagePath":    proj.StoragePath,
+		"path":                proj.Path,
+		"title":               proj.Title,
+		"storageMode":         proj.StorageMode,
+		"schemaVersion":       proj.SchemaVersion,
+		"manifestPath":        proj.ManifestPath,
+		"lockfilePath":        proj.LockfilePath,
+		"provenancePath":      proj.ProvenancePath,
+		"storagePath":         proj.StoragePath,
+		"archiveMetadataPath": proj.ArchiveMetadataPath,
 	}
 }
 

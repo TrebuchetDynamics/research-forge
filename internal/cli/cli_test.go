@@ -112,6 +112,9 @@ func TestExecuteProjectInspectJSONEnvelope(t *testing.T) {
 	if data["storagePath"] != filepath.Join(dir, "data", "rforge.sqlite") {
 		t.Fatalf("data.storagePath = %#v", data["storagePath"])
 	}
+	if data["archiveMetadataPath"] != filepath.Join(dir, "rforge.archive.json") {
+		t.Fatalf("data.archiveMetadataPath = %#v", data["archiveMetadataPath"])
+	}
 }
 
 func TestExecuteUnknownCommandJSONErrorEnvelope(t *testing.T) {

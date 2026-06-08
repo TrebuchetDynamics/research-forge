@@ -80,7 +80,7 @@ See also:
 - [x] Initialize local project data directories.
 - [x] Initialize SQLite local database.
 - [x] Add project path validation and traversal tests.
-- [ ] Add archive-safe project metadata.
+- [x] Add archive-safe project metadata.
 - [x] Add repo-embedded `.researchforge` config creation when `rforge` runs inside an existing repository.
 - [x] Default repo-embedded Research project path to `<repo>/research-forge/`.
 - [x] Add discovery workflow for existing academic files, PDFs, notes, and research assets already present in a repository, with explicit provenance before import.

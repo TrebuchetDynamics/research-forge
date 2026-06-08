@@ -35,6 +35,30 @@ func TestCreateWritesManifestLockfileAndProvenance(t *testing.T) {
 	if created.StoragePath != filepath.Join(dir, "data", "rforge.sqlite") {
 		t.Fatalf("created storage path = %q", created.StoragePath)
 	}
+	if created.ArchiveMetadataPath != filepath.Join(dir, "rforge.archive.json") {
+		t.Fatalf("created archive metadata path = %q", created.ArchiveMetadataPath)
+	}
+
+	archiveBytes, err := os.ReadFile(created.ArchiveMetadataPath)
+	if err != nil {
+		t.Fatalf("read archive metadata: %v", err)
+	}
+	var archive map[string]any
+	if err := json.Unmarshal(archiveBytes, &archive); err != nil {
+		t.Fatalf("archive metadata is not JSON: %v", err)
+	}
+	if archive["schemaVersion"] != "1" {
+		t.Fatalf("archive schemaVersion = %#v, want 1", archive["schemaVersion"])
+	}
+	for _, key := range []string{"manifest", "lockfile", "provenance", "storage"} {
+		value, ok := archive[key].(string)
+		if !ok || value == "" {
+			t.Fatalf("archive metadata missing relative %s path: %#v", key, archive)
+		}
+		if filepath.IsAbs(value) {
+			t.Fatalf("archive metadata %s path is absolute: %q", key, value)
+		}
+	}
 
 	manifestBytes, err := os.ReadFile(created.ManifestPath)
 	if err != nil {
