@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"io"
+	"net/url"
 	"os"
 	"path/filepath"
 
@@ -72,6 +73,28 @@ func Initialize(path string) (*Store, error) {
 		return nil, err
 	}
 	return store, nil
+}
+
+// CheckExisting verifies that an existing SQLite database can answer a simple query without creating, migrating, or backing it up.
+func CheckExisting(path string) error {
+	if path == "" {
+		return fmt.Errorf("database path is required")
+	}
+	info, err := os.Stat(path)
+	if err != nil {
+		return err
+	}
+	if info.IsDir() {
+		return fmt.Errorf("database path is a directory")
+	}
+	dsn := (&url.URL{Scheme: "file", Path: path, RawQuery: "mode=ro"}).String()
+	db, err := sql.Open("sqlite", dsn)
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+	var one int
+	return db.QueryRow("SELECT 1").Scan(&one)
 }
 
 // HealthCheck verifies that the database can answer a simple query.

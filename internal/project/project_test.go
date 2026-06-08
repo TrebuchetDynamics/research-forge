@@ -20,8 +20,23 @@ func TestCreateWritesManifestLockfileAndProvenance(t *testing.T) {
 	if created.Path != dir {
 		t.Fatalf("created path = %q, want %q", created.Path, dir)
 	}
+	if created.SchemaVersion != "1" {
+		t.Fatalf("created schema version = %q, want 1", created.SchemaVersion)
+	}
+	if created.ManifestPath != filepath.Join(dir, "rforge.project.toml") {
+		t.Fatalf("created manifest path = %q", created.ManifestPath)
+	}
+	if created.LockfilePath != filepath.Join(dir, "rforge.lock.json") {
+		t.Fatalf("created lockfile path = %q", created.LockfilePath)
+	}
+	if created.ProvenancePath != filepath.Join(dir, "provenance", "events.jsonl") {
+		t.Fatalf("created provenance path = %q", created.ProvenancePath)
+	}
+	if created.StoragePath != filepath.Join(dir, "data", "rforge.sqlite") {
+		t.Fatalf("created storage path = %q", created.StoragePath)
+	}
 
-	manifestBytes, err := os.ReadFile(filepath.Join(dir, "rforge.project.toml"))
+	manifestBytes, err := os.ReadFile(created.ManifestPath)
 	if err != nil {
 		t.Fatalf("read manifest: %v", err)
 	}
@@ -36,11 +51,11 @@ func TestCreateWritesManifestLockfileAndProvenance(t *testing.T) {
 		}
 	}
 
-	if _, err := os.Stat(filepath.Join(dir, "data", "rforge.sqlite")); err != nil {
+	if _, err := os.Stat(created.StoragePath); err != nil {
 		t.Fatalf("sqlite database not initialized: %v", err)
 	}
 
-	lockBytes, err := os.ReadFile(filepath.Join(dir, "rforge.lock.json"))
+	lockBytes, err := os.ReadFile(created.LockfilePath)
 	if err != nil {
 		t.Fatalf("read lockfile: %v", err)
 	}
@@ -52,7 +67,7 @@ func TestCreateWritesManifestLockfileAndProvenance(t *testing.T) {
 		t.Fatalf("lock schemaVersion = %#v, want 1", lock["schemaVersion"])
 	}
 
-	eventsBytes, err := os.ReadFile(filepath.Join(dir, "provenance", "events.jsonl"))
+	eventsBytes, err := os.ReadFile(created.ProvenancePath)
 	if err != nil {
 		t.Fatalf("read provenance events: %v", err)
 	}

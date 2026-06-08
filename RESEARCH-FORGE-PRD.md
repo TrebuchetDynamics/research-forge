@@ -654,9 +654,13 @@ Requirements:
 - Prefer pinned versions in reproducible project manifests.
 - Track vulnerabilities and license notices for bundled or recommended dependencies.
 
-### 8.9 Project Manifest and Workflow Lockfile
+### 8.9 Project Manifest, Repository Config, and Workflow Lockfile
 
 Each research project should have a portable manifest and lockfile.
+
+When `rforge` is run inside an existing repository, ResearchForge should create repo-local `.researchforge` configuration and use `<repo>/research-forge/` as the default Research project folder. The repository may already contain academic files, PDFs, notes, datasets, or other research assets. ResearchForge must treat those assets as pre-existing local material and discover or import them only through explicit, provenance-recorded workflow steps.
+
+The main deterministic end-to-end test topic is **artificial photosynthesis**. Fixtures, example searches, and local-first e2e scenarios should prefer this topic unless a slice has a stronger domain-specific reason to use another topic.
 
 Example files:
 

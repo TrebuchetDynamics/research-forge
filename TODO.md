@@ -35,6 +35,7 @@ See also:
 - [x] Add `CONTEXT.md` glossary when first domain terms are finalized.
 - [x] Add `docs/adr/` and ADR index when first ADR is accepted.
 - [ ] Reconcile PRD `rforge.project.yaml` example with current `rforge.project.toml` implementation via ADR or PRD update.
+- [x] Standardize artificial photosynthesis as the main deterministic end-to-end test topic.
 
 ## 1. Milestone 0 — Go/Fyne/CLI foundation
 
@@ -80,6 +81,9 @@ See also:
 - [x] Initialize SQLite local database.
 - [x] Add project path validation and traversal tests.
 - [ ] Add archive-safe project metadata.
+- [x] Add repo-embedded `.researchforge` config creation when `rforge` runs inside an existing repository.
+- [x] Default repo-embedded Research project path to `<repo>/research-forge/`.
+- [x] Add discovery workflow for existing academic files, PDFs, notes, and research assets already present in a repository, with explicit provenance before import.
 
 ### 1.4 Manifest, lockfile, provenance
 
@@ -113,8 +117,8 @@ See also:
 - [x] Check SQLite availability.
 - [x] Check optional GROBID endpoint.
 - [x] Check optional OpenSearch endpoint.
-- [ ] Check optional Qdrant endpoint.
-- [ ] Check optional R/metafor.
+- [x] Check optional Qdrant endpoint.
+- [x] Check optional R/metafor.
 - [x] Output actionable JSON and human-readable results.
 
 ### 1.7 Fyne app shell

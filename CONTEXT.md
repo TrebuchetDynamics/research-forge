@@ -72,6 +72,18 @@ A ResearchForge record of an open-source project studied for possible integratio
 
 The classification for how ResearchForge may use an OSS repository study: `pattern-reference` by default, or explicitly escalated to `adapter-only`, `integrate`, `needs-license-review`, or `avoid` before any dependency, code, schema, fixture, or asset is used.
 
+### Artificial photosynthesis fixture topic
+
+The main deterministic end-to-end test topic for ResearchForge. Use the spelling "artificial photosynthesis" in code, fixtures, docs, and test names.
+
+### Repository-embedded ResearchForge config
+
+A `.researchforge` configuration file or directory created in the repository where `rforge` is run. It records repo-local ResearchForge settings without requiring users to leave their working repository.
+
+### Default ResearchForge workspace
+
+The default Research project folder for repo-embedded use: `<repo>/research-forge/`. ResearchForge should assume a repository may already contain academic files, PDFs, notes, or other research assets and should discover or import them only through explicit, provenance-recorded workflow steps.
+
 ### Retrieval-first, provenance-first, statistics-first, LLM-assisted
 
 The core ResearchForge principle: retrieve and cite source material first, preserve provenance, use auditable statistical methods, and allow LLMs only as assistants for tasks such as query expansion or extraction suggestions.

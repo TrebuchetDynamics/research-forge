@@ -30,13 +30,8 @@ func CheckHealth(path string) HealthReport {
 }
 
 func sqliteHealthCheck(path string) HealthCheck {
-	store, err := storage.Initialize(path)
-	if err != nil {
+	if err := storage.CheckExisting(path); err != nil {
 		return HealthCheck{Name: "sqlite", OK: false, Message: err.Error(), Action: "Create or repair the project data/rforge.sqlite database."}
-	}
-	defer store.Close()
-	if err := store.HealthCheck(); err != nil {
-		return HealthCheck{Name: "sqlite", OK: false, Message: err.Error(), Action: "Check database file permissions and rerun rforge doctor."}
 	}
 	return HealthCheck{Name: "sqlite", OK: true, Message: path, Action: "No action needed."}
 }

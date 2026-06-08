@@ -100,6 +100,18 @@ func TestExecuteProjectInspectJSONEnvelope(t *testing.T) {
 	if data["title"] != "Demo Review" {
 		t.Fatalf("data.title = %#v, want Demo Review", data["title"])
 	}
+	if data["manifestPath"] != filepath.Join(dir, "rforge.project.toml") {
+		t.Fatalf("data.manifestPath = %#v", data["manifestPath"])
+	}
+	if data["lockfilePath"] != filepath.Join(dir, "rforge.lock.json") {
+		t.Fatalf("data.lockfilePath = %#v", data["lockfilePath"])
+	}
+	if data["provenancePath"] != filepath.Join(dir, "provenance", "events.jsonl") {
+		t.Fatalf("data.provenancePath = %#v", data["provenancePath"])
+	}
+	if data["storagePath"] != filepath.Join(dir, "data", "rforge.sqlite") {
+		t.Fatalf("data.storagePath = %#v", data["storagePath"])
+	}
 }
 
 func TestExecuteUnknownCommandJSONErrorEnvelope(t *testing.T) {
@@ -228,6 +240,71 @@ func TestExecuteDoctorJSONChecksConfiguredOpenSearchEndpoint(t *testing.T) {
 		}
 	}
 	t.Fatalf("missing opensearch_endpoint check: %#v", checks)
+}
+
+func TestExecuteDoctorJSONChecksConfiguredQdrantEndpoint(t *testing.T) {
+	t.Setenv("RFORGE_QDRANT_URL", "http://localhost:6333")
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+
+	code := Execute([]string{"--json", "doctor"}, stdout, stderr)
+	if code != 0 {
+		t.Fatalf("exit code = %d, stderr = %s", code, stderr.String())
+	}
+	var envelope map[string]any
+	if err := json.Unmarshal(stdout.Bytes(), &envelope); err != nil {
+		t.Fatalf("stdout is not JSON: %v\n%s", err, stdout.String())
+	}
+	data := envelope["data"].(map[string]any)
+	checks := data["checks"].([]any)
+	for _, raw := range checks {
+		check := raw.(map[string]any)
+		if check["name"] == "qdrant_endpoint" {
+			if check["ok"] != true {
+				t.Fatalf("qdrant endpoint check failed: %#v", check)
+			}
+			if check["message"] != "http://localhost:6333" {
+				t.Fatalf("qdrant endpoint message = %#v", check["message"])
+			}
+			return
+		}
+	}
+	t.Fatalf("missing qdrant_endpoint check: %#v", checks)
+}
+
+func TestExecuteDoctorJSONChecksConfiguredRMetafor(t *testing.T) {
+	dir := t.TempDir()
+	rscript := filepath.Join(dir, "Rscript")
+	if err := os.WriteFile(rscript, []byte("#!/bin/sh\nexit 0\n"), 0o755); err != nil {
+		t.Fatalf("write fake Rscript: %v", err)
+	}
+	t.Setenv("RFORGE_RSCRIPT_PATH", rscript)
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+
+	code := Execute([]string{"--json", "doctor"}, stdout, stderr)
+	if code != 0 {
+		t.Fatalf("exit code = %d, stderr = %s", code, stderr.String())
+	}
+	var envelope map[string]any
+	if err := json.Unmarshal(stdout.Bytes(), &envelope); err != nil {
+		t.Fatalf("stdout is not JSON: %v\n%s", err, stdout.String())
+	}
+	data := envelope["data"].(map[string]any)
+	checks := data["checks"].([]any)
+	for _, raw := range checks {
+		check := raw.(map[string]any)
+		if check["name"] == "r_metafor" {
+			if check["ok"] != true {
+				t.Fatalf("r_metafor check failed: %#v", check)
+			}
+			if check["message"] != rscript {
+				t.Fatalf("r_metafor message = %#v", check["message"])
+			}
+			return
+		}
+	}
+	t.Fatalf("missing r_metafor check: %#v", checks)
 }
 
 func TestExecuteProjectListJSON(t *testing.T) {

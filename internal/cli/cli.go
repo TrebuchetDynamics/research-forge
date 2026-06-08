@@ -6,7 +6,9 @@ import (
 	"io"
 	"net/url"
 	"os"
+	"path/filepath"
 	"runtime"
+	"strings"
 
 	"github.com/TrebuchetDynamics/research-forge/internal/project"
 )
@@ -65,6 +67,12 @@ func executeDoctor(stdout, stderr io.Writer, opts globalOptions) int {
 	if endpoint := os.Getenv("RFORGE_OPENSEARCH_URL"); endpoint != "" {
 		checks = append(checks, optionalHTTPEndpointCheck("opensearch_endpoint", endpoint, "Set RFORGE_OPENSEARCH_URL to a valid OpenSearch HTTP endpoint, or unset it to skip this optional check."))
 	}
+	if endpoint := os.Getenv("RFORGE_QDRANT_URL"); endpoint != "" {
+		checks = append(checks, optionalHTTPEndpointCheck("qdrant_endpoint", endpoint, "Set RFORGE_QDRANT_URL to a valid Qdrant HTTP endpoint, or unset it to skip this optional check."))
+	}
+	if rscript := os.Getenv("RFORGE_RSCRIPT_PATH"); rscript != "" {
+		checks = append(checks, optionalRMetaforCheck(rscript))
+	}
 	if opts.JSON {
 		return writeJSON(stdout, 0, map[string]any{"checks": checks})
 	}
@@ -76,6 +84,14 @@ func executeDoctor(stdout, stderr io.Writer, opts globalOptions) int {
 		fmt.Fprintf(stdout, "%s: %s (%s) action: %s\n", check.Name, status, check.Message, check.Action)
 	}
 	return 0
+}
+
+func optionalRMetaforCheck(rscript string) project.HealthCheck {
+	info, err := os.Stat(rscript)
+	if err != nil || info.IsDir() {
+		return project.HealthCheck{Name: "r_metafor", OK: false, Message: rscript, Action: "Set RFORGE_RSCRIPT_PATH to an executable Rscript with metafor available, or unset it to skip this optional check."}
+	}
+	return project.HealthCheck{Name: "r_metafor", OK: true, Message: rscript, Action: "No action needed."}
 }
 
 func optionalHTTPEndpointCheck(name, endpoint, failureAction string) project.HealthCheck {
@@ -94,16 +110,49 @@ func executeProject(args []string, stdout, stderr io.Writer, opts globalOptions)
 	case "create":
 		path, title, ok := parseProjectCreate(args[1:])
 		if !ok {
-			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge project create <path> --title <title>")
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge project create [path] --title <title>")
+		}
+		if path == "" {
+			defaultPath, err := defaultRepoProjectPath()
+			if err != nil {
+				return writeError(stdout, stderr, opts, 1, "repo_project_defaults_failed", err.Error())
+			}
+			path = defaultPath
 		}
 		created, err := project.Create(path, project.CreateOptions{Title: title})
 		if err != nil {
 			return writeError(stdout, stderr, opts, 1, "project_create_failed", fmt.Sprintf("create project: %v", err))
 		}
+		if err := writeRepoConfigForProject(created); err != nil {
+			return writeError(stdout, stderr, opts, 1, "repo_config_failed", fmt.Sprintf("write repo config: %v", err))
+		}
 		if opts.JSON {
 			return writeJSON(stdout, 0, projectData(created))
 		}
 		fmt.Fprintf(stdout, "created project %s\n", created.Path)
+		return 0
+	case "discover-assets":
+		if len(args) != 1 {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge project discover-assets")
+		}
+		repoRoot, err := findRepoRoot(".")
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "repo_discovery_failed", err.Error())
+		}
+		projectPath, err := repoProjectPath(repoRoot)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "repo_project_defaults_failed", err.Error())
+		}
+		assets, err := project.DiscoverAssets(repoRoot, projectPath)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "asset_discovery_failed", fmt.Sprintf("discover assets: %v", err))
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"assets": assets})
+		}
+		for _, asset := range assets {
+			fmt.Fprintf(stdout, "%s\t%s\timported=%v\n", asset.Kind, asset.Path, asset.Imported)
+		}
 		return 0
 	case "inspect":
 		if len(args) != 2 {
@@ -143,7 +192,16 @@ func executeProject(args []string, stdout, stderr io.Writer, opts globalOptions)
 }
 
 func projectData(proj project.Project) map[string]any {
-	return map[string]any{"path": proj.Path, "title": proj.Title, "storageMode": proj.StorageMode}
+	return map[string]any{
+		"path":           proj.Path,
+		"title":          proj.Title,
+		"storageMode":    proj.StorageMode,
+		"schemaVersion":  proj.SchemaVersion,
+		"manifestPath":   proj.ManifestPath,
+		"lockfilePath":   proj.LockfilePath,
+		"provenancePath": proj.ProvenancePath,
+		"storagePath":    proj.StoragePath,
+	}
 }
 
 func parseGlobalOptions(args []string) (globalOptions, []string, bool) {
@@ -216,7 +274,82 @@ func parseProjectCreate(args []string) (string, string, bool) {
 			path = arg
 		}
 	}
-	return path, title, path != "" && title != ""
+	return path, title, title != ""
+}
+
+func defaultRepoProjectPath() (string, error) {
+	cwd, err := os.Getwd()
+	if err != nil {
+		return "", err
+	}
+	repoRoot, err := findRepoRoot(cwd)
+	if err != nil {
+		return "", err
+	}
+	return repoProjectPath(repoRoot)
+}
+
+func repoProjectPath(repoRoot string) (string, error) {
+	configured, err := readRepoProjectPath(repoRoot)
+	if err != nil {
+		return "", err
+	}
+	if configured != "" {
+		return filepath.Join(repoRoot, configured), nil
+	}
+	return filepath.Join(repoRoot, "research-forge"), nil
+}
+
+func readRepoProjectPath(repoRoot string) (string, error) {
+	configBytes, err := os.ReadFile(filepath.Join(repoRoot, ".researchforge"))
+	if err != nil {
+		if os.IsNotExist(err) {
+			return "", nil
+		}
+		return "", err
+	}
+	for _, line := range strings.Split(string(configBytes), "\n") {
+		key, value, ok := strings.Cut(line, "=")
+		if !ok || strings.TrimSpace(key) != "default_project_path" {
+			continue
+		}
+		value = strings.TrimSpace(value)
+		value = strings.Trim(value, "\"")
+		if strings.Contains(value, "..") || filepath.IsAbs(value) {
+			return "", fmt.Errorf("invalid default_project_path in .researchforge")
+		}
+		return value, nil
+	}
+	return "", nil
+}
+
+func writeRepoConfigForProject(proj project.Project) error {
+	repoRoot, err := findRepoRoot(proj.Path)
+	if err != nil {
+		return nil
+	}
+	content := fmt.Sprintf("default_project_path = %q\ne2e_topic = %q\n", filepath.Base(proj.Path), "artificial photosynthesis")
+	return os.WriteFile(filepath.Join(repoRoot, ".researchforge"), []byte(content), 0o644)
+}
+
+func findRepoRoot(start string) (string, error) {
+	dir, err := filepath.Abs(start)
+	if err != nil {
+		return "", err
+	}
+	if info, err := os.Stat(dir); err == nil && !info.IsDir() {
+		dir = filepath.Dir(dir)
+	}
+	for {
+		if _, err := os.Stat(filepath.Join(dir, ".git")); err == nil {
+			return dir, nil
+		}
+		parent := filepath.Dir(dir)
+		if parent == dir {
+			return "", fmt.Errorf("not inside a repository; pass an explicit project path")
+		}
+		dir = parent
+	}
 }
 
 func printHelp(w io.Writer) {
@@ -225,7 +358,8 @@ func printHelp(w io.Writer) {
 	fmt.Fprintln(w, "Usage:")
 	fmt.Fprintln(w, "  rforge version")
 	fmt.Fprintln(w, "  rforge doctor")
-	fmt.Fprintln(w, "  rforge project create <path> --title <title>")
+	fmt.Fprintln(w, "  rforge project create [path] --title <title>")
+	fmt.Fprintln(w, "  rforge project discover-assets")
 	fmt.Fprintln(w, "  rforge project inspect <path>")
 	fmt.Fprintln(w, "  rforge project list <root>")
 }
