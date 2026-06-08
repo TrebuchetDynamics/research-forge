@@ -186,6 +186,13 @@ func DiscoverAssets(repoRoot, projectPath string) ([]Asset, error) {
 		return nil, err
 	}
 	sort.Slice(assets, func(i, j int) bool { return assets[i].Path < assets[j].Path })
+	unchanged, err := lastDiscoveryMatches(projectPath, assets)
+	if err != nil {
+		return nil, err
+	}
+	if unchanged {
+		return assets, nil
+	}
 	if err := appendEvent(projectPath, map[string]any{
 		"schemaVersion": schemaVersion,
 		"id":            "evt_" + time.Now().UTC().Format("20060102T150405Z"),
@@ -205,6 +212,64 @@ func DiscoverAssets(repoRoot, projectPath string) ([]Asset, error) {
 		return nil, err
 	}
 	return assets, nil
+}
+
+func lastDiscoveryMatches(projectPath string, assets []Asset) (bool, error) {
+	events, err := ReadEvents(projectPath)
+	if err != nil {
+		return false, err
+	}
+	for i := len(events) - 1; i >= 0; i-- {
+		event := events[i]
+		if event.Action != "project.assets.discover" {
+			continue
+		}
+		previous, ok := event.Outputs["assets"]
+		if !ok {
+			return false, nil
+		}
+		return sameAssets(assetsFromEvent(previous), assets), nil
+	}
+	return false, nil
+}
+
+func assetsFromEvent(raw any) []Asset {
+	rawAssets, ok := raw.([]any)
+	if !ok {
+		return nil
+	}
+	assets := make([]Asset, 0, len(rawAssets))
+	for _, rawAsset := range rawAssets {
+		values, ok := rawAsset.(map[string]any)
+		if !ok {
+			continue
+		}
+		asset := Asset{}
+		if value, ok := values["path"].(string); ok {
+			asset.Path = value
+		}
+		if value, ok := values["kind"].(string); ok {
+			asset.Kind = value
+		}
+		if value, ok := values["imported"].(bool); ok {
+			asset.Imported = value
+		}
+		assets = append(assets, asset)
+	}
+	sort.Slice(assets, func(i, j int) bool { return assets[i].Path < assets[j].Path })
+	return assets
+}
+
+func sameAssets(a, b []Asset) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for i := range a {
+		if a[i] != b[i] {
+			return false
+		}
+	}
+	return true
 }
 
 func assetKind(path string) (string, bool) {

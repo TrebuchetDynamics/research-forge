@@ -58,6 +58,45 @@ func TestExternalE2EArtificialPhotosynthesisWorkspace(t *testing.T) {
 	}
 }
 
+func TestE2EDiscoverAssetsDoesNotAppendDuplicateProvenanceWhenAssetsUnchanged(t *testing.T) {
+	repo := t.TempDir()
+	if err := os.Mkdir(filepath.Join(repo, ".git"), 0o755); err != nil {
+		t.Fatalf("create fake git repo: %v", err)
+	}
+	if err := os.WriteFile(filepath.Join(repo, "references.bib"), []byte("@article{fixture,title={Artificial photosynthesis}}\n"), 0o644); err != nil {
+		t.Fatalf("write bibliography: %v", err)
+	}
+	oldwd, err := os.Getwd()
+	if err != nil {
+		t.Fatalf("get cwd: %v", err)
+	}
+	if err := os.Chdir(repo); err != nil {
+		t.Fatalf("chdir repo: %v", err)
+	}
+	t.Cleanup(func() { _ = os.Chdir(oldwd) })
+	if code := Execute([]string{"project", "create", "--title", "Artificial Photosynthesis Review"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("project create exit code = %d", code)
+	}
+	if code := Execute([]string{"project", "discover-assets"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("first discover-assets exit code = %d", code)
+	}
+	eventsPath := filepath.Join(repo, "research-forge", "provenance", "events.jsonl")
+	firstEvents, err := os.ReadFile(eventsPath)
+	if err != nil {
+		t.Fatalf("read first events: %v", err)
+	}
+	if code := Execute([]string{"project", "discover-assets"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("second discover-assets exit code = %d", code)
+	}
+	secondEvents, err := os.ReadFile(eventsPath)
+	if err != nil {
+		t.Fatalf("read second events: %v", err)
+	}
+	if string(secondEvents) != string(firstEvents) {
+		t.Fatalf("duplicate unchanged discovery appended provenance:\nfirst:\n%s\nsecond:\n%s", string(firstEvents), string(secondEvents))
+	}
+}
+
 func TestE2EDiscoverAssetsRejectsUnsafeResearchForgeConfigPath(t *testing.T) {
 	repo := t.TempDir()
 	if err := os.Mkdir(filepath.Join(repo, ".git"), 0o755); err != nil {
