@@ -664,7 +664,7 @@ The main deterministic end-to-end test topic is **artificial photosynthesis**. F
 
 Example files:
 
-- `rforge.project.yaml` — user-authored project settings, sources, schemas, watched searches, and output preferences.
+- `rforge.project.toml` — user-authored project settings, sources, schemas, watched searches, and output preferences.
 - `rforge.lock.json` — generated versions, connector parameters, parser versions, model IDs, service digests, and statistical engine versions.
 
 This makes analyses rerunnable across machines and reviewable in version control.

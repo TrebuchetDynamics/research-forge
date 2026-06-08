@@ -34,7 +34,7 @@ See also:
 - [ ] Add license after owner decision.
 - [x] Add `CONTEXT.md` glossary when first domain terms are finalized.
 - [x] Add `docs/adr/` and ADR index when first ADR is accepted.
-- [ ] Reconcile PRD `rforge.project.yaml` example with current `rforge.project.toml` implementation via ADR or PRD update.
+- [x] Reconcile PRD `rforge.project.yaml` example with current `rforge.project.toml` implementation via ADR or PRD update.
 - [x] Standardize artificial photosynthesis as the main deterministic end-to-end test topic.
 
 ## 1. Milestone 0 — Go/Fyne/CLI foundation
