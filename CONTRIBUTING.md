@@ -58,6 +58,15 @@ If a change affects user-visible research workflow, it should preserve or add pr
 - What exact source supports each extracted claim?
 - What tool versions, parameters, and outputs reproduce the result?
 
+## Decision-gated TODOs
+
+Some `TODO.md` items require explicit owner/build decisions before implementation, such as project licensing and Fyne desktop scope. Before changing those items:
+
+1. Run `make todo-audit`.
+2. Open an Owner decision issue with `.github/ISSUE_TEMPLATE/owner_decision.yml` or use `make decision-issues` to generate scaffolds.
+3. Link the approved decision in the PR.
+4. Keep `rforge decisions --check TODO.md` passing if unchecked TODOs remain.
+
 ## Pull requests
 
 A pull request should include:

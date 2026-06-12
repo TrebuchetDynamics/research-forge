@@ -2,7 +2,7 @@
 
 ResearchForge is an open, reproducible research engine for academic literature discovery, systematic review, evidence extraction, and meta-analysis.
 
-The command-line tool is planned as **`rforge`**.
+The command-line tool is **`rforge`**.
 
 > Retrieval-first, provenance-first, statistics-first, LLM-assisted.
 
@@ -10,7 +10,7 @@ ResearchForge is intended to help researchers discover papers, map citation grap
 
 ## Status
 
-This repository currently contains the product requirements document and early project planning. Implementation has not started yet.
+This repository is in **pre-alpha implementation**. It includes the PRD and planning docs plus a Go `rforge` CLI foundation with local project workspaces, provenance, scholarly source connectors, document/retrieval workflow slices, screening, evidence, analysis, reporting, and deterministic tests.
 
 See [RESEARCH-FORGE-PRD.md](./RESEARCH-FORGE-PRD.md) for the full product requirements, [DEVELOPMENT_PLAN.md](./DEVELOPMENT_PLAN.md) for the implementation plan, [ROADMAP.md](./ROADMAP.md) for milestone sequencing, [TODO.md](./TODO.md) for the end-to-end task checklist, and [SKILLS.md](./SKILLS.md) for the TDD-only project development skills.
 
@@ -57,12 +57,12 @@ Research question / domain query
 ## Planned MVP stack
 
 - **Language:** Go
-- **CLI:** `rforge`, likely Cobra or urfave/cli
-- **Desktop UI:** Fyne
-- **Database:** PostgreSQL, with optional SQLite for local single-user mode
-- **Search:** OpenSearch, with optional Bleve for local mode
-- **Vector database:** Qdrant
-- **PDF parsing:** GROBID as an external service
+- **CLI:** `rforge`, currently using a standard-library parser while the command surface stabilizes
+- **Desktop UI:** Fyne deferred until desktop build scope is owned; dependency-free view models are available
+- **Database:** SQLite-first local storage, with a PostgreSQL adapter seam prepared for later
+- **Search:** local retrieval index first; OpenSearch/Qdrant remain optional future adapter seams
+- **Vector database:** Qdrant planned as an optional adapter seam
+- **PDF parsing:** GROBID as an optional external parser adapter
 - **Metadata sources:** OpenAlex, Crossref, arXiv, Unpaywall, and related scholarly APIs
 - **Meta-analysis:** R `metafor` integration initially
 
@@ -98,4 +98,8 @@ ResearchForge should not be an opaque AI answer machine. It should be a scientif
 
 ## License
 
-No license has been selected yet.
+No license has been selected yet. This is an owner decision tracked in [docs/owner-decisions.md](docs/owner-decisions.md); `rforge decisions` lists the currently blocked decisions.
+
+## Decision-gated scope
+
+Fyne desktop delivery is currently deferred until the desktop build scope is approved (see ADR 0005). Run `make todo-audit` to verify that remaining unchecked `TODO.md` items are covered by owner/build decisions, or `make decisions-markdown` for a review-friendly blocker table.

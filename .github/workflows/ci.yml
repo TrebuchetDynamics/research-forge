@@ -22,9 +22,15 @@ jobs:
         run: go test ./...
       - name: Vet
         run: go vet ./...
+      - name: TODO decision audit
+        run: make todo-audit
       - name: Install govulncheck
         run: go install golang.org/x/vuln/cmd/govulncheck@latest
       - name: Vulnerability check
         run: govulncheck ./...
+      - name: Dependency metadata scan
+        run: go list -m all
+      - name: License metadata scan
+        run: go list -m -json all
       - name: Diff check
         run: git diff --check

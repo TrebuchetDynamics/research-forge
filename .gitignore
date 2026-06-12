@@ -23,8 +23,9 @@ tmp/
 # External repository study clones
 /opensource/clones/
 
-# Logs and local state
+# Logs, generated maps, and local state
 *.log
+/graphify-out/
 .DS_Store
 Thumbs.db
 

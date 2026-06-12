@@ -37,3 +37,9 @@
 ## Linked TODO/Roadmap item
 
 - 
+
+## Decision-gated TODOs
+
+- [ ] No decision-gated TODOs are changed, or an Owner decision issue linked below approves the change.
+- Owner decision issue linked:
+- [ ] If unchecked TODOs remain, `rforge decisions --check TODO.md` passes.

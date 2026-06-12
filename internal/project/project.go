@@ -1,7 +1,6 @@
 package project
 
 import (
-	"bufio"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -10,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/TrebuchetDynamics/research-forge/internal/provenance"
 	"github.com/TrebuchetDynamics/research-forge/internal/storage"
 )
 
@@ -36,17 +36,7 @@ type Asset struct {
 }
 
 // Event is a provenance event recorded in a ResearchForge project.
-type Event struct {
-	SchemaVersion string         `json:"schemaVersion"`
-	ID            string         `json:"id"`
-	Timestamp     string         `json:"timestamp"`
-	Actor         string         `json:"actor"`
-	Action        string         `json:"action"`
-	Target        string         `json:"target"`
-	Inputs        map[string]any `json:"inputs"`
-	Outputs       map[string]any `json:"outputs"`
-	Warnings      []string       `json:"warnings"`
-}
+type Event = provenance.Event
 
 // CreateOptions configures project creation.
 type CreateOptions struct {
@@ -132,30 +122,24 @@ func Create(path string, opts CreateOptions) (Project, error) {
 	if eventID == nil {
 		eventID = func(t time.Time) string { return "evt_" + t.Format("20060102T150405Z") }
 	}
-	event := map[string]any{
-		"schemaVersion": schemaVersion,
-		"id":            eventID(now),
-		"timestamp":     now.Format(time.RFC3339),
-		"actor":         "rforge",
-		"action":        "project.create",
-		"target":        path,
-		"inputs": map[string]any{
+	if err := provenance.Append(path, provenance.Event{
+		SchemaVersion: schemaVersion,
+		ID:            eventID(now),
+		Timestamp:     now.Format(time.RFC3339),
+		Actor:         "rforge",
+		Action:        "project.create",
+		Target:        path,
+		Inputs: map[string]any{
 			"title":       title,
 			"storageMode": "sqlite",
 		},
-		"outputs": map[string]any{
+		Outputs: map[string]any{
 			"manifest":   "rforge.project.toml",
 			"lockfile":   "rforge.lock.json",
 			"provenance": "provenance/events.jsonl",
 		},
-		"warnings": []string{},
-	}
-	eventBytes, err := json.Marshal(event)
-	if err != nil {
-		return Project{}, err
-	}
-	eventBytes = append(eventBytes, '\n')
-	if err := os.WriteFile(provenancePath, eventBytes, 0o644); err != nil {
+		Warnings: []string{},
+	}); err != nil {
 		return Project{}, err
 	}
 
@@ -214,21 +198,22 @@ func DiscoverAssets(repoRoot, projectPath string) ([]Asset, error) {
 	if unchanged {
 		return assets, nil
 	}
-	if err := appendEvent(projectPath, map[string]any{
-		"schemaVersion": schemaVersion,
-		"id":            "evt_" + time.Now().UTC().Format("20060102T150405Z"),
-		"timestamp":     time.Now().UTC().Format(time.RFC3339),
-		"actor":         "rforge",
-		"action":        "project.assets.discover",
-		"target":        repoRoot,
-		"inputs": map[string]any{
+	now := time.Now().UTC()
+	if err := provenance.Append(projectPath, provenance.Event{
+		SchemaVersion: schemaVersion,
+		ID:            "evt_" + now.Format("20060102T150405Z"),
+		Timestamp:     now.Format(time.RFC3339),
+		Actor:         "rforge",
+		Action:        "project.assets.discover",
+		Target:        repoRoot,
+		Inputs: map[string]any{
 			"repoRoot": repoRoot,
 		},
-		"outputs": map[string]any{
+		Outputs: map[string]any{
 			"assetCount": len(assets),
 			"assets":     assets,
 		},
-		"warnings": []string{},
+		Warnings: []string{},
 	}); err != nil {
 		return nil, err
 	}
@@ -236,61 +221,7 @@ func DiscoverAssets(repoRoot, projectPath string) ([]Asset, error) {
 }
 
 func lastDiscoveryMatches(projectPath string, assets []Asset) (bool, error) {
-	events, err := ReadEvents(projectPath)
-	if err != nil {
-		return false, err
-	}
-	for i := len(events) - 1; i >= 0; i-- {
-		event := events[i]
-		if event.Action != "project.assets.discover" {
-			continue
-		}
-		previous, ok := event.Outputs["assets"]
-		if !ok {
-			return false, nil
-		}
-		return sameAssets(assetsFromEvent(previous), assets), nil
-	}
-	return false, nil
-}
-
-func assetsFromEvent(raw any) []Asset {
-	rawAssets, ok := raw.([]any)
-	if !ok {
-		return nil
-	}
-	assets := make([]Asset, 0, len(rawAssets))
-	for _, rawAsset := range rawAssets {
-		values, ok := rawAsset.(map[string]any)
-		if !ok {
-			continue
-		}
-		asset := Asset{}
-		if value, ok := values["path"].(string); ok {
-			asset.Path = value
-		}
-		if value, ok := values["kind"].(string); ok {
-			asset.Kind = value
-		}
-		if value, ok := values["imported"].(bool); ok {
-			asset.Imported = value
-		}
-		assets = append(assets, asset)
-	}
-	sort.Slice(assets, func(i, j int) bool { return assets[i].Path < assets[j].Path })
-	return assets
-}
-
-func sameAssets(a, b []Asset) bool {
-	if len(a) != len(b) {
-		return false
-	}
-	for i := range a {
-		if a[i] != b[i] {
-			return false
-		}
-	}
-	return true
+	return provenance.LastOutputEquals(projectPath, "project.assets.discover", "assets", assets)
 }
 
 func assetKind(path string) (string, bool) {
@@ -308,21 +239,6 @@ func assetKind(path string) (string, bool) {
 	}
 }
 
-func appendEvent(projectPath string, event map[string]any) error {
-	eventBytes, err := json.Marshal(event)
-	if err != nil {
-		return err
-	}
-	eventBytes = append(eventBytes, '\n')
-	file, err := os.OpenFile(filepath.Join(projectPath, "provenance", "events.jsonl"), os.O_APPEND|os.O_WRONLY, 0o644)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-	_, err = file.Write(eventBytes)
-	return err
-}
-
 // ValidatePath rejects empty paths and parent-directory traversal segments.
 func ValidatePath(path string) error {
 	if strings.TrimSpace(path) == "" {
@@ -338,29 +254,7 @@ func ValidatePath(path string) error {
 
 // ReadEvents reads provenance events from a ResearchForge project.
 func ReadEvents(path string) ([]Event, error) {
-	file, err := os.Open(filepath.Join(path, "provenance", "events.jsonl"))
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
-
-	events := []Event{}
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		line := strings.TrimSpace(scanner.Text())
-		if line == "" {
-			continue
-		}
-		var event Event
-		if err := json.Unmarshal([]byte(line), &event); err != nil {
-			return nil, err
-		}
-		events = append(events, event)
-	}
-	if err := scanner.Err(); err != nil {
-		return nil, err
-	}
-	return events, nil
+	return provenance.Read(path)
 }
 
 // Inspect reads a ResearchForge project workspace.

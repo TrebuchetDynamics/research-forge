@@ -7,6 +7,8 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"github.com/TrebuchetDynamics/research-forge/internal/provenance"
 )
 
 func TestExternalE2EArtificialPhotosynthesisWorkspace(t *testing.T) {
@@ -80,21 +82,30 @@ func TestE2EDiscoverAssetsDoesNotAppendDuplicateProvenanceWhenAssetsUnchanged(t 
 	if code := Execute([]string{"project", "discover-assets"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
 		t.Fatalf("first discover-assets exit code = %d", code)
 	}
-	eventsPath := filepath.Join(repo, "research-forge", "provenance", "events.jsonl")
-	firstEvents, err := os.ReadFile(eventsPath)
+	firstEvents, err := provenance.Read(filepath.Join(repo, "research-forge"))
 	if err != nil {
 		t.Fatalf("read first events: %v", err)
 	}
 	if code := Execute([]string{"project", "discover-assets"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
 		t.Fatalf("second discover-assets exit code = %d", code)
 	}
-	secondEvents, err := os.ReadFile(eventsPath)
+	secondEvents, err := provenance.Read(filepath.Join(repo, "research-forge"))
 	if err != nil {
 		t.Fatalf("read second events: %v", err)
 	}
-	if string(secondEvents) != string(firstEvents) {
-		t.Fatalf("duplicate unchanged discovery appended provenance:\nfirst:\n%s\nsecond:\n%s", string(firstEvents), string(secondEvents))
+	if countEvents(firstEvents, "project.assets.discover") != countEvents(secondEvents, "project.assets.discover") {
+		t.Fatalf("duplicate unchanged discovery appended domain provenance:\nfirst=%#v\nsecond=%#v", firstEvents, secondEvents)
 	}
+}
+
+func countEvents(events []provenance.Event, action string) int {
+	count := 0
+	for _, event := range events {
+		if event.Action == action {
+			count++
+		}
+	}
+	return count
 }
 
 func TestE2EDiscoverAssetsRejectsUnsafeResearchForgeConfigPath(t *testing.T) {
@@ -182,6 +193,51 @@ func TestE2EDiscoverAssetsFromRepoSubdirectoryUsesResearchForgeConfig(t *testing
 	}
 	if _, err := os.Stat(filepath.Join(repo, "research-forge")); !os.IsNotExist(err) {
 		t.Fatalf("discover-assets ignored .researchforge and used default workspace, err=%v", err)
+	}
+}
+
+func TestE2EDiscoverExistingAcademicAssetsRecordsCLICommandProvenance(t *testing.T) {
+	repo := t.TempDir()
+	if err := os.Mkdir(filepath.Join(repo, ".git"), 0o755); err != nil {
+		t.Fatalf("create fake git repo: %v", err)
+	}
+	if err := os.WriteFile(filepath.Join(repo, "paper.pdf"), []byte("%PDF-1.4 artificial photosynthesis fixture"), 0o644); err != nil {
+		t.Fatalf("write PDF: %v", err)
+	}
+	oldwd, err := os.Getwd()
+	if err != nil {
+		t.Fatalf("get cwd: %v", err)
+	}
+	if err := os.Chdir(repo); err != nil {
+		t.Fatalf("chdir repo: %v", err)
+	}
+	t.Cleanup(func() { _ = os.Chdir(oldwd) })
+	if code := Execute([]string{"project", "create", "--title", "Artificial Photosynthesis Review"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("project create exit code = %d", code)
+	}
+
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+	code := Execute([]string{"--json", "project", "discover-assets"}, stdout, stderr)
+	if code != 0 {
+		t.Fatalf("exit code = %d, stderr = %s", code, stderr.String())
+	}
+	events, err := provenance.Read(filepath.Join(repo, "research-forge"))
+	if err != nil {
+		t.Fatalf("read provenance: %v", err)
+	}
+	var sawCommand bool
+	for _, event := range events {
+		if event.Action != "cli.command" || event.Inputs["command"] != "project discover-assets" {
+			continue
+		}
+		if event.Outputs["assetCount"] != float64(1) {
+			t.Fatalf("cli.command assetCount = %#v", event.Outputs["assetCount"])
+		}
+		sawCommand = true
+	}
+	if !sawCommand {
+		t.Fatalf("missing discover-assets cli.command provenance event: %#v", events)
 	}
 }
 

@@ -4,6 +4,8 @@ ResearchForge will be built as a sequence of test-first vertical milestones. Eac
 
 > Retrieval-first, provenance-first, statistics-first, LLM-assisted.
 
+Decision-gated roadmap items are tracked through `rforge decisions`, `docs/owner-decisions.md`, and `docs/remaining-todo-audit.md`. Fyne desktop delivery is deferred by ADR 0005 until desktop build scope is owned; dependency-free view models are available meanwhile.
+
 ## Release stages
 
 | Stage | Purpose | Expected outcome |

@@ -1,0 +1,43 @@
+name: Owner decision
+description: Record an owner/product decision that blocks TODO completion
+labels: [decision]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this for decision-gated TODOs such as project license selection or Fyne desktop build scope.
+  - type: input
+    id: decision_id
+    attributes:
+      label: Decision ID
+      description: Example: project_license or fyne_desktop_build_scope
+    validations:
+      required: true
+  - type: textarea
+    id: blocked_todos
+    attributes:
+      label: Blocked TODO items
+      description: Copy the exact unchecked TODO.md lines this decision will unblock.
+    validations:
+      required: true
+  - type: textarea
+    id: options
+    attributes:
+      label: Options considered
+      description: Summarize viable choices and trade-offs.
+    validations:
+      required: true
+  - type: textarea
+    id: decision
+    attributes:
+      label: Decision
+      description: State the selected option and owner approval.
+    validations:
+      required: true
+  - type: textarea
+    id: implementation_steps
+    attributes:
+      label: Implementation steps after approval
+      description: List files, commands, tests, and TODO checkboxes to update.
+    validations:
+      required: true
