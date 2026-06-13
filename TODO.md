@@ -12,7 +12,7 @@ See also:
 ## Global rules
 
 - [x] Use red-green-refactor for every implementation slice.
-- [x] Keep CLI and Fyne behavior backed by shared Go application services.
+- [x] Keep CLI and web GUI behavior backed by shared Go application services.
 - [x] Record provenance for user-visible workflow changes and external-tool/API outputs.
 - [x] Avoid live network dependencies in normal tests.
 - [x] Use only legal, deterministic, minimal test fixtures.
@@ -31,13 +31,13 @@ See also:
 - [x] Add pull request template with TDD receipt section.
 - [x] Add contribution guide.
 - [x] Add code of conduct if public contributions are expected.
-- [ ] Add license after owner decision. _(Owner decision required; see `docs/owner-decisions.md` and `rforge decisions`.)_
+- [ ] Add license after owner decision. _(Owner decision required; see issue #1, `docs/owner-decisions.md`, and `rforge decisions`; requires SPDX identifier, exact copyright holder, approver, approval date, and `make license-decision-approval-gate` with `approved:true`.)_
 - [x] Add `CONTEXT.md` glossary when first domain terms are finalized.
 - [x] Add `docs/adr/` and ADR index when first ADR is accepted.
 - [x] Reconcile PRD `rforge.project.yaml` example with current `rforge.project.toml` implementation via ADR or PRD update.
 - [x] Standardize artificial photosynthesis as the main deterministic end-to-end test topic.
 
-## 1. Milestone 0 — Go/Fyne/CLI foundation
+## 1. Milestone 0 — Go/CLI/Web GUI foundation
 
 ### 1.1 Go module and tooling
 
@@ -121,15 +121,15 @@ See also:
 - [x] Check optional R/metafor.
 - [x] Output actionable JSON and human-readable results.
 
-### 1.7 Fyne app shell
+### 1.7 Local web GUI shell
 
-- [ ] Add Fyne dependency after build decision. _(Build decision required; see ADR 0005, `docs/owner-decisions.md`, and `rforge decisions`.)_
-- [x] Add `rforge ui` or separate desktop entry point.
-- [x] Add app shell.
-- [x] Add project dashboard placeholder.
+- [x] Add Go + HTMX web GUI workspace/dependencies.
+- [x] Add `rforge ui` local web entry point placeholder.
+- [x] Add local web app shell placeholder.
+- [x] Add project dashboard and generated-artifact placeholder.
 - [x] Add background job abstraction.
 - [x] Add view-model tests for dashboard state.
-- [x] Ensure no core logic lives in widgets.
+- [x] Ensure no core logic lives in browser components.
 
 ## 2. Milestone 1 — Scholarly metadata and library MVP
 
@@ -151,7 +151,7 @@ See also:
 - [x] Store provenance per source.
 - [x] Add create/update/list/search library storage.
 - [x] Add library CLI list command.
-- [x] Add Fyne library view model.
+- [x] Add web GUI library view model.
 
 ### 2.3 OpenAlex connector
 
@@ -235,8 +235,8 @@ See also:
 - [x] Add search form view model.
 - [x] Add search result table view model.
 - [x] Add library table/detail view model.
-- [ ] Add Fyne search screen. _(Blocked by Fyne desktop build decision; dependency-free view models are implemented.)_
-- [ ] Add Fyne library screen. _(Blocked by Fyne desktop build decision; dependency-free view models are implemented.)_
+- [x] Add web GUI search screen.
+- [x] Add web GUI library screen.
 - [x] Add loading/error/empty states.
 - [x] Ensure UI calls shared services.
 
@@ -275,7 +275,7 @@ See also:
 - [x] Add OSS metadata refresh command.
 - [x] Add scheduled OSS refresh metadata model.
 - [x] Add stale/archived repository detection.
-- [x] Add Fyne OSS dashboard view model and screen.
+- [x] Add web-ready OSS dashboard view model.
 - [x] Ensure external source code is not copied into production code without review.
 
 ## 4. Milestone 3 — Legal full-text, parsing, and indexing
@@ -311,7 +311,7 @@ See also:
 - [x] Add optional OpenSearch adapter seam.
 - [x] Add optional Qdrant adapter seam.
 - [x] Add embeddings adapter seam if needed.
-- [x] Add Fyne PDF/section/passages view model and screen.
+- [x] Add web-ready PDF/section/passages view model.
 
 ### 4.4 Citation graph
 
@@ -323,7 +323,7 @@ See also:
 - [x] Add research lineage view model.
 - [x] Add citation graph export.
 - [x] Add graph export format interoperability tests.
-- [x] Add Fyne citation graph view model.
+- [x] Add web GUI citation graph view model.
 
 ## 5. Milestone 4 — Screening workflow
 
@@ -343,7 +343,7 @@ See also:
 - [x] Add `rforge prisma counts`.
 - [x] Add CSV screening export/import.
 - [x] Add ASReview-style active-learning prioritization scaffold.
-- [x] Add Fyne screening queue and decision panel.
+- [x] Add web-ready screening queue and decision-panel view model.
 
 ## 6. Milestone 5 — Evidence extraction
 
@@ -362,7 +362,7 @@ See also:
 - [x] Add explicit LLM configuration and secret handling.
 - [x] Add `rforge extract suggest`.
 - [x] Ensure suggestions cannot become accepted without review.
-- [x] Add Fyne evidence table and source-link view.
+- [x] Add web-ready evidence table and source-link view model.
 
 ## 7. Milestone 6 — Meta-analysis MVP
 
@@ -386,7 +386,7 @@ See also:
 - [x] Add `rforge analysis prepare`.
 - [x] Add `rforge analysis run`.
 - [x] Add `rforge analysis export`.
-- [x] Add Fyne analysis setup/results view.
+- [x] Add web-ready analysis setup/results view model for meta-analysis artifacts.
 
 ## 8. Milestone 7 — Report generation
 
@@ -407,7 +407,7 @@ See also:
 - [x] Add LaTeX export scaffold.
 - [x] Add `rforge report build`.
 - [x] Add `rforge report audit`.
-- [x] Add Fyne report builder/export flow.
+- [x] Add web-ready report/artifact browser view model.
 
 ## 9. Milestone 8 — Hardening and beta release
 
@@ -437,7 +437,7 @@ See also:
 - [x] Benchmark report generation.
 - [x] Add cancellation tests for long jobs.
 - [x] Add memory/allocation regression notes.
-- [x] Ensure Fyne UI stays responsive during jobs.
+- [x] Ensure background jobs expose cancellation/progress for local web GUI responsiveness.
 
 ### 9.3 Documentation
 
@@ -457,7 +457,7 @@ See also:
 ### 9.4 Release packaging
 
 - [x] Add cross-platform CLI build automation.
-- [x] Add Fyne package smoke checks.
+- [x] Add Go + HTMX web GUI smoke-check target.
 - [x] Add checksums for artifacts.
 - [x] Add SBOM/dependency metadata if feasible.
 - [x] Add project archive/restore commands.
@@ -474,7 +474,7 @@ See also:
 The MVP is complete when a researcher can:
 
 - [x] Create a research project from the CLI.
-- [ ] Create/open a research project from the Fyne UI. _(Blocked by Fyne desktop build decision; `rforge --json ui` reports the deferral.)_
+- [x] Create/open a research project from the web GUI.
 - [x] Search OpenAlex for a topic.
 - [x] Search Crossref for a topic.
 - [x] Search arXiv for a topic.
@@ -488,6 +488,11 @@ The MVP is complete when a researcher can:
 - [x] Link evidence to source passages/tables/figures/equations.
 - [x] Run a basic meta-analysis.
 - [x] Study and catalog relevant OSS repositories from the CLI.
-- [ ] View OSS repository studies in Fyne. _(Blocked by Fyne desktop build decision; OSS view model is implemented.)_
+- [x] View OSS repository studies in the web GUI.
+- [x] View CLI-generated papers, meta-analysis outputs, PRISMA/citation diagrams, and report artifacts in the web GUI.
 - [x] Export a reproducible report with citations and provenance.
 - [x] Reproduce the report from stored manifest, lockfile, provenance, and project data.
+
+## Current completion audit
+
+See [docs/todo-completion-audit.md](docs/todo-completion-audit.md) for the current prompt-to-artifact checklist, remaining owner/license blocker, Go + HTMX implementation tracker, and validation evidence for this TODO list.

@@ -30,7 +30,7 @@ Use this skill for performance work after behavior is correct or when a performa
 - PDF parse job queues.
 - Index rebuild throughput.
 - Retrieval latency.
-- Fyne UI responsiveness under background jobs.
+- web GUI responsiveness under background jobs.
 - Report generation for large projects.
 - Project archive/restore speed.
 

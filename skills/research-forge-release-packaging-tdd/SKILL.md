@@ -1,6 +1,6 @@
 ---
 name: research-forge-release-packaging-tdd
-description: Build ResearchForge release, install, and packaging workflows with tests first. Use for versioning, goreleaser, cross-platform builds, Fyne packaging, checksums, archives, installers, upgrade tests, or release notes.
+description: Build ResearchForge release, install, and packaging workflows with tests first. Use for versioning, goreleaser, cross-platform builds, web GUI packaging, checksums, archives, installers, upgrade tests, or release notes.
 ---
 
 # ResearchForge Release Packaging TDD
@@ -26,7 +26,7 @@ Use this skill when preparing repeatable builds or releases.
 
 - `rforge version` build metadata.
 - Cross-platform CLI builds.
-- Fyne desktop packaging smoke checks.
+- Local web GUI packaging/static-build smoke checks after stack selection.
 - Checksums and SBOM/dependency metadata.
 - Example project bundled as release fixture.
 - Upgrade tests for project format.

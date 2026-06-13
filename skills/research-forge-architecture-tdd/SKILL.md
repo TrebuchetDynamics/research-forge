@@ -25,7 +25,7 @@ Use this skill when a development slice needs an architecture decision or seam b
 ## Decision areas
 
 - CLI framework and command topology.
-- Shared application core used by CLI and Fyne.
+- Shared application core used by CLI and web GUI.
 - SQLite/PostgreSQL storage boundary.
 - Local search vs OpenSearch adapter boundary.
 - Optional Qdrant/vector adapter boundary.

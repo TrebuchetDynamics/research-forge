@@ -33,7 +33,7 @@ Use this skill for Milestone 4 screening workflows.
 7. PRISMA counts from event history.
 8. CSV import/export.
 9. Active-learning prioritization scaffold.
-10. Fyne screening queue view model.
+10. web GUI screening queue view model.
 
 ## Verification gate
 

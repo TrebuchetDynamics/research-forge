@@ -7,4 +7,4 @@ Benchmark coverage includes datasets/scenarios for 10, 1,000, and 100,000 record
 - index rebuild benchmark in `internal/retrieval`;
 - report generation benchmark in `internal/report`.
 
-Long-running jobs must accept cancellation. Future Fyne jobs should run through background job abstractions to keep UI responsive.
+Long-running jobs must accept cancellation. Future web GUI jobs should run through background job abstractions to keep UI responsive.

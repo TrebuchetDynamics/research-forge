@@ -25,7 +25,6 @@ tmp/
 
 # Logs, generated maps, and local state
 *.log
-/graphify-out/
 .DS_Store
 Thumbs.db
 

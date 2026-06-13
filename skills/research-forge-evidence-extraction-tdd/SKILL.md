@@ -32,7 +32,7 @@ Use this skill for Milestone 5 evidence extraction.
 6. Audit check for unsupported evidence.
 7. LLM suggestion adapter interface behind explicit config.
 8. Suggestion review/acceptance workflow.
-9. Fyne evidence table view model.
+9. web GUI evidence table view model.
 
 ## Verification gate
 

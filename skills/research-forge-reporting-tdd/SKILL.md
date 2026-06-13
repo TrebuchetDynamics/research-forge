@@ -33,7 +33,7 @@ Use this skill for Milestone 7 report generation.
 7. Audit appendix.
 8. HTML export.
 9. LaTeX export scaffold.
-10. Fyne report builder view model.
+10. web GUI report builder view model.
 
 ## Verification gate
 

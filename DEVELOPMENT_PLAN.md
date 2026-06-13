@@ -1,6 +1,6 @@
 # ResearchForge Development Plan
 
-This plan turns the ResearchForge PRD into an implementation roadmap for building the `rforge` CLI, Fyne desktop app, reproducible research workspace, scholarly ingestion engine, screening workflow, evidence extraction pipeline, meta-analysis module, report generator, and OSS repository intelligence system.
+This plan turns the ResearchForge PRD into an implementation roadmap for building the `rforge` CLI, Go + HTMX local research cockpit, reproducible research workspace, scholarly ingestion engine, screening workflow, evidence extraction pipeline, meta-analysis module, report generator, and OSS repository intelligence system.
 
 See [RESEARCH-FORGE-PRD.md](./RESEARCH-FORGE-PRD.md) for product requirements.
 
@@ -10,7 +10,7 @@ See [RESEARCH-FORGE-PRD.md](./RESEARCH-FORGE-PRD.md) for product requirements.
 2. **Provenance-first** — every user action, external query, parser output, extraction, model suggestion, and statistical run must be logged.
 3. **Statistics-first** — meta-analysis features must prefer auditable statistical routines over opaque generated conclusions.
 4. **LLM-assisted, never LLM-owned** — LLMs may suggest query expansions, summaries, and extraction candidates, but claims must link to exact evidence.
-5. **CLI/UI parity** — core workflows must live in shared Go services and be exposed through both `rforge` and Fyne where practical.
+5. **CLI/UI parity** — core workflows must live in shared Go services and be exposed through both `rforge` and web GUI where practical.
 6. **Local-first privacy** — local projects should run without cloud dependencies unless users explicitly configure external APIs/services.
 7. **External-tool governance** — GROBID, OpenSearch, Qdrant, R/metafor, and other tools must be versioned in project lockfiles.
 8. **OSS-study safety** — external source clones stay out of source control; ResearchForge stores notes, metadata, licenses, risks, and integration decisions.
@@ -36,7 +36,8 @@ research-forge/
 │   ├── analysis/                  # effect sizes and meta-analysis adapters
 │   ├── reports/                   # Markdown/HTML/LaTeX/report assets
 │   ├── oss/                       # OSS repository registry and study workflows
-│   └── ui/                        # Fyne app shell and view models
+│   └── ui/                        # framework-neutral view models and local web launcher seams
+├── web/                           # Go+HTMX local GUI workspace
 ├── pkg/                           # stable public packages, only when justified
 ├── migrations/                    # database migrations
 ├── assets/                        # icons, templates, static UI/report assets
@@ -78,13 +79,13 @@ Initial domain concepts should be modeled before feature work begins:
 
 ### Milestone 0 — Project foundation
 
-**Goal:** create the Go/Fyne/CLI foundation and reproducibility spine.
+**Goal:** create the Go/CLI/Web GUI foundation and reproducibility spine.
 
 Deliverables:
 
 - Go module and initial package layout.
 - `rforge` CLI skeleton with help, version, config path, and JSON output convention.
-- Fyne app shell with project dashboard placeholder.
+- local web GUI launcher with project dashboard and generated-artifact placeholder.
 - Project workspace creation/open/list commands.
 - Project manifest: `rforge.project.toml`.
 - Workflow lockfile: `rforge.lock.json`.
@@ -107,7 +108,7 @@ Exit criteria:
 
 - A user can create a project from CLI.
 - The project contains a manifest, lockfile, database, and event log.
-- Fyne app starts and can open/show a project placeholder.
+- `rforge ui` starts a local web server and can open/show a project placeholder.
 
 ### Milestone 1 — Scholarly metadata and library MVP
 
@@ -125,7 +126,7 @@ Deliverables:
 - DOI, arXiv ID, title/year/author deduplication.
 - Library list/search commands.
 - BibTeX, RIS, CSV, JSON import/export MVP.
-- Fyne library table and search-result review screen.
+- web GUI library table and search-result review screen.
 
 Validation:
 
@@ -156,7 +157,7 @@ Deliverables:
 - `rforge oss scan --topic <topic>` metadata workflow.
 - License detection and risk notes.
 - Study-note template for integration decisions.
-- Fyne OSS dashboard placeholder/table.
+- web GUI OSS dashboard placeholder/table.
 
 Validation:
 
@@ -187,7 +188,7 @@ Deliverables:
 - Optional OpenSearch adapter.
 - Optional Qdrant adapter for embeddings.
 - `rforge parse`, `rforge index`, and `rforge retrieve` commands.
-- Fyne PDF/section view placeholder.
+- web GUI PDF/section view placeholder.
 
 Validation:
 
@@ -217,7 +218,7 @@ Deliverables:
 - CSV export/import for external review workflows.
 - PRISMA counts generated from event history.
 - Basic active-learning prioritization scaffold inspired by ASReview.
-- Fyne screening queue UI.
+- web GUI screening queue UI.
 
 Validation:
 
@@ -240,7 +241,7 @@ Exit criteria:
 Deliverables:
 
 - Extraction schema definition format.
-- Manual extraction CLI and Fyne table UI.
+- Manual extraction CLI and web GUI table UI.
 - Evidence items linked to paper, document asset, section, passage, table, figure, or equation where available.
 - Validation status: suggested, accepted, rejected, corrected.
 - LLM-assisted suggestion adapter behind explicit configuration.
@@ -275,7 +276,7 @@ Deliverables:
 - Funnel plot output where applicable.
 - Heterogeneity metrics.
 - Sensitivity-analysis scaffold.
-- Fyne analysis setup and result viewer.
+- web GUI analysis setup and result viewer for CLI-generated meta-analysis artifacts.
 
 Validation:
 
@@ -304,7 +305,7 @@ Deliverables:
 - Evidence tables.
 - Meta-analysis plots/results.
 - Audit appendix: queries, sources, decisions, parser versions, extraction links, analysis versions.
-- Fyne report builder/export flow.
+- web GUI report/artifact browser for CLI-generated reports, PRISMA diagrams, citation diagrams, and analysis plots.
 
 Validation:
 
@@ -333,7 +334,7 @@ Deliverables:
 - Error handling and recovery pass.
 - Performance pass for medium libraries.
 - Backup/export/import project archive.
-- Accessibility and UX pass for Fyne screens.
+- Accessibility and UX pass for local web GUI screens, keyboard navigation, and chart alternatives.
 
 Validation:
 
@@ -371,8 +372,8 @@ Prefer vertical slices over isolated infrastructure. Each slice should include d
 16. Evidence export.
 17. R/metafor analysis run.
 18. Markdown report export.
-19. Fyne dashboard/library/search parity.
-20. Fyne screening/evidence/report parity.
+19. web GUI dashboard/library/search parity.
+20. web GUI screening/evidence/report parity.
 
 ## 6. Testing strategy
 
@@ -407,11 +408,11 @@ Prefer vertical slices over isolated infrastructure. Each slice should include d
 
 ### Manual acceptance tests
 
-- Fyne opens project.
-- Fyne search results can be reviewed.
-- Fyne screening decisions are persisted.
-- Fyne evidence table links back to source passages.
-- Fyne report export matches CLI-generated report semantics.
+- web GUI opens project.
+- web GUI search results can be reviewed.
+- web GUI screening decisions are persisted.
+- web GUI evidence table links back to source passages.
+- web GUI report/artifact browser matches CLI-generated report semantics and links to generated diagrams/plots.
 
 ## 7. CI and release plan
 
@@ -424,12 +425,21 @@ go vet ./...
 govulncheck ./...
 ```
 
+License release gate for `TODO.md:34`:
+
+```sh
+make license-decision-live-audit
+make license-decision-approval-gate # requires approved:true
+```
+
+The live owner decision must include License SPDX identifier, Copyright holder, Approved by, and Approval date before adding `LICENSE` or publishing a public release.
+
 Later CI gates:
 
 - Staticcheck.
 - Race tests for selected packages.
 - Cross-platform build matrix.
-- Fyne packaging smoke tests.
+- web GUI local-server/static-build smoke tests after stack selection.
 - Fixture-based CLI end-to-end tests.
 - Dependency/license scans.
 - Reproducible release artifacts.
@@ -449,7 +459,7 @@ Write ADRs only when these decisions are made:
 2. Local storage default: SQLite-first vs PostgreSQL-first.
 3. Search backend: SQLite FTS/Bleve local mode vs mandatory OpenSearch.
 4. Vector backend: optional Qdrant vs embedded/local alternative.
-5. UI architecture: Fyne view models and background job pattern.
+5. UI architecture: Go + HTMX local research cockpit, artifact APIs, view models, guided local actions, and background job update pattern.
 6. Provenance format: append-only JSONL/events table vs richer event store.
 7. Project archive format and compatibility policy.
 8. LLM adapter boundary and review requirements.
@@ -461,7 +471,7 @@ These decisions should be settled before or during Milestone 0:
 
 1. Should SQLite be the default MVP storage mode, with PostgreSQL later? Recommended: yes, because it lowers setup cost and improves local-first usability.
 2. Should the first CLI framework be Cobra? Recommended: yes, because `rforge` needs nested commands, help, completion, and mature command organization.
-3. Should Fyne be built from the first milestone or after CLI MVP? Recommended: start the shell immediately, but keep feature implementation in shared services and add UI parity after CLI validation.
+3. Resolved: Go + HTMX owns the local web GUI. Start the shell immediately, keep feature implementation in shared Go services, add UI parity after CLI validation, and use targeted visualization libraries for graph/table interactivity.
 4. Should Qdrant/OpenSearch be mandatory for MVP? Recommended: no; make them optional service-mode backends after a local search MVP exists.
 5. Should LLM features ship in the MVP? Recommended: only behind explicit configuration and never as a required path.
 
@@ -487,7 +497,7 @@ Week 2:
 - Persist normalized `PaperRecord` rows.
 - Add library list command.
 - Add JSON output convention.
-- Add Fyne app shell and project dashboard placeholder.
+- Add local web GUI launcher and project dashboard/artifact placeholder.
 
 End-of-sprint demo:
 

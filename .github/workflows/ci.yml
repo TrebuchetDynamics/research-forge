@@ -23,7 +23,7 @@ jobs:
       - name: Vet
         run: go vet ./...
       - name: TODO decision audit
-        run: make todo-audit
+        run: make todo-completion-audit
       - name: Install govulncheck
         run: go install golang.org/x/vuln/cmd/govulncheck@latest
       - name: Vulnerability check

@@ -103,12 +103,13 @@ func Execute(args []string, stdout, stderr io.Writer) int {
 	case "ui":
 		if opts.JSON {
 			return writeJSON(stdout, 0, map[string]any{
-				"status":          "fyne_dependency_deferred",
-				"reason":          "ADR 0005 defers Fyne until desktop build scope is owned",
+				"status":          "go_htmx_web_gui_ready",
+				"stack":           "go+htmx",
+				"reason":          "ADR 0006 replaces Fyne desktop with a local web GUI; Go + HTMX handlers are implemented in internal/webui",
 				"viewModelsReady": true,
 			})
 		}
-		fmt.Fprintln(stdout, "ResearchForge UI shell placeholder (Fyne packaging deferred by ADR 0005)")
+		fmt.Fprintln(stdout, "ResearchForge Go + HTMX local web GUI ready (ADR 0006)")
 		return 0
 	case "watch":
 		return executeWatch(remaining[1:], stdout, stderr, opts)
@@ -124,29 +125,48 @@ func Execute(args []string, stdout, stderr io.Writer) int {
 func executeDecisions(args []string, stdout, stderr io.Writer, opts globalOptions) int {
 	decisions := []map[string]any{
 		{
-			"id":     "project_license",
-			"status": "owner_decision_required",
+			"id":                    "project_license",
+			"status":                "owner_decision_required",
+			"blocker_kind":          "owner_decision",
+			"owner_action_required": true,
+			"issue_labels":          []string{"decision", "blocked", "owner-input-needed"},
+			"milestone":             "Owner decisions",
 			"todos": []string{
 				"Add license after owner decision",
 			},
-			"todo_refs": []string{"TODO.md:34"},
-			"doc":       "docs/owner-decisions.md",
-			"audit":     "docs/remaining-todo-audit.md",
-		},
-		{
-			"id":     "fyne_desktop_build_scope",
-			"status": "build_decision_required",
-			"todos": []string{
-				"Add Fyne dependency after build decision",
-				"Add Fyne search screen",
-				"Add Fyne library screen",
-				"Create/open a research project from the Fyne UI",
-				"View OSS repository studies in Fyne",
+			"owner_inputs": []string{
+				"license choice with SPDX identifier: MIT, Apache-2.0, GPL-3.0-only/GPL-3.0-or-later, AGPL-3.0-only/AGPL-3.0-or-later, NOASSERTION/all-rights-reserved note, or another named license",
+				"adoption model: academic, commercial, internal, or mixed",
+				"patent posture and contributor expectations",
+				"exact copyright holder string",
+				"dual licensing or contributor license agreement expectations",
 			},
-			"todo_refs": []string{"TODO.md:126", "TODO.md:238", "TODO.md:239", "TODO.md:477", "TODO.md:491"},
-			"doc":       "docs/owner-decisions.md",
-			"audit":     "docs/remaining-todo-audit.md",
-			"adr":       "docs/adr/0005-defer-fyne-dependency-until-desktop-build-scope-is-owned.md",
+			"owner_response_required_fields": []string{
+				"License SPDX identifier",
+				"Copyright holder",
+				"Approved by",
+				"Approval date",
+			},
+			"options_considered": []string{
+				"MIT: permissive, simple, minimal patent language",
+				"Apache-2.0: permissive with explicit patent grant",
+				"GPL-3.0/AGPL-3.0: copyleft options for stronger sharing requirements",
+				"No public license yet: preserves all rights but blocks external reuse",
+			},
+			"implementation_steps": []string{
+				"Run make license-decision-approval-gate and require approved:true",
+				"Add LICENSE with the approved SPDX license text and copyright holder",
+				"Update README.md license section",
+				"Update contribution guidance if contributor terms change",
+				"Update TODO.md license checkbox",
+				"Run make check",
+				"Run rforge decisions --completion-audit TODO.md docs/todo-completion-audit.md if unchecked TODOs remain",
+			},
+			"todo_refs":   []string{"TODO.md:34"},
+			"doc":         "docs/owner-decisions.md",
+			"audit":       "docs/remaining-todo-audit.md",
+			"issue":       "https://github.com/TrebuchetDynamics/research-forge/issues/1",
+			"issue_title": "Owner decision: project_license (SPDX, copyright holder, approver, date required)",
 		},
 	}
 	if len(args) == 2 && args[0] == "--issue-body" {
@@ -155,24 +175,34 @@ func executeDecisions(args []string, stdout, stderr io.Writer, opts globalOption
 	if len(args) == 2 && args[0] == "--check" {
 		return checkDecisionsCoverTODO(args[1], decisions, stdout, stderr, opts)
 	}
+	if len(args) == 3 && args[0] == "--completion-audit" {
+		return checkTodoCompletionAudit(args[1], args[2], decisions, stdout, stderr, opts)
+	}
 	if len(args) == 1 && args[0] == "--markdown" {
 		return writeDecisionsMarkdown(decisions, stdout)
 	}
 	if len(args) != 0 {
-		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge decisions [--issue-body <decision-id>|--check <todo-file>|--markdown]")
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge decisions [--issue-body <decision-id>|--check <todo-file>|--completion-audit <todo-file> <audit-file>|--markdown]")
 	}
 	if opts.JSON {
 		return writeJSON(stdout, 0, map[string]any{"decisions": decisions})
 	}
 	for _, decision := range decisions {
-		fmt.Fprintf(stdout, "%s\t%s\t%s\n", decision["id"], decision["status"], decision["doc"])
+		ownerAction := ""
+		if required, _ := decision["owner_action_required"].(bool); required {
+			ownerAction = "owner required"
+			if inputs, ok := decision["owner_inputs"].([]string); ok && len(inputs) > 0 {
+				ownerAction += ": " + strings.Join(inputs, ", ")
+			}
+		}
+		fmt.Fprintf(stdout, "%s\t%s\t%s\t%s\n", decision["id"], decision["status"], ownerAction, decision["doc"])
 	}
 	return 0
 }
 
 func writeDecisionsMarkdown(decisions []map[string]any, stdout io.Writer) int {
-	fmt.Fprintln(stdout, "| Decision ID | Status | TODO Lines | Blocked TODOs | Evidence |")
-	fmt.Fprintln(stdout, "| --- | --- | --- | --- | --- |")
+	fmt.Fprintln(stdout, "| Decision ID | Status | Owner Action | TODO Lines | Blocked TODOs | Evidence |")
+	fmt.Fprintln(stdout, "| --- | --- | --- | --- | --- | --- |")
 	for _, decision := range decisions {
 		todos := []string{}
 		if rawTodos, ok := decision["todos"].([]string); ok {
@@ -182,13 +212,35 @@ func writeDecisionsMarkdown(decisions []map[string]any, stdout io.Writer) int {
 		if rawRefs, ok := decision["todo_refs"].([]string); ok {
 			refs = rawRefs
 		}
+		ownerAction := ""
+		if required, _ := decision["owner_action_required"].(bool); required {
+			ownerAction = "owner required"
+			if inputs, ok := decision["owner_inputs"].([]string); ok && len(inputs) > 0 {
+				ownerAction += ": " + strings.Join(inputs, ", ")
+			}
+		}
 		evidence := []string{}
-		for _, key := range []string{"doc", "audit", "adr"} {
+		for _, key := range []string{"doc", "audit", "adr", "issue"} {
 			if value, ok := decision[key].(string); ok && value != "" {
 				evidence = append(evidence, value)
 			}
 		}
-		fmt.Fprintf(stdout, "| %s | %s | %s | %s | %s |\n", decision["id"], decision["status"], strings.Join(refs, "<br>"), strings.Join(todos, "<br>"), strings.Join(evidence, "<br>"))
+		if labels, ok := decision["issue_labels"].([]string); ok && len(labels) > 0 {
+			evidence = append(evidence, "labels: "+strings.Join(labels, ", "))
+		}
+		if milestone, ok := decision["milestone"].(string); ok && milestone != "" {
+			evidence = append(evidence, "milestone: "+milestone)
+		}
+		if options, ok := decision["options_considered"].([]string); ok && len(options) > 0 {
+			evidence = append(evidence, "options: "+strings.Join(options, "; "))
+		}
+		if fields, ok := decision["owner_response_required_fields"].([]string); ok && len(fields) > 0 {
+			evidence = append(evidence, "response fields: "+strings.Join(fields, ", "))
+		}
+		if steps, ok := decision["implementation_steps"].([]string); ok && len(steps) > 0 {
+			evidence = append(evidence, "steps: "+strings.Join(steps, "; "))
+		}
+		fmt.Fprintf(stdout, "| %s | %s | %s | %s | %s | %s |\n", decision["id"], decision["status"], ownerAction, strings.Join(refs, "<br>"), strings.Join(todos, "<br>"), strings.Join(evidence, "<br>"))
 	}
 	return 0
 }
@@ -199,14 +251,18 @@ func checkDecisionsCoverTODO(path string, decisions []map[string]any, stdout, st
 		return writeError(stdout, stderr, opts, 1, "todo_read_failed", err.Error())
 	}
 	covered := map[string]bool{}
+	issueByTODO := map[string]string{}
 	for _, decision := range decisions {
+		issue, _ := decision["issue"].(string)
 		if todos, ok := decision["todos"].([]string); ok {
 			for _, todo := range todos {
 				covered[todo] = true
+				issueByTODO[todo] = issue
 			}
 		}
 	}
 	missing := []string{}
+	missingIssueRefs := []string{}
 	uncheckedRefs := map[string]bool{}
 	for lineNumber, line := range strings.Split(string(data), "\n") {
 		line = strings.TrimSpace(line)
@@ -221,10 +277,17 @@ func checkDecisionsCoverTODO(path string, decisions []map[string]any, stdout, st
 		item = strings.TrimSuffix(item, ".")
 		if !covered[item] {
 			missing = append(missing, item)
+			continue
+		}
+		if issue := issueByTODO[item]; issue != "" {
+			issueNumber := issue[strings.LastIndex(issue, "/")+1:]
+			if !strings.Contains(line, issue) && !strings.Contains(line, "#"+issueNumber) {
+				missingIssueRefs = append(missingIssueRefs, fmt.Sprintf("TODO.md:%d", lineNumber+1))
+			}
 		}
 	}
 	if len(missing) > 0 {
-		return writeError(stdout, stderr, opts, 1, "todo_decision_coverage_failed", "unchecked TODO items are not decision-covered: "+strings.Join(missing, "; "))
+		return writeError(stdout, stderr, opts, 1, "todo_decision_coverage_failed", "unchecked TODO items are not decision/tracker-covered: "+strings.Join(missing, "; "))
 	}
 	decisionRefs := map[string]bool{}
 	staleRefs := []string{}
@@ -241,6 +304,9 @@ func checkDecisionsCoverTODO(path string, decisions []map[string]any, stdout, st
 	if len(staleRefs) > 0 {
 		return writeError(stdout, stderr, opts, 1, "todo_decision_refs_failed", "decision TODO line references are stale: "+strings.Join(staleRefs, "; "))
 	}
+	if len(missingIssueRefs) > 0 {
+		return writeError(stdout, stderr, opts, 1, "todo_decision_issue_refs_failed", "unchecked TODO items are missing tracking issue references: "+strings.Join(missingIssueRefs, "; "))
+	}
 	missingRefs := []string{}
 	for ref := range uncheckedRefs {
 		if !decisionRefs[ref] {
@@ -248,14 +314,423 @@ func checkDecisionsCoverTODO(path string, decisions []map[string]any, stdout, st
 		}
 	}
 	if len(missingRefs) > 0 {
-		return writeError(stdout, stderr, opts, 1, "todo_decision_refs_failed", "unchecked TODO line references are not decision-covered: "+strings.Join(missingRefs, "; "))
+		return writeError(stdout, stderr, opts, 1, "todo_decision_refs_failed", "unchecked TODO line references are not decision/tracker-covered: "+strings.Join(missingRefs, "; "))
 	}
 	if opts.JSON {
-		return writeJSON(stdout, 0, map[string]any{"covered": true, "line_refs_verified": true, "unchecked_refs": len(uncheckedRefs)})
+		return writeJSON(stdout, 0, map[string]any{"covered": true, "line_refs_verified": true, "issue_refs_verified": true, "unchecked_refs": len(uncheckedRefs)})
 	}
-	fmt.Fprintln(stdout, "all unchecked TODO items are decision-covered")
+	fmt.Fprintln(stdout, "all unchecked TODO items are decision/tracker-covered")
 	fmt.Fprintln(stdout, "line references verified")
+	fmt.Fprintln(stdout, "issue references verified")
 	return 0
+}
+
+func checkTodoCompletionAudit(todoPath, auditPath string, decisions []map[string]any, stdout, stderr io.Writer, opts globalOptions) int {
+	decisionStdout := stdout
+	decisionOpts := opts
+	if opts.JSON {
+		decisionStdout = io.Discard
+		decisionOpts.JSON = false
+	}
+	if code := checkDecisionsCoverTODO(todoPath, decisions, decisionStdout, stderr, decisionOpts); code != 0 {
+		return code
+	}
+	auditData, err := os.ReadFile(auditPath)
+	if err != nil {
+		return writeError(stdout, stderr, opts, 1, "todo_completion_audit_read_failed", err.Error())
+	}
+	audit := string(auditData)
+	for _, required := range []string{"Success criteria", "Prompt-to-artifact checklist"} {
+		if !strings.Contains(audit, required) {
+			return writeError(stdout, stderr, opts, 1, "todo_completion_audit_failed", fmt.Sprintf("completion audit missing %q", required))
+		}
+	}
+	missingAuditIssues := []string{}
+	for _, decision := range decisions {
+		issue, _ := decision["issue"].(string)
+		if issue == "" {
+			continue
+		}
+		issueNumber := issue[strings.LastIndex(issue, "/")+1:]
+		if !strings.Contains(audit, issue) && !strings.Contains(audit, "#"+issueNumber) {
+			missingAuditIssues = append(missingAuditIssues, issue)
+		}
+	}
+	if len(missingAuditIssues) > 0 {
+		return writeError(stdout, stderr, opts, 1, "todo_completion_audit_failed", "completion audit missing tracking issue references: "+strings.Join(missingAuditIssues, "; "))
+	}
+	missingCheckedEvidence := []string{}
+	for _, required := range []string{"web-gui-smoke", "SKILLS.md", "skills/research-forge-web-ui-tdd/SKILL.md", "internal/webui", "web/assets/researchforge.css"} {
+		if !strings.Contains(audit, required) {
+			missingCheckedEvidence = append(missingCheckedEvidence, required)
+		}
+	}
+	if len(missingCheckedEvidence) > 0 {
+		return writeError(stdout, stderr, opts, 1, "todo_completion_audit_failed", "completion audit missing checked TODO evidence: "+strings.Join(missingCheckedEvidence, "; "))
+	}
+	if !strings.Contains(audit, "make check") {
+		return writeError(stdout, stderr, opts, 1, "todo_completion_audit_failed", "completion audit missing quality gate: make check")
+	}
+	todoData, err := os.ReadFile(todoPath)
+	if err != nil {
+		return writeError(stdout, stderr, opts, 1, "todo_read_failed", err.Error())
+	}
+	missing := []string{}
+	uncheckedRefs := 0
+	licenseTODOOwnerInputsVerified := false
+	licenseFileAbsentWhenBlocked := false
+	licenseDecisionPendingVerified := false
+	licenseDecisionDraftOwnerInputsVerified := false
+	licenseDecisionRequiredResponseFieldsVerified := false
+	licenseOwnerApprovalAbsentVerified := false
+	readmeLicensePendingVerified := false
+	licenseOwnerInputsVerified := false
+	licenseOwnerResponseFieldsVerified := false
+	licenseOptionsVerified := false
+	licenseImplementationStepsVerified := false
+	licenseIssueRoutingVerified := false
+	licenseIssueTitleVerified := false
+	remainingTodoAuditVerified := false
+	licenseApprovalGateTargetVerified := false
+	licenseDecisionBriefVerified := false
+	ownerDecisionsLicenseSectionVerified := false
+	ownerDecisionTemplateVerified := false
+	ownerDecisionTemplateResponseFieldsVerified := false
+	prLicenseGateVerified := false
+	contributingLicenseWorkflowVerified := false
+	for _, line := range strings.Split(string(todoData), "\n") {
+		line = strings.TrimSpace(line)
+		if !strings.HasPrefix(line, "- [ ] ") {
+			continue
+		}
+		uncheckedRefs++
+		item := strings.TrimPrefix(line, "- [ ] ")
+		if idx := strings.Index(item, " _("); idx >= 0 {
+			item = strings.TrimSpace(item[:idx])
+		}
+		item = strings.TrimSuffix(item, ".")
+		if item == "Add license after owner decision" {
+			for _, required := range []string{"SPDX", "copyright holder", "approver", "approval date"} {
+				if !strings.Contains(line, required) {
+					return writeError(stdout, stderr, opts, 1, "todo_completion_audit_failed", "license TODO line missing "+required)
+				}
+			}
+			licenseTODOOwnerInputsVerified = true
+			licensePath := filepath.Join(filepath.Dir(todoPath), "LICENSE")
+			if _, err := os.Stat(licensePath); err == nil {
+				return writeError(stdout, stderr, opts, 1, "todo_completion_audit_failed", "LICENSE exists while license TODO remains blocked by owner decision")
+			} else if !os.IsNotExist(err) {
+				return writeError(stdout, stderr, opts, 1, "todo_completion_audit_failed", err.Error())
+			}
+			licenseFileAbsentWhenBlocked = true
+			licenseDecisionPath := filepath.Join(filepath.Dir(todoPath), "docs", "decisions", "project_license_issue.md")
+			licenseDecisionData, err := os.ReadFile(licenseDecisionPath)
+			if err != nil {
+				return writeError(stdout, stderr, opts, 1, "todo_completion_audit_failed", err.Error())
+			}
+			licenseDecision := string(licenseDecisionData)
+			if !strings.Contains(licenseDecision, "owner_decision_required") || !strings.Contains(licenseDecision, "Pending owner selection") {
+				return writeError(stdout, stderr, opts, 1, "todo_completion_audit_failed", "license decision draft must remain pending while license TODO is unchecked")
+			}
+			licenseDecisionPendingVerified = true
+			for _, required := range []string{"Owner inputs needed", "SPDX", "copyright holder string", "Implementation steps after approval", "TODO.md:34", "Owner decision: project_license (SPDX, copyright holder, approver, date required)"} {
+				if !strings.Contains(licenseDecision, required) {
+					return writeError(stdout, stderr, opts, 1, "todo_completion_audit_failed", "license decision draft missing "+required)
+				}
+			}
+			licenseDecisionDraftOwnerInputsVerified = true
+			for _, required := range []string{"Required owner response fields", "License SPDX identifier", "Copyright holder", "Approved by", "Approval date"} {
+				if !strings.Contains(licenseDecision, required) {
+					return writeError(stdout, stderr, opts, 1, "todo_completion_audit_failed", "license decision draft missing required response field "+required)
+				}
+			}
+			licenseDecisionRequiredResponseFieldsVerified = true
+			for _, prefix := range []string{"- License SPDX identifier:", "- Copyright holder:", "- Approved by:", "- Approval date:"} {
+				if hasNonPlaceholderDecisionValue(licenseDecision, prefix) {
+					return writeError(stdout, stderr, opts, 1, "todo_completion_audit_failed", "license decision draft contains owner approval while license TODO is unchecked")
+				}
+			}
+			licenseOwnerApprovalAbsentVerified = true
+			readmePath := filepath.Join(filepath.Dir(todoPath), "README.md")
+			readmeData, err := os.ReadFile(readmePath)
+			if err != nil {
+				return writeError(stdout, stderr, opts, 1, "todo_completion_audit_failed", err.Error())
+			}
+			readme := string(readmeData)
+			for _, required := range []string{"No license has been selected yet", "license choice", "copyright holder string", "approver", "approval date"} {
+				if !strings.Contains(readme, required) {
+					return writeError(stdout, stderr, opts, 1, "todo_completion_audit_failed", "README license section must remain pending while license TODO is unchecked")
+				}
+			}
+			readmeLicensePendingVerified = true
+			for _, decision := range decisions {
+				if decision["id"] != "project_license" {
+					continue
+				}
+				ownerInputs, ok := decision["owner_inputs"].([]string)
+				if !ok {
+					return writeError(stdout, stderr, opts, 1, "todo_completion_audit_failed", "project_license decision missing owner inputs")
+				}
+				joinedInputs := strings.Join(ownerInputs, "\n")
+				for _, required := range []string{"license choice", "adoption model", "patent posture", "copyright holder string"} {
+					if !strings.Contains(joinedInputs, required) {
+						return writeError(stdout, stderr, opts, 1, "todo_completion_audit_failed", "project_license owner inputs missing "+required)
+					}
+				}
+				licenseOwnerInputsVerified = true
+				ownerResponseFields, ok := decision["owner_response_required_fields"].([]string)
+				if !ok {
+					return writeError(stdout, stderr, opts, 1, "todo_completion_audit_failed", "project_license decision missing owner response required fields")
+				}
+				joinedResponseFields := strings.Join(ownerResponseFields, "\n")
+				for _, required := range []string{"License SPDX identifier", "Copyright holder", "Approved by", "Approval date"} {
+					if !strings.Contains(joinedResponseFields, required) {
+						return writeError(stdout, stderr, opts, 1, "todo_completion_audit_failed", "project_license owner response fields missing "+required)
+					}
+				}
+				licenseOwnerResponseFieldsVerified = true
+				options, ok := decision["options_considered"].([]string)
+				if !ok {
+					return writeError(stdout, stderr, opts, 1, "todo_completion_audit_failed", "project_license decision missing options considered")
+				}
+				joinedOptions := strings.Join(options, "\n")
+				for _, required := range []string{"MIT", "Apache-2.0", "GPL-3.0", "AGPL-3.0", "No public license yet"} {
+					if !strings.Contains(joinedOptions, required) {
+						return writeError(stdout, stderr, opts, 1, "todo_completion_audit_failed", "project_license options considered missing "+required)
+					}
+				}
+				licenseOptionsVerified = true
+				steps, ok := decision["implementation_steps"].([]string)
+				if !ok {
+					return writeError(stdout, stderr, opts, 1, "todo_completion_audit_failed", "project_license decision missing implementation steps")
+				}
+				joinedSteps := strings.Join(steps, "\n")
+				for _, required := range []string{"make license-decision-approval-gate", "Add LICENSE", "Update README.md license section", "Update TODO.md license checkbox", "make check", "rforge decisions --completion-audit TODO.md docs/todo-completion-audit.md"} {
+					if !strings.Contains(joinedSteps, required) {
+						return writeError(stdout, stderr, opts, 1, "todo_completion_audit_failed", "project_license implementation steps missing "+required)
+					}
+				}
+				licenseImplementationStepsVerified = true
+				issueLabels, ok := decision["issue_labels"].([]string)
+				if !ok {
+					return writeError(stdout, stderr, opts, 1, "todo_completion_audit_failed", "project_license decision missing issue labels")
+				}
+				joinedLabels := strings.Join(issueLabels, "\n")
+				for _, required := range []string{"decision", "blocked", "owner-input-needed"} {
+					if !strings.Contains(joinedLabels, required) {
+						return writeError(stdout, stderr, opts, 1, "todo_completion_audit_failed", "project_license issue labels missing "+required)
+					}
+				}
+				if milestone, ok := decision["milestone"].(string); !ok || milestone != "Owner decisions" {
+					return writeError(stdout, stderr, opts, 1, "todo_completion_audit_failed", "project_license decision missing Owner decisions milestone")
+				}
+				licenseIssueRoutingVerified = true
+				if issueTitle, ok := decision["issue_title"].(string); !ok || issueTitle != "Owner decision: project_license (SPDX, copyright holder, approver, date required)" {
+					return writeError(stdout, stderr, opts, 1, "todo_completion_audit_failed", "project_license decision missing current issue title")
+				}
+				licenseIssueTitleVerified = true
+			}
+			if !licenseOwnerInputsVerified {
+				return writeError(stdout, stderr, opts, 1, "todo_completion_audit_failed", "project_license decision missing from blocker list")
+			}
+			licenseBriefPath := filepath.Join(filepath.Dir(todoPath), "docs", "license-decision.md")
+			licenseBriefData, err := os.ReadFile(licenseBriefPath)
+			if err != nil {
+				return writeError(stdout, stderr, opts, 1, "todo_completion_audit_failed", err.Error())
+			}
+			licenseBrief := string(licenseBriefData)
+			for _, required := range []string{"SPDX", "MIT", "Apache-2.0", "GPL-3.0", "AGPL-3.0", "No public license yet", "copyright holder", "Required owner response fields", "License SPDX identifier", "Approved by", "Approval date", "make license-decision-live-audit", "make license-decision-approval-gate", "approved:true", "issue #1", "TODO.md:34"} {
+				if !strings.Contains(licenseBrief, required) {
+					return writeError(stdout, stderr, opts, 1, "todo_completion_audit_failed", "license decision brief missing "+required)
+				}
+			}
+			licenseDecisionBriefVerified = true
+			remainingAuditPath := filepath.Join(filepath.Dir(todoPath), "docs", "remaining-todo-audit.md")
+			remainingAuditData, err := os.ReadFile(remainingAuditPath)
+			if err != nil {
+				return writeError(stdout, stderr, opts, 1, "todo_completion_audit_failed", err.Error())
+			}
+			remainingAudit := string(remainingAuditData)
+			for _, required := range []string{"TODO.md:34", "Owner decision: project_license (SPDX, copyright holder, approver, date required)", "approver", "approval date", "owner_response_required_fields"} {
+				if !strings.Contains(remainingAudit, required) {
+					return writeError(stdout, stderr, opts, 1, "todo_completion_audit_failed", "remaining TODO audit missing "+required)
+				}
+			}
+			remainingTodoAuditVerified = true
+			makefilePath := filepath.Join(filepath.Dir(todoPath), "Makefile")
+			makefileData, err := os.ReadFile(makefilePath)
+			if err != nil {
+				return writeError(stdout, stderr, opts, 1, "todo_completion_audit_failed", err.Error())
+			}
+			makefile := string(makefileData)
+			for _, required := range []string{"license-decision-live-audit", "license-decision-approval-gate", "approved:true", "license decision approval missing"} {
+				if !strings.Contains(makefile, required) {
+					return writeError(stdout, stderr, opts, 1, "todo_completion_audit_failed", "Makefile license approval gate missing "+required)
+				}
+			}
+			licenseApprovalGateTargetVerified = true
+			ownerDecisionsPath := filepath.Join(filepath.Dir(todoPath), "docs", "owner-decisions.md")
+			ownerDecisionsData, err := os.ReadFile(ownerDecisionsPath)
+			if err != nil {
+				return writeError(stdout, stderr, opts, 1, "todo_completion_audit_failed", err.Error())
+			}
+			ownerDecisions := string(ownerDecisionsData)
+			for _, required := range []string{"Decision ID: `project_license`", "Status: `owner_decision_required`", "#1", "Owner decision: project_license (SPDX, copyright holder, approver, date required)", "license", "copyright holder", "approving owner", "approval date"} {
+				if !strings.Contains(ownerDecisions, required) {
+					return writeError(stdout, stderr, opts, 1, "todo_completion_audit_failed", "owner decisions license section missing "+required)
+				}
+			}
+			ownerDecisionsLicenseSectionVerified = true
+			templatePath := filepath.Join(filepath.Dir(todoPath), ".github", "ISSUE_TEMPLATE", "owner_decision.yml")
+			templateData, err := os.ReadFile(templatePath)
+			if err != nil {
+				return writeError(stdout, stderr, opts, 1, "todo_completion_audit_failed", err.Error())
+			}
+			templateText := string(templateData)
+			for _, required := range []string{"id: owner_inputs", "Owner inputs needed", "SPDX identifier", "copyright holder", "required: true"} {
+				if !strings.Contains(templateText, required) {
+					return writeError(stdout, stderr, opts, 1, "todo_completion_audit_failed", "owner decision template missing "+required)
+				}
+			}
+			ownerDecisionTemplateVerified = true
+			for _, required := range []string{"id: owner_response_required_fields", "Required owner response fields", "License SPDX identifier", "Copyright holder", "Approved by", "Approval date", "required: true"} {
+				if !strings.Contains(templateText, required) {
+					return writeError(stdout, stderr, opts, 1, "todo_completion_audit_failed", "owner decision template response fields missing "+required)
+				}
+			}
+			ownerDecisionTemplateResponseFieldsVerified = true
+			prTemplatePath := filepath.Join(filepath.Dir(todoPath), ".github", "PULL_REQUEST_TEMPLATE.md")
+			prTemplateData, err := os.ReadFile(prTemplatePath)
+			if err != nil {
+				return writeError(stdout, stderr, opts, 1, "todo_completion_audit_failed", err.Error())
+			}
+			prTemplate := string(prTemplateData)
+			for _, required := range []string{"Owner decision issue linked", "SPDX identifier", "copyright holder", "approver", "approval date", "make license-decision-live-audit", "approved:true", "license_owner_approval_absent_verified"} {
+				if !strings.Contains(prTemplate, required) {
+					return writeError(stdout, stderr, opts, 1, "todo_completion_audit_failed", "PR template missing license gate "+required)
+				}
+			}
+			prLicenseGateVerified = true
+			contributingPath := filepath.Join(filepath.Dir(todoPath), "CONTRIBUTING.md")
+			contributingData, err := os.ReadFile(contributingPath)
+			if err != nil {
+				return writeError(stdout, stderr, opts, 1, "todo_completion_audit_failed", err.Error())
+			}
+			contributing := string(contributingData)
+			for _, required := range []string{"Decision-gated TODOs", "SPDX identifier", "copyright holder", "approver", "approval date", "make license-decision-live-audit", "make license-decision-approval-gate", "rforge decisions --completion-audit TODO.md docs/todo-completion-audit.md"} {
+				if !strings.Contains(contributing, required) {
+					return writeError(stdout, stderr, opts, 1, "todo_completion_audit_failed", "CONTRIBUTING license workflow missing "+required)
+				}
+			}
+			contributingLicenseWorkflowVerified = true
+		}
+		if !strings.Contains(audit, item) {
+			missing = append(missing, item)
+		}
+	}
+	if len(missing) > 0 {
+		return writeError(stdout, stderr, opts, 1, "todo_completion_audit_failed", "completion audit does not cover unchecked TODO items: "+strings.Join(missing, "; "))
+	}
+	blockedDecisionIDs := []string{}
+	blockedIssueURLs := []string{}
+	for _, decision := range decisions {
+		if id, ok := decision["id"].(string); ok && id != "" {
+			blockedDecisionIDs = append(blockedDecisionIDs, id)
+		}
+		if issue, ok := decision["issue"].(string); ok && issue != "" {
+			blockedIssueURLs = append(blockedIssueURLs, issue)
+		}
+	}
+	blockedDecisions := len(blockedDecisionIDs)
+	if opts.JSON {
+		return writeJSON(stdout, 0, map[string]any{"covered": true, "line_refs_verified": true, "issue_refs_verified": true, "completion_audit_verified": true, "completion_audit_issue_refs_verified": true, "checked_evidence_verified": true, "quality_gate_verified": true, "license_todo_owner_inputs_verified": licenseTODOOwnerInputsVerified, "license_file_absent_when_blocked": licenseFileAbsentWhenBlocked, "license_decision_pending_verified": licenseDecisionPendingVerified, "license_decision_draft_owner_inputs_verified": licenseDecisionDraftOwnerInputsVerified, "license_decision_required_response_fields_verified": licenseDecisionRequiredResponseFieldsVerified, "license_owner_approval_absent_verified": licenseOwnerApprovalAbsentVerified, "readme_license_pending_verified": readmeLicensePendingVerified, "license_owner_inputs_verified": licenseOwnerInputsVerified, "license_owner_response_fields_verified": licenseOwnerResponseFieldsVerified, "license_options_verified": licenseOptionsVerified, "license_implementation_steps_verified": licenseImplementationStepsVerified, "license_issue_routing_verified": licenseIssueRoutingVerified, "license_issue_title_verified": licenseIssueTitleVerified, "remaining_todo_audit_verified": remainingTodoAuditVerified, "license_approval_gate_target_verified": licenseApprovalGateTargetVerified, "license_decision_brief_verified": licenseDecisionBriefVerified, "owner_decisions_license_section_verified": ownerDecisionsLicenseSectionVerified, "owner_decision_template_verified": ownerDecisionTemplateVerified, "owner_decision_template_response_fields_verified": ownerDecisionTemplateResponseFieldsVerified, "pr_license_gate_verified": prLicenseGateVerified, "contributing_license_workflow_verified": contributingLicenseWorkflowVerified, "unchecked_refs": uncheckedRefs, "completion_blocked": blockedDecisions > 0, "blocked_decisions": blockedDecisions, "blocked_decision_ids": blockedDecisionIDs, "blocked_issue_urls": blockedIssueURLs})
+	}
+	fmt.Fprintf(stdout, "unchecked TODO refs verified: %d\n", uncheckedRefs)
+	fmt.Fprintf(stdout, "completion remains blocked by %d decision(s)\n", blockedDecisions)
+	fmt.Fprintf(stdout, "blocked decision ids: %s\n", strings.Join(blockedDecisionIDs, ", "))
+	fmt.Fprintf(stdout, "blocked issue urls: %s\n", strings.Join(blockedIssueURLs, ", "))
+	if licenseTODOOwnerInputsVerified {
+		fmt.Fprintln(stdout, "license TODO owner inputs verified")
+	}
+	if licenseFileAbsentWhenBlocked {
+		fmt.Fprintln(stdout, "license file absent while owner decision pending")
+	}
+	if licenseDecisionPendingVerified {
+		fmt.Fprintln(stdout, "license decision remains pending")
+	}
+	if licenseDecisionDraftOwnerInputsVerified {
+		fmt.Fprintln(stdout, "license decision draft owner inputs verified")
+	}
+	if licenseDecisionRequiredResponseFieldsVerified {
+		fmt.Fprintln(stdout, "license decision required response fields verified")
+	}
+	if licenseOwnerApprovalAbsentVerified {
+		fmt.Fprintln(stdout, "license owner approval absent verified")
+	}
+	if readmeLicensePendingVerified {
+		fmt.Fprintln(stdout, "README license section remains pending")
+	}
+	if licenseOwnerInputsVerified {
+		fmt.Fprintln(stdout, "license owner inputs verified")
+	}
+	if licenseOwnerResponseFieldsVerified {
+		fmt.Fprintln(stdout, "license owner response fields verified")
+	}
+	if licenseOptionsVerified {
+		fmt.Fprintln(stdout, "license options verified")
+	}
+	if licenseImplementationStepsVerified {
+		fmt.Fprintln(stdout, "license implementation steps verified")
+	}
+	if licenseIssueRoutingVerified {
+		fmt.Fprintln(stdout, "license issue routing verified")
+	}
+	if licenseIssueTitleVerified {
+		fmt.Fprintln(stdout, "license issue title verified")
+	}
+	if remainingTodoAuditVerified {
+		fmt.Fprintln(stdout, "remaining TODO audit verified")
+	}
+	if licenseApprovalGateTargetVerified {
+		fmt.Fprintln(stdout, "license approval gate target verified")
+	}
+	if licenseDecisionBriefVerified {
+		fmt.Fprintln(stdout, "license decision brief verified")
+	}
+	if ownerDecisionsLicenseSectionVerified {
+		fmt.Fprintln(stdout, "owner decisions license section verified")
+	}
+	if ownerDecisionTemplateVerified {
+		fmt.Fprintln(stdout, "owner decision template verified")
+	}
+	if ownerDecisionTemplateResponseFieldsVerified {
+		fmt.Fprintln(stdout, "owner decision template response fields verified")
+	}
+	if prLicenseGateVerified {
+		fmt.Fprintln(stdout, "PR license gate verified")
+	}
+	if contributingLicenseWorkflowVerified {
+		fmt.Fprintln(stdout, "contributing license workflow verified")
+	}
+	fmt.Fprintln(stdout, "checked TODO evidence verified")
+	fmt.Fprintln(stdout, "quality gate verified")
+	fmt.Fprintln(stdout, "completion audit issue references verified")
+	fmt.Fprintln(stdout, "completion audit verified")
+	return 0
+}
+
+func hasNonPlaceholderDecisionValue(text, prefix string) bool {
+	for _, line := range strings.Split(text, "\n") {
+		line = strings.TrimSpace(line)
+		if !strings.HasPrefix(line, prefix) {
+			continue
+		}
+		value := strings.TrimSpace(strings.TrimPrefix(line, prefix))
+		if value != "" && !strings.HasPrefix(value, "<") {
+			return true
+		}
+	}
+	return false
 }
 
 func writeDecisionIssueBody(id string, decisions []map[string]any, stdout, stderr io.Writer, opts globalOptions) int {
@@ -263,16 +738,95 @@ func writeDecisionIssueBody(id string, decisions []map[string]any, stdout, stder
 		if decision["id"] != id {
 			continue
 		}
+		fmt.Fprintf(stdout, "# Owner decision issue: %s\n\n", decision["id"])
 		fmt.Fprintf(stdout, "## Decision ID\n\n%s\n\n", decision["id"])
+		if status, ok := decision["status"].(string); ok && status != "" {
+			fmt.Fprintf(stdout, "## Status\n\n%s\n\n", status)
+		}
+		if issue, ok := decision["issue"].(string); ok && issue != "" {
+			fmt.Fprintf(stdout, "## Tracking issue\n\n%s\n\n", issue)
+		}
+		if issueTitle, ok := decision["issue_title"].(string); ok && issueTitle != "" {
+			fmt.Fprintf(stdout, "Current issue title: `%s`\n\n", issueTitle)
+		}
+		issueLabels, hasIssueLabels := decision["issue_labels"].([]string)
+		milestone, hasMilestone := decision["milestone"].(string)
+		if hasIssueLabels || hasMilestone {
+			fmt.Fprint(stdout, "## Recommended issue routing\n\n")
+			if hasIssueLabels && len(issueLabels) > 0 {
+				fmt.Fprintf(stdout, "- Labels: `%s`\n", strings.Join(issueLabels, "`, `"))
+			}
+			if hasMilestone && milestone != "" {
+				fmt.Fprintf(stdout, "- Milestone: `%s`\n", milestone)
+			}
+			fmt.Fprintln(stdout)
+		}
 		fmt.Fprint(stdout, "## Blocked TODO items\n\n")
+		refs, _ := decision["todo_refs"].([]string)
 		if todos, ok := decision["todos"].([]string); ok {
-			for _, todo := range todos {
+			for i, todo := range todos {
+				if i < len(refs) && refs[i] != "" {
+					fmt.Fprintf(stdout, "- `%s` — %s\n", refs[i], todo)
+					continue
+				}
 				fmt.Fprintf(stdout, "- %s\n", todo)
 			}
 		}
-		fmt.Fprint(stdout, "\n## Options considered\n\n- \n")
-		fmt.Fprint(stdout, "## Decision\n\n- \n")
-		fmt.Fprint(stdout, "## Implementation steps after approval\n\n- \n")
+		fmt.Fprint(stdout, "\n## Options considered\n\n")
+		if options, ok := decision["options_considered"].([]string); ok && len(options) > 0 {
+			for _, option := range options {
+				fmt.Fprintf(stdout, "- %s.\n", option)
+			}
+		} else {
+			fmt.Fprint(stdout, "- \n")
+		}
+		fmt.Fprintln(stdout)
+		if decision["id"] == "project_license" {
+			fmt.Fprint(stdout, "## Owner inputs needed\n\n")
+			fmt.Fprint(stdout, "- License choice with SPDX identifier: `MIT`, `Apache-2.0`, `GPL-3.0-only`/`GPL-3.0-or-later`, `AGPL-3.0-only`/`AGPL-3.0-or-later`, `NOASSERTION`/all-rights-reserved note, or another named license.\n")
+			fmt.Fprint(stdout, "- Intended adoption model: academic, commercial, internal, or mixed.\n")
+			fmt.Fprint(stdout, "- Patent posture and contributor expectations.\n")
+			fmt.Fprint(stdout, "- Exact copyright holder string.\n")
+			fmt.Fprint(stdout, "- Whether dual licensing or a contributor license agreement is desired.\n\n")
+		} else if ownerInputs, ok := decision["owner_inputs"].([]string); ok && len(ownerInputs) > 0 {
+			fmt.Fprint(stdout, "## Owner inputs needed\n\n")
+			for _, input := range ownerInputs {
+				fmt.Fprintf(stdout, "- %s.\n", input)
+			}
+			fmt.Fprintln(stdout)
+		}
+		if ownerResponseFields, ok := decision["owner_response_required_fields"].([]string); ok && len(ownerResponseFields) > 0 {
+			fmt.Fprint(stdout, "## Required owner response fields\n\n")
+			for _, field := range ownerResponseFields {
+				fmt.Fprintf(stdout, "- %s\n", field)
+			}
+			fmt.Fprintln(stdout)
+		}
+		if decision["id"] == "project_license" {
+			fmt.Fprint(stdout, "## Owner response template\n\n```md\n## Decision\n- License SPDX identifier: <MIT | Apache-2.0 | GPL-3.0-only | GPL-3.0-or-later | AGPL-3.0-only | AGPL-3.0-or-later | NOASSERTION | other>\n- Copyright holder: <exact legal/name string>\n- Adoption model: <academic | commercial | internal | mixed>\n- Patent/contributor posture: <notes>\n- Dual licensing / CLA expectations: <none or details>\n- Approved by: <owner>\n- Approval date: <YYYY-MM-DD>\n```\n\n")
+		}
+		fmt.Fprint(stdout, "## Decision\n\n")
+		if decision["id"] == "project_license" {
+			fmt.Fprint(stdout, "- Pending owner selection.\n\n")
+		} else {
+			fmt.Fprint(stdout, "- \n")
+		}
+		fmt.Fprint(stdout, "## Implementation steps after approval\n\n")
+		if decision["id"] == "project_license" {
+			fmt.Fprint(stdout, "- Run `make license-decision-approval-gate` and require `approved:true`.\n")
+			fmt.Fprint(stdout, "- Add `LICENSE` with the approved SPDX license text and copyright holder.\n")
+			fmt.Fprint(stdout, "- Update `README.md` license section.\n")
+			fmt.Fprint(stdout, "- Update contribution guidance if contributor terms change.\n")
+			fmt.Fprint(stdout, "- Update `TODO.md` license checkbox.\n")
+			fmt.Fprint(stdout, "- Run `make check`.\n")
+			fmt.Fprint(stdout, "- Run `rforge decisions --completion-audit TODO.md docs/todo-completion-audit.md` if unchecked TODOs remain.\n")
+		} else if steps, ok := decision["implementation_steps"].([]string); ok && len(steps) > 0 {
+			for _, step := range steps {
+				fmt.Fprintf(stdout, "- %s.\n", step)
+			}
+		} else {
+			fmt.Fprint(stdout, "- Record the approved option, approver, date, and blocked TODO lines.\n- Implement only the TODO items approved by this decision.\n- Update TODO.md and docs/remaining-todo-audit.md.\n- Run `make check`.\n- Run `rforge decisions --completion-audit TODO.md docs/todo-completion-audit.md` if unchecked TODOs remain.\n")
+		}
 		return 0
 	}
 	return writeError(stdout, stderr, opts, 2, "unknown_decision", fmt.Sprintf("unknown decision %q", id))
@@ -1244,4 +1798,6 @@ func printHelp(w io.Writer) {
 	fmt.Fprintln(w, "  rforge project discover-assets")
 	fmt.Fprintln(w, "  rforge project inspect <path>")
 	fmt.Fprintln(w, "  rforge project list <root>")
+	fmt.Fprintln(w, "  rforge decisions --check TODO.md")
+	fmt.Fprintln(w, "  rforge decisions --completion-audit TODO.md docs/todo-completion-audit.md")
 }

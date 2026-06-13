@@ -2,7 +2,7 @@
 
 ## Status
 
-Accepted
+Superseded by [ADR 0006](0006-rescope-fyne-desktop-to-local-web-gui.md) for future UI direction.
 
 ## Context
 
@@ -12,15 +12,15 @@ Adding Fyne now would expand the dependency graph and CI/build requirements befo
 
 ## Decision
 
-ResearchForge will defer adding the Fyne dependency until the desktop build scope is owned. Until then:
+ResearchForge deferred adding the Fyne dependency until the desktop build scope was owned. ADR 0006 later re-scoped the primary UI to a local web GUI, and the Go + HTMX implementation slices have landed. Under the superseding decision:
 
 - core behavior stays in shared services;
 - `internal/ui` provides dependency-free view models;
-- `rforge ui` is a placeholder entry point;
-- Fyne package smoke checks are documented as deferred.
+- `internal/webui` adapts those models into local Go + HTMX screens;
+- the historical Fyne package smoke check remains documented as deferred.
 
 ## Consequences
 
 - CLI and service behavior can continue to harden without desktop dependency churn.
-- Fyne TODO items remain open until the build decision changes.
-- Future Fyne work should wire widgets to existing view models instead of duplicating core logic.
+- superseding Go + HTMX local web GUI TODO items are complete and covered by `make web-gui-smoke`.
+- Future primary UI work should follow ADR 0006 and wire web views to existing view models instead of duplicating core logic.

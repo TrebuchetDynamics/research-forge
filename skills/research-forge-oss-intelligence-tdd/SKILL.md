@@ -32,7 +32,7 @@ Use this skill for Milestone 2 OSS repository study workflows.
 6. License detection from repository files.
 7. Study-note template.
 8. `rforge oss report` markdown output.
-9. Fyne OSS dashboard view-model hook.
+9. web GUI OSS dashboard view-model hook.
 
 ## Verification gate
 

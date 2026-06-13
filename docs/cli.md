@@ -17,7 +17,11 @@ Core commands:
 - `rforge extraction schema add`, `rforge extract add|suggest`, `rforge evidence audit`
 - `rforge analysis prepare|run|export`
 - `rforge report build|audit`
-- `rforge decisions` lists owner/build decisions that intentionally block remaining TODO items
-- `rforge decisions --check TODO.md` verifies unchecked TODO items and line references are decision-covered
-- `rforge decisions --markdown` prints a review-friendly decision/evidence table
+- `rforge ui` reports the local Go + HTMX web GUI status; `rforge --json ui` exposes the selected stack and ready state from ADR 0006
+- `rforge decisions` lists owner decisions and implementation trackers that intentionally keep remaining TODO items open
+- `rforge decisions --check TODO.md` verifies unchecked TODO items, line references, and tracking issue references are decision/tracker-covered
+- `rforge decisions --completion-audit TODO.md docs/todo-completion-audit.md` verifies decision/tracker coverage plus the closeout prompt-to-artifact audit; JSON output includes `completion_blocked`, `blocked_decisions`, `blocked_decision_ids`, `license_owner_approval_absent_verified`, `license_owner_response_fields_verified`, `license_options_verified`, `license_issue_routing_verified`, `license_issue_title_verified`, and `remaining_todo_audit_verified` so automation does not treat covered TODOs as finished work
+- `rforge --json decisions` exposes blocker routing and choice metadata such as `issue_title`, `todo_refs`, `issue_labels`, `milestone`, `options_considered`, and `owner_response_required_fields` for owner-decision automation
+- `rforge decisions --markdown` prints a review-friendly decision/evidence table with routing/options metadata
 - `rforge decisions --issue-body <decision-id>` prints an owner-decision issue body scaffold
+- `make license-decision-live-audit` inspects live issue #1 approval fields; `make license-decision-approval-gate` passes only when the aggregate is `approved:true`

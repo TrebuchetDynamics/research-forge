@@ -40,7 +40,7 @@ Next slice: <dependent behavior>
 - Evidence -> `research-forge-evidence-extraction-tdd`.
 - Analysis -> `research-forge-meta-analysis-tdd`.
 - Reports -> `research-forge-reporting-tdd`.
-- Fyne UI -> `research-forge-fyne-ui-tdd`.
+- web GUI -> `research-forge-web-ui-tdd`.
 - Data/privacy/compatibility -> `research-forge-data-governance-tdd`.
 - Security/quality -> `research-forge-quality-security-tdd`.
 - Performance -> `research-forge-performance-tdd`.

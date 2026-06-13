@@ -5,12 +5,12 @@ body:
   - type: markdown
     attributes:
       value: |
-        Use this for decision-gated TODOs such as project license selection or Fyne desktop build scope.
+        Use this for decision-gated TODOs such as project license selection or future owner-scoped changes.
   - type: input
     id: decision_id
     attributes:
       label: Decision ID
-      description: Example: project_license or fyne_desktop_build_scope
+      description: Example: project_license or another owner-scoped decision ID
     validations:
       required: true
   - type: textarea
@@ -25,6 +25,20 @@ body:
     attributes:
       label: Options considered
       description: Summarize viable choices and trade-offs.
+    validations:
+      required: true
+  - type: textarea
+    id: owner_inputs
+    attributes:
+      label: Owner inputs needed
+      description: For project_license, include SPDX identifier, exact copyright holder, adoption model, patent/contributor posture, and any dual licensing or CLA expectations.
+    validations:
+      required: true
+  - type: textarea
+    id: owner_response_required_fields
+    attributes:
+      label: Required owner response fields
+      description: For project_license, include License SPDX identifier, Copyright holder, Approved by, and Approval date.
     validations:
       required: true
   - type: textarea

@@ -6,7 +6,7 @@ The command-line tool is **`rforge`**.
 
 > Retrieval-first, provenance-first, statistics-first, LLM-assisted.
 
-ResearchForge is intended to help researchers discover papers, map citation graphs, screen literature, extract evidence, run meta-analyses, generate auditable reports, and maintain a local knowledge base of relevant open-source research tooling.
+ResearchForge is intended to help researchers discover papers, map citation graphs, screen literature, extract evidence, run meta-analyses, generate auditable reports, visualize CLI-generated papers/diagrams/statistical artifacts locally, and maintain a local knowledge base of relevant open-source research tooling.
 
 ## Status
 
@@ -24,7 +24,7 @@ See [RESEARCH-FORGE-PRD.md](./RESEARCH-FORGE-PRD.md) for the full product requir
 - Evidence extraction linked to source passages
 - Meta-analysis and statistical reporting
 - Reproducible research reports with audit trails
-- CLI and Fyne desktop interfaces
+- CLI and local web GUI interfaces
 - Continuous study of relevant open-source scholarly tooling
 
 ## Target users
@@ -51,14 +51,14 @@ Research question / domain query
   -> Evidence extraction
   -> Meta-analysis/statistics
   -> Report generator
-  -> CLI + Fyne desktop UI
+  -> CLI + local web GUI
 ```
 
 ## Planned MVP stack
 
 - **Language:** Go
 - **CLI:** `rforge`, currently using a standard-library parser while the command surface stabilizes
-- **Desktop UI:** Fyne deferred until desktop build scope is owned; dependency-free view models are available
+- **Local web GUI:** Go + HTMX local research cockpit launched by `rforge ui` for project review, artifact navigation, guided local actions, and embedded visualization libraries where needed
 - **Database:** SQLite-first local storage, with a PostgreSQL adapter seam prepared for later
 - **Search:** local retrieval index first; OpenSearch/Qdrant remain optional future adapter seams
 - **Vector database:** Qdrant planned as an optional adapter seam
@@ -98,8 +98,8 @@ ResearchForge should not be an opaque AI answer machine. It should be a scientif
 
 ## License
 
-No license has been selected yet. This is an owner decision tracked in [docs/owner-decisions.md](docs/owner-decisions.md); `rforge decisions` lists the currently blocked decisions.
+No license has been selected yet. This is an owner decision tracked in issue #1 and [docs/owner-decisions.md](docs/owner-decisions.md); `rforge decisions` lists the currently blocked decisions. The remaining owner inputs are the license choice and exact copyright holder string; the required owner response fields are the license SPDX identifier, approver, and approval date. Run `make license-decision-live-audit` to inspect issue #1 and `make license-decision-approval-gate` before adding `LICENSE`.
 
 ## Decision-gated scope
 
-Fyne desktop delivery is currently deferred until the desktop build scope is approved (see ADR 0005). Run `make todo-audit` to verify that remaining unchecked `TODO.md` items are covered by owner/build decisions, or `make decisions-markdown` for a review-friendly blocker table.
+Local web GUI delivery now targets Go + HTMX; the implementation tracker is recorded in issue #2 and ADR 0006. Run `make todo-audit` to verify that remaining unchecked `TODO.md` items are covered by owner decisions, `make todo-completion-audit` for the closeout prompt-to-artifact checklist, or `make decisions-markdown` for a review-friendly blocker table.

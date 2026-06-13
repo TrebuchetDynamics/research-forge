@@ -33,7 +33,7 @@ Use this skill for Milestone 6 statistical analysis work.
 7. Funnel plot artifact registration.
 8. Heterogeneity metric parsing.
 9. Sensitivity-analysis scaffold.
-10. Fyne analysis view model.
+10. web GUI analysis view model.
 
 ## Verification gate
 

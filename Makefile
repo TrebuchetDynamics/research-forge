@@ -1,4 +1,4 @@
-.PHONY: fmt test vet vuln check decisions decisions-markdown decision-issues todo-audit build-release checksums sbom install-smoke fyne-smoke external-e2e-artificial-photosynthesis
+.PHONY: fmt test vet vuln check decisions decisions-markdown decision-issues todo-audit todo-completion-audit license-decision-live-audit license-decision-approval-gate build-release checksums sbom install-smoke web-gui-smoke external-e2e-artificial-photosynthesis
 
 fmt:
 	gofmt -w cmd internal
@@ -12,7 +12,7 @@ vet:
 vuln:
 	govulncheck ./...
 
-check: test vet todo-audit
+check: test vet todo-completion-audit
 	git diff --check
 
 decisions:
@@ -23,11 +23,19 @@ decisions-markdown:
 
 decision-issues:
 	go run ./cmd/rforge decisions --issue-body project_license
-	go run ./cmd/rforge decisions --issue-body fyne_desktop_build_scope
 
 todo-audit: decisions
 	go run ./cmd/rforge decisions --check TODO.md
 	grep -n "\\[ \\]" TODO.md
+
+todo-completion-audit: decisions
+	go run ./cmd/rforge decisions --completion-audit TODO.md docs/todo-completion-audit.md
+
+license-decision-live-audit:
+	gh issue view 1 --json title,state,body,comments,labels,milestone --jq 'def text: ([.body] + [.comments[].body]) | join("\n---\n"); def has_spdx: (text | test("License SPDX identifier: (MIT|Apache-2\\.0|GPL-3\\.0-(only|or-later)|AGPL-3\\.0-(only|or-later)|NOASSERTION)")); def has_holder: (text | test("Copyright holder: [^<\\n][^\\n]+")); def has_approver: (text | test("Approved by: [^<\\n][^\\n]+")); def has_date: (text | test("Approval date: [0-9]{4}-[0-9]{2}-[0-9]{2}")); {title, state, labels: [.labels[].name], milestone: (.milestone.title // null), has_spdx: has_spdx, has_holder: has_holder, has_approver: has_approver, has_date: has_date, approved: (has_spdx and has_holder and has_approver and has_date)}'
+
+license-decision-approval-gate:
+	@$(MAKE) -s license-decision-live-audit | grep -q '"approved":true' || (echo "license decision approval missing: issue #1 must report approved:true" >&2; exit 1)
 
 build-release:
 	mkdir -p dist
@@ -45,8 +53,8 @@ install-smoke:
 	go run ./cmd/rforge --help >/dev/null
 	go run ./cmd/rforge version >/dev/null
 
-fyne-smoke:
-	@echo "Fyne packaging deferred until Fyne build decision lands"
+web-gui-smoke:
+	go test ./internal/webui
 
 external-e2e-artificial-photosynthesis:
 	RFORGE_EXTERNAL_E2E_DIR=/home/xel/git/artificial-photosynthesis go test ./internal/cli -run TestExternalE2EArtificialPhotosynthesisWorkspace -count=1 -v

@@ -28,11 +28,11 @@ Production code changes that skip the red step are not accepted unless they are 
 | [`research-forge-evidence-extraction-tdd`](./skills/research-forge-evidence-extraction-tdd/SKILL.md) | Extraction schemas, evidence tables, source links, validation states, LLM suggestions |
 | [`research-forge-meta-analysis-tdd`](./skills/research-forge-meta-analysis-tdd/SKILL.md) | Effect sizes, R/metafor adapter, analysis inputs, plots, heterogeneity, reproducibility |
 | [`research-forge-reporting-tdd`](./skills/research-forge-reporting-tdd/SKILL.md) | Markdown/HTML/LaTeX reports, PRISMA diagrams, evidence/citation tables, audit appendix |
-| [`research-forge-fyne-ui-tdd`](./skills/research-forge-fyne-ui-tdd/SKILL.md) | Fyne desktop UI screens, view models, background jobs, CLI/UI parity |
+| [`research-forge-web-ui-tdd`](./skills/research-forge-web-ui-tdd/SKILL.md) | Local web GUI screens, artifact visualizations, view models, background jobs, CLI/UI parity |
 | [`research-forge-data-governance-tdd`](./skills/research-forge-data-governance-tdd/SKILL.md) | Schemas, migrations, archives, privacy defaults, copyright/OA policy, provenance retention, compatibility |
 | [`research-forge-quality-security-tdd`](./skills/research-forge-quality-security-tdd/SKILL.md) | Threat modeling, secrets, path safety, external commands, fuzzing, dependency scans, CI hardening |
 | [`research-forge-performance-tdd`](./skills/research-forge-performance-tdd/SKILL.md) | Benchmarks, large-library performance, indexing throughput, caching, UI responsiveness, memory use |
-| [`research-forge-release-packaging-tdd`](./skills/research-forge-release-packaging-tdd/SKILL.md) | Versioning, cross-platform builds, Fyne packaging, checksums, install smoke tests, release notes |
+| [`research-forge-release-packaging-tdd`](./skills/research-forge-release-packaging-tdd/SKILL.md) | Versioning, cross-platform builds, web GUI packaging, checksums, install smoke tests, release notes |
 | [`research-forge-developer-docs-tdd`](./skills/research-forge-developer-docs-tdd/SKILL.md) | CLI docs, architecture docs, ADR index, contributor guides, examples, tutorials, generated help |
 
 ## Recommended usage order
@@ -44,7 +44,7 @@ Production code changes that skip the red step are not accepted unless they are 
 5. Scholarly ingestion TDD and OSS intelligence TDD for Milestones 1-2.
 6. Document pipeline TDD, screening TDD, and evidence extraction TDD for Milestones 3-5.
 7. Meta-analysis TDD and reporting TDD for Milestones 6-7.
-8. Fyne UI TDD alongside each milestone for parity.
+8. Web GUI TDD alongside each milestone for parity.
 9. Data governance, quality/security, performance, docs, and release skills whenever the slice crosses those concerns.
 
 ## Development handoff format

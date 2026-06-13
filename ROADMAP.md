@@ -4,7 +4,7 @@ ResearchForge will be built as a sequence of test-first vertical milestones. Eac
 
 > Retrieval-first, provenance-first, statistics-first, LLM-assisted.
 
-Decision-gated roadmap items are tracked through `rforge decisions`, `docs/owner-decisions.md`, and `docs/remaining-todo-audit.md`. Fyne desktop delivery is deferred by ADR 0005 until desktop build scope is owned; dependency-free view models are available meanwhile.
+Decision-gated roadmap items are tracked through `rforge decisions`, `docs/owner-decisions.md`, and `docs/remaining-todo-audit.md`. Fyne desktop delivery has been re-scoped to a Go + HTMX local research cockpit by ADR 0006. Dependency-free view models are available for cockpit pages and guided local actions.
 
 ## Release stages
 
@@ -13,11 +13,11 @@ Decision-gated roadmap items are tracked through `rforge decisions`, `docs/owner
 | Pre-alpha | Prove project, CLI, provenance, and metadata-library foundation | Developers can create projects and search/store scholarly metadata |
 | Alpha | Complete end-to-end review workflow on fixtures/open data | Users can search, dedupe, screen, extract evidence, and build reports on controlled data |
 | Beta | Real-world open-access parsing and meta-analysis | Researchers can run a full MVP workflow with legal OA papers and auditable analysis |
-| 1.0 | Stable reproducible research engine | Project format, CLI workflows, Fyne UI, docs, and release process are stable enough for broad use |
+| 1.0 | Stable reproducible research engine | Project format, CLI workflows, web GUI, docs, and release process are stable enough for broad use |
 
 ## Milestone 0 — Foundation
 
-**Goal:** establish the Go application foundation, `rforge` CLI, Fyne shell, local project model, storage, provenance, and validation pipeline.
+**Goal:** establish the Go application foundation, `rforge` CLI, web GUI shell, local project model, storage, provenance, and validation pipeline.
 
 **Major deliverables:**
 
@@ -28,7 +28,7 @@ Decision-gated roadmap items are tracked through `rforge decisions`, `docs/owner
 - SQLite local storage foundation
 - Append-only provenance event log
 - `rforge doctor`
-- Fyne app shell and dashboard placeholder
+- local web GUI launcher, dashboard placeholder, and generated-artifact placeholder
 - CI for formatting, tests, vetting, and vulnerability checks
 
 **Exit criteria:**
@@ -36,7 +36,7 @@ Decision-gated roadmap items are tracked through `rforge decisions`, `docs/owner
 - `rforge project create` creates a usable local project.
 - Project contains manifest, lockfile, database, and event log.
 - `rforge doctor --json` reports local readiness.
-- Fyne app starts and opens a project placeholder.
+- `rforge ui` starts a local web server and opens a project placeholder.
 
 ## Milestone 1 — Scholarly metadata and library MVP
 
@@ -53,7 +53,7 @@ Decision-gated roadmap items are tracked through `rforge decisions`, `docs/owner
 - DOI/arXiv/title-author-year deduplication
 - BibTeX/RIS/CSV/JSON import and export
 - CLI search/import/export/library commands
-- Fyne search and library screens
+- web GUI search and library screens
 
 **Exit criteria:**
 
@@ -72,13 +72,13 @@ Decision-gated roadmap items are tracked through `rforge decisions`, `docs/owner
 - `rforge oss add/list/clone/license-check/note/report`
 - License and risk metadata
 - Study-note templates
-- Fyne OSS dashboard
+- web GUI OSS dashboard
 
 **Exit criteria:**
 
 - User can catalog and shallow-clone repositories without committing clones.
 - Repository notes, licenses, risks, and integration findings are committed as metadata.
-- Fyne can display studied repositories.
+- web GUI can display studied repositories.
 
 ## Milestone 3 — Full-text acquisition, parsing, and retrieval
 
@@ -94,7 +94,7 @@ Decision-gated roadmap items are tracked through `rforge decisions`, `docs/owner
 - Local full-text index MVP
 - Optional OpenSearch/Qdrant adapter seams
 - `rforge pdf fetch`, `rforge parse`, `rforge index`, `rforge retrieve`
-- Fyne PDF/section/passages view
+- web GUI PDF/section/passages view
 
 **Exit criteria:**
 
@@ -116,7 +116,7 @@ Decision-gated roadmap items are tracked through `rforge decisions`, `docs/owner
 - PRISMA counts from stored state/events
 - CSV screening import/export
 - Active-learning prioritization scaffold
-- Fyne screening queue and decision panel
+- web GUI screening queue and decision panel
 
 **Exit criteria:**
 
@@ -137,7 +137,7 @@ Decision-gated roadmap items are tracked through `rforge decisions`, `docs/owner
 - Validation states: suggested, accepted, rejected, corrected
 - LLM suggestion adapter behind explicit configuration
 - Evidence export to CSV/JSON/Markdown
-- Fyne evidence table and source-link view
+- web GUI evidence table and source-link view
 
 **Exit criteria:**
 
@@ -160,7 +160,7 @@ Decision-gated roadmap items are tracked through `rforge decisions`, `docs/owner
 - Heterogeneity metrics
 - Sensitivity-analysis scaffold
 - CLI analysis commands
-- Fyne analysis setup/results view
+- web GUI analysis setup/results view for CLI-generated meta-analysis artifacts
 
 **Exit criteria:**
 
@@ -182,7 +182,7 @@ Decision-gated roadmap items are tracked through `rforge decisions`, `docs/owner
 - PRISMA diagram/summary
 - Analysis result sections
 - Audit appendix
-- Fyne report builder/export flow
+- web GUI report/artifact browser for CLI-generated reports, PRISMA diagrams, citation diagrams, and analysis plots
 
 **Exit criteria:**
 
@@ -208,7 +208,7 @@ Report can answer:
 - Example open-data project
 - Project archive/restore
 - Cross-platform CLI builds
-- Fyne packaging smoke tests
+- web GUI local-server/static-build smoke tests after stack selection
 - Checksums and release notes
 
 **Exit criteria:**
@@ -243,13 +243,14 @@ Report can answer:
 
 - Implement behavior in shared Go services.
 - Validate via CLI first where practical.
-- Add Fyne view models and screens without duplicating business logic.
+- Add local web GUI view models, artifact APIs, and screens without duplicating business logic.
 
 ### Quality and release
 
 - Keep CI green from Milestone 0 onward.
 - Add security and performance checks as workflows mature.
 - Publish releases only after explicit owner approval.
+- Treat `TODO.md:34` as the current release blocker until `make license-decision-live-audit` and `make license-decision-approval-gate` show `approved:true` for the project license decision.
 
 ## First execution slice
 

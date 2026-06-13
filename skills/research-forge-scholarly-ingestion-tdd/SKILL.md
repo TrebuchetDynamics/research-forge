@@ -35,7 +35,7 @@ Required loop for every production change:
 7. Unpaywall OA lookup.
 8. DOI/arXiv/title-author-year dedupe.
 9. BibTeX/CSV/JSON import/export.
-10. Fyne library/search view-model hooks.
+10. web GUI library/search view-model hooks.
 
 ## Verification gate
 
