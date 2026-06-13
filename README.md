@@ -98,7 +98,7 @@ ResearchForge should not be an opaque AI answer machine. It should be a scientif
 
 ## License
 
-No license has been selected yet. This is an owner decision tracked in issue #1 and [docs/owner-decisions.md](docs/owner-decisions.md); `rforge decisions` lists the currently blocked decisions. The remaining owner inputs are the license choice and exact copyright holder string; the required owner response fields are the license SPDX identifier, approver, and approval date. Run `make license-decision-live-audit` to inspect issue #1 and `make license-decision-approval-gate` before adding `LICENSE`.
+ResearchForge is licensed under the MIT License (SPDX: `MIT`), Copyright (c) 2026 Trebuchet Dynamics. See [LICENSE](LICENSE) for the full text. The license was selected by the repository owner on 2026-06-13; the decision record is tracked in issue #1 and [docs/owner-decisions.md](docs/owner-decisions.md).
 
 ## Decision-gated scope
 

@@ -1,6 +1,16 @@
 # License decision brief
 
-ResearchForge does not currently have a project license. Until an owner selects one, the repository should be treated as all-rights-reserved by default.
+## Decision recorded (2026-06-13)
+
+ResearchForge is licensed under the **MIT License** (SPDX: `MIT`), Copyright (c)
+2026 Trebuchet Dynamics, approved by the repository owner (XelHaku) on issue #1.
+`make license-decision-approval-gate` reports `approved:true`, `LICENSE` carries
+the MIT text, and the `README.md` license section names the license. The brief
+below is retained as the rationale and process record for that decision.
+
+## Background
+
+Before the decision, ResearchForge had no project license and the repository was treated as all-rights-reserved by default.
 
 ## Common options
 

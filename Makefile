@@ -26,7 +26,7 @@ decision-issues:
 
 todo-audit: decisions
 	go run ./cmd/rforge decisions --check TODO.md
-	grep -n "\\[ \\]" TODO.md
+	@grep -n "\\[ \\]" TODO.md || echo "no unchecked TODO items remain"
 
 todo-completion-audit: decisions
 	go run ./cmd/rforge decisions --completion-audit TODO.md docs/todo-completion-audit.md

@@ -12,36 +12,38 @@ make decision-issues
 rforge decisions --issue-body project_license
 ```
 
-Prefilled drafts are also stored in:
+Resolved decision and implementation tracker records are stored in:
 
 - [decisions/project_license_issue.md](decisions/project_license_issue.md)
-
-Resolved implementation tracker records are stored in:
-
 - [decisions/web_gui_stack_scope_issue.md](decisions/web_gui_stack_scope_issue.md)
 
-Open tracking issues:
-
-- [#1 Owner decision: project_license (SPDX, copyright holder, approver, date required)](https://github.com/TrebuchetDynamics/research-forge/issues/1)
+No owner decisions currently block the TODO checklist. The owner-decision
+workflow above (issues opened with status `owner_decision_required`, the
+`owner_response_required_fields`, `license_owner_response_fields_verified`,
+`license_options_verified`, and `license_issue_routing_verified` audit signals)
+remains available for any future blocker.
 
 ## Project license
 
 Decision ID: `project_license`
 
-Status: `owner_decision_required`
+Status: `resolved`
 
 Tracking issue: [#1 Owner decision: project_license (SPDX, copyright holder, approver, date required)](https://github.com/TrebuchetDynamics/research-forge/issues/1)
 
-`TODO.md`: Add license after owner decision.
+`TODO.md`: Add license after owner decision (resolved).
 
-Decision needed:
+Decision recorded (2026-06-13):
 
-- choose a project license (for example MIT, Apache-2.0, GPL-family, source-available, or no public license yet);
-- confirm copyright holder text;
-- record the approving owner and approval date;
-- update `README.md` license section and add `LICENSE` if a license is selected.
+- License SPDX identifier: MIT;
+- Copyright holder: Trebuchet Dynamics;
+- Approved by: XelHaku (repository owner);
+- Approval date: 2026-06-13.
 
-See [license-decision.md](license-decision.md) for option trade-offs and implementation steps.
+The owner approved MIT on issue #1; `make license-decision-approval-gate`
+reports `approved:true`. `LICENSE` and the `README.md` license section name the
+MIT License and SPDX identifier. See [license-decision.md](license-decision.md)
+for the option trade-offs that informed the decision.
 
 ## Local web GUI stack and scope
 

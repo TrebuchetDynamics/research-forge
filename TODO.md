@@ -31,7 +31,7 @@ See also:
 - [x] Add pull request template with TDD receipt section.
 - [x] Add contribution guide.
 - [x] Add code of conduct if public contributions are expected.
-- [ ] Add license after owner decision. _(Owner decision required; see issue #1, `docs/owner-decisions.md`, and `rforge decisions`; requires SPDX identifier, exact copyright holder, approver, approval date, and `make license-decision-approval-gate` with `approved:true`.)_
+- [x] Add license after owner decision. _(Resolved 2026-06-13: MIT, Copyright (c) 2026 Trebuchet Dynamics; approved by owner in issue #1, `make license-decision-approval-gate` reports `approved:true`; see `LICENSE`, `docs/license-decision.md`, and `docs/owner-decisions.md`.)_
 - [x] Add `CONTEXT.md` glossary when first domain terms are finalized.
 - [x] Add `docs/adr/` and ADR index when first ADR is accepted.
 - [x] Reconcile PRD `rforge.project.yaml` example with current `rforge.project.toml` implementation via ADR or PRD update.

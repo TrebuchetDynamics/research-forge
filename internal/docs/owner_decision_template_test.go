@@ -18,7 +18,7 @@ func TestNoFyneDependencyAfterWebGUIRescope(t *testing.T) {
 	}
 }
 
-func TestLicenseTODOIdentifiesRequiredOwnerInputs(t *testing.T) {
+func TestLicenseTODOReferencesResolutionArtifacts(t *testing.T) {
 	root := filepath.Join("..", "..")
 	data, err := os.ReadFile(filepath.Join(root, "TODO.md"))
 	if err != nil {
@@ -27,26 +27,34 @@ func TestLicenseTODOIdentifiesRequiredOwnerInputs(t *testing.T) {
 	var licenseLine string
 	for _, line := range strings.Split(string(data), "\n") {
 		if strings.Contains(line, "Add license after owner decision") {
-			licenseLine = line
+			licenseLine = strings.TrimSpace(line)
 			break
 		}
 	}
 	if licenseLine == "" {
 		t.Fatalf("missing license TODO")
 	}
-	for _, want := range []string{"SPDX", "copyright holder", "issue #1"} {
+	if !strings.HasPrefix(licenseLine, "- [x] ") {
+		t.Fatalf("license TODO is not resolved: %s", licenseLine)
+	}
+	for _, want := range []string{"MIT", "Trebuchet Dynamics", "issue #1", "LICENSE"} {
 		if !strings.Contains(licenseLine, want) {
-			t.Fatalf("license TODO missing %q: %s", want, licenseLine)
+			t.Fatalf("resolved license TODO missing %q: %s", want, licenseLine)
 		}
 	}
 }
 
-func TestNoLicenseFileUntilOwnerDecision(t *testing.T) {
+func TestLicenseFilePresentAfterOwnerDecision(t *testing.T) {
 	root := filepath.Join("..", "..")
-	if _, err := os.Stat(filepath.Join(root, "LICENSE")); err == nil {
-		t.Fatalf("LICENSE exists but TODO.md still says license requires owner decision")
-	} else if !os.IsNotExist(err) {
-		t.Fatalf("stat LICENSE: %v", err)
+	data, err := os.ReadFile(filepath.Join(root, "LICENSE"))
+	if err != nil {
+		t.Fatalf("LICENSE missing after owner license decision: %v", err)
+	}
+	text := string(data)
+	for _, want := range []string{"MIT License", "Trebuchet Dynamics", "2026"} {
+		if !strings.Contains(text, want) {
+			t.Fatalf("LICENSE missing %q", want)
+		}
 	}
 }
 
@@ -155,7 +163,7 @@ func TestReadmeLinksLicenseDecisionTracking(t *testing.T) {
 		t.Fatalf("read README: %v", err)
 	}
 	text := string(data)
-	for _, want := range []string{"No license has been selected yet", "issue #1", "docs/owner-decisions.md", "rforge decisions", "license choice", "copyright holder string", "approver", "approval date", "make license-decision-live-audit", "make license-decision-approval-gate", "Decision-gated scope", "issue #2", "ADR 0006", "make todo-audit", "make todo-completion-audit", "make decisions-markdown"} {
+	for _, want := range []string{"MIT License", "SPDX", "Trebuchet Dynamics", "LICENSE", "issue #1", "docs/owner-decisions.md", "Decision-gated scope", "issue #2", "ADR 0006", "make todo-audit", "make todo-completion-audit", "make decisions-markdown"} {
 		if !strings.Contains(text, want) {
 			t.Fatalf("README license section missing %q", want)
 		}
@@ -342,19 +350,17 @@ func TestOwnerDecisionIssueTemplateSupportsRemainingDecisionIDs(t *testing.T) {
 		"project_license_issue.md": {
 			"Decision ID",
 			"project_license",
-			"owner_decision_required",
+			"resolved",
 			"https://github.com/TrebuchetDynamics/research-forge/issues/1",
 			"Owner decision: project_license (SPDX, copyright holder, approver, date required)",
-			"Blocked TODO items",
+			"Resolved TODO items",
 			"TODO.md:34",
 			"Add license after owner decision",
 			"Options considered",
-			"Owner inputs needed",
-			"copyright holder string",
-			"Owner response template",
+			"MIT",
+			"Trebuchet Dynamics",
 			"Approved by",
 			"Approval date",
-			"Implementation steps after approval",
 			"make license-decision-approval-gate",
 			"make check",
 			"rforge decisions --completion-audit TODO.md docs/todo-completion-audit.md",

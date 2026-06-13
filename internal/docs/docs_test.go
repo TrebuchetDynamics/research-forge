@@ -138,7 +138,7 @@ func TestUncheckedTodosPointToDecisionCommands(t *testing.T) {
 	}
 }
 
-func TestLicenseTodoNamesRequiredOwnerApprovalFields(t *testing.T) {
+func TestLicenseTodoRecordsOwnerResolution(t *testing.T) {
 	root := filepath.Join("..", "..")
 	data, err := os.ReadFile(filepath.Join(root, "TODO.md"))
 	if err != nil {
@@ -146,17 +146,17 @@ func TestLicenseTodoNamesRequiredOwnerApprovalFields(t *testing.T) {
 	}
 	for _, line := range strings.Split(string(data), "\n") {
 		line = strings.TrimSpace(line)
-		if !strings.HasPrefix(line, "- [ ] ") || !strings.Contains(line, "Add license after owner decision") {
+		if !strings.HasPrefix(line, "- [x] ") || !strings.Contains(line, "Add license after owner decision") {
 			continue
 		}
-		for _, want := range []string{"SPDX identifier", "exact copyright holder", "approver", "approval date", "make license-decision-approval-gate", "approved:true"} {
+		for _, want := range []string{"Resolved", "MIT", "Trebuchet Dynamics", "approved", "#1", "make license-decision-approval-gate", "approved:true"} {
 			if !strings.Contains(line, want) {
-				t.Fatalf("license TODO missing required owner approval field %q: %s", want, line)
+				t.Fatalf("resolved license TODO missing %q: %s", want, line)
 			}
 		}
 		return
 	}
-	t.Fatalf("unchecked license TODO not found")
+	t.Fatalf("resolved license TODO not found")
 }
 
 func TestUncheckedTodosReferenceTrackingIssues(t *testing.T) {
@@ -186,7 +186,7 @@ func TestRemainingTodoAuditDocumentsExecutableAuditCommand(t *testing.T) {
 		t.Fatalf("read remaining audit: %v", err)
 	}
 	audit := string(auditData)
-	for _, want := range []string{"make todo-audit", "make todo-completion-audit", "make license-decision-live-audit", "approved", "completion_blocked", "blocked_decisions", "blocked_decision_ids", "license_decision_required_response_fields_verified", "license_owner_approval_absent_verified", "license_owner_response_fields_verified", "owner_decision_template_response_fields_verified", "license_options_verified", "license_issue_routing_verified", "license_issue_title_verified", "remaining_todo_audit_verified", "verify decision line references", "verify tracking issue references", "Prompt-to-artifact checklist", "decision-resolution-checklist.md", "go test ./...", "go vet ./...", "git diff --check"} {
+	for _, want := range []string{"make todo-audit", "make todo-completion-audit", "make license-decision-live-audit", "make license-decision-approval-gate", "approved:true", "completion_blocked", "blocked_decisions", "blocked_decision_ids", "license_resolution_verified", "verify decision line references", "verify tracking issue references", "Prompt-to-artifact checklist", "decision-resolution-checklist.md", "go test ./...", "go vet ./...", "git diff --check"} {
 		if !strings.Contains(audit, want) {
 			t.Fatalf("remaining TODO audit missing %q", want)
 		}
@@ -247,17 +247,13 @@ func TestTodoCompletionAuditMapsObjectiveToEvidence(t *testing.T) {
 		"make check",
 		"make license-decision-live-audit",
 		"make license-decision-approval-gate",
-		"approved:false",
+		"approved:true",
 		"rforge decisions --check TODO.md",
 		"rforge decisions --completion-audit TODO.md docs/todo-completion-audit.md",
 		"completion_blocked",
 		"blocked_decisions",
 		"blocked_decision_ids",
-		"license_decision_required_response_fields_verified",
-		"license_owner_response_fields_verified",
-		"owner_decision_template_response_fields_verified",
-		"license_options_verified",
-		"license_issue_routing_verified",
+		"license_resolution_verified",
 		"web-gui-smoke",
 		"internal/webui",
 		"web/assets/researchforge.css",
@@ -276,14 +272,14 @@ func TestTodoCompletionAuditMapsObjectiveToEvidence(t *testing.T) {
 	}
 }
 
-func TestReadmeLicenseSectionNamesRequiredOwnerResponseFields(t *testing.T) {
+func TestReadmeLicenseSectionNamesResolvedLicense(t *testing.T) {
 	root := filepath.Join("..", "..")
 	data, err := os.ReadFile(filepath.Join(root, "README.md"))
 	if err != nil {
 		t.Fatalf("read README.md: %v", err)
 	}
 	text := string(data)
-	for _, want := range []string{"No license has been selected yet", "license choice", "copyright holder string", "license SPDX identifier", "approver", "approval date"} {
+	for _, want := range []string{"MIT License", "SPDX", "Trebuchet Dynamics", "LICENSE"} {
 		if !strings.Contains(text, want) {
 			t.Fatalf("README license section missing %q", want)
 		}

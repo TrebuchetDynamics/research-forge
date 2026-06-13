@@ -98,63 +98,18 @@ func TestExecuteDecisionsCheckTODO(t *testing.T) {
 	}
 }
 
-func TestExecuteDecisionsIssueBodyForLicenseDecisionIncludesBlockedItem(t *testing.T) {
-	stdout := new(bytes.Buffer)
-	stderr := new(bytes.Buffer)
+func TestExecuteDecisionsIssueBodyRejectsResolvedDecisions(t *testing.T) {
+	for _, id := range []string{"project_license", "web_gui_stack_scope"} {
+		stdout := new(bytes.Buffer)
+		stderr := new(bytes.Buffer)
 
-	code := Execute([]string{"decisions", "--issue-body", "project_license"}, stdout, stderr)
-	if code != 0 {
-		t.Fatalf("exit code = %d, stderr = %s", code, stderr.String())
-	}
-	for _, want := range []string{"project_license", "owner_decision_required", "https://github.com/TrebuchetDynamics/research-forge/issues/1", "Recommended issue routing", "Labels", "decision", "owner-input-needed", "Milestone", "Owner decisions", "Add license after owner decision", "Options considered", "MIT", "Apache-2.0", "No public license yet", "Required owner response fields", "Owner response template", "License SPDX identifier", "Approved by", "Approval date", "Pending owner selection", "Implementation steps after approval", "make check", "rforge decisions --completion-audit TODO.md docs/todo-completion-audit.md"} {
-		if !strings.Contains(stdout.String(), want) {
-			t.Fatalf("license issue body missing %q:\n%s", want, stdout.String())
+		code := Execute([]string{"decisions", "--issue-body", id}, stdout, stderr)
+		if code == 0 {
+			t.Fatalf("expected non-zero exit for resolved decision %q", id)
 		}
-	}
-}
-
-func TestExecuteDecisionsIssueBodyRejectsCompletedWebGUITracker(t *testing.T) {
-	stdout := new(bytes.Buffer)
-	stderr := new(bytes.Buffer)
-
-	code := Execute([]string{"decisions", "--issue-body", "web_gui_stack_scope"}, stdout, stderr)
-	if code == 0 {
-		t.Fatalf("expected non-zero exit for completed tracker")
-	}
-	if !strings.Contains(stderr.String(), "unknown decision") || !strings.Contains(stderr.String(), "web_gui_stack_scope") {
-		t.Fatalf("stderr missing completed tracker rejection: %s", stderr.String())
-	}
-}
-
-func TestExecuteDecisionsIssueBodyForOwnerDecision(t *testing.T) {
-	stdout := new(bytes.Buffer)
-	stderr := new(bytes.Buffer)
-
-	code := Execute([]string{"decisions", "--issue-body", "project_license"}, stdout, stderr)
-	if code != 0 {
-		t.Fatalf("exit code = %d, stderr = %s", code, stderr.String())
-	}
-	for _, want := range []string{"Decision ID", "project_license", "Current issue title", "Owner decision: project_license (SPDX, copyright holder, approver, date required)", "Blocked TODO items", "TODO.md:34", "Add license after owner decision", "Options considered", "Owner inputs needed", "License choice with SPDX identifier", "NOASSERTION", "Exact copyright holder string", "Implementation steps after approval", "make license-decision-approval-gate"} {
-		if !strings.Contains(stdout.String(), want) {
-			t.Fatalf("issue body missing %q:\n%s", want, stdout.String())
+		if !strings.Contains(stderr.String(), "unknown decision") || !strings.Contains(stderr.String(), id) {
+			t.Fatalf("stderr missing resolved decision rejection for %q: %s", id, stderr.String())
 		}
-	}
-}
-
-func TestExecuteDecisionsIssueBodyMatchesTrackedDraft(t *testing.T) {
-	stdout := new(bytes.Buffer)
-	stderr := new(bytes.Buffer)
-
-	code := Execute([]string{"decisions", "--issue-body", "project_license"}, stdout, stderr)
-	if code != 0 {
-		t.Fatalf("exit code = %d, stderr = %s", code, stderr.String())
-	}
-	want, err := os.ReadFile(filepath.Join("..", "..", "docs", "decisions", "project_license_issue.md"))
-	if err != nil {
-		t.Fatalf("read project license issue draft: %v", err)
-	}
-	if stdout.String() != string(want) {
-		t.Fatalf("generated issue body drifted from tracked draft\n--- generated ---\n%s\n--- want ---\n%s", stdout.String(), string(want))
 	}
 }
 
@@ -173,7 +128,7 @@ func TestExecuteDecisionsUsageMentionsMarkdownMode(t *testing.T) {
 	}
 }
 
-func TestExecuteDecisionsJSONExposesIssueTitleAndTodoRefs(t *testing.T) {
+func TestExecuteDecisionsJSONHasNoActiveOwnerBlockers(t *testing.T) {
 	stdout := new(bytes.Buffer)
 	stderr := new(bytes.Buffer)
 
@@ -181,10 +136,8 @@ func TestExecuteDecisionsJSONExposesIssueTitleAndTodoRefs(t *testing.T) {
 	if code != 0 {
 		t.Fatalf("exit code = %d, stderr = %s", code, stderr.String())
 	}
-	for _, want := range []string{"\"issue_title\"", "Owner decision: project_license (SPDX, copyright holder, approver, date required)", "\"todo_refs\"", "TODO.md:34"} {
-		if !strings.Contains(stdout.String(), want) {
-			t.Fatalf("json output missing %q:\n%s", want, stdout.String())
-		}
+	if !strings.Contains(stdout.String(), "\"decisions\":[]") {
+		t.Fatalf("expected empty owner-decision registry after license resolution, got:\n%s", stdout.String())
 	}
 }
 
@@ -199,96 +152,6 @@ func TestExecuteDecisionsJSONIncludesExactUncheckedTODOLineReferences(t *testing
 	for _, lineRef := range uncheckedTODOLineRefs(t) {
 		if !strings.Contains(stdout.String(), lineRef) {
 			t.Fatalf("json output missing TODO line reference %q:\n%s", lineRef, stdout.String())
-		}
-	}
-}
-
-func TestExecuteDecisionsJSONIncludesLicenseOwnerInputs(t *testing.T) {
-	stdout := new(bytes.Buffer)
-	stderr := new(bytes.Buffer)
-
-	code := Execute([]string{"--json", "decisions"}, stdout, stderr)
-	if code != 0 {
-		t.Fatalf("exit code = %d, stderr = %s", code, stderr.String())
-	}
-	for _, want := range []string{"\"owner_inputs\"", "license choice", "copyright holder string", "patent posture", "adoption model"} {
-		if !strings.Contains(stdout.String(), want) {
-			t.Fatalf("json output missing owner input %q:\n%s", want, stdout.String())
-		}
-	}
-}
-
-func TestExecuteDecisionsJSONIncludesLicenseOwnerResponseFields(t *testing.T) {
-	stdout := new(bytes.Buffer)
-	stderr := new(bytes.Buffer)
-
-	code := Execute([]string{"--json", "decisions"}, stdout, stderr)
-	if code != 0 {
-		t.Fatalf("exit code = %d, stderr = %s", code, stderr.String())
-	}
-	for _, want := range []string{"\"owner_response_required_fields\"", "License SPDX identifier", "Copyright holder", "Approved by", "Approval date"} {
-		if !strings.Contains(stdout.String(), want) {
-			t.Fatalf("json output missing owner response field %q:\n%s", want, stdout.String())
-		}
-	}
-}
-
-func TestExecuteDecisionsJSONMarksLicenseAsOwnerActionRequired(t *testing.T) {
-	stdout := new(bytes.Buffer)
-	stderr := new(bytes.Buffer)
-
-	code := Execute([]string{"--json", "decisions"}, stdout, stderr)
-	if code != 0 {
-		t.Fatalf("exit code = %d, stderr = %s", code, stderr.String())
-	}
-	for _, want := range []string{"\"blocker_kind\":\"owner_decision\"", "\"owner_action_required\":true"} {
-		if !strings.Contains(stdout.String(), want) {
-			t.Fatalf("json output missing owner-action marker %q:\n%s", want, stdout.String())
-		}
-	}
-}
-
-func TestExecuteDecisionsJSONIncludesIssueRoutingForLicenseBlocker(t *testing.T) {
-	stdout := new(bytes.Buffer)
-	stderr := new(bytes.Buffer)
-
-	code := Execute([]string{"--json", "decisions"}, stdout, stderr)
-	if code != 0 {
-		t.Fatalf("exit code = %d, stderr = %s", code, stderr.String())
-	}
-	for _, want := range []string{"\"issue_labels\":[\"decision\",\"blocked\",\"owner-input-needed\"]", "\"milestone\":\"Owner decisions\""} {
-		if !strings.Contains(stdout.String(), want) {
-			t.Fatalf("json output missing issue routing %q:\n%s", want, stdout.String())
-		}
-	}
-}
-
-func TestExecuteDecisionsJSONIncludesLicenseImplementationSteps(t *testing.T) {
-	stdout := new(bytes.Buffer)
-	stderr := new(bytes.Buffer)
-
-	code := Execute([]string{"--json", "decisions"}, stdout, stderr)
-	if code != 0 {
-		t.Fatalf("exit code = %d, stderr = %s", code, stderr.String())
-	}
-	for _, want := range []string{"\"implementation_steps\"", "Add LICENSE", "Update README.md license section", "Update TODO.md license checkbox", "make license-decision-approval-gate", "make check", "rforge decisions --completion-audit TODO.md docs/todo-completion-audit.md"} {
-		if !strings.Contains(stdout.String(), want) {
-			t.Fatalf("json output missing implementation step %q:\n%s", want, stdout.String())
-		}
-	}
-}
-
-func TestExecuteDecisionsPlainOutputShowsOwnerAction(t *testing.T) {
-	stdout := new(bytes.Buffer)
-	stderr := new(bytes.Buffer)
-
-	code := Execute([]string{"decisions"}, stdout, stderr)
-	if code != 0 {
-		t.Fatalf("exit code = %d, stderr = %s", code, stderr.String())
-	}
-	for _, want := range []string{"project_license", "owner_decision_required", "owner required", "license choice", "copyright holder string"} {
-		if !strings.Contains(stdout.String(), want) {
-			t.Fatalf("decisions output missing %q:\n%s", want, stdout.String())
 		}
 	}
 }
@@ -308,44 +171,6 @@ func TestExecuteDecisionsMarkdownIncludesTodoLineReferences(t *testing.T) {
 	}
 }
 
-func TestExecuteDecisionsMarkdownPrintsAuditTable(t *testing.T) {
-	stdout := new(bytes.Buffer)
-	stderr := new(bytes.Buffer)
-
-	code := Execute([]string{"decisions", "--markdown"}, stdout, stderr)
-	if code != 0 {
-		t.Fatalf("exit code = %d, stderr = %s", code, stderr.String())
-	}
-	for _, want := range []string{"| Decision ID | Status | Owner Action | TODO Lines | Blocked TODOs | Evidence |", "project_license", "owner required", "license choice", "docs/remaining-todo-audit.md", "owner-input-needed", "Owner decisions", "MIT", "No public license yet", "response fields", "License SPDX identifier", "Approval date", "make license-decision-approval-gate", "approved:true"} {
-		if !strings.Contains(stdout.String(), want) {
-			t.Fatalf("markdown output missing %q:\n%s", want, stdout.String())
-		}
-	}
-}
-
-func TestExecuteDecisionsHasNoStaleTODOCoverage(t *testing.T) {
-	stdout := new(bytes.Buffer)
-	stderr := new(bytes.Buffer)
-
-	code := Execute([]string{"--json", "decisions"}, stdout, stderr)
-	if code != 0 {
-		t.Fatalf("exit code = %d, stderr = %s", code, stderr.String())
-	}
-	for _, covered := range []string{
-		"Add license after owner decision",
-	} {
-		found := false
-		for _, remaining := range uncheckedTODOItems(t) {
-			if remaining == covered {
-				found = true
-			}
-		}
-		if !found {
-			t.Fatalf("decisions output covers stale or checked TODO %q", covered)
-		}
-	}
-}
-
 func TestExecuteDecisionsCompletionAuditVerifiesAuditDocument(t *testing.T) {
 	stdout := new(bytes.Buffer)
 	stderr := new(bytes.Buffer)
@@ -354,10 +179,13 @@ func TestExecuteDecisionsCompletionAuditVerifiesAuditDocument(t *testing.T) {
 	if code != 0 {
 		t.Fatalf("exit code = %d, stdout = %s, stderr = %s", code, stdout.String(), stderr.String())
 	}
-	for _, want := range []string{"completion audit verified", "all unchecked TODO items are decision/tracker-covered", "issue references verified", "unchecked TODO refs verified: 1", "completion remains blocked by 1 decision(s)", "blocked decision ids: project_license", "blocked issue urls: https://github.com/TrebuchetDynamics/research-forge/issues/1", "license TODO owner inputs verified", "license file absent while owner decision pending", "license decision remains pending", "license decision draft owner inputs verified", "license decision required response fields verified", "license owner approval absent verified", "README license section remains pending", "license owner inputs verified", "license owner response fields verified", "license options verified", "license implementation steps verified", "license issue routing verified", "license issue title verified", "remaining TODO audit verified", "license approval gate target verified", "license decision brief verified", "owner decisions license section verified", "owner decision template verified", "owner decision template response fields verified", "PR license gate verified", "contributing license workflow verified"} {
+	for _, want := range []string{"completion audit verified", "all unchecked TODO items are decision/tracker-covered", "issue references verified", "unchecked TODO refs verified: 0", "completion blocked by 0 owner decision(s)", "license resolution verified", "checked TODO evidence verified", "quality gate verified"} {
 		if !strings.Contains(stdout.String(), want) {
 			t.Fatalf("completion audit output missing %q:\n%s", want, stdout.String())
 		}
+	}
+	if strings.Contains(stdout.String(), "remains pending") || strings.Contains(stdout.String(), "absent") {
+		t.Fatalf("resolved completion audit should not report pending license state:\n%s", stdout.String())
 	}
 }
 
@@ -373,7 +201,7 @@ func TestExecuteDecisionsCompletionAuditJSONIsSingleEnvelope(t *testing.T) {
 	if strings.Count(out, "\n") != 1 || strings.Contains(out, "all unchecked TODO items are decision/tracker-covered") || !json.Valid([]byte(out)) {
 		t.Fatalf("expected a single JSON envelope, got:\n%s", out)
 	}
-	for _, want := range []string{"\"completion_audit_verified\":true", "\"completion_audit_issue_refs_verified\":true", "\"checked_evidence_verified\":true", "\"quality_gate_verified\":true", "\"completion_blocked\":true", "\"blocked_decisions\":1", "\"blocked_decision_ids\":[\"project_license\"]", "\"blocked_issue_urls\":[\"https://github.com/TrebuchetDynamics/research-forge/issues/1\"]", "\"line_refs_verified\":true", "\"issue_refs_verified\":true", "\"unchecked_refs\":1", "\"license_todo_owner_inputs_verified\":true", "\"license_file_absent_when_blocked\":true", "\"license_decision_pending_verified\":true", "\"license_decision_draft_owner_inputs_verified\":true", "\"license_decision_required_response_fields_verified\":true", "\"license_owner_approval_absent_verified\":true", "\"readme_license_pending_verified\":true", "\"license_owner_inputs_verified\":true", "\"license_owner_response_fields_verified\":true", "\"license_options_verified\":true", "\"license_implementation_steps_verified\":true", "\"license_issue_routing_verified\":true", "\"license_issue_title_verified\":true", "\"remaining_todo_audit_verified\":true", "\"license_approval_gate_target_verified\":true", "\"license_decision_brief_verified\":true", "\"owner_decisions_license_section_verified\":true", "\"owner_decision_template_verified\":true", "\"owner_decision_template_response_fields_verified\":true", "\"pr_license_gate_verified\":true", "\"contributing_license_workflow_verified\":true"} {
+	for _, want := range []string{"\"completion_audit_verified\":true", "\"completion_audit_issue_refs_verified\":true", "\"checked_evidence_verified\":true", "\"quality_gate_verified\":true", "\"completion_blocked\":false", "\"blocked_decisions\":0", "\"blocked_decision_ids\":[]", "\"blocked_issue_urls\":[]", "\"line_refs_verified\":true", "\"issue_refs_verified\":true", "\"unchecked_refs\":0", "\"license_resolution_verified\":true"} {
 		if !strings.Contains(out, want) {
 			t.Fatalf("json completion audit output missing %q:\n%s", want, out)
 		}
@@ -388,7 +216,7 @@ func TestExecuteDecisionsCheckReportsAllUncheckedTODOReferences(t *testing.T) {
 	if code != 0 {
 		t.Fatalf("exit code = %d, stderr = %s", code, stderr.String())
 	}
-	for _, want := range []string{"\"line_refs_verified\":true", "\"issue_refs_verified\":true", "\"unchecked_refs\":1"} {
+	for _, want := range []string{"\"line_refs_verified\":true", "\"issue_refs_verified\":true", "\"unchecked_refs\":0"} {
 		if !strings.Contains(stdout.String(), want) {
 			t.Fatalf("json check output missing %q:\n%s", want, stdout.String())
 		}
@@ -408,21 +236,6 @@ func TestExecuteDecisionsCheckVerifiesLineReferences(t *testing.T) {
 	}
 }
 
-func TestExecuteDecisionsCoversEveryRemainingUncheckedTODO(t *testing.T) {
-	stdout := new(bytes.Buffer)
-	stderr := new(bytes.Buffer)
-
-	code := Execute([]string{"--json", "decisions"}, stdout, stderr)
-	if code != 0 {
-		t.Fatalf("exit code = %d, stderr = %s", code, stderr.String())
-	}
-	for _, remaining := range uncheckedTODOItems(t) {
-		if !strings.Contains(stdout.String(), remaining) {
-			t.Fatalf("decisions output does not cover remaining TODO %q:\n%s", remaining, stdout.String())
-		}
-	}
-}
-
 func uncheckedTODOLineRefs(t *testing.T) []string {
 	t.Helper()
 	data, err := os.ReadFile(filepath.Join("..", "..", "TODO.md"))
@@ -436,46 +249,6 @@ func uncheckedTODOLineRefs(t *testing.T) []string {
 		}
 	}
 	return refs
-}
-
-func uncheckedTODOItems(t *testing.T) []string {
-	t.Helper()
-	data, err := os.ReadFile(filepath.Join("..", "..", "TODO.md"))
-	if err != nil {
-		t.Fatalf("read TODO.md: %v", err)
-	}
-	items := []string{}
-	for _, line := range strings.Split(string(data), "\n") {
-		line = strings.TrimSpace(line)
-		if !strings.HasPrefix(line, "- [ ] ") {
-			continue
-		}
-		item := strings.TrimPrefix(line, "- [ ] ")
-		if idx := strings.Index(item, " _("); idx >= 0 {
-			item = strings.TrimSpace(item[:idx])
-		}
-		item = strings.TrimSuffix(item, ".")
-		items = append(items, item)
-	}
-	if len(items) == 0 {
-		t.Fatalf("expected decision-gated unchecked TODO items")
-	}
-	return items
-}
-
-func TestExecuteDecisionsJSONListsOwnerBlockedTODOs(t *testing.T) {
-	stdout := new(bytes.Buffer)
-	stderr := new(bytes.Buffer)
-
-	code := Execute([]string{"--json", "decisions"}, stdout, stderr)
-	if code != 0 {
-		t.Fatalf("exit code = %d, stderr = %s", code, stderr.String())
-	}
-	for _, want := range []string{"project_license", "docs/owner-decisions.md", "docs/remaining-todo-audit.md", "https://github.com/TrebuchetDynamics/research-forge/issues/1"} {
-		if !strings.Contains(stdout.String(), want) {
-			t.Fatalf("decisions output missing %q:\n%s", want, stdout.String())
-		}
-	}
 }
 
 func TestExecuteUIJSONReportsReadyWebGUI(t *testing.T) {
