@@ -22,17 +22,22 @@ Implemented nearby capabilities:
 
 - Screening configuration and decisions.
 - PRISMA counts.
-- Conflict detection and uncertain queues.
+- Conflict detection, adjudicated conflict resolution, and uncertain queues.
 - Deterministic seed-overlap prioritization through `rforge screen prioritize`.
+- Boundary-focused uncertainty sampling through `rforge screen uncertainty`.
+- Smoothed naive-Bayes model-based active-learning ranking through `rforge screen model-prioritize`.
+- Reviewer progress metrics through `rforge screen progress --stage <stage>`.
+- Recall/effort curve scaffold through `rforge screen recall --stage <stage>`.
+- Simple recall-threshold stopping recommendation through `rforge screen stopping --stage <stage> [--target-recall 0.95]`.
 
 Missing features:
 
-- Model-based ranking over abstracts/titles.
-- Uncertainty sampling and balanced exploration/exploitation.
-- Recall/effort curve simulation.
-- Reviewer progress metrics.
-- Stopping criteria and sensitivity diagnostics.
-- Multi-reviewer adjudication workflow beyond conflict listing.
+- Richer model-based ranking over abstracts/titles beyond the current smoothed naive-Bayes scaffold.
+- Balanced exploration/exploitation policy beyond standalone uncertainty sampling.
+- Richer recall/effort simulation beyond observed-decision cumulative curves.
+- Richer reviewer progress dashboards and trend metrics.
+- Richer stopping criteria and sensitivity diagnostics beyond observed recall thresholding.
+- Rich multi-reviewer adjudication workflow beyond adjudicated final decisions.
 
 ## Recommended slice
 

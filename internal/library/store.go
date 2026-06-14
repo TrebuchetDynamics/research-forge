@@ -178,6 +178,8 @@ func recordKey(record PaperRecord) string {
 		return "arxiv:" + ids.ArXivID
 	case ids.PMID != "":
 		return "pmid:" + ids.PMID
+	case ids.PMCID != "":
+		return "pmcid:" + ids.PMCID
 	case ids.CrossrefID != "":
 		return "crossref:" + ids.CrossrefID
 	case ids.SemanticScholarID != "":

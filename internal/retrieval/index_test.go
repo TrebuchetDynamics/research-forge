@@ -28,6 +28,9 @@ func TestSQLiteFTSIndexRebuildAndRetrievePassages(t *testing.T) {
 
 func TestAdapterSeamsExistForOptionalSearchVectorAndEmbeddingBackends(t *testing.T) {
 	var _ SearchAdapter = (*SQLiteIndex)(nil)
+	var _ SearchAdapter = (*OpenSearchIndex)(nil)
+	var _ SearchAdapter = (*QdrantIndex)(nil)
+	var _ VectorAdapter = (*QdrantIndex)(nil)
 	var _ VectorAdapter = NoopVectorAdapter{}
 	var _ EmbeddingAdapter = NoopEmbeddingAdapter{}
 }

@@ -1,8 +1,10 @@
 package webui
 
 import (
+	"fmt"
 	"html/template"
 	"net/http"
+	"strings"
 
 	"github.com/TrebuchetDynamics/research-forge/internal/project"
 	"github.com/TrebuchetDynamics/research-forge/internal/ui"
@@ -140,6 +142,38 @@ type ArtifactDashboardState struct {
 	Reports       ui.ReportViewModel
 }
 
+// CitationGraphSVG renders a small accessible SVG preview for exported citation graphs.
+func (s ArtifactDashboardState) CitationGraphSVG() template.HTML {
+	if len(s.CitationGraph.Nodes) == 0 {
+		return ""
+	}
+	positions := map[string][2]int{}
+	var b strings.Builder
+	b.WriteString(`<svg role="img" aria-label="Citation graph visualization" viewBox="0 0 520 160" class="citation-graph-svg">`)
+	b.WriteString(`<title>Citation graph visualization</title>`)
+	for i, node := range s.CitationGraph.Nodes {
+		x := 80 + (i%5)*100
+		y := 50 + (i/5)*70
+		positions[node.ID] = [2]int{x, y}
+	}
+	for _, edge := range s.CitationGraph.Edges {
+		source, sourceOK := positions[edge.Source]
+		target, targetOK := positions[edge.Target]
+		if !sourceOK || !targetOK {
+			continue
+		}
+		fmt.Fprintf(&b, `<line x1="%d" y1="%d" x2="%d" y2="%d" stroke="currentColor" stroke-width="1" />`, source[0], source[1], target[0], target[1])
+	}
+	for _, node := range s.CitationGraph.Nodes {
+		pos := positions[node.ID]
+		label := template.HTMLEscapeString(node.ID)
+		fmt.Fprintf(&b, `<circle cx="%d" cy="%d" r="16" fill="none" stroke="currentColor" stroke-width="2" />`, pos[0], pos[1])
+		fmt.Fprintf(&b, `<text x="%d" y="%d" text-anchor="middle">%s</text>`, pos[0], pos[1]+34, label)
+	}
+	b.WriteString(`</svg>`)
+	return template.HTML(b.String())
+}
+
 var artifactsTemplate = template.Must(template.New("artifacts").Parse(`<section aria-labelledby="artifacts-title" class="rf-card" hx-get="/artifacts/refresh" hx-trigger="refresh-artifacts from:body">
   <h2 id="artifacts-title">CLI-generated artifacts</h2>
   <section aria-labelledby="artifact-papers-title">
@@ -159,6 +193,7 @@ var artifactsTemplate = template.Must(template.New("artifacts").Parse(`<section 
   <section aria-labelledby="artifact-citations-title">
     <h3 id="artifact-citations-title">Citation graph</h3>
     {{if .CitationGraph.Nodes}}
+    {{.CitationGraphSVG}}
     {{range .CitationGraph.Nodes}}<p>{{.ID}}</p>{{end}}
     {{range .CitationGraph.Edges}}<p>{{.Source}} → {{.Target}}</p>{{end}}
     {{else}}<p>No citation graph exported yet</p>{{end}}

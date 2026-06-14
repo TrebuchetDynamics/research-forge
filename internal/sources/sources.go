@@ -19,6 +19,7 @@ type SourceQuery struct {
 	Terms      string
 	Limit      int
 	PageCursor string
+	Filters    map[string]string
 }
 
 // Identifiers are normalized scholarly IDs on a source result.
@@ -26,6 +27,8 @@ type Identifiers struct {
 	DOI               string
 	OpenAlexID        string
 	ArXivID           string
+	PMID              string
+	PMCID             string
 	CrossrefID        string
 	SemanticScholarID string
 }
@@ -64,6 +67,8 @@ func PaperRecords(response SourceResponse) ([]library.PaperRecord, error) {
 				DOI:               record.Identifiers.DOI,
 				OpenAlexID:        record.Identifiers.OpenAlexID,
 				ArXivID:           record.Identifiers.ArXivID,
+				PMID:              record.Identifiers.PMID,
+				PMCID:             record.Identifiers.PMCID,
 				CrossrefID:        record.Identifiers.CrossrefID,
 				SemanticScholarID: record.Identifiers.SemanticScholarID,
 			},

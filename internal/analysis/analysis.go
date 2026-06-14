@@ -4,6 +4,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
+	"math"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -27,6 +28,10 @@ type EffectSizeCalculator interface {
 }
 type StandardizedMeanDifference struct{}
 
+type LogOddsRatio struct{}
+
+type RiskRatio struct{}
+
 func (StandardizedMeanDifference) Calculate(values map[string]string) (float64, float64, error) {
 	mt, _ := strconv.ParseFloat(values["mean_treatment"], 64)
 	mc, _ := strconv.ParseFloat(values["mean_control"], 64)
@@ -39,8 +44,53 @@ func (StandardizedMeanDifference) Calculate(values map[string]string) (float64, 
 	return (mt - mc) / sd, 1/nt + 1/nc, nil
 }
 
+func (LogOddsRatio) Calculate(values map[string]string) (float64, float64, error) {
+	eventsT, totalT, eventsC, totalC, err := binaryOutcomeInputs(values, "log odds ratio")
+	if err != nil {
+		return 0, 0, err
+	}
+	nonEventsT := totalT - eventsT
+	nonEventsC := totalC - eventsC
+	// Haldane-Anscombe correction keeps zero-cell binary outcomes estimable.
+	if eventsT == 0 || nonEventsT == 0 || eventsC == 0 || nonEventsC == 0 {
+		eventsT += 0.5
+		nonEventsT += 0.5
+		eventsC += 0.5
+		nonEventsC += 0.5
+	}
+	return math.Log((eventsT * nonEventsC) / (nonEventsT * eventsC)), 1/eventsT + 1/nonEventsT + 1/eventsC + 1/nonEventsC, nil
+}
+
+func (RiskRatio) Calculate(values map[string]string) (float64, float64, error) {
+	eventsT, totalT, eventsC, totalC, err := binaryOutcomeInputs(values, "risk ratio")
+	if err != nil {
+		return 0, 0, err
+	}
+	if eventsT == 0 || eventsC == 0 {
+		eventsT += 0.5
+		eventsC += 0.5
+		totalT += 0.5
+		totalC += 0.5
+	}
+	return math.Log((eventsT / totalT) / (eventsC / totalC)), 1/eventsT - 1/totalT + 1/eventsC - 1/totalC, nil
+}
+
+func binaryOutcomeInputs(values map[string]string, name string) (float64, float64, float64, float64, error) {
+	eventsT, _ := strconv.ParseFloat(values["events_treatment"], 64)
+	totalT, _ := strconv.ParseFloat(values["n_treatment"], 64)
+	eventsC, _ := strconv.ParseFloat(values["events_control"], 64)
+	totalC, _ := strconv.ParseFloat(values["n_control"], 64)
+	if totalT == 0 || totalC == 0 || eventsT > totalT || eventsC > totalC {
+		return 0, 0, 0, 0, fmt.Errorf("%s inputs are incomplete", name)
+	}
+	return eventsT, totalT, eventsC, totalC, nil
+}
+
 func Prepare(id string, items []evidence.EvidenceItem) (AnalysisRun, error) {
-	calc := StandardizedMeanDifference{}
+	return PrepareWithCalculator(id, items, StandardizedMeanDifference{})
+}
+
+func PrepareWithCalculator(id string, items []evidence.EvidenceItem, calc EffectSizeCalculator) (AnalysisRun, error) {
 	run := AnalysisRun{SchemaVersion: "1", ID: id}
 	for _, item := range items {
 		if item.Status != evidence.StatusAccepted {
@@ -156,8 +206,14 @@ func RunMetafor(dir string, run AnalysisRun, runner Runner) (AnalysisResult, err
 	if err := os.WriteFile(outputPath, []byte(out.Stdout), 0o644); err != nil {
 		return AnalysisResult{}, err
 	}
-	forest := Artifact{Path: filepath.Join(dir, run.ID+"-forest.png")}
-	funnel := Artifact{Path: filepath.Join(dir, run.ID+"-funnel.png")}
+	forest, err := writeForestPlotArtifact(dir, run)
+	if err != nil {
+		return AnalysisResult{}, err
+	}
+	funnel, err := writeFunnelPlotArtifact(dir, run)
+	if err != nil {
+		return AnalysisResult{}, err
+	}
 	warnings := []string{}
 	if strings.TrimSpace(out.Stderr) != "" {
 		warnings = append(warnings, out.Stderr)
@@ -165,4 +221,107 @@ func RunMetafor(dir string, run AnalysisRun, runner Runner) (AnalysisResult, err
 	metrics, _ := ParseHeterogeneity(out.Stdout)
 	return AnalysisResult{Versions: runner.ToolVersions(), ScriptChecksum: checksum([]byte(script)), OutputChecksum: checksum([]byte(out.Stdout)), Warnings: warnings, ForestPlot: forest, FunnelPlot: funnel, Metrics: metrics}, nil
 }
+func writeForestPlotArtifact(dir string, run AnalysisRun) (Artifact, error) {
+	path := filepath.Join(dir, run.ID+"-forest.svg")
+	data := []byte(forestPlotSVG(run))
+	if err := os.WriteFile(path, data, 0o644); err != nil {
+		return Artifact{}, err
+	}
+	return Artifact{Path: path, Checksum: checksum(data)}, nil
+}
+
+func writeFunnelPlotArtifact(dir string, run AnalysisRun) (Artifact, error) {
+	path := filepath.Join(dir, run.ID+"-funnel.svg")
+	data := []byte(funnelPlotSVG(run))
+	if err := os.WriteFile(path, data, 0o644); err != nil {
+		return Artifact{}, err
+	}
+	return Artifact{Path: path, Checksum: checksum(data)}, nil
+}
+
+func forestPlotSVG(run AnalysisRun) string {
+	width := 640
+	height := 80 + len(run.InputRows)*34
+	if height < 140 {
+		height = 140
+	}
+	min, max := effectRange(run)
+	var b strings.Builder
+	fmt.Fprintf(&b, `<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Forest plot" viewBox="0 0 %d %d">`, width, height)
+	b.WriteString(`<title>Forest plot</title><line x1="320" y1="30" x2="320" y2="` + fmt.Sprint(height-30) + `" stroke="#888"/>`)
+	for i, row := range run.InputRows {
+		y := 55 + i*34
+		x := scaleEffect(row.EffectSize, min, max, 80, 580)
+		se := math.Sqrt(row.Variance)
+		left := scaleEffect(row.EffectSize-1.96*se, min, max, 80, 580)
+		right := scaleEffect(row.EffectSize+1.96*se, min, max, 80, 580)
+		label := xmlEscape(row.PaperID)
+		fmt.Fprintf(&b, `<line x1="%d" y1="%d" x2="%d" y2="%d" stroke="#2d6cdf"/><circle cx="%d" cy="%d" r="5" fill="#2d6cdf"/><text x="12" y="%d" font-size="12">%s</text>`, left, y, right, y, x, y, y+4, label)
+	}
+	b.WriteString(`</svg>`)
+	return b.String()
+}
+
+func funnelPlotSVG(run AnalysisRun) string {
+	width := 640
+	height := 420
+	min, max := effectRange(run)
+	maxSE := 0.0
+	for _, row := range run.InputRows {
+		if row.Variance > 0 && math.Sqrt(row.Variance) > maxSE {
+			maxSE = math.Sqrt(row.Variance)
+		}
+	}
+	if maxSE == 0 {
+		maxSE = 1
+	}
+	var b strings.Builder
+	fmt.Fprintf(&b, `<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Funnel plot" viewBox="0 0 %d %d">`, width, height)
+	b.WriteString(`<title>Funnel plot</title><line x1="60" y1="360" x2="600" y2="360" stroke="#888"/><line x1="60" y1="40" x2="60" y2="360" stroke="#888"/>`)
+	for _, row := range run.InputRows {
+		x := scaleEffect(row.EffectSize, min, max, 80, 580)
+		y := 60 + int((math.Sqrt(row.Variance)/maxSE)*280)
+		fmt.Fprintf(&b, `<circle cx="%d" cy="%d" r="5" fill="#d66b2d"><title>%s</title></circle>`, x, y, xmlEscape(row.PaperID))
+	}
+	b.WriteString(`</svg>`)
+	return b.String()
+}
+
+func effectRange(run AnalysisRun) (float64, float64) {
+	if len(run.InputRows) == 0 {
+		return -1, 1
+	}
+	min, max := run.InputRows[0].EffectSize, run.InputRows[0].EffectSize
+	for _, row := range run.InputRows {
+		se := math.Sqrt(row.Variance)
+		for _, value := range []float64{row.EffectSize - 1.96*se, row.EffectSize + 1.96*se} {
+			if value < min {
+				min = value
+			}
+			if value > max {
+				max = value
+			}
+		}
+	}
+	if min == max {
+		return min - 1, max + 1
+	}
+	return min, max
+}
+
+func scaleEffect(value, min, max float64, left, right int) int {
+	if max <= min {
+		return (left + right) / 2
+	}
+	return left + int(((value-min)/(max-min))*float64(right-left))
+}
+
+func xmlEscape(value string) string {
+	value = strings.ReplaceAll(value, "&", "&amp;")
+	value = strings.ReplaceAll(value, "<", "&lt;")
+	value = strings.ReplaceAll(value, ">", "&gt;")
+	value = strings.ReplaceAll(value, `"`, "&quot;")
+	return value
+}
+
 func checksum(data []byte) string { sum := sha256.Sum256(data); return hex.EncodeToString(sum[:]) }

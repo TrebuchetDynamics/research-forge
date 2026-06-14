@@ -1,4 +1,4 @@
-.PHONY: fmt test vet vuln check decisions decisions-markdown decision-issues todo-audit todo-completion-audit license-decision-live-audit license-decision-approval-gate build-release checksums sbom install-smoke web-gui-smoke external-e2e-artificial-photosynthesis
+.PHONY: fmt test vet vuln check inventory-check decisions decisions-markdown decision-issues todo-audit todo-completion-audit license-decision-live-audit license-decision-approval-gate build-release checksums sbom install-smoke web-gui-smoke source-live-smoke biomedical-live-smoke semantic-scholar-live-smoke external-e2e-artificial-photosynthesis
 
 fmt:
 	gofmt -w cmd internal
@@ -12,8 +12,11 @@ vet:
 vuln:
 	govulncheck ./...
 
-check: test vet todo-completion-audit
+check: test vet todo-completion-audit inventory-check
 	git diff --check
+
+inventory-check:
+	go run ./cmd/rforge oss inventory-check opensource/inventory/manifest.json
 
 decisions:
 	go run ./cmd/rforge --json decisions
@@ -55,6 +58,15 @@ install-smoke:
 
 web-gui-smoke:
 	go test ./internal/webui
+
+source-live-smoke:
+	RFORGE_RUN_LIVE_SOURCE_SMOKE=1 go test ./internal/sources -run TestOptInLiveSourceConnectorSmoke -count=1 -v
+
+biomedical-live-smoke:
+	RFORGE_RUN_LIVE_SOURCE_SMOKE=1 go test ./internal/sources -run 'TestOptInLiveSourceConnectorSmoke/(pubmed|europepmc)' -count=1 -v
+
+semantic-scholar-live-smoke:
+	RFORGE_RUN_LIVE_SOURCE_SMOKE=1 go test ./internal/sources -run 'TestOptInLiveSourceConnectorSmoke/semantic-scholar' -count=1 -v
 
 external-e2e-artificial-photosynthesis:
 	RFORGE_EXTERNAL_E2E_DIR=/home/xel/git/artificial-photosynthesis go test ./internal/cli -run TestExternalE2EArtificialPhotosynthesisWorkspace -count=1 -v

@@ -1,6 +1,6 @@
 # ResearchForge OSS inventory
 
-This directory stores committed, source-controlled study notes for open-source projects and public scholarly infrastructure that ResearchForge learns from.
+This directory stores committed, source-controlled study notes for open-source projects and public scholarly infrastructure that ResearchForge learns from. The machine-readable index is [`manifest.json`](./manifest.json).
 
 Policy:
 
@@ -21,11 +21,26 @@ Policy:
 | OpenAlex | Scholarly graph/source API | `adapter-only` | [openalex.md](./openalex.md) |
 | Qdrant | Vector retrieval | `adapter-only` | [qdrant.md](./qdrant.md) |
 | OpenSearch | Full-text retrieval | `adapter-only` | [opensearch.md](./opensearch.md) |
+| s2orc-doc2json | Full-text parser interchange | `adapter-only` | [s2orc-doc2json.md](./s2orc-doc2json.md) |
+| PaperMage | Layered paper document model | `pattern-reference` | [papermage.md](./papermage.md) |
+| Anystyle | Reference parser | `adapter-only` | [anystyle.md](./anystyle.md) |
+| CERMINE | PDF parser fallback | `adapter-only` | [cermine.md](./cermine.md) |
+| Science Parse | Historical PDF parser fallback | `pattern-reference` | [science-parse.md](./science-parse.md) |
+
+## Validation
+
+Run:
+
+```sh
+rforge oss inventory-check opensource/inventory/manifest.json
+```
+
+The verifier checks that every manifest entry has governance metadata (`area`, `disposition`, `licensePolicy`, `risk`, `nextSlice`) and that its Markdown note exists inside this directory.
 
 ## Current highest-priority gaps from this inventory
 
-1. Zotero-compatible CSL-JSON / Better BibTeX import-export.
-2. Semantic Scholar citation expansion import into the local library with provenance.
-3. PubMed / Europe PMC connector implementation.
-4. Opt-in live connector smoke tests for API drift.
+1. Rich Zotero collections/annotations beyond CSL-JSON/RDF metadata.
+2. Parser comparison report and parsed-reference normalization across GROBID, S2ORC-style JSON, and Anystyle-style reference parsing.
+3. Richer PubMed / Europe PMC full-text workflows; PubMed and Europe PMC search plus opt-in biomedical live smoke docs/targets are implemented.
+4. Additional opt-in live connector smoke coverage for API drift beyond current source smoke tests.
 5. Richer ASReview-style ranking loop: model-based prioritization, reviewer feedback metrics, and stopping diagnostics.

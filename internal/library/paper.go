@@ -10,6 +10,7 @@ type Identifiers struct {
 	DOI               string
 	ArXivID           string
 	PMID              string
+	PMCID             string
 	OpenAlexID        string
 	CrossrefID        string
 	SemanticScholarID string
@@ -148,9 +149,18 @@ func normalizeIdentifiers(ids Identifiers) Identifiers {
 	ids.CrossrefID = normalizeDOI(ids.CrossrefID)
 	ids.ArXivID = strings.TrimPrefix(strings.TrimSpace(ids.ArXivID), "arXiv:")
 	ids.PMID = strings.TrimSpace(ids.PMID)
+	ids.PMCID = normalizePMCID(ids.PMCID)
 	ids.OpenAlexID = strings.TrimPrefix(strings.TrimSpace(ids.OpenAlexID), "https://openalex.org/")
 	ids.SemanticScholarID = strings.TrimSpace(ids.SemanticScholarID)
 	return ids
+}
+
+func normalizePMCID(value string) string {
+	value = strings.ToUpper(strings.TrimSpace(value))
+	if value == "" || strings.HasPrefix(value, "PMC") {
+		return value
+	}
+	return "PMC" + value
 }
 
 func normalizeDOI(value string) string {
@@ -162,5 +172,5 @@ func normalizeDOI(value string) string {
 }
 
 func (ids Identifiers) any() bool {
-	return ids.DOI != "" || ids.ArXivID != "" || ids.PMID != "" || ids.OpenAlexID != "" || ids.CrossrefID != "" || ids.SemanticScholarID != ""
+	return ids.DOI != "" || ids.ArXivID != "" || ids.PMID != "" || ids.PMCID != "" || ids.OpenAlexID != "" || ids.CrossrefID != "" || ids.SemanticScholarID != ""
 }

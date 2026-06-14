@@ -203,6 +203,7 @@ func ImportCSV(path string) ([]PaperRecord, int, error) {
 				DOI:               csvValue(row, header, "doi"),
 				ArXivID:           csvValue(row, header, "arxiv_id"),
 				PMID:              csvValue(row, header, "pmid"),
+				PMCID:             csvValue(row, header, "pmcid"),
 				OpenAlexID:        csvValue(row, header, "openalex_id"),
 				CrossrefID:        csvValue(row, header, "crossref_id"),
 				SemanticScholarID: csvValue(row, header, "semantic_scholar_id"),
@@ -234,11 +235,11 @@ func ExportCSV(path string, records []PaperRecord) error {
 	defer file.Close()
 	writer := csv.NewWriter(file)
 	defer writer.Flush()
-	if err := writer.Write([]string{"title", "doi", "arxiv_id", "pmid", "openalex_id", "crossref_id", "semantic_scholar_id", "year", "abstract", "venue", "publisher", "license", "open_access"}); err != nil {
+	if err := writer.Write([]string{"title", "doi", "arxiv_id", "pmid", "pmcid", "openalex_id", "crossref_id", "semantic_scholar_id", "year", "abstract", "venue", "publisher", "license", "open_access"}); err != nil {
 		return err
 	}
 	for _, record := range records {
-		if err := writer.Write([]string{record.Title, record.Identifiers.DOI, record.Identifiers.ArXivID, record.Identifiers.PMID, record.Identifiers.OpenAlexID, record.Identifiers.CrossrefID, record.Identifiers.SemanticScholarID, strconv.Itoa(record.Year), record.Abstract, record.Venue, record.Publisher, record.License, strconv.FormatBool(record.OpenAccess)}); err != nil {
+		if err := writer.Write([]string{record.Title, record.Identifiers.DOI, record.Identifiers.ArXivID, record.Identifiers.PMID, record.Identifiers.PMCID, record.Identifiers.OpenAlexID, record.Identifiers.CrossrefID, record.Identifiers.SemanticScholarID, strconv.Itoa(record.Year), record.Abstract, record.Venue, record.Publisher, record.License, strconv.FormatBool(record.OpenAccess)}); err != nil {
 			return err
 		}
 	}

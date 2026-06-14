@@ -30,3 +30,17 @@ section {
   padding: 1.25rem;
   background: rgba(255, 255, 255, 0.04);
 }
+
+.citation-graph-svg {
+  display: block;
+  width: 100%;
+  max-width: 42rem;
+  min-height: 10rem;
+  margin: 0.75rem 0;
+  color: #8fd3ff;
+}
+
+.citation-graph-svg text {
+  fill: #f3f6f8;
+  font-size: 0.75rem;
+}

@@ -8,6 +8,76 @@ import (
 	"time"
 )
 
+func TestCrossrefConnectorLookupDOIRefreshesMetadata(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/works/10.5555/refresh" {
+			t.Fatalf("path = %q", r.URL.Path)
+		}
+		_, _ = w.Write([]byte(`{"message":{"DOI":"10.5555/REFRESH","title":["Refreshed Crossref metadata"],"publisher":"Refresh Publisher","reference-count":2,"license":[{"URL":"https://license.example"}]}}`))
+	}))
+	defer server.Close()
+
+	connector := NewCrossrefConnector(NewHTTPClient(HTTPClientOptions{BaseURL: server.URL, Timeout: time.Second}))
+	record, rawRef, err := connector.LookupDOI(context.Background(), "10.5555/refresh")
+	if err != nil {
+		t.Fatalf("LookupDOI returned error: %v", err)
+	}
+	if rawRef != "crossref:/works/10.5555/refresh" {
+		t.Fatalf("rawRef = %q", rawRef)
+	}
+	if record.Title != "Refreshed Crossref metadata" || record.Publisher != "Refresh Publisher" || record.License != "https://license.example" || record.Metadata["reference_count"] != "2" {
+		t.Fatalf("record = %#v", record)
+	}
+}
+
+func TestCrossrefConnectorReferencesExtractsReferenceList(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/works/10.5555/source" {
+			t.Fatalf("path = %q", r.URL.Path)
+		}
+		_, _ = w.Write([]byte(`{"message":{"DOI":"10.5555/source","reference":[{"DOI":"10.1000/ref-one","article-title":"Reference One","key":"ref1"},{"article-title":"Title only reference","key":"ref2"},{"key":"empty"}]}}`))
+	}))
+	defer server.Close()
+
+	response, err := NewCrossrefConnector(NewHTTPClient(HTTPClientOptions{BaseURL: server.URL})).References(context.Background(), "10.5555/source")
+	if err != nil {
+		t.Fatalf("References returned error: %v", err)
+	}
+	if response.RawRef != "crossref:/works/10.5555/source/references" {
+		t.Fatalf("rawRef = %q", response.RawRef)
+	}
+	if len(response.Records) != 2 {
+		t.Fatalf("records = %#v", response.Records)
+	}
+	if response.Records[0].Identifiers.DOI != "10.1000/ref-one" || response.Records[0].Title != "Reference One" || response.Records[0].Metadata["referenced_by_doi"] != "10.5555/source" {
+		t.Fatalf("first record = %#v", response.Records[0])
+	}
+	if response.Records[1].Title != "Title only reference" || response.Records[1].Metadata["reference_key"] != "ref2" {
+		t.Fatalf("second record = %#v", response.Records[1])
+	}
+}
+
+func TestCrossrefConnectorSearchPassesWorksFilters(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/works" || r.URL.Query().Get("filter") != "from-pub-date:2020,type:journal-article" {
+			t.Fatalf("request = %s?%s", r.URL.Path, r.URL.RawQuery)
+		}
+		_, _ = w.Write([]byte(`{"message":{"items":[{"DOI":"10.5555/filtered","title":["Filtered work"]}]}}`))
+	}))
+	defer server.Close()
+
+	response, err := NewCrossrefConnector(NewHTTPClient(HTTPClientOptions{BaseURL: server.URL})).Search(context.Background(), SourceQuery{Terms: "filtered", Limit: 1, Filters: map[string]string{"filter": "from-pub-date:2020,type:journal-article"}})
+	if err != nil {
+		t.Fatalf("Search returned error: %v", err)
+	}
+	if len(response.Records) != 1 || response.Records[0].Identifiers.DOI != "10.5555/filtered" {
+		t.Fatalf("response = %#v", response)
+	}
+	if response.RawRef != "crossref:/works?filter=from-pub-date%3A2020%2Ctype%3Ajournal-article&query=filtered&rows=1" {
+		t.Fatalf("rawRef = %q", response.RawRef)
+	}
+}
+
 func TestCrossrefConnectorSearchesAndNormalizesWorks(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != "/works" {
@@ -29,7 +99,11 @@ func TestCrossrefConnectorSearchesAndNormalizesWorks(t *testing.T) {
 				"publisher": "Fixture Publisher",
 				"URL": "https://doi.org/10.5555/crossref.example",
 				"type": "journal-article",
-				"reference-count": 12
+				"reference-count": 12,
+				"reference": [{"DOI":"10.1000/ref-one"}, {"article-title":"no doi"}],
+				"funder": [{"name":"Fixture Foundation","award":["FF-1"]}],
+				"license": [{"URL":"https://creativecommons.org/licenses/by/4.0/"}],
+				"relation": {"is-preprint-of":[{"id-type":"doi","id":"10.5555/version-of-record"}]}
 			}]}
 		}`))
 	}))
@@ -59,7 +133,10 @@ func TestCrossrefConnectorSearchesAndNormalizesWorks(t *testing.T) {
 	if record.Abstract != "Deterministic Crossref abstract." || len(record.URLs) != 1 || record.URLs[0] != "https://doi.org/10.5555/crossref.example" {
 		t.Fatalf("text/urls = %#v", record)
 	}
-	if record.Metadata["type"] != "journal-article" || record.Metadata["reference_count"] != "12" {
+	if record.License != "https://creativecommons.org/licenses/by/4.0/" || !record.OpenAccess {
+		t.Fatalf("license/open access = %#v", record)
+	}
+	if record.Metadata["type"] != "journal-article" || record.Metadata["reference_count"] != "12" || record.Metadata["reference_dois"] != "10.1000/ref-one" || record.Metadata["funders"] != "Fixture Foundation" || record.Metadata["funder_awards"] != "Fixture Foundation:FF-1" || record.Metadata["relations"] != "is-preprint-of:10.5555/version-of-record" {
 		t.Fatalf("metadata = %#v", record.Metadata)
 	}
 	papers, err := PaperRecords(response)

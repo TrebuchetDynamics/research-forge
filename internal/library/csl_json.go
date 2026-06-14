@@ -9,16 +9,25 @@ import (
 )
 
 type cslItem struct {
-	ID             string    `json:"id,omitempty"`
-	Type           string    `json:"type,omitempty"`
-	Title          string    `json:"title,omitempty"`
-	DOI            string    `json:"DOI,omitempty"`
-	Abstract       string    `json:"abstract,omitempty"`
-	ContainerTitle string    `json:"container-title,omitempty"`
-	Publisher      string    `json:"publisher,omitempty"`
-	URL            string    `json:"URL,omitempty"`
-	Issued         cslIssued `json:"issued,omitempty"`
-	Author         []cslName `json:"author,omitempty"`
+	ID             string          `json:"id,omitempty"`
+	Type           string          `json:"type,omitempty"`
+	Title          string          `json:"title,omitempty"`
+	DOI            string          `json:"DOI,omitempty"`
+	Abstract       string          `json:"abstract,omitempty"`
+	ContainerTitle string          `json:"container-title,omitempty"`
+	Publisher      string          `json:"publisher,omitempty"`
+	URL            string          `json:"URL,omitempty"`
+	CitationKey    string          `json:"citation-key,omitempty"`
+	Note           string          `json:"note,omitempty"`
+	Keyword        string          `json:"keyword,omitempty"`
+	Attachments    []cslAttachment `json:"attachments,omitempty"`
+	Issued         cslIssued       `json:"issued,omitempty"`
+	Author         []cslName       `json:"author,omitempty"`
+}
+
+type cslAttachment struct {
+	Title string `json:"title,omitempty"`
+	Path  string `json:"path,omitempty"`
 }
 
 type cslIssued struct {
@@ -52,10 +61,7 @@ func ImportCSLJSON(path string) ([]PaperRecord, int, error) {
 			Venue:       item.ContainerTitle,
 			Publisher:   item.Publisher,
 			URLs:        normalizeStrings([]string{item.URL}),
-			SourceRefs: []SourceRef{{Source: "csl-json", Metadata: map[string]string{
-				"csl_id":   item.ID,
-				"csl_type": item.Type,
-			}}},
+			SourceRefs:  []SourceRef{{Source: "csl-json", Metadata: cslMetadata(item)}},
 		})
 		if err != nil {
 			skipped++
@@ -81,6 +87,9 @@ func ExportCSLJSON(path string, records []PaperRecord) error {
 			Abstract:       record.Abstract,
 			ContainerTitle: record.Venue,
 			Publisher:      record.Publisher,
+			CitationKey:    cslCitationKey(record),
+			Note:           cslMetadataValue(record, "note"),
+			Keyword:        cslMetadataValue(record, "tags"),
 			Author:         libraryAuthorsToCSL(record.Authors),
 		}
 		if len(record.URLs) > 0 {
@@ -97,6 +106,51 @@ func ExportCSLJSON(path string, records []PaperRecord) error {
 	}
 	data = append(data, '\n')
 	return os.WriteFile(path, data, 0o644)
+}
+
+func cslMetadata(item cslItem) map[string]string {
+	metadata := map[string]string{
+		"csl_id":       item.ID,
+		"csl_type":     item.Type,
+		"citation_key": item.CitationKey,
+	}
+	if strings.TrimSpace(item.Note) != "" {
+		metadata["note"] = strings.TrimSpace(item.Note)
+	}
+	if strings.TrimSpace(item.Keyword) != "" {
+		metadata["tags"] = strings.Join(splitCSLKeywords(item.Keyword), "; ")
+	}
+	if files := redactedAttachmentFiles(item.Attachments); len(files) > 0 {
+		metadata["attachment_files"] = strings.Join(files, "; ")
+	}
+	return metadata
+}
+
+func splitCSLKeywords(value string) []string {
+	fields := strings.FieldsFunc(value, func(r rune) bool { return r == ';' || r == ',' })
+	out := []string{}
+	for _, field := range fields {
+		field = strings.TrimSpace(field)
+		if field != "" {
+			out = append(out, field)
+		}
+	}
+	return out
+}
+
+func redactedAttachmentFiles(attachments []cslAttachment) []string {
+	out := []string{}
+	for _, attachment := range attachments {
+		path := strings.TrimSpace(attachment.Path)
+		if path == "" {
+			continue
+		}
+		file := filepath.Base(strings.ReplaceAll(path, "\\", "/"))
+		if file != "." && file != string(filepath.Separator) && file != "" {
+			out = append(out, file)
+		}
+	}
+	return out
 }
 
 func cslAuthorsToLibrary(authors []cslName) []Author {
@@ -132,6 +186,24 @@ func cslID(record PaperRecord, index int) string {
 		return record.Identifiers.DOI
 	}
 	return "paper-" + strconv.Itoa(index+1)
+}
+
+func cslMetadataValue(record PaperRecord, key string) string {
+	for _, ref := range record.SourceRefs {
+		if (ref.Source == "csl-json" || ref.Source == "zotero" || ref.Source == "better-bibtex") && ref.Metadata != nil && strings.TrimSpace(ref.Metadata[key]) != "" {
+			return strings.TrimSpace(ref.Metadata[key])
+		}
+	}
+	return ""
+}
+
+func cslCitationKey(record PaperRecord) string {
+	for _, ref := range record.SourceRefs {
+		if (ref.Source == "csl-json" || ref.Source == "better-bibtex") && ref.Metadata != nil && strings.TrimSpace(ref.Metadata["citation_key"]) != "" {
+			return strings.TrimSpace(ref.Metadata["citation_key"])
+		}
+	}
+	return ""
 }
 
 func cslType(record PaperRecord) string {

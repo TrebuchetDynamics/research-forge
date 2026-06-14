@@ -858,16 +858,20 @@ func executeReport(args []string, stdout, stderr io.Writer, opts globalOptions) 
 
 func executeAnalysis(args []string, stdout, stderr io.Writer, opts globalOptions) int {
 	if len(args) < 2 || opts.Project == "" {
-		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge analysis <prepare|run|export>")
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge analysis <prepare|run|sensitivity|export>")
 	}
 	runPath := filepath.Join(opts.Project, "analysis", safeFileStem(args[1])+".json")
 	switch args[0] {
 	case "prepare":
+		calc, ok := parseAnalysisEffect(args[2:])
+		if !ok {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge analysis prepare <run-id> [--effect smd|log-odds-ratio|risk-ratio]")
+		}
 		var items []evidence.EvidenceItem
 		if err := readJSONFile(evidenceItemsPath(opts.Project), &items); err != nil {
 			return writeError(stdout, stderr, opts, 1, "analysis_evidence_read_failed", err.Error())
 		}
-		run, err := analysis.Prepare(args[1], items)
+		run, err := analysis.PrepareWithCalculator(args[1], items, calc)
 		if err != nil {
 			return writeError(stdout, stderr, opts, 1, "analysis_prepare_failed", err.Error())
 		}
@@ -896,6 +900,114 @@ func executeAnalysis(args []string, stdout, stderr io.Writer, opts globalOptions
 		}
 		fmt.Fprintln(stdout, "ran analysis")
 		return 0
+	case "sensitivity":
+		if len(args) != 4 || args[2] != "--method" || args[3] != "leave-one-out" {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge analysis sensitivity <run-id> --method leave-one-out")
+		}
+		var run analysis.AnalysisRun
+		if err := readJSONFile(runPath, &run); err != nil {
+			return writeError(stdout, stderr, opts, 1, "analysis_read_failed", err.Error())
+		}
+		report, err := analysis.LeaveOneOut(run)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "analysis_sensitivity_failed", err.Error())
+		}
+		path := filepath.Join(opts.Project, "analysis", safeFileStem(args[1])+"-sensitivity.json")
+		if err := writeJSONFile(path, report); err != nil {
+			return writeError(stdout, stderr, opts, 1, "analysis_sensitivity_store_failed", err.Error())
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"sensitivity": report, "path": path})
+		}
+		fmt.Fprintf(stdout, "wrote sensitivity analysis to %s\n", path)
+		return 0
+	case "subgroup":
+		variable, groups, ok := parseSubgroupArgs(args[2:])
+		if !ok {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge analysis subgroup <run-id> --variable <name> --group <paper>=<group>")
+		}
+		var run analysis.AnalysisRun
+		if err := readJSONFile(runPath, &run); err != nil {
+			return writeError(stdout, stderr, opts, 1, "analysis_read_failed", err.Error())
+		}
+		report, err := analysis.SubgroupAnalysis(run, variable, groups)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "analysis_subgroup_failed", err.Error())
+		}
+		path := filepath.Join(opts.Project, "analysis", safeFileStem(args[1])+"-subgroup.json")
+		if err := writeJSONFile(path, report); err != nil {
+			return writeError(stdout, stderr, opts, 1, "analysis_subgroup_store_failed", err.Error())
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"subgroup": report, "path": path})
+		}
+		fmt.Fprintf(stdout, "wrote subgroup analysis to %s\n", path)
+		return 0
+	case "meta-regression":
+		moderator, values, ok := parseMetaRegressionArgs(args[2:])
+		if !ok {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge analysis meta-regression <run-id> --moderator <name> --value <paper>=<number>")
+		}
+		var run analysis.AnalysisRun
+		if err := readJSONFile(runPath, &run); err != nil {
+			return writeError(stdout, stderr, opts, 1, "analysis_read_failed", err.Error())
+		}
+		report, err := analysis.MetaRegression(run, moderator, values)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "analysis_meta_regression_failed", err.Error())
+		}
+		path := filepath.Join(opts.Project, "analysis", safeFileStem(args[1])+"-meta-regression.json")
+		if err := writeJSONFile(path, report); err != nil {
+			return writeError(stdout, stderr, opts, 1, "analysis_meta_regression_store_failed", err.Error())
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"metaRegression": report, "path": path})
+		}
+		fmt.Fprintf(stdout, "wrote meta-regression analysis to %s\n", path)
+		return 0
+	case "bayesian":
+		priorMean, priorVariance, ok := parseBayesianArgs(args[2:])
+		if !ok {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge analysis bayesian <run-id> --method normal-approx [--prior-mean 0] [--prior-variance 100]")
+		}
+		var run analysis.AnalysisRun
+		if err := readJSONFile(runPath, &run); err != nil {
+			return writeError(stdout, stderr, opts, 1, "analysis_read_failed", err.Error())
+		}
+		report, err := analysis.BayesianNormalApproximation(run, priorMean, priorVariance)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "analysis_bayesian_failed", err.Error())
+		}
+		path := filepath.Join(opts.Project, "analysis", safeFileStem(args[1])+"-bayesian.json")
+		if err := writeJSONFile(path, report); err != nil {
+			return writeError(stdout, stderr, opts, 1, "analysis_bayesian_store_failed", err.Error())
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"bayesian": report, "path": path})
+		}
+		fmt.Fprintf(stdout, "wrote Bayesian analysis to %s\n", path)
+		return 0
+	case "publication-bias":
+		if len(args) != 4 || args[2] != "--method" || args[3] != "egger" {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge analysis publication-bias <run-id> --method egger")
+		}
+		var run analysis.AnalysisRun
+		if err := readJSONFile(runPath, &run); err != nil {
+			return writeError(stdout, stderr, opts, 1, "analysis_read_failed", err.Error())
+		}
+		report, err := analysis.EggerRegression(run)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "analysis_publication_bias_failed", err.Error())
+		}
+		path := filepath.Join(opts.Project, "analysis", safeFileStem(args[1])+"-publication-bias.json")
+		if err := writeJSONFile(path, report); err != nil {
+			return writeError(stdout, stderr, opts, 1, "analysis_publication_bias_store_failed", err.Error())
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"publicationBias": report, "path": path})
+		}
+		fmt.Fprintf(stdout, "wrote publication bias analysis to %s\n", path)
+		return 0
 	case "export":
 		if len(args) != 3 {
 			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge analysis export <run-id> <file>")
@@ -916,7 +1028,125 @@ func executeAnalysis(args []string, stdout, stderr io.Writer, opts globalOptions
 		fmt.Fprintln(stdout, "exported analysis")
 		return 0
 	default:
-		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge analysis <prepare|run|export>")
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge analysis <prepare|run|sensitivity|subgroup|meta-regression|publication-bias|bayesian|export>")
+	}
+}
+
+func parseBayesianArgs(args []string) (float64, float64, bool) {
+	priorMean := 0.0
+	priorVariance := 100.0
+	methodSeen := false
+	for i := 0; i < len(args); i++ {
+		switch args[i] {
+		case "--method":
+			if i+1 >= len(args) || args[i+1] != "normal-approx" {
+				return 0, 0, false
+			}
+			methodSeen = true
+			i++
+		case "--prior-mean":
+			if i+1 >= len(args) {
+				return 0, 0, false
+			}
+			parsed, err := strconv.ParseFloat(args[i+1], 64)
+			if err != nil {
+				return 0, 0, false
+			}
+			priorMean = parsed
+			i++
+		case "--prior-variance":
+			if i+1 >= len(args) {
+				return 0, 0, false
+			}
+			parsed, err := strconv.ParseFloat(args[i+1], 64)
+			if err != nil || parsed <= 0 {
+				return 0, 0, false
+			}
+			priorVariance = parsed
+			i++
+		default:
+			return 0, 0, false
+		}
+	}
+	return priorMean, priorVariance, methodSeen
+}
+
+func parseSubgroupArgs(args []string) (string, map[string]string, bool) {
+	variable := ""
+	groups := map[string]string{}
+	for i := 0; i < len(args); i++ {
+		switch args[i] {
+		case "--variable":
+			if i+1 >= len(args) {
+				return "", nil, false
+			}
+			variable = args[i+1]
+			i++
+		case "--group":
+			if i+1 >= len(args) {
+				return "", nil, false
+			}
+			paper, group, ok := strings.Cut(args[i+1], "=")
+			if !ok || strings.TrimSpace(paper) == "" || strings.TrimSpace(group) == "" {
+				return "", nil, false
+			}
+			groups[strings.TrimSpace(paper)] = strings.TrimSpace(group)
+			i++
+		default:
+			return "", nil, false
+		}
+	}
+	return variable, groups, strings.TrimSpace(variable) != "" && len(groups) > 0
+}
+
+func parseMetaRegressionArgs(args []string) (string, map[string]float64, bool) {
+	moderator := ""
+	values := map[string]float64{}
+	for i := 0; i < len(args); i++ {
+		switch args[i] {
+		case "--moderator":
+			if i+1 >= len(args) {
+				return "", nil, false
+			}
+			moderator = args[i+1]
+			i++
+		case "--value":
+			if i+1 >= len(args) {
+				return "", nil, false
+			}
+			paper, raw, ok := strings.Cut(args[i+1], "=")
+			if !ok || strings.TrimSpace(paper) == "" {
+				return "", nil, false
+			}
+			parsed, err := strconv.ParseFloat(raw, 64)
+			if err != nil {
+				return "", nil, false
+			}
+			values[strings.TrimSpace(paper)] = parsed
+			i++
+		default:
+			return "", nil, false
+		}
+	}
+	return moderator, values, strings.TrimSpace(moderator) != "" && len(values) > 0
+}
+
+func parseAnalysisEffect(args []string) (analysis.EffectSizeCalculator, bool) {
+	if len(args) == 0 {
+		return analysis.StandardizedMeanDifference{}, true
+	}
+	if len(args) != 2 || args[0] != "--effect" {
+		return nil, false
+	}
+	switch args[1] {
+	case "smd", "standardized-mean-difference":
+		return analysis.StandardizedMeanDifference{}, true
+	case "log-odds-ratio":
+		return analysis.LogOddsRatio{}, true
+	case "risk-ratio", "rr":
+		return analysis.RiskRatio{}, true
+	default:
+		return nil, false
 	}
 }
 
@@ -1060,7 +1290,7 @@ func evidenceItemsPath(project string) string {
 
 func executeScreen(args []string, stdout, stderr io.Writer, opts globalOptions) int {
 	if len(args) == 0 || opts.Project == "" {
-		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> screen <configure|decide|queue|prioritize>")
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> screen <configure|decide|adjudicate|queue|prioritize|model-prioritize|uncertainty|progress|recall|stopping>")
 	}
 	switch args[0] {
 	case "configure":
@@ -1104,6 +1334,32 @@ func executeScreen(args []string, stdout, stderr io.Writer, opts globalOptions) 
 			return writeJSON(stdout, 0, map[string]any{"decided": input.PaperID})
 		}
 		fmt.Fprintln(stdout, "recorded screening decision")
+		return 0
+	case "adjudicate":
+		input, ok := parseScreenDecision(args[1:])
+		if !ok {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge screen adjudicate --paper <id> --stage <stage> --decision <decision> [--reason <reason>] --reviewer <name>")
+		}
+		input.Adjudicated = true
+		workflow, events, err := loadScreening(opts.Project)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "screen_load_failed", err.Error())
+		}
+		store := screening.NewMemoryStore(workflow)
+		for _, event := range events {
+			_ = store.Decide(screening.DecisionInput{PaperID: event.PaperID, Stage: event.Stage, Decision: event.Decision, Reason: event.Reason, Reviewer: event.Reviewer, Adjudicated: event.Adjudicated})
+		}
+		if err := store.Decide(input); err != nil {
+			return writeError(stdout, stderr, opts, 2, "screen_adjudication_invalid", err.Error())
+		}
+		events = append(events, screening.DecisionEvent{PaperID: input.PaperID, Stage: input.Stage, Decision: input.Decision, Reason: input.Reason, Reviewer: input.Reviewer, Adjudicated: true})
+		if err := writeJSONFile(screenEventsPath(opts.Project), events); err != nil {
+			return writeError(stdout, stderr, opts, 1, "screen_adjudication_failed", err.Error())
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"adjudicated": input.PaperID})
+		}
+		fmt.Fprintln(stdout, "recorded screening adjudication")
 		return 0
 	case "queue":
 		stage, decision, ok := parseScreenQueue(args[1:])
@@ -1158,6 +1414,128 @@ func executeScreen(args []string, stdout, stderr io.Writer, opts globalOptions) 
 			fmt.Fprintf(stdout, "%s\t%.0f\n", paper.ID, paper.Score)
 		}
 		return 0
+	case "model-prioritize":
+		stage, limit, ok := parseScreenPrioritize(args[1:])
+		if !ok {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge screen model-prioritize --stage <stage> [--limit N]")
+		}
+		_, events, err := loadScreening(opts.Project)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "screen_load_failed", err.Error())
+		}
+		store, err := library.OpenStore(filepath.Join(opts.Project, "data", "library.json"))
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "library_open_failed", err.Error())
+		}
+		papers, err := store.List()
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "library_list_failed", err.Error())
+		}
+		records := make([]screening.ScreeningRecord, 0, len(papers))
+		for _, paper := range papers {
+			records = append(records, screening.ScreeningRecord{ID: screeningPaperID(paper), Title: paper.Title, Abstract: paper.Abstract})
+		}
+		prioritized := screening.PrioritizeModelRecords(records, events, stage)
+		if limit > 0 && limit < len(prioritized) {
+			prioritized = prioritized[:limit]
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"prioritized": prioritized, "method": "naive-bayes"})
+		}
+		for _, paper := range prioritized {
+			fmt.Fprintf(stdout, "%s\t%.3f\n", paper.ID, paper.Score)
+		}
+		return 0
+	case "uncertainty":
+		stage, limit, ok := parseScreenPrioritize(args[1:])
+		if !ok {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge screen uncertainty --stage <stage> [--limit N]")
+		}
+		_, events, err := loadScreening(opts.Project)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "screen_load_failed", err.Error())
+		}
+		store, err := library.OpenStore(filepath.Join(opts.Project, "data", "library.json"))
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "library_open_failed", err.Error())
+		}
+		papers, err := store.List()
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "library_list_failed", err.Error())
+		}
+		records := make([]screening.ScreeningRecord, 0, len(papers))
+		for _, paper := range papers {
+			records = append(records, screening.ScreeningRecord{ID: screeningPaperID(paper), Title: paper.Title, Abstract: paper.Abstract})
+		}
+		prioritized := screening.PrioritizeUncertaintyRecords(records, events, stage)
+		if limit > 0 && limit < len(prioritized) {
+			prioritized = prioritized[:limit]
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"uncertainty": prioritized})
+		}
+		for _, paper := range prioritized {
+			fmt.Fprintf(stdout, "%s\t%.3f\t%.0f\n", paper.ID, paper.Uncertainty, paper.Score)
+		}
+		return 0
+	case "recall":
+		stage, ok := parseSingleFlag(args[1:], "--stage")
+		if !ok {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge screen recall --stage <stage>")
+		}
+		_, events, err := loadScreening(opts.Project)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "screen_load_failed", err.Error())
+		}
+		curve := screening.RecallEffortCurve(events, screening.Stage(stage))
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"recall": curve})
+		}
+		for _, point := range curve {
+			fmt.Fprintf(stdout, "%d\t%d\t%.3f\n", point.Screened, point.Included, point.Recall)
+		}
+		return 0
+	case "stopping":
+		stage, target, ok := parseScreenStopping(args[1:])
+		if !ok {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge screen stopping --stage <stage> [--target-recall 0.95]")
+		}
+		_, events, err := loadScreening(opts.Project)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "screen_load_failed", err.Error())
+		}
+		recommendation := screening.StoppingCriteria(events, stage, target)
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"stopping": recommendation})
+		}
+		fmt.Fprintf(stdout, "%t\t%.3f\t%s\n", recommendation.CanStop, recommendation.CurrentRecall, recommendation.Reason)
+		return 0
+	case "progress":
+		stage, ok := parseSingleFlag(args[1:], "--stage")
+		if !ok {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge screen progress --stage <stage>")
+		}
+		_, events, err := loadScreening(opts.Project)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "screen_load_failed", err.Error())
+		}
+		store, err := library.OpenStore(filepath.Join(opts.Project, "data", "library.json"))
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "library_open_failed", err.Error())
+		}
+		papers, err := store.List()
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "library_list_failed", err.Error())
+		}
+		report := screening.Progress(events, screening.Stage(stage), len(papers))
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"progress": report})
+		}
+		fmt.Fprintf(stdout, "%s\t%d screened\t%d remaining\t%d conflicts\n", report.Stage, report.ScreenedRecords, report.Remaining, report.Conflicts)
+		for _, reviewer := range report.Reviewers {
+			fmt.Fprintf(stdout, "%s\t%d decisions\t%d include\t%d exclude\t%d uncertain\n", reviewer.Reviewer, reviewer.Decisions, reviewer.Included, reviewer.Excluded, reviewer.Uncertain)
+		}
+		return 0
 	case "conflicts":
 		stage, ok := parseSingleFlag(args[1:], "--stage")
 		if !ok {
@@ -1169,7 +1547,7 @@ func executeScreen(args []string, stdout, stderr io.Writer, opts globalOptions) 
 		}
 		store := screening.NewMemoryStore(workflow)
 		for _, event := range events {
-			_ = store.Decide(screening.DecisionInput{PaperID: event.PaperID, Stage: event.Stage, Decision: event.Decision, Reason: event.Reason, Reviewer: event.Reviewer})
+			_ = store.Decide(screening.DecisionInput{PaperID: event.PaperID, Stage: event.Stage, Decision: event.Decision, Reason: event.Reason, Reviewer: event.Reviewer, Adjudicated: event.Adjudicated})
 		}
 		conflicts := store.Conflicts(screening.Stage(stage))
 		if conflicts == nil {
@@ -1183,7 +1561,7 @@ func executeScreen(args []string, stdout, stderr io.Writer, opts globalOptions) 
 		}
 		return 0
 	default:
-		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> screen <configure|decide|queue|prioritize|conflicts>")
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> screen <configure|decide|adjudicate|queue|prioritize|progress|recall|stopping|conflicts>")
 	}
 }
 
@@ -1246,6 +1624,31 @@ func parseScreenQueue(args []string) (screening.Stage, screening.Decision, bool)
 	}
 	return screening.Stage(values["--stage"]), screening.Decision(values["--decision"]), values["--stage"] != "" && values["--decision"] != ""
 }
+func parseScreenStopping(args []string) (screening.Stage, float64, bool) {
+	values := map[string]string{}
+	for i := 0; i < len(args); i++ {
+		switch args[i] {
+		case "--stage", "--target-recall":
+			if i+1 >= len(args) {
+				return "", 0, false
+			}
+			values[args[i]] = args[i+1]
+			i++
+		default:
+			return "", 0, false
+		}
+	}
+	target := 0.95
+	if values["--target-recall"] != "" {
+		parsed, err := strconv.ParseFloat(values["--target-recall"], 64)
+		if err != nil || parsed <= 0 || parsed > 1 {
+			return "", 0, false
+		}
+		target = parsed
+	}
+	return screening.Stage(values["--stage"]), target, values["--stage"] != ""
+}
+
 func parseScreenPrioritize(args []string) (screening.Stage, int, bool) {
 	values := map[string]string{}
 	for i := 0; i < len(args); i++ {
@@ -1595,14 +1998,16 @@ func printHelp(w io.Writer) {
 	fmt.Fprintln(w, "Usage:")
 	fmt.Fprintln(w, "  rforge version")
 	fmt.Fprintln(w, "  rforge doctor")
-	fmt.Fprintln(w, "  rforge search --source openalex|arxiv|crossref|semantic-scholar --query <query>")
-	fmt.Fprintln(w, "  rforge citations expand --source semantic-scholar --paper <id> --direction references|citations|both --out <file> [--import-library]")
+	fmt.Fprintln(w, "  rforge search --source openalex|arxiv|crossref|semantic-scholar|europepmc|pubmed --query <query> [--category arxiv-category] [--filter source-filter]")
+	fmt.Fprintln(w, "  rforge citations expand --source semantic-scholar|openalex --paper <id> --direction references|citations|both --depth N [--max-records N] --out <file> [--import-library]")
+	fmt.Fprintln(w, "  rforge citations report --graph <graph.json> --out <report.md>")
 	fmt.Fprintln(w, "  rforge oa lookup <doi>")
 	fmt.Fprintln(w, "  rforge service check <name>")
 	fmt.Fprintln(w, "  rforge library list")
 	fmt.Fprintln(w, "  rforge duplicate report")
-	fmt.Fprintln(w, "  rforge import json|csv|bibtex|ris|csl-json <file>")
-	fmt.Fprintln(w, "  rforge export json|csv|bibtex|ris|csl-json <file>")
+	fmt.Fprintln(w, "  rforge import json|csv|bibtex|ris|csl-json|zotero-rdf <file>")
+	fmt.Fprintln(w, "  rforge export json|csv|bibtex|ris|csl-json|zotero-rdf <file>")
+	fmt.Fprintln(w, "  rforge oss inventory-check <manifest.json>")
 	fmt.Fprintln(w, "  rforge oss add|list|license-check")
 	fmt.Fprintln(w, "  rforge project create [path] --title <title>")
 	fmt.Fprintln(w, "  rforge project discover-assets")

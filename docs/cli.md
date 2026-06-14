@@ -4,19 +4,28 @@ Core commands:
 
 - `rforge project create [path] --title <title>`
 - `rforge project inspect <path>`
-- `rforge search --source openalex|arxiv|crossref|semantic-scholar --query <query>`
-- `rforge citations expand --source semantic-scholar --paper <id> --direction references|citations|both --out <file> [--import-library]`
+- `rforge search --source openalex|arxiv|crossref|semantic-scholar|europepmc|pubmed --query <query> [--category arxiv-category] [--filter source-filter] [--entity authors|institutions]`
+- `rforge search import --source openalex --query <query> --pages N [--limit N] [--filter source-filter]`
+- `rforge search related --source openalex --paper <work-id> [--limit N]`
+- `rforge citations expand --source semantic-scholar|openalex --paper <id> --direction references|citations|both --depth N [--max-records N] --out <file> [--import-library]`
+- `rforge citations report --graph <graph.json> --out <report.md>`
 - `rforge oa lookup <doi>`
-- `rforge import json|csv|bibtex|ris|csl-json <file>`
-- `rforge export json|csv|bibtex|ris|csl-json <file>`
-- `rforge duplicate report|merge|split`
+- `rforge library list`, `rforge library refresh-doi <doi>`, `rforge library import-crossref-refs <doi>`
+- `rforge import json|csv|bibtex|ris|csl-json|zotero-rdf <file>`
+- `rforge export json|csv|bibtex|ris|csl-json|zotero-rdf <file>`
+- `rforge duplicate report [--source <source>]|merge|split` (use `--source semantic-scholar` for graph-import dedupe review)
+- `rforge oss inventory-check <manifest.json>`
 - `rforge oss add|list|clone|license-check|note|scan|report|refresh`
-- `rforge pdf fetch --doi <doi>`
-- `rforge parse --paper <id> --parser grobid --pdf <file>`
-- `rforge index rebuild`, `rforge retrieve --query <query>`
-- `rforge screen configure|decide|queue|prioritize|conflicts`, `rforge prisma counts`
+- `rforge pdf fetch --doi <doi>`, `rforge pdf fetch-arxiv --paper <arxiv-id> --kind pdf|source --url <url>`
+- `rforge parse --paper <id> --parser grobid --pdf <file>` or `rforge parse --paper <id> --parser tex --tex <file>` or `rforge parse --paper <id> --parser s2orc --s2orc <file>`
+- `rforge parse references --paper <id> --parser anystyle --file <refs.txt> --out <refs.json>` (requires `RFORGE_ANYSTYLE_CMD`)
+- `rforge parse compare --left <parsed.json> --right <parsed.json> --out <report.json>`
+- `rforge parse normalize-refs --parsed <parsed.json> --source crossref|openalex|semantic-scholar --out <report.json>`
+- `rforge parse review-refs --parsed <parsed.json> --out <report.json> [--threshold 0.75]`
+- `rforge index rebuild [--backend sqlite|opensearch|qdrant|hybrid]` (writes `data/retrieval.lock.json`; qdrant/hybrid honor `RFORGE_EMBEDDING_DIMENSIONS` or opt-in `RFORGE_EMBEDDING_URL`/`RFORGE_EMBEDDING_MODEL`), `rforge retrieve --query <query> [--backend sqlite|opensearch|qdrant|hybrid]`
+- `rforge screen configure|decide|adjudicate|queue|prioritize|model-prioritize|uncertainty|progress|recall|stopping|conflicts`, `rforge prisma counts`
 - `rforge extraction schema add`, `rforge extract add|suggest`, `rforge evidence audit`
-- `rforge analysis prepare|run|export`
+- `rforge analysis prepare [--effect smd|log-odds-ratio|risk-ratio]|run|sensitivity|subgroup|meta-regression|publication-bias|bayesian|export`
 - `rforge report build|audit`
 - `rforge ui` reports the local Go + HTMX web GUI status; `rforge --json ui` exposes the selected stack and ready state from ADR 0006
 - `rforge decisions` lists owner decisions and implementation trackers that intentionally keep remaining TODO items open

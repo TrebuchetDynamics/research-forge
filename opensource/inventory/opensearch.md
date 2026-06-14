@@ -23,10 +23,11 @@ Implemented nearby capabilities:
 - Optional OpenSearch service check.
 - Adapter seam/backlog exists.
 - Local retrieval/index package exists.
+- OpenSearch passage indexing/search adapter with mocked HTTP tests.
+- CLI backend selection through `rforge index rebuild --backend opensearch` and `rforge retrieve --backend opensearch`.
 
 Missing features:
 
-- Real OpenSearch indexing/query adapter.
 - Mapping version recorded in lockfile.
 - Bulk indexing command with partial-failure provenance.
 - Highlighted passage search results.
@@ -34,7 +35,7 @@ Missing features:
 
 ## Recommended slice
 
-Add an adapter contract and fake-backed tests first, then a gated real OpenSearch integration behind `RFORGE_OPENSEARCH_URL`.
+Add mapping-version provenance, partial bulk-failure reporting, highlighted passage results, and opt-in live OpenSearch integration tests.
 
 Acceptance target:
 

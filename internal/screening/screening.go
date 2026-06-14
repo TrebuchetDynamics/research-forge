@@ -58,18 +58,20 @@ func (w Workflow) ValidateReason(reason string) error {
 }
 
 type DecisionInput struct {
-	PaperID  string
-	Stage    Stage
-	Decision Decision
-	Reason   string
-	Reviewer string
+	PaperID     string
+	Stage       Stage
+	Decision    Decision
+	Reason      string
+	Reviewer    string
+	Adjudicated bool
 }
 type DecisionEvent struct {
-	PaperID  string
-	Stage    Stage
-	Decision Decision
-	Reason   string
-	Reviewer string
+	PaperID     string
+	Stage       Stage
+	Decision    Decision
+	Reason      string
+	Reviewer    string
+	Adjudicated bool
 }
 type QueueFilter struct {
 	Stage    Stage
@@ -100,7 +102,7 @@ func (s *MemoryStore) Decide(input DecisionInput) error {
 			return err
 		}
 	}
-	s.events = append(s.events, DecisionEvent{PaperID: input.PaperID, Stage: input.Stage, Decision: input.Decision, Reason: input.Reason, Reviewer: input.Reviewer})
+	s.events = append(s.events, DecisionEvent{PaperID: input.PaperID, Stage: input.Stage, Decision: input.Decision, Reason: input.Reason, Reviewer: input.Reviewer, Adjudicated: input.Adjudicated})
 	return nil
 }
 
@@ -116,13 +118,20 @@ func (s *MemoryStore) History(paperID string) []DecisionEvent {
 
 func (s *MemoryStore) Conflicts(stage Stage) []string {
 	byPaper := map[string]map[Decision]bool{}
+	adjudicated := map[string]bool{}
 	for _, event := range s.events {
 		if event.Stage == stage {
+			if event.Adjudicated {
+				adjudicated[event.PaperID] = true
+			}
 			if byPaper[event.PaperID] == nil {
 				byPaper[event.PaperID] = map[Decision]bool{}
 			}
 			byPaper[event.PaperID][event.Decision] = true
 		}
+	}
+	for paper := range adjudicated {
+		delete(byPaper, paper)
 	}
 	var out []string
 	for paper, decisions := range byPaper {

@@ -49,5 +49,8 @@ type Passage struct {
 
 // Reference is one parsed bibliography reference.
 type Reference struct {
-	Title string
+	Title      string
+	DOI        string
+	Raw        string
+	Confidence float64
 }

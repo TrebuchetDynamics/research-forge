@@ -141,7 +141,7 @@ func TestExportCSVWritesGoldenPaperRecords(t *testing.T) {
 	if err != nil {
 		t.Fatalf("read export: %v", err)
 	}
-	want := "title,doi,arxiv_id,pmid,openalex_id,crossref_id,semantic_scholar_id,year,abstract,venue,publisher,license,open_access\nArtificial photosynthesis CSV export,10.1000/csv-export,,,,,,2026,,,,,false\n"
+	want := "title,doi,arxiv_id,pmid,pmcid,openalex_id,crossref_id,semantic_scholar_id,year,abstract,venue,publisher,license,open_access\nArtificial photosynthesis CSV export,10.1000/csv-export,,,,,,,2026,,,,,false\n"
 	if string(data) != want {
 		t.Fatalf("export mismatch:\n%s", string(data))
 	}
@@ -168,6 +168,7 @@ func TestExportJSONWritesGoldenPaperRecords(t *testing.T) {
       "DOI": "10.1000/export",
       "ArXivID": "",
       "PMID": "",
+      "PMCID": "",
       "OpenAlexID": "",
       "CrossrefID": "",
       "SemanticScholarID": ""

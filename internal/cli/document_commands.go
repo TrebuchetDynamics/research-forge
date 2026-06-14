@@ -7,6 +7,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 
@@ -18,8 +19,9 @@ import (
 const maxParsePDFBytes int64 = 100 << 20
 
 func executeIndex(args []string, stdout, stderr io.Writer, opts globalOptions) int {
-	if len(args) != 1 || args[0] != "rebuild" {
-		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> index rebuild")
+	backend, ok := parseIndexArgs(args)
+	if !ok {
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> index rebuild [--backend sqlite|opensearch|qdrant|hybrid]")
 	}
 	if opts.Project == "" {
 		return writeError(stdout, stderr, opts, 2, "missing_project", "--project is required for index commands")
@@ -28,7 +30,7 @@ func executeIndex(args []string, stdout, stderr io.Writer, opts globalOptions) i
 	if err != nil {
 		return writeError(stdout, stderr, opts, 1, "parsed_read_failed", fmt.Sprintf("read parsed documents: %v", err))
 	}
-	index, err := retrieval.OpenSQLiteIndex(filepath.Join(opts.Project, "data", "retrieval.db"))
+	index, err := openRetrievalBackend(opts.Project, backend)
 	if err != nil {
 		return writeError(stdout, stderr, opts, 1, "index_open_failed", fmt.Sprintf("open index: %v", err))
 	}
@@ -36,22 +38,57 @@ func executeIndex(args []string, stdout, stderr io.Writer, opts globalOptions) i
 	if err := index.Rebuild(docs); err != nil {
 		return writeError(stdout, stderr, opts, 1, "index_rebuild_failed", fmt.Sprintf("rebuild index: %v", err))
 	}
-	if opts.JSON {
-		return writeJSON(stdout, 0, map[string]any{"indexedDocuments": len(docs)})
+	if err := writeRetrievalLock(opts.Project, backend, len(docs)); err != nil {
+		return writeError(stdout, stderr, opts, 1, "index_lock_failed", fmt.Sprintf("write retrieval lock: %v", err))
 	}
-	fmt.Fprintf(stdout, "indexed %d parsed documents\n", len(docs))
+	if opts.JSON {
+		return writeJSON(stdout, 0, map[string]any{"indexedDocuments": len(docs), "backend": backend})
+	}
+	fmt.Fprintf(stdout, "indexed %d parsed documents with %s\n", len(docs), backend)
 	return 0
 }
 
+type retrievalLock struct {
+	SchemaVersion    string `json:"schemaVersion"`
+	Backend          string `json:"backend"`
+	IndexedDocuments int    `json:"indexedDocuments"`
+	LexicalBackend   string `json:"lexicalBackend,omitempty"`
+	VectorBackend    string `json:"vectorBackend,omitempty"`
+	EmbeddingBackend string `json:"embeddingBackend,omitempty"`
+	EmbeddingVersion string `json:"embeddingVersion,omitempty"`
+}
+
+func writeRetrievalLock(project, backend string, indexedDocuments int) error {
+	lock := retrievalLock{SchemaVersion: "1", Backend: backend, IndexedDocuments: indexedDocuments}
+	switch backend {
+	case "qdrant":
+		embedding := embeddingModelFromEnv()
+		lock.VectorBackend = "qdrant"
+		lock.EmbeddingBackend = embedding.EmbeddingBackendName()
+		lock.EmbeddingVersion = embeddingVersionFromEnv()
+	case "hybrid":
+		embedding := embeddingModelFromEnv()
+		lock.LexicalBackend = "sqlite-fts5"
+		lock.VectorBackend = "qdrant"
+		lock.EmbeddingBackend = embedding.EmbeddingBackendName()
+		lock.EmbeddingVersion = embeddingVersionFromEnv()
+	case "opensearch":
+		lock.LexicalBackend = "opensearch"
+	default:
+		lock.LexicalBackend = "sqlite-fts5"
+	}
+	return writeJSONFile(filepath.Join(project, "data", "retrieval.lock.json"), lock)
+}
+
 func executeRetrieve(args []string, stdout, stderr io.Writer, opts globalOptions) int {
-	query, ok := parseRetrieveArgs(args)
+	query, backend, ok := parseRetrieveArgs(args)
 	if !ok {
-		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> retrieve --query <query>")
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> retrieve --query <query> [--backend sqlite|opensearch|qdrant|hybrid]")
 	}
 	if opts.Project == "" {
 		return writeError(stdout, stderr, opts, 2, "missing_project", "--project is required for retrieve commands")
 	}
-	index, err := retrieval.OpenSQLiteIndex(filepath.Join(opts.Project, "data", "retrieval.db"))
+	index, err := openRetrievalBackend(opts.Project, backend)
 	if err != nil {
 		return writeError(stdout, stderr, opts, 1, "index_open_failed", fmt.Sprintf("open index: %v", err))
 	}
@@ -61,7 +98,7 @@ func executeRetrieve(args []string, stdout, stderr io.Writer, opts globalOptions
 		return writeError(stdout, stderr, opts, 1, "retrieve_failed", fmt.Sprintf("retrieve: %v", err))
 	}
 	if opts.JSON {
-		return writeJSON(stdout, 0, map[string]any{"results": results})
+		return writeJSON(stdout, 0, map[string]any{"results": results, "backend": backend})
 	}
 	for _, result := range results {
 		fmt.Fprintf(stdout, "%s\t%s\n", result.PassageID, result.Text)
@@ -69,11 +106,104 @@ func executeRetrieve(args []string, stdout, stderr io.Writer, opts globalOptions
 	return 0
 }
 
-func parseRetrieveArgs(args []string) (string, bool) {
-	if len(args) != 2 || args[0] != "--query" || strings.TrimSpace(args[1]) == "" {
-		return "", false
+func parseIndexArgs(args []string) (string, bool) {
+	if len(args) == 1 && args[0] == "rebuild" {
+		return "sqlite", true
 	}
-	return args[1], true
+	if len(args) == 3 && args[0] == "rebuild" && args[1] == "--backend" && validRetrievalBackend(args[2]) {
+		return args[2], true
+	}
+	return "", false
+}
+
+func parseRetrieveArgs(args []string) (string, string, bool) {
+	backend := "sqlite"
+	query := ""
+	for i := 0; i < len(args); i++ {
+		switch args[i] {
+		case "--query":
+			if i+1 >= len(args) {
+				return "", "", false
+			}
+			query = args[i+1]
+			i++
+		case "--backend":
+			if i+1 >= len(args) || !validRetrievalBackend(args[i+1]) {
+				return "", "", false
+			}
+			backend = args[i+1]
+			i++
+		default:
+			return "", "", false
+		}
+	}
+	return query, backend, strings.TrimSpace(query) != ""
+}
+
+func validRetrievalBackend(backend string) bool {
+	return backend == "sqlite" || backend == "opensearch" || backend == "qdrant" || backend == "hybrid"
+}
+
+func embeddingModelFromEnv() retrieval.EmbeddingModel {
+	if endpoint := strings.TrimSpace(os.Getenv("RFORGE_EMBEDDING_URL")); endpoint != "" {
+		return retrieval.HTTPEmbedding{Endpoint: endpoint, Model: os.Getenv("RFORGE_EMBEDDING_MODEL")}
+	}
+	return retrieval.DeterministicEmbedding{Dimensions: embeddingDimensionsFromEnv()}
+}
+
+func embeddingVersionFromEnv() string {
+	if strings.TrimSpace(os.Getenv("RFORGE_EMBEDDING_URL")) != "" {
+		model := strings.TrimSpace(os.Getenv("RFORGE_EMBEDDING_MODEL"))
+		if model == "" {
+			model = "default"
+		}
+		return "http-model=" + model
+	}
+	return fmt.Sprintf("dimensions=%d", embeddingDimensionsFromEnv())
+}
+
+func embeddingDimensionsFromEnv() int {
+	dimensions := 8
+	if raw := strings.TrimSpace(os.Getenv("RFORGE_EMBEDDING_DIMENSIONS")); raw != "" {
+		if parsed, err := strconv.Atoi(raw); err == nil && parsed > 0 {
+			dimensions = parsed
+		}
+	}
+	return dimensions
+}
+
+func openRetrievalBackend(project, backend string) (retrieval.SearchAdapter, error) {
+	switch backend {
+	case "opensearch":
+		baseURL := os.Getenv("RFORGE_OPENSEARCH_URL")
+		if strings.TrimSpace(baseURL) == "" {
+			return nil, fmt.Errorf("RFORGE_OPENSEARCH_URL is required for opensearch backend")
+		}
+		return retrieval.NewOpenSearchIndex(retrieval.OpenSearchOptions{BaseURL: baseURL, Index: os.Getenv("RFORGE_OPENSEARCH_INDEX")})
+	case "qdrant":
+		baseURL := os.Getenv("RFORGE_QDRANT_URL")
+		if strings.TrimSpace(baseURL) == "" {
+			return nil, fmt.Errorf("RFORGE_QDRANT_URL is required for qdrant backend")
+		}
+		return retrieval.NewQdrantIndex(retrieval.QdrantOptions{BaseURL: baseURL, Collection: os.Getenv("RFORGE_QDRANT_COLLECTION"), Embeddings: embeddingModelFromEnv()})
+	case "hybrid":
+		qdrantURL := os.Getenv("RFORGE_QDRANT_URL")
+		if strings.TrimSpace(qdrantURL) == "" {
+			return nil, fmt.Errorf("RFORGE_QDRANT_URL is required for hybrid backend")
+		}
+		lexical, err := retrieval.OpenSQLiteIndex(filepath.Join(project, "data", "retrieval.db"))
+		if err != nil {
+			return nil, err
+		}
+		vector, err := retrieval.NewQdrantIndex(retrieval.QdrantOptions{BaseURL: qdrantURL, Collection: os.Getenv("RFORGE_QDRANT_COLLECTION"), Embeddings: embeddingModelFromEnv()})
+		if err != nil {
+			_ = lexical.Close()
+			return nil, err
+		}
+		return retrieval.HybridIndex{Lexical: lexical, Vector: vector}, nil
+	default:
+		return retrieval.OpenSQLiteIndex(filepath.Join(project, "data", "retrieval.db"))
+	}
 }
 
 func readParsedDocuments(dir string) ([]parsing.ParsedDocument, error) {
@@ -103,19 +233,134 @@ func executeParse(args []string, stdout, stderr io.Writer, opts globalOptions) i
 	if opts.Project == "" {
 		return writeError(stdout, stderr, opts, 2, "missing_project", "--project is required for parse commands")
 	}
-	paperID, parserName, pdfPath, ok := parseParseArgs(args)
-	if !ok || parserName != "grobid" {
-		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> parse --paper <id> --parser grobid --pdf <file>")
+	if len(args) > 0 && args[0] == "review-refs" {
+		parsedPath, out, threshold, ok := parseReviewRefsArgs(args[1:])
+		if !ok {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> parse review-refs --parsed <parsed.json> --out <report.json> [--threshold 0.75]")
+		}
+		var doc parsing.ParsedDocument
+		if err := readJSONFile(parsedPath, &doc); err != nil {
+			return writeError(stdout, stderr, opts, 1, "parse_refs_read_failed", err.Error())
+		}
+		report := parsing.AmbiguousReferences(doc, threshold)
+		if err := writeJSONFile(out, report); err != nil {
+			return writeError(stdout, stderr, opts, 1, "parse_refs_review_write_failed", err.Error())
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"referenceReview": report, "path": out})
+		}
+		fmt.Fprintf(stdout, "wrote reference review queue to %s\n", out)
+		return 0
 	}
-	pdf, err := readParsePDF(pdfPath)
-	if err != nil {
-		return writeError(stdout, stderr, opts, 1, "parse_pdf_read_failed", fmt.Sprintf("read PDF: %v", err))
+	if len(args) > 0 && args[0] == "references" {
+		paperID, parserName, inputPath, out, ok := parseReferenceParseArgs(args[1:])
+		if !ok || parserName != "anystyle" {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> parse references --paper <id> --parser anystyle --file <refs.txt> --out <refs.json>")
+		}
+		input, err := os.ReadFile(inputPath)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "parse_references_read_failed", err.Error())
+		}
+		command := strings.Fields(os.Getenv("RFORGE_ANYSTYLE_CMD"))
+		if len(command) == 0 {
+			return writeError(stdout, stderr, opts, 2, "parse_references_command_missing", "RFORGE_ANYSTYLE_CMD is required for anystyle reference parsing")
+		}
+		parser := parsing.AnyStyleReferenceParser{Runner: parsing.ExecCommandRunner{Command: command}, Version: "external"}
+		doc, err := parser.ParseReferences(context.Background(), paperID, input)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "parse_references_failed", err.Error())
+		}
+		if err := writeJSONFile(out, doc); err != nil {
+			return writeError(stdout, stderr, opts, 1, "parse_references_write_failed", err.Error())
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"parsed": doc, "path": out})
+		}
+		fmt.Fprintf(stdout, "wrote parsed references to %s\n", out)
+		return 0
 	}
-	baseURL := os.Getenv("RFORGE_GROBID_URL")
-	client := parsing.NewGROBIDClient(parsing.GROBIDClientOptions{BaseURL: baseURL, Timeout: 30 * time.Second, Version: "configured"})
-	doc, err := client.Parse(context.Background(), pdf, parsing.ParseOptions{PaperID: paperID})
-	if err != nil {
-		return writeError(stdout, stderr, opts, 1, "parse_failed", fmt.Sprintf("parse: %v", err))
+	if len(args) > 0 && args[0] == "normalize-refs" {
+		parsedPath, sourceName, out, ok := parseNormalizeRefsArgs(args[1:])
+		if !ok || !validReferenceNormalizationSource(sourceName) {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> parse normalize-refs --parsed <parsed.json> --source crossref|openalex|semantic-scholar --out <report.json>")
+		}
+		var doc parsing.ParsedDocument
+		if err := readJSONFile(parsedPath, &doc); err != nil {
+			return writeError(stdout, stderr, opts, 1, "parse_refs_read_failed", err.Error())
+		}
+		connector, ok := searchConnector(sourceName)
+		if !ok {
+			return writeError(stdout, stderr, opts, 2, "unknown_source", fmt.Sprintf("unknown source %q", sourceName))
+		}
+		report, err := parsing.NormalizeParsedReferences(context.Background(), connector, doc)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "parse_refs_normalize_failed", err.Error())
+		}
+		if err := writeJSONFile(out, report); err != nil {
+			return writeError(stdout, stderr, opts, 1, "parse_refs_write_failed", err.Error())
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"referenceNormalization": report, "path": out})
+		}
+		fmt.Fprintf(stdout, "wrote reference normalization to %s\n", out)
+		return 0
+	}
+	if len(args) > 0 && args[0] == "compare" {
+		left, right, out, ok := parseParseCompareArgs(args[1:])
+		if !ok {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> parse compare --left <parsed.json> --right <parsed.json> --out <report.json>")
+		}
+		report, err := compareParsedFiles(left, right)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "parse_compare_failed", err.Error())
+		}
+		if err := writeJSONFile(out, report); err != nil {
+			return writeError(stdout, stderr, opts, 1, "parse_compare_write_failed", err.Error())
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"comparison": report, "path": out})
+		}
+		fmt.Fprintf(stdout, "wrote parser comparison to %s\n", out)
+		return 0
+	}
+	paperID, parserName, inputPath, ok := parseParseArgs(args)
+	if !ok || (parserName != "grobid" && parserName != "tex" && parserName != "s2orc") {
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> parse --paper <id> --parser grobid --pdf <file> | --parser tex --tex <file> | --parser s2orc --s2orc <file>")
+	}
+	var doc parsing.ParsedDocument
+	var inputData []byte
+	if parserName == "grobid" {
+		pdf, err := readParsePDF(inputPath)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "parse_pdf_read_failed", fmt.Sprintf("read PDF: %v", err))
+		}
+		inputData = pdf
+		baseURL := os.Getenv("RFORGE_GROBID_URL")
+		client := parsing.NewGROBIDClient(parsing.GROBIDClientOptions{BaseURL: baseURL, Timeout: 30 * time.Second, Version: "configured"})
+		doc, err = client.Parse(context.Background(), pdf, parsing.ParseOptions{PaperID: paperID})
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "parse_failed", fmt.Sprintf("parse: %v", err))
+		}
+	} else if parserName == "tex" {
+		tex, err := os.ReadFile(inputPath)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "parse_tex_read_failed", fmt.Sprintf("read TeX: %v", err))
+		}
+		inputData = tex
+		doc, err = (parsing.TeXParser{}).Parse(context.Background(), tex, parsing.ParseOptions{PaperID: paperID})
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "parse_failed", fmt.Sprintf("parse: %v", err))
+		}
+	} else {
+		data, err := os.ReadFile(inputPath)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "parse_s2orc_read_failed", fmt.Sprintf("read S2ORC JSON: %v", err))
+		}
+		inputData = data
+		doc, err = (parsing.S2ORCJSONParser{}).Parse(context.Background(), data, parsing.ParseOptions{PaperID: paperID})
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "parse_failed", fmt.Sprintf("parse: %v", err))
+		}
 	}
 	parsedDir := filepath.Join(opts.Project, "parsed")
 	if err := os.MkdirAll(parsedDir, 0o755); err != nil {
@@ -130,14 +375,39 @@ func executeParse(args []string, stdout, stderr io.Writer, opts globalOptions) i
 	if err := os.WriteFile(parsedPath, data, 0o644); err != nil {
 		return writeError(stdout, stderr, opts, 1, "parse_store_failed", fmt.Sprintf("write parsed doc: %v", err))
 	}
-	if err := recordDuplicateEvent(opts.Project, "parser.run", map[string]any{"paperID": paperID, "parser": parserName, "pdf": pdfPath}, map[string]any{"parsedPath": parsedPath, "parserVersion": doc.ParserVersion, "warnings": doc.Warnings}); err != nil {
+	manifestPath := filepath.Join(parsedDir, safeFileStem(paperID)+".manifest.json")
+	manifest := parsing.NewParserRunManifest(doc, inputData, parsedPath)
+	if err := writeJSONFile(manifestPath, manifest); err != nil {
+		return writeError(stdout, stderr, opts, 1, "parse_manifest_failed", fmt.Sprintf("write parser manifest: %v", err))
+	}
+	if err := recordDuplicateEvent(opts.Project, "parser.run", map[string]any{"paperID": paperID, "parser": parserName, "input": inputPath}, map[string]any{"parsedPath": parsedPath, "manifestPath": manifestPath, "parserVersion": doc.ParserVersion, "warnings": doc.Warnings}); err != nil {
 		return writeError(stdout, stderr, opts, 1, "parse_provenance_failed", fmt.Sprintf("record parse provenance: %v", err))
 	}
 	if opts.JSON {
-		return writeJSON(stdout, 0, map[string]any{"parsed": doc, "path": parsedPath})
+		return writeJSON(stdout, 0, map[string]any{"parsed": doc, "path": parsedPath, "manifestPath": manifestPath})
 	}
 	fmt.Fprintf(stdout, "parsed %s to %s\n", paperID, parsedPath)
 	return 0
+}
+
+func validReferenceNormalizationSource(sourceName string) bool {
+	return sourceName == "crossref" || sourceName == "openalex" || sourceName == "semantic-scholar"
+}
+
+func compareParsedFiles(left, right string) (parsing.ComparisonReport, error) {
+	docs := []parsing.ParsedDocument{}
+	for _, path := range []string{left, right} {
+		data, err := os.ReadFile(path)
+		if err != nil {
+			return parsing.ComparisonReport{}, err
+		}
+		var doc parsing.ParsedDocument
+		if err := json.Unmarshal(data, &doc); err != nil {
+			return parsing.ComparisonReport{}, err
+		}
+		docs = append(docs, doc)
+	}
+	return parsing.CompareParsedDocuments(docs), nil
 }
 
 func readParsePDF(path string) ([]byte, error) {
@@ -163,11 +433,49 @@ func readParsePDF(path string) ([]byte, error) {
 	return data, nil
 }
 
-func parseParseArgs(args []string) (string, string, string, bool) {
+func parseReviewRefsArgs(args []string) (string, string, float64, bool) {
+	values := map[string]string{"--threshold": "0.75"}
+	for i := 0; i < len(args); i++ {
+		switch args[i] {
+		case "--parsed", "--out", "--threshold":
+			if i+1 >= len(args) {
+				return "", "", 0, false
+			}
+			values[args[i]] = args[i+1]
+			i++
+		default:
+			return "", "", 0, false
+		}
+	}
+	threshold, err := strconv.ParseFloat(values["--threshold"], 64)
+	if err != nil || threshold <= 0 || threshold > 1 {
+		return "", "", 0, false
+	}
+	return values["--parsed"], values["--out"], threshold, values["--parsed"] != "" && values["--out"] != ""
+}
+
+func parseReferenceParseArgs(args []string) (string, string, string, string, bool) {
 	values := map[string]string{}
 	for i := 0; i < len(args); i++ {
 		switch args[i] {
-		case "--paper", "--parser", "--pdf":
+		case "--paper", "--parser", "--file", "--out":
+			if i+1 >= len(args) {
+				return "", "", "", "", false
+			}
+			values[args[i]] = args[i+1]
+			i++
+		default:
+			return "", "", "", "", false
+		}
+	}
+	return values["--paper"], values["--parser"], values["--file"], values["--out"], values["--paper"] != "" && values["--parser"] != "" && values["--file"] != "" && values["--out"] != ""
+}
+
+func parseNormalizeRefsArgs(args []string) (string, string, string, bool) {
+	values := map[string]string{}
+	for i := 0; i < len(args); i++ {
+		switch args[i] {
+		case "--parsed", "--source", "--out":
 			if i+1 >= len(args) {
 				return "", "", "", false
 			}
@@ -177,7 +485,48 @@ func parseParseArgs(args []string) (string, string, string, bool) {
 			return "", "", "", false
 		}
 	}
-	return values["--paper"], values["--parser"], values["--pdf"], values["--paper"] != "" && values["--parser"] != "" && values["--pdf"] != ""
+	return values["--parsed"], values["--source"], values["--out"], values["--parsed"] != "" && values["--source"] != "" && values["--out"] != ""
+}
+
+func parseParseCompareArgs(args []string) (string, string, string, bool) {
+	values := map[string]string{}
+	for i := 0; i < len(args); i++ {
+		switch args[i] {
+		case "--left", "--right", "--out":
+			if i+1 >= len(args) {
+				return "", "", "", false
+			}
+			values[args[i]] = args[i+1]
+			i++
+		default:
+			return "", "", "", false
+		}
+	}
+	return values["--left"], values["--right"], values["--out"], values["--left"] != "" && values["--right"] != "" && values["--out"] != ""
+}
+
+func parseParseArgs(args []string) (string, string, string, bool) {
+	values := map[string]string{}
+	for i := 0; i < len(args); i++ {
+		switch args[i] {
+		case "--paper", "--parser", "--pdf", "--tex", "--s2orc":
+			if i+1 >= len(args) {
+				return "", "", "", false
+			}
+			values[args[i]] = args[i+1]
+			i++
+		default:
+			return "", "", "", false
+		}
+	}
+	input := values["--pdf"]
+	if values["--parser"] == "tex" {
+		input = values["--tex"]
+	}
+	if values["--parser"] == "s2orc" {
+		input = values["--s2orc"]
+	}
+	return values["--paper"], values["--parser"], input, values["--paper"] != "" && values["--parser"] != "" && input != ""
 }
 
 func safeFileStem(value string) string {
@@ -191,11 +540,26 @@ func safeFileStem(value string) string {
 }
 
 func executePDF(args []string, stdout, stderr io.Writer, opts globalOptions) int {
-	if len(args) == 0 || args[0] != "fetch" {
-		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> pdf fetch --doi <doi> --pdf-url <url> --license <license> --oa-status <status>")
+	if len(args) == 0 || (args[0] != "fetch" && args[0] != "fetch-arxiv") {
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> pdf fetch --doi <doi> --pdf-url <url> --license <license> --oa-status <status> | pdf fetch-arxiv --paper <arxiv-id> --kind pdf|source --url <url>")
 	}
 	if opts.Project == "" {
 		return writeError(stdout, stderr, opts, 2, "missing_project", "--project is required for pdf commands")
+	}
+	if args[0] == "fetch-arxiv" {
+		paperID, kind, assetURL, ok := parseArXivFetch(args[1:])
+		if !ok {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> pdf fetch-arxiv --paper <arxiv-id> --kind pdf|source --url <url>")
+		}
+		asset, err := documents.FetchArXivAsset(context.Background(), opts.Project, paperID, assetURL, kind)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "arxiv_fetch_failed", fmt.Sprintf("fetch arXiv asset: %v", err))
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"asset": asset})
+		}
+		fmt.Fprintf(stdout, "fetched arXiv asset %s\n", asset.LocalPath)
+		return 0
 	}
 	doi, pdfURL, license, oaStatus, ok := parsePDFFetch(args[1:])
 	if !ok {
@@ -210,6 +574,24 @@ func executePDF(args []string, stdout, stderr io.Writer, opts globalOptions) int
 	}
 	fmt.Fprintf(stdout, "fetched PDF %s\n", asset.LocalPath)
 	return 0
+}
+
+func parseArXivFetch(args []string) (string, string, string, bool) {
+	values := map[string]string{}
+	for i := 0; i < len(args); i++ {
+		switch args[i] {
+		case "--paper", "--kind", "--url":
+			if i+1 >= len(args) {
+				return "", "", "", false
+			}
+			values[args[i]] = args[i+1]
+			i++
+		default:
+			return "", "", "", false
+		}
+	}
+	kind := values["--kind"]
+	return values["--paper"], kind, values["--url"], values["--paper"] != "" && (kind == "pdf" || kind == "source") && values["--url"] != ""
 }
 
 func parsePDFFetch(args []string) (string, string, string, string, bool) {

@@ -1,19 +1,23 @@
 package cli
 
 import (
+	"context"
 	"fmt"
 	"io"
+	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/TrebuchetDynamics/research-forge/internal/library"
 	"github.com/TrebuchetDynamics/research-forge/internal/provenance"
+	"github.com/TrebuchetDynamics/research-forge/internal/sources"
 )
 
 func executeImport(args []string, stdout, stderr io.Writer, opts globalOptions) int {
 	if len(args) != 2 || !supportedImportExportFormat(args[0]) {
-		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> import <json|csv|bibtex|ris|csl-json> <file>")
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> import <json|csv|bibtex|ris|csl-json|zotero-rdf> <file>")
 	}
 	if opts.Project == "" {
 		return writeError(stdout, stderr, opts, 2, "missing_project", "--project is required for import commands")
@@ -30,6 +34,8 @@ func executeImport(args []string, stdout, stderr io.Writer, opts globalOptions) 
 		records, skippedNoIdentifier, err = library.ImportRIS(args[1])
 	case "csl-json":
 		records, skippedNoIdentifier, err = library.ImportCSLJSON(args[1])
+	case "zotero-rdf":
+		records, skippedNoIdentifier, err = library.ImportZoteroRDF(args[1])
 	default:
 		records, skippedNoIdentifier, err = library.ImportJSON(args[1])
 	}
@@ -61,12 +67,12 @@ func executeImport(args []string, stdout, stderr io.Writer, opts globalOptions) 
 }
 
 func supportedImportExportFormat(format string) bool {
-	return format == "json" || format == "csv" || format == "bibtex" || format == "ris" || format == "csl-json"
+	return format == "json" || format == "csv" || format == "bibtex" || format == "ris" || format == "csl-json" || format == "zotero-rdf"
 }
 
 func executeExport(args []string, stdout, stderr io.Writer, opts globalOptions) int {
 	if len(args) != 2 || !supportedImportExportFormat(args[0]) {
-		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> export <json|csv|bibtex|ris|csl-json> <file>")
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> export <json|csv|bibtex|ris|csl-json|zotero-rdf> <file>")
 	}
 	if opts.Project == "" {
 		return writeError(stdout, stderr, opts, 2, "missing_project", "--project is required for export commands")
@@ -88,6 +94,8 @@ func executeExport(args []string, stdout, stderr io.Writer, opts globalOptions) 
 		err = library.ExportRIS(args[1], records)
 	case "csl-json":
 		err = library.ExportCSLJSON(args[1], records)
+	case "zotero-rdf":
+		err = library.ExportZoteroRDF(args[1], records)
 	default:
 		err = library.ExportJSON(args[1], records)
 	}
@@ -118,10 +126,11 @@ func executeDuplicate(args []string, stdout, stderr io.Writer, opts globalOption
 	}
 	switch args[0] {
 	case "report":
-		if len(args) != 1 {
-			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> duplicate report")
+		sourceFilter, ok := parseDuplicateReportArgs(args[1:])
+		if !ok {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> duplicate report [--source <source>]")
 		}
-		matches := duplicateMatches(papers)
+		matches := duplicateMatches(papers, sourceFilter)
 		if opts.JSON {
 			return writeJSON(stdout, 0, map[string]any{"matches": matches})
 		}
@@ -217,29 +226,65 @@ func recordDuplicateEvent(projectPath, action string, inputs, outputs map[string
 }
 
 type duplicateReportMatch struct {
-	LeftIndex  int
-	RightIndex int
-	Duplicate  bool
-	Score      float64
-	Reason     string
+	LeftIndex    int
+	RightIndex   int
+	Duplicate    bool
+	Score        float64
+	Reason       string
+	LeftSources  []string
+	RightSources []string
 }
 
-func duplicateMatches(papers []library.PaperRecord) []duplicateReportMatch {
+func parseDuplicateReportArgs(args []string) (string, bool) {
+	if len(args) == 0 {
+		return "", true
+	}
+	if len(args) == 2 && args[0] == "--source" && strings.TrimSpace(args[1]) != "" {
+		return strings.TrimSpace(args[1]), true
+	}
+	return "", false
+}
+
+func duplicateMatches(papers []library.PaperRecord, sourceFilter string) []duplicateReportMatch {
 	matches := []duplicateReportMatch{}
 	for i := 0; i < len(papers); i++ {
 		for j := i + 1; j < len(papers); j++ {
+			if sourceFilter != "" && !paperHasSource(papers[i], sourceFilter) && !paperHasSource(papers[j], sourceFilter) {
+				continue
+			}
 			match := library.ScoreDuplicate(papers[i], papers[j])
 			if match.Duplicate {
-				matches = append(matches, duplicateReportMatch{LeftIndex: i, RightIndex: j, Duplicate: true, Score: match.Score, Reason: match.Reason})
+				matches = append(matches, duplicateReportMatch{LeftIndex: i, RightIndex: j, Duplicate: true, Score: match.Score, Reason: match.Reason, LeftSources: paperSources(papers[i]), RightSources: paperSources(papers[j])})
 			}
 		}
 	}
 	return matches
 }
 
+func paperHasSource(paper library.PaperRecord, source string) bool {
+	for _, ref := range paper.SourceRefs {
+		if ref.Source == source {
+			return true
+		}
+	}
+	return false
+}
+
+func paperSources(paper library.PaperRecord) []string {
+	sources := []string{}
+	seen := map[string]bool{}
+	for _, ref := range paper.SourceRefs {
+		if ref.Source != "" && !seen[ref.Source] {
+			seen[ref.Source] = true
+			sources = append(sources, ref.Source)
+		}
+	}
+	return sources
+}
+
 func executeLibrary(args []string, stdout, stderr io.Writer, opts globalOptions) int {
-	if len(args) != 1 || args[0] != "list" {
-		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> library list")
+	if len(args) == 0 {
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> library <list|refresh-doi|import-crossref-refs>")
 	}
 	if opts.Project == "" {
 		return writeError(stdout, stderr, opts, 2, "missing_project", "--project is required for library commands")
@@ -248,15 +293,120 @@ func executeLibrary(args []string, stdout, stderr io.Writer, opts globalOptions)
 	if err != nil {
 		return writeError(stdout, stderr, opts, 1, "library_open_failed", fmt.Sprintf("open library: %v", err))
 	}
-	papers, err := store.List()
-	if err != nil {
-		return writeError(stdout, stderr, opts, 1, "library_list_failed", fmt.Sprintf("list library: %v", err))
+	switch args[0] {
+	case "list":
+		if len(args) != 1 {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> library list")
+		}
+		papers, err := store.List()
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "library_list_failed", fmt.Sprintf("list library: %v", err))
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"papers": papers})
+		}
+		for _, paper := range papers {
+			fmt.Fprintf(stdout, "%s\t%s\n", paper.Identifiers.DOI, paper.Title)
+		}
+		return 0
+	case "import-crossref-refs":
+		if len(args) != 2 {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> library import-crossref-refs <doi>")
+		}
+		baseURL := os.Getenv("RFORGE_CROSSREF_URL")
+		if baseURL == "" {
+			baseURL = "https://api.crossref.org"
+		}
+		response, err := sources.NewCrossrefConnector(defaultSourceHTTPClient(baseURL)).References(context.Background(), args[1])
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "library_crossref_refs_failed", err.Error())
+		}
+		importable := make([]sources.SourceRecord, 0, len(response.Records))
+		for _, record := range response.Records {
+			if record.Identifiers.DOI != "" && record.Title != "" {
+				importable = append(importable, record)
+			}
+		}
+		papers, err := sources.PaperRecords(sources.SourceResponse{Records: importable, RawRef: response.RawRef})
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "library_crossref_refs_normalize_failed", err.Error())
+		}
+		summary, err := store.ImportRecords(papers)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "library_crossref_refs_import_failed", err.Error())
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"imported": summary.Imported, "skippedDuplicate": summary.SkippedDuplicate, "skippedNoIdentifier": summary.SkippedNoIdentifier, "extracted": len(response.Records), "importable": len(importable)})
+		}
+		fmt.Fprintf(stdout, "imported %d Crossref references\n", summary.Imported)
+		return 0
+	case "refresh-doi":
+		if len(args) != 2 {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> library refresh-doi <doi>")
+		}
+		papers, err := store.List()
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "library_list_failed", fmt.Sprintf("list library: %v", err))
+		}
+		baseURL := os.Getenv("RFORGE_CROSSREF_URL")
+		if baseURL == "" {
+			baseURL = "https://api.crossref.org"
+		}
+		record, rawRef, err := sources.NewCrossrefConnector(defaultSourceHTTPClient(baseURL)).LookupDOI(context.Background(), args[1])
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "library_refresh_failed", fmt.Sprintf("refresh DOI: %v", err))
+		}
+		refreshed, err := sources.PaperRecords(sources.SourceResponse{Records: []sources.SourceRecord{record}, RawRef: rawRef})
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "library_refresh_normalize_failed", err.Error())
+		}
+		updated, ok := refreshLibraryPaperByDOI(papers, refreshed[0])
+		if !ok {
+			return writeError(stdout, stderr, opts, 2, "library_refresh_not_found", "DOI not found in library")
+		}
+		if err := store.ReplaceAll(updated); err != nil {
+			return writeError(stdout, stderr, opts, 1, "library_refresh_store_failed", err.Error())
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"refreshed": record.Identifiers.DOI})
+		}
+		fmt.Fprintf(stdout, "refreshed %s\n", record.Identifiers.DOI)
+		return 0
+	default:
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> library <list|refresh-doi|import-crossref-refs>")
 	}
-	if opts.JSON {
-		return writeJSON(stdout, 0, map[string]any{"papers": papers})
+}
+
+func refreshLibraryPaperByDOI(papers []library.PaperRecord, refreshed library.PaperRecord) ([]library.PaperRecord, bool) {
+	for i, paper := range papers {
+		if paper.Identifiers.DOI == refreshed.Identifiers.DOI {
+			papers[i] = library.MergeDuplicate(paper, refreshed)
+			if refreshed.Title != "" {
+				papers[i].Title = refreshed.Title
+			}
+			if refreshed.Abstract != "" {
+				papers[i].Abstract = refreshed.Abstract
+			}
+			if refreshed.Year != 0 {
+				papers[i].Year = refreshed.Year
+			}
+			if refreshed.Venue != "" {
+				papers[i].Venue = refreshed.Venue
+			}
+			if refreshed.Publisher != "" {
+				papers[i].Publisher = refreshed.Publisher
+			}
+			if refreshed.License != "" {
+				papers[i].License = refreshed.License
+			}
+			if refreshed.OpenAccess {
+				papers[i].OpenAccess = true
+			}
+			if len(refreshed.URLs) > 0 {
+				papers[i].URLs = refreshed.URLs
+			}
+			return papers, true
+		}
 	}
-	for _, paper := range papers {
-		fmt.Fprintf(stdout, "%s\t%s\n", paper.Identifiers.DOI, paper.Title)
-	}
-	return 0
+	return papers, false
 }

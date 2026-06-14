@@ -1,0 +1,157 @@
+{
+  "schemaVersion": "1",
+  "entries": [
+    {
+      "id": "zotero",
+      "name": "Zotero",
+      "repository": "zotero/zotero",
+      "url": "https://github.com/zotero/zotero",
+      "area": "reference-management",
+      "disposition": "pattern-reference",
+      "licensePolicy": "study UX and interchange formats; do not copy code/translators without review",
+      "note": "zotero.md",
+      "risk": "Translator code, sync semantics, attachments, and annotations need separate license/privacy review.",
+      "nextSlice": "Zotero RDF import/export or Better BibTeX citation-key preservation."
+    },
+    {
+      "id": "asreview",
+      "name": "ASReview",
+      "repository": "asreview/asreview",
+      "url": "https://github.com/asreview/asreview",
+      "area": "screening-active-learning",
+      "disposition": "pattern-reference",
+      "licensePolicy": "study workflow concepts; do not port model/UI code without review",
+      "note": "asreview.md",
+      "risk": "Opaque ranking could undermine auditable systematic-review decisions if copied uncritically.",
+      "nextSlice": "Persist prioritization runs with input hashes, seed counts, method, and ranked output."
+    },
+    {
+      "id": "grobid",
+      "name": "GROBID",
+      "repository": "kermitt2/grobid",
+      "url": "https://github.com/kermitt2/grobid",
+      "area": "pdf-fulltext-parsing",
+      "disposition": "adapter-only",
+      "licensePolicy": "call as an external/local service; do not vendor code",
+      "note": "grobid.md",
+      "risk": "Parser version and TEI output changes can affect reproducibility and reference extraction quality.",
+      "nextSlice": "Normalize parsed references against Crossref/OpenAlex/Semantic Scholar while preserving raw text."
+    },
+    {
+      "id": "metafor",
+      "name": "metafor",
+      "url": "https://www.metafor-project.org/",
+      "area": "meta-analysis-statistics",
+      "disposition": "adapter-only",
+      "licensePolicy": "call installed R/metafor through explicit external-tool adapter",
+      "note": "metafor.md",
+      "risk": "Statistical outputs require version capture, warnings, and reproducible scripts.",
+      "nextSlice": "Add leave-one-out sensitivity analysis command."
+    },
+    {
+      "id": "semantic-scholar",
+      "name": "Semantic Scholar",
+      "url": "https://api.semanticscholar.org/",
+      "area": "scholarly-graph-source",
+      "disposition": "adapter-only",
+      "licensePolicy": "use public API under terms/rate limits; redact API keys",
+      "note": "semantic-scholar.md",
+      "risk": "Quota/rate limits and field restrictions require explicit backoff and provenance policy.",
+      "nextSlice": "Add quota-aware backoff and resumable graph expansion run files."
+    },
+    {
+      "id": "openalex",
+      "name": "OpenAlex",
+      "url": "https://openalex.org/",
+      "area": "scholarly-graph-source",
+      "disposition": "adapter-only",
+      "licensePolicy": "use public API respectfully with documented request parameters and provenance",
+      "note": "openalex.md",
+      "risk": "Broad graph imports need pagination, cursor capture, and deduplication across sources.",
+      "nextSlice": "Add paginated search/import with frozen query and cursor state."
+    },
+    {
+      "id": "qdrant",
+      "name": "Qdrant",
+      "repository": "qdrant/qdrant",
+      "url": "https://github.com/qdrant/qdrant",
+      "area": "vector-retrieval",
+      "disposition": "adapter-only",
+      "licensePolicy": "call as optional configured service; keep embeddings local unless configured",
+      "note": "qdrant.md",
+      "risk": "Embedding model/version and payload privacy must be locked before semantic retrieval claims.",
+      "nextSlice": "Add Qdrant adapter interface implementation with fake-backed tests."
+    },
+    {
+      "id": "opensearch",
+      "name": "OpenSearch",
+      "url": "https://opensearch.org/",
+      "area": "fulltext-retrieval",
+      "disposition": "adapter-only",
+      "licensePolicy": "optional external service; record endpoint/config without secrets",
+      "note": "opensearch.md",
+      "risk": "Index mappings and partial bulk-index failures need versioned provenance.",
+      "nextSlice": "Add OpenSearch adapter contract and fake-backed tests before live integration."
+    },
+    {
+      "id": "s2orc-doc2json",
+      "name": "s2orc-doc2json",
+      "repository": "allenai/s2orc-doc2json",
+      "url": "https://github.com/allenai/s2orc-doc2json",
+      "area": "fulltext-parser",
+      "disposition": "adapter-only",
+      "licensePolicy": "call as external conversion tool or format reference; do not vendor code/fixtures without review",
+      "note": "s2orc-doc2json.md",
+      "risk": "Generated JSON shape and parser versions can alter evidence offsets and bibliography links.",
+      "nextSlice": "Add S2ORC-style JSON reader into parsed-document model."
+    },
+    {
+      "id": "papermage",
+      "name": "PaperMage",
+      "repository": "allenai/papermage",
+      "url": "https://github.com/allenai/papermage",
+      "area": "document-model-parser",
+      "disposition": "pattern-reference",
+      "licensePolicy": "study document-model ideas; do not port code/models without review",
+      "note": "papermage.md",
+      "risk": "Layered document models require stable offsets and provider provenance to avoid evidence drift.",
+      "nextSlice": "Introduce parser-run manifest with layer counts and warnings."
+    },
+    {
+      "id": "anystyle",
+      "name": "Anystyle",
+      "repository": "inukshuk/anystyle",
+      "url": "https://github.com/inukshuk/anystyle",
+      "area": "reference-parser",
+      "disposition": "adapter-only",
+      "licensePolicy": "call as optional external parser; do not vendor code/training data without review",
+      "note": "anystyle.md",
+      "risk": "Reference parser confidence and ambiguous fields need reviewer-visible normalization state.",
+      "nextSlice": "Add optional plain-text reference parse command with fake-backed tests."
+    },
+    {
+      "id": "cermine",
+      "name": "CERMINE",
+      "repository": "CeON/CERMINE",
+      "url": "https://github.com/CeON/CERMINE",
+      "area": "pdf-parser-fallback",
+      "disposition": "adapter-only",
+      "licensePolicy": "optional external fallback; do not vendor Java artifacts or sample documents without review",
+      "note": "cermine.md",
+      "risk": "Fallback parser outputs can conflict with GROBID and need quality comparison before acceptance.",
+      "nextSlice": "Build parser comparison report over existing parsed-document JSON files."
+    },
+    {
+      "id": "science-parse",
+      "name": "Science Parse",
+      "repository": "allenai/science-parse",
+      "url": "https://github.com/allenai/science-parse",
+      "area": "pdf-parser-fallback",
+      "disposition": "pattern-reference",
+      "licensePolicy": "historical/reference study only unless maintenance and licensing are revalidated",
+      "note": "science-parse.md",
+      "risk": "Stale parser maintenance status can create reproducibility and security risk.",
+      "nextSlice": "Add parser candidate scoring for maintenance, footprint, output coverage, and license constraints."
+    }
+  ]
+}

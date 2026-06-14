@@ -16,6 +16,52 @@ const maxPDFDownloadBytes int64 = 100 << 20
 
 var pdfHTTPClient = &http.Client{Timeout: 30 * time.Second}
 
+// FetchArXivAsset downloads an arXiv PDF or TeX source asset into project storage.
+func FetchArXivAsset(ctx context.Context, projectPath, arxivID, assetURL, kind string) (DocumentAsset, error) {
+	arxivID = strings.TrimSpace(arxivID)
+	if arxivID == "" {
+		return DocumentAsset{}, fmt.Errorf("arxiv id is required")
+	}
+	if err := validatePDFURL(assetURL); err != nil {
+		return DocumentAsset{}, err
+	}
+	mimeType := "application/pdf"
+	ext := ".pdf"
+	localOnly := false
+	if kind == "source" {
+		mimeType = "application/gzip"
+		ext = ".tar.gz"
+		localOnly = true
+	} else if kind != "pdf" {
+		return DocumentAsset{}, fmt.Errorf("arxiv asset kind must be pdf or source")
+	}
+	request, err := http.NewRequestWithContext(ctx, http.MethodGet, assetURL, nil)
+	if err != nil {
+		return DocumentAsset{}, err
+	}
+	response, err := pdfHTTPClient.Do(request)
+	if err != nil {
+		return DocumentAsset{}, err
+	}
+	defer response.Body.Close()
+	if response.StatusCode < 200 || response.StatusCode >= 300 {
+		return DocumentAsset{}, fmt.Errorf("arxiv fetch status %d", response.StatusCode)
+	}
+	data, err := readPDFResponse(response)
+	if err != nil {
+		return DocumentAsset{}, err
+	}
+	dir := filepath.Join(projectPath, "documents", "arxiv")
+	if err := os.MkdirAll(dir, 0o755); err != nil {
+		return DocumentAsset{}, err
+	}
+	path := filepath.Join(dir, safeDocumentName(arxivID)+ext)
+	if err := os.WriteFile(path, data, 0o644); err != nil {
+		return DocumentAsset{}, err
+	}
+	return NewDocumentAsset(DocumentAssetInput{PaperID: arxivID, AcquisitionSource: "arxiv-" + kind, License: "arXiv", OAStatus: "green", LocalPath: path, MIMEType: mimeType, LocalOnly: localOnly})
+}
+
 // FetchPDFByDOI downloads a legal open-access PDF into project storage.
 func FetchPDFByDOI(ctx context.Context, projectPath, doi string, metadata OpenAccessMetadata) (DocumentAsset, error) {
 	pdfURL, err := SelectLegalPDFURL(metadata)

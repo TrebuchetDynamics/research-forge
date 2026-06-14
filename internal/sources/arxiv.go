@@ -27,7 +27,7 @@ func (c ArXivConnector) Search(ctx context.Context, query SourceQuery) (SourceRe
 	if limit <= 0 {
 		limit = 25
 	}
-	params := map[string]string{"search_query": "all:" + query.Terms, "max_results": strconv.Itoa(limit)}
+	params := map[string]string{"search_query": arxivSearchQuery(query), "max_results": strconv.Itoa(limit)}
 	body, err := c.http.Get(ctx, "/api/query", params)
 	if err != nil {
 		return SourceResponse{}, err
@@ -46,6 +46,7 @@ func (c ArXivConnector) Search(ctx context.Context, query SourceQuery) (SourceRe
 			Abstract: compactSpace(entry.Summary),
 			Identifiers: Identifiers{
 				ArXivID: id,
+				DOI:     normalizeSourceDOI(entry.DOI),
 			},
 			Year:     yearFromPublished(entry.Published),
 			URLs:     arxivLinks(entry),
@@ -66,6 +67,9 @@ type arxivEntry struct {
 	Published  string          `xml:"published"`
 	Links      []arxivLink     `xml:"link"`
 	Categories []arxivCategory `xml:"category"`
+	DOI        string          `xml:"http://arxiv.org/schemas/atom doi"`
+	Comment    string          `xml:"http://arxiv.org/schemas/atom comment"`
+	JournalRef string          `xml:"http://arxiv.org/schemas/atom journal_ref"`
 }
 
 type arxivLink struct {
@@ -75,6 +79,22 @@ type arxivLink struct {
 
 type arxivCategory struct {
 	Term string `xml:"term,attr"`
+}
+
+func arxivSearchQuery(query SourceQuery) string {
+	terms := strings.TrimSpace(query.Terms)
+	category := strings.TrimSpace(query.Filters["category"])
+	parts := []string{}
+	if category != "" {
+		parts = append(parts, "cat:"+category)
+	}
+	if terms != "" {
+		parts = append(parts, "all:"+terms)
+	}
+	if len(parts) == 0 {
+		return "all:"
+	}
+	return strings.Join(parts, " AND ")
 }
 
 func rawArXivRef(params map[string]string) string {
@@ -117,16 +137,26 @@ func arxivLinks(entry arxivEntry) []string {
 			links = append(links, strings.TrimSpace(link.Href))
 		}
 	}
+	baseID := normalizeArXivID(entry.ID)
+	if baseID != "" {
+		links = append(links, "https://arxiv.org/pdf/"+baseID, "https://arxiv.org/e-print/"+baseID)
+	}
 	if len(links) == 0 && strings.TrimSpace(entry.ID) != "" {
 		links = append(links, strings.TrimSpace(entry.ID))
 	}
-	return links
+	return nonEmptyStrings(links...)
 }
 
 func arxivMetadata(entry arxivEntry) map[string]string {
 	metadata := map[string]string{}
 	if version := arxivVersion(entry.ID); version != "" {
 		metadata["version"] = version
+	}
+	if comment := compactSpace(entry.Comment); comment != "" {
+		metadata["comment"] = comment
+	}
+	if journalRef := compactSpace(entry.JournalRef); journalRef != "" {
+		metadata["journal_ref"] = journalRef
 	}
 	categories := []string{}
 	for _, category := range entry.Categories {

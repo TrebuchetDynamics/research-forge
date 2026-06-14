@@ -39,6 +39,8 @@ func TestArtifactsHandlerRendersCLIGeneratedOutputs(t *testing.T) {
 		"Screened: 8",
 		"Included: 3",
 		"Citation graph",
+		"Citation graph visualization",
+		"<svg",
 		"paper-a",
 		"paper-a → paper-b",
 		"Report artifacts",

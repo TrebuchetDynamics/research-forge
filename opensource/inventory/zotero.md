@@ -20,31 +20,36 @@ Zotero is the dominant open-source reference-manager ecosystem. ResearchForge sh
 
 Implemented nearby capabilities:
 
-- JSON, CSV, BibTeX, RIS, and CSL-JSON import/export.
+- JSON, CSV, BibTeX, RIS, CSL-JSON, and Zotero RDF import/export.
 - Normalized `PaperRecord` identifiers including DOI, arXiv, PMID, OpenAlex, Crossref, and Semantic Scholar IDs.
 - CSL-JSON preserves Zotero-style item IDs in source metadata where available.
+- CSL-JSON imports and exports Better BibTeX `citation-key` values via source metadata.
+- CSL-JSON preserves Zotero note/tag metadata and imports attachment filenames with local path privacy redaction.
+- Zotero RDF import/export preserves collection metadata through `z:collection` source metadata.
 
 Missing features:
 
 - Zotero RDF import/export.
-- Better BibTeX citation-key preservation.
-- Collection/tag mapping.
-- Notes/annotation import.
-- Attachment path import with privacy-safe redaction.
+- Better BibTeX citation-key preservation beyond CSL-JSON metadata.
+- Rich collection hierarchy mapping beyond flat CSL/RDF metadata.
+- Rich annotation model beyond flat Zotero RDF annotation metadata.
+- Attachment import beyond privacy-redacted filenames.
 
 ## Completed slice
 
-CSL-JSON import/export is implemented. It is simpler and safer than full Zotero RDF, gives immediate Zotero interoperability, and fits the existing library import/export command shape.
+CSL-JSON import/export and a conservative Zotero RDF import/export subset are implemented. CSL-JSON remains the simplest path for Zotero interoperability, while Zotero RDF supports title, DOI, abstract, venue, date, publisher, Better BibTeX citekey, tags, collections, notes, flat annotations, and privacy-redacted attachment filenames.
 
 Implemented command shape:
 
 ```sh
 rforge import csl-json zotero-export.json
 rforge export csl-json library.csl.json
+rforge import zotero-rdf zotero.rdf
+rforge export zotero-rdf library.rdf
 ```
 
-Tests cover DOI normalization, authors, year/date parsing, title/container title, URL, abstract, and round-trip preservation of CSL item IDs where present.
+Tests cover DOI normalization, authors, year/date parsing, title/container title, URL, abstract, round-trip preservation of CSL item IDs, Better BibTeX `citation-key` preservation, note/tag/collection/annotation metadata, redacted attachment filenames, and Zotero RDF import/export where present.
 
 ## Recommended next slice
 
-Add Zotero RDF import/export or Better BibTeX citation-key preservation beyond CSL item IDs.
+Add richer Zotero collection mapping, rich annotation import, and attachment provenance beyond redacted filenames.

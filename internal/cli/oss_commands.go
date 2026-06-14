@@ -11,7 +11,27 @@ import (
 
 func executeOSS(args []string, stdout, stderr io.Writer, opts globalOptions) int {
 	if len(args) == 0 {
-		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> oss <add|list|license-check>")
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge oss <inventory-check|add|list|license-check>")
+	}
+	if args[0] == "inventory-check" {
+		if len(args) != 2 {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge oss inventory-check <manifest.json>")
+		}
+		result, err := oss.ValidateInventoryManifest(args[1])
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "oss_inventory_check_failed", fmt.Sprintf("check inventory: %v", err))
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, result)
+		}
+		if len(result.Issues) == 0 {
+			fmt.Fprintf(stdout, "inventory ok: %d entries\n", result.EntryCount)
+			return 0
+		}
+		for _, issue := range result.Issues {
+			fmt.Fprintln(stdout, issue)
+		}
+		return 1
 	}
 	if opts.Project == "" {
 		return writeError(stdout, stderr, opts, 2, "missing_project", "--project is required for oss commands")

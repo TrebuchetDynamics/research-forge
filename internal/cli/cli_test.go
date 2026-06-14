@@ -12,8 +12,10 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/TrebuchetDynamics/research-forge/internal/analysis"
 	"github.com/TrebuchetDynamics/research-forge/internal/library"
 	"github.com/TrebuchetDynamics/research-forge/internal/provenance"
+	"github.com/TrebuchetDynamics/research-forge/internal/screening"
 )
 
 func TestExecuteHelpMentionsDecisionCompletionAudit(t *testing.T) {
@@ -655,6 +657,9 @@ func TestExecuteSearchOpenAlexJSONWithMockHTTP(t *testing.T) {
 		if r.URL.Query().Get("search") != "artificial photosynthesis" {
 			t.Fatalf("search = %q", r.URL.Query().Get("search"))
 		}
+		if r.URL.Query().Get("filter") != "type:review" {
+			t.Fatalf("filter = %q", r.URL.Query().Get("filter"))
+		}
 		_, _ = w.Write([]byte(`{"results":[{"id":"https://openalex.org/W123","doi":"https://doi.org/10.1000/example","title":"Artificial photosynthesis catalyst review","publication_year":2026}]}`))
 	}))
 	defer server.Close()
@@ -662,7 +667,7 @@ func TestExecuteSearchOpenAlexJSONWithMockHTTP(t *testing.T) {
 	stdout := new(bytes.Buffer)
 	stderr := new(bytes.Buffer)
 
-	code := Execute([]string{"--json", "search", "--source", "openalex", "--query", "artificial photosynthesis", "--limit", "1"}, stdout, stderr)
+	code := Execute([]string{"--json", "search", "--source", "openalex", "--query", "artificial photosynthesis", "--limit", "1", "--filter", "type:review"}, stdout, stderr)
 	if code != 0 {
 		t.Fatalf("exit code = %d, stderr = %s", code, stderr.String())
 	}
@@ -678,6 +683,140 @@ func TestExecuteSearchOpenAlexJSONWithMockHTTP(t *testing.T) {
 	paper := papers[0].(map[string]any)
 	if paper["Title"] != "Artificial photosynthesis catalyst review" {
 		t.Fatalf("paper title = %#v", paper["Title"])
+	}
+}
+
+func TestExecuteCitationsExpandOpenAlexWritesGraph(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case "/works/W123":
+			_, _ = w.Write([]byte(`{"id":"https://openalex.org/W123","referenced_works":["https://openalex.org/WREF1"]}`))
+		case "/works":
+			_, _ = w.Write([]byte(`{"results":[{"id":"https://openalex.org/WCITE1","title":"Citing OpenAlex work"}]}`))
+		default:
+			t.Fatalf("unexpected path: %s", r.URL.Path)
+		}
+	}))
+	defer server.Close()
+	t.Setenv("RFORGE_OPENALEX_URL", server.URL)
+	out := filepath.Join(t.TempDir(), "openalex-graph.json")
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+
+	code := Execute([]string{"--json", "citations", "expand", "--source", "openalex", "--paper", "W123", "--direction", "both", "--limit", "1", "--out", out}, stdout, stderr)
+	if code != 0 {
+		t.Fatalf("exit code = %d, stderr = %s", code, stderr.String())
+	}
+	data, err := os.ReadFile(out)
+	if err != nil {
+		t.Fatalf("read graph: %v", err)
+	}
+	for _, want := range []string{`"source": "W123"`, `"target": "WREF1"`, `"source": "WCITE1"`, `"target": "W123"`} {
+		if !strings.Contains(string(data), want) {
+			t.Fatalf("graph missing %s:\n%s", want, data)
+		}
+	}
+}
+
+func TestExecuteCitationsExpandSemanticScholarRecursiveWithProvenance(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case "/graph/v1/paper/seed/references":
+			_, _ = w.Write([]byte(`{"data":[{"citedPaper":{"paperId":"ref-1","title":"Reference one","externalIds":{"DOI":"10.1000/ref1"}}}]}`))
+		case "/graph/v1/paper/ref-1/references":
+			_, _ = w.Write([]byte(`{"data":[{"citedPaper":{"paperId":"ref-2","title":"Reference two","externalIds":{"DOI":"10.1000/ref2"}}}]}`))
+		default:
+			t.Fatalf("unexpected path: %s", r.URL.Path)
+		}
+	}))
+	defer server.Close()
+	t.Setenv("RFORGE_SEMANTIC_SCHOLAR_URL", server.URL)
+	project := filepath.Join(t.TempDir(), "recursive-graph-project")
+	if code := Execute([]string{"project", "create", project, "--title", "Recursive Citation Graph"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("project create exit code = %d", code)
+	}
+	out := filepath.Join(t.TempDir(), "recursive-citation-graph.json")
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+
+	code := Execute([]string{"--json", "--project", project, "citations", "expand", "--source", "semantic-scholar", "--paper", "seed", "--direction", "references", "--limit", "1", "--depth", "2", "--out", out, "--import-library"}, stdout, stderr)
+	if code != 0 {
+		t.Fatalf("exit code = %d, stderr = %s", code, stderr.String())
+	}
+	data, err := os.ReadFile(out)
+	if err != nil {
+		t.Fatalf("read graph: %v", err)
+	}
+	for _, want := range []string{`"source": "seed"`, `"target": "ref-1"`, `"source": "ref-1"`, `"target": "ref-2"`} {
+		if !strings.Contains(string(data), want) {
+			t.Fatalf("recursive graph missing %s:\n%s", want, data)
+		}
+	}
+	var envelope struct {
+		OK   bool `json:"ok"`
+		Data struct {
+			Edges    int `json:"edges"`
+			Imported int `json:"imported"`
+			Depth    int `json:"depth"`
+		} `json:"data"`
+	}
+	if err := json.Unmarshal(stdout.Bytes(), &envelope); err != nil {
+		t.Fatalf("stdout is not JSON: %v\n%s", err, stdout.String())
+	}
+	if !envelope.OK || envelope.Data.Edges != 2 || envelope.Data.Imported != 2 || envelope.Data.Depth != 2 {
+		t.Fatalf("envelope = %#v", envelope)
+	}
+	events, err := provenance.Read(project)
+	if err != nil {
+		t.Fatalf("read provenance: %v", err)
+	}
+	for _, event := range events {
+		if event.Action == "citations.expand" && event.Outputs["edges"] == float64(2) && event.Outputs["imported"] == float64(2) {
+			return
+		}
+	}
+	t.Fatalf("missing citations.expand provenance event: %#v", events)
+}
+
+func TestExecuteCitationsExpandSemanticScholarHonorsMaxRecords(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case "/graph/v1/paper/seed/references":
+			_, _ = w.Write([]byte(`{"data":[{"citedPaper":{"paperId":"ref-1","title":"Reference one"}}]}`))
+		case "/graph/v1/paper/ref-1/references":
+			_, _ = w.Write([]byte(`{"data":[{"citedPaper":{"paperId":"ref-2","title":"Reference two"}}]}`))
+		default:
+			t.Fatalf("unexpected path: %s", r.URL.Path)
+		}
+	}))
+	defer server.Close()
+	t.Setenv("RFORGE_SEMANTIC_SCHOLAR_URL", server.URL)
+	out := filepath.Join(t.TempDir(), "limited-citation-graph.json")
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+
+	code := Execute([]string{"--json", "citations", "expand", "--source", "semantic-scholar", "--paper", "seed", "--direction", "references", "--limit", "1", "--depth", "2", "--max-records", "1", "--out", out}, stdout, stderr)
+	if code != 0 {
+		t.Fatalf("exit code = %d, stderr = %s", code, stderr.String())
+	}
+	data, err := os.ReadFile(out)
+	if err != nil {
+		t.Fatalf("read graph: %v", err)
+	}
+	if !strings.Contains(string(data), `"target": "ref-1"`) || strings.Contains(string(data), `"target": "ref-2"`) {
+		t.Fatalf("max-record graph not limited correctly:\n%s", data)
+	}
+	var envelope struct {
+		Data struct {
+			Edges      int `json:"edges"`
+			MaxRecords int `json:"maxRecords"`
+		} `json:"data"`
+	}
+	if err := json.Unmarshal(stdout.Bytes(), &envelope); err != nil {
+		t.Fatalf("stdout is not JSON: %v\n%s", err, stdout.String())
+	}
+	if envelope.Data.Edges != 1 || envelope.Data.MaxRecords != 1 {
+		t.Fatalf("envelope = %#v", envelope)
 	}
 }
 
@@ -740,6 +879,97 @@ func TestExecuteCitationsExpandSemanticScholarWritesGraph(t *testing.T) {
 	}
 }
 
+func TestExecuteCitationsReportWritesMarkdownSummary(t *testing.T) {
+	graphPath := filepath.Join(t.TempDir(), "graph.json")
+	reportPath := filepath.Join(t.TempDir(), "graph-report.md")
+	graph := `{"nodes":[{"id":"paper-a"},{"id":"paper-b"},{"id":"ref-1"}],"edges":[{"source":"paper-a","target":"ref-1"},{"source":"paper-b","target":"ref-1"}]}`
+	if err := os.WriteFile(graphPath, []byte(graph), 0o644); err != nil {
+		t.Fatalf("write graph: %v", err)
+	}
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+	if code := Execute([]string{"--json", "citations", "report", "--graph", graphPath, "--out", reportPath}, stdout, stderr); code != 0 {
+		t.Fatalf("citations report exit code = %d, stderr = %s", code, stderr.String())
+	}
+	markdown, err := os.ReadFile(reportPath)
+	if err != nil {
+		t.Fatalf("read report: %v", err)
+	}
+	for _, want := range []string{"# Citation graph report", "- Nodes: 3", "- Edges: 2", "`ref-1`"} {
+		if !strings.Contains(string(markdown), want) {
+			t.Fatalf("report missing %q:\n%s", want, markdown)
+		}
+	}
+	if !strings.Contains(stdout.String(), `"edgeCount":2`) {
+		t.Fatalf("json output = %s", stdout.String())
+	}
+}
+
+func TestExecuteSearchPubMedJSONWithMockHTTP(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case "/entrez/eutils/esearch.fcgi":
+			_, _ = w.Write([]byte(`{"esearchresult":{"idlist":["123456"]}}`))
+		case "/entrez/eutils/esummary.fcgi":
+			_, _ = w.Write([]byte(`{"result":{"uids":["123456"],"123456":{"uid":"123456","title":"PubMed fixture","pubdate":"2026","articleids":[{"idtype":"doi","value":"10.1000/pubmed"}]}}}`))
+		case "/entrez/eutils/efetch.fcgi":
+			_, _ = w.Write([]byte(`<PubmedArticleSet><PubmedArticle><MedlineCitation><PMID>123456</PMID><MeshHeadingList><MeshHeading><DescriptorName>Machine Learning</DescriptorName></MeshHeading></MeshHeadingList></MedlineCitation></PubmedArticle></PubmedArticleSet>`))
+		default:
+			t.Fatalf("unexpected path: %s", r.URL.Path)
+		}
+	}))
+	defer server.Close()
+	t.Setenv("RFORGE_PUBMED_URL", server.URL)
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+
+	code := Execute([]string{"--json", "search", "--source", "pubmed", "--query", "machine learning", "--limit", "1"}, stdout, stderr)
+	if code != 0 {
+		t.Fatalf("exit code = %d, stderr = %s", code, stderr.String())
+	}
+	var envelope map[string]any
+	if err := json.Unmarshal(stdout.Bytes(), &envelope); err != nil {
+		t.Fatalf("stdout is not JSON: %v\n%s", err, stdout.String())
+	}
+	identifiers := envelope["data"].(map[string]any)["papers"].([]any)[0].(map[string]any)["Identifiers"].(map[string]any)
+	if identifiers["PMID"] != "123456" {
+		t.Fatalf("PMID = %#v", identifiers["PMID"])
+	}
+}
+
+func TestExecuteSearchEuropePMCJSONWithMockHTTP(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/webservices/rest/search" {
+			t.Fatalf("path = %q", r.URL.Path)
+		}
+		if r.URL.Query().Get("query") != "biomedical machine learning" {
+			t.Fatalf("query = %q", r.URL.Query().Get("query"))
+		}
+		_, _ = w.Write([]byte(`{"resultList":{"result":[{"id":"123456","pmid":"123456","doi":"10.1000/pmc","title":"Biomedical machine learning fixture","pubYear":"2026"}]}}`))
+	}))
+	defer server.Close()
+	t.Setenv("RFORGE_EUROPEPMC_URL", server.URL)
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+
+	code := Execute([]string{"--json", "search", "--source", "europepmc", "--query", "biomedical machine learning", "--limit", "1"}, stdout, stderr)
+	if code != 0 {
+		t.Fatalf("exit code = %d, stderr = %s", code, stderr.String())
+	}
+	var envelope map[string]any
+	if err := json.Unmarshal(stdout.Bytes(), &envelope); err != nil {
+		t.Fatalf("stdout is not JSON: %v\n%s", err, stdout.String())
+	}
+	papers := envelope["data"].(map[string]any)["papers"].([]any)
+	if len(papers) != 1 {
+		t.Fatalf("len(papers) = %d, want 1", len(papers))
+	}
+	identifiers := papers[0].(map[string]any)["Identifiers"].(map[string]any)
+	if identifiers["PMID"] != "123456" {
+		t.Fatalf("PMID = %#v", identifiers["PMID"])
+	}
+}
+
 func TestExecuteSearchSemanticScholarJSONWithMockHTTP(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != "/graph/v1/paper/search" {
@@ -776,6 +1006,131 @@ func TestExecuteSearchSemanticScholarJSONWithMockHTTP(t *testing.T) {
 	identifiers := paper["Identifiers"].(map[string]any)
 	if identifiers["SemanticScholarID"] != "s2-1" {
 		t.Fatalf("SemanticScholarID = %#v", identifiers["SemanticScholarID"])
+	}
+}
+
+func TestExecuteSearchSemanticScholarRetriesRateLimit(t *testing.T) {
+	requests := 0
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		requests++
+		if requests == 1 {
+			http.Error(w, "quota", http.StatusTooManyRequests)
+			return
+		}
+		_, _ = w.Write([]byte(`{"data":[{"paperId":"s2-retry","title":"Retried Semantic Scholar search"}]}`))
+	}))
+	defer server.Close()
+	t.Setenv("RFORGE_SEMANTIC_SCHOLAR_URL", server.URL)
+	t.Setenv("RFORGE_SEMANTIC_SCHOLAR_MAX_RETRIES", "1")
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+
+	code := Execute([]string{"--json", "search", "--source", "semantic-scholar", "--query", "quota retry", "--limit", "1"}, stdout, stderr)
+	if code != 0 {
+		t.Fatalf("exit code = %d, stderr = %s", code, stderr.String())
+	}
+	if requests != 2 || !strings.Contains(stdout.String(), "s2-retry") {
+		t.Fatalf("requests=%d stdout=%s", requests, stdout.String())
+	}
+}
+
+func TestExecuteSearchRelatedOpenAlex(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/works/W1" {
+			t.Fatalf("path = %q", r.URL.Path)
+		}
+		_, _ = w.Write([]byte(`{"id":"https://openalex.org/W1","related_works":["https://openalex.org/W2"]}`))
+	}))
+	defer server.Close()
+	t.Setenv("RFORGE_OPENALEX_URL", server.URL)
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+	code := Execute([]string{"--json", "search", "related", "--source", "openalex", "--paper", "W1", "--limit", "1"}, stdout, stderr)
+	if code != 0 {
+		t.Fatalf("exit code = %d, stderr = %s", code, stderr.String())
+	}
+	if !strings.Contains(stdout.String(), `"source":"openalex"`) || !strings.Contains(stdout.String(), `"SourceID":"W2"`) {
+		t.Fatalf("stdout = %s", stdout.String())
+	}
+}
+
+func TestExecuteSearchImportOpenAlexPages(t *testing.T) {
+	dir := filepath.Join(t.TempDir(), "demo")
+	if code := Execute([]string{"project", "create", dir, "--title", "OpenAlex Import"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("project create exit code = %d", code)
+	}
+	requests := []string{}
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/works" || r.URL.Query().Get("search") != "machine learning" || r.URL.Query().Get("per-page") != "1" {
+			t.Fatalf("request = %s?%s", r.URL.Path, r.URL.RawQuery)
+		}
+		requests = append(requests, r.URL.Query().Get("cursor"))
+		switch r.URL.Query().Get("cursor") {
+		case "*":
+			_, _ = w.Write([]byte(`{"meta":{"next_cursor":"page-2"},"results":[{"id":"https://openalex.org/W1","title":"First imported work","doi":"10.1000/oa1"}]}`))
+		case "page-2":
+			_, _ = w.Write([]byte(`{"meta":{"next_cursor":""},"results":[{"id":"https://openalex.org/W2","title":"Second imported work","doi":"10.1000/oa2"}]}`))
+		default:
+			t.Fatalf("unexpected cursor %q", r.URL.Query().Get("cursor"))
+		}
+	}))
+	defer server.Close()
+	t.Setenv("RFORGE_OPENALEX_URL", server.URL)
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+	code := Execute([]string{"--json", "--project", dir, "search", "import", "--source", "openalex", "--query", "machine learning", "--pages", "2", "--limit", "1"}, stdout, stderr)
+	if code != 0 {
+		t.Fatalf("exit code = %d, stderr = %s", code, stderr.String())
+	}
+	if len(requests) != 2 || requests[0] != "*" || requests[1] != "page-2" {
+		t.Fatalf("requests = %#v", requests)
+	}
+	if !strings.Contains(stdout.String(), `"imported":2`) || !strings.Contains(stdout.String(), "page-2") {
+		t.Fatalf("stdout = %s", stdout.String())
+	}
+	listed := mustRunCLI(t, "--json", "--project", dir, "library", "list")
+	if !strings.Contains(string(listed), "First imported work") || !strings.Contains(string(listed), "Second imported work") {
+		t.Fatalf("library = %s", listed)
+	}
+}
+
+func TestExecuteSearchOpenAlexAuthorsJSONWithMockHTTP(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/authors" || r.URL.Query().Get("search") != "Ada Lovelace" || r.URL.Query().Get("per-page") != "1" {
+			t.Fatalf("request = %s?%s", r.URL.Path, r.URL.RawQuery)
+		}
+		_, _ = w.Write([]byte(`{"results":[{"id":"https://openalex.org/A123","display_name":"Ada Lovelace","works_count":42}]}`))
+	}))
+	defer server.Close()
+	t.Setenv("RFORGE_OPENALEX_URL", server.URL)
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+	code := Execute([]string{"--json", "search", "--source", "openalex", "--entity", "authors", "--query", "Ada Lovelace", "--limit", "1"}, stdout, stderr)
+	if code != 0 {
+		t.Fatalf("exit code = %d, stderr = %s", code, stderr.String())
+	}
+	if !strings.Contains(stdout.String(), `"entity":"authors"`) || !strings.Contains(stdout.String(), `"sourceId":"A123"`) {
+		t.Fatalf("stdout = %s", stdout.String())
+	}
+}
+
+func TestExecuteSearchOpenAlexInstitutionsJSONWithMockHTTP(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/institutions" || r.URL.Query().Get("search") != "University" {
+			t.Fatalf("request = %s?%s", r.URL.Path, r.URL.RawQuery)
+		}
+		_, _ = w.Write([]byte(`{"results":[{"id":"https://openalex.org/I123","display_name":"Example University","works_count":100,"ror":"https://ror.org/123","country_code":"GB"}]}`))
+	}))
+	defer server.Close()
+	t.Setenv("RFORGE_OPENALEX_URL", server.URL)
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+	code := Execute([]string{"--json", "search", "--source", "openalex", "--entity", "institutions", "--query", "University", "--limit", "1"}, stdout, stderr)
+	if code != 0 {
+		t.Fatalf("exit code = %d, stderr = %s", code, stderr.String())
+	}
+	if !strings.Contains(stdout.String(), `"entity":"institutions"`) || !strings.Contains(stdout.String(), `"ror":"https://ror.org/123"`) {
+		t.Fatalf("stdout = %s", stdout.String())
 	}
 }
 
@@ -883,6 +1238,33 @@ func TestExecuteDuplicateReportJSON(t *testing.T) {
 	match := matches[0].(map[string]any)
 	if match["Reason"] != "fuzzy_title_author_year" || match["Score"].(float64) <= 0 {
 		t.Fatalf("match = %#v", match)
+	}
+}
+
+func TestExecuteDuplicateReportFiltersGraphImportedSource(t *testing.T) {
+	dir := filepath.Join(t.TempDir(), "demo")
+	if code := Execute([]string{"project", "create", dir, "--title", "Graph Dedupe"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("project create exit code = %d", code)
+	}
+	store, err := library.OpenStore(filepath.Join(dir, "data", "library.json"))
+	if err != nil {
+		t.Fatalf("OpenStore returned error: %v", err)
+	}
+	existing, _ := library.NewPaperRecord(library.PaperRecordInput{Title: "Graph neural networks for reviews", Identifiers: library.Identifiers{DOI: "10.1000/existing"}, Authors: []library.Author{{Family: "Lovelace"}}, Year: 2026, SourceRefs: []library.SourceRef{{Source: "openalex"}}})
+	imported, _ := library.NewPaperRecord(library.PaperRecordInput{Title: "Graph neural networks in reviews", Identifiers: library.Identifiers{SemanticScholarID: "S2-1"}, Authors: []library.Author{{Family: "Lovelace"}}, Year: 2026, SourceRefs: []library.SourceRef{{Source: "semantic-scholar", RawPayloadRef: "semantic-scholar:/recursive?seed=S2"}}})
+	unrelated, _ := library.NewPaperRecord(library.PaperRecordInput{Title: "Unrelated graph neural networks in reviews", Identifiers: library.Identifiers{DOI: "10.1000/unrelated"}, Authors: []library.Author{{Family: "Lovelace"}}, Year: 2026, SourceRefs: []library.SourceRef{{Source: "crossref"}}})
+	for _, paper := range []library.PaperRecord{existing, imported, unrelated} {
+		if err := store.Create(paper); err != nil {
+			t.Fatalf("Create returned error: %v", err)
+		}
+	}
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+	if code := Execute([]string{"--json", "--project", dir, "duplicate", "report", "--source", "semantic-scholar"}, stdout, stderr); code != 0 {
+		t.Fatalf("duplicate report exit code = %d, stderr = %s", code, stderr.String())
+	}
+	if !strings.Contains(stdout.String(), `"RightSources":["semantic-scholar"]`) {
+		t.Fatalf("filtered duplicate report = %s", stdout.String())
 	}
 }
 
@@ -1051,6 +1433,186 @@ func TestExecuteAnalysisPrepareRunAndExport(t *testing.T) {
 	}
 }
 
+func TestExecuteAnalysisSubgroup(t *testing.T) {
+	dir := filepath.Join(t.TempDir(), "demo")
+	if code := Execute([]string{"project", "create", dir, "--title", "Subgroup"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("project create exit code = %d", code)
+	}
+	run := analysis.AnalysisRun{SchemaVersion: "1", ID: "sub-run", InputRows: []analysis.InputRow{
+		{PaperID: "p1", EffectSize: 1, Variance: 1},
+		{PaperID: "p2", EffectSize: 3, Variance: 1},
+		{PaperID: "p3", EffectSize: 10, Variance: 2},
+	}}
+	if err := writeJSONFile(filepath.Join(dir, "analysis", "sub-run.json"), run); err != nil {
+		t.Fatalf("write run: %v", err)
+	}
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+	if code := Execute([]string{"--json", "--project", dir, "analysis", "subgroup", "sub-run", "--variable", "region", "--group", "p1=EU", "--group", "p2=EU", "--group", "p3=US"}, stdout, stderr); code != 0 {
+		t.Fatalf("subgroup exit code = %d, stderr = %s", code, stderr.String())
+	}
+	if !strings.Contains(stdout.String(), `"variable":"region"`) || !strings.Contains(stdout.String(), `"group":"EU"`) {
+		t.Fatalf("subgroup output = %s", stdout.String())
+	}
+	if _, err := os.Stat(filepath.Join(dir, "analysis", "sub-run-subgroup.json")); err != nil {
+		t.Fatalf("subgroup artifact missing: %v", err)
+	}
+}
+
+func TestExecuteAnalysisMetaRegression(t *testing.T) {
+	dir := filepath.Join(t.TempDir(), "demo")
+	if code := Execute([]string{"project", "create", dir, "--title", "Meta Regression"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("project create exit code = %d", code)
+	}
+	run := analysis.AnalysisRun{SchemaVersion: "1", ID: "reg-run", InputRows: []analysis.InputRow{
+		{PaperID: "p1", EffectSize: 1, Variance: 1},
+		{PaperID: "p2", EffectSize: 2, Variance: 1},
+		{PaperID: "p3", EffectSize: 3, Variance: 1},
+	}}
+	if err := writeJSONFile(filepath.Join(dir, "analysis", "reg-run.json"), run); err != nil {
+		t.Fatalf("write run: %v", err)
+	}
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+	if code := Execute([]string{"--json", "--project", dir, "analysis", "meta-regression", "reg-run", "--moderator", "dose", "--value", "p1=1", "--value", "p2=2", "--value", "p3=3"}, stdout, stderr); code != 0 {
+		t.Fatalf("meta-regression exit code = %d, stderr = %s", code, stderr.String())
+	}
+	if !strings.Contains(stdout.String(), `"moderator":"dose"`) || !strings.Contains(stdout.String(), `"slope":1`) {
+		t.Fatalf("meta-regression output = %s", stdout.String())
+	}
+	if _, err := os.Stat(filepath.Join(dir, "analysis", "reg-run-meta-regression.json")); err != nil {
+		t.Fatalf("meta-regression artifact missing: %v", err)
+	}
+}
+
+func TestExecuteAnalysisBayesianNormalApproximation(t *testing.T) {
+	dir := filepath.Join(t.TempDir(), "demo")
+	if code := Execute([]string{"project", "create", dir, "--title", "Bayesian Meta-analysis"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("project create exit code = %d", code)
+	}
+	run := analysis.AnalysisRun{SchemaVersion: "1", ID: "bayes-run", InputRows: []analysis.InputRow{
+		{PaperID: "p1", EffectSize: 1, Variance: 1},
+		{PaperID: "p2", EffectSize: 3, Variance: 1},
+	}}
+	if err := writeJSONFile(filepath.Join(dir, "analysis", "bayes-run.json"), run); err != nil {
+		t.Fatalf("write run: %v", err)
+	}
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+	if code := Execute([]string{"--json", "--project", dir, "analysis", "bayesian", "bayes-run", "--method", "normal-approx", "--prior-mean", "0", "--prior-variance", "1"}, stdout, stderr); code != 0 {
+		t.Fatalf("bayesian exit code = %d, stderr = %s", code, stderr.String())
+	}
+	if !strings.Contains(stdout.String(), `"method":"normal-approx"`) || !strings.Contains(stdout.String(), `"runId":"bayes-run"`) {
+		t.Fatalf("bayesian output = %s", stdout.String())
+	}
+	if _, err := os.Stat(filepath.Join(dir, "analysis", "bayes-run-bayesian.json")); err != nil {
+		t.Fatalf("bayesian artifact missing: %v", err)
+	}
+}
+
+func TestExecuteAnalysisPublicationBiasEgger(t *testing.T) {
+	dir := filepath.Join(t.TempDir(), "demo")
+	if code := Execute([]string{"project", "create", dir, "--title", "Bias Meta-analysis"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("project create exit code = %d", code)
+	}
+	run := analysis.AnalysisRun{SchemaVersion: "1", ID: "bias-run", InputRows: []analysis.InputRow{
+		{PaperID: "p1", EffectSize: 0.2, Variance: 0.04},
+		{PaperID: "p2", EffectSize: 0.3, Variance: 0.05},
+		{PaperID: "p3", EffectSize: 0.4, Variance: 0.06},
+	}}
+	if err := writeJSONFile(filepath.Join(dir, "analysis", "bias-run.json"), run); err != nil {
+		t.Fatalf("write run: %v", err)
+	}
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+	if code := Execute([]string{"--json", "--project", dir, "analysis", "publication-bias", "bias-run", "--method", "egger"}, stdout, stderr); code != 0 {
+		t.Fatalf("publication bias exit code = %d, stderr = %s", code, stderr.String())
+	}
+	if !strings.Contains(stdout.String(), `"method":"egger"`) || !strings.Contains(stdout.String(), "underpowered") {
+		t.Fatalf("publication bias output = %s", stdout.String())
+	}
+	if _, err := os.Stat(filepath.Join(dir, "analysis", "bias-run-publication-bias.json")); err != nil {
+		t.Fatalf("publication bias artifact missing: %v", err)
+	}
+}
+
+func TestExecuteAnalysisPrepareSupportsLogOddsRatio(t *testing.T) {
+	dir := filepath.Join(t.TempDir(), "demo")
+	if code := Execute([]string{"project", "create", dir, "--title", "Binary Meta-analysis"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("project create exit code = %d", code)
+	}
+	items := `[{"PaperID":"paper-1","Values":{"events_treatment":"30","n_treatment":"100","events_control":"20","n_control":"100"},"Support":{"Kind":"passage","Ref":"p1"},"Status":"accepted"}]`
+	if err := os.WriteFile(filepath.Join(dir, "data", "evidence.items.json"), []byte(items), 0o644); err != nil {
+		t.Fatalf("write evidence: %v", err)
+	}
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+	if code := Execute([]string{"--json", "--project", dir, "analysis", "prepare", "binary-run", "--effect", "log-odds-ratio"}, stdout, stderr); code != 0 {
+		t.Fatalf("analysis prepare exit code = %d, stderr = %s", code, stderr.String())
+	}
+	var envelope struct {
+		Data struct {
+			Run analysis.AnalysisRun `json:"run"`
+		} `json:"data"`
+	}
+	if err := json.Unmarshal(stdout.Bytes(), &envelope); err != nil {
+		t.Fatalf("prepare stdout is not JSON: %v\n%s", err, stdout.String())
+	}
+	if len(envelope.Data.Run.InputRows) != 1 || envelope.Data.Run.InputRows[0].PaperID != "paper-1" || envelope.Data.Run.InputRows[0].Variance <= 0 {
+		t.Fatalf("prepare output = %#v", envelope)
+	}
+}
+
+func TestExecuteAnalysisPrepareSupportsRiskRatio(t *testing.T) {
+	dir := filepath.Join(t.TempDir(), "demo")
+	if code := Execute([]string{"project", "create", dir, "--title", "Risk Ratio Meta-analysis"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("project create exit code = %d", code)
+	}
+	items := `[{"PaperID":"paper-1","Values":{"events_treatment":"40","n_treatment":"100","events_control":"20","n_control":"100"},"Support":{"Kind":"passage","Ref":"p1"},"Status":"accepted"}]`
+	if err := os.WriteFile(filepath.Join(dir, "data", "evidence.items.json"), []byte(items), 0o644); err != nil {
+		t.Fatalf("write evidence: %v", err)
+	}
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+	if code := Execute([]string{"--json", "--project", dir, "analysis", "prepare", "rr-run", "--effect", "risk-ratio"}, stdout, stderr); code != 0 {
+		t.Fatalf("analysis prepare exit code = %d, stderr = %s", code, stderr.String())
+	}
+	if !strings.Contains(stdout.String(), `"ID":"rr-run"`) || !strings.Contains(stdout.String(), `"PaperID":"paper-1"`) {
+		t.Fatalf("prepare output = %s", stdout.String())
+	}
+}
+
+func TestExecuteAnalysisSensitivityLeaveOneOut(t *testing.T) {
+	dir := filepath.Join(t.TempDir(), "demo")
+	if code := Execute([]string{"project", "create", dir, "--title", "Demo Review"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("project create exit code = %d", code)
+	}
+	items := `[
+{"PaperID":"paper-1","Values":{"mean_treatment":"10","mean_control":"8","sd_pooled":"2","n_treatment":"25","n_control":"25"},"Support":{"Kind":"passage","Ref":"p1"},"Status":"accepted"},
+{"PaperID":"paper-2","Values":{"mean_treatment":"12","mean_control":"8","sd_pooled":"2","n_treatment":"25","n_control":"25"},"Support":{"Kind":"passage","Ref":"p2"},"Status":"accepted"},
+{"PaperID":"paper-3","Values":{"mean_treatment":"16","mean_control":"8","sd_pooled":"2","n_treatment":"25","n_control":"25"},"Support":{"Kind":"passage","Ref":"p3"},"Status":"accepted"}
+]`
+	if err := os.WriteFile(filepath.Join(dir, "data", "evidence.items.json"), []byte(items), 0o644); err != nil {
+		t.Fatalf("write evidence: %v", err)
+	}
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+	if code := Execute([]string{"--json", "--project", dir, "analysis", "prepare", "run-1"}, stdout, stderr); code != 0 {
+		t.Fatalf("analysis prepare exit code = %d, stderr = %s", code, stderr.String())
+	}
+	stdout.Reset()
+	stderr.Reset()
+	if code := Execute([]string{"--json", "--project", dir, "analysis", "sensitivity", "run-1", "--method", "leave-one-out"}, stdout, stderr); code != 0 {
+		t.Fatalf("analysis sensitivity exit code = %d, stderr = %s", code, stderr.String())
+	}
+	if !strings.Contains(stdout.String(), "leave-one-out") || !strings.Contains(stdout.String(), "paper-1") {
+		t.Fatalf("sensitivity output = %s", stdout.String())
+	}
+	if _, err := os.Stat(filepath.Join(dir, "analysis", "run-1-sensitivity.json")); err != nil {
+		t.Fatalf("sensitivity artifact missing: %v", err)
+	}
+}
+
 func TestExecuteEvidenceSchemaExtractAuditAndSuggest(t *testing.T) {
 	dir := filepath.Join(t.TempDir(), "demo")
 	if code := Execute([]string{"project", "create", dir, "--title", "Demo Review"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
@@ -1137,6 +1699,80 @@ func TestExecuteScreenPrioritizeRanksLibraryFromScreeningFeedback(t *testing.T) 
 	}
 }
 
+func TestExecuteScreenModelPrioritizeRanksWithModelScore(t *testing.T) {
+	dir := filepath.Join(t.TempDir(), "demo")
+	if code := Execute([]string{"project", "create", dir, "--title", "Model Review"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("project create exit code = %d", code)
+	}
+	importPath := filepath.Join(t.TempDir(), "library.json")
+	fixture := `[
+  {"Title":"crypto leakage microstructure","Identifiers":{"DOI":"10.1000/include"}},
+  {"Title":"plant catalyst photosynthesis","Identifiers":{"DOI":"10.1000/exclude"}},
+  {"Title":"crypto microstructure signals","Identifiers":{"DOI":"10.1000/relevant"}},
+  {"Title":"plant photosynthesis materials","Identifiers":{"DOI":"10.1000/irrelevant"}}
+]`
+	if err := os.WriteFile(importPath, []byte(fixture), 0o644); err != nil {
+		t.Fatalf("write library fixture: %v", err)
+	}
+	if code := Execute([]string{"--json", "--project", dir, "import", "json", importPath}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("import exit code = %d", code)
+	}
+	if code := Execute([]string{"--json", "--project", dir, "screen", "configure", "--reason", "off-topic"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("screen configure exit code = %d", code)
+	}
+	if code := Execute([]string{"--project", dir, "screen", "decide", "--paper", "10.1000/include", "--stage", "title_abstract", "--decision", "include", "--reviewer", "ada"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("include decision exit code = %d", code)
+	}
+	if code := Execute([]string{"--project", dir, "screen", "decide", "--paper", "10.1000/exclude", "--stage", "title_abstract", "--decision", "exclude", "--reason", "off-topic", "--reviewer", "ada"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("exclude decision exit code = %d", code)
+	}
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+	if code := Execute([]string{"--json", "--project", dir, "screen", "model-prioritize", "--stage", "title_abstract", "--limit", "1"}, stdout, stderr); code != 0 {
+		t.Fatalf("screen model-prioritize exit code = %d, stderr = %s", code, stderr.String())
+	}
+	if !strings.Contains(stdout.String(), `"method":"naive-bayes"`) || !strings.Contains(stdout.String(), `"id":"10.1000/relevant"`) {
+		t.Fatalf("model-prioritize output = %s", stdout.String())
+	}
+}
+
+func TestExecuteScreenUncertaintyRanksBoundaryRecords(t *testing.T) {
+	dir := filepath.Join(t.TempDir(), "demo")
+	if code := Execute([]string{"project", "create", dir, "--title", "Demo Review"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("project create exit code = %d", code)
+	}
+	importPath := filepath.Join(t.TempDir(), "library.json")
+	fixture := `[
+  {"Title":"crypto leakage","Identifiers":{"DOI":"10.1000/include"}},
+  {"Title":"plant catalyst","Identifiers":{"DOI":"10.1000/exclude"}},
+  {"Title":"crypto leakage","Identifiers":{"DOI":"10.1000/positive"}},
+  {"Title":"unseen validation","Identifiers":{"DOI":"10.1000/boundary"}}
+]`
+	if err := os.WriteFile(importPath, []byte(fixture), 0o644); err != nil {
+		t.Fatalf("write library fixture: %v", err)
+	}
+	if code := Execute([]string{"--json", "--project", dir, "import", "json", importPath}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("import exit code = %d", code)
+	}
+	if code := Execute([]string{"--json", "--project", dir, "screen", "configure", "--reason", "off-topic"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("screen configure exit code = %d", code)
+	}
+	if code := Execute([]string{"--project", dir, "screen", "decide", "--paper", "10.1000/include", "--stage", "title_abstract", "--decision", "include", "--reviewer", "ada"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("include decision exit code = %d", code)
+	}
+	if code := Execute([]string{"--project", dir, "screen", "decide", "--paper", "10.1000/exclude", "--stage", "title_abstract", "--decision", "exclude", "--reason", "off-topic", "--reviewer", "ada"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("exclude decision exit code = %d", code)
+	}
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+	if code := Execute([]string{"--json", "--project", dir, "screen", "uncertainty", "--stage", "title_abstract", "--limit", "1"}, stdout, stderr); code != 0 {
+		t.Fatalf("screen uncertainty exit code = %d, stderr = %s", code, stderr.String())
+	}
+	if !strings.Contains(stdout.String(), `"id":"10.1000/boundary"`) || !strings.Contains(stdout.String(), `"uncertainty":1`) {
+		t.Fatalf("uncertainty output = %s", stdout.String())
+	}
+}
+
 func TestExecuteScreenWorkflowAndPrismaCounts(t *testing.T) {
 	dir := filepath.Join(t.TempDir(), "demo")
 	if code := Execute([]string{"project", "create", dir, "--title", "Demo Review"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
@@ -1167,6 +1803,119 @@ func TestExecuteScreenWorkflowAndPrismaCounts(t *testing.T) {
 	}
 	if !strings.Contains(stdout.String(), `"Excluded":1`) {
 		t.Fatalf("counts output = %s", stdout.String())
+	}
+}
+
+func TestExecuteScreenStoppingReportsRecommendation(t *testing.T) {
+	dir := filepath.Join(t.TempDir(), "demo")
+	if code := Execute([]string{"project", "create", dir, "--title", "Stopping Review"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("project create exit code = %d", code)
+	}
+	if code := Execute([]string{"--project", dir, "screen", "configure", "--reason", "off-topic"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("screen configure exit code = %d", code)
+	}
+	if code := Execute([]string{"--project", dir, "screen", "decide", "--paper", "p1", "--stage", "title_abstract", "--decision", "include", "--reviewer", "ada"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("screen decide exit code = %d", code)
+	}
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+	if code := Execute([]string{"--json", "--project", dir, "screen", "stopping", "--stage", "title_abstract", "--target-recall", "0.9"}, stdout, stderr); code != 0 {
+		t.Fatalf("screen stopping exit code = %d, stderr = %s", code, stderr.String())
+	}
+	if !strings.Contains(stdout.String(), `"canStop":true`) || !strings.Contains(stdout.String(), `"targetRecall":0.9`) {
+		t.Fatalf("stopping output = %s", stdout.String())
+	}
+}
+
+func TestExecuteScreenRecallReportsEffortCurve(t *testing.T) {
+	dir := filepath.Join(t.TempDir(), "demo")
+	if code := Execute([]string{"project", "create", dir, "--title", "Recall Review"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("project create exit code = %d", code)
+	}
+	if code := Execute([]string{"--project", dir, "screen", "configure", "--reason", "off-topic"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("screen configure exit code = %d", code)
+	}
+	decisions := [][]string{
+		{"p1", "exclude", "off-topic", "ada"},
+		{"p2", "include", "", "ada"},
+		{"p3", "include", "", "grace"},
+	}
+	for _, decision := range decisions {
+		args := []string{"--project", dir, "screen", "decide", "--paper", decision[0], "--stage", "title_abstract", "--decision", decision[1], "--reviewer", decision[3]}
+		if decision[2] != "" {
+			args = append(args, "--reason", decision[2])
+		}
+		if code := Execute(args, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+			t.Fatalf("screen decide %v exit code = %d", decision, code)
+		}
+	}
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+	if code := Execute([]string{"--json", "--project", dir, "screen", "recall", "--stage", "title_abstract"}, stdout, stderr); code != 0 {
+		t.Fatalf("screen recall exit code = %d, stderr = %s", code, stderr.String())
+	}
+	if !strings.Contains(stdout.String(), `"recall":1`) || !strings.Contains(stdout.String(), `"screened":3`) {
+		t.Fatalf("recall output = %s", stdout.String())
+	}
+}
+
+func TestExecuteScreenProgressReportsReviewerMetrics(t *testing.T) {
+	dir := filepath.Join(t.TempDir(), "demo")
+	if code := Execute([]string{"project", "create", dir, "--title", "Demo Review"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("project create exit code = %d", code)
+	}
+	importPath := filepath.Join(t.TempDir(), "library.json")
+	fixture := `[
+  {"Title":"Paper one","Identifiers":{"DOI":"10.1000/one"}},
+  {"Title":"Paper two","Identifiers":{"DOI":"10.1000/two"}},
+  {"Title":"Paper three","Identifiers":{"DOI":"10.1000/three"}}
+]`
+	if err := os.WriteFile(importPath, []byte(fixture), 0o644); err != nil {
+		t.Fatalf("write library fixture: %v", err)
+	}
+	if code := Execute([]string{"--json", "--project", dir, "import", "json", importPath}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("import exit code = %d", code)
+	}
+	if code := Execute([]string{"--project", dir, "screen", "configure", "--reason", "off-topic"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("screen configure exit code = %d", code)
+	}
+	if code := Execute([]string{"--project", dir, "screen", "decide", "--paper", "10.1000/one", "--stage", "title_abstract", "--decision", "include", "--reviewer", "ada"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("screen decide include exit code = %d", code)
+	}
+	if code := Execute([]string{"--project", dir, "screen", "decide", "--paper", "10.1000/two", "--stage", "title_abstract", "--decision", "exclude", "--reason", "off-topic", "--reviewer", "grace"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("screen decide exclude exit code = %d", code)
+	}
+	if code := Execute([]string{"--project", dir, "screen", "decide", "--paper", "10.1000/two", "--stage", "title_abstract", "--decision", "include", "--reviewer", "ada"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("screen decide conflict exit code = %d", code)
+	}
+
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+	if code := Execute([]string{"--json", "--project", dir, "screen", "progress", "--stage", "title_abstract"}, stdout, stderr); code != 0 {
+		t.Fatalf("screen progress exit code = %d, stderr = %s", code, stderr.String())
+	}
+	var env struct {
+		Data struct {
+			Progress struct {
+				TotalRecords    int `json:"totalRecords"`
+				ScreenedRecords int `json:"screenedRecords"`
+				Remaining       int `json:"remaining"`
+				Conflicts       int `json:"conflicts"`
+				Reviewers       []struct {
+					Reviewer  string `json:"reviewer"`
+					Decisions int    `json:"decisions"`
+				} `json:"reviewers"`
+			} `json:"progress"`
+		} `json:"data"`
+	}
+	if err := json.Unmarshal(stdout.Bytes(), &env); err != nil {
+		t.Fatalf("progress stdout is not JSON: %v\n%s", err, stdout.String())
+	}
+	if env.Data.Progress.TotalRecords != 3 || env.Data.Progress.ScreenedRecords != 2 || env.Data.Progress.Remaining != 1 || env.Data.Progress.Conflicts != 1 {
+		t.Fatalf("progress = %#v", env.Data.Progress)
+	}
+	if len(env.Data.Progress.Reviewers) != 2 || env.Data.Progress.Reviewers[0].Reviewer != "ada" || env.Data.Progress.Reviewers[0].Decisions != 2 {
+		t.Fatalf("reviewers = %#v", env.Data.Progress.Reviewers)
 	}
 }
 
@@ -1208,6 +1957,42 @@ func TestExecuteScreenConflictsReportsConflictingDecisions(t *testing.T) {
 	}
 }
 
+func TestExecuteScreenAdjudicateResolvesConflict(t *testing.T) {
+	dir := filepath.Join(t.TempDir(), "demo")
+	if code := Execute([]string{"project", "create", dir, "--title", "Demo Review"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("project create exit code = %d", code)
+	}
+	if code := Execute([]string{"--project", dir, "screen", "configure", "--reason", "off-topic"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("screen configure exit code = %d", code)
+	}
+	if code := Execute([]string{"--project", dir, "screen", "decide", "--paper", "paper-1", "--stage", "title_abstract", "--decision", "include", "--reviewer", "ada"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("screen decide include exit code = %d", code)
+	}
+	if code := Execute([]string{"--project", dir, "screen", "decide", "--paper", "paper-1", "--stage", "title_abstract", "--decision", "exclude", "--reason", "off-topic", "--reviewer", "linus"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("screen decide exclude exit code = %d", code)
+	}
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+	if code := Execute([]string{"--json", "--project", dir, "screen", "adjudicate", "--paper", "paper-1", "--stage", "title_abstract", "--decision", "include", "--reviewer", "carol"}, stdout, stderr); code != 0 {
+		t.Fatalf("screen adjudicate exit code = %d, stderr = %s", code, stderr.String())
+	}
+	stdout.Reset()
+	stderr.Reset()
+	if code := Execute([]string{"--json", "--project", dir, "screen", "conflicts", "--stage", "title_abstract"}, stdout, stderr); code != 0 {
+		t.Fatalf("screen conflicts exit code = %d, stderr = %s", code, stderr.String())
+	}
+	if strings.Contains(stdout.String(), "paper-1") {
+		t.Fatalf("conflict not resolved: %s", stdout.String())
+	}
+	var events []screening.DecisionEvent
+	if err := readJSONFile(screenEventsPath(dir), &events); err != nil {
+		t.Fatalf("load events: %v", err)
+	}
+	if !events[len(events)-1].Adjudicated {
+		t.Fatalf("last event not adjudicated: %#v", events[len(events)-1])
+	}
+}
+
 func TestExecuteScreenConflictsRequiresStage(t *testing.T) {
 	dir := filepath.Join(t.TempDir(), "demo")
 	if code := Execute([]string{"project", "create", dir, "--title", "Demo Review"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
@@ -1243,6 +2028,458 @@ func TestExecuteIndexRebuildAndRetrieve(t *testing.T) {
 		t.Fatalf("retrieve exit code = %d, stderr = %s", code, stderr.String())
 	}
 	if !strings.Contains(stdout.String(), "paper-1-sec-1-p-1") || !strings.Contains(stdout.String(), "Solar fuel catalysts") {
+		t.Fatalf("retrieve output = %s", stdout.String())
+	}
+}
+
+func TestExecuteParseReviewRefsWritesAmbiguousQueue(t *testing.T) {
+	dir := filepath.Join(t.TempDir(), "demo")
+	if code := Execute([]string{"project", "create", dir, "--title", "Reference Review"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("project create exit code = %d", code)
+	}
+	parsed := filepath.Join(t.TempDir(), "parsed.json")
+	out := filepath.Join(t.TempDir(), "review.json")
+	doc := `{"PaperID":"paper-1","References":[{"Title":"Confident","DOI":"10.1000/ok","Confidence":0.95},{"Title":"Ambiguous","Raw":"raw ref","Confidence":0.4}]}`
+	if err := os.WriteFile(parsed, []byte(doc), 0o644); err != nil {
+		t.Fatalf("write parsed: %v", err)
+	}
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+	if code := Execute([]string{"--json", "--project", dir, "parse", "review-refs", "--parsed", parsed, "--out", out, "--threshold", "0.75"}, stdout, stderr); code != 0 {
+		t.Fatalf("review refs exit code = %d, stderr = %s", code, stderr.String())
+	}
+	data, err := os.ReadFile(out)
+	if err != nil {
+		t.Fatalf("read review output: %v", err)
+	}
+	if !strings.Contains(string(data), `"reason": "low_confidence"`) || !strings.Contains(string(data), `"raw": "raw ref"`) {
+		t.Fatalf("review report = %s", data)
+	}
+}
+
+func TestExecuteParseReferencesWithAnyStyleCommand(t *testing.T) {
+	dir := filepath.Join(t.TempDir(), "demo")
+	if code := Execute([]string{"project", "create", dir, "--title", "Anystyle"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("project create exit code = %d", code)
+	}
+	refs := filepath.Join(t.TempDir(), "refs.txt")
+	out := filepath.Join(t.TempDir(), "refs.json")
+	if err := os.WriteFile(refs, []byte("Reference text"), 0o644); err != nil {
+		t.Fatalf("write refs: %v", err)
+	}
+	script := filepath.Join(t.TempDir(), "anystyle-fixture")
+	if err := os.WriteFile(script, []byte("#!/bin/sh\nprintf '%s' '[{\"title\":\"Parsed reference\",\"doi\":\"10.1000/ref\"}]'\n"), 0o755); err != nil {
+		t.Fatalf("write script: %v", err)
+	}
+	t.Setenv("RFORGE_ANYSTYLE_CMD", script)
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+	if code := Execute([]string{"--json", "--project", dir, "parse", "references", "--paper", "paper-1", "--parser", "anystyle", "--file", refs, "--out", out}, stdout, stderr); code != 0 {
+		t.Fatalf("parse references exit code = %d, stderr = %s", code, stderr.String())
+	}
+	data, err := os.ReadFile(out)
+	if err != nil {
+		t.Fatalf("read refs output: %v", err)
+	}
+	if !strings.Contains(string(data), `"ParserName": "anystyle"`) || !strings.Contains(string(data), `"DOI": "10.1000/ref"`) {
+		t.Fatalf("parsed references = %s", data)
+	}
+}
+
+func TestExecuteParseNormalizeRefsWritesSourceMatches(t *testing.T) {
+	dir := filepath.Join(t.TempDir(), "demo")
+	if code := Execute([]string{"project", "create", dir, "--title", "Reference Normalize"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("project create exit code = %d", code)
+	}
+	parsed := filepath.Join(t.TempDir(), "parsed.json")
+	out := filepath.Join(t.TempDir(), "refs.json")
+	parsedDoc := `{"PaperID":"paper-1","References":[{"Title":"Reference work","DOI":"10.5555/ref"}]}`
+	if err := os.WriteFile(parsed, []byte(parsedDoc), 0o644); err != nil {
+		t.Fatalf("write parsed: %v", err)
+	}
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/works" || r.URL.Query().Get("query") != "10.5555/ref" {
+			t.Fatalf("unexpected crossref request: %s?%s", r.URL.Path, r.URL.RawQuery)
+		}
+		_, _ = w.Write([]byte(`{"message":{"items":[{"DOI":"10.5555/ref","title":["Normalized Reference"],"reference-count":1}]}}`))
+	}))
+	defer server.Close()
+	t.Setenv("RFORGE_CROSSREF_URL", server.URL)
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+	if code := Execute([]string{"--json", "--project", dir, "parse", "normalize-refs", "--parsed", parsed, "--source", "crossref", "--out", out}, stdout, stderr); code != 0 {
+		t.Fatalf("normalize refs exit code = %d, stderr = %s", code, stderr.String())
+	}
+	data, err := os.ReadFile(out)
+	if err != nil {
+		t.Fatalf("read normalization: %v", err)
+	}
+	if !strings.Contains(string(data), `"matchedDoi": "10.5555/ref"`) || !strings.Contains(string(data), "Normalized Reference") {
+		t.Fatalf("normalization report = %s", data)
+	}
+}
+
+func TestExecutePDFFetchArXivAsset(t *testing.T) {
+	dir := filepath.Join(t.TempDir(), "demo")
+	if code := Execute([]string{"project", "create", dir, "--title", "arXiv Fetch"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("project create exit code = %d", code)
+	}
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/pdf/2401.00001" {
+			t.Fatalf("path = %q", r.URL.Path)
+		}
+		_, _ = w.Write([]byte("%PDF arxiv fixture"))
+	}))
+	defer server.Close()
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+	if code := Execute([]string{"--json", "--project", dir, "pdf", "fetch-arxiv", "--paper", "2401.00001", "--kind", "pdf", "--url", server.URL + "/pdf/2401.00001"}, stdout, stderr); code != 0 {
+		t.Fatalf("fetch arxiv exit code = %d, stderr = %s", code, stderr.String())
+	}
+	if !strings.Contains(stdout.String(), `"AcquisitionSource":"arxiv-pdf"`) || !strings.Contains(stdout.String(), `"MIMEType":"application/pdf"`) {
+		t.Fatalf("stdout = %s", stdout.String())
+	}
+}
+
+func TestExecuteParseS2ORCWritesParsedDocument(t *testing.T) {
+	dir := filepath.Join(t.TempDir(), "demo")
+	if code := Execute([]string{"project", "create", dir, "--title", "S2ORC Parse"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("project create exit code = %d", code)
+	}
+	s2orcPath := filepath.Join(t.TempDir(), "paper.json")
+	fixture := `{"title":"S2ORC Fixture","abstract":"Abstract text.","body_text":[{"section":"Intro","text":"Body text."}],"bib_entries":{"B0":{"title":"Reference","doi":"10.1000/ref"}}}`
+	if err := os.WriteFile(s2orcPath, []byte(fixture), 0o644); err != nil {
+		t.Fatalf("write s2orc: %v", err)
+	}
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+	if code := Execute([]string{"--json", "--project", dir, "parse", "--paper", "paper-1", "--parser", "s2orc", "--s2orc", s2orcPath}, stdout, stderr); code != 0 {
+		t.Fatalf("parse s2orc exit code = %d, stderr = %s", code, stderr.String())
+	}
+	parsedPath := filepath.Join(dir, "parsed", "paper-1.json")
+	data, err := os.ReadFile(parsedPath)
+	if err != nil {
+		t.Fatalf("read parsed: %v", err)
+	}
+	if !strings.Contains(string(data), `"ParserName": "s2orc-doc2json"`) || !strings.Contains(string(data), "S2ORC Fixture") || !strings.Contains(string(data), "Body text") {
+		t.Fatalf("parsed doc = %s", data)
+	}
+	manifest, err := os.ReadFile(filepath.Join(dir, "parsed", "paper-1.manifest.json"))
+	if err != nil {
+		t.Fatalf("read parser manifest: %v", err)
+	}
+	if !strings.Contains(string(manifest), `"parserName": "s2orc-doc2json"`) || !strings.Contains(string(manifest), `"passages": 1`) || !strings.Contains(string(manifest), `"references": 1`) {
+		t.Fatalf("parser manifest = %s", manifest)
+	}
+}
+
+func TestExecuteParseTeXWritesParsedDocument(t *testing.T) {
+	dir := filepath.Join(t.TempDir(), "demo")
+	if code := Execute([]string{"project", "create", dir, "--title", "TeX Parse"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("project create exit code = %d", code)
+	}
+	texPath := filepath.Join(t.TempDir(), "paper.tex")
+	if err := os.WriteFile(texPath, []byte(`\title{TeX Fixture}\begin{abstract}Abstract text.\end{abstract}\section{Intro}Body text.`), 0o644); err != nil {
+		t.Fatalf("write tex: %v", err)
+	}
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+	if code := Execute([]string{"--json", "--project", dir, "parse", "--paper", "paper-1", "--parser", "tex", "--tex", texPath}, stdout, stderr); code != 0 {
+		t.Fatalf("parse tex exit code = %d, stderr = %s", code, stderr.String())
+	}
+	parsedPath := filepath.Join(dir, "parsed", "paper-1.json")
+	data, err := os.ReadFile(parsedPath)
+	if err != nil {
+		t.Fatalf("read parsed: %v", err)
+	}
+	if !strings.Contains(string(data), `"ParserName": "tex"`) || !strings.Contains(string(data), "TeX Fixture") || !strings.Contains(string(data), "Body text") {
+		t.Fatalf("parsed doc = %s", data)
+	}
+}
+
+func TestExecuteParseNormalizeRefsSupportsOpenAlex(t *testing.T) {
+	dir := filepath.Join(t.TempDir(), "demo")
+	if code := Execute([]string{"project", "create", dir, "--title", "OpenAlex Ref Normalize"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("project create exit code = %d", code)
+	}
+	parsed := filepath.Join(t.TempDir(), "parsed.json")
+	out := filepath.Join(t.TempDir(), "refs.json")
+	parsedDoc := `{"PaperID":"paper-1","References":[{"Title":"Reference work","DOI":"10.5555/ref"}]}`
+	if err := os.WriteFile(parsed, []byte(parsedDoc), 0o644); err != nil {
+		t.Fatalf("write parsed: %v", err)
+	}
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/works" || r.URL.Query().Get("search") != "10.5555/ref" {
+			t.Fatalf("unexpected openalex request: %s?%s", r.URL.Path, r.URL.RawQuery)
+		}
+		_, _ = w.Write([]byte(`{"results":[{"id":"https://openalex.org/W1","doi":"https://doi.org/10.5555/ref","title":"Normalized OpenAlex Reference"}]}`))
+	}))
+	defer server.Close()
+	t.Setenv("RFORGE_OPENALEX_URL", server.URL)
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+	if code := Execute([]string{"--json", "--project", dir, "parse", "normalize-refs", "--parsed", parsed, "--source", "openalex", "--out", out}, stdout, stderr); code != 0 {
+		t.Fatalf("normalize refs exit code = %d, stderr = %s", code, stderr.String())
+	}
+	data, err := os.ReadFile(out)
+	if err != nil {
+		t.Fatalf("read normalization: %v", err)
+	}
+	if !strings.Contains(string(data), `"source": "openalex"`) || !strings.Contains(string(data), "Normalized OpenAlex Reference") {
+		t.Fatalf("normalization report = %s", data)
+	}
+}
+
+func TestExecuteParseCompareWritesComparisonReport(t *testing.T) {
+	dir := filepath.Join(t.TempDir(), "demo")
+	if code := Execute([]string{"project", "create", dir, "--title", "Parser Compare"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("project create exit code = %d", code)
+	}
+	left := filepath.Join(t.TempDir(), "left.json")
+	right := filepath.Join(t.TempDir(), "right.json")
+	out := filepath.Join(t.TempDir(), "compare.json")
+	leftDoc := `{"PaperID":"paper-1","ParserName":"grobid","Title":"Shared","Sections":[{"ID":"s1","Passages":[{"ID":"p1"}]}],"References":[{"Title":"Ref"}]}`
+	rightDoc := `{"PaperID":"paper-1","ParserName":"s2orc","Title":"Different","Sections":[{"ID":"s1","Passages":[{"ID":"p1"},{"ID":"p2"}]}],"References":[{"Title":"Ref"},{"Title":"Ref 2"}],"Warnings":["low confidence"]}`
+	if err := os.WriteFile(left, []byte(leftDoc), 0o644); err != nil {
+		t.Fatalf("write left: %v", err)
+	}
+	if err := os.WriteFile(right, []byte(rightDoc), 0o644); err != nil {
+		t.Fatalf("write right: %v", err)
+	}
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+	if code := Execute([]string{"--json", "--project", dir, "parse", "compare", "--left", left, "--right", right, "--out", out}, stdout, stderr); code != 0 {
+		t.Fatalf("parse compare exit code = %d, stderr = %s", code, stderr.String())
+	}
+	data, err := os.ReadFile(out)
+	if err != nil {
+		t.Fatalf("read comparison: %v", err)
+	}
+	if !strings.Contains(string(data), "review-required") || !strings.Contains(string(data), "referenceDelta") {
+		t.Fatalf("comparison report = %s", data)
+	}
+}
+
+func TestExecuteIndexAndRetrieveWithHybridBackend(t *testing.T) {
+	dir := filepath.Join(t.TempDir(), "demo")
+	if code := Execute([]string{"project", "create", dir, "--title", "Hybrid Demo"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("project create exit code = %d", code)
+	}
+	parsedDir := filepath.Join(dir, "parsed")
+	if err := os.MkdirAll(parsedDir, 0o755); err != nil {
+		t.Fatalf("mkdir parsed: %v", err)
+	}
+	parsed := `{"PaperID":"paper-1","Sections":[{"ID":"s1","Passages":[{"ID":"p1","PaperID":"paper-1","SectionID":"s1","Text":"Solar fuel catalysts split water."}]}]}`
+	if err := os.WriteFile(filepath.Join(parsedDir, "paper-1.json"), []byte(parsed), 0o644); err != nil {
+		t.Fatalf("write parsed: %v", err)
+	}
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case "/collections/researchforge_passages/points":
+			_, _ = w.Write([]byte(`{"result":{"status":"completed"}}`))
+		case "/collections/researchforge_passages/points/search":
+			_, _ = w.Write([]byte(`{"result":[{"payload":{"PaperID":"paper-2","SectionID":"s2","PassageID":"p2","Text":"Vector-only solar catalyst passage."}}]}`))
+		default:
+			t.Fatalf("unexpected path: %s", r.URL.Path)
+		}
+	}))
+	defer server.Close()
+	t.Setenv("RFORGE_QDRANT_URL", server.URL)
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+	if code := Execute([]string{"--json", "--project", dir, "index", "rebuild", "--backend", "hybrid"}, stdout, stderr); code != 0 {
+		t.Fatalf("hybrid index exit code = %d, stderr = %s", code, stderr.String())
+	}
+	lockData, err := os.ReadFile(filepath.Join(dir, "data", "retrieval.lock.json"))
+	if err != nil {
+		t.Fatalf("read retrieval lock: %v", err)
+	}
+	if !strings.Contains(string(lockData), `"backend": "hybrid"`) || !strings.Contains(string(lockData), `"embeddingBackend": "deterministic-hash"`) {
+		t.Fatalf("retrieval lock = %s", lockData)
+	}
+	stdout.Reset()
+	stderr.Reset()
+	if code := Execute([]string{"--json", "--project", dir, "retrieve", "--query", "solar catalysts", "--backend", "hybrid"}, stdout, stderr); code != 0 {
+		t.Fatalf("hybrid retrieve exit code = %d, stderr = %s", code, stderr.String())
+	}
+	if !strings.Contains(stdout.String(), "Solar fuel catalysts") || !strings.Contains(stdout.String(), "Vector-only solar catalyst") || !strings.Contains(stdout.String(), `"backend":"hybrid"`) {
+		t.Fatalf("retrieve output = %s", stdout.String())
+	}
+}
+
+func TestExecuteIndexAndRetrieveWithQdrantBackend(t *testing.T) {
+	dir := filepath.Join(t.TempDir(), "demo")
+	if code := Execute([]string{"project", "create", dir, "--title", "Qdrant Demo"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("project create exit code = %d", code)
+	}
+	parsedDir := filepath.Join(dir, "parsed")
+	if err := os.MkdirAll(parsedDir, 0o755); err != nil {
+		t.Fatalf("mkdir parsed: %v", err)
+	}
+	parsed := `{"PaperID":"paper-1","Sections":[{"ID":"s1","Passages":[{"ID":"p1","PaperID":"paper-1","SectionID":"s1","Text":"Solar fuel catalysts split water."}]}]}`
+	if err := os.WriteFile(filepath.Join(parsedDir, "paper-1.json"), []byte(parsed), 0o644); err != nil {
+		t.Fatalf("write parsed: %v", err)
+	}
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case "/collections/researchforge_passages/points":
+			var request struct {
+				Points []struct {
+					Vector []float64 `json:"vector"`
+				} `json:"points"`
+			}
+			if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+				t.Fatalf("decode qdrant upsert: %v", err)
+			}
+			if len(request.Points) != 1 || len(request.Points[0].Vector) != 12 {
+				t.Fatalf("qdrant vectors = %#v", request.Points)
+			}
+			_, _ = w.Write([]byte(`{"result":{"status":"completed"}}`))
+		case "/collections/researchforge_passages/points/search":
+			var request struct {
+				Vector []float64 `json:"vector"`
+			}
+			if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+				t.Fatalf("decode qdrant search: %v", err)
+			}
+			if len(request.Vector) != 12 {
+				t.Fatalf("qdrant query vector length = %d", len(request.Vector))
+			}
+			_, _ = w.Write([]byte(`{"result":[{"payload":{"PaperID":"paper-1","SectionID":"s1","PassageID":"p1","Text":"Solar fuel catalysts split water."}}]}`))
+		default:
+			t.Fatalf("unexpected path: %s", r.URL.Path)
+		}
+	}))
+	defer server.Close()
+	t.Setenv("RFORGE_QDRANT_URL", server.URL)
+	t.Setenv("RFORGE_EMBEDDING_DIMENSIONS", "12")
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+	if code := Execute([]string{"--json", "--project", dir, "index", "rebuild", "--backend", "qdrant"}, stdout, stderr); code != 0 {
+		t.Fatalf("qdrant index exit code = %d, stderr = %s", code, stderr.String())
+	}
+	if !strings.Contains(stdout.String(), `"backend":"qdrant"`) {
+		t.Fatalf("index output = %s", stdout.String())
+	}
+	lockData, err := os.ReadFile(filepath.Join(dir, "data", "retrieval.lock.json"))
+	if err != nil {
+		t.Fatalf("read retrieval lock: %v", err)
+	}
+	if !strings.Contains(string(lockData), `"embeddingVersion": "dimensions=12"`) {
+		t.Fatalf("retrieval lock = %s", lockData)
+	}
+	stdout.Reset()
+	stderr.Reset()
+	if code := Execute([]string{"--json", "--project", dir, "retrieve", "--query", "solar catalysts", "--backend", "qdrant"}, stdout, stderr); code != 0 {
+		t.Fatalf("qdrant retrieve exit code = %d, stderr = %s", code, stderr.String())
+	}
+	if !strings.Contains(stdout.String(), "Solar fuel catalysts") || !strings.Contains(stdout.String(), `"backend":"qdrant"`) {
+		t.Fatalf("retrieve output = %s", stdout.String())
+	}
+}
+
+func TestExecuteQdrantBackendUsesHTTPEmbeddingProvider(t *testing.T) {
+	dir := filepath.Join(t.TempDir(), "demo")
+	if code := Execute([]string{"project", "create", dir, "--title", "HTTP Embeddings"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("project create exit code = %d", code)
+	}
+	parsedDir := filepath.Join(dir, "parsed")
+	if err := os.MkdirAll(parsedDir, 0o755); err != nil {
+		t.Fatalf("mkdir parsed: %v", err)
+	}
+	parsed := `{"PaperID":"paper-1","Sections":[{"ID":"s1","Passages":[{"ID":"p1","PaperID":"paper-1","SectionID":"s1","Text":"Solar fuel catalysts split water."}]}]}`
+	if err := os.WriteFile(filepath.Join(parsedDir, "paper-1.json"), []byte(parsed), 0o644); err != nil {
+		t.Fatalf("write parsed: %v", err)
+	}
+	var embeddingCalls int
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case "/embed":
+			embeddingCalls++
+			var request map[string]string
+			if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+				t.Fatalf("decode embedding request: %v", err)
+			}
+			if request["model"] != "fixture-embed" {
+				t.Fatalf("embedding request = %#v", request)
+			}
+			_, _ = w.Write([]byte(`{"embedding":[0.25,0.75]}`))
+		case "/collections/researchforge_passages/points":
+			_, _ = w.Write([]byte(`{"result":{"status":"completed"}}`))
+		case "/collections/researchforge_passages/points/search":
+			_, _ = w.Write([]byte(`{"result":[{"payload":{"PaperID":"paper-1","SectionID":"s1","PassageID":"p1","Text":"Solar fuel catalysts split water."}}]}`))
+		default:
+			t.Fatalf("unexpected path: %s", r.URL.Path)
+		}
+	}))
+	defer server.Close()
+	t.Setenv("RFORGE_QDRANT_URL", server.URL)
+	t.Setenv("RFORGE_EMBEDDING_URL", server.URL+"/embed")
+	t.Setenv("RFORGE_EMBEDDING_MODEL", "fixture-embed")
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+	if code := Execute([]string{"--json", "--project", dir, "index", "rebuild", "--backend", "qdrant"}, stdout, stderr); code != 0 {
+		t.Fatalf("qdrant index exit code = %d, stderr = %s", code, stderr.String())
+	}
+	if embeddingCalls != 1 {
+		t.Fatalf("embedding calls after rebuild = %d", embeddingCalls)
+	}
+	lockData, err := os.ReadFile(filepath.Join(dir, "data", "retrieval.lock.json"))
+	if err != nil {
+		t.Fatalf("read retrieval lock: %v", err)
+	}
+	if !strings.Contains(string(lockData), `"embeddingBackend": "http-embedding:fixture-embed"`) || !strings.Contains(string(lockData), `"embeddingVersion": "http-model=fixture-embed"`) {
+		t.Fatalf("retrieval lock = %s", lockData)
+	}
+	stdout.Reset()
+	stderr.Reset()
+	if code := Execute([]string{"--json", "--project", dir, "retrieve", "--query", "solar catalysts", "--backend", "qdrant"}, stdout, stderr); code != 0 {
+		t.Fatalf("qdrant retrieve exit code = %d, stderr = %s", code, stderr.String())
+	}
+	if embeddingCalls != 2 {
+		t.Fatalf("embedding calls after retrieve = %d", embeddingCalls)
+	}
+}
+
+func TestExecuteIndexAndRetrieveWithOpenSearchBackend(t *testing.T) {
+	dir := filepath.Join(t.TempDir(), "demo")
+	if code := Execute([]string{"project", "create", dir, "--title", "OpenSearch Demo"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("project create exit code = %d", code)
+	}
+	parsedDir := filepath.Join(dir, "parsed")
+	if err := os.MkdirAll(parsedDir, 0o755); err != nil {
+		t.Fatalf("mkdir parsed: %v", err)
+	}
+	parsed := `{"PaperID":"paper-1","Sections":[{"ID":"s1","Passages":[{"ID":"p1","PaperID":"paper-1","SectionID":"s1","Text":"Solar fuel catalysts split water."}]}]}`
+	if err := os.WriteFile(filepath.Join(parsedDir, "paper-1.json"), []byte(parsed), 0o644); err != nil {
+		t.Fatalf("write parsed: %v", err)
+	}
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case "/researchforge-passages/_bulk", "/researchforge-passages/_refresh":
+			_, _ = w.Write([]byte(`{"ok":true}`))
+		case "/researchforge-passages/_search":
+			_, _ = w.Write([]byte(`{"hits":{"hits":[{"_source":{"PaperID":"paper-1","SectionID":"s1","PassageID":"p1","Text":"Solar fuel catalysts split water."}}]}}`))
+		default:
+			t.Fatalf("unexpected path: %s", r.URL.Path)
+		}
+	}))
+	defer server.Close()
+	t.Setenv("RFORGE_OPENSEARCH_URL", server.URL)
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+	if code := Execute([]string{"--json", "--project", dir, "index", "rebuild", "--backend", "opensearch"}, stdout, stderr); code != 0 {
+		t.Fatalf("opensearch index exit code = %d, stderr = %s", code, stderr.String())
+	}
+	if !strings.Contains(stdout.String(), `"backend":"opensearch"`) {
+		t.Fatalf("index output = %s", stdout.String())
+	}
+	stdout.Reset()
+	stderr.Reset()
+	if code := Execute([]string{"--json", "--project", dir, "retrieve", "--query", "solar catalysts", "--backend", "opensearch"}, stdout, stderr); code != 0 {
+		t.Fatalf("opensearch retrieve exit code = %d, stderr = %s", code, stderr.String())
+	}
+	if !strings.Contains(stdout.String(), "Solar fuel catalysts") || !strings.Contains(stdout.String(), `"backend":"opensearch"`) {
 		t.Fatalf("retrieve output = %s", stdout.String())
 	}
 }
@@ -1371,6 +2608,35 @@ func TestExecuteOSSNoteCreatesTemplate(t *testing.T) {
 	}
 }
 
+func TestExecuteOSSInventoryCheckJSON(t *testing.T) {
+	root := t.TempDir()
+	manifest := filepath.Join(root, "manifest.json")
+	if err := os.WriteFile(filepath.Join(root, "zotero.md"), []byte("# Zotero\n"), 0o644); err != nil {
+		t.Fatalf("write note: %v", err)
+	}
+	if err := os.WriteFile(manifest, []byte(`{"schemaVersion":"1","entries":[{"id":"zotero","name":"Zotero","area":"reference-management","disposition":"pattern-reference","licensePolicy":"study-only","note":"zotero.md","risk":"review required","nextSlice":"CSL JSON"}]}`), 0o644); err != nil {
+		t.Fatalf("write manifest: %v", err)
+	}
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+	code := Execute([]string{"--json", "oss", "inventory-check", manifest}, stdout, stderr)
+	if code != 0 {
+		t.Fatalf("inventory-check exit code = %d stderr=%s stdout=%s", code, stderr.String(), stdout.String())
+	}
+	var envelope struct {
+		Data struct {
+			EntryCount int      `json:"entryCount"`
+			Issues     []string `json:"issues"`
+		} `json:"data"`
+	}
+	if err := json.Unmarshal(stdout.Bytes(), &envelope); err != nil {
+		t.Fatalf("stdout is not JSON: %v\n%s", err, stdout.String())
+	}
+	if envelope.Data.EntryCount != 1 || len(envelope.Data.Issues) != 0 {
+		t.Fatalf("inventory check = %#v", envelope.Data)
+	}
+}
+
 func TestExecuteOSSAddListAndLicenseCheck(t *testing.T) {
 	dir := filepath.Join(t.TempDir(), "demo")
 	if code := Execute([]string{"project", "create", dir, "--title", "Demo Review"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
@@ -1448,6 +2714,75 @@ func TestExecuteImportExportJSON(t *testing.T) {
 	}
 }
 
+func TestExecuteLibraryImportCrossrefReferences(t *testing.T) {
+	dir := filepath.Join(t.TempDir(), "demo")
+	if code := Execute([]string{"project", "create", dir, "--title", "Crossref References"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("project create exit code = %d", code)
+	}
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/works/10.5555/source" {
+			t.Fatalf("path = %q", r.URL.Path)
+		}
+		_, _ = w.Write([]byte(`{"message":{"DOI":"10.5555/source","reference":[{"DOI":"10.1000/ref-one","article-title":"Reference One","key":"ref1"},{"article-title":"Title only reference","key":"ref2"}]}}`))
+	}))
+	defer server.Close()
+	t.Setenv("RFORGE_CROSSREF_URL", server.URL)
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+	if code := Execute([]string{"--json", "--project", dir, "library", "import-crossref-refs", "10.5555/source"}, stdout, stderr); code != 0 {
+		t.Fatalf("import refs exit code = %d, stderr = %s", code, stderr.String())
+	}
+	if !strings.Contains(stdout.String(), `"extracted":2`) || !strings.Contains(stdout.String(), `"imported":1`) {
+		t.Fatalf("stdout = %s", stdout.String())
+	}
+	listed := mustRunCLI(t, "--json", "--project", dir, "library", "list")
+	if !strings.Contains(string(listed), "Reference One") || strings.Contains(string(listed), "Title only reference") {
+		t.Fatalf("library = %s", listed)
+	}
+}
+
+func TestExecuteLibraryRefreshDOIFromCrossref(t *testing.T) {
+	dir := filepath.Join(t.TempDir(), "demo")
+	if code := Execute([]string{"project", "create", dir, "--title", "Crossref Refresh"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("project create exit code = %d", code)
+	}
+	importPath := filepath.Join(t.TempDir(), "library.json")
+	fixture := `[{"Title":"Old title","Identifiers":{"DOI":"10.5555/refresh"}}]`
+	if err := os.WriteFile(importPath, []byte(fixture), 0o644); err != nil {
+		t.Fatalf("write fixture: %v", err)
+	}
+	if code := Execute([]string{"--json", "--project", dir, "import", "json", importPath}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("import exit code = %d", code)
+	}
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/works/10.5555/refresh" {
+			t.Fatalf("path = %q", r.URL.Path)
+		}
+		_, _ = w.Write([]byte(`{"message":{"DOI":"10.5555/refresh","title":["Refreshed title"],"publisher":"Crossref Publisher","reference-count":3,"license":[{"URL":"https://license.example"}]}}`))
+	}))
+	defer server.Close()
+	t.Setenv("RFORGE_CROSSREF_URL", server.URL)
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+	if code := Execute([]string{"--json", "--project", dir, "library", "refresh-doi", "10.5555/refresh"}, stdout, stderr); code != 0 {
+		t.Fatalf("refresh exit code = %d, stderr = %s", code, stderr.String())
+	}
+	var lib struct {
+		Data struct {
+			Papers []library.PaperRecord `json:"papers"`
+		} `json:"data"`
+	}
+	if err := json.Unmarshal(mustRunCLI(t, "--json", "--project", dir, "library", "list"), &lib); err != nil {
+		t.Fatalf("decode library: %v", err)
+	}
+	if len(lib.Data.Papers) != 1 || lib.Data.Papers[0].Title != "Refreshed title" || lib.Data.Papers[0].Publisher != "Crossref Publisher" || lib.Data.Papers[0].License != "https://license.example" {
+		t.Fatalf("papers = %#v", lib.Data.Papers)
+	}
+	if lib.Data.Papers[0].SourceRefs[0].Metadata["reference_count"] != "3" {
+		t.Fatalf("source refs = %#v", lib.Data.Papers[0].SourceRefs)
+	}
+}
+
 func TestExecuteCSLJSONImportExportRoundTrip(t *testing.T) {
 	dir := filepath.Join(t.TempDir(), "demo")
 	if code := Execute([]string{"project", "create", dir, "--title", "Zotero Review"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
@@ -1474,6 +2809,36 @@ func TestExecuteCSLJSONImportExportRoundTrip(t *testing.T) {
 		t.Fatalf("read exported CSL JSON: %v", err)
 	}
 	if skipped != 0 || len(exported) != 1 || exported[0].SourceRefs[0].Metadata["csl_id"] != "smith2026crypto" {
+		t.Fatalf("exported=%#v skipped=%d", exported, skipped)
+	}
+}
+
+func TestExecuteZoteroRDFImportExportRoundTrip(t *testing.T) {
+	dir := filepath.Join(t.TempDir(), "demo")
+	if code := Execute([]string{"project", "create", dir, "--title", "Zotero RDF Review"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("project create exit code = %d", code)
+	}
+	importPath := filepath.Join(t.TempDir(), "zotero.rdf")
+	fixture := `<?xml version="1.0"?><rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:prism="http://prismstandard.org/namespaces/1.2/basic/" xmlns:bib="http://purl.org/net/biblio#" xmlns:better-bibtex="https://retorque.re/zotero-better-bibtex/export#"><bib:Article rdf:about="#item-1"><dc:title>Zotero RDF CLI fixture</dc:title><prism:doi>10.1000/rdf-cli</prism:doi><better-bibtex:citekey>cli2026rdf</better-bibtex:citekey></bib:Article></rdf:RDF>`
+	if err := os.WriteFile(importPath, []byte(fixture), 0o644); err != nil {
+		t.Fatalf("write fixture: %v", err)
+	}
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+	if code := Execute([]string{"--json", "--project", dir, "import", "zotero-rdf", importPath}, stdout, stderr); code != 0 {
+		t.Fatalf("zotero-rdf import exit=%d stderr=%s stdout=%s", code, stderr.String(), stdout.String())
+	}
+	exportPath := filepath.Join(t.TempDir(), "export.rdf")
+	stdout.Reset()
+	stderr.Reset()
+	if code := Execute([]string{"--json", "--project", dir, "export", "zotero-rdf", exportPath}, stdout, stderr); code != 0 {
+		t.Fatalf("zotero-rdf export exit=%d stderr=%s stdout=%s", code, stderr.String(), stdout.String())
+	}
+	exported, skipped, err := library.ImportZoteroRDF(exportPath)
+	if err != nil {
+		t.Fatalf("read exported Zotero RDF: %v", err)
+	}
+	if skipped != 0 || len(exported) != 1 || exported[0].Title != "Zotero RDF CLI fixture" || exported[0].SourceRefs[0].Metadata["citation_key"] != "cli2026rdf" {
 		t.Fatalf("exported=%#v skipped=%d", exported, skipped)
 	}
 }

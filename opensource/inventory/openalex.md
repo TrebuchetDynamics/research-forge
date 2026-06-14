@@ -20,18 +20,18 @@ OpenAlex is a broad open scholarly graph and a strong default discovery source f
 
 Implemented nearby capabilities:
 
-- `rforge search --source openalex`.
-- OpenAlex source connector with mocked tests.
+- `rforge search --source openalex` with cursor/filter support and `rforge search import --source openalex --pages N` paginated library import.
+- `rforge citations expand --source openalex` for reference/citation graph export.
+- OpenAlex source connector with mocked tests, including works, author/institution entity searches, and related-work discovery records.
 - Source refs stored in `PaperRecord` conversion.
 - Live manual searches have been used for ResearchForge-backed reports.
 
 Missing features:
 
-- OpenAlex citation graph expansion.
-- Cursor-based multi-page import workflow.
-- Concepts/domain-map import.
-- Institution/author search.
-- Works filter support beyond generic search.
+- Rich cursor-based multi-page import workflow beyond fixed page-count import.
+- Rich concepts/domain-map import beyond source metadata.
+- Rich CLI UX for institution/author search beyond `rforge search --source openalex --entity authors|institutions`.
+- Higher-level works filter presets beyond generic `--filter`.
 - Opt-in live connector smoke test.
 
 ## Recommended slice

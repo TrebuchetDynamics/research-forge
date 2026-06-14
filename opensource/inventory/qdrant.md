@@ -23,18 +23,22 @@ Implemented nearby capabilities:
 - Optional Qdrant service check.
 - Adapter seam/backlog exists.
 - Retrieval package supports local indexing scaffolds.
+- Qdrant passage vector indexing/search adapter with mocked HTTP tests.
+- CLI backend selection through `rforge index rebuild --backend qdrant` and `rforge retrieve --backend qdrant`.
+- Deterministic local hash embedding scaffold for offline tests and reproducible smoke workflows, with `RFORGE_EMBEDDING_DIMENSIONS` dimension configuration recorded in `data/retrieval.lock.json`.
+- Opt-in HTTP embedding provider via `RFORGE_EMBEDDING_URL` and `RFORGE_EMBEDDING_MODEL`, with backend/model metadata recorded in `data/retrieval.lock.json`.
+- Hybrid lexical + vector retrieval through `--backend hybrid`, combining SQLite FTS with Qdrant results using reciprocal-rank fusion and deterministic de-duplication.
+- Retrieval rebuilds write `data/retrieval.lock.json` with backend and deterministic embedding metadata.
 
 Missing features:
 
-- Real Qdrant indexing/query adapter.
-- Embedding model configuration and lockfile capture.
-- Hybrid lexical + vector retrieval.
-- Passage-level vector indexing.
+- Production embedding provider presets beyond the generic HTTP embedding contract.
+- Rich hybrid ranking beyond reciprocal-rank fusion, such as calibrated backend weights and learned rerankers.
 - Opt-in Qdrant integration test.
 
 ## Recommended slice
 
-Add a Qdrant adapter interface implementation behind explicit configuration while keeping local tests on a fake adapter.
+Add configurable embedding provider/model selection and richer hybrid ranking over SQLite/OpenSearch plus Qdrant results.
 
 Acceptance target:
 

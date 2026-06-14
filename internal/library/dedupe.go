@@ -45,6 +45,9 @@ func MergeDuplicate(left, right PaperRecord) PaperRecord {
 	if merged.Identifiers.PMID == "" {
 		merged.Identifiers.PMID = right.Identifiers.PMID
 	}
+	if merged.Identifiers.PMCID == "" {
+		merged.Identifiers.PMCID = right.Identifiers.PMCID
+	}
 	if merged.Identifiers.OpenAlexID == "" {
 		merged.Identifiers.OpenAlexID = right.Identifiers.OpenAlexID
 	}

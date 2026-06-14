@@ -49,10 +49,18 @@ func TestRunExternalCommandCapturesVersionsOutputsWarningsChecksumsAndArtifacts(
 	if result.OutputChecksum == "" || result.ScriptChecksum == "" || result.Versions["R"] != "4.3.0" || len(result.Warnings) != 1 {
 		t.Fatalf("result = %#v", result)
 	}
-	if result.ForestPlot.Path == "" || result.FunnelPlot.Path == "" || result.MetaRegression.Available != false || result.SubgroupAnalysis.Available != false || result.PublicationBias.Available != false || result.SensitivityAnalysis.Available != false {
+	if result.ForestPlot.Path == "" || result.ForestPlot.Checksum == "" || result.FunnelPlot.Path == "" || result.FunnelPlot.Checksum == "" || result.MetaRegression.Available != false || result.SubgroupAnalysis.Available != false || result.PublicationBias.Available != false || result.SensitivityAnalysis.Available != false {
 		t.Fatalf("artifacts/scaffolds = %#v", result)
 	}
 	if _, err := os.Stat(filepath.Join(dir, "run-1-script.R")); err != nil {
 		t.Fatalf("missing script: %v", err)
+	}
+	forestData, err := os.ReadFile(result.ForestPlot.Path)
+	if err != nil || !strings.Contains(string(forestData), "Forest plot") || !strings.Contains(string(forestData), "paper-1") {
+		t.Fatalf("forest artifact err=%v data=%s", err, forestData)
+	}
+	funnelData, err := os.ReadFile(result.FunnelPlot.Path)
+	if err != nil || !strings.Contains(string(funnelData), "Funnel plot") || !strings.Contains(string(funnelData), "paper-1") {
+		t.Fatalf("funnel artifact err=%v data=%s", err, funnelData)
 	}
 }

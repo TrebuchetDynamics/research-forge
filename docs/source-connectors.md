@@ -7,11 +7,12 @@ ResearchForge keeps scholarly source integrations local-first and explicit about
 ### PubMed / Europe PMC
 
 - Purpose: biomedical literature discovery, PMID/PMCID metadata, and open biomedical full-text leads.
-- Terms review before implementation:
+- Status: Europe PMC search connector implemented as `rforge search --source europepmc`; PubMed/NCBI E-utilities search connector implemented as `rforge search --source pubmed`; normalized records preserve PMID, PMCID, MeSH terms, and Europe PMC full-text/OA links where source payloads provide them. Opt-in live smoke documentation and `make biomedical-live-smoke` cover the biomedical connectors.
+- Terms review before further implementation:
   - confirm NCBI E-utilities usage policies, rate limits, API key expectations, and attribution requirements;
-  - confirm Europe PMC API terms, rate limits, license metadata availability, and full-text link constraints.
+  - confirm Europe PMC API terms, rate limits, license metadata availability, and full-text link constraints before full-text acquisition.
 - Outbound data: query terms, field filters, pagination tokens, optional tool/email/API-key identification.
-- Credentials/config: optional NCBI API key; optional contact email/tool name if required by policy.
+- Credentials/config: optional NCBI API key/contact metadata through `RFORGE_PUBMED_API_KEY`, `RFORGE_PUBMED_TOOL`, and `RFORGE_PUBMED_EMAIL`; API keys are omitted from raw provenance refs.
 
 ### Semantic Scholar
 
@@ -20,7 +21,21 @@ ResearchForge keeps scholarly source integrations local-first and explicit about
   - confirm API key requirements, throttling, field availability, abstract/license constraints, and redistribution limits;
   - decide whether citation graph fields are cached or revalidated per project.
 - Outbound data: query terms, paper IDs, requested fields, pagination tokens, optional API key.
-- Credentials/config: optional or required Semantic Scholar API key depending on endpoint tier.
+- Credentials/config: optional or required Semantic Scholar API key depending on endpoint tier; `RFORGE_SEMANTIC_SCHOLAR_MAX_RETRIES` configures quota/transient retry attempts and the shared HTTP policy honors `Retry-After` on 429 responses.
+
+### OpenAlex
+
+- Purpose: broad scholarly metadata, concepts/domain mapping, related works, and citation graph discovery.
+- Status: OpenAlex works search supports cursor pagination, source filters via `--filter`, OA/license metadata, concept names in source metadata for domain mapping, related-work OpenAlex IDs and `RelatedWorks` discovery records, author/institution entity search APIs, and citation/reference graph expansion through `rforge citations expand --source openalex`.
+- Outbound data: query terms, source filters, cursor tokens, row limits.
+- Credentials/config: no API key; optional endpoint override/contact user agent.
+
+### arXiv
+
+- Purpose: preprint discovery and source/PDF acquisition leads.
+- Status: arXiv search supports optional `--category`, preserves version/category/comment/journal-ref metadata, DOI when present, and adds PDF plus TeX source acquisition URLs. arXiv PDF/source assets can be fetched with `rforge pdf fetch-arxiv`, and TeX source files can be parsed with `rforge parse --parser tex --tex <file>`.
+- Outbound data: query terms, category filters, max results, optional endpoint override.
+- Credentials/config: no API key; use a contact user-agent if configured later.
 
 ### NASA ADS
 
@@ -45,11 +60,11 @@ ResearchForge keeps scholarly source integrations local-first and explicit about
 | Source | Outbound user/project data | Credential/config | Must redact |
 | --- | --- | --- | --- |
 | OpenAlex | query terms, filters, pagination cursor | optional base URL/contact user agent | none by default |
-| arXiv | query terms, max results, pagination metadata | optional base URL/contact user agent | none by default |
-| Crossref | query terms, row limits, filters | optional base URL/contact user agent | email if configured later |
+| arXiv | query terms, category filters, max results, pagination metadata | optional base URL/contact user agent | none by default |
+| Crossref | query terms, row limits, works filters, DOI refresh lookups, reference-list extraction | optional base URL/contact user agent | email if configured later |
 | Unpaywall | DOI lookup, configured email | email required by policy | email |
 | PubMed / Europe PMC | query terms, IDs, pagination tokens | optional NCBI key/contact metadata | API keys, email if configured |
-| Semantic Scholar | query terms, paper IDs, requested fields | API key depending on endpoint | API key |
+| Semantic Scholar | query terms, paper IDs, requested fields | API key depending on endpoint; retry count via env | API key |
 | NASA ADS | query terms, bibcodes/DOIs, requested fields | API token | API token |
 | DOAJ / CORE | query terms, DOI/title filters, pagination tokens | CORE API key if used | API key |
 
