@@ -1239,12 +1239,53 @@ func TestExecuteImportExportJSON(t *testing.T) {
 	if code := Execute([]string{"--json", "--project", dir, "export", "json", exportPath}, stdout, stderr); code != 0 {
 		t.Fatalf("export exit code = %d, stderr = %s", code, stderr.String())
 	}
-	exported, err := library.ImportJSON(exportPath)
+	exported, _, err := library.ImportJSON(exportPath)
 	if err != nil {
 		t.Fatalf("read exported JSON: %v", err)
 	}
 	if len(exported) != 1 || exported[0].Title != "Artificial photosynthesis JSON import" {
 		t.Fatalf("exported = %#v", exported)
+	}
+}
+
+func TestExecuteImportSkipsDuplicatesAndReports(t *testing.T) {
+	dir := filepath.Join(t.TempDir(), "demo")
+	if code := Execute([]string{"project", "create", dir, "--title", "Demo Review"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("project create exit code = %d", code)
+	}
+	importPath := filepath.Join(t.TempDir(), "import.json")
+	fixture := `[
+  {"Title":"First","Identifiers":{"DOI":"10.1000/dup"}},
+  {"Title":"Duplicate of first","Identifiers":{"DOI":"10.1000/dup"}},
+  {"Title":"No identifier"},
+  {"Title":"Distinct","Identifiers":{"DOI":"10.1000/distinct"}}
+]`
+	if err := os.WriteFile(importPath, []byte(fixture), 0o644); err != nil {
+		t.Fatalf("write import: %v", err)
+	}
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+	if code := Execute([]string{"--json", "--project", dir, "import", "json", importPath}, stdout, stderr); code != 0 {
+		t.Fatalf("import aborted on duplicate/no-identifier records: exit=%d stderr=%s", code, stderr.String())
+	}
+	var env struct {
+		Data struct {
+			Imported            int      `json:"imported"`
+			SkippedDuplicate    []string `json:"skipped_duplicate"`
+			SkippedNoIdentifier int      `json:"skipped_no_identifier"`
+		} `json:"data"`
+	}
+	if err := json.Unmarshal(stdout.Bytes(), &env); err != nil {
+		t.Fatalf("import stdout is not JSON: %v\n%s", err, stdout.String())
+	}
+	if env.Data.Imported != 2 {
+		t.Fatalf("imported = %d, want 2", env.Data.Imported)
+	}
+	if len(env.Data.SkippedDuplicate) != 1 || env.Data.SkippedDuplicate[0] != "10.1000/dup" {
+		t.Fatalf("skipped_duplicate = %v, want [10.1000/dup]", env.Data.SkippedDuplicate)
+	}
+	if env.Data.SkippedNoIdentifier != 1 {
+		t.Fatalf("skipped_no_identifier = %d, want 1", env.Data.SkippedNoIdentifier)
 	}
 }
 

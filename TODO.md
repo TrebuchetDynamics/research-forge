@@ -510,7 +510,7 @@ The MVP checklist above is complete. This section tracks follow-on validation an
 
 ### Post-1.0 backlog
 
-- [ ] Make `import` resilient to duplicate identifiers: skip or merge in-file/in-store duplicates and report them, instead of aborting the whole import and leaving partial state (found via the full-pipeline e2e; the library store currently errors `paper record already exists`).
+- [x] Make `import` resilient to duplicate identifiers: skip in-file/in-store duplicates and no-identifier records and report them, instead of aborting the whole import and leaving partial state (parsers skip+count unstorable records, `Store.ImportRecords` skips+reports duplicates; merging stays in `duplicate merge`). See `docs/superpowers/specs/2026-06-13-import-duplicate-handling-design.md`.
 - [ ] Add a web GUI end-to-end test that builds view models from a CLI-generated project and serves them through the `internal/webui` handlers, tying CLI-produced artifacts to the cockpit pages.
 - [ ] Add opt-in live-service smoke tests for source connectors (OpenAlex, arXiv, Crossref, Unpaywall) behind an environment guard, mirroring the external e2e pattern.
 - [ ] Add an opt-in GROBID parse e2e against a real GROBID endpoint behind an environment guard.

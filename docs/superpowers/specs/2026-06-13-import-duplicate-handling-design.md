@@ -33,8 +33,27 @@ command. A real storage failure (read/write) still returns an error.
 
 ## API
 
-New method on `library.Store` so dedup-against-store and the write happen in one
-place (also replaces the current O(n²) per-record `Create`/`List`):
+Resilience lives at two layers, each owning one concern, because no-identifier
+records are rejected by `NewPaperRecord` inside the parsers — before any record
+reaches the store.
+
+**Parser layer — skip unstorable records.** The four format parsers
+(`ImportJSON`, `ImportBibTeX`, `ImportCSV`, `ImportRIS`) skip records that cannot
+be normalized into a storable `PaperRecord` (missing an identifier — or, rarely,
+a title) instead of aborting the whole parse, and report how many they skipped.
+Structural failures (unreadable file, malformed JSON) still return an error.
+
+```go
+// ([]PaperRecord, skippedNoIdentifier int, error)
+func ImportJSON(path string) ([]PaperRecord, int, error)
+func ImportBibTeX(path string) ([]PaperRecord, int, error)
+func ImportCSV(path string) ([]PaperRecord, int, error)
+func ImportRIS(path string) ([]PaperRecord, int, error)
+```
+
+**Store layer — skip duplicates.** A new method on `library.Store` so
+dedup-against-store and the write happen in one place (also replaces the current
+O(n²) per-record `Create`/`List`):
 
 ```go
 // ImportSummary reports the outcome of a resilient batch import.
@@ -53,26 +72,44 @@ func (s Store) ImportRecords(records []PaperRecord) (ImportSummary, error)
 Implementation: `List` existing records once, seed a `seen` set from their keys,
 iterate the batch building the merged slice (skipping per the rules above), then
 `ReplaceAll` once. `SkippedDuplicate` reports the bare identifier (key with its
-`type:` prefix stripped) to match user-facing output.
+`type:` prefix stripped). `ImportRecords` also defensively skips any
+no-identifier record, though the parsers normally remove those first.
 
 ## CLI
 
-`executeImport` replaces its per-record `Create` loop with one `ImportRecords`
-call.
+`executeImport` threads the parser's skipped-no-identifier count and replaces
+its per-record `Create` loop with one `ImportRecords` call:
+
+```go
+records, skippedNoIdentifier, err := library.ImportJSON(path) // or the matching format
+summary, err := store.ImportRecords(records)
+// imported = summary.Imported
+// skipped_duplicate = summary.SkippedDuplicate
+// skipped_no_identifier = skippedNoIdentifier
+```
 
 - JSON (back-compatible): keeps `"imported": N`; adds `"skipped_duplicate": [...]`
   and `"skipped_no_identifier": M`.
 - Plain: `imported N records (skipped X duplicates, Y without identifiers)`.
 
+`duplicate split` also parses replacement records via `ImportJSON`; it ignores
+the skipped count (replacement sets are expected to be clean).
+
 ## Testing (test-first)
 
-Library (`internal/library`):
+Library store (`internal/library`, `ImportRecords`):
 
 - imports new records and reports `Imported`;
 - skips an in-store duplicate and reports its identifier;
 - skips an in-batch duplicate (same identifier twice in one call);
 - skips a no-identifier record and counts it;
 - returns the right summary for a mixed batch.
+
+Library parsers (`internal/library`, `ImportJSON`/`ImportBibTeX`/`ImportCSV`/`ImportRIS`):
+
+- a parser skips a record with no identifier, keeps the valid ones, and returns
+  the skipped count;
+- a structurally malformed file still returns an error.
 
 CLI (`internal/cli`):
 

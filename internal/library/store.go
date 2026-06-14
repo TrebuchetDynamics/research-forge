@@ -51,6 +51,58 @@ func (s Store) Create(record PaperRecord) error {
 	return s.write(records)
 }
 
+// ImportSummary reports the outcome of a resilient batch import.
+type ImportSummary struct {
+	Imported            int
+	SkippedDuplicate    []string
+	SkippedNoIdentifier int
+}
+
+// ImportRecords adds records to the store, skipping records that have no
+// identifier or whose identity key already exists in the store or earlier in
+// the same batch. It returns an error only on a storage failure, never on a
+// duplicate or identifier-less record, so a single bad record cannot abort an
+// import or leave the library in a partial state.
+func (s Store) ImportRecords(records []PaperRecord) (ImportSummary, error) {
+	existing, err := s.List()
+	if err != nil {
+		return ImportSummary{}, err
+	}
+	seen := make(map[string]bool, len(existing))
+	for _, record := range existing {
+		seen[recordKey(record)] = true
+	}
+	summary := ImportSummary{}
+	merged := existing
+	for _, record := range records {
+		key := recordKey(record)
+		if key == "" {
+			summary.SkippedNoIdentifier++
+			continue
+		}
+		if seen[key] {
+			summary.SkippedDuplicate = append(summary.SkippedDuplicate, identifierFromKey(key))
+			continue
+		}
+		seen[key] = true
+		merged = append(merged, record)
+		summary.Imported++
+	}
+	if err := s.ReplaceAll(merged); err != nil {
+		return ImportSummary{}, err
+	}
+	return summary, nil
+}
+
+// identifierFromKey strips the "type:" prefix from a record identity key so the
+// bare identifier (e.g. a DOI) can be reported to users.
+func identifierFromKey(key string) string {
+	if idx := strings.Index(key, ":"); idx >= 0 {
+		return key[idx+1:]
+	}
+	return key
+}
+
 // Update replaces an existing PaperRecord by identifier.
 func (s Store) Update(record PaperRecord) error {
 	records, err := s.List()

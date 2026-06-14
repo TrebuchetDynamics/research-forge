@@ -19,16 +19,17 @@ func executeImport(args []string, stdout, stderr io.Writer, opts globalOptions) 
 		return writeError(stdout, stderr, opts, 2, "missing_project", "--project is required for import commands")
 	}
 	var records []library.PaperRecord
+	var skippedNoIdentifier int
 	var err error
 	switch args[0] {
 	case "csv":
-		records, err = library.ImportCSV(args[1])
+		records, skippedNoIdentifier, err = library.ImportCSV(args[1])
 	case "bibtex":
-		records, err = library.ImportBibTeX(args[1])
+		records, skippedNoIdentifier, err = library.ImportBibTeX(args[1])
 	case "ris":
-		records, err = library.ImportRIS(args[1])
+		records, skippedNoIdentifier, err = library.ImportRIS(args[1])
 	default:
-		records, err = library.ImportJSON(args[1])
+		records, skippedNoIdentifier, err = library.ImportJSON(args[1])
 	}
 	if err != nil {
 		return writeError(stdout, stderr, opts, 1, "import_failed", fmt.Sprintf("import %s: %v", args[0], err))
@@ -37,15 +38,23 @@ func executeImport(args []string, stdout, stderr io.Writer, opts globalOptions) 
 	if err != nil {
 		return writeError(stdout, stderr, opts, 1, "library_open_failed", fmt.Sprintf("open library: %v", err))
 	}
-	for _, record := range records {
-		if err := store.Create(record); err != nil {
-			return writeError(stdout, stderr, opts, 1, "import_store_failed", fmt.Sprintf("store imported record: %v", err))
-		}
+	summary, err := store.ImportRecords(records)
+	if err != nil {
+		return writeError(stdout, stderr, opts, 1, "import_store_failed", fmt.Sprintf("store imported records: %v", err))
 	}
+	skippedNoIdentifier += summary.SkippedNoIdentifier
 	if opts.JSON {
-		return writeJSON(stdout, 0, map[string]any{"imported": len(records)})
+		skipped := summary.SkippedDuplicate
+		if skipped == nil {
+			skipped = []string{}
+		}
+		return writeJSON(stdout, 0, map[string]any{
+			"imported":              summary.Imported,
+			"skipped_duplicate":     skipped,
+			"skipped_no_identifier": skippedNoIdentifier,
+		})
 	}
-	fmt.Fprintf(stdout, "imported %d records\n", len(records))
+	fmt.Fprintf(stdout, "imported %d records (skipped %d duplicates, %d without identifiers)\n", summary.Imported, len(summary.SkippedDuplicate), skippedNoIdentifier)
 	return 0
 }
 
@@ -146,7 +155,7 @@ func executeDuplicate(args []string, stdout, stderr io.Writer, opts globalOption
 		if err != nil || index < 0 || index >= len(papers) {
 			return writeError(stdout, stderr, opts, 2, "invalid_duplicate_index", "duplicate split index must reference an existing record")
 		}
-		replacements, err := library.ImportJSON(args[2])
+		replacements, _, err := library.ImportJSON(args[2])
 		if err != nil || len(replacements) < 2 {
 			return writeError(stdout, stderr, opts, 2, "invalid_split_file", "duplicate split requires a JSON file with at least two replacement records")
 		}

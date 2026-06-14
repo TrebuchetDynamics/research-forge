@@ -13,6 +13,6 @@ func FuzzImportCSV(f *testing.F) {
 		if err := os.WriteFile(path, []byte(data), 0o644); err != nil {
 			t.Fatal(err)
 		}
-		_, _ = ImportCSV(path)
+		_, _, _ = ImportCSV(path)
 	})
 }

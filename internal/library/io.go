@@ -11,16 +11,20 @@ import (
 )
 
 // ImportJSON reads PaperRecords from a deterministic JSON fixture/export file.
-func ImportJSON(path string) ([]PaperRecord, error) {
+// It skips records that cannot be normalized into a storable PaperRecord (for
+// example, records missing an identifier) and returns how many were skipped, so
+// a single unstorable record cannot abort the whole import.
+func ImportJSON(path string) ([]PaperRecord, int, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 	var records []PaperRecord
 	if err := json.Unmarshal(data, &records); err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 	out := make([]PaperRecord, 0, len(records))
+	skipped := 0
 	for _, record := range records {
 		normalized, err := NewPaperRecord(PaperRecordInput{
 			Title:         record.Title,
@@ -37,21 +41,25 @@ func ImportJSON(path string) ([]PaperRecord, error) {
 			SourceRefs:    record.SourceRefs,
 		})
 		if err != nil {
-			return nil, err
+			skipped++
+			continue
 		}
 		out = append(out, normalized)
 	}
-	return out, nil
+	return out, skipped, nil
 }
 
-// ImportBibTeX reads a minimal deterministic BibTeX fixture/export file.
-func ImportBibTeX(path string) ([]PaperRecord, error) {
+// ImportBibTeX reads a minimal deterministic BibTeX fixture/export file. It
+// skips entries that cannot be normalized into a storable PaperRecord and
+// returns how many were skipped.
+func ImportBibTeX(path string) ([]PaperRecord, int, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 	entries := strings.Split(string(data), "@")
 	records := []PaperRecord{}
+	skipped := 0
 	for _, entry := range entries {
 		if strings.TrimSpace(entry) == "" {
 			continue
@@ -66,11 +74,12 @@ func ImportBibTeX(path string) ([]PaperRecord, error) {
 			Publisher:   fields["publisher"],
 		})
 		if err != nil {
-			return nil, err
+			skipped++
+			continue
 		}
 		records = append(records, record)
 	}
-	return records, nil
+	return records, skipped, nil
 }
 
 // ExportBibTeX writes a minimal deterministic BibTeX file.
@@ -111,13 +120,16 @@ func parseBibTeXFields(entry string) map[string]string {
 	return fields
 }
 
-// ImportRIS reads a minimal deterministic RIS fixture/export file.
-func ImportRIS(path string) ([]PaperRecord, error) {
+// ImportRIS reads a minimal deterministic RIS fixture/export file. It skips
+// entries that cannot be normalized into a storable PaperRecord and returns how
+// many were skipped.
+func ImportRIS(path string) ([]PaperRecord, int, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 	records := []PaperRecord{}
+	skipped := 0
 	fields := map[string]string{}
 	for _, line := range strings.Split(string(data), "\n") {
 		if strings.TrimSpace(line) == "" {
@@ -127,7 +139,9 @@ func ImportRIS(path string) ([]PaperRecord, error) {
 			year, _ := strconv.Atoi(fields["PY"])
 			record, err := NewPaperRecord(PaperRecordInput{Title: fields["TI"], Identifiers: Identifiers{DOI: fields["DO"]}, Year: year, Venue: fields["JO"]})
 			if err != nil {
-				return nil, err
+				skipped++
+				fields = map[string]string{}
+				continue
 			}
 			records = append(records, record)
 			fields = map[string]string{}
@@ -137,7 +151,7 @@ func ImportRIS(path string) ([]PaperRecord, error) {
 			fields[line[:2]] = strings.TrimSpace(line[6:])
 		}
 	}
-	return records, nil
+	return records, skipped, nil
 }
 
 // ExportRIS writes a minimal deterministic RIS file.
@@ -159,25 +173,28 @@ func ExportRIS(path string, records []PaperRecord) error {
 	return os.WriteFile(path, []byte(builder.String()), 0o644)
 }
 
-// ImportCSV reads PaperRecords from a deterministic CSV fixture/export file.
-func ImportCSV(path string) ([]PaperRecord, error) {
+// ImportCSV reads PaperRecords from a deterministic CSV fixture/export file. It
+// skips rows that cannot be normalized into a storable PaperRecord and returns
+// how many were skipped.
+func ImportCSV(path string) ([]PaperRecord, int, error) {
 	file, err := os.Open(path)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 	defer file.Close()
 	rows, err := csv.NewReader(file).ReadAll()
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 	if len(rows) == 0 {
-		return nil, fmt.Errorf("csv header is required")
+		return nil, 0, fmt.Errorf("csv header is required")
 	}
 	header := map[string]int{}
 	for i, name := range rows[0] {
 		header[name] = i
 	}
 	records := []PaperRecord{}
+	skipped := 0
 	for _, row := range rows[1:] {
 		year, _ := strconv.Atoi(csvValue(row, header, "year"))
 		record, err := NewPaperRecord(PaperRecordInput{
@@ -197,11 +214,12 @@ func ImportCSV(path string) ([]PaperRecord, error) {
 			License:   csvValue(row, header, "license"),
 		})
 		if err != nil {
-			return nil, err
+			skipped++
+			continue
 		}
 		records = append(records, record)
 	}
-	return records, nil
+	return records, skipped, nil
 }
 
 // ExportCSV writes PaperRecords as stable CSV.

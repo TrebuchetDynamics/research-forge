@@ -39,6 +39,6 @@ func BenchmarkImportsExports(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		path := b.TempDir() + "/x.json"
 		_ = ExportJSON(path, records)
-		_, _ = ImportJSON(path)
+		_, _, _ = ImportJSON(path)
 	}
 }

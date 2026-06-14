@@ -20,7 +20,7 @@ func TestImportJSONReadsPaperRecordsFixture(t *testing.T) {
 		t.Fatalf("write fixture: %v", err)
 	}
 
-	records, err := ImportJSON(path)
+	records, _, err := ImportJSON(path)
 	if err != nil {
 		t.Fatalf("ImportJSON returned error: %v", err)
 	}
@@ -43,7 +43,7 @@ func TestImportBibTeXReadsPaperRecordsFixture(t *testing.T) {
 		t.Fatalf("write fixture: %v", err)
 	}
 
-	records, err := ImportBibTeX(path)
+	records, _, err := ImportBibTeX(path)
 	if err != nil {
 		t.Fatalf("ImportBibTeX returned error: %v", err)
 	}
@@ -83,7 +83,7 @@ func TestImportRISReadsPaperRecordsFixture(t *testing.T) {
 	if err := os.WriteFile(path, []byte(fixture), 0o644); err != nil {
 		t.Fatalf("write fixture: %v", err)
 	}
-	records, err := ImportRIS(path)
+	records, _, err := ImportRIS(path)
 	if err != nil {
 		t.Fatalf("ImportRIS returned error: %v", err)
 	}
@@ -118,7 +118,7 @@ func TestImportCSVReadsPaperRecordsFixture(t *testing.T) {
 		t.Fatalf("write fixture: %v", err)
 	}
 
-	records, err := ImportCSV(path)
+	records, _, err := ImportCSV(path)
 	if err != nil {
 		t.Fatalf("ImportCSV returned error: %v", err)
 	}
