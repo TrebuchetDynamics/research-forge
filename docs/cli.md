@@ -23,6 +23,7 @@ Core commands:
 - `rforge parse normalize-refs --parsed <parsed.json> --source crossref|openalex|semantic-scholar --out <report.json>`
 - `rforge parse review-refs --parsed <parsed.json> --out <report.json> [--threshold 0.75]`
 - `rforge index rebuild [--backend sqlite|opensearch|qdrant|hybrid]` (writes `data/retrieval.lock.json`; qdrant/hybrid honor `RFORGE_EMBEDDING_DIMENSIONS` or opt-in `RFORGE_EMBEDDING_URL`/`RFORGE_EMBEDDING_MODEL`), `rforge retrieve --query <query> [--backend sqlite|opensearch|qdrant|hybrid]`
+- `rforge research parse-pdftotext --paper <id> --pdf <file> --out <parsed.json> [--title <title>] [--chunk-size N]`, `rforge research screen-queue --out <queue.csv> [--markdown <queue.md>] [--library <library.json>] [--search-results <dir>]`, `rforge research leakage-audit --parsed <parsed-dir> --out <audit.json> [--markdown <audit.md>]`
 - `rforge screen configure|decide|adjudicate|queue|prioritize|model-prioritize|uncertainty|progress|recall|stopping|conflicts`, `rforge prisma counts`
 - `rforge extraction schema add`, `rforge extract add|suggest`, `rforge evidence audit`
 - `rforge analysis prepare [--effect smd|log-odds-ratio|risk-ratio]|run|sensitivity|subgroup|meta-regression|publication-bias|bayesian|export`

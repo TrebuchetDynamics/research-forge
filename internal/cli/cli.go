@@ -88,6 +88,8 @@ func Execute(args []string, stdout, stderr io.Writer) int {
 		return executeIndex(remaining[1:], stdout, stderr, opts)
 	case "retrieve":
 		return executeRetrieve(remaining[1:], stdout, stderr, opts)
+	case "research":
+		return executeResearch(remaining[1:], stdout, stderr, opts)
 	case "screen":
 		return executeScreen(remaining[1:], stdout, stderr, opts)
 	case "prisma":
@@ -2009,6 +2011,9 @@ func printHelp(w io.Writer) {
 	fmt.Fprintln(w, "  rforge export json|csv|bibtex|ris|csl-json|zotero-rdf <file>")
 	fmt.Fprintln(w, "  rforge oss inventory-check <manifest.json>")
 	fmt.Fprintln(w, "  rforge oss add|list|license-check")
+	fmt.Fprintln(w, "  rforge research parse-pdftotext --paper <id> --pdf <file> --out <parsed.json> [--title <title>]")
+	fmt.Fprintln(w, "  rforge research screen-queue --out <queue.csv> [--markdown <queue.md>] [--library <library.json>] [--search-results <dir>]")
+	fmt.Fprintln(w, "  rforge research leakage-audit --parsed <parsed-dir> --out <audit.json> [--markdown <audit.md>]")
 	fmt.Fprintln(w, "  rforge project create [path] --title <title>")
 	fmt.Fprintln(w, "  rforge project discover-assets")
 	fmt.Fprintln(w, "  rforge project inspect <path>")
