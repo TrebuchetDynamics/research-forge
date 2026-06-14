@@ -511,7 +511,7 @@ The MVP checklist above is complete. This section tracks follow-on validation an
 ### Post-1.0 backlog
 
 - [x] Make `import` resilient to duplicate identifiers: skip in-file/in-store duplicates and no-identifier records and report them, instead of aborting the whole import and leaving partial state (parsers skip+count unstorable records, `Store.ImportRecords` skips+reports duplicates; merging stays in `duplicate merge`). See `docs/superpowers/specs/2026-06-13-import-duplicate-handling-design.md`.
-- [ ] Add a web GUI end-to-end test that builds view models from a CLI-generated project and serves them through the `internal/webui` handlers, tying CLI-produced artifacts to the cockpit pages.
+- [x] Add a web GUI end-to-end test that builds view models from a CLI-generated project and serves them through the `internal/webui` handlers, tying CLI-produced artifacts to the cockpit pages (`internal/webui.BuildLibraryViewModel`/`BuildArtifactDashboardState` read the project's library, screening, and analysis state; e2e serves the library and artifacts handlers via httptest in `internal/webui/builders_test.go`).
 - [ ] Add opt-in live-service smoke tests for source connectors (OpenAlex, arXiv, Crossref, Unpaywall) behind an environment guard, mirroring the external e2e pattern.
 - [ ] Add an opt-in GROBID parse e2e against a real GROBID endpoint behind an environment guard.
 - [ ] Add an opt-in R/metafor `analysis run` e2e using a real Rscript to complement the deterministic `FakeRunner` path.
