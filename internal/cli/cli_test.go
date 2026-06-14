@@ -243,8 +243,12 @@ func uncheckedTODOLineRefs(t *testing.T) []string {
 		t.Fatalf("read TODO.md: %v", err)
 	}
 	refs := []string{}
+	inBacklog := false
 	for i, line := range strings.Split(string(data), "\n") {
-		if strings.HasPrefix(strings.TrimSpace(line), "- [ ] ") {
+		if isTodoBacklogHeading(line) {
+			inBacklog = true
+		}
+		if !inBacklog && strings.HasPrefix(strings.TrimSpace(line), "- [ ] ") {
 			refs = append(refs, fmt.Sprintf("TODO.md:%d", i+1))
 		}
 	}

@@ -496,3 +496,23 @@ The MVP is complete when a researcher can:
 ## Current completion audit
 
 See [docs/todo-completion-audit.md](docs/todo-completion-audit.md) for the current prompt-to-artifact checklist, remaining owner/license blocker, Go + HTMX implementation tracker, and validation evidence for this TODO list.
+
+## 11. Continuous validation and post-1.0 backlog
+
+The MVP checklist above is complete. This section tracks follow-on validation and future enhancements. Items in this backlog section are post-1.0 work and are intentionally exempt from the owner-decision coverage audit (see `isTodoBacklogHeading` in `internal/cli`), so they do not need a tracking decision/issue to remain unchecked.
+
+### Completed validation hardening
+
+- [x] Add full research-pipeline CLI e2e: create → import → deduplicate → screen → PRISMA → extract evidence → meta-analysis → report, offline and deterministic (`internal/cli/full_pipeline_e2e_test.go`).
+- [x] Add report reproducibility e2e asserting byte-identical rebuilds from stored project state.
+- [x] Add import/export round-trip e2e preserving identifiers across formats and projects.
+- [x] Add project archive/restore round-trip e2e preserving manifest and library.
+
+### Post-1.0 backlog
+
+- [ ] Make `import` resilient to duplicate identifiers: skip or merge in-file/in-store duplicates and report them, instead of aborting the whole import and leaving partial state (found via the full-pipeline e2e; the library store currently errors `paper record already exists`).
+- [ ] Add a web GUI end-to-end test that builds view models from a CLI-generated project and serves them through the `internal/webui` handlers, tying CLI-produced artifacts to the cockpit pages.
+- [ ] Add opt-in live-service smoke tests for source connectors (OpenAlex, arXiv, Crossref, Unpaywall) behind an environment guard, mirroring the external e2e pattern.
+- [ ] Add an opt-in GROBID parse e2e against a real GROBID endpoint behind an environment guard.
+- [ ] Add an opt-in R/metafor `analysis run` e2e using a real Rscript to complement the deterministic `FakeRunner` path.
+- [ ] Add a multi-reviewer screening e2e exercising conflict detection and the uncertain queue through the CLI.

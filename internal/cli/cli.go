@@ -206,6 +206,14 @@ func writeDecisionsMarkdown(decisions []map[string]any, stdout io.Writer) int {
 	return 0
 }
 
+// isTodoBacklogHeading reports whether a TODO.md line opens a post-1.0 backlog
+// section. Unchecked items in that section are future work, not owner-gated MVP
+// blockers, so the decision/completion audits exempt them from coverage.
+func isTodoBacklogHeading(line string) bool {
+	trimmed := strings.TrimSpace(line)
+	return strings.HasPrefix(trimmed, "#") && strings.Contains(strings.ToLower(trimmed), "backlog")
+}
+
 func checkDecisionsCoverTODO(path string, decisions []map[string]any, stdout, stderr io.Writer, opts globalOptions) int {
 	data, err := os.ReadFile(path)
 	if err != nil {
@@ -225,9 +233,13 @@ func checkDecisionsCoverTODO(path string, decisions []map[string]any, stdout, st
 	missing := []string{}
 	missingIssueRefs := []string{}
 	uncheckedRefs := map[string]bool{}
+	inBacklog := false
 	for lineNumber, line := range strings.Split(string(data), "\n") {
+		if isTodoBacklogHeading(line) {
+			inBacklog = true
+		}
 		line = strings.TrimSpace(line)
-		if !strings.HasPrefix(line, "- [ ] ") {
+		if inBacklog || !strings.HasPrefix(line, "- [ ] ") {
 			continue
 		}
 		uncheckedRefs[fmt.Sprintf("TODO.md:%d", lineNumber+1)] = true
@@ -338,9 +350,13 @@ func checkTodoCompletionAudit(todoPath, auditPath string, decisions []map[string
 	}
 	missing := []string{}
 	uncheckedRefs := 0
+	inBacklog := false
 	for _, line := range strings.Split(string(todoData), "\n") {
+		if isTodoBacklogHeading(line) {
+			inBacklog = true
+		}
 		line = strings.TrimSpace(line)
-		if !strings.HasPrefix(line, "- [ ] ") {
+		if inBacklog || !strings.HasPrefix(line, "- [ ] ") {
 			continue
 		}
 		uncheckedRefs++

@@ -7,6 +7,14 @@ import (
 	"testing"
 )
 
+// todoBacklogHeading reports whether a TODO.md line opens a post-1.0 backlog
+// section whose unchecked items are future work exempt from decision-coverage
+// auditing (mirrors isTodoBacklogHeading in internal/cli).
+func todoBacklogHeading(line string) bool {
+	t := strings.TrimSpace(line)
+	return strings.HasPrefix(t, "#") && strings.Contains(strings.ToLower(t), "backlog")
+}
+
 func TestDevelopmentPlanDocumentsLicenseReleaseGate(t *testing.T) {
 	root := filepath.Join("..", "..")
 	data, err := os.ReadFile(filepath.Join(root, "DEVELOPMENT_PLAN.md"))
@@ -114,7 +122,7 @@ func TestCLIReferenceDocumentsDecisionAuditModes(t *testing.T) {
 		t.Fatalf("read CLI reference: %v", err)
 	}
 	text := string(data)
-	for _, want := range []string{"rforge decisions --check TODO.md", "tracking issue references", "rforge decisions --completion-audit TODO.md docs/todo-completion-audit.md", "completion_blocked", "blocked_decisions", "blocked_decision_ids", "issue_title", "todo_refs", "issue_labels", "milestone", "options_considered", "owner_response_required_fields", "license_owner_approval_absent_verified", "license_owner_response_fields_verified", "license_options_verified", "license_issue_routing_verified", "license_issue_title_verified", "remaining_todo_audit_verified", "make license-decision-live-audit", "make license-decision-approval-gate", "approved:true", "rforge decisions --markdown", "routing/options", "rforge decisions --issue-body <decision-id>"} {
+	for _, want := range []string{"rforge decisions --check TODO.md", "tracking issue references", "rforge decisions --completion-audit TODO.md docs/todo-completion-audit.md", "completion_blocked", "blocked_decisions", "blocked_decision_ids", "license_resolution_verified", "issue_title", "todo_refs", "issue_labels", "milestone", "options_considered", "owner_response_required_fields", "make license-decision-live-audit", "make license-decision-approval-gate", "approved:true", "rforge decisions --markdown", "routing/options", "rforge decisions --issue-body <decision-id>"} {
 		if !strings.Contains(text, want) {
 			t.Fatalf("CLI reference missing %q", want)
 		}
@@ -127,9 +135,13 @@ func TestUncheckedTodosPointToDecisionCommands(t *testing.T) {
 	if err != nil {
 		t.Fatalf("read TODO.md: %v", err)
 	}
+	inBacklog := false
 	for _, line := range strings.Split(string(data), "\n") {
+		if todoBacklogHeading(line) {
+			inBacklog = true
+		}
 		line = strings.TrimSpace(line)
-		if !strings.HasPrefix(line, "- [ ] ") {
+		if inBacklog || !strings.HasPrefix(line, "- [ ] ") {
 			continue
 		}
 		if !strings.Contains(line, "rforge decisions") && !strings.Contains(line, "local web GUI build decision") && !strings.Contains(line, "local Go + HTMX implementation") && !strings.Contains(line, "Pending Go + HTMX web GUI implementation") {
@@ -165,9 +177,13 @@ func TestUncheckedTodosReferenceTrackingIssues(t *testing.T) {
 	if err != nil {
 		t.Fatalf("read TODO.md: %v", err)
 	}
+	inBacklog := false
 	for _, line := range strings.Split(string(data), "\n") {
+		if todoBacklogHeading(line) {
+			inBacklog = true
+		}
 		line = strings.TrimSpace(line)
-		if !strings.HasPrefix(line, "- [ ] ") {
+		if inBacklog || !strings.HasPrefix(line, "- [ ] ") {
 			continue
 		}
 		if strings.Contains(line, "license") && !strings.Contains(line, "#1") {
@@ -215,9 +231,13 @@ func TestTodoCompletionAuditCoversUncheckedTodos(t *testing.T) {
 		t.Fatalf("read TODO completion audit: %v", err)
 	}
 	audit := string(auditData)
+	inBacklog := false
 	for _, line := range strings.Split(string(todoData), "\n") {
+		if todoBacklogHeading(line) {
+			inBacklog = true
+		}
 		line = strings.TrimSpace(line)
-		if !strings.HasPrefix(line, "- [ ] ") {
+		if inBacklog || !strings.HasPrefix(line, "- [ ] ") {
 			continue
 		}
 		item := strings.TrimPrefix(line, "- [ ] ")
@@ -311,9 +331,13 @@ func TestRemainingTodoAuditCoversUncheckedTodos(t *testing.T) {
 		t.Fatalf("read remaining audit: %v", err)
 	}
 	audit := string(auditData)
+	inBacklog := false
 	for _, line := range strings.Split(string(todoData), "\n") {
+		if todoBacklogHeading(line) {
+			inBacklog = true
+		}
 		line = strings.TrimSpace(line)
-		if !strings.HasPrefix(line, "- [ ] ") {
+		if inBacklog || !strings.HasPrefix(line, "- [ ] ") {
 			continue
 		}
 		item := strings.TrimPrefix(line, "- [ ] ")
