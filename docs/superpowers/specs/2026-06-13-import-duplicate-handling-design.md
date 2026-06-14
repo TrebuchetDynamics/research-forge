@@ -1,0 +1,89 @@
+# Design: resilient `import` (duplicate-identifier handling)
+
+Date: 2026-06-13
+
+## Problem
+
+`rforge import <format> <file>` calls `library.Store.Create` once per parsed
+record and returns on the first error. `Store.Create` errors when a record has
+no identifier (`paper record identifier is required`) or when its identity key
+already exists (`paper record already exists`). As a result, a single duplicate
+or identifier-less record aborts the whole import and leaves the library in a
+partial state. This was surfaced by the full-pipeline e2e test.
+
+## Goal
+
+Make `import` resilient: import every new record, skip records that cannot be
+stored cleanly, never partially fail on duplicates, and report what was skipped.
+
+## Behavior
+
+For each record in the parsed batch:
+
+- **No identifier** (`recordKey == ""`): skip; increment a skipped-no-identifier
+  count.
+- **Duplicate**: identity key already present in the store *or* already seen
+  earlier in the same batch: skip; record the identifier.
+- **Otherwise**: import it.
+
+Identity key is the existing `recordKey` priority order (DOI → OpenAlex → arXiv →
+PMID → Crossref → Semantic Scholar). Existing library records are never mutated;
+merging duplicates stays a deliberate step via the existing `duplicate merge`
+command. A real storage failure (read/write) still returns an error.
+
+## API
+
+New method on `library.Store` so dedup-against-store and the write happen in one
+place (also replaces the current O(n²) per-record `Create`/`List`):
+
+```go
+// ImportSummary reports the outcome of a resilient batch import.
+type ImportSummary struct {
+    Imported            int
+    SkippedDuplicate    []string // identifiers skipped as duplicates, e.g. "10.1000/ap-1"
+    SkippedNoIdentifier int
+}
+
+// ImportRecords adds records to the store, skipping records that have no
+// identifier or whose identifier already exists in the store or earlier in the
+// same batch. It returns an error only on a storage failure.
+func (s Store) ImportRecords(records []PaperRecord) (ImportSummary, error)
+```
+
+Implementation: `List` existing records once, seed a `seen` set from their keys,
+iterate the batch building the merged slice (skipping per the rules above), then
+`ReplaceAll` once. `SkippedDuplicate` reports the bare identifier (key with its
+`type:` prefix stripped) to match user-facing output.
+
+## CLI
+
+`executeImport` replaces its per-record `Create` loop with one `ImportRecords`
+call.
+
+- JSON (back-compatible): keeps `"imported": N`; adds `"skipped_duplicate": [...]`
+  and `"skipped_no_identifier": M`.
+- Plain: `imported N records (skipped X duplicates, Y without identifiers)`.
+
+## Testing (test-first)
+
+Library (`internal/library`):
+
+- imports new records and reports `Imported`;
+- skips an in-store duplicate and reports its identifier;
+- skips an in-batch duplicate (same identifier twice in one call);
+- skips a no-identifier record and counts it;
+- returns the right summary for a mixed batch.
+
+CLI (`internal/cli`):
+
+- importing a file containing a duplicate no longer aborts (exit 0) and the JSON
+  reports `imported` plus the skip fields;
+- a clean import still reports `imported: N` with empty skip fields.
+
+Update any existing test that asserted the old abort/`already exists` behavior.
+
+## Out of scope (YAGNI)
+
+- merge-on-import;
+- an `--on-duplicate skip|merge|error` flag;
+- new import provenance events.
