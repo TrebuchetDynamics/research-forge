@@ -8,11 +8,13 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"strconv"
 	"strings"
 	"time"
 
 	"github.com/TrebuchetDynamics/research-forge/internal/analysis"
 	"github.com/TrebuchetDynamics/research-forge/internal/evidence"
+	"github.com/TrebuchetDynamics/research-forge/internal/library"
 	"github.com/TrebuchetDynamics/research-forge/internal/project"
 	"github.com/TrebuchetDynamics/research-forge/internal/provenance"
 	"github.com/TrebuchetDynamics/research-forge/internal/report"
@@ -66,6 +68,8 @@ func Execute(args []string, stdout, stderr io.Writer) int {
 		return executeLibrary(remaining[1:], stdout, stderr, opts)
 	case "search":
 		return executeSearch(remaining[1:], stdout, stderr, opts)
+	case "citations":
+		return executeCitations(remaining[1:], stdout, stderr, opts)
 	case "oa":
 		return executeOA(remaining[1:], stdout, stderr, opts)
 	case "duplicate":
@@ -1056,7 +1060,7 @@ func evidenceItemsPath(project string) string {
 
 func executeScreen(args []string, stdout, stderr io.Writer, opts globalOptions) int {
 	if len(args) == 0 || opts.Project == "" {
-		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> screen <configure|decide|queue>")
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> screen <configure|decide|queue|prioritize>")
 	}
 	switch args[0] {
 	case "configure":
@@ -1122,6 +1126,38 @@ func executeScreen(args []string, stdout, stderr io.Writer, opts globalOptions) 
 			fmt.Fprintln(stdout, paper)
 		}
 		return 0
+	case "prioritize":
+		stage, limit, ok := parseScreenPrioritize(args[1:])
+		if !ok {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge screen prioritize --stage <stage> [--limit N]")
+		}
+		_, events, err := loadScreening(opts.Project)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "screen_load_failed", err.Error())
+		}
+		store, err := library.OpenStore(filepath.Join(opts.Project, "data", "library.json"))
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "library_open_failed", err.Error())
+		}
+		papers, err := store.List()
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "library_list_failed", err.Error())
+		}
+		records := make([]screening.ScreeningRecord, 0, len(papers))
+		for _, paper := range papers {
+			records = append(records, screening.ScreeningRecord{ID: screeningPaperID(paper), Title: paper.Title, Abstract: paper.Abstract})
+		}
+		prioritized := screening.PrioritizeActiveLearningRecords(records, events, stage)
+		if limit > 0 && limit < len(prioritized) {
+			prioritized = prioritized[:limit]
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"prioritized": prioritized})
+		}
+		for _, paper := range prioritized {
+			fmt.Fprintf(stdout, "%s\t%.0f\n", paper.ID, paper.Score)
+		}
+		return 0
 	case "conflicts":
 		stage, ok := parseSingleFlag(args[1:], "--stage")
 		if !ok {
@@ -1147,7 +1183,7 @@ func executeScreen(args []string, stdout, stderr io.Writer, opts globalOptions) 
 		}
 		return 0
 	default:
-		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> screen <configure|decide|queue|conflicts>")
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> screen <configure|decide|queue|prioritize|conflicts>")
 	}
 }
 
@@ -1209,6 +1245,39 @@ func parseScreenQueue(args []string) (screening.Stage, screening.Decision, bool)
 		values[args[i]] = args[i+1]
 	}
 	return screening.Stage(values["--stage"]), screening.Decision(values["--decision"]), values["--stage"] != "" && values["--decision"] != ""
+}
+func parseScreenPrioritize(args []string) (screening.Stage, int, bool) {
+	values := map[string]string{}
+	for i := 0; i < len(args); i++ {
+		switch args[i] {
+		case "--stage", "--limit":
+			if i+1 >= len(args) {
+				return "", 0, false
+			}
+			values[args[i]] = args[i+1]
+			i++
+		default:
+			return "", 0, false
+		}
+	}
+	limit := 0
+	if values["--limit"] != "" {
+		parsed, err := strconv.Atoi(values["--limit"])
+		if err != nil || parsed <= 0 {
+			return "", 0, false
+		}
+		limit = parsed
+	}
+	return screening.Stage(values["--stage"]), limit, values["--stage"] != ""
+}
+func screeningPaperID(paper library.PaperRecord) string {
+	ids := paper.Identifiers
+	for _, id := range []string{ids.DOI, ids.OpenAlexID, ids.ArXivID, ids.PMID, ids.CrossrefID, ids.SemanticScholarID} {
+		if strings.TrimSpace(id) != "" {
+			return strings.TrimSpace(id)
+		}
+	}
+	return strings.TrimSpace(paper.Title)
 }
 func screenWorkflowPath(project string) string {
 	return filepath.Join(project, "data", "screening.workflow.json")
@@ -1526,13 +1595,14 @@ func printHelp(w io.Writer) {
 	fmt.Fprintln(w, "Usage:")
 	fmt.Fprintln(w, "  rforge version")
 	fmt.Fprintln(w, "  rforge doctor")
-	fmt.Fprintln(w, "  rforge search --source openalex|arxiv|crossref --query <query>")
+	fmt.Fprintln(w, "  rforge search --source openalex|arxiv|crossref|semantic-scholar --query <query>")
+	fmt.Fprintln(w, "  rforge citations expand --source semantic-scholar --paper <id> --direction references|citations|both --out <file> [--import-library]")
 	fmt.Fprintln(w, "  rforge oa lookup <doi>")
 	fmt.Fprintln(w, "  rforge service check <name>")
 	fmt.Fprintln(w, "  rforge library list")
 	fmt.Fprintln(w, "  rforge duplicate report")
-	fmt.Fprintln(w, "  rforge import json|csv|bibtex|ris <file>")
-	fmt.Fprintln(w, "  rforge export json|csv|bibtex|ris <file>")
+	fmt.Fprintln(w, "  rforge import json|csv|bibtex|ris|csl-json <file>")
+	fmt.Fprintln(w, "  rforge export json|csv|bibtex|ris|csl-json <file>")
 	fmt.Fprintln(w, "  rforge oss add|list|license-check")
 	fmt.Fprintln(w, "  rforge project create [path] --title <title>")
 	fmt.Fprintln(w, "  rforge project discover-assets")

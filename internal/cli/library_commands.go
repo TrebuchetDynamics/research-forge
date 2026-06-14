@@ -13,7 +13,7 @@ import (
 
 func executeImport(args []string, stdout, stderr io.Writer, opts globalOptions) int {
 	if len(args) != 2 || !supportedImportExportFormat(args[0]) {
-		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> import <json|csv|bibtex|ris> <file>")
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> import <json|csv|bibtex|ris|csl-json> <file>")
 	}
 	if opts.Project == "" {
 		return writeError(stdout, stderr, opts, 2, "missing_project", "--project is required for import commands")
@@ -28,6 +28,8 @@ func executeImport(args []string, stdout, stderr io.Writer, opts globalOptions) 
 		records, skippedNoIdentifier, err = library.ImportBibTeX(args[1])
 	case "ris":
 		records, skippedNoIdentifier, err = library.ImportRIS(args[1])
+	case "csl-json":
+		records, skippedNoIdentifier, err = library.ImportCSLJSON(args[1])
 	default:
 		records, skippedNoIdentifier, err = library.ImportJSON(args[1])
 	}
@@ -59,12 +61,12 @@ func executeImport(args []string, stdout, stderr io.Writer, opts globalOptions) 
 }
 
 func supportedImportExportFormat(format string) bool {
-	return format == "json" || format == "csv" || format == "bibtex" || format == "ris"
+	return format == "json" || format == "csv" || format == "bibtex" || format == "ris" || format == "csl-json"
 }
 
 func executeExport(args []string, stdout, stderr io.Writer, opts globalOptions) int {
 	if len(args) != 2 || !supportedImportExportFormat(args[0]) {
-		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> export <json|csv|bibtex|ris> <file>")
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> export <json|csv|bibtex|ris|csl-json> <file>")
 	}
 	if opts.Project == "" {
 		return writeError(stdout, stderr, opts, 2, "missing_project", "--project is required for export commands")
@@ -84,6 +86,8 @@ func executeExport(args []string, stdout, stderr io.Writer, opts globalOptions) 
 		err = library.ExportBibTeX(args[1], records)
 	case "ris":
 		err = library.ExportRIS(args[1], records)
+	case "csl-json":
+		err = library.ExportCSLJSON(args[1], records)
 	default:
 		err = library.ExportJSON(args[1], records)
 	}

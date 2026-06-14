@@ -23,10 +23,11 @@ type SourceQuery struct {
 
 // Identifiers are normalized scholarly IDs on a source result.
 type Identifiers struct {
-	DOI        string
-	OpenAlexID string
-	ArXivID    string
-	CrossrefID string
+	DOI               string
+	OpenAlexID        string
+	ArXivID           string
+	CrossrefID        string
+	SemanticScholarID string
 }
 
 // SourceRecord is a source-specific scholarly metadata result.
@@ -60,10 +61,11 @@ func PaperRecords(response SourceResponse) ([]library.PaperRecord, error) {
 			Title:    record.Title,
 			Abstract: record.Abstract,
 			Identifiers: library.Identifiers{
-				DOI:        record.Identifiers.DOI,
-				OpenAlexID: record.Identifiers.OpenAlexID,
-				ArXivID:    record.Identifiers.ArXivID,
-				CrossrefID: record.Identifiers.CrossrefID,
+				DOI:               record.Identifiers.DOI,
+				OpenAlexID:        record.Identifiers.OpenAlexID,
+				ArXivID:           record.Identifiers.ArXivID,
+				CrossrefID:        record.Identifiers.CrossrefID,
+				SemanticScholarID: record.Identifiers.SemanticScholarID,
 			},
 			Year:       record.Year,
 			Venue:      record.Venue,

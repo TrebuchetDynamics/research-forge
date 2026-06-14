@@ -681,6 +681,104 @@ func TestExecuteSearchOpenAlexJSONWithMockHTTP(t *testing.T) {
 	}
 }
 
+func TestExecuteCitationsExpandSemanticScholarWritesGraph(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case "/graph/v1/paper/seed/references":
+			_, _ = w.Write([]byte(`{"data":[{"citedPaper":{"paperId":"ref-1","title":"Reference one","externalIds":{"DOI":"10.1000/ref"}}}]}`))
+		case "/graph/v1/paper/seed/citations":
+			_, _ = w.Write([]byte(`{"data":[{"citingPaper":{"paperId":"citing-1","title":"Citing one","externalIds":{"DOI":"10.1000/citing"}}}]}`))
+		default:
+			t.Fatalf("unexpected path: %s", r.URL.Path)
+		}
+	}))
+	defer server.Close()
+	t.Setenv("RFORGE_SEMANTIC_SCHOLAR_URL", server.URL)
+	project := filepath.Join(t.TempDir(), "graph-project")
+	if code := Execute([]string{"project", "create", project, "--title", "Citation Graph Import"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("project create exit code = %d", code)
+	}
+	out := filepath.Join(t.TempDir(), "citation-graph.json")
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+
+	code := Execute([]string{"--json", "--project", project, "citations", "expand", "--source", "semantic-scholar", "--paper", "seed", "--direction", "both", "--limit", "1", "--out", out, "--import-library"}, stdout, stderr)
+	if code != 0 {
+		t.Fatalf("exit code = %d, stderr = %s", code, stderr.String())
+	}
+	data, err := os.ReadFile(out)
+	if err != nil {
+		t.Fatalf("read graph: %v", err)
+	}
+	for _, want := range []string{`"source": "citing-1"`, `"target": "seed"`, `"source": "seed"`, `"target": "ref-1"`} {
+		if !strings.Contains(string(data), want) {
+			t.Fatalf("graph missing %s:\n%s", want, data)
+		}
+	}
+	var envelope struct {
+		OK   bool `json:"ok"`
+		Data struct {
+			Imported int `json:"imported"`
+		} `json:"data"`
+	}
+	if err := json.Unmarshal(stdout.Bytes(), &envelope); err != nil {
+		t.Fatalf("stdout is not JSON: %v\n%s", err, stdout.String())
+	}
+	if !envelope.OK || envelope.Data.Imported != 2 {
+		t.Fatalf("envelope = %#v", envelope)
+	}
+	var lib struct {
+		Data struct {
+			Papers []library.PaperRecord `json:"papers"`
+		} `json:"data"`
+	}
+	if err := json.Unmarshal(mustRunCLI(t, "--json", "--project", project, "library", "list"), &lib); err != nil {
+		t.Fatalf("decode library list: %v", err)
+	}
+	if len(lib.Data.Papers) != 2 {
+		t.Fatalf("library papers = %#v, want 2 imported graph records", lib.Data.Papers)
+	}
+}
+
+func TestExecuteSearchSemanticScholarJSONWithMockHTTP(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/graph/v1/paper/search" {
+			t.Fatalf("path = %q", r.URL.Path)
+		}
+		if r.URL.Query().Get("query") != "crypto leakage detection" {
+			t.Fatalf("query = %q", r.URL.Query().Get("query"))
+		}
+		if got := r.Header.Get("x-api-key"); got != "test-semantic-scholar-key" {
+			t.Fatalf("x-api-key = %q", got)
+		}
+		_, _ = w.Write([]byte(`{"data":[{"paperId":"s2-1","title":"Leakage-aware financial machine learning","year":2026,"externalIds":{"DOI":"10.1000/s2"}}]}`))
+	}))
+	defer server.Close()
+	t.Setenv("RFORGE_SEMANTIC_SCHOLAR_URL", server.URL)
+	t.Setenv("RFORGE_SEMANTIC_SCHOLAR_API_KEY", "test-semantic-scholar-key")
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+
+	code := Execute([]string{"--json", "search", "--source", "semantic-scholar", "--query", "crypto leakage detection", "--limit", "1"}, stdout, stderr)
+	if code != 0 {
+		t.Fatalf("exit code = %d, stderr = %s", code, stderr.String())
+	}
+	var envelope map[string]any
+	if err := json.Unmarshal(stdout.Bytes(), &envelope); err != nil {
+		t.Fatalf("stdout is not JSON: %v\n%s", err, stdout.String())
+	}
+	data := envelope["data"].(map[string]any)
+	papers := data["papers"].([]any)
+	if len(papers) != 1 {
+		t.Fatalf("len(papers) = %d, want 1", len(papers))
+	}
+	paper := papers[0].(map[string]any)
+	identifiers := paper["Identifiers"].(map[string]any)
+	if identifiers["SemanticScholarID"] != "s2-1" {
+		t.Fatalf("SemanticScholarID = %#v", identifiers["SemanticScholarID"])
+	}
+}
+
 func TestExecuteSearchCrossrefJSONWithMockHTTP(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != "/works" {
@@ -983,6 +1081,59 @@ func TestExecuteEvidenceSchemaExtractAuditAndSuggest(t *testing.T) {
 	}
 	if !strings.Contains(stdout.String(), "noop-llm") {
 		t.Fatalf("suggest output = %s", stdout.String())
+	}
+}
+
+func TestExecuteScreenPrioritizeRanksLibraryFromScreeningFeedback(t *testing.T) {
+	dir := filepath.Join(t.TempDir(), "demo")
+	if code := Execute([]string{"project", "create", dir, "--title", "Demo Review"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("project create exit code = %d", code)
+	}
+	importPath := filepath.Join(t.TempDir(), "library.json")
+	fixture := `[
+  {"Title":"LightGBM leakage detection for crypto order books","Abstract":"microstructure forecasting","Identifiers":{"DOI":"10.1000/include"}},
+  {"Title":"Plant photosynthesis catalyst review","Abstract":"materials chemistry","Identifiers":{"DOI":"10.1000/exclude"}},
+  {"Title":"Crypto order book leakage detection","Abstract":"LightGBM microstructure forecasting","Identifiers":{"DOI":"10.1000/relevant"}},
+  {"Title":"Artificial photosynthesis catalyst","Abstract":"materials review","Identifiers":{"DOI":"10.1000/irrelevant"}}
+]`
+	if err := os.WriteFile(importPath, []byte(fixture), 0o644); err != nil {
+		t.Fatalf("write library fixture: %v", err)
+	}
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+	if code := Execute([]string{"--json", "--project", dir, "import", "json", importPath}, stdout, stderr); code != 0 {
+		t.Fatalf("import exit code = %d, stderr = %s", code, stderr.String())
+	}
+	if code := Execute([]string{"--json", "--project", dir, "screen", "configure", "--reason", "off-topic"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("screen configure exit code = %d", code)
+	}
+	if code := Execute([]string{"--project", dir, "screen", "decide", "--paper", "10.1000/include", "--stage", "title_abstract", "--decision", "include", "--reviewer", "ada"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("include decision exit code = %d", code)
+	}
+	if code := Execute([]string{"--project", dir, "screen", "decide", "--paper", "10.1000/exclude", "--stage", "title_abstract", "--decision", "exclude", "--reason", "off-topic", "--reviewer", "ada"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("exclude decision exit code = %d", code)
+	}
+	stdout.Reset()
+	stderr.Reset()
+	if code := Execute([]string{"--json", "--project", dir, "screen", "prioritize", "--stage", "title_abstract", "--limit", "2"}, stdout, stderr); code != 0 {
+		t.Fatalf("screen prioritize exit code = %d, stderr = %s", code, stderr.String())
+	}
+	var envelope struct {
+		Data struct {
+			Prioritized []struct {
+				ID    string  `json:"id"`
+				Score float64 `json:"score"`
+			} `json:"prioritized"`
+		} `json:"data"`
+	}
+	if err := json.Unmarshal(stdout.Bytes(), &envelope); err != nil {
+		t.Fatalf("stdout is not JSON: %v\n%s", err, stdout.String())
+	}
+	if len(envelope.Data.Prioritized) != 2 {
+		t.Fatalf("prioritized length = %d, want 2: %#v", len(envelope.Data.Prioritized), envelope.Data.Prioritized)
+	}
+	if envelope.Data.Prioritized[0].ID != "10.1000/relevant" {
+		t.Fatalf("top priority = %#v, want relevant paper", envelope.Data.Prioritized[0])
 	}
 }
 
@@ -1294,6 +1445,36 @@ func TestExecuteImportExportJSON(t *testing.T) {
 	}
 	if len(exported) != 1 || exported[0].Title != "Artificial photosynthesis JSON import" {
 		t.Fatalf("exported = %#v", exported)
+	}
+}
+
+func TestExecuteCSLJSONImportExportRoundTrip(t *testing.T) {
+	dir := filepath.Join(t.TempDir(), "demo")
+	if code := Execute([]string{"project", "create", dir, "--title", "Zotero Review"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("project create exit code = %d", code)
+	}
+	importPath := filepath.Join(t.TempDir(), "zotero.csl.json")
+	fixture := `[{"id":"smith2026crypto","type":"article-journal","title":"Leak-free LightGBM for crypto price data","DOI":"10.1000/csl","issued":{"date-parts":[[2026]]},"author":[{"given":"Jane","family":"Smith"}],"container-title":"Journal of Financial ML"}]`
+	if err := os.WriteFile(importPath, []byte(fixture), 0o644); err != nil {
+		t.Fatalf("write fixture: %v", err)
+	}
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+	if code := Execute([]string{"--json", "--project", dir, "import", "csl-json", importPath}, stdout, stderr); code != 0 {
+		t.Fatalf("csl-json import exit=%d stderr=%s stdout=%s", code, stderr.String(), stdout.String())
+	}
+	exportPath := filepath.Join(t.TempDir(), "export.csl.json")
+	stdout.Reset()
+	stderr.Reset()
+	if code := Execute([]string{"--json", "--project", dir, "export", "csl-json", exportPath}, stdout, stderr); code != 0 {
+		t.Fatalf("csl-json export exit=%d stderr=%s stdout=%s", code, stderr.String(), stdout.String())
+	}
+	exported, skipped, err := library.ImportCSLJSON(exportPath)
+	if err != nil {
+		t.Fatalf("read exported CSL JSON: %v", err)
+	}
+	if skipped != 0 || len(exported) != 1 || exported[0].SourceRefs[0].Metadata["csl_id"] != "smith2026crypto" {
+		t.Fatalf("exported=%#v skipped=%d", exported, skipped)
 	}
 }
 

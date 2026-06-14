@@ -5,12 +5,72 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
 
+	"github.com/TrebuchetDynamics/research-forge/internal/citations"
+	"github.com/TrebuchetDynamics/research-forge/internal/library"
 	"github.com/TrebuchetDynamics/research-forge/internal/sources"
 )
+
+func executeCitations(args []string, stdout, stderr io.Writer, opts globalOptions) int {
+	if len(args) == 0 || args[0] != "expand" {
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge citations expand --source semantic-scholar --paper <id> --direction <references|citations|both> --out <file>")
+	}
+	source, paperID, direction, out, limit, importLibrary, ok := parseCitationsExpand(args[1:])
+	if !ok || source != "semantic-scholar" {
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge citations expand --source semantic-scholar --paper <id> --direction <references|citations|both> --out <file>")
+	}
+	connector := sources.NewSemanticScholarConnector(defaultSemanticScholarHTTPClient())
+	expansion, err := connector.ExpandCitationGraph(context.Background(), sources.SemanticScholarGraphQuery{PaperID: paperID, Direction: sources.SemanticScholarGraphDirection(direction), Limit: limit})
+	if err != nil {
+		return writeError(stdout, stderr, opts, 1, "citation_expand_failed", fmt.Sprintf("expand citations: %v", err))
+	}
+	graph := citations.NewGraph()
+	for _, edge := range expansion.Edges {
+		graph.AddCitation(edge.SourceID, edge.TargetID)
+	}
+	data, err := graph.ExportJSON()
+	if err != nil {
+		return writeError(stdout, stderr, opts, 1, "citation_graph_export_failed", err.Error())
+	}
+	if err := os.MkdirAll(filepath.Dir(out), 0o755); err != nil {
+		return writeError(stdout, stderr, opts, 1, "citation_graph_write_failed", err.Error())
+	}
+	if err := os.WriteFile(out, data, 0o644); err != nil {
+		return writeError(stdout, stderr, opts, 1, "citation_graph_write_failed", err.Error())
+	}
+	imported := 0
+	if importLibrary {
+		if opts.Project == "" {
+			return writeError(stdout, stderr, opts, 2, "missing_project", "--project is required when using --import-library")
+		}
+		store, err := library.OpenStore(filepath.Join(opts.Project, "data", "library.json"))
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "library_open_failed", err.Error())
+		}
+		records := make([]sources.SourceRecord, 0, len(expansion.Records))
+		for _, record := range expansion.Records {
+			records = append(records, record)
+		}
+		papers, err := sources.PaperRecords(sources.SourceResponse{Records: records, RawRef: expansion.RawRef})
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "citation_import_normalize_failed", err.Error())
+		}
+		summary, err := store.ImportRecords(papers)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "citation_import_failed", err.Error())
+		}
+		imported = summary.Imported
+	}
+	if opts.JSON {
+		return writeJSON(stdout, 0, map[string]any{"path": out, "edges": len(expansion.Edges), "rawRef": expansion.RawRef, "imported": imported})
+	}
+	fmt.Fprintf(stdout, "wrote citation graph with %d edges to %s\n", len(expansion.Edges), out)
+	return 0
+}
 
 func executeOA(args []string, stdout, stderr io.Writer, opts globalOptions) int {
 	if len(args) != 2 || args[0] != "lookup" {
@@ -83,6 +143,8 @@ func searchConnector(source string) (sourceConnector, bool) {
 			baseURL = "https://api.crossref.org"
 		}
 		return sources.NewCrossrefConnector(defaultSourceHTTPClient(baseURL)), true
+	case "semantic-scholar":
+		return sources.NewSemanticScholarConnector(defaultSemanticScholarHTTPClient()), true
 	default:
 		return nil, false
 	}
@@ -95,6 +157,57 @@ func defaultSourceHTTPClient(baseURL string) sources.HTTPClient {
 		Timeout:    10 * time.Second,
 		MaxRetries: 2,
 	})
+}
+
+func defaultSemanticScholarHTTPClient() sources.HTTPClient {
+	baseURL := os.Getenv("RFORGE_SEMANTIC_SCHOLAR_URL")
+	if baseURL == "" {
+		baseURL = "https://api.semanticscholar.org"
+	}
+	if apiKey := strings.TrimSpace(os.Getenv("RFORGE_SEMANTIC_SCHOLAR_API_KEY")); apiKey != "" {
+		return sources.NewHTTPClient(sources.HTTPClientOptions{
+			BaseURL:    baseURL,
+			UserAgent:  "ResearchForge/dev",
+			Timeout:    10 * time.Second,
+			MaxRetries: 2,
+			Headers:    map[string]string{"x-api-key": apiKey},
+		})
+	}
+	return defaultSourceHTTPClient(baseURL)
+}
+
+func parseCitationsExpand(args []string) (string, string, string, string, int, bool, bool) {
+	values := map[string]string{}
+	limit := 25
+	importLibrary := false
+	for i := 0; i < len(args); i++ {
+		switch args[i] {
+		case "--import-library":
+			importLibrary = true
+		case "--source", "--paper", "--direction", "--out", "--limit":
+			if i+1 >= len(args) {
+				return "", "", "", "", 0, false, false
+			}
+			if args[i] == "--limit" {
+				parsed, err := strconv.Atoi(args[i+1])
+				if err != nil || parsed <= 0 {
+					return "", "", "", "", 0, false, false
+				}
+				limit = parsed
+			} else {
+				values[args[i]] = args[i+1]
+			}
+			i++
+		default:
+			return "", "", "", "", 0, false, false
+		}
+	}
+	direction := values["--direction"]
+	if direction == "" {
+		direction = "both"
+	}
+	validDirection := direction == string(sources.SemanticScholarDirectionReferences) || direction == string(sources.SemanticScholarDirectionCitations) || direction == string(sources.SemanticScholarDirectionBoth)
+	return values["--source"], values["--paper"], direction, values["--out"], limit, importLibrary, values["--source"] != "" && values["--paper"] != "" && values["--out"] != "" && validDirection
 }
 
 func parseSearch(args []string) (string, string, int, bool) {

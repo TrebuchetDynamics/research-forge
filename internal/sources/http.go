@@ -18,6 +18,7 @@ type HTTPClientOptions struct {
 	Timeout          time.Duration
 	MaxRetries       int
 	MaxResponseBytes int64
+	Headers          map[string]string
 	Sleep            func(time.Duration)
 }
 
@@ -30,6 +31,7 @@ type HTTPClient struct {
 	client           *http.Client
 	maxRetries       int
 	maxResponseBytes int64
+	headers          map[string]string
 	sleep            func(time.Duration)
 }
 
@@ -47,12 +49,21 @@ func NewHTTPClient(options HTTPClientOptions) HTTPClient {
 	if maxBytes == 0 {
 		maxBytes = maxSourceResponseBytes
 	}
+	headers := map[string]string{}
+	for key, value := range options.Headers {
+		key = strings.TrimSpace(key)
+		value = strings.TrimSpace(value)
+		if key != "" && value != "" {
+			headers[key] = value
+		}
+	}
 	return HTTPClient{
 		baseURL:          strings.TrimRight(options.BaseURL, "/"),
 		userAgent:        options.UserAgent,
 		client:           &http.Client{Timeout: timeout},
 		maxRetries:       options.MaxRetries,
 		maxResponseBytes: maxBytes,
+		headers:          headers,
 		sleep:            sleep,
 	}
 }
@@ -83,6 +94,9 @@ func (c HTTPClient) Get(ctx context.Context, path string, query map[string]strin
 		}
 		if c.userAgent != "" {
 			request.Header.Set("User-Agent", c.userAgent)
+		}
+		for key, value := range c.headers {
+			request.Header.Set(key, value)
 		}
 		response, err := c.client.Do(request)
 		if err != nil {

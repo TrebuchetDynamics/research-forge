@@ -4,16 +4,17 @@ Core commands:
 
 - `rforge project create [path] --title <title>`
 - `rforge project inspect <path>`
-- `rforge search --source openalex|arxiv|crossref --query <query>`
+- `rforge search --source openalex|arxiv|crossref|semantic-scholar --query <query>`
+- `rforge citations expand --source semantic-scholar --paper <id> --direction references|citations|both --out <file> [--import-library]`
 - `rforge oa lookup <doi>`
-- `rforge import json|csv|bibtex|ris <file>`
-- `rforge export json|csv|bibtex|ris <file>`
+- `rforge import json|csv|bibtex|ris|csl-json <file>`
+- `rforge export json|csv|bibtex|ris|csl-json <file>`
 - `rforge duplicate report|merge|split`
 - `rforge oss add|list|clone|license-check|note|scan|report|refresh`
 - `rforge pdf fetch --doi <doi>`
 - `rforge parse --paper <id> --parser grobid --pdf <file>`
 - `rforge index rebuild`, `rforge retrieve --query <query>`
-- `rforge screen configure|decide|queue|conflicts`, `rforge prisma counts`
+- `rforge screen configure|decide|queue|prioritize|conflicts`, `rforge prisma counts`
 - `rforge extraction schema add`, `rforge extract add|suggest`, `rforge evidence audit`
 - `rforge analysis prepare|run|export`
 - `rforge report build|audit`
