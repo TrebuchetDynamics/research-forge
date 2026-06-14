@@ -13,7 +13,7 @@ Core commands:
 - `rforge pdf fetch --doi <doi>`
 - `rforge parse --paper <id> --parser grobid --pdf <file>`
 - `rforge index rebuild`, `rforge retrieve --query <query>`
-- `rforge screen configure|decide|queue`, `rforge prisma counts`
+- `rforge screen configure|decide|queue|conflicts`, `rforge prisma counts`
 - `rforge extraction schema add`, `rforge extract add|suggest`, `rforge evidence audit`
 - `rforge analysis prepare|run|export`
 - `rforge report build|audit`

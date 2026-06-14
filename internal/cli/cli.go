@@ -1122,8 +1122,32 @@ func executeScreen(args []string, stdout, stderr io.Writer, opts globalOptions) 
 			fmt.Fprintln(stdout, paper)
 		}
 		return 0
+	case "conflicts":
+		stage, ok := parseSingleFlag(args[1:], "--stage")
+		if !ok {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge screen conflicts --stage <stage>")
+		}
+		workflow, events, err := loadScreening(opts.Project)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "screen_load_failed", err.Error())
+		}
+		store := screening.NewMemoryStore(workflow)
+		for _, event := range events {
+			_ = store.Decide(screening.DecisionInput{PaperID: event.PaperID, Stage: event.Stage, Decision: event.Decision, Reason: event.Reason, Reviewer: event.Reviewer})
+		}
+		conflicts := store.Conflicts(screening.Stage(stage))
+		if conflicts == nil {
+			conflicts = []string{}
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"conflicts": conflicts})
+		}
+		for _, paper := range conflicts {
+			fmt.Fprintln(stdout, paper)
+		}
+		return 0
 	default:
-		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> screen <configure|decide|queue>")
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> screen <configure|decide|queue|conflicts>")
 	}
 }
 

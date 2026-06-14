@@ -1019,6 +1019,55 @@ func TestExecuteScreenWorkflowAndPrismaCounts(t *testing.T) {
 	}
 }
 
+func TestExecuteScreenConflictsReportsConflictingDecisions(t *testing.T) {
+	dir := filepath.Join(t.TempDir(), "demo")
+	if code := Execute([]string{"project", "create", dir, "--title", "Demo Review"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("project create exit code = %d", code)
+	}
+	if code := Execute([]string{"--project", dir, "screen", "configure", "--reason", "off-topic"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("screen configure exit code = %d", code)
+	}
+	// Two reviewers disagree on the same paper at the same stage.
+	if code := Execute([]string{"--project", dir, "screen", "decide", "--paper", "paper-1", "--stage", "title_abstract", "--decision", "include", "--reviewer", "ada"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("screen decide include exit code = %d", code)
+	}
+	if code := Execute([]string{"--project", dir, "screen", "decide", "--paper", "paper-1", "--stage", "title_abstract", "--decision", "exclude", "--reason", "off-topic", "--reviewer", "linus"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("screen decide exclude exit code = %d", code)
+	}
+	// A non-conflicting paper must not appear.
+	if code := Execute([]string{"--project", dir, "screen", "decide", "--paper", "paper-2", "--stage", "title_abstract", "--decision", "include", "--reviewer", "ada"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("screen decide paper-2 exit code = %d", code)
+	}
+
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+	if code := Execute([]string{"--json", "--project", dir, "screen", "conflicts", "--stage", "title_abstract"}, stdout, stderr); code != 0 {
+		t.Fatalf("screen conflicts exit code = %d, stderr = %s", code, stderr.String())
+	}
+	var env struct {
+		Data struct {
+			Conflicts []string `json:"conflicts"`
+		} `json:"data"`
+	}
+	if err := json.Unmarshal(stdout.Bytes(), &env); err != nil {
+		t.Fatalf("conflicts stdout is not JSON: %v\n%s", err, stdout.String())
+	}
+	if len(env.Data.Conflicts) != 1 || env.Data.Conflicts[0] != "paper-1" {
+		t.Fatalf("conflicts = %v, want [paper-1]", env.Data.Conflicts)
+	}
+}
+
+func TestExecuteScreenConflictsRequiresStage(t *testing.T) {
+	dir := filepath.Join(t.TempDir(), "demo")
+	if code := Execute([]string{"project", "create", dir, "--title", "Demo Review"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("project create exit code = %d", code)
+	}
+	stderr := new(bytes.Buffer)
+	if code := Execute([]string{"--project", dir, "screen", "conflicts"}, new(bytes.Buffer), stderr); code == 0 {
+		t.Fatalf("expected non-zero exit for missing --stage")
+	}
+}
+
 func TestExecuteIndexRebuildAndRetrieve(t *testing.T) {
 	dir := filepath.Join(t.TempDir(), "demo")
 	if code := Execute([]string{"project", "create", dir, "--title", "Demo Review"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {

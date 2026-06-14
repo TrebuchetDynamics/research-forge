@@ -515,4 +515,4 @@ The MVP checklist above is complete. This section tracks follow-on validation an
 - [ ] Add opt-in live-service smoke tests for source connectors (OpenAlex, arXiv, Crossref, Unpaywall) behind an environment guard, mirroring the external e2e pattern.
 - [ ] Add an opt-in GROBID parse e2e against a real GROBID endpoint behind an environment guard.
 - [ ] Add an opt-in R/metafor `analysis run` e2e using a real Rscript to complement the deterministic `FakeRunner` path.
-- [ ] Add a multi-reviewer screening e2e exercising conflict detection and the uncertain queue through the CLI.
+- [x] Add a multi-reviewer screening e2e exercising conflict detection and the uncertain queue through the CLI (`internal/cli/screening_e2e_test.go`; added the enabling `rforge screen conflicts --stage <stage>` command over the existing `MemoryStore.Conflicts`).
