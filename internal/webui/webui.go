@@ -16,7 +16,7 @@ var shellTemplate = template.Must(template.New("shell").Parse(`<!doctype html>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>ResearchForge</title>
-  <script src="https://unpkg.com/htmx.org@1.9.12" integrity="sha384-2VbB9nQbS2QZ4WJjvQ8WbQbQwQvQwQvQwQvQwQvQwQvQwQvQwQvQwQvQwQvQw" crossorigin="anonymous"></script>
+  <script src="/assets/htmx.min.js" defer></script>
   <link rel="stylesheet" href="/assets/researchforge.css">
 </head>
 <body>

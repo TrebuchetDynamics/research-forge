@@ -18,7 +18,7 @@ func TestShellHandlerRendersGoHTMXWorkspace(t *testing.T) {
 	body := rec.Body.String()
 	for _, want := range []string{
 		"ResearchForge",
-		"htmx.org",
+		"/assets/htmx.min.js",
 		"hx-boost=\"true\"",
 		"/assets/researchforge.css",
 		"Project dashboard",
