@@ -1,5 +1,7 @@
 # ResearchForge
 
+[![Playwright e2e](https://github.com/TrebuchetDynamics/research-forge/actions/workflows/playwright-e2e.yml/badge.svg)](https://github.com/TrebuchetDynamics/research-forge/actions/workflows/playwright-e2e.yml)
+
 ResearchForge is an open, reproducible research engine for academic literature discovery, systematic review, evidence extraction, and meta-analysis.
 
 The command-line tool is **`rforge`**.
