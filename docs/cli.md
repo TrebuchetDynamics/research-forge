@@ -4,20 +4,24 @@ Core commands:
 
 - `rforge project create [path] --title <title>`
 - `rforge project inspect <path>`
-- `rforge search --source openalex|arxiv|crossref|semantic-scholar|europepmc|pubmed --query <query> [--category arxiv-category] [--filter source-filter] [--entity authors|institutions]`
-- `rforge search import --source openalex --query <query> --pages N [--limit N] [--filter source-filter]`
+- `rforge search --source openalex|arxiv|crossref|semantic-scholar|europepmc|pubmed --query <query> [--category arxiv-category] [--filter source-filter] [--from-year YYYY] [--to-year YYYY] [--type article] [--open-access true|false] [--concept C41008148] [--entity authors|institutions]`
+- `rforge search import --source openalex --query <query> --pages N [--limit N] [--filter source-filter] [--from-year YYYY] [--to-year YYYY] [--type article] [--open-access true|false] [--concept C41008148] [--resume-state state.json]`
 - `rforge search related --source openalex --paper <work-id> [--limit N]`
-- `rforge citations expand --source semantic-scholar|openalex --paper <id> --direction references|citations|both --depth N [--max-records N] --out <file> [--import-library]`
+- `rforge citations expand --source semantic-scholar|openalex|crossref --paper <id> --direction references|citations|both --depth N [--max-records N] --out <file> [--import-library]`
 - `rforge citations report --graph <graph.json> --out <report.md>`
 - `rforge oa lookup <doi>`
-- `rforge library list`, `rforge library refresh-doi <doi>`, `rforge library import-crossref-refs <doi>`
+- `rforge library list`, `rforge library refresh-doi <doi>`, `rforge library refresh-crossref`, `rforge library import-crossref-refs <doi>`
 - `rforge import json|csv|bibtex|ris|csl-json|zotero-rdf <file>`
 - `rforge export json|csv|bibtex|ris|csl-json|zotero-rdf <file>`
 - `rforge duplicate report [--source <source>]|merge|split` (use `--source semantic-scholar` for graph-import dedupe review)
 - `rforge oss inventory-check <manifest.json>`
+- `rforge oss inventory-refresh <manifest.json> --source github [--base-url <url>]`
+- `rforge oss inventory-policy <manifest.json> [--stale-after 18mo]`
+- `rforge oss inventory-drift <manifest.json>`
+- `rforge oss inventory-report <manifest.json> [--area <area>]`
 - `rforge oss add|list|clone|license-check|note|scan|report|refresh`
 - `rforge pdf fetch --doi <doi>`, `rforge pdf fetch-arxiv --paper <arxiv-id> --kind pdf|source --url <url>`
-- `rforge parse --paper <id> --parser grobid --pdf <file>` or `rforge parse --paper <id> --parser tex --tex <file>` or `rforge parse --paper <id> --parser s2orc --s2orc <file>`
+- `rforge parse --paper <id> --parser grobid --pdf <file>` or `rforge parse --paper <id> --parser tex --tex <file>` or `rforge parse --paper <id> --parser s2orc --s2orc <file>` or `rforge parse --paper <id> --parser papermage --papermage <file>`
 - `rforge parse references --paper <id> --parser anystyle --file <refs.txt> --out <refs.json>` (requires `RFORGE_ANYSTYLE_CMD`)
 - `rforge parse compare --left <parsed.json> --right <parsed.json> --out <report.json>`
 - `rforge parse normalize-refs --parsed <parsed.json> --source crossref|openalex|semantic-scholar --out <report.json>`

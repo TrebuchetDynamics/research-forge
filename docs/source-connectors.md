@@ -26,7 +26,7 @@ ResearchForge keeps scholarly source integrations local-first and explicit about
 ### OpenAlex
 
 - Purpose: broad scholarly metadata, concepts/domain mapping, related works, and citation graph discovery.
-- Status: OpenAlex works search supports cursor pagination, source filters via `--filter`, OA/license metadata, concept names in source metadata for domain mapping, related-work OpenAlex IDs and `RelatedWorks` discovery records, author/institution entity search APIs, and citation/reference graph expansion through `rforge citations expand --source openalex`.
+- Status: OpenAlex works search supports cursor pagination, resumable paginated imports via `rforge search import --resume-state state.json`, source filters via `--filter`, advanced filter flags (`--from-year`, `--to-year`, `--type`, `--open-access`, `--concept`), OA/license metadata, concept names/IDs plus topic/domain/field/subfield metadata for domain mapping, related-work OpenAlex IDs and `RelatedWorks` discovery records, author/institution entity search APIs, and citation/reference graph expansion through `rforge citations expand --source openalex`. Library imports merge duplicate DOI records across OpenAlex/Crossref/Semantic Scholar into one record while preserving additional identifiers and source refs.
 - Outbound data: query terms, source filters, cursor tokens, row limits.
 - Credentials/config: no API key; optional endpoint override/contact user agent.
 

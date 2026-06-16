@@ -23,15 +23,15 @@ Implemented nearby capabilities:
 - Parsed document model with sections, passages, and references.
 - Parser-run manifests record parser name/version, input checksum, parsed output path, layer counts, and warnings.
 - GROBID adapter.
+- PaperMage-style external JSON adapter via `rforge parse --parser papermage --papermage <file>` for section, paragraph, bibliography, and warning layers.
 - Evidence support refs linked to passages.
 
 Missing features:
 
-- Rich layered parser-output model beyond parser-run layer counts.
-- Rich parser comparison/fallback framework beyond compare reports and run manifests.
+- Rich layered parser-output model beyond sections/passages/references/warnings.
 - Annotation layer import from Zotero/PDF tools.
 - Multiple parser output reconciliation.
 
 ## Recommended slice
 
-Extend parser-run manifests into a richer layered document reconciliation workflow.
+Extend the PaperMage JSON adapter into richer layered document reconciliation with stable offsets, annotation layers, and multi-parser conflict review.

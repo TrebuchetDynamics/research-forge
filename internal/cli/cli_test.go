@@ -649,6 +649,27 @@ func TestExecuteSearchArXivJSONWithMockHTTP(t *testing.T) {
 	}
 }
 
+func TestExecuteSearchOpenAlexAdvancedFilters(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/works" {
+			t.Fatalf("unexpected path: %s", r.URL.Path)
+		}
+		wantFilter := "from_publication_date:2020-01-01,to_publication_date:2021-12-31,type:article,is_oa:true,concepts.id:C41008148"
+		if got := r.URL.Query().Get("filter"); got != wantFilter {
+			t.Fatalf("filter = %q, want %q", got, wantFilter)
+		}
+		_, _ = w.Write([]byte(`{"results":[{"id":"https://openalex.org/W123","title":"Filtered"}]}`))
+	}))
+	defer server.Close()
+	t.Setenv("RFORGE_OPENALEX_URL", server.URL)
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+	code := Execute([]string{"--json", "search", "--source", "openalex", "--query", "test", "--from-year", "2020", "--to-year", "2021", "--type", "article", "--open-access", "true", "--concept", "C41008148"}, stdout, stderr)
+	if code != 0 {
+		t.Fatalf("search exit code = %d stderr=%s stdout=%s", code, stderr.String(), stdout.String())
+	}
+}
+
 func TestExecuteSearchOpenAlexJSONWithMockHTTP(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != "/works" {
@@ -683,6 +704,40 @@ func TestExecuteSearchOpenAlexJSONWithMockHTTP(t *testing.T) {
 	paper := papers[0].(map[string]any)
 	if paper["Title"] != "Artificial photosynthesis catalyst review" {
 		t.Fatalf("paper title = %#v", paper["Title"])
+	}
+}
+
+func TestExecuteCitationsExpandCrossrefReferencesWritesGraph(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/works/10.1000/source" {
+			t.Fatalf("path = %q", r.URL.Path)
+		}
+		_, _ = w.Write([]byte(`{"message":{"DOI":"10.1000/source","title":["Source paper"],"reference":[{"DOI":"10.1000/ref-a","article-title":"Reference A"},{"DOI":"10.1000/ref-b","article-title":"Reference B"}]}}`))
+	}))
+	defer server.Close()
+	t.Setenv("RFORGE_CROSSREF_URL", server.URL)
+	project := filepath.Join(t.TempDir(), "crossref-graph-project")
+	if code := Execute([]string{"project", "create", project, "--title", "Crossref Graph"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("project create exit code = %d", code)
+	}
+	out := filepath.Join(t.TempDir(), "crossref-graph.json")
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+	code := Execute([]string{"--json", "--project", project, "citations", "expand", "--source", "crossref", "--paper", "10.1000/source", "--direction", "references", "--out", out, "--import-library"}, stdout, stderr)
+	if code != 0 {
+		t.Fatalf("exit code = %d, stderr = %s stdout=%s", code, stderr.String(), stdout.String())
+	}
+	data, err := os.ReadFile(out)
+	if err != nil {
+		t.Fatalf("read graph: %v", err)
+	}
+	for _, want := range []string{`"source": "10.1000/source"`, `"target": "10.1000/ref-a"`, `"target": "10.1000/ref-b"`} {
+		if !strings.Contains(string(data), want) {
+			t.Fatalf("graph missing %s:\n%s", want, data)
+		}
+	}
+	if !strings.Contains(stdout.String(), `"edges":2`) || !strings.Contains(stdout.String(), `"imported":2`) {
+		t.Fatalf("stdout = %s", stdout.String())
 	}
 }
 
@@ -1051,6 +1106,53 @@ func TestExecuteSearchRelatedOpenAlex(t *testing.T) {
 	}
 	if !strings.Contains(stdout.String(), `"source":"openalex"`) || !strings.Contains(stdout.String(), `"SourceID":"W2"`) {
 		t.Fatalf("stdout = %s", stdout.String())
+	}
+}
+
+func TestExecuteSearchImportOpenAlexResumeState(t *testing.T) {
+	dir := t.TempDir()
+	if code := Execute([]string{"project", "create", dir, "--title", "OpenAlex Resume"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("project create exit code = %d", code)
+	}
+	var cursors []string
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/works" {
+			t.Fatalf("unexpected path: %s", r.URL.Path)
+		}
+		cursors = append(cursors, r.URL.Query().Get("cursor"))
+		switch r.URL.Query().Get("cursor") {
+		case "*":
+			_, _ = w.Write([]byte(`{"meta":{"next_cursor":"page-2"},"results":[{"id":"https://openalex.org/W1","title":"First","doi":"https://doi.org/10.1000/one"}]}`))
+		case "page-2":
+			_, _ = w.Write([]byte(`{"meta":{"next_cursor":"page-3"},"results":[{"id":"https://openalex.org/W2","title":"Second","doi":"https://doi.org/10.1000/two"}]}`))
+		default:
+			t.Fatalf("unexpected cursor: %q", r.URL.Query().Get("cursor"))
+		}
+	}))
+	defer server.Close()
+	t.Setenv("RFORGE_OPENALEX_URL", server.URL)
+	state := filepath.Join(dir, "openalex-state.json")
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+	code := Execute([]string{"--json", "--project", dir, "search", "import", "--source", "openalex", "--query", "machine learning", "--pages", "1", "--limit", "1", "--resume-state", state}, stdout, stderr)
+	if code != 0 {
+		t.Fatalf("first import exit code = %d stderr=%s stdout=%s", code, stderr.String(), stdout.String())
+	}
+	data, err := os.ReadFile(state)
+	if err != nil {
+		t.Fatalf("read state: %v", err)
+	}
+	if !strings.Contains(string(data), `"nextCursor": "page-2"`) || !strings.Contains(string(data), `"query": "machine learning"`) {
+		t.Fatalf("state missing cursor/query:\n%s", data)
+	}
+	stdout.Reset()
+	stderr.Reset()
+	code = Execute([]string{"--json", "--project", dir, "search", "import", "--source", "openalex", "--query", "machine learning", "--pages", "1", "--limit", "1", "--resume-state", state}, stdout, stderr)
+	if code != 0 {
+		t.Fatalf("second import exit code = %d stderr=%s stdout=%s", code, stderr.String(), stdout.String())
+	}
+	if got, want := strings.Join(cursors, ","), "*,page-2"; got != want {
+		t.Fatalf("cursors = %q, want %q", got, want)
 	}
 }
 
@@ -2141,6 +2243,37 @@ func TestExecutePDFFetchArXivAsset(t *testing.T) {
 	}
 }
 
+func TestExecuteParsePaperMageWritesParsedDocumentAndManifest(t *testing.T) {
+	dir := t.TempDir()
+	if code := Execute([]string{"project", "create", dir, "--title", "PaperMage Demo"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("project create exit code = %d", code)
+	}
+	input := filepath.Join(dir, "papermage.json")
+	if err := os.WriteFile(input, []byte(`{"metadata":{"title":"Layered paper"},"layers":{"sections":[{"text":"Intro"}],"paragraphs":[{"section":"Intro","text":"Paragraph text."}],"bibliography":[{"title":"Ref","doi":"10.1000/ref"}]}}`), 0o644); err != nil {
+		t.Fatalf("write PaperMage input: %v", err)
+	}
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+	code := Execute([]string{"--json", "--project", dir, "parse", "--paper", "paper-1", "--parser", "papermage", "--papermage", input}, stdout, stderr)
+	if code != 0 {
+		t.Fatalf("parse papermage exit code = %d stderr=%s stdout=%s", code, stderr.String(), stdout.String())
+	}
+	parsed, err := os.ReadFile(filepath.Join(dir, "parsed", "paper-1.json"))
+	if err != nil {
+		t.Fatalf("read parsed: %v", err)
+	}
+	if !strings.Contains(string(parsed), `"ParserName": "papermage"`) || !strings.Contains(string(parsed), "Layered paper") {
+		t.Fatalf("parsed document = %s", parsed)
+	}
+	manifest, err := os.ReadFile(filepath.Join(dir, "parsed", "paper-1.manifest.json"))
+	if err != nil {
+		t.Fatalf("read manifest: %v", err)
+	}
+	if !strings.Contains(string(manifest), `"parserName": "papermage"`) || !strings.Contains(string(manifest), `"passages": 1`) {
+		t.Fatalf("manifest = %s", manifest)
+	}
+}
+
 func TestExecuteParseS2ORCWritesParsedDocument(t *testing.T) {
 	dir := filepath.Join(t.TempDir(), "demo")
 	if code := Execute([]string{"project", "create", dir, "--title", "S2ORC Parse"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
@@ -2608,6 +2741,95 @@ func TestExecuteOSSNoteCreatesTemplate(t *testing.T) {
 	}
 }
 
+func TestExecuteOSSInventoryDriftJSON(t *testing.T) {
+	dir := t.TempDir()
+	manifest := filepath.Join(dir, "manifest.json")
+	if err := os.WriteFile(filepath.Join(dir, "alpha.md"), []byte("# Wrong\n\nArea: parser\n"), 0o644); err != nil {
+		t.Fatalf("write note: %v", err)
+	}
+	if err := os.WriteFile(manifest, []byte(`{"schemaVersion":"1","entries":[{"id":"alpha","name":"Alpha","area":"scholarly-graph-source","disposition":"adapter-only","licensePolicy":"adapter","note":"alpha.md","risk":"drift","nextSlice":"fix"}]}`), 0o644); err != nil {
+		t.Fatalf("write manifest: %v", err)
+	}
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+	code := Execute([]string{"--json", "oss", "inventory-drift", manifest}, stdout, stderr)
+	if code != 0 {
+		t.Fatalf("inventory-drift exit code = %d stderr=%s stdout=%s", code, stderr.String(), stdout.String())
+	}
+	if !strings.Contains(stdout.String(), "note heading") || !strings.Contains(stdout.String(), "note area") {
+		t.Fatalf("stdout missing drift issues:\n%s", stdout.String())
+	}
+}
+
+func TestExecuteOSSInventoryPolicyJSON(t *testing.T) {
+	manifest := filepath.Join(t.TempDir(), "manifest.json")
+	if err := os.WriteFile(manifest, []byte(`{"schemaVersion":"1","entries":[{"id":"old","name":"Old","area":"parser","disposition":"adapter-only","licensePolicy":"adapter","note":"old.md","risk":"stale","nextSlice":"refresh","licenseSPDX":"MIT","pushedAt":"2024-01-01T00:00:00Z"},{"id":"bad","name":"Bad","area":"parser","disposition":"integrate","licensePolicy":"review","note":"bad.md","risk":"license","nextSlice":"avoid","licenseSPDX":"AGPL-3.0-only","pushedAt":"2026-01-01T00:00:00Z"}]}`), 0o644); err != nil {
+		t.Fatalf("write manifest: %v", err)
+	}
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+	code := Execute([]string{"--json", "oss", "inventory-policy", manifest, "--stale-after", "18mo", "--now", "2026-06-14T00:00:00Z"}, stdout, stderr)
+	if code != 0 {
+		t.Fatalf("inventory-policy exit code = %d stderr=%s stdout=%s", code, stderr.String(), stdout.String())
+	}
+	if !strings.Contains(stdout.String(), "old: stale") || !strings.Contains(stdout.String(), "bad: copyleft license") {
+		t.Fatalf("stdout missing policy issues:\n%s", stdout.String())
+	}
+}
+
+func TestExecuteOSSInventoryRefreshGitHub(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/repos/zotero/zotero" {
+			t.Fatalf("unexpected path: %s", r.URL.Path)
+		}
+		_, _ = w.Write([]byte(`{"stargazers_count":321,"forks_count":54,"archived":true,"pushed_at":"2026-06-01T00:00:00Z","license":{"spdx_id":"AGPL-3.0-only"}}`))
+	}))
+	defer server.Close()
+	root := t.TempDir()
+	manifest := filepath.Join(root, "manifest.json")
+	if err := os.WriteFile(manifest, []byte(`{"schemaVersion":"1","entries":[{"id":"zotero","name":"Zotero","repository":"zotero/zotero","area":"reference-management","disposition":"pattern-reference","licensePolicy":"study","note":"zotero.md","risk":"license","nextSlice":"metadata"}]}`), 0o644); err != nil {
+		t.Fatalf("write manifest: %v", err)
+	}
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+	code := Execute([]string{"--json", "oss", "inventory-refresh", manifest, "--source", "github", "--base-url", server.URL}, stdout, stderr)
+	if code != 0 {
+		t.Fatalf("inventory-refresh exit code = %d stderr=%s stdout=%s", code, stderr.String(), stdout.String())
+	}
+	if !strings.Contains(stdout.String(), `"refreshed":1`) {
+		t.Fatalf("stdout = %s", stdout.String())
+	}
+	data, err := os.ReadFile(manifest)
+	if err != nil {
+		t.Fatalf("read manifest: %v", err)
+	}
+	for _, want := range []string{`"stars": 321`, `"forks": 54`, `"licenseSPDX": "AGPL-3.0-only"`, `"archived": true`} {
+		if !strings.Contains(string(data), want) {
+			t.Fatalf("manifest missing %s:\n%s", want, data)
+		}
+	}
+}
+
+func TestExecuteOSSInventoryReportFiltersArea(t *testing.T) {
+	root := t.TempDir()
+	manifest := filepath.Join(root, "manifest.json")
+	if err := os.WriteFile(manifest, []byte(`{"schemaVersion":"1","entries":[{"id":"openalex","name":"OpenAlex","area":"scholarly-graph-source","disposition":"adapter-only","licensePolicy":"api","note":"openalex.md","risk":"cursor risk","nextSlice":"paginated import"},{"id":"zotero","name":"Zotero","area":"reference-management","disposition":"pattern-reference","licensePolicy":"study","note":"zotero.md","risk":"attachment risk","nextSlice":"collections"}]}`), 0o644); err != nil {
+		t.Fatalf("write manifest: %v", err)
+	}
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+	code := Execute([]string{"oss", "inventory-report", manifest, "--area", "scholarly-graph-source"}, stdout, stderr)
+	if code != 0 {
+		t.Fatalf("inventory-report exit code = %d stderr=%s stdout=%s", code, stderr.String(), stdout.String())
+	}
+	if !strings.Contains(stdout.String(), "OpenAlex") || !strings.Contains(stdout.String(), "paginated import") {
+		t.Fatalf("report missing OpenAlex row:\n%s", stdout.String())
+	}
+	if strings.Contains(stdout.String(), "Zotero") {
+		t.Fatalf("area-filtered report included Zotero:\n%s", stdout.String())
+	}
+}
+
 func TestExecuteOSSInventoryCheckJSON(t *testing.T) {
 	root := t.TempDir()
 	manifest := filepath.Join(root, "manifest.json")
@@ -2738,6 +2960,56 @@ func TestExecuteLibraryImportCrossrefReferences(t *testing.T) {
 	listed := mustRunCLI(t, "--json", "--project", dir, "library", "list")
 	if !strings.Contains(string(listed), "Reference One") || strings.Contains(string(listed), "Title only reference") {
 		t.Fatalf("library = %s", listed)
+	}
+}
+
+func TestExecuteLibraryRefreshCrossrefAllDOIRecords(t *testing.T) {
+	dir := filepath.Join(t.TempDir(), "demo")
+	if code := Execute([]string{"project", "create", dir, "--title", "Crossref Batch Refresh"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("project create exit code = %d", code)
+	}
+	importPath := filepath.Join(t.TempDir(), "library.json")
+	fixture := `[
+  {"Title":"Old one","Identifiers":{"DOI":"10.5555/one"}},
+  {"Title":"Old two","Identifiers":{"DOI":"10.5555/two"}},
+  {"Title":"No DOI","Identifiers":{"OpenAlexID":"W123"}}
+]`
+	if err := os.WriteFile(importPath, []byte(fixture), 0o644); err != nil {
+		t.Fatalf("write fixture: %v", err)
+	}
+	if code := Execute([]string{"--json", "--project", dir, "import", "json", importPath}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("import exit code = %d", code)
+	}
+	requests := []string{}
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		requests = append(requests, r.URL.Path)
+		switch r.URL.Path {
+		case "/works/10.5555/one":
+			_, _ = w.Write([]byte(`{"message":{"DOI":"10.5555/one","title":["Refreshed one"],"publisher":"Crossref One"}}`))
+		case "/works/10.5555/two":
+			_, _ = w.Write([]byte(`{"message":{"DOI":"10.5555/two","title":["Refreshed two"],"publisher":"Crossref Two"}}`))
+		default:
+			t.Fatalf("unexpected path = %q", r.URL.Path)
+		}
+	}))
+	defer server.Close()
+	t.Setenv("RFORGE_CROSSREF_URL", server.URL)
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+	if code := Execute([]string{"--json", "--project", dir, "library", "refresh-crossref"}, stdout, stderr); code != 0 {
+		t.Fatalf("batch refresh exit code = %d, stderr = %s", code, stderr.String())
+	}
+	if len(requests) != 2 {
+		t.Fatalf("requests = %#v, want two DOI refreshes", requests)
+	}
+	if !strings.Contains(stdout.String(), `"refreshed":2`) || !strings.Contains(stdout.String(), `"skippedNoDOI":1`) {
+		t.Fatalf("stdout = %s", stdout.String())
+	}
+	listed := string(mustRunCLI(t, "--json", "--project", dir, "library", "list"))
+	for _, want := range []string{"Refreshed one", "Crossref One", "Refreshed two", "Crossref Two", "No DOI"} {
+		if !strings.Contains(listed, want) {
+			t.Fatalf("library missing %q:\n%s", want, listed)
+		}
 	}
 }
 

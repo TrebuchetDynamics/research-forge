@@ -324,8 +324,8 @@ func executeParse(args []string, stdout, stderr io.Writer, opts globalOptions) i
 		return 0
 	}
 	paperID, parserName, inputPath, ok := parseParseArgs(args)
-	if !ok || (parserName != "grobid" && parserName != "tex" && parserName != "s2orc") {
-		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> parse --paper <id> --parser grobid --pdf <file> | --parser tex --tex <file> | --parser s2orc --s2orc <file>")
+	if !ok || (parserName != "grobid" && parserName != "tex" && parserName != "s2orc" && parserName != "papermage") {
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> parse --paper <id> --parser grobid --pdf <file> | --parser tex --tex <file> | --parser s2orc --s2orc <file> | --parser papermage --papermage <file>")
 	}
 	var doc parsing.ParsedDocument
 	var inputData []byte
@@ -351,13 +351,23 @@ func executeParse(args []string, stdout, stderr io.Writer, opts globalOptions) i
 		if err != nil {
 			return writeError(stdout, stderr, opts, 1, "parse_failed", fmt.Sprintf("parse: %v", err))
 		}
-	} else {
+	} else if parserName == "s2orc" {
 		data, err := os.ReadFile(inputPath)
 		if err != nil {
 			return writeError(stdout, stderr, opts, 1, "parse_s2orc_read_failed", fmt.Sprintf("read S2ORC JSON: %v", err))
 		}
 		inputData = data
 		doc, err = (parsing.S2ORCJSONParser{}).Parse(context.Background(), data, parsing.ParseOptions{PaperID: paperID})
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "parse_failed", fmt.Sprintf("parse: %v", err))
+		}
+	} else {
+		data, err := os.ReadFile(inputPath)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "parse_papermage_read_failed", fmt.Sprintf("read PaperMage JSON: %v", err))
+		}
+		inputData = data
+		doc, err = (parsing.PaperMageJSONParser{}).Parse(context.Background(), data, parsing.ParseOptions{PaperID: paperID})
 		if err != nil {
 			return writeError(stdout, stderr, opts, 1, "parse_failed", fmt.Sprintf("parse: %v", err))
 		}
@@ -509,7 +519,7 @@ func parseParseArgs(args []string) (string, string, string, bool) {
 	values := map[string]string{}
 	for i := 0; i < len(args); i++ {
 		switch args[i] {
-		case "--paper", "--parser", "--pdf", "--tex", "--s2orc":
+		case "--paper", "--parser", "--pdf", "--tex", "--s2orc", "--papermage":
 			if i+1 >= len(args) {
 				return "", "", "", false
 			}
@@ -525,6 +535,9 @@ func parseParseArgs(args []string) (string, string, string, bool) {
 	}
 	if values["--parser"] == "s2orc" {
 		input = values["--s2orc"]
+	}
+	if values["--parser"] == "papermage" {
+		input = values["--papermage"]
 	}
 	return values["--paper"], values["--parser"], input, values["--paper"] != "" && values["--parser"] != "" && input != ""
 }

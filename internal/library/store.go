@@ -68,9 +68,11 @@ func (s Store) ImportRecords(records []PaperRecord) (ImportSummary, error) {
 	if err != nil {
 		return ImportSummary{}, err
 	}
-	seen := make(map[string]bool, len(existing))
-	for _, record := range existing {
-		seen[recordKey(record)] = true
+	seen := make(map[string]int, len(existing))
+	for i, record := range existing {
+		if key := recordKey(record); key != "" {
+			seen[key] = i
+		}
 	}
 	summary := ImportSummary{}
 	merged := existing
@@ -80,11 +82,12 @@ func (s Store) ImportRecords(records []PaperRecord) (ImportSummary, error) {
 			summary.SkippedNoIdentifier++
 			continue
 		}
-		if seen[key] {
+		if existingIndex, ok := seen[key]; ok {
+			merged[existingIndex] = MergeDuplicate(merged[existingIndex], record)
 			summary.SkippedDuplicate = append(summary.SkippedDuplicate, identifierFromKey(key))
 			continue
 		}
-		seen[key] = true
+		seen[key] = len(merged)
 		merged = append(merged, record)
 		summary.Imported++
 	}

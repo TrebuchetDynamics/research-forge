@@ -33,9 +33,13 @@ Run:
 
 ```sh
 rforge oss inventory-check opensource/inventory/manifest.json
+rforge oss inventory-refresh opensource/inventory/manifest.json --source github
+rforge oss inventory-policy opensource/inventory/manifest.json --stale-after 18mo
+rforge oss inventory-drift opensource/inventory/manifest.json
+rforge oss inventory-report opensource/inventory/manifest.json --area scholarly-graph-source
 ```
 
-The verifier checks that every manifest entry has governance metadata (`area`, `disposition`, `licensePolicy`, `risk`, `nextSlice`) and that its Markdown note exists inside this directory.
+The verifier checks that every manifest entry has governance metadata (`area`, `disposition`, `licensePolicy`, `risk`, `nextSlice`) and that its Markdown note exists inside this directory. The refresh command updates GitHub-backed entries with stars, forks, license, archive status, and push timestamp. The policy command flags archived repositories, stale `pushedAt` timestamps, missing/unknown licenses, and GPL/AGPL/LGPL entries whose disposition is not `adapter-only` or `pattern-reference`. The drift command compares manifest metadata with note headings and optional note fields (`Area`, `Disposition`, `Repository`, `URL`, `License policy`, `Next slice`) and flags unreferenced note files. The report command renders a deterministic Markdown ecosystem report with tool, area, disposition, refreshed metadata, risk, next slice, and note columns.
 
 ## Current highest-priority gaps from this inventory
 

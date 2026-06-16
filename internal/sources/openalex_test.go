@@ -100,6 +100,23 @@ func TestOpenAlexConnectorRetriesRateLimitWithBackoff(t *testing.T) {
 	}
 }
 
+func TestOpenAlexConnectorMapsConceptsAndDomains(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		_, _ = w.Write([]byte(`{"results":[{"id":"https://openalex.org/W999","title":"Domain work","concepts":[{"id":"https://openalex.org/C41008148","display_name":"Computer science","score":0.91}],"primary_topic":{"display_name":"Machine learning","domain":{"display_name":"Physical Sciences"},"field":{"display_name":"Computer Science"},"subfield":{"display_name":"Artificial Intelligence"}}}]}`))
+	}))
+	defer server.Close()
+	response, err := NewOpenAlexConnector(NewHTTPClient(HTTPClientOptions{BaseURL: server.URL})).Search(context.Background(), SourceQuery{Terms: "ml", Limit: 1})
+	if err != nil {
+		t.Fatalf("Search returned error: %v", err)
+	}
+	metadata := response.Records[0].Metadata
+	for key, want := range map[string]string{"concepts": "Computer science", "concept_ids": "C41008148", "top_concept": "Computer science", "topic": "Machine learning", "domain": "Physical Sciences", "field": "Computer Science", "subfield": "Artificial Intelligence"} {
+		if metadata[key] != want {
+			t.Fatalf("metadata[%s] = %q, want %q (metadata=%#v)", key, metadata[key], want, metadata)
+		}
+	}
+}
+
 func TestOpenAlexConnectorSearchesAndNormalizesWorks(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != "/works" {

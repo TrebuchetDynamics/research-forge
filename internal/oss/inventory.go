@@ -16,16 +16,22 @@ type InventoryManifest struct {
 
 // InventoryEntry describes one studied OSS tool/source and its governance metadata.
 type InventoryEntry struct {
-	ID            string `json:"id"`
-	Name          string `json:"name"`
-	Repository    string `json:"repository,omitempty"`
-	URL           string `json:"url,omitempty"`
-	Area          string `json:"area"`
-	Disposition   string `json:"disposition"`
-	LicensePolicy string `json:"licensePolicy"`
-	Note          string `json:"note"`
-	Risk          string `json:"risk"`
-	NextSlice     string `json:"nextSlice"`
+	ID                  string `json:"id"`
+	Name                string `json:"name"`
+	Repository          string `json:"repository,omitempty"`
+	URL                 string `json:"url,omitempty"`
+	Area                string `json:"area"`
+	Disposition         string `json:"disposition"`
+	LicensePolicy       string `json:"licensePolicy"`
+	Note                string `json:"note"`
+	Risk                string `json:"risk"`
+	NextSlice           string `json:"nextSlice"`
+	Stars               int    `json:"stars,omitempty"`
+	Forks               int    `json:"forks,omitempty"`
+	LicenseSPDX         string `json:"licenseSPDX,omitempty"`
+	Archived            bool   `json:"archived,omitempty"`
+	PushedAt            string `json:"pushedAt,omitempty"`
+	MetadataRefreshedAt string `json:"metadataRefreshedAt,omitempty"`
 }
 
 // InventoryValidationResult reports deterministic inventory manifest validation.
@@ -44,14 +50,23 @@ func (r InventoryValidationResult) Contains(substr string) bool {
 	return false
 }
 
-// ValidateInventoryManifest verifies the OSS inventory manifest and referenced notes.
-func ValidateInventoryManifest(path string) (InventoryValidationResult, error) {
+// LoadInventoryManifest reads a machine-readable OSS inventory manifest.
+func LoadInventoryManifest(path string) (InventoryManifest, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
-		return InventoryValidationResult{}, err
+		return InventoryManifest{}, err
 	}
 	var manifest InventoryManifest
 	if err := json.Unmarshal(data, &manifest); err != nil {
+		return InventoryManifest{}, err
+	}
+	return manifest, nil
+}
+
+// ValidateInventoryManifest verifies the OSS inventory manifest and referenced notes.
+func ValidateInventoryManifest(path string) (InventoryValidationResult, error) {
+	manifest, err := LoadInventoryManifest(path)
+	if err != nil {
 		return InventoryValidationResult{}, err
 	}
 	result := InventoryValidationResult{EntryCount: len(manifest.Entries)}

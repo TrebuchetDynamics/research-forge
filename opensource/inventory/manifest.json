@@ -115,7 +115,7 @@
       "licensePolicy": "study document-model ideas; do not port code/models without review",
       "note": "papermage.md",
       "risk": "Layered document models require stable offsets and provider provenance to avoid evidence drift.",
-      "nextSlice": "Introduce parser-run manifest with layer counts and warnings."
+      "nextSlice": "Extend PaperMage-style JSON adapter with stable offsets, annotation layers, and multi-parser reconciliation."
     },
     {
       "id": "anystyle",

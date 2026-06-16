@@ -344,37 +344,86 @@ func executeLibrary(args []string, stdout, stderr io.Writer, opts globalOptions)
 		if len(args) != 2 {
 			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> library refresh-doi <doi>")
 		}
+		result, err := refreshCrossrefDOIs(store, []string{args[1]})
+		if err != nil {
+			return writeError(stdout, stderr, opts, result.exitCode, result.code, err.Error())
+		}
+		if result.Refreshed == 0 {
+			return writeError(stdout, stderr, opts, 2, "library_refresh_not_found", "DOI not found in library")
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"refreshed": strings.ToLower(strings.TrimSpace(args[1]))})
+		}
+		fmt.Fprintf(stdout, "refreshed %s\n", strings.ToLower(strings.TrimSpace(args[1])))
+		return 0
+	case "refresh-crossref":
+		if len(args) != 1 {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> library refresh-crossref")
+		}
 		papers, err := store.List()
 		if err != nil {
 			return writeError(stdout, stderr, opts, 1, "library_list_failed", fmt.Sprintf("list library: %v", err))
 		}
-		baseURL := os.Getenv("RFORGE_CROSSREF_URL")
-		if baseURL == "" {
-			baseURL = "https://api.crossref.org"
+		dois := []string{}
+		skippedNoDOI := 0
+		for _, paper := range papers {
+			if strings.TrimSpace(paper.Identifiers.DOI) == "" {
+				skippedNoDOI++
+				continue
+			}
+			dois = append(dois, paper.Identifiers.DOI)
 		}
-		record, rawRef, err := sources.NewCrossrefConnector(defaultSourceHTTPClient(baseURL)).LookupDOI(context.Background(), args[1])
+		result, err := refreshCrossrefDOIs(store, dois)
 		if err != nil {
-			return writeError(stdout, stderr, opts, 1, "library_refresh_failed", fmt.Sprintf("refresh DOI: %v", err))
+			return writeError(stdout, stderr, opts, result.exitCode, result.code, err.Error())
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"refreshed": result.Refreshed, "skippedNoDOI": skippedNoDOI})
+		}
+		fmt.Fprintf(stdout, "refreshed %d Crossref DOI records\n", result.Refreshed)
+		return 0
+	default:
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> library <list|refresh-doi|refresh-crossref|import-crossref-refs>")
+	}
+}
+
+type crossrefRefreshResult struct {
+	Refreshed int
+	code      string
+	exitCode  int
+}
+
+func refreshCrossrefDOIs(store library.Store, dois []string) (crossrefRefreshResult, error) {
+	papers, err := store.List()
+	if err != nil {
+		return crossrefRefreshResult{code: "library_list_failed", exitCode: 1}, fmt.Errorf("list library: %v", err)
+	}
+	baseURL := os.Getenv("RFORGE_CROSSREF_URL")
+	if baseURL == "" {
+		baseURL = "https://api.crossref.org"
+	}
+	connector := sources.NewCrossrefConnector(defaultSourceHTTPClient(baseURL))
+	updated := papers
+	result := crossrefRefreshResult{}
+	for _, doi := range dois {
+		record, rawRef, err := connector.LookupDOI(context.Background(), doi)
+		if err != nil {
+			return crossrefRefreshResult{Refreshed: result.Refreshed, code: "library_refresh_failed", exitCode: 1}, fmt.Errorf("refresh DOI: %v", err)
 		}
 		refreshed, err := sources.PaperRecords(sources.SourceResponse{Records: []sources.SourceRecord{record}, RawRef: rawRef})
 		if err != nil {
-			return writeError(stdout, stderr, opts, 1, "library_refresh_normalize_failed", err.Error())
+			return crossrefRefreshResult{Refreshed: result.Refreshed, code: "library_refresh_normalize_failed", exitCode: 1}, err
 		}
-		updated, ok := refreshLibraryPaperByDOI(papers, refreshed[0])
-		if !ok {
-			return writeError(stdout, stderr, opts, 2, "library_refresh_not_found", "DOI not found in library")
+		var ok bool
+		updated, ok = refreshLibraryPaperByDOI(updated, refreshed[0])
+		if ok {
+			result.Refreshed++
 		}
-		if err := store.ReplaceAll(updated); err != nil {
-			return writeError(stdout, stderr, opts, 1, "library_refresh_store_failed", err.Error())
-		}
-		if opts.JSON {
-			return writeJSON(stdout, 0, map[string]any{"refreshed": record.Identifiers.DOI})
-		}
-		fmt.Fprintf(stdout, "refreshed %s\n", record.Identifiers.DOI)
-		return 0
-	default:
-		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> library <list|refresh-doi|import-crossref-refs>")
 	}
+	if err := store.ReplaceAll(updated); err != nil {
+		return crossrefRefreshResult{Refreshed: result.Refreshed, code: "library_refresh_store_failed", exitCode: 1}, err
+	}
+	return result, nil
 }
 
 func refreshLibraryPaperByDOI(papers []library.PaperRecord, refreshed library.PaperRecord) ([]library.PaperRecord, bool) {

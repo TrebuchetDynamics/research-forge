@@ -70,12 +70,7 @@ func (c OpenAlexConnector) Search(ctx context.Context, query SourceQuery) (Sourc
 			URLs:       nonEmptyStrings(work.PrimaryLocation.LandingPageURL),
 			License:    strings.TrimSpace(work.PrimaryLocation.License),
 			OpenAccess: work.OpenAccess.IsOA,
-			Metadata: map[string]string{
-				"type":                 strings.TrimSpace(work.Type),
-				"oa_status":            strings.TrimSpace(work.OpenAccess.OAStatus),
-				"concepts":             strings.Join(openAlexConcepts(work.Concepts), "; "),
-				"related_openalex_ids": strings.Join(normalizeOpenAlexIDs(work.RelatedWorks), "; "),
-			},
+			Metadata:   openAlexWorkMetadata(work),
 		})
 	}
 	return SourceResponse{Records: records, RawRef: rawOpenAlexRef(params), NextPageCursor: strings.TrimSpace(payload.Meta.NextCursor)}, nil
@@ -148,6 +143,7 @@ type openAlexWork struct {
 	Concepts        []openAlexConcept       `json:"concepts"`
 	RelatedWorks    []string                `json:"related_works"`
 	ReferencedWorks []string                `json:"referenced_works"`
+	PrimaryTopic    openAlexTopic           `json:"primary_topic"`
 }
 
 type openAlexOpenAccess struct {
@@ -166,12 +162,60 @@ type openAlexConcept struct {
 	Score       float64 `json:"score"`
 }
 
+type openAlexTopic struct {
+	DisplayName string              `json:"display_name"`
+	Domain      openAlexTopicBucket `json:"domain"`
+	Field       openAlexTopicBucket `json:"field"`
+	Subfield    openAlexTopicBucket `json:"subfield"`
+}
+
+type openAlexTopicBucket struct {
+	DisplayName string `json:"display_name"`
+}
+
+func openAlexWorkMetadata(work openAlexWork) map[string]string {
+	metadata := map[string]string{
+		"type":                 strings.TrimSpace(work.Type),
+		"oa_status":            strings.TrimSpace(work.OpenAccess.OAStatus),
+		"concepts":             strings.Join(openAlexConcepts(work.Concepts), "; "),
+		"concept_ids":          strings.Join(openAlexConceptIDs(work.Concepts), "; "),
+		"related_openalex_ids": strings.Join(normalizeOpenAlexIDs(work.RelatedWorks), "; "),
+	}
+	if len(work.Concepts) > 0 {
+		metadata["top_concept"] = compactSpace(work.Concepts[0].DisplayName)
+	}
+	if topic := compactSpace(work.PrimaryTopic.DisplayName); topic != "" {
+		metadata["topic"] = topic
+	}
+	if domain := compactSpace(work.PrimaryTopic.Domain.DisplayName); domain != "" {
+		metadata["domain"] = domain
+	}
+	if field := compactSpace(work.PrimaryTopic.Field.DisplayName); field != "" {
+		metadata["field"] = field
+	}
+	if subfield := compactSpace(work.PrimaryTopic.Subfield.DisplayName); subfield != "" {
+		metadata["subfield"] = subfield
+	}
+	return metadata
+}
+
 func openAlexConcepts(concepts []openAlexConcept) []string {
 	out := []string{}
 	for _, concept := range concepts {
 		name := compactSpace(concept.DisplayName)
 		if name != "" {
 			out = append(out, name)
+		}
+	}
+	return out
+}
+
+func openAlexConceptIDs(concepts []openAlexConcept) []string {
+	out := []string{}
+	for _, concept := range concepts {
+		id := normalizeOpenAlexID(concept.ID)
+		if id != "" {
+			out = append(out, id)
 		}
 	}
 	return out

@@ -5,6 +5,9 @@ import (
 	"fmt"
 	"io"
 	"path/filepath"
+	"strconv"
+	"strings"
+	"time"
 
 	"github.com/TrebuchetDynamics/research-forge/internal/oss"
 )
@@ -32,6 +35,67 @@ func executeOSS(args []string, stdout, stderr io.Writer, opts globalOptions) int
 			fmt.Fprintln(stdout, issue)
 		}
 		return 1
+	}
+	if args[0] == "inventory-report" {
+		manifestPath, area, ok := parseOSSInventoryReport(args[1:])
+		if !ok {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge oss inventory-report <manifest.json> [--area <area>]")
+		}
+		manifest, err := oss.LoadInventoryManifest(manifestPath)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "oss_inventory_report_failed", fmt.Sprintf("read inventory: %v", err))
+		}
+		report := oss.BuildInventoryReport(manifest, oss.InventoryReportOptions{Area: area})
+		if opts.JSON {
+			return writeJSON(stdout, 0, report)
+		}
+		fmt.Fprint(stdout, report.Markdown)
+		return 0
+	}
+	if args[0] == "inventory-drift" {
+		if len(args) != 2 {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge oss inventory-drift <manifest.json>")
+		}
+		result, err := oss.CheckInventoryDrift(args[1])
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "oss_inventory_drift_failed", fmt.Sprintf("check inventory drift: %v", err))
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, result)
+		}
+		fmt.Fprint(stdout, result.Markdown)
+		return 0
+	}
+	if args[0] == "inventory-refresh" {
+		manifestPath, source, baseURL, ok := parseOSSInventoryRefresh(args[1:])
+		if !ok || source != "github" {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge oss inventory-refresh <manifest.json> --source github [--base-url <url>]")
+		}
+		result, err := oss.RefreshInventoryGitHubMetadata(manifestPath, oss.GitHubMetadataOptions{BaseURL: baseURL})
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "oss_inventory_refresh_failed", fmt.Sprintf("refresh inventory: %v", err))
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, result)
+		}
+		fmt.Fprintf(stdout, "refreshed %d inventory entries, skipped %d\n", result.Refreshed, result.Skipped)
+		return 0
+	}
+	if args[0] == "inventory-policy" {
+		manifestPath, staleMonths, now, ok := parseOSSInventoryPolicy(args[1:])
+		if !ok {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge oss inventory-policy <manifest.json> [--stale-after 18mo] [--now <rfc3339>]")
+		}
+		manifest, err := oss.LoadInventoryManifest(manifestPath)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "oss_inventory_policy_failed", fmt.Sprintf("read inventory: %v", err))
+		}
+		result := oss.CheckInventoryPolicy(manifest, oss.InventoryPolicyOptions{StaleAfterMonths: staleMonths, Now: now})
+		if opts.JSON {
+			return writeJSON(stdout, 0, result)
+		}
+		fmt.Fprint(stdout, result.Markdown)
+		return 0
 	}
 	if opts.Project == "" {
 		return writeError(stdout, stderr, opts, 2, "missing_project", "--project is required for oss commands")
@@ -165,6 +229,85 @@ func executeOSS(args []string, stdout, stderr io.Writer, opts globalOptions) int
 	default:
 		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> oss <add|list|license-check>")
 	}
+}
+
+func parseOSSInventoryPolicy(args []string) (string, int, time.Time, bool) {
+	if len(args) == 0 {
+		return "", 0, time.Time{}, false
+	}
+	manifestPath := args[0]
+	staleMonths := 18
+	now := time.Time{}
+	for i := 1; i < len(args); i++ {
+		switch args[i] {
+		case "--stale-after":
+			if i+1 >= len(args) {
+				return "", 0, time.Time{}, false
+			}
+			months, ok := parseMonths(args[i+1])
+			if !ok {
+				return "", 0, time.Time{}, false
+			}
+			staleMonths = months
+			i++
+		case "--now":
+			if i+1 >= len(args) {
+				return "", 0, time.Time{}, false
+			}
+			parsed, err := time.Parse(time.RFC3339, args[i+1])
+			if err != nil {
+				return "", 0, time.Time{}, false
+			}
+			now = parsed
+			i++
+		default:
+			return "", 0, time.Time{}, false
+		}
+	}
+	return manifestPath, staleMonths, now, manifestPath != ""
+}
+
+func parseMonths(value string) (int, bool) {
+	value = strings.TrimSpace(value)
+	value = strings.TrimSuffix(value, "months")
+	value = strings.TrimSuffix(value, "month")
+	value = strings.TrimSuffix(value, "mo")
+	months, err := strconv.Atoi(value)
+	return months, err == nil && months > 0
+}
+
+func parseOSSInventoryRefresh(args []string) (string, string, string, bool) {
+	if len(args) < 3 {
+		return "", "", "", false
+	}
+	manifestPath := args[0]
+	values := map[string]string{}
+	for i := 1; i < len(args); i++ {
+		switch args[i] {
+		case "--source", "--base-url":
+			if i+1 >= len(args) {
+				return "", "", "", false
+			}
+			values[args[i]] = args[i+1]
+			i++
+		default:
+			return "", "", "", false
+		}
+	}
+	return manifestPath, values["--source"], values["--base-url"], manifestPath != "" && values["--source"] != ""
+}
+
+func parseOSSInventoryReport(args []string) (string, string, bool) {
+	if len(args) != 1 && len(args) != 3 {
+		return "", "", false
+	}
+	if len(args) == 3 {
+		if args[1] != "--area" || args[2] == "" {
+			return "", "", false
+		}
+		return args[0], args[2], args[0] != ""
+	}
+	return args[0], "", args[0] != ""
 }
 
 func parseOSSAdd(args []string) (string, string, bool) {

@@ -2,6 +2,7 @@ package cli
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 	"os"
@@ -51,8 +52,8 @@ func executeCitations(args []string, stdout, stderr io.Writer, opts globalOption
 		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge citations <expand|report>")
 	}
 	source, paperID, direction, out, limit, depth, maxRecords, importLibrary, ok := parseCitationsExpand(args[1:])
-	if !ok || (source != "semantic-scholar" && source != "openalex") {
-		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge citations expand --source semantic-scholar|openalex --paper <id> --direction <references|citations|both> --out <file>")
+	if !ok || (source != "semantic-scholar" && source != "openalex" && source != "crossref") {
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge citations expand --source semantic-scholar|openalex|crossref --paper <id> --direction <references|citations|both> --out <file>")
 	}
 	var expansion sources.CitationGraphExpansion
 	var err error
@@ -62,6 +63,8 @@ func executeCitations(args []string, stdout, stderr io.Writer, opts globalOption
 			baseURL = "https://api.openalex.org"
 		}
 		expansion, err = sources.NewOpenAlexConnector(defaultSourceHTTPClient(baseURL)).ExpandCitationGraph(context.Background(), sources.OpenAlexGraphQuery{WorkID: paperID, Direction: sources.SemanticScholarGraphDirection(direction), Limit: limit})
+	} else if source == "crossref" {
+		expansion, err = expandCrossrefReferences(context.Background(), paperID)
 	} else {
 		connector := sources.NewSemanticScholarConnector(defaultSemanticScholarHTTPClient())
 		expansion, err = expandSemanticScholarRecursive(context.Background(), connector, paperID, sources.SemanticScholarGraphDirection(direction), limit, depth, maxRecords)
@@ -140,6 +143,31 @@ func executeCitations(args []string, stdout, stderr io.Writer, opts globalOption
 	}
 	fmt.Fprintf(stdout, "wrote citation graph with %d edges to %s\n", len(expansion.Edges), out)
 	return 0
+}
+
+func expandCrossrefReferences(ctx context.Context, doi string) (sources.CitationGraphExpansion, error) {
+	baseURL := os.Getenv("RFORGE_CROSSREF_URL")
+	if baseURL == "" {
+		baseURL = "https://api.crossref.org"
+	}
+	response, err := sources.NewCrossrefConnector(defaultSourceHTTPClient(baseURL)).References(ctx, doi)
+	if err != nil {
+		return sources.CitationGraphExpansion{}, err
+	}
+	seed := strings.ToLower(strings.TrimSpace(doi))
+	expansion := sources.CitationGraphExpansion{SeedID: seed, Records: map[string]sources.SourceRecord{}, RawRef: response.RawRef}
+	for _, record := range response.Records {
+		refID := strings.TrimSpace(record.Identifiers.DOI)
+		if refID == "" {
+			refID = strings.TrimSpace(record.SourceID)
+		}
+		if refID == "" {
+			continue
+		}
+		expansion.Edges = append(expansion.Edges, sources.CitationEdge{SourceID: seed, TargetID: refID})
+		expansion.Records[refID] = record
+	}
+	return expansion, nil
 }
 
 func expandSemanticScholarRecursive(ctx context.Context, connector sources.SemanticScholarConnector, seedID string, direction sources.SemanticScholarGraphDirection, limit, depth, maxRecords int) (sources.CitationGraphExpansion, error) {
@@ -342,9 +370,9 @@ func executeSearchImport(args []string, stdout, stderr io.Writer, opts globalOpt
 	if opts.Project == "" {
 		return writeError(stdout, stderr, opts, 2, "missing_project", "--project is required for search import")
 	}
-	source, query, pages, limit, filters, ok := parseSearchImport(args)
+	source, query, pages, limit, filters, resumeStatePath, ok := parseSearchImport(args)
 	if !ok || source != "openalex" {
-		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> search import --source openalex --query <query> --pages N [--limit N] [--filter source-filter]")
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> search import --source openalex --query <query> --pages N [--limit N] [--filter source-filter] [--resume-state state.json]")
 	}
 	connector, ok := searchConnector(source)
 	if !ok {
@@ -355,6 +383,17 @@ func executeSearchImport(args []string, stdout, stderr io.Writer, opts globalOpt
 		return writeError(stdout, stderr, opts, 1, "library_open_failed", err.Error())
 	}
 	cursor := "*"
+	state, err := loadOpenAlexImportState(resumeStatePath)
+	if err != nil {
+		return writeError(stdout, stderr, opts, 1, "search_import_resume_state_failed", err.Error())
+	}
+	if err := validateOpenAlexImportState(state, source, query, limit, filters); err != nil {
+		return writeError(stdout, stderr, opts, 1, "search_import_resume_state_failed", err.Error())
+	}
+	if strings.TrimSpace(state.NextCursor) != "" {
+		cursor = strings.TrimSpace(state.NextCursor)
+	}
+	savedNextCursor := strings.TrimSpace(state.NextCursor)
 	imported, skippedDuplicate, skippedNoIdentifier := 0, 0, 0
 	rawRefs := []string{}
 	for page := 0; page < pages; page++ {
@@ -374,19 +413,87 @@ func executeSearchImport(args []string, stdout, stderr io.Writer, opts globalOpt
 		imported += summary.Imported
 		skippedDuplicate += len(summary.SkippedDuplicate)
 		skippedNoIdentifier += summary.SkippedNoIdentifier
-		if strings.TrimSpace(response.NextPageCursor) == "" {
+		savedNextCursor = strings.TrimSpace(response.NextPageCursor)
+		if err := saveOpenAlexImportState(resumeStatePath, openAlexImportState{Source: source, Query: query, Filters: filters, Limit: limit, NextCursor: savedNextCursor, UpdatedAt: time.Now().UTC().Format(time.RFC3339)}); err != nil {
+			return writeError(stdout, stderr, opts, 1, "search_import_resume_state_failed", err.Error())
+		}
+		if savedNextCursor == "" {
 			break
 		}
-		cursor = response.NextPageCursor
+		cursor = savedNextCursor
 	}
-	if err := recordDuplicateEvent(opts.Project, "search.import", map[string]any{"source": source, "query": query, "pages": pages, "limit": limit, "filters": filters}, map[string]any{"imported": imported, "skippedDuplicate": skippedDuplicate, "skippedNoIdentifier": skippedNoIdentifier, "rawRefs": rawRefs}); err != nil {
+	if err := recordDuplicateEvent(opts.Project, "search.import", map[string]any{"source": source, "query": query, "pages": pages, "limit": limit, "filters": filters, "resumeState": resumeStatePath}, map[string]any{"imported": imported, "skippedDuplicate": skippedDuplicate, "skippedNoIdentifier": skippedNoIdentifier, "rawRefs": rawRefs, "nextCursor": savedNextCursor}); err != nil {
 		return writeError(stdout, stderr, opts, 1, "search_import_provenance_failed", err.Error())
 	}
 	if opts.JSON {
-		return writeJSON(stdout, 0, map[string]any{"source": source, "imported": imported, "skippedDuplicate": skippedDuplicate, "skippedNoIdentifier": skippedNoIdentifier, "rawRefs": rawRefs})
+		return writeJSON(stdout, 0, map[string]any{"source": source, "imported": imported, "skippedDuplicate": skippedDuplicate, "skippedNoIdentifier": skippedNoIdentifier, "rawRefs": rawRefs, "resumeState": resumeStatePath, "nextCursor": savedNextCursor})
 	}
 	fmt.Fprintf(stdout, "imported %d records from %s\n", imported, source)
 	return 0
+}
+
+type openAlexImportState struct {
+	Source     string            `json:"source"`
+	Query      string            `json:"query"`
+	Filters    map[string]string `json:"filters,omitempty"`
+	Limit      int               `json:"limit"`
+	NextCursor string            `json:"nextCursor,omitempty"`
+	UpdatedAt  string            `json:"updatedAt"`
+}
+
+func validateOpenAlexImportState(state openAlexImportState, source, query string, limit int, filters map[string]string) error {
+	if strings.TrimSpace(state.Source) == "" {
+		return nil
+	}
+	if state.Source != source || state.Query != query || state.Limit != limit || !sameStringMap(state.Filters, filters) {
+		return fmt.Errorf("resume state does not match requested source/query/limit/filters")
+	}
+	return nil
+}
+
+func sameStringMap(a, b map[string]string) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for key, av := range a {
+		if b[key] != av {
+			return false
+		}
+	}
+	return true
+}
+
+func loadOpenAlexImportState(path string) (openAlexImportState, error) {
+	if strings.TrimSpace(path) == "" {
+		return openAlexImportState{}, nil
+	}
+	data, err := os.ReadFile(path)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return openAlexImportState{}, nil
+		}
+		return openAlexImportState{}, err
+	}
+	var state openAlexImportState
+	if err := json.Unmarshal(data, &state); err != nil {
+		return openAlexImportState{}, err
+	}
+	return state, nil
+}
+
+func saveOpenAlexImportState(path string, state openAlexImportState) error {
+	if strings.TrimSpace(path) == "" {
+		return nil
+	}
+	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+		return err
+	}
+	data, err := json.MarshalIndent(state, "", "  ")
+	if err != nil {
+		return err
+	}
+	data = append(data, '\n')
+	return os.WriteFile(path, data, 0o644)
 }
 
 type sourceConnector interface {
@@ -564,56 +671,67 @@ func parseSearchRelated(args []string) (string, string, int, bool) {
 	return source, paper, limit, source != "" && strings.TrimSpace(paper) != ""
 }
 
-func parseSearchImport(args []string) (string, string, int, int, map[string]string, bool) {
+func parseSearchImport(args []string) (string, string, int, int, map[string]string, string, bool) {
 	limit := 25
 	pages := 1
 	filters := map[string]string{}
-	var source, query string
+	var source, query, resumeState string
 	for i := 0; i < len(args); i++ {
 		switch args[i] {
 		case "--source":
 			if i+1 >= len(args) {
-				return "", "", 0, 0, nil, false
+				return "", "", 0, 0, nil, "", false
 			}
 			source = args[i+1]
 			i++
 		case "--query":
 			if i+1 >= len(args) {
-				return "", "", 0, 0, nil, false
+				return "", "", 0, 0, nil, "", false
 			}
 			query = args[i+1]
 			i++
 		case "--pages":
 			if i+1 >= len(args) {
-				return "", "", 0, 0, nil, false
+				return "", "", 0, 0, nil, "", false
 			}
 			parsed, err := strconv.Atoi(args[i+1])
 			if err != nil || parsed <= 0 {
-				return "", "", 0, 0, nil, false
+				return "", "", 0, 0, nil, "", false
 			}
 			pages = parsed
 			i++
 		case "--limit":
 			if i+1 >= len(args) {
-				return "", "", 0, 0, nil, false
+				return "", "", 0, 0, nil, "", false
 			}
 			parsed, err := strconv.Atoi(args[i+1])
 			if err != nil || parsed <= 0 {
-				return "", "", 0, 0, nil, false
+				return "", "", 0, 0, nil, "", false
 			}
 			limit = parsed
 			i++
 		case "--filter":
 			if i+1 >= len(args) {
-				return "", "", 0, 0, nil, false
+				return "", "", 0, 0, nil, "", false
 			}
 			filters["filter"] = appendCommaFilter(filters["filter"], args[i+1])
 			i++
+		case "--from-year", "--to-year", "--type", "--open-access", "--concept":
+			if i+1 >= len(args) || !appendOpenAlexAdvancedFilter(filters, args[i], args[i+1]) {
+				return "", "", 0, 0, nil, "", false
+			}
+			i++
+		case "--resume-state":
+			if i+1 >= len(args) {
+				return "", "", 0, 0, nil, "", false
+			}
+			resumeState = args[i+1]
+			i++
 		default:
-			return "", "", 0, 0, nil, false
+			return "", "", 0, 0, nil, "", false
 		}
 	}
-	return source, query, pages, limit, filters, source != "" && strings.TrimSpace(query) != ""
+	return source, query, pages, limit, filters, resumeState, source != "" && strings.TrimSpace(query) != ""
 }
 
 func parseSearch(args []string) (string, string, int, map[string]string, bool) {
@@ -656,6 +774,11 @@ func parseSearch(args []string) (string, string, int, map[string]string, bool) {
 			}
 			filters["filter"] = appendCommaFilter(filters["filter"], args[i+1])
 			i++
+		case "--from-year", "--to-year", "--type", "--open-access", "--concept":
+			if i+1 >= len(args) || !appendOpenAlexAdvancedFilter(filters, args[i], args[i+1]) {
+				return "", "", 0, nil, false
+			}
+			i++
 		case "--entity":
 			if i+1 >= len(args) {
 				return "", "", 0, nil, false
@@ -667,6 +790,37 @@ func parseSearch(args []string) (string, string, int, map[string]string, bool) {
 		}
 	}
 	return source, query, limit, filters, source != "" && (strings.TrimSpace(query) != "" || strings.TrimSpace(filters["category"]) != "" || strings.TrimSpace(filters["filter"]) != "")
+}
+
+func appendOpenAlexAdvancedFilter(filters map[string]string, flag, value string) bool {
+	value = strings.TrimSpace(value)
+	if value == "" {
+		return false
+	}
+	switch flag {
+	case "--from-year":
+		if _, err := strconv.Atoi(value); err != nil || len(value) != 4 {
+			return false
+		}
+		filters["filter"] = appendCommaFilter(filters["filter"], "from_publication_date:"+value+"-01-01")
+	case "--to-year":
+		if _, err := strconv.Atoi(value); err != nil || len(value) != 4 {
+			return false
+		}
+		filters["filter"] = appendCommaFilter(filters["filter"], "to_publication_date:"+value+"-12-31")
+	case "--type":
+		filters["filter"] = appendCommaFilter(filters["filter"], "type:"+value)
+	case "--open-access":
+		if value != "true" && value != "false" {
+			return false
+		}
+		filters["filter"] = appendCommaFilter(filters["filter"], "is_oa:"+value)
+	case "--concept":
+		filters["filter"] = appendCommaFilter(filters["filter"], "concepts.id:"+value)
+	default:
+		return false
+	}
+	return true
 }
 
 func appendCommaFilter(existing, next string) string {
