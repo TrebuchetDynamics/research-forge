@@ -1,0 +1,49 @@
+name: Playwright e2e
+
+# Opt-in browser end-to-end tests for the local Go + HTMX dashboard. These are
+# excluded from the default `go test ./...` gate (build tag `playwright_e2e`)
+# because they need a browser, so they run in this dedicated workflow.
+#
+# Scope: the functional/interaction e2e (TestPlaywrightDashboard) only. The
+# screenshot regression test (TestPlaywrightScreenshotRegression) is intentionally
+# NOT run here — its golden PNGs are pinned to the font rendering of the machine
+# that generated them, so it is a local tool (`make web-gui-screenshots-update`)
+# rather than a cross-environment CI check.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+# The pinned playwright-go version. Keep in sync with go.mod and the Makefile so
+# CI installs the exact Chromium build the test runtime expects.
+env:
+  PLAYWRIGHT_GO_VERSION: v0.5700.1
+
+jobs:
+  playwright-e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ env.PLAYWRIGHT_GO_VERSION }}
+
+      - name: Install Chromium (pinned via playwright-go)
+        run: go run github.com/playwright-community/playwright-go/cmd/playwright@${{ env.PLAYWRIGHT_GO_VERSION }} install --with-deps chromium
+
+      - name: Run dashboard browser e2e
+        env:
+          RFORGE_RUN_PLAYWRIGHT: "1"
+        run: go test -tags playwright_e2e ./internal/webui -run TestPlaywrightDashboard -count=1 -v
