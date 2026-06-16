@@ -63,6 +63,7 @@ Before expanding the first HTMX slice, decide:
 - **Analysis** — `/artifacts` surfaces meta-analysis heterogeneity (I², τ², Q) and forest/funnel plot availability from `<project>/analysis/<run>-result.json`, plus PRISMA flow counts.
 - **Knowledge graph** — `/artifacts` renders a deterministic server-side SVG citation graph from `<project>/data/citation-graph.json`, with nodes linking to their `/papers/{id}` reading page. A vendored, dependency-free `citation-graph.js` (offline, embedded) progressively enhances this into an interactive graph (pan/zoom/click) fed by the `/artifacts/graph.json` data endpoint; JS-disabled clients keep the static SVG fallback.
 - **In-browser project switcher** — `/projects/switch` repoints the active folder at runtime (complements per-instance `--addr`), triggering HTMX refresh of the library and artifacts views.
+- **Browser e2e** — an opt-in `playwright-go` test (`internal/webui/playwright_e2e_test.go`, build tag `playwright_e2e`, env `RFORGE_RUN_PLAYWRIGHT=1`, `make web-gui-e2e`) drives headless Chromium through the shell, papers reader, and the JS-enhanced interactive citation graph (node click → paper page). It is excluded from the default gate and skips cleanly without browsers, matching the project's other opt-in e2e tests.
 
 Decisions resolved for this build: multi-port = per-instance `--addr` flag **and** in-browser switcher; papers = native PDF + parsed text; graph = server-rendered SVG fallback **plus** vendored offline interactive JS (pan/zoom/click).
 
