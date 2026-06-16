@@ -35,3 +35,6 @@ Thumbs.db
 !.env.example
 *.pem
 *.key
+
+# Playwright screenshot regression failure artifacts
+internal/webui/testdata/screenshots/*.actual.png
