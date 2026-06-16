@@ -91,6 +91,7 @@ func NewRouter(cfg Config) http.Handler {
 	artifactsHandler := newProjectArtifactsHandler(state.get)
 	mux.Handle("/artifacts", artifactsHandler)
 	mux.Handle("/artifacts/refresh", artifactsHandler)
+	mux.Handle("GET /artifacts/graph.json", newCitationGraphJSONHandler(state.get))
 
 	mux.Handle("GET /papers", newPaperListHandler(state.get))
 	mux.Handle("GET /papers/{id}", newPaperDetailHandler(state.get))

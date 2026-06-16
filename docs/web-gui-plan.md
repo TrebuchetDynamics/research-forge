@@ -61,10 +61,10 @@ Before expanding the first HTMX slice, decide:
 - **Server + multi-port** — `rforge [--project <path>] ui [--addr :8080]` binds an `http.Server` (address also from `RFORGE_UI_ADDR`); multiple instances run concurrently on different ports, one per research folder. `rforge --json ui` reports the resolved address/project/routes without binding. Static assets are embedded (`internal/webui/static`).
 - **Read papers in the browser** — `/papers` lists parsed documents from `<project>/parsed/`; `/papers/{id}` shows parsed sections/passages alongside a natively rendered project-local PDF (`/papers/{id}/pdf`) when one exists under `<project>/documents/`, falling back to parsed text only (copyright-safe). Paper ids are validated against a safe-stem allow-list to prevent path traversal.
 - **Analysis** — `/artifacts` surfaces meta-analysis heterogeneity (I², τ², Q) and forest/funnel plot availability from `<project>/analysis/<run>-result.json`, plus PRISMA flow counts.
-- **Knowledge graph** — `/artifacts` renders a deterministic server-side SVG citation graph from `<project>/data/citation-graph.json`, with nodes linking to their `/papers/{id}` reading page. A clean seam remains to drop in vendored interactive JS later.
+- **Knowledge graph** — `/artifacts` renders a deterministic server-side SVG citation graph from `<project>/data/citation-graph.json`, with nodes linking to their `/papers/{id}` reading page. A vendored, dependency-free `citation-graph.js` (offline, embedded) progressively enhances this into an interactive graph (pan/zoom/click) fed by the `/artifacts/graph.json` data endpoint; JS-disabled clients keep the static SVG fallback.
 - **In-browser project switcher** — `/projects/switch` repoints the active folder at runtime (complements per-instance `--addr`), triggering HTMX refresh of the library and artifacts views.
 
-Decisions resolved for this build: multi-port = per-instance `--addr` flag **and** in-browser switcher; papers = native PDF + parsed text; graph = server-rendered SVG now, JS seam later.
+Decisions resolved for this build: multi-port = per-instance `--addr` flag **and** in-browser switcher; papers = native PDF + parsed text; graph = server-rendered SVG fallback **plus** vendored offline interactive JS (pan/zoom/click).
 
 ## Current ready seams
 

@@ -233,7 +233,10 @@ var artifactsTemplate = template.Must(template.New("artifacts").Parse(`<section 
   <section aria-labelledby="artifact-citations-title">
     <h3 id="artifact-citations-title">Citation graph</h3>
     {{if .CitationGraph.Nodes}}
-    {{.CitationGraphSVG}}
+    <div id="citation-graph" data-citation-graph data-src="/artifacts/graph.json" role="application" aria-label="Citation graph (drag to pan, scroll to zoom, click a node to open the paper)">
+      {{.CitationGraphSVG}}
+    </div>
+    <script src="/assets/citation-graph.js" defer></script>
     {{range .CitationGraph.Nodes}}<p>{{.ID}}</p>{{end}}
     {{range .CitationGraph.Edges}}<p>{{.Source}} → {{.Target}}</p>{{end}}
     {{else}}<p>No citation graph exported yet</p>{{end}}
