@@ -107,16 +107,7 @@ func Execute(args []string, stdout, stderr io.Writer) int {
 	case "archive":
 		return executeArchive(remaining[1:], stdout, stderr, opts)
 	case "ui":
-		if opts.JSON {
-			return writeJSON(stdout, 0, map[string]any{
-				"status":          "go_htmx_web_gui_ready",
-				"stack":           "go+htmx",
-				"reason":          "ADR 0006 replaces Fyne desktop with a local web GUI; Go + HTMX handlers are implemented in internal/webui",
-				"viewModelsReady": true,
-			})
-		}
-		fmt.Fprintln(stdout, "ResearchForge Go + HTMX local web GUI ready (ADR 0006)")
-		return 0
+		return executeUI(remaining[1:], stdout, stderr, opts)
 	case "watch":
 		return executeWatch(remaining[1:], stdout, stderr, opts)
 	case "inbox":

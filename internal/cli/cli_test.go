@@ -257,16 +257,48 @@ func uncheckedTODOLineRefs(t *testing.T) []string {
 	return refs
 }
 
-func TestExecuteUIJSONReportsReadyWebGUI(t *testing.T) {
+func TestExecuteUIJSONReportsServingConfig(t *testing.T) {
 	stdout := new(bytes.Buffer)
 	stderr := new(bytes.Buffer)
 
-	code := Execute([]string{"--json", "ui"}, stdout, stderr)
+	code := Execute([]string{"--json", "--project", "/tmp/example", "ui", "--addr", ":9999"}, stdout, stderr)
 	if code != 0 {
 		t.Fatalf("exit code = %d, stderr = %s", code, stderr.String())
 	}
-	if !strings.Contains(stdout.String(), "go_htmx_web_gui_ready") || !strings.Contains(stdout.String(), "ADR 0006") {
-		t.Fatalf("ui output = %s", stdout.String())
+	out := stdout.String()
+	for _, want := range []string{"serving_ready", "go+htmx", ":9999", "/tmp/example", "/library"} {
+		if !strings.Contains(out, want) {
+			t.Fatalf("ui output missing %q: %s", want, out)
+		}
+	}
+}
+
+func TestExecuteUIAddrDefaultsAndEnvOverride(t *testing.T) {
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+	if code := Execute([]string{"--json", "ui"}, stdout, stderr); code != 0 {
+		t.Fatalf("default addr exit code = %d, stderr = %s", code, stderr.String())
+	}
+	if !strings.Contains(stdout.String(), ":8080") {
+		t.Fatalf("default addr output = %s", stdout.String())
+	}
+
+	t.Setenv("RFORGE_UI_ADDR", ":7000")
+	stdout.Reset()
+	stderr.Reset()
+	if code := Execute([]string{"--json", "ui"}, stdout, stderr); code != 0 {
+		t.Fatalf("env addr exit code = %d, stderr = %s", code, stderr.String())
+	}
+	if !strings.Contains(stdout.String(), ":7000") {
+		t.Fatalf("env addr output = %s", stdout.String())
+	}
+}
+
+func TestExecuteUIRejectsUnknownFlag(t *testing.T) {
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+	if code := Execute([]string{"ui", "--bogus"}, stdout, stderr); code != 2 {
+		t.Fatalf("exit code = %d, want 2; stderr = %s", code, stderr.String())
 	}
 }
 

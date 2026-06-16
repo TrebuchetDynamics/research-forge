@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/TrebuchetDynamics/research-forge/internal/analysis"
 	"github.com/TrebuchetDynamics/research-forge/internal/library"
 	"github.com/TrebuchetDynamics/research-forge/internal/screening"
 	"github.com/TrebuchetDynamics/research-forge/internal/ui"
@@ -46,11 +47,88 @@ func BuildArtifactDashboardState(projectPath string) (ArtifactDashboardState, er
 	if err != nil {
 		return ArtifactDashboardState{}, err
 	}
+	graph, err := buildCitationGraph(projectPath)
+	if err != nil {
+		return ArtifactDashboardState{}, err
+	}
 	return ArtifactDashboardState{
-		Papers:   papers,
-		PRISMA:   prisma,
-		Analysis: buildAnalysisViewModel(projectPath),
+		Papers:         papers,
+		PRISMA:         prisma,
+		Analysis:       buildAnalysisViewModel(projectPath),
+		AnalysisDetail: buildAnalysisDetail(projectPath),
+		CitationGraph:  graph,
 	}, nil
+}
+
+// buildCitationGraph loads the project's exported citation graph
+// (data/citation-graph.json, the stable nodes/edges export format) into the
+// cockpit citation-graph view model. A project without a graph yields an empty,
+// non-error model.
+func buildCitationGraph(projectPath string) (ui.CitationGraphViewModel, error) {
+	data, err := os.ReadFile(filepath.Join(projectPath, "data", "citation-graph.json"))
+	if os.IsNotExist(err) {
+		return ui.CitationGraphViewModel{}, nil
+	}
+	if err != nil {
+		return ui.CitationGraphViewModel{}, err
+	}
+	var export struct {
+		Nodes []struct {
+			ID string `json:"id"`
+		} `json:"nodes"`
+		Edges []struct {
+			Source string `json:"source"`
+			Target string `json:"target"`
+		} `json:"edges"`
+	}
+	if err := json.Unmarshal(data, &export); err != nil {
+		return ui.CitationGraphViewModel{}, err
+	}
+	nodes := make([]ui.GraphNode, 0, len(export.Nodes))
+	for _, n := range export.Nodes {
+		nodes = append(nodes, ui.GraphNode{ID: n.ID})
+	}
+	edges := make([]ui.GraphEdge, 0, len(export.Edges))
+	for _, e := range export.Edges {
+		edges = append(edges, ui.GraphEdge{Source: e.Source, Target: e.Target})
+	}
+	return ui.NewCitationGraphViewModel(nodes, edges), nil
+}
+
+// buildAnalysisDetail loads the project's stored meta-analysis result
+// (analysis/<run>-result.json) into a readable detail view: heterogeneity
+// metrics, plot availability, and any runner warnings. A project without a
+// stored result yields a not-ready detail.
+func buildAnalysisDetail(projectPath string) AnalysisDetail {
+	dir := filepath.Join(projectPath, "analysis")
+	entries, err := os.ReadDir(dir)
+	if err != nil {
+		return AnalysisDetail{}
+	}
+	for _, entry := range entries {
+		if entry.IsDir() || !strings.HasSuffix(entry.Name(), "-result.json") {
+			continue
+		}
+		data, err := os.ReadFile(filepath.Join(dir, entry.Name()))
+		if err != nil {
+			return AnalysisDetail{}
+		}
+		var result analysis.AnalysisResult
+		if err := json.Unmarshal(data, &result); err != nil {
+			return AnalysisDetail{}
+		}
+		return AnalysisDetail{
+			Ready:         true,
+			RunID:         strings.TrimSuffix(entry.Name(), "-result.json"),
+			I2:            result.Metrics.I2,
+			Tau2:          result.Metrics.Tau2,
+			Q:             result.Metrics.Q,
+			HasForestPlot: strings.TrimSpace(result.ForestPlot.Path) != "",
+			HasFunnelPlot: strings.TrimSpace(result.FunnelPlot.Path) != "",
+			Warnings:      result.Warnings,
+		}
+	}
+	return AnalysisDetail{}
 }
 
 // buildPRISMAFlowState replays the project's stored screening decisions into

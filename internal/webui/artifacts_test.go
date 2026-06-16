@@ -10,11 +10,12 @@ import (
 
 func TestArtifactsHandlerRendersCLIGeneratedOutputs(t *testing.T) {
 	state := ArtifactDashboardState{
-		Papers:        ui.NewLibraryViewModel([]ui.PaperRow{{Title: "Catalyst study"}}),
-		Analysis:      ui.NewAnalysisViewModel("run-42", true),
-		CitationGraph: ui.NewCitationGraphViewModel([]ui.GraphNode{{ID: "paper-a"}, {ID: "paper-b"}}, []ui.GraphEdge{{Source: "paper-a", Target: "paper-b"}}),
-		PRISMA:        PRISMAFlowState{Records: 12, Screened: 8, Included: 3},
-		Reports:       ui.NewReportViewModel([]string{"markdown", "html"}),
+		Papers:         ui.NewLibraryViewModel([]ui.PaperRow{{Title: "Catalyst study"}}),
+		Analysis:       ui.NewAnalysisViewModel("run-42", true),
+		AnalysisDetail: AnalysisDetail{Ready: true, RunID: "run-42", I2: 30.5, Tau2: 0.2, Q: 5.1, HasForestPlot: true},
+		CitationGraph:  ui.NewCitationGraphViewModel([]ui.GraphNode{{ID: "paper-a"}, {ID: "paper-b"}}, []ui.GraphEdge{{Source: "paper-a", Target: "paper-b"}}),
+		PRISMA:         PRISMAFlowState{Records: 12, Screened: 8, Included: 3},
+		Reports:        ui.NewReportViewModel([]string{"markdown", "html"}),
 	}
 
 	req := httptest.NewRequest("GET", "/artifacts", nil)
@@ -33,7 +34,8 @@ func TestArtifactsHandlerRendersCLIGeneratedOutputs(t *testing.T) {
 		"Catalyst study",
 		"Meta-analysis outputs",
 		"run-42",
-		"Ready",
+		"Heterogeneity I²",
+		"Forest plot registered",
 		"PRISMA diagram",
 		"Records: 12",
 		"Screened: 8",

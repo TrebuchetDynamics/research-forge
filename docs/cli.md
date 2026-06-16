@@ -32,7 +32,7 @@ Core commands:
 - `rforge extraction schema add`, `rforge extract add|suggest`, `rforge evidence audit`
 - `rforge analysis prepare [--effect smd|log-odds-ratio|risk-ratio]|run|sensitivity|subgroup|meta-regression|publication-bias|bayesian|export`
 - `rforge report build|audit`
-- `rforge ui` reports the local Go + HTMX web GUI status; `rforge --json ui` exposes the selected stack and ready state from ADR 0006
+- `rforge [--project <path>] ui [--addr :8080]` serves the local Go + HTMX research cockpit for a research folder (address also configurable via `RFORGE_UI_ADDR`); run multiple instances on different ports to view several projects at once. `rforge --json ui` reports the resolved address, project, and route list without binding a port. Routes: `/` (shell), `/papers` and `/papers/{id}` (read parsed full text + native PDF), `/papers/{id}/pdf`, `/library`, `/artifacts` (PRISMA flow, meta-analysis heterogeneity/plots, clickable citation graph), `/oss`, `/search`, `/projects` and `/projects/switch` (in-browser folder switcher)
 - `rforge decisions` lists owner decisions and implementation trackers that intentionally keep remaining TODO items open
 - `rforge decisions --check TODO.md` verifies unchecked TODO items, line references, and tracking issue references are decision/tracker-covered
 - `rforge decisions --completion-audit TODO.md docs/todo-completion-audit.md` verifies decision/tracker coverage plus the closeout prompt-to-artifact audit; JSON output includes `completion_blocked`, `blocked_decisions`, `blocked_decision_ids`, and `license_resolution_verified` so automation does not treat covered TODOs as finished work

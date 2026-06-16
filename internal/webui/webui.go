@@ -24,11 +24,22 @@ var shellTemplate = template.Must(template.New("shell").Parse(`<!doctype html>
     <header>
       <p class="eyebrow">Local Go + HTMX workspace</p>
       <h1>ResearchForge</h1>
-      <p>Project dashboard and CLI-generated artifacts will be served from shared Go application services.</p>
+      <p>Read papers, browse CLI-generated artifacts, and explore the knowledge graph for the open research project.</p>
+      <nav aria-label="Dashboard sections">
+        <ul class="rf-nav">
+          <li><a href="/papers">Papers</a></li>
+          <li><a href="/library">Library</a></li>
+          <li><a href="/artifacts">Artifacts</a></li>
+          <li><a href="/oss">OSS studies</a></li>
+          <li><a href="/search">Search</a></li>
+          <li><a href="/projects">Projects</a></li>
+        </ul>
+      </nav>
     </header>
+    <div hx-get="/projects/active" hx-trigger="load"></div>
     <section aria-labelledby="dashboard-title">
       <h2 id="dashboard-title">Project dashboard</h2>
-      <p>Open or create a project after the implementation tracker slices land.</p>
+      <p>Open a research folder, then read every parsed paper in the browser and review its analysis, PRISMA flow, and citation graph.</p>
     </section>
     <section aria-labelledby="artifacts-title">
       <h2 id="artifacts-title">CLI-generated artifacts</h2>
@@ -133,13 +144,27 @@ type PRISMAFlowState struct {
 	Included int
 }
 
+// AnalysisDetail surfaces a stored meta-analysis result for the cockpit:
+// heterogeneity metrics, plot availability, and runner warnings.
+type AnalysisDetail struct {
+	Ready         bool
+	RunID         string
+	I2            float64
+	Tau2          float64
+	Q             float64
+	HasForestPlot bool
+	HasFunnelPlot bool
+	Warnings      []string
+}
+
 // ArtifactDashboardState combines CLI-generated outputs for the local web GUI.
 type ArtifactDashboardState struct {
-	Papers        ui.LibraryViewModel
-	Analysis      ui.AnalysisViewModel
-	CitationGraph ui.CitationGraphViewModel
-	PRISMA        PRISMAFlowState
-	Reports       ui.ReportViewModel
+	Papers         ui.LibraryViewModel
+	Analysis       ui.AnalysisViewModel
+	AnalysisDetail AnalysisDetail
+	CitationGraph  ui.CitationGraphViewModel
+	PRISMA         PRISMAFlowState
+	Reports        ui.ReportViewModel
 }
 
 // CitationGraphSVG renders a small accessible SVG preview for exported citation graphs.
@@ -167,8 +192,11 @@ func (s ArtifactDashboardState) CitationGraphSVG() template.HTML {
 	for _, node := range s.CitationGraph.Nodes {
 		pos := positions[node.ID]
 		label := template.HTMLEscapeString(node.ID)
+		stem := template.HTMLEscapeString(graphNodeStem(node.ID))
+		fmt.Fprintf(&b, `<a href="/papers/%s">`, stem)
 		fmt.Fprintf(&b, `<circle cx="%d" cy="%d" r="16" fill="none" stroke="currentColor" stroke-width="2" />`, pos[0], pos[1])
 		fmt.Fprintf(&b, `<text x="%d" y="%d" text-anchor="middle">%s</text>`, pos[0], pos[1]+34, label)
+		b.WriteString(`</a>`)
 	}
 	b.WriteString(`</svg>`)
 	return template.HTML(b.String())
@@ -182,7 +210,19 @@ var artifactsTemplate = template.Must(template.New("artifacts").Parse(`<section 
   </section>
   <section aria-labelledby="artifact-analysis-title">
     <h3 id="artifact-analysis-title">Meta-analysis outputs</h3>
-    {{if .Analysis.Ready}}<p>Ready: {{.Analysis.RunID}}</p>{{else}}<p>No analysis run ready</p>{{end}}
+    {{if .AnalysisDetail.Ready}}
+    <p>Run: {{.AnalysisDetail.RunID}}</p>
+    <dl>
+      <dt>Heterogeneity I²</dt><dd>{{.AnalysisDetail.I2}}</dd>
+      <dt>τ²</dt><dd>{{.AnalysisDetail.Tau2}}</dd>
+      <dt>Q</dt><dd>{{.AnalysisDetail.Q}}</dd>
+    </dl>
+    <ul>
+      {{if .AnalysisDetail.HasForestPlot}}<li>Forest plot registered</li>{{end}}
+      {{if .AnalysisDetail.HasFunnelPlot}}<li>Funnel plot registered</li>{{end}}
+    </ul>
+    {{if .AnalysisDetail.Warnings}}<p class="analysis-warnings">Warnings: {{range .AnalysisDetail.Warnings}}{{.}}; {{end}}</p>{{end}}
+    {{else}}<p>No analysis run ready</p>{{end}}
   </section>
   <section aria-labelledby="artifact-prisma-title">
     <h3 id="artifact-prisma-title">PRISMA diagram</h3>

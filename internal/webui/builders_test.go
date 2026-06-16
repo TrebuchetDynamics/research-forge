@@ -123,7 +123,7 @@ func TestE2EWebCockpitServesProjectViewModelsThroughHandlers(t *testing.T) {
 		"Artificial photosynthesis catalyst review",
 		"Records: 1",
 		"Included: 1",
-		"Ready: run1",
+		"Run: run1",
 	} {
 		if !strings.Contains(artBody, want) {
 			t.Fatalf("artifacts page missing %q:\n%s", want, artBody)
