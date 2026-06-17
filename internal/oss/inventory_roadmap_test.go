@@ -33,7 +33,19 @@ func TestBuildInventoryRoadmapReportGroupsNextSlicesByAreaAndFindsCoverageGaps(t
 	if !report.ContainsGap("beta.md") {
 		t.Fatalf("expected beta coverage gap: %#v", report.CoverageGaps)
 	}
-	if !strings.Contains(report.Markdown, "## retrieval") || !strings.Contains(report.Markdown, "Add alpha retrieval") || !strings.Contains(report.Markdown, "Coverage gaps") {
+	if len(report.SuggestedSlices) == 0 || !roadmapHasSuggestion(report, "beta", "test") {
+		t.Fatalf("suggested slices missing: %#v", report.SuggestedSlices)
+	}
+	if !strings.Contains(report.Markdown, "## retrieval") || !strings.Contains(report.Markdown, "Add alpha retrieval") || !strings.Contains(report.Markdown, "Suggested implementation slices") || strings.Contains(report.Markdown, "[x]") {
 		t.Fatalf("markdown:\n%s", report.Markdown)
 	}
+}
+
+func roadmapHasSuggestion(report InventoryRoadmapReport, id, kind string) bool {
+	for _, suggestion := range report.SuggestedSlices {
+		if suggestion.ID == id && suggestion.Kind == kind {
+			return true
+		}
+	}
+	return false
 }
