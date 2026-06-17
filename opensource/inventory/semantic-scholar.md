@@ -36,6 +36,7 @@ Implemented nearby capabilities:
 - Deterministic mocked HTTP tests for search, graph expansion, recursive expansion, library import, graph-import dedupe filtering, web visualization, and report generation.
 - The forge workflow DAG includes discovery/import checkpoints with inputs, outputs, provenance actions, and restart-safe skips.
 - The local project knowledge graph merges Semantic Scholar citation edges with Zotero collections/tags, OpenAlex concepts, parsed references, evidence, screening, analysis, and report claims for `rforge knowledge query`.
+- Citation-to-evidence trace views link report claims back to source API records and raw request/response metadata along with evidence, parser passages, PDFs, and effect-size rows.
 
 Missing features:
 

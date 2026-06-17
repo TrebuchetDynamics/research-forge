@@ -1044,7 +1044,8 @@ func executeReport(args []string, stdout, stderr io.Writer, opts globalOptions) 
 		if store, err := library.OpenStore(filepath.Join(opts.Project, "data", "library.json")); err == nil {
 			records, _ = store.List()
 		}
-		view := report.BuildCitationEvidenceTraceView(report.CitationEvidenceTraceInput{Claims: queue.Suggestions, EvidenceItems: items, AnalysisRun: run, LibraryRecords: records, PDFBaseURL: "/papers"})
+		parsedDocs, _ := readParsedDocuments(filepath.Join(opts.Project, "parsed"))
+		view := report.BuildCitationEvidenceTraceView(report.CitationEvidenceTraceInput{Claims: queue.Suggestions, EvidenceItems: items, AnalysisRun: run, ParsedDocuments: parsedDocs, LibraryRecords: records, PDFBaseURL: "/papers"})
 		if err := writeJSONFile(outPath, view); err != nil {
 			return writeError(stdout, stderr, opts, 1, "report_trace_write_failed", err.Error())
 		}

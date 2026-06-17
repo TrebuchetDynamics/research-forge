@@ -9,6 +9,7 @@ import (
 	"github.com/TrebuchetDynamics/research-forge/internal/analysis"
 	"github.com/TrebuchetDynamics/research-forge/internal/evidence"
 	"github.com/TrebuchetDynamics/research-forge/internal/library"
+	"github.com/TrebuchetDynamics/research-forge/internal/parsing"
 	"github.com/TrebuchetDynamics/research-forge/internal/report"
 )
 
@@ -25,6 +26,10 @@ func TestExecuteReportTraceWritesCitationEvidenceTraceView(t *testing.T) {
 		t.Fatalf("mkdir analysis: %v", err)
 	}
 	writeJSONForCLITest(t, analysisPath, analysis.AnalysisRun{ID: "run1", InputRows: []analysis.InputRow{{PaperID: "paper-1", EffectSize: 1, Variance: 0.1}}})
+	if err := os.MkdirAll(filepath.Join(project, "parsed"), 0o755); err != nil {
+		t.Fatalf("mkdir parsed: %v", err)
+	}
+	writeJSONForCLITest(t, filepath.Join(project, "parsed", "paper-1.json"), parsing.ParsedDocument{PaperID: "paper-1", ParserName: "grobid", ParserVersion: "0.8", Sections: []parsing.Section{{Passages: []parsing.Passage{{ID: "passage-1", PaperID: "paper-1", Text: "quoted"}}}}})
 	store, err := library.OpenStore(filepath.Join(project, "data", "library.json"))
 	if err != nil {
 		t.Fatalf("open library: %v", err)
@@ -42,7 +47,7 @@ func TestExecuteReportTraceWritesCitationEvidenceTraceView(t *testing.T) {
 	if err := readJSONFile(out, &view); err != nil {
 		t.Fatalf("read trace: %v", err)
 	}
-	if len(view.Claims) != 1 || len(view.Claims[0].EffectSizeRows) != 1 || len(view.Claims[0].AcceptedEvidence) != 1 || view.Claims[0].ReferenceManagerItems[0] != "zotero:ZOT-1" {
+	if len(view.Claims) != 1 || len(view.Claims[0].EffectSizeRows) != 1 || len(view.Claims[0].AcceptedEvidence) != 1 || len(view.Claims[0].Passages) != 1 || view.Claims[0].Passages[0].ParserName != "grobid" || view.Claims[0].ReferenceManagerItems[0] != "zotero:ZOT-1" {
 		t.Fatalf("view = %#v", view)
 	}
 }

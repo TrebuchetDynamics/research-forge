@@ -33,6 +33,7 @@ Implemented nearby capabilities:
 - `RunMetafor` writes reproducible SVG forest/funnel plot artifacts with checksums alongside scripts and captured output.
 - `AnalysisArtifactManifest` / `rforge analysis run` bundle forest/funnel SVGs, plot settings, checksums, R/metafor script metadata, engine versions, warnings, and report embedding metadata in `analysis/<run-id>-artifact-manifest.json`.
 - The forge workflow DAG includes analyze/report checkpoints with inputs, outputs, provenance actions, and restart-safe skips.
+- Citation-to-evidence trace views link report claims back to metafor effect-size rows, accepted evidence, parser passages, PDFs, reference-manager items, source records, and raw request/response metadata.
 - Bayesian normal-normal approximation alternative through `rforge analysis bayesian <run-id> --method normal-approx`.
 
 Missing features:

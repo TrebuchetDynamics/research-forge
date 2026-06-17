@@ -22,6 +22,7 @@ Implemented nearby capabilities:
 
 - The forge workflow DAG includes import/dedupe checkpoints with inputs, outputs, provenance actions, and restart-safe skips.
 - The local project knowledge graph merges Zotero collections/tags with source concepts, citations, parsed references, evidence, screening, analysis, and report claims for `rforge knowledge query`.
+- Citation-to-evidence trace views link report claims back to reference-manager items, accepted evidence, parser passages, source API records, and raw request/response metadata.
 
 - JSON, CSV, BibTeX, RIS, CSL-JSON, and Zotero RDF import/export.
 - Normalized `PaperRecord` identifiers including DOI, arXiv, PMID, OpenAlex, Crossref, and Semantic Scholar IDs.

@@ -26,6 +26,7 @@ Implemented nearby capabilities:
 - Parser-run manifests record parser source/version/command, input/output checksums, TEI/JSON output kind, license constraints, shareability, warnings, and reviewer gates.
 - The forge workflow DAG includes parse checkpoints with inputs, outputs, provenance actions, and restart-safe skips.
 - The local project knowledge graph merges GROBID parsed references with collections/tags, OpenAlex concepts, citation edges, evidence, screening, analysis, and report claims for `rforge knowledge query`.
+- Citation-to-evidence trace views link report claims back to parser outputs, passage offsets/text, PDFs, accepted evidence, effect-size rows, and source/reference-manager provenance.
 - Opt-in real GROBID endpoint e2e listed in TODO as complete.
 
 Missing features:

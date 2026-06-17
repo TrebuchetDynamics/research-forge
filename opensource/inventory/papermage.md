@@ -21,6 +21,7 @@ PaperMage models papers as layered entities over text. That pattern can help Res
 Implemented nearby capabilities:
 
 - The local project knowledge graph merges PaperMage-style parsed references with collections/tags, OpenAlex concepts, citation edges, evidence, screening, analysis, and report claims for `rforge knowledge query`.
+- Citation-to-evidence trace views link report claims back to parser outputs, passage offsets/text, PDFs, accepted evidence, effect-size rows, and source/reference-manager provenance.
 
 - Parsed document model with sections, passages, and references.
 - Parser-run manifests record parser name/version, input checksum, parsed output path, layer counts, and warnings.
