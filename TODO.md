@@ -574,7 +574,7 @@ This is the canonical build order for the post-1.0 super-tool work. The thematic
 - [x] Add an evidence extraction grid linking every field to passage/table/figure/equation support, parser offsets, PDF view, reviewer status, correction history, and downstream analysis inclusion (`BuildExtractionGrid`, `rforge evidence grid`).
 - [x] Add scientific entity extraction suggestions with passage offsets, abbreviation resolution, entity-link candidates, confidence, model provenance, and reviewer decisions (`DraftScientificEntitySuggestions`, `ReviewScientificEntitySuggestion`, `rforge evidence entity-suggest|entity-review`).
 - [x] Add LLM-assisted but citation-locked extraction/report-prose suggestions that remain unaccepted until reviewer approval (`DraftCitationLockedSuggestions`, `ReviewCitationLockedSuggestion`, `rforge evidence citation-suggest|citation-review`).
-- [ ] Add an evidence gap analyzer for missing outcomes, missing comparators, unsupported claims, incomplete full-text acquisition, and analysis-input readiness.
+- [x] Add an evidence gap analyzer for missing outcomes, missing comparators, unsupported claims, incomplete full-text acquisition, and analysis-input readiness (`AnalyzeEvidenceGaps`, `rforge evidence gaps`).
 - [ ] Add per-passage provenance and parser/version/source-offset links in generated reports and package audits.
 
 #### Phase 8 — Statistical analysis and method comparison

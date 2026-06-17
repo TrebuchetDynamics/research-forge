@@ -1245,6 +1245,40 @@ func executeEvidence(args []string, stdout, stderr io.Writer, opts globalOptions
 			fmt.Fprintln(stdout, issue.Code)
 		}
 		return 0
+	case "gaps":
+		gapArgs, ok := parseEvidenceGaps(args[1:])
+		if !ok {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge evidence gaps --out <report.json> [--outcome <name> --comparator <name> --full-text <paper-id> --available-full-text <paper-id> --claims <queue.json> --analysis <run.json>]")
+		}
+		var items []evidence.EvidenceItem
+		_ = readJSONFile(evidenceItemsPath(opts.Project), &items)
+		claims := []evidence.CitationLockedSuggestion{}
+		if gapArgs.ClaimsPath != "" {
+			var queue evidence.CitationLockedSuggestionQueue
+			if err := readJSONFile(gapArgs.ClaimsPath, &queue); err != nil {
+				return writeError(stdout, stderr, opts, 1, "claims_read_failed", err.Error())
+			}
+			claims = queue.Suggestions
+		}
+		included := []string{}
+		if gapArgs.AnalysisPath != "" {
+			var run analysis.AnalysisRun
+			if err := readJSONFile(gapArgs.AnalysisPath, &run); err != nil {
+				return writeError(stdout, stderr, opts, 1, "analysis_read_failed", err.Error())
+			}
+			for _, row := range run.InputRows {
+				included = append(included, row.PaperID)
+			}
+		}
+		report := evidence.AnalyzeEvidenceGaps(evidence.EvidenceGapAnalysisInput{Items: items, Claims: claims, RequiredOutcomes: gapArgs.Outcomes, RequiredComparators: gapArgs.Comparators, FullTextRequiredPaperIDs: gapArgs.FullTextRequired, AvailableFullTextPaperIDs: gapArgs.FullTextAvailable, AnalysisIncludedPaperIDs: included})
+		if err := writeJSONFile(gapArgs.OutPath, report); err != nil {
+			return writeError(stdout, stderr, opts, 1, "evidence_gaps_write_failed", err.Error())
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"gaps": report, "path": gapArgs.OutPath})
+		}
+		fmt.Fprintf(stdout, "wrote evidence gap report with %d gaps to %s\n", len(report.Gaps), gapArgs.OutPath)
+		return 0
 	case "grid":
 		parsedPaths, analysisPath, outPath, ok := parseEvidenceGrid(args[1:])
 		if !ok {
@@ -1412,6 +1446,48 @@ func executeEvidence(args []string, stdout, stderr io.Writer, opts globalOptions
 	default:
 		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge evidence <audit|risk-bias-templates|risk-bias-suggest|risk-bias-review>")
 	}
+}
+
+type evidenceGapsArgs struct {
+	Outcomes          []string
+	Comparators       []string
+	FullTextRequired  []string
+	FullTextAvailable []string
+	ClaimsPath        string
+	AnalysisPath      string
+	OutPath           string
+}
+
+func parseEvidenceGaps(args []string) (evidenceGapsArgs, bool) {
+	parsed := evidenceGapsArgs{}
+	for i := 0; i < len(args); i++ {
+		switch args[i] {
+		case "--outcome", "--comparator", "--full-text", "--available-full-text", "--claims", "--analysis", "--out":
+			if i+1 >= len(args) {
+				return evidenceGapsArgs{}, false
+			}
+			switch args[i] {
+			case "--outcome":
+				parsed.Outcomes = append(parsed.Outcomes, args[i+1])
+			case "--comparator":
+				parsed.Comparators = append(parsed.Comparators, args[i+1])
+			case "--full-text":
+				parsed.FullTextRequired = append(parsed.FullTextRequired, args[i+1])
+			case "--available-full-text":
+				parsed.FullTextAvailable = append(parsed.FullTextAvailable, args[i+1])
+			case "--claims":
+				parsed.ClaimsPath = args[i+1]
+			case "--analysis":
+				parsed.AnalysisPath = args[i+1]
+			case "--out":
+				parsed.OutPath = args[i+1]
+			}
+			i++
+		default:
+			return evidenceGapsArgs{}, false
+		}
+	}
+	return parsed, parsed.OutPath != ""
 }
 
 func parseEvidenceGrid(args []string) ([]string, string, string, bool) {
