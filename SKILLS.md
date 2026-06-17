@@ -17,6 +17,7 @@ Production code changes that skip the red step are not accepted unless they are 
 
 | Skill | Use for |
 |---|---|
+| [`research-forge`](./skills/research-forge/SKILL.md) | **Agent usage skill** — run `rforge` to conduct research and save outputs to a project folder or arbitrary path; covers literature search, OSS study, meta-analysis, and knowledge capture |
 | [`research-forge-workflow-orchestration-tdd`](./skills/research-forge-workflow-orchestration-tdd/SKILL.md) | Milestone breakdown, slice sequencing, handoffs, acceptance criteria, routing to specialist skills |
 | [`research-forge-architecture-tdd`](./skills/research-forge-architecture-tdd/SKILL.md) | Package boundaries, ADRs, shared core, service interfaces, adapter seams, dependency direction |
 | [`research-forge-foundation-tdd`](./skills/research-forge-foundation-tdd/SKILL.md) | Go module, `rforge` CLI, project workspace, manifest, lockfile, provenance, SQLite, doctor, CI |
