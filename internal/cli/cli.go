@@ -998,9 +998,33 @@ func parseReportBuild(args []string) (string, []string, bool) {
 
 func executePackage(args []string, stdout, stderr io.Writer, opts globalOptions) int {
 	if len(args) == 0 {
-		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge package <create|audit|replay>")
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge package <create|audit|replay|archive|restore>")
 	}
 	switch args[0] {
+	case "archive":
+		if len(args) != 3 {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge package archive <package-dir> <archive.tar>")
+		}
+		if err := reviewpkg.Archive(args[1], args[2]); err != nil {
+			return writeError(stdout, stderr, opts, 1, "package_archive_failed", err.Error())
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"ok": true, "path": args[2]})
+		}
+		fmt.Fprintf(stdout, "archived review package to %s\n", args[2])
+		return 0
+	case "restore":
+		if len(args) != 3 {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge package restore <archive.tar> <package-dir>")
+		}
+		if err := reviewpkg.Restore(args[1], args[2]); err != nil {
+			return writeError(stdout, stderr, opts, 1, "package_restore_failed", err.Error())
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"ok": true, "path": args[2]})
+		}
+		fmt.Fprintf(stdout, "restored review package to %s\n", args[2])
+		return 0
 	case "audit":
 		if len(args) != 2 {
 			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge package audit <package-dir>")

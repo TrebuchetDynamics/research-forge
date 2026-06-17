@@ -592,7 +592,7 @@ This is the canonical build order for the post-1.0 super-tool work. The thematic
 - [x] Add a claim traceability panel that blocks final export for unresolved or weakly supported generated paragraphs, tables, or figures (`ClaimTraceabilityPanel`, `GuardFinalReportExport`, `rforge report claim-panel|final-export`).
 - [x] Add the Reproducible review package format with project manifest, lockfiles, source query plans, dedupe decisions, parser manifests, screening audit, extraction schema, accepted evidence, analysis artifacts, report outputs, redaction policy, and checksums (`reviewpkg.Manifest`, `reviewpkg.Create`, `rforge package create`).
 - [x] Add package replay/audit commands that verify all checksums, lockfiles, analysis inputs, report outputs, redactions, and provenance links (`reviewpkg.Audit`, `reviewpkg.Replay`, `rforge package audit|replay`).
-- [ ] Add package archive/restore compatibility tests that prove a package can be moved, reopened, audited, and replayed without private local state.
+- [x] Add package archive/restore compatibility tests that prove a package can be moved, reopened, audited, and replayed without private local state (`reviewpkg.Archive`, `reviewpkg.Restore`, `rforge package archive|restore`).
 
 #### Phase 10 — HTMX cockpit and one-command Forge workflow
 
