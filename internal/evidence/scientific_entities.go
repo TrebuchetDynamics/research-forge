@@ -103,6 +103,18 @@ func DraftScientificEntitySuggestions(request ScientificEntitySuggestionRequest)
 	return queue
 }
 
+func EveryScientificEntitySuggestionAuditable(queue ScientificEntitySuggestionQueue) bool {
+	for _, suggestion := range queue.Suggestions {
+		if strings.TrimSpace(suggestion.PassageID) == "" || strings.TrimSpace(suggestion.Mention) == "" || suggestion.Offset.End <= suggestion.Offset.Start || len(suggestion.EntityLinkCandidates) == 0 || suggestion.Confidence <= 0 || strings.TrimSpace(suggestion.ModelName) == "" || strings.TrimSpace(suggestion.ModelVersion) == "" {
+			return false
+		}
+		if suggestion.Status != EntitySuggested && strings.TrimSpace(suggestion.ReviewerDecision.Reviewer) == "" {
+			return false
+		}
+	}
+	return true
+}
+
 func ReviewScientificEntitySuggestion(queue ScientificEntitySuggestionQueue, input ScientificEntityReviewInput) (ScientificEntitySuggestionQueue, error) {
 	if strings.TrimSpace(input.SuggestionID) == "" {
 		return queue, fmt.Errorf("suggestion id is required")

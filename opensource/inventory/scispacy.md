@@ -27,11 +27,13 @@ Implemented nearby capabilities:
 
 Missing features:
 
-- Scientific entity extraction adapter.
-- Abbreviation expansion records linked to passages.
-- Entity-linking review queue.
+- Real optional SciSpaCy adapter after model/license/biomedical text-handling review.
 - Entity-driven query expansion and extraction schema suggestions.
+
+Implemented:
+
+- `DraftScientificEntitySuggestions`, `EveryScientificEntitySuggestionAuditable`, and `rforge evidence entity-suggest|entity-review` create SciSpaCy-inspired scientific entity suggestions with passage IDs/offsets, abbreviation resolution, entity-link candidates, confidence, model provenance, and reviewer accept/correct/reject decisions.
 
 ## Recommended next slice
 
-Add scientific entity suggestion records with mention text, passage ID, offsets, candidate entity IDs, model/version, confidence, and reviewer accepted/rejected/corrected status.
+Add a real optional SciSpaCy adapter and entity-driven query expansion/extraction-schema suggestion workflows while preserving auditable suggestion queues.

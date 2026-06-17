@@ -24,6 +24,9 @@ func TestScientificEntitySuggestionsCaptureOffsetsAbbreviationsLinksModelAndRevi
 	if len(tnf.EntityLinkCandidates) == 0 || tnf.Confidence <= 0 || tnf.ModelName != "scispacy-inspired-fixture" || tnf.ModelVersion != "1.0" || tnf.Status != EntitySuggested {
 		t.Fatalf("tnf metadata = %#v", tnf)
 	}
+	if !EveryScientificEntitySuggestionAuditable(queue) {
+		t.Fatalf("queue should be auditable: %#v", queue)
+	}
 	reviewed, err := ReviewScientificEntitySuggestion(queue, ScientificEntityReviewInput{SuggestionID: tnf.ID, Decision: EntityAccepted, Reviewer: "ada", Note: "matches passage"})
 	if err != nil {
 		t.Fatalf("review: %v", err)
@@ -33,5 +36,12 @@ func TestScientificEntitySuggestionsCaptureOffsetsAbbreviationsLinksModelAndRevi
 	}
 	if _, err := ReviewScientificEntitySuggestion(queue, ScientificEntityReviewInput{SuggestionID: tnf.ID, Decision: EntityAccepted}); err == nil {
 		t.Fatalf("expected reviewer required error")
+	}
+	if _, err := ReviewScientificEntitySuggestion(queue, ScientificEntityReviewInput{SuggestionID: tnf.ID, Decision: EntityCorrected, Reviewer: "ada"}); err != nil {
+		t.Fatalf("corrected decision should be allowed: %v", err)
+	}
+	queue.Suggestions[0].EntityLinkCandidates = nil
+	if EveryScientificEntitySuggestionAuditable(queue) {
+		t.Fatalf("missing entity-link candidates should fail audit")
 	}
 }
