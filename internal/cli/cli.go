@@ -15,6 +15,7 @@ import (
 	"github.com/TrebuchetDynamics/research-forge/internal/analysis"
 	"github.com/TrebuchetDynamics/research-forge/internal/evidence"
 	"github.com/TrebuchetDynamics/research-forge/internal/library"
+	"github.com/TrebuchetDynamics/research-forge/internal/parsing"
 	"github.com/TrebuchetDynamics/research-forge/internal/project"
 	"github.com/TrebuchetDynamics/research-forge/internal/provenance"
 	"github.com/TrebuchetDynamics/research-forge/internal/report"
@@ -1244,6 +1245,40 @@ func executeEvidence(args []string, stdout, stderr io.Writer, opts globalOptions
 			fmt.Fprintln(stdout, issue.Code)
 		}
 		return 0
+	case "grid":
+		parsedPaths, analysisPath, outPath, ok := parseEvidenceGrid(args[1:])
+		if !ok {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge evidence grid --out <grid.json> [--parsed <parsed.json>] [--analysis <run.json>]")
+		}
+		var items []evidence.EvidenceItem
+		_ = readJSONFile(evidenceItemsPath(opts.Project), &items)
+		docs := []parsing.ParsedDocument{}
+		for _, path := range parsedPaths {
+			var doc parsing.ParsedDocument
+			if err := readJSONFile(path, &doc); err != nil {
+				return writeError(stdout, stderr, opts, 1, "parsed_read_failed", err.Error())
+			}
+			docs = append(docs, doc)
+		}
+		included := []string{}
+		if analysisPath != "" {
+			var run analysis.AnalysisRun
+			if err := readJSONFile(analysisPath, &run); err != nil {
+				return writeError(stdout, stderr, opts, 1, "analysis_read_failed", err.Error())
+			}
+			for _, row := range run.InputRows {
+				included = append(included, row.PaperID)
+			}
+		}
+		grid := evidence.BuildExtractionGrid(evidence.ExtractionGridInput{Items: items, ParsedDocuments: docs, AnalysisIncludedPaperIDs: included, PDFBaseURL: "/papers"})
+		if err := writeJSONFile(outPath, grid); err != nil {
+			return writeError(stdout, stderr, opts, 1, "evidence_grid_write_failed", err.Error())
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"grid": grid, "path": outPath})
+		}
+		fmt.Fprintf(stdout, "wrote evidence extraction grid with %d rows to %s\n", len(grid.Rows), outPath)
+		return 0
 	case "risk-bias-templates":
 		outPath, ok := parseSingleFlag(args[1:], "--out")
 		if !ok {
@@ -1296,6 +1331,28 @@ func executeEvidence(args []string, stdout, stderr io.Writer, opts globalOptions
 	default:
 		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge evidence <audit|risk-bias-templates|risk-bias-suggest|risk-bias-review>")
 	}
+}
+
+func parseEvidenceGrid(args []string) ([]string, string, string, bool) {
+	parsed := []string{}
+	values := map[string]string{}
+	for i := 0; i < len(args); i++ {
+		switch args[i] {
+		case "--parsed", "--analysis", "--out":
+			if i+1 >= len(args) {
+				return nil, "", "", false
+			}
+			if args[i] == "--parsed" {
+				parsed = append(parsed, args[i+1])
+			} else {
+				values[args[i]] = args[i+1]
+			}
+			i++
+		default:
+			return nil, "", "", false
+		}
+	}
+	return parsed, values["--analysis"], values["--out"], values["--out"] != ""
 }
 
 func parseRiskBiasSuggest(args []string) (evidence.RiskOfBiasSuggestionRequest, string, bool) {
