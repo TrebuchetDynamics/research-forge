@@ -546,7 +546,7 @@ This is the canonical build order for the post-1.0 super-tool work. The thematic
 #### Phase 4 — Parser arbitration and reference normalization
 
 - [x] Add parser-output license/provenance manifests for GROBID, S2ORC-style JSON, PaperMage, CERMINE, Science Parse-style metadata, and Anystyle outputs (`ParserRunManifest`, `DefaultParserOutputPolicies`, `rforge parse manifest-policies`).
-- [ ] Add a multi-engine parser arbitration layer that scores parser output per field, compares raw text/offsets/warnings, and records why one output was accepted.
+- [x] Add a multi-engine parser arbitration layer that scores parser output per field, compares raw text/offsets/warnings, and records why one output was accepted (`ArbitrateParserOutputs`, `rforge parse arbitrate`).
 - [ ] Extend parsed-document models with stable offsets, layered annotations, citation spans, parser confidence, and multi-parser reconciliation outputs.
 - [ ] Add reviewer-persistent parsed-reference adjudication for accept/correct/reject/defer decisions.
 - [ ] Normalize parsed references against Crossref, OpenAlex, Semantic Scholar, and ADS while preserving raw strings, confidence, provenance, and ambiguity queues.

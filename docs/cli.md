@@ -39,6 +39,7 @@ Core commands:
 - `rforge parse manifest-policies` lists parser-output license/provenance policies for GROBID, S2ORC-style JSON, PaperMage, CERMINE, Science Parse-style metadata, and Anystyle outputs
 - `rforge parse references --paper <id> --parser anystyle --file <refs.txt> --out <refs.json>` (requires `RFORGE_ANYSTYLE_CMD`) writes an Anystyle parser-output manifest beside the parsed references
 - `rforge parse compare --left <parsed.json> --right <parsed.json> --out <report.json>`
+- `rforge parse arbitrate --left <parsed.json> --right <parsed.json> --out <report.json> [--accept <parser> --reason <text> --reviewer <name>]` scores parser output per field, compares raw text/offsets/warnings, and records why one parser output was accepted
 - `rforge parse normalize-refs --parsed <parsed.json> --source crossref|openalex|semantic-scholar --out <report.json>`
 - `rforge parse review-refs --parsed <parsed.json> --out <report.json> [--threshold 0.75]`
 - `rforge index rebuild [--backend sqlite|opensearch|qdrant|hybrid]` (writes `data/retrieval.lock.json`; qdrant/hybrid honor `RFORGE_EMBEDDING_DIMENSIONS` or opt-in `RFORGE_EMBEDDING_URL`/`RFORGE_EMBEDDING_MODEL`), `rforge retrieve --query <query> [--backend sqlite|opensearch|qdrant|hybrid]`

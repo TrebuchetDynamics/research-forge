@@ -328,6 +328,28 @@ func executeParse(args []string, stdout, stderr io.Writer, opts globalOptions) i
 		fmt.Fprintf(stdout, "wrote reference normalization to %s\n", out)
 		return 0
 	}
+	if len(args) > 0 && args[0] == "arbitrate" {
+		left, right, out, accepted, reason, reviewer, ok := parseParseArbitrateArgs(args[1:])
+		if !ok {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> parse arbitrate --left <parsed.json> --right <parsed.json> --out <report.json> [--accept <parser> --reason <text> --reviewer <name>]")
+		}
+		docs, err := readParsedDocumentPair(left, right)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "parse_arbitrate_read_failed", err.Error())
+		}
+		report := parsing.ArbitrateParserOutputs(docs, parsing.ArbitrationDecisionInput{AcceptedParser: accepted, Reason: reason, Reviewer: reviewer})
+		if err := writeJSONFile(out, report); err != nil {
+			return writeError(stdout, stderr, opts, 1, "parse_arbitrate_write_failed", err.Error())
+		}
+		if err := recordDuplicateEvent(opts.Project, "parser.arbitration.decided", map[string]any{"left": left, "right": right, "accepted": report.Decision.AcceptedParser}, map[string]any{"path": out, "reason": report.Decision.Reason, "reviewer": report.Decision.Reviewer}); err != nil {
+			return writeError(stdout, stderr, opts, 1, "parse_arbitrate_provenance_failed", err.Error())
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"arbitration": report, "path": out})
+		}
+		fmt.Fprintf(stdout, "wrote parser arbitration to %s\n", out)
+		return 0
+	}
 	if len(args) > 0 && args[0] == "compare" {
 		left, right, out, ok := parseParseCompareArgs(args[1:])
 		if !ok {
@@ -443,19 +465,27 @@ func validReferenceNormalizationSource(sourceName string) bool {
 }
 
 func compareParsedFiles(left, right string) (parsing.ComparisonReport, error) {
+	docs, err := readParsedDocumentPair(left, right)
+	if err != nil {
+		return parsing.ComparisonReport{}, err
+	}
+	return parsing.CompareParsedDocuments(docs), nil
+}
+
+func readParsedDocumentPair(left, right string) ([]parsing.ParsedDocument, error) {
 	docs := []parsing.ParsedDocument{}
 	for _, path := range []string{left, right} {
 		data, err := os.ReadFile(path)
 		if err != nil {
-			return parsing.ComparisonReport{}, err
+			return nil, err
 		}
 		var doc parsing.ParsedDocument
 		if err := json.Unmarshal(data, &doc); err != nil {
-			return parsing.ComparisonReport{}, err
+			return nil, err
 		}
 		docs = append(docs, doc)
 	}
-	return parsing.CompareParsedDocuments(docs), nil
+	return docs, nil
 }
 
 func readParsePDF(path string) ([]byte, error) {
@@ -534,6 +564,23 @@ func parseNormalizeRefsArgs(args []string) (string, string, string, bool) {
 		}
 	}
 	return values["--parsed"], values["--source"], values["--out"], values["--parsed"] != "" && values["--source"] != "" && values["--out"] != ""
+}
+
+func parseParseArbitrateArgs(args []string) (string, string, string, string, string, string, bool) {
+	values := map[string]string{}
+	for i := 0; i < len(args); i++ {
+		switch args[i] {
+		case "--left", "--right", "--out", "--accept", "--reason", "--reviewer":
+			if i+1 >= len(args) {
+				return "", "", "", "", "", "", false
+			}
+			values[args[i]] = args[i+1]
+			i++
+		default:
+			return "", "", "", "", "", "", false
+		}
+	}
+	return values["--left"], values["--right"], values["--out"], values["--accept"], values["--reason"], values["--reviewer"], values["--left"] != "" && values["--right"] != "" && values["--out"] != ""
 }
 
 func parseParseCompareArgs(args []string) (string, string, string, bool) {
