@@ -45,6 +45,21 @@ func TestRiskRatioCalculatesBinaryOutcomeEffect(t *testing.T) {
 	}
 }
 
+func TestAdditionalEffectCalculatorsMeanDifferenceRiskDifferenceAndCorrelation(t *testing.T) {
+	md, mdVar, err := (MeanDifference{}).Calculate(map[string]string{"mean_treatment": "10", "mean_control": "7", "sd_treatment": "4", "sd_control": "5", "n_treatment": "50", "n_control": "60"})
+	if err != nil || math.Abs(md-3) > 1e-12 || mdVar <= 0 {
+		t.Fatalf("mean difference = %g var=%g err=%v", md, mdVar, err)
+	}
+	rd, rdVar, err := (RiskDifference{}).Calculate(map[string]string{"events_treatment": "30", "n_treatment": "100", "events_control": "20", "n_control": "100"})
+	if err != nil || math.Abs(rd-0.1) > 1e-12 || rdVar <= 0 {
+		t.Fatalf("risk difference = %g var=%g err=%v", rd, rdVar, err)
+	}
+	z, zVar, err := (FisherZCorrelation{}).Calculate(map[string]string{"correlation": "0.5", "n": "30"})
+	if err != nil || math.Abs(z-math.Atanh(0.5)) > 1e-12 || math.Abs(zVar-(1.0/27.0)) > 1e-12 {
+		t.Fatalf("fisher z = %g var=%g err=%v", z, zVar, err)
+	}
+}
+
 func TestPrepareWithCalculatorSupportsLogOddsRatio(t *testing.T) {
 	items := []evidence.EvidenceItem{{
 		PaperID: "paper-1",

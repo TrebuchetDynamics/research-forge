@@ -890,7 +890,7 @@ func executeAnalysis(args []string, stdout, stderr io.Writer, opts globalOptions
 	case "prepare":
 		calc, ok := parseAnalysisEffect(args[2:])
 		if !ok {
-			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge analysis prepare <run-id> [--effect smd|log-odds-ratio|risk-ratio]")
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge analysis prepare <run-id> [--effect smd|log-odds-ratio|risk-ratio|mean-difference|risk-difference|fisher-z-correlation]")
 		}
 		var items []evidence.EvidenceItem
 		if err := readJSONFile(evidenceItemsPath(opts.Project), &items); err != nil {
@@ -1170,6 +1170,12 @@ func parseAnalysisEffect(args []string) (analysis.EffectSizeCalculator, bool) {
 		return analysis.LogOddsRatio{}, true
 	case "risk-ratio", "rr":
 		return analysis.RiskRatio{}, true
+	case "mean-difference", "md":
+		return analysis.MeanDifference{}, true
+	case "risk-difference", "rd":
+		return analysis.RiskDifference{}, true
+	case "fisher-z-correlation", "fisher-z", "correlation":
+		return analysis.FisherZCorrelation{}, true
 	default:
 		return nil, false
 	}

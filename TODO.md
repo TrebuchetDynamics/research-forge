@@ -579,7 +579,7 @@ This is the canonical build order for the post-1.0 super-tool work. The thematic
 
 #### Phase 8 — Statistical analysis and method comparison
 
-- [ ] Add additional effect-size calculators beyond standardized mean difference, log odds ratio, and risk ratio.
+- [x] Add additional effect-size calculators beyond standardized mean difference, log odds ratio, and risk ratio (`MeanDifference`, `RiskDifference`, `FisherZCorrelation`; `rforge analysis prepare --effect mean-difference|risk-difference|fisher-z-correlation`).
 - [ ] Improve subgroup analysis and meta-regression UX beyond direct CLI value entry.
 - [ ] Add influence diagnostics, richer sensitivity artifacts, and publication-bias tests beyond Egger-style regression.
 - [ ] Add publication-ready analysis artifact manifests for forest/funnel plots, plot settings, checksums, R/metafor scripts, engine versions, warnings, and report embedding metadata.

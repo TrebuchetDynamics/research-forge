@@ -32,6 +32,12 @@ type LogOddsRatio struct{}
 
 type RiskRatio struct{}
 
+type MeanDifference struct{}
+
+type RiskDifference struct{}
+
+type FisherZCorrelation struct{}
+
 func (StandardizedMeanDifference) Calculate(values map[string]string) (float64, float64, error) {
 	mt, _ := strconv.ParseFloat(values["mean_treatment"], 64)
 	mc, _ := strconv.ParseFloat(values["mean_control"], 64)
@@ -42,6 +48,19 @@ func (StandardizedMeanDifference) Calculate(values map[string]string) (float64, 
 		return 0, 0, fmt.Errorf("effect size inputs are incomplete")
 	}
 	return (mt - mc) / sd, 1/nt + 1/nc, nil
+}
+
+func (MeanDifference) Calculate(values map[string]string) (float64, float64, error) {
+	mt, _ := strconv.ParseFloat(values["mean_treatment"], 64)
+	mc, _ := strconv.ParseFloat(values["mean_control"], 64)
+	sdt, _ := strconv.ParseFloat(values["sd_treatment"], 64)
+	sdc, _ := strconv.ParseFloat(values["sd_control"], 64)
+	nt, _ := strconv.ParseFloat(values["n_treatment"], 64)
+	nc, _ := strconv.ParseFloat(values["n_control"], 64)
+	if nt == 0 || nc == 0 || sdt == 0 || sdc == 0 {
+		return 0, 0, fmt.Errorf("mean difference inputs are incomplete")
+	}
+	return mt - mc, (sdt*sdt)/nt + (sdc*sdc)/nc, nil
 }
 
 func (LogOddsRatio) Calculate(values map[string]string) (float64, float64, error) {
@@ -73,6 +92,25 @@ func (RiskRatio) Calculate(values map[string]string) (float64, float64, error) {
 		totalC += 0.5
 	}
 	return math.Log((eventsT / totalT) / (eventsC / totalC)), 1/eventsT - 1/totalT + 1/eventsC - 1/totalC, nil
+}
+
+func (RiskDifference) Calculate(values map[string]string) (float64, float64, error) {
+	eventsT, totalT, eventsC, totalC, err := binaryOutcomeInputs(values, "risk difference")
+	if err != nil {
+		return 0, 0, err
+	}
+	pt := eventsT / totalT
+	pc := eventsC / totalC
+	return pt - pc, (pt*(1-pt))/totalT + (pc*(1-pc))/totalC, nil
+}
+
+func (FisherZCorrelation) Calculate(values map[string]string) (float64, float64, error) {
+	r, _ := strconv.ParseFloat(values["correlation"], 64)
+	n, _ := strconv.ParseFloat(values["n"], 64)
+	if r <= -1 || r >= 1 || n <= 3 {
+		return 0, 0, fmt.Errorf("correlation inputs are incomplete")
+	}
+	return math.Atanh(r), 1 / (n - 3), nil
 }
 
 func binaryOutcomeInputs(values map[string]string, name string) (float64, float64, float64, float64, error) {
