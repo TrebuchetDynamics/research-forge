@@ -60,6 +60,10 @@ A structured extracted value or claim that is linked to exact source support suc
 
 A reproducible statistical execution over accepted evidence, including inputs, model settings, scripts or notebooks, tool versions, outputs, warnings, and checksums.
 
+### Meta-analysis spine
+
+The first-priority ResearchForge super-tool workflow for meta-analysis authors: a reproducible path from source planning, import/deduplication, legal full-text acquisition, parser arbitration, screening, and evidence extraction through statistical analysis and auditable reporting. Broader research-cockpit features should build on this spine rather than bypass it.
+
 ### Report build
 
 A generated research report export with citations, evidence tables, screening summaries, analysis outputs, audit appendix, and build metadata.
