@@ -20,7 +20,7 @@ func TestCalibrateHybridRetrievalSelectsWeightedConfigAndRecordsChecksum(t *test
 	if err != nil {
 		t.Fatalf("CalibrateHybridRetrieval returned error: %v", err)
 	}
-	if file.SchemaVersion != "1" || file.QuerySetChecksum == "" || file.QueryCount != 2 || len(file.Evaluations) != 2 {
+	if file.SchemaVersion != "1" || file.QuerySetChecksum == "" || file.QueryCount != 2 || len(file.Evaluations) != 2 || file.CalibrationMethod == "" || len(file.ReproducibilityNotes) == 0 {
 		t.Fatalf("file = %#v", file)
 	}
 	if file.SelectedConfiguration.Name != "balanced" || file.SelectedConfiguration.LexicalWeight != 1 || file.SelectedConfiguration.BackendWeights["qdrant"] != 1 {

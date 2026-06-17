@@ -34,12 +34,14 @@ type HybridTuningEvaluation struct {
 
 type HybridTuningFile struct {
 	SchemaVersion         string                   `json:"schemaVersion"`
+	CalibrationMethod     string                   `json:"calibrationMethod"`
 	QuerySetChecksum      string                   `json:"querySetChecksum"`
 	QueryCount            int                      `json:"queryCount"`
 	K                     int                      `json:"k"`
 	Candidates            []HybridTuningCandidate  `json:"candidates"`
 	Evaluations           []HybridTuningEvaluation `json:"evaluations"`
 	SelectedConfiguration HybridTuningCandidate    `json:"selectedConfiguration"`
+	ReproducibilityNotes  []string                 `json:"reproducibilityNotes"`
 }
 
 func CalibrateHybridRetrieval(queries []HybridTuningQuery, lexical, vector map[string][]PassageResult, candidates []HybridTuningCandidate, k int) (HybridTuningFile, error) {
@@ -52,7 +54,7 @@ func CalibrateHybridRetrieval(queries []HybridTuningQuery, lexical, vector map[s
 	if len(candidates) == 0 {
 		candidates = DefaultHybridTuningCandidates()
 	}
-	file := HybridTuningFile{SchemaVersion: "1", QuerySetChecksum: checksumHybridQueries(queries), QueryCount: len(queries), K: k, Candidates: candidates}
+	file := HybridTuningFile{SchemaVersion: "1", CalibrationMethod: "deterministic-rrf-grid", QuerySetChecksum: checksumHybridQueries(queries), QueryCount: len(queries), K: k, Candidates: candidates, ReproducibilityNotes: []string{"query-set checksum locks query IDs and relevance labels", "candidate lexical/vector/backend weights are persisted before evaluation", "selected configuration is derived solely from deterministic recall@k + MRR scores"}}
 	for _, candidate := range candidates {
 		normalized := normalizeHybridCandidate(candidate)
 		eval := evaluateHybridCandidate(queries, lexical, vector, normalized, k)

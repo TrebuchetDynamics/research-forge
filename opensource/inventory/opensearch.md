@@ -32,6 +32,7 @@ Missing features:
 - Bulk indexing command with partial-failure provenance.
 - Highlighted passage search results.
 - Retrieval benchmark report now compares OpenSearch fixture results against SQLite FTS, Qdrant, and hybrid ranking with reproducibility/privacy notes.
+- Hybrid retrieval tuning files persist lexical/vector/backend weights, deterministic calibration method, evaluation scores, selected configuration, reproducibility notes, and query-set checksums.
 - Opt-in OpenSearch integration test.
 
 ## Recommended slice
