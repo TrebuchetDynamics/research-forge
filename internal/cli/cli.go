@@ -1356,6 +1356,79 @@ func executeScreen(args []string, stdout, stderr io.Writer, opts globalOptions) 
 		}
 		fmt.Fprintln(stdout, "recorded screening adjudication")
 		return 0
+	case "assign":
+		stage, reviewers, perRecord, outPath, ok := parseScreenAssign(args[1:])
+		if !ok {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge screen assign --stage <stage> --reviewer <name> [--reviewer <name>] [--per-record N] --out <assignments.json>")
+		}
+		records, err := screeningRecordsFromLibrary(opts.Project)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "library_list_failed", err.Error())
+		}
+		assignments := screening.AssignReviewers(records, reviewers, perRecord)
+		for i := range assignments {
+			assignments[i].Stage = stage
+		}
+		if err := writeJSONFile(outPath, assignments); err != nil {
+			return writeError(stdout, stderr, opts, 1, "screen_assign_write_failed", err.Error())
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"assignments": assignments, "path": outPath})
+		}
+		fmt.Fprintf(stdout, "wrote %d reviewer assignments to %s\n", len(assignments), outPath)
+		return 0
+	case "panel":
+		stage, outPath, ok := parseScreenPanel(args[1:])
+		if !ok {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge screen panel --stage <stage> --out <panel.json>")
+		}
+		_, events, err := loadScreening(opts.Project)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "screen_load_failed", err.Error())
+		}
+		panel := screening.BuildConflictAdjudicationPanel(events, stage)
+		if err := writeJSONFile(outPath, panel); err != nil {
+			return writeError(stdout, stderr, opts, 1, "screen_panel_write_failed", err.Error())
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"panel": panel, "path": outPath})
+		}
+		fmt.Fprintf(stdout, "wrote conflict/adjudication panel to %s\n", outPath)
+		return 0
+	case "audit-bundle":
+		stage, assignmentsPath, activeRunPath, outPath, ok := parseScreenAuditBundle(args[1:])
+		if !ok {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge screen audit-bundle --stage <stage> --out <bundle.json> [--assignments <assignments.json> --active-run <run.json>]")
+		}
+		records, err := screeningRecordsFromLibrary(opts.Project)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "library_list_failed", err.Error())
+		}
+		_, events, err := loadScreening(opts.Project)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "screen_load_failed", err.Error())
+		}
+		assignments := []screening.ReviewerAssignment{}
+		if assignmentsPath != "" {
+			if err := readJSONFile(assignmentsPath, &assignments); err != nil {
+				return writeError(stdout, stderr, opts, 1, "screen_assignments_read_failed", err.Error())
+			}
+		}
+		var activeRun screening.ActiveLearningRun
+		if activeRunPath != "" {
+			if err := readJSONFile(activeRunPath, &activeRun); err != nil {
+				return writeError(stdout, stderr, opts, 1, "screen_active_run_read_failed", err.Error())
+			}
+		}
+		bundle := screening.BuildScreeningAuditBundle(screening.ScreeningAuditBundleInput{Records: records, Events: events, Assignments: assignments, Stage: stage, ActiveRun: activeRun})
+		if err := writeJSONFile(outPath, bundle); err != nil {
+			return writeError(stdout, stderr, opts, 1, "screen_audit_bundle_write_failed", err.Error())
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"auditBundle": bundle, "path": outPath})
+		}
+		fmt.Fprintf(stdout, "wrote screening audit bundle to %s\n", outPath)
+		return 0
 	case "queue":
 		stage, decision, ok := parseScreenQueue(args[1:])
 		if !ok {
@@ -1675,6 +1748,64 @@ func parseScreenDecision(args []string) (screening.DecisionInput, bool) {
 	}
 	return screening.DecisionInput{PaperID: values["--paper"], Stage: screening.Stage(values["--stage"]), Decision: screening.Decision(values["--decision"]), Reason: values["--reason"], Reviewer: values["--reviewer"]}, values["--paper"] != "" && values["--stage"] != "" && values["--decision"] != "" && values["--reviewer"] != ""
 }
+func parseScreenAssign(args []string) (screening.Stage, []string, int, string, bool) {
+	values := map[string]string{}
+	reviewers := []string{}
+	perRecord := 1
+	for i := 0; i < len(args); i++ {
+		switch args[i] {
+		case "--stage", "--reviewer", "--per-record", "--out":
+			if i+1 >= len(args) {
+				return "", nil, 0, "", false
+			}
+			switch args[i] {
+			case "--reviewer":
+				reviewers = append(reviewers, args[i+1])
+			case "--per-record":
+				parsed, err := strconv.Atoi(args[i+1])
+				if err != nil || parsed <= 0 {
+					return "", nil, 0, "", false
+				}
+				perRecord = parsed
+			default:
+				values[args[i]] = args[i+1]
+			}
+			i++
+		default:
+			return "", nil, 0, "", false
+		}
+	}
+	return screening.Stage(values["--stage"]), reviewers, perRecord, values["--out"], values["--stage"] != "" && values["--out"] != "" && len(reviewers) > 0
+}
+
+func parseScreenPanel(args []string) (screening.Stage, string, bool) {
+	if len(args) != 4 {
+		return "", "", false
+	}
+	values := map[string]string{}
+	for i := 0; i < len(args); i += 2 {
+		values[args[i]] = args[i+1]
+	}
+	return screening.Stage(values["--stage"]), values["--out"], values["--stage"] != "" && values["--out"] != ""
+}
+
+func parseScreenAuditBundle(args []string) (screening.Stage, string, string, string, bool) {
+	values := map[string]string{}
+	for i := 0; i < len(args); i++ {
+		switch args[i] {
+		case "--stage", "--assignments", "--active-run", "--out":
+			if i+1 >= len(args) {
+				return "", "", "", "", false
+			}
+			values[args[i]] = args[i+1]
+			i++
+		default:
+			return "", "", "", "", false
+		}
+	}
+	return screening.Stage(values["--stage"]), values["--assignments"], values["--active-run"], values["--out"], values["--stage"] != "" && values["--out"] != ""
+}
+
 func parseScreenQueue(args []string) (screening.Stage, screening.Decision, bool) {
 	if len(args) != 4 {
 		return "", "", false
@@ -1792,6 +1923,22 @@ func parseScreenPrioritize(args []string) (screening.Stage, int, bool) {
 	}
 	return screening.Stage(values["--stage"]), limit, values["--stage"] != ""
 }
+func screeningRecordsFromLibrary(project string) ([]screening.ScreeningRecord, error) {
+	store, err := library.OpenStore(filepath.Join(project, "data", "library.json"))
+	if err != nil {
+		return nil, err
+	}
+	papers, err := store.List()
+	if err != nil {
+		return nil, err
+	}
+	records := make([]screening.ScreeningRecord, 0, len(papers))
+	for _, paper := range papers {
+		records = append(records, screening.ScreeningRecord{ID: screeningPaperID(paper), Title: paper.Title, Abstract: paper.Abstract})
+	}
+	return records, nil
+}
+
 func screeningPaperID(paper library.PaperRecord) string {
 	ids := paper.Identifiers
 	for _, id := range []string{ids.DOI, ids.OpenAlexID, ids.ArXivID, ids.PMID, ids.CrossrefID, ids.SemanticScholarID} {
