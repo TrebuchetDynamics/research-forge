@@ -3,12 +3,13 @@ package parsing
 import "strings"
 
 type ParserArbitrationReport struct {
-	SchemaVersion     string                    `json:"schemaVersion"`
-	PaperID           string                    `json:"paperId"`
-	FieldScores       map[string][]FieldScore   `json:"fieldScores"`
-	Comparisons       []FieldComparison         `json:"comparisons"`
-	WarningComparison []ParserWarnings          `json:"warningComparison"`
-	Decision          ParserArbitrationDecision `json:"decision"`
+	SchemaVersion         string                       `json:"schemaVersion"`
+	PaperID               string                       `json:"paperId"`
+	FieldScores           map[string][]FieldScore      `json:"fieldScores"`
+	Comparisons           []FieldComparison            `json:"comparisons"`
+	WarningComparison     []ParserWarnings             `json:"warningComparison"`
+	ReconciliationOutputs []ParserReconciliationOutput `json:"reconciliationOutputs"`
+	Decision              ParserArbitrationDecision    `json:"decision"`
 }
 
 type FieldScore struct {
@@ -76,6 +77,7 @@ func ArbitrateParserOutputs(docs []ParsedDocument, input ArbitrationDecisionInpu
 	if report.Decision.Reason == "" {
 		report.Decision.Reason = "highest aggregate field score; reviewer must confirm before accepting parser output"
 	}
+	report.ReconciliationOutputs = buildReconciliationOutputs(report.Comparisons, docs, report.Decision)
 	return report
 }
 
@@ -144,6 +146,26 @@ func bestParserByFieldScores(scores map[string][]FieldScore) string {
 		}
 	}
 	return best
+}
+
+func buildReconciliationOutputs(comparisons []FieldComparison, docs []ParsedDocument, decision ParserArbitrationDecision) []ParserReconciliationOutput {
+	outputs := []ParserReconciliationOutput{}
+	warnings := map[string][]string{}
+	for _, doc := range docs {
+		warnings[doc.ParserName] = append([]string{}, doc.Warnings...)
+	}
+	for _, comparison := range comparisons {
+		output := ParserReconciliationOutput{Field: comparison.Field, AcceptedParser: decision.AcceptedParser, Reason: decision.Reason}
+		for _, value := range comparison.ParserValues {
+			alt := ParserReconciliationAlt{ParserName: value.ParserName, Value: value.RawText, Offset: value.Offset, Warnings: warnings[value.ParserName]}
+			if value.ParserName == decision.AcceptedParser {
+				output.AcceptedValue = value.RawText
+			}
+			output.Alternatives = append(output.Alternatives, alt)
+		}
+		outputs = append(outputs, output)
+	}
+	return outputs
 }
 
 func firstNonEmptyArbitration(values ...string) string {

@@ -60,7 +60,7 @@ func (p AnyStyleReferenceParser) ParseReferences(ctx context.Context, paperID st
 	if len(doc.References) == 0 {
 		doc.Warnings = append(doc.Warnings, "no references parsed")
 	}
-	return doc, nil
+	return EnrichParsedDocumentModel(doc), nil
 }
 
 type anyStyleReference struct {

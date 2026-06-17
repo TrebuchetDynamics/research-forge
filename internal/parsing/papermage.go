@@ -57,7 +57,7 @@ func (p PaperMageJSONParser) Parse(ctx context.Context, data []byte, options Par
 		}
 		doc.References = append(doc.References, Reference{Title: title, DOI: doi, Raw: raw, Confidence: ref.Confidence})
 	}
-	return doc, nil
+	return EnrichParsedDocumentModel(doc), nil
 }
 
 type paperMagePayload struct {

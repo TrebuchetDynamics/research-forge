@@ -45,7 +45,7 @@ func (p S2ORCJSONParser) Parse(ctx context.Context, data []byte, options ParseOp
 	if doc.Title == "" {
 		doc.Warnings = append(doc.Warnings, "missing title")
 	}
-	return doc, nil
+	return EnrichParsedDocumentModel(doc), nil
 }
 
 type s2orcDocument struct {

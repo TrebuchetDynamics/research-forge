@@ -196,7 +196,7 @@ func parseTEI(data []byte, paperID string) (ParsedDocument, error) {
 	if doc.Title == "" {
 		doc.Warnings = append(doc.Warnings, "missing title")
 	}
-	return doc, nil
+	return EnrichParsedDocumentModel(doc), nil
 }
 
 func compactText(value string) string {

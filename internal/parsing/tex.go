@@ -36,7 +36,7 @@ func (p TeXParser) Parse(ctx context.Context, data []byte, options ParseOptions)
 	if doc.Title == "" {
 		doc.Warnings = append(doc.Warnings, "missing title")
 	}
-	return doc, nil
+	return EnrichParsedDocumentModel(doc), nil
 }
 
 type texSection struct {
