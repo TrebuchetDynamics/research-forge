@@ -11,6 +11,9 @@ import (
 	"sort"
 	"strings"
 	"time"
+
+	"github.com/TrebuchetDynamics/research-forge/internal/documents"
+	"github.com/TrebuchetDynamics/research-forge/internal/library"
 )
 
 type Options struct {
@@ -66,6 +69,9 @@ func Create(projectPath, packagePath string, opts Options) (Package, error) {
 	if strings.TrimSpace(projectPath) == "" || strings.TrimSpace(packagePath) == "" {
 		return Package{}, fmt.Errorf("project and package paths are required")
 	}
+	if err := guardReferenceManagerPrivacyGate(projectPath); err != nil {
+		return Package{}, err
+	}
 	if err := os.RemoveAll(packagePath); err != nil {
 		return Package{}, err
 	}
@@ -118,6 +124,38 @@ func Create(projectPath, packagePath string, opts Options) (Package, error) {
 		return Package{}, err
 	}
 	return pkg, nil
+}
+
+func guardReferenceManagerPrivacyGate(projectPath string) error {
+	libraryPath := filepath.Join(projectPath, "data", "library.json")
+	if !exists(libraryPath) {
+		return nil
+	}
+	data, err := os.ReadFile(libraryPath)
+	if err != nil {
+		return err
+	}
+	var records []library.PaperRecord
+	if err := json.Unmarshal(data, &records); err != nil {
+		return err
+	}
+	review := documents.ReviewPrivacyLicensing(documents.PrivacyLicensingReviewInput{Records: records})
+	if len(review.Issues) == 0 {
+		return nil
+	}
+	reviewPath := filepath.Join(projectPath, "data", "privacy-licensing-review.json")
+	data, err = os.ReadFile(reviewPath)
+	if err != nil {
+		return documents.GuardPrivacyLicensing(review)
+	}
+	var approved documents.PrivacyLicensingReview
+	if err := json.Unmarshal(data, &approved); err != nil {
+		return err
+	}
+	if err := documents.GuardPrivacyLicensing(approved); err != nil {
+		return err
+	}
+	return nil
 }
 
 func copyGlob(projectPath, packagePath, pattern string, onCopy func(string)) {
