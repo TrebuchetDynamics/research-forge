@@ -37,8 +37,9 @@ func semanticScholarLiveSmokeHTTPClient() HTTPClient {
 // the normal, network-free suite. Base URLs may be overridden with the same
 // RFORGE_*_URL env vars the CLI uses. PubMed also honors optional
 // RFORGE_PUBMED_API_KEY/RFORGE_PUBMED_TOOL/RFORGE_PUBMED_EMAIL; Semantic
-// Scholar honors RFORGE_SEMANTIC_SCHOLAR_API_KEY; the Unpaywall subtest
-// additionally requires RFORGE_UNPAYWALL_EMAIL.
+// Scholar honors RFORGE_SEMANTIC_SCHOLAR_API_KEY; NASA ADS requires
+// RFORGE_ADS_TOKEN; the Unpaywall subtest additionally requires
+// RFORGE_UNPAYWALL_EMAIL.
 func TestOptInLiveSourceConnectorSmoke(t *testing.T) {
 	if os.Getenv("RFORGE_RUN_LIVE_SOURCE_SMOKE") != "1" {
 		t.Skip("set RFORGE_RUN_LIVE_SOURCE_SMOKE=1 to run live source connector smoke tests")
@@ -57,6 +58,16 @@ func TestOptInLiveSourceConnectorSmoke(t *testing.T) {
 			return NewSemanticScholarConnector(semanticScholarLiveSmokeHTTPClient())
 		}},
 		{"europepmc", "RFORGE_EUROPEPMC_URL", "https://www.ebi.ac.uk/europepmc", func(c HTTPClient) SourceConnector { return NewEuropePMCConnector(c) }},
+		{"nasa-ads", "RFORGE_ADS_URL", "https://api.adsabs.harvard.edu", func(c HTTPClient) SourceConnector {
+			if os.Getenv("RFORGE_ADS_TOKEN") == "" {
+				t.Skip("set RFORGE_ADS_TOKEN to run the NASA ADS live smoke test")
+			}
+			baseURL := os.Getenv("RFORGE_ADS_URL")
+			if baseURL == "" {
+				baseURL = "https://api.adsabs.harvard.edu"
+			}
+			return NewNASAADSConnector(NewNASAADSHTTPClient(baseURL, os.Getenv("RFORGE_ADS_TOKEN")))
+		}},
 		{"pubmed", "RFORGE_PUBMED_URL", "https://eutils.ncbi.nlm.nih.gov", func(c HTTPClient) SourceConnector {
 			return NewPubMedConnectorWithOptions(c, PubMedOptions{APIKey: os.Getenv("RFORGE_PUBMED_API_KEY"), Tool: os.Getenv("RFORGE_PUBMED_TOOL"), Email: os.Getenv("RFORGE_PUBMED_EMAIL")})
 		}},

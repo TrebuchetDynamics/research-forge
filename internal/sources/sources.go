@@ -31,6 +31,7 @@ type Identifiers struct {
 	PMCID             string
 	CrossrefID        string
 	SemanticScholarID string
+	ADSBibcode        string
 }
 
 // SourceRecord is a source-specific scholarly metadata result.
@@ -71,6 +72,7 @@ func PaperRecords(response SourceResponse) ([]library.PaperRecord, error) {
 				PMCID:             record.Identifiers.PMCID,
 				CrossrefID:        record.Identifiers.CrossrefID,
 				SemanticScholarID: record.Identifiers.SemanticScholarID,
+				ADSBibcode:        record.Identifiers.ADSBibcode,
 			},
 			Year:       record.Year,
 			Venue:      record.Venue,

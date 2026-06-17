@@ -27,11 +27,12 @@ Implemented nearby capabilities:
 
 Missing features:
 
-- NASA ADS search connector.
-- Bibcode identifier field and normalization rules.
-- ADS citation/reference graph expansion.
-- Opt-in ADS live smoke test with token redaction.
+- Advanced ADS pagination/rate-budget dashboarding.
+
+Implemented:
+
+- NASA ADS search connector supports bibcode/DOI/title query normalization, physics/astronomy metadata fields, ADS bibcode identifiers, token-bearing HTTP client with redaction helper, citation/reference graph expansion, protocol source-planning entries, and opt-in live smoke coverage gated by `RFORGE_ADS_TOKEN`.
 
 ## Recommended next slice
 
-Add a fake-backed NASA ADS connector for bibcode/DOI/title search that normalizes records into `PaperRecord` while preserving raw ADS IDs and request provenance.
+Add richer ADS pagination/rate-budget dashboards and broader astronomy-specific metadata fields on top of the implemented fake-backed connector and live-smoke seam.

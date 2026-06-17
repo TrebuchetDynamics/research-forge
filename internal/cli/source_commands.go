@@ -847,7 +847,7 @@ func searchConnector(source string) (sourceConnector, bool) {
 		if baseURL == "" {
 			baseURL = "https://api.adsabs.harvard.edu"
 		}
-		return sources.NewNASAADSConnector(defaultSourceHTTPClient(baseURL)), true
+		return sources.NewNASAADSConnector(sources.NewNASAADSHTTPClient(baseURL, os.Getenv("RFORGE_ADS_TOKEN"))), true
 	case "europepmc":
 		baseURL := os.Getenv("RFORGE_EUROPEPMC_URL")
 		if baseURL == "" {

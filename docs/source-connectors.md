@@ -44,7 +44,7 @@ ResearchForge keeps scholarly source integrations local-first and explicit about
   - confirm token requirements, rate limits, acceptable cached metadata, and attribution/citation requirements;
   - validate whether abstracts or full-text links carry additional restrictions.
 - Outbound data: query terms, bibcodes/DOIs, requested fields, pagination tokens, API token.
-- Credentials/config: NASA ADS API token stored outside project manifests and redacted from provenance/output.
+- Credentials/config: NASA ADS API token (`RFORGE_ADS_TOKEN`) stored outside project manifests and redacted from provenance/output; opt-in live smoke requires the token.
 
 ### DOAJ / CORE
 
