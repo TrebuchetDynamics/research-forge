@@ -11,6 +11,7 @@ import (
 	"github.com/TrebuchetDynamics/research-forge/internal/library"
 	"github.com/TrebuchetDynamics/research-forge/internal/project"
 	"github.com/TrebuchetDynamics/research-forge/internal/provenance"
+	"github.com/TrebuchetDynamics/research-forge/internal/retrieval"
 	"github.com/TrebuchetDynamics/research-forge/internal/screening"
 	"github.com/TrebuchetDynamics/research-forge/internal/ui"
 )
@@ -92,6 +93,23 @@ func forgeNextActions(currentState string) []ForgeNextAction {
 	default:
 		return []ForgeNextAction{{Label: "Inspect project", CLI: "rforge project inspect <path>"}}
 	}
+}
+
+type RetrievalTuningState struct {
+	ProjectPath          string
+	Query                string
+	Backends             []retrieval.RetrievalBackendBenchmark
+	QueryResults         []retrieval.RetrievalBenchmarkQueryResult
+	PrivacyNotes         []string
+	ReproducibilityNotes []string
+	CLIEquivalent        string
+}
+
+func BuildRetrievalTuningState(projectPath string) RetrievalTuningState {
+	fixture := retrieval.DefaultRetrievalBenchmarkFixture()
+	report, _ := retrieval.RunRetrievalBenchmark(fixture, 3)
+	state := RetrievalTuningState{ProjectPath: projectPath, Query: "same query fixture set", Backends: report.Backends, QueryResults: report.QueryResults, PrivacyNotes: report.PrivacyNotes, ReproducibilityNotes: report.ReproducibilityNotes, CLIEquivalent: "rforge retrieve benchmark --out data/retrieval-benchmark.json && rforge retrieve tune-hybrid --queries queries.json --lexical lexical.json --vector vector.json --out data/hybrid-tuning.json"}
+	return state
 }
 
 type AcquisitionQueueState struct {

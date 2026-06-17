@@ -172,6 +172,21 @@ var genericWorkbenchTemplate = template.Must(template.New("generic-workbench").P
   <p><a href="/workbenches">Back to HTMX workbenches</a></p>
 </section>`))
 
+var retrievalTuningTemplate = template.Must(template.New("retrieval-tuning").Parse(`<section aria-labelledby="retrieval-title" class="rf-card">
+  <h2 id="retrieval-title">Retrieval tuning</h2>
+  <p>Compare SQLite FTS, OpenSearch, Qdrant vector, and hybrid results for the same query set with passage provenance, ranking explanations, embedding privacy status, and benchmark scores.</p>
+  <p>CLI equivalent: <code>{{.CLIEquivalent}}</code></p>
+  <h3>Benchmark scores</h3>
+  <div role="table" aria-label="Retrieval backend benchmark scores">
+    <div role="row"><strong role="columnheader">Backend</strong><strong role="columnheader">Recall@K</strong><strong role="columnheader">MRR</strong><strong role="columnheader">Score</strong><strong role="columnheader">embedding privacy status</strong><strong role="columnheader">ranking explanations</strong></div>
+    {{range .Backends}}<div role="row"><span role="cell">{{if eq .Backend "sqlite-fts"}}SQLite FTS{{else if eq .Backend "qdrant"}}Qdrant vector{{else if eq .Backend "opensearch"}}OpenSearch{{else}}{{.Backend}}{{end}}</span><span role="cell">{{printf "%.3f" .RecallAtK}}</span><span role="cell">{{printf "%.3f" .MRR}}</span><span role="cell">{{printf "%.3f" .Score}}</span><span role="cell">{{.PrivacyNote}}</span><span role="cell">{{.ReproducibilityNote}}</span></div>{{end}}
+  </div>
+  <h3>Passage provenance</h3>
+  {{range .QueryResults}}<p>{{.QueryID}} {{.Backend}} top passages: {{.TopK}}</p>{{end}}
+  <h3>Privacy/reproducibility notes</h3>
+  {{range .PrivacyNotes}}<p>{{.}}</p>{{end}}{{range .ReproducibilityNotes}}<p>{{.}}</p>{{end}}
+</section>`))
+
 var acquisitionQueueTemplate = template.Must(template.New("acquisition-queue").Parse(`<section aria-labelledby="acquisition-title" class="rf-card">
   <h2 id="acquisition-title">Legal full-text acquisition queue</h2>
   <p>OA/license status, source URL, expected stored path, restricted/shareable flags, and explicit reviewer approval before downloading or archiving documents.</p>
@@ -592,6 +607,13 @@ func NewWorkbenchIndexHandler(state WorkbenchIndexState) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		_ = workbenchIndexTemplate.Execute(w, state)
+	})
+}
+
+func newRetrievalTuningHandler(projectPath func() string) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		_ = retrievalTuningTemplate.Execute(w, BuildRetrievalTuningState(projectPath()))
 	})
 }
 

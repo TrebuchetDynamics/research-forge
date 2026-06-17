@@ -34,6 +34,7 @@ Implemented nearby capabilities:
 - The `/map` local web cockpit combines concept maps, citation neighborhoods, screening priority, parser quality, retrieval hits, and evidence coverage with no-JS server rendering and `/map/snapshot.json` audit exports.
 - Cross-tool benchmarks report deterministic fixture metrics for discovery recall, dedupe precision, parser field accuracy, reference normalization, retrieval quality, screening effort savings, and report/package reproducibility.
 - The method-comparison workbench compares parser choices, retrieval backends, screening rankers, effect-size models, and publication-bias diagnostics side-by-side before recording the reviewer-selected method locked into the final report.
+- The `/retrieve` tuning screen compares SQLite FTS, OpenSearch, Qdrant vector, and hybrid results for the same query set with passage provenance, ranking explanations, embedding privacy status, and benchmark scores.
 
 Missing features:
 
