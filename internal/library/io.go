@@ -66,12 +66,14 @@ func ImportBibTeX(path string) ([]PaperRecord, int, error) {
 		}
 		fields := parseBibTeXFields(entry)
 		year, _ := strconv.Atoi(fields["year"])
+		metadata := jabRefMetadata(entry, fields)
 		record, err := NewPaperRecord(PaperRecordInput{
 			Title:       fields["title"],
 			Identifiers: Identifiers{DOI: fields["doi"]},
 			Year:        year,
 			Venue:       fields["journal"],
 			Publisher:   fields["publisher"],
+			SourceRefs:  []SourceRef{{Source: "jabref-bibtex", Metadata: metadata}},
 		})
 		if err != nil {
 			skipped++
@@ -89,18 +91,33 @@ func ExportBibTeX(path string, records []PaperRecord) error {
 	}
 	var builder strings.Builder
 	for i, record := range records {
-		fmt.Fprintf(&builder, "@article{paper%d,\n", i+1)
+		key := metadataValue(record, "citation_key")
+		if key == "" {
+			key = fmt.Sprintf("paper%d", i+1)
+		}
+		fmt.Fprintf(&builder, "@article{%s,\n", key)
 		fmt.Fprintf(&builder, "  title = {%s},\n", record.Title)
 		fmt.Fprintf(&builder, "  doi = {%s},\n", record.Identifiers.DOI)
 		fmt.Fprintf(&builder, "  year = {%d}", record.Year)
 		if record.Venue != "" {
-			fmt.Fprintf(&builder, ",\n  journal = {%s}\n", record.Venue)
-		} else {
-			builder.WriteString("\n")
+			fmt.Fprintf(&builder, ",\n  journal = {%s}", record.Venue)
 		}
-		builder.WriteString("}\n")
+		writeBibTeXMetadataField(&builder, record, "keywords", "tags")
+		writeBibTeXMetadataField(&builder, record, "groups", "groups")
+		writeBibTeXMetadataField(&builder, record, "note", "note")
+		writeBibTeXMetadataField(&builder, record, "annote", "annotations")
+		if file := metadataValue(record, "attachment_files"); file != "" {
+			fmt.Fprintf(&builder, ",\n  file = {:%s:PDF}", file)
+		}
+		builder.WriteString("\n}\n")
 	}
 	return os.WriteFile(path, []byte(builder.String()), 0o644)
+}
+
+func writeBibTeXMetadataField(builder *strings.Builder, record PaperRecord, fieldName, metadataKey string) {
+	if value := metadataValue(record, metadataKey); value != "" {
+		fmt.Fprintf(builder, ",\n  %s = {%s}", fieldName, value)
+	}
 }
 
 func parseBibTeXFields(entry string) map[string]string {
@@ -118,6 +135,72 @@ func parseBibTeXFields(entry string) map[string]string {
 		fields[key] = strings.TrimSpace(value)
 	}
 	return fields
+}
+
+func jabRefMetadata(entry string, fields map[string]string) map[string]string {
+	metadata := map[string]string{"citation_key": bibTeXCitationKey(entry)}
+	copyBibTeXMetadata(metadata, "tags", fields["keywords"])
+	copyBibTeXMetadata(metadata, "groups", fields["groups"])
+	copyBibTeXMetadata(metadata, "note", fields["note"])
+	copyBibTeXMetadata(metadata, "annotations", fields["annote"])
+	if files := redactedBibTeXFiles(fields["file"]); len(files) > 0 {
+		metadata["attachment_files"] = strings.Join(files, "; ")
+		metadata["linked_file_privacy_check"] = "redacted-local-paths"
+	}
+	if diff := bibTeXCleanupDiffs(fields); diff != "" {
+		metadata["cleanup_diff"] = diff
+	}
+	return metadata
+}
+
+func copyBibTeXMetadata(metadata map[string]string, key, value string) {
+	value = strings.TrimSpace(value)
+	if value != "" {
+		metadata[key] = value
+	}
+}
+
+func bibTeXCitationKey(entry string) string {
+	line := strings.TrimSpace(strings.SplitN(entry, "\n", 2)[0])
+	if idx := strings.Index(line, "{"); idx >= 0 {
+		line = line[idx+1:]
+	}
+	if idx := strings.Index(line, ","); idx >= 0 {
+		return strings.TrimSpace(line[:idx])
+	}
+	return ""
+}
+
+func redactedBibTeXFiles(value string) []string {
+	out := []string{}
+	for _, part := range strings.Split(value, ";") {
+		part = strings.TrimSpace(part)
+		if part == "" {
+			continue
+		}
+		pieces := strings.Split(part, ":")
+		candidate := part
+		if len(pieces) >= 2 {
+			candidate = pieces[len(pieces)-2]
+		}
+		candidate = strings.ReplaceAll(candidate, "\\", "/")
+		file := filepath.Base(candidate)
+		if file != "" && file != "." && file != string(filepath.Separator) {
+			out = append(out, file)
+		}
+	}
+	return out
+}
+
+func bibTeXCleanupDiffs(fields map[string]string) string {
+	diffs := []string{}
+	if raw := strings.TrimSpace(fields["doi"]); raw != "" {
+		normalized := normalizeDOI(raw)
+		if raw != normalized {
+			diffs = append(diffs, "doi: "+raw+" -> "+normalized)
+		}
+	}
+	return strings.Join(diffs, "; ")
 }
 
 // ImportRIS reads a minimal deterministic RIS fixture/export file. It skips

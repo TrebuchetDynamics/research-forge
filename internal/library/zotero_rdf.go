@@ -64,6 +64,7 @@ func ImportZoteroRDF(path string) ([]PaperRecord, int, error) {
 		}
 		if files := redactedRDFAttachments(item.Attachment); len(files) > 0 {
 			metadata["attachment_files"] = strings.Join(files, "; ")
+			metadata["linked_file_privacy_check"] = "redacted-local-paths"
 		}
 		record, err := NewPaperRecord(PaperRecordInput{
 			Title:       item.Title,

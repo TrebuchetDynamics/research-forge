@@ -530,7 +530,7 @@ This is the canonical build order for the post-1.0 super-tool work. The thematic
 
 #### Phase 2 — Library import, identity, and deduplication
 
-- [ ] Add Zotero/JabRef reference-manager fidelity work: collections/groups, tags, notes, annotations, citation keys, BibTeX/BibLaTeX cleanup diffs, and linked-file privacy checks.
+- [x] Add Zotero/JabRef reference-manager fidelity work: collections/groups, tags, notes, annotations, citation keys, BibTeX/BibLaTeX cleanup diffs, and linked-file privacy checks (`ImportZoteroRDF`, `ImportBibTeX`, `ReferenceManagerFidelityReport`).
 - [ ] Add a reference-manager interchange fidelity matrix across BibTeX, RIS, CSL-JSON, Zotero RDF, Better BibTeX citation keys, tags, notes, collections, and redacted attachments.
 - [ ] Add source-fusion identity resolution for DOI, arXiv, PMID, PMCID, OpenAlex, Semantic Scholar, Crossref, Zotero, and ADS bibcode identifiers with explainable match rules.
 - [ ] Add reversible merge/split decisions and conflict records for identity clusters.
