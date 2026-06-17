@@ -78,7 +78,7 @@ type ParserFallbackDecision struct {
 }
 
 func DefaultParserFallbackPolicy() ParserFallbackPolicy {
-	return ParserFallbackPolicy{Parsers: []string{"grobid", "s2orc-doc2json", "papermage", "cermine", "anystyle"}, ReviewerRequired: true, AutoAcceptConflicts: false}
+	return ParserFallbackPolicy{Parsers: []string{"grobid", "s2orc-doc2json", "papermage", "cermine", "science-parse", "anystyle"}, ReviewerRequired: true, AutoAcceptConflicts: false}
 }
 func (p ParserFallbackPolicy) HasParser(name string) bool {
 	name = canonicalParserName(name)

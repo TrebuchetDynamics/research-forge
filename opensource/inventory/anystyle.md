@@ -26,6 +26,7 @@ Implemented nearby capabilities:
 - Parser-run manifests record parser source/version/command, input/output checksums, reference JSON output kind, license constraints, shareability, warnings, and reviewer gates.
 - `rforge parse adjudicate-ref` and `rforge parse adjudicated-refs --ambiguity-out` persist reviewer accept/correct/reject/defer decisions, provenance links, corrected reference fields, and exportable ambiguity queues for Anystyle/GROBID/S2ORC-normalized matches.
 - Multi-engine parser arbitration scores GROBID/S2ORC-style/PaperMage/CERMINE/Science Parse/Anystyle outputs per field, routes conflicts to review, records reviewer selection reasons, and emits reconciliation outputs.
+- The `/parsing` HTMX arbitration screen compares parser outputs field-by-field with confidence, raw text, offsets, warnings, and accept/correct/reject controls.
 - Crossref/OpenAlex/Semantic Scholar connectors.
 - Duplicate report/merge/split UX.
 - Source-fusion identity resolution merges DOI/arXiv/PMID/PMCID/OpenAlex/Semantic Scholar/Crossref/Zotero IDs with explainable rules, conflict records, reversible merge/split decision logs, and `library identity-decision apply` support.

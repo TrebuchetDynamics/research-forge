@@ -110,8 +110,12 @@ var sourcePlanningTemplate = template.Must(template.New("source-planning").Parse
 
 var parserConflictTemplate = template.Must(template.New("parser-conflict").Parse(`<section aria-labelledby="parser-conflict-title" class="rf-card">
   <h2 id="parser-conflict-title">Parser conflict review</h2>
-  <p>CERMINE participates as an adapter-only fallback alongside {{range .Parsers}}{{.}} {{end}}.</p>
+  <p>Parser arbitration screen comparing {{range .Parsers}}{{index $.ParserLabels .}} {{end}} field-by-field.</p>
   <p>{{if .ReviewerRequired}}reviewer required{{else}}reviewer optional{{end}}. {{if .AutoAcceptConflicts}}Conflicts may be auto-accepted.{{else}}No conflicting fields are auto-accepted.{{end}}</p>
+  <div role="table" aria-label="Parser arbitration fields">
+    <div role="row"><strong role="columnheader">Field</strong><strong role="columnheader">Parser</strong><strong role="columnheader">confidence</strong><strong role="columnheader">raw text</strong><strong role="columnheader">offsets</strong><strong role="columnheader">warnings</strong><strong role="columnheader">Controls</strong></div>
+    {{range .Fields}}<div role="row"><span role="cell">{{.Field}}</span><span role="cell">{{.ParserName}}</span><span role="cell">{{.Confidence}}</span><span role="cell">{{.RawText}}</span><span role="cell">{{.Offsets}}</span><span role="cell">{{.Warnings}}</span><span role="cell">{{range $.Controls}}<button type="button">{{.}}</button> {{end}}</span></div>{{end}}
+  </div>
   <p>CLI equivalent: <code>{{.CLIEquivalent}}</code></p>
 </section>`))
 
