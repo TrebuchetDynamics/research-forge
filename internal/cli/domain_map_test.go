@@ -43,10 +43,16 @@ func TestExecuteCitationsDomainMapWritesArtifact(t *testing.T) {
 	if err := json.Unmarshal(data, &artifact); err != nil {
 		t.Fatalf("decode artifact: %v", err)
 	}
-	if artifact.ModelSettings.Model != "bertopic-fixture" || len(artifact.Topics) == 0 || len(artifact.MergeSplitHistory) != 1 {
+	if artifact.ModelSettings.Model != "bertopic-fixture" || artifact.ModelSettings.EmbeddingProvider == "" || len(artifact.Topics) == 0 || len(artifact.MergeSplitHistory) != 1 {
 		t.Fatalf("artifact = %#v", artifact)
 	}
-	if artifact.Topics[0].RepresentativePapers == nil || artifact.Topics[0].RepresentativePassages == nil {
-		t.Fatalf("missing representatives: %#v", artifact.Topics[0])
+	var solar *citations.DomainTopic
+	for i := range artifact.Topics {
+		if artifact.Topics[i].TopicID == "solar" {
+			solar = &artifact.Topics[i]
+		}
+	}
+	if solar == nil || solar.Label != "Reviewer solar fuels" || !solar.ReviewerEditedLabel || len(solar.RepresentativePapers) == 0 || len(solar.RepresentativePassages) == 0 || len(solar.CitationGraphLinks) == 0 {
+		t.Fatalf("missing BERTopic-style topic fields: %#v", artifact.Topics)
 	}
 }

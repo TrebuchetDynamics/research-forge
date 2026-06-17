@@ -27,11 +27,13 @@ Implemented nearby capabilities:
 
 Missing features:
 
-- Topic-cluster artifacts over paper abstracts/passages.
-- Representative-paper and representative-passage links for each topic.
-- Topic merge/split review history.
-- Integration with research map dashboard filters.
+- Optional external BERTopic adapter after dependency/model/license review.
+- Rich research-map dashboard controls for topic merge/split operations.
+
+Implemented:
+
+- `BuildDomainMapArtifact` and `rforge citations domain-map` create BERTopic-inspired topic/domain map artifacts with representative papers/passages, reviewer-edited labels, merge/split history, model settings, input checksums, and citation-graph links.
 
 ## Recommended next slice
 
-Add a topic-cluster/domain-map artifact that stores input record IDs, model settings, representative terms/passages, reviewer-edited labels, and links to citation graph neighborhoods.
+Add optional external BERTopic adapter and dashboard controls for reviewer-driven topic merge/split operations, preserving the existing deterministic artifact contract.
