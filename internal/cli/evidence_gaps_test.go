@@ -21,7 +21,7 @@ func TestExecuteEvidenceGapsWritesGapReport(t *testing.T) {
 	writeJSONForCLITest(t, analysisPath, analysis.AnalysisRun{SchemaVersion: "1", ID: "run1"})
 	out := filepath.Join(project, "data", "evidence-gaps.json")
 	var stdout, stderr bytes.Buffer
-	code := Execute([]string{"--json", "--project", project, "evidence", "gaps", "--outcome", "hospitalization", "--comparator", "standard care", "--full-text", "p1", "--claims", claimsPath, "--analysis", analysisPath, "--out", out}, &stdout, &stderr)
+	code := Execute([]string{"--json", "--project", project, "evidence", "gaps", "--question", "Does treatment reduce hospitalization?", "--screened-in", "p1", "--screened-in", "p2", "--parsed-paper", "p1", "--outcome", "hospitalization", "--comparator", "standard care", "--full-text", "p1", "--claims", claimsPath, "--analysis", analysisPath, "--out", out}, &stdout, &stderr)
 	if code != 0 {
 		t.Fatalf("gaps code=%d stderr=%s stdout=%s", code, stderr.String(), stdout.String())
 	}
@@ -32,4 +32,16 @@ func TestExecuteEvidenceGapsWritesGapReport(t *testing.T) {
 	if report.ReadyForAnalysis || len(report.Gaps) == 0 {
 		t.Fatalf("report = %#v", report)
 	}
+	if !hasEvidenceGapCode(report, "screened_in_missing_evidence") || !hasEvidenceGapCode(report, "screened_in_missing_parsed_passages") || !hasEvidenceGapCode(report, "question_term_missing_evidence") {
+		t.Fatalf("report missing cross-check gaps = %#v", report.Gaps)
+	}
+}
+
+func hasEvidenceGapCode(report evidence.EvidenceGapReport, code string) bool {
+	for _, gap := range report.Gaps {
+		if gap.Code == code {
+			return true
+		}
+	}
+	return false
 }

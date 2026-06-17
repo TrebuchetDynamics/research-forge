@@ -3,6 +3,9 @@ package evidence
 import "strings"
 
 type EvidenceGapAnalysisInput struct {
+	ResearchQuestion          string
+	ScreenedInPaperIDs        []string
+	ParsedPassagePaperIDs     []string
 	Items                     []EvidenceItem
 	Claims                    []CitationLockedSuggestion
 	RequiredOutcomes          []string
@@ -31,6 +34,28 @@ func AnalyzeEvidenceGaps(input EvidenceGapAnalysisInput) EvidenceGapReport {
 	accepted := acceptedEvidence(input.Items)
 	outcomes := valuesByField(accepted, "outcome")
 	comparators := valuesByField(accepted, "comparator")
+	acceptedPaperIDs := map[string]bool{}
+	for _, item := range accepted {
+		acceptedPaperIDs[item.PaperID] = true
+	}
+	parsedPassages := set(input.ParsedPassagePaperIDs)
+	for _, paperID := range input.ScreenedInPaperIDs {
+		paperID = strings.TrimSpace(paperID)
+		if paperID == "" {
+			continue
+		}
+		if !acceptedPaperIDs[paperID] {
+			report.Gaps = append(report.Gaps, EvidenceGap{Code: "screened_in_missing_evidence", PaperID: paperID, Message: "screened-in study has no accepted extracted evidence"})
+		}
+		if len(parsedPassages) > 0 && !parsedPassages[paperID] {
+			report.Gaps = append(report.Gaps, EvidenceGap{Code: "screened_in_missing_parsed_passages", PaperID: paperID, Message: "screened-in study has no parsed passages for evidence support"})
+		}
+	}
+	for _, term := range researchQuestionTerms(input.ResearchQuestion) {
+		if !containsTermInEvidence(accepted, term) {
+			report.Gaps = append(report.Gaps, EvidenceGap{Code: "question_term_missing_evidence", Value: term, Message: "research-question term is not represented in accepted evidence values"})
+		}
+	}
 	for _, outcome := range input.RequiredOutcomes {
 		if !containsFold(outcomes, outcome) {
 			report.Gaps = append(report.Gaps, EvidenceGap{Code: "missing_outcome", Field: "outcome", Value: strings.TrimSpace(outcome), Message: "required outcome has no accepted evidence"})
@@ -59,10 +84,6 @@ func AnalyzeEvidenceGaps(input EvidenceGapAnalysisInput) EvidenceGapReport {
 		}
 	}
 	analysisIncluded := set(input.AnalysisIncludedPaperIDs)
-	acceptedPaperIDs := map[string]bool{}
-	for _, item := range accepted {
-		acceptedPaperIDs[item.PaperID] = true
-	}
 	for paperID := range acceptedPaperIDs {
 		if !analysisIncluded[paperID] {
 			report.Gaps = append(report.Gaps, EvidenceGap{Code: "analysis_input_not_ready", PaperID: paperID, Message: "accepted evidence is not present in analysis inputs"})
@@ -102,6 +123,30 @@ func containsFold(values []string, want string) bool {
 	for _, value := range values {
 		if strings.ToLower(strings.TrimSpace(value)) == want {
 			return true
+		}
+	}
+	return false
+}
+
+func researchQuestionTerms(question string) []string {
+	out := []string{}
+	seen := map[string]bool{}
+	for _, token := range strings.FieldsFunc(strings.ToLower(question), func(r rune) bool { return r < 'a' || r > 'z' }) {
+		if len(token) < 6 || seen[token] {
+			continue
+		}
+		seen[token] = true
+		out = append(out, token)
+	}
+	return out
+}
+
+func containsTermInEvidence(items []EvidenceItem, term string) bool {
+	for _, item := range items {
+		for _, value := range item.Values {
+			if strings.Contains(strings.ToLower(value), term) {
+				return true
+			}
 		}
 	}
 	return false

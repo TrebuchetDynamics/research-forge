@@ -1868,7 +1868,7 @@ func executeEvidence(args []string, stdout, stderr io.Writer, opts globalOptions
 	case "gaps":
 		gapArgs, ok := parseEvidenceGaps(args[1:])
 		if !ok {
-			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge evidence gaps --out <report.json> [--outcome <name> --comparator <name> --full-text <paper-id> --available-full-text <paper-id> --claims <queue.json> --analysis <run.json>]")
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge evidence gaps --out <report.json> [--question <text> --screened-in <paper-id> --parsed-paper <paper-id> --outcome <name> --comparator <name> --full-text <paper-id> --available-full-text <paper-id> --claims <queue.json> --analysis <run.json>]")
 		}
 		var items []evidence.EvidenceItem
 		_ = readJSONFile(evidenceItemsPath(opts.Project), &items)
@@ -1890,7 +1890,7 @@ func executeEvidence(args []string, stdout, stderr io.Writer, opts globalOptions
 				included = append(included, row.PaperID)
 			}
 		}
-		report := evidence.AnalyzeEvidenceGaps(evidence.EvidenceGapAnalysisInput{Items: items, Claims: claims, RequiredOutcomes: gapArgs.Outcomes, RequiredComparators: gapArgs.Comparators, FullTextRequiredPaperIDs: gapArgs.FullTextRequired, AvailableFullTextPaperIDs: gapArgs.FullTextAvailable, AnalysisIncludedPaperIDs: included})
+		report := evidence.AnalyzeEvidenceGaps(evidence.EvidenceGapAnalysisInput{ResearchQuestion: gapArgs.Question, ScreenedInPaperIDs: gapArgs.ScreenedInPaperIDs, ParsedPassagePaperIDs: gapArgs.ParsedPaperIDs, Items: items, Claims: claims, RequiredOutcomes: gapArgs.Outcomes, RequiredComparators: gapArgs.Comparators, FullTextRequiredPaperIDs: gapArgs.FullTextRequired, AvailableFullTextPaperIDs: gapArgs.FullTextAvailable, AnalysisIncludedPaperIDs: included})
 		if err := writeJSONFile(gapArgs.OutPath, report); err != nil {
 			return writeError(stdout, stderr, opts, 1, "evidence_gaps_write_failed", err.Error())
 		}
@@ -2069,24 +2069,33 @@ func executeEvidence(args []string, stdout, stderr io.Writer, opts globalOptions
 }
 
 type evidenceGapsArgs struct {
-	Outcomes          []string
-	Comparators       []string
-	FullTextRequired  []string
-	FullTextAvailable []string
-	ClaimsPath        string
-	AnalysisPath      string
-	OutPath           string
+	Question           string
+	ScreenedInPaperIDs []string
+	ParsedPaperIDs     []string
+	Outcomes           []string
+	Comparators        []string
+	FullTextRequired   []string
+	FullTextAvailable  []string
+	ClaimsPath         string
+	AnalysisPath       string
+	OutPath            string
 }
 
 func parseEvidenceGaps(args []string) (evidenceGapsArgs, bool) {
 	parsed := evidenceGapsArgs{}
 	for i := 0; i < len(args); i++ {
 		switch args[i] {
-		case "--outcome", "--comparator", "--full-text", "--available-full-text", "--claims", "--analysis", "--out":
+		case "--question", "--screened-in", "--parsed-paper", "--outcome", "--comparator", "--full-text", "--available-full-text", "--claims", "--analysis", "--out":
 			if i+1 >= len(args) {
 				return evidenceGapsArgs{}, false
 			}
 			switch args[i] {
+			case "--question":
+				parsed.Question = args[i+1]
+			case "--screened-in":
+				parsed.ScreenedInPaperIDs = append(parsed.ScreenedInPaperIDs, args[i+1])
+			case "--parsed-paper":
+				parsed.ParsedPaperIDs = append(parsed.ParsedPaperIDs, args[i+1])
 			case "--outcome":
 				parsed.Outcomes = append(parsed.Outcomes, args[i+1])
 			case "--comparator":

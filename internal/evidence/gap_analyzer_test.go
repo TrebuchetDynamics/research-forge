@@ -9,6 +9,9 @@ func TestAnalyzeEvidenceGapsFindsMissingOutcomesComparatorsUnsupportedClaimsFull
 	}
 	claims := []CitationLockedSuggestion{{ID: "claim-1", PaperID: "p2", Status: StatusSuggested, SuggestedText: "Unsupported draft claim"}}
 	report := AnalyzeEvidenceGaps(EvidenceGapAnalysisInput{
+		ResearchQuestion:          "Does treatment reduce hospitalization versus standard care?",
+		ScreenedInPaperIDs:        []string{"p1", "p2", "p3"},
+		ParsedPassagePaperIDs:     []string{"p1"},
 		Items:                     items,
 		Claims:                    claims,
 		RequiredOutcomes:          []string{"mortality", "hospitalization"},
@@ -20,7 +23,7 @@ func TestAnalyzeEvidenceGapsFindsMissingOutcomesComparatorsUnsupportedClaimsFull
 	if report.SchemaVersion != "1" || report.ReadyForAnalysis {
 		t.Fatalf("report = %#v", report)
 	}
-	wantCodes := map[string]bool{"missing_outcome": false, "missing_comparator": false, "unsupported_claim": false, "incomplete_full_text": false, "analysis_input_not_ready": false}
+	wantCodes := map[string]bool{"missing_outcome": false, "missing_comparator": false, "unsupported_claim": false, "incomplete_full_text": false, "analysis_input_not_ready": false, "screened_in_missing_evidence": false, "screened_in_missing_parsed_passages": false, "question_term_missing_evidence": false}
 	for _, gap := range report.Gaps {
 		if _, ok := wantCodes[gap.Code]; ok {
 			wantCodes[gap.Code] = true
@@ -35,7 +38,7 @@ func TestAnalyzeEvidenceGapsFindsMissingOutcomesComparatorsUnsupportedClaimsFull
 
 func TestAnalyzeEvidenceGapsReadyWhenRequirementsCovered(t *testing.T) {
 	items := []EvidenceItem{{PaperID: "p1", Values: map[string]string{"outcome": "mortality", "comparator": "placebo", "effect": "0.8"}, Support: Support{Kind: SupportPassage, Ref: "p1:p1"}, Status: StatusAccepted}}
-	report := AnalyzeEvidenceGaps(EvidenceGapAnalysisInput{Items: items, RequiredOutcomes: []string{"mortality"}, RequiredComparators: []string{"placebo"}, FullTextRequiredPaperIDs: []string{"p1"}, AvailableFullTextPaperIDs: []string{"p1"}, AnalysisIncludedPaperIDs: []string{"p1"}})
+	report := AnalyzeEvidenceGaps(EvidenceGapAnalysisInput{ResearchQuestion: "mortality placebo", ScreenedInPaperIDs: []string{"p1"}, ParsedPassagePaperIDs: []string{"p1"}, Items: items, RequiredOutcomes: []string{"mortality"}, RequiredComparators: []string{"placebo"}, FullTextRequiredPaperIDs: []string{"p1"}, AvailableFullTextPaperIDs: []string{"p1"}, AnalysisIncludedPaperIDs: []string{"p1"}})
 	if !report.ReadyForAnalysis || len(report.Gaps) != 0 {
 		t.Fatalf("report = %#v", report)
 	}

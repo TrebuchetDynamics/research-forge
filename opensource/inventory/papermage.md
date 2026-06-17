@@ -23,6 +23,7 @@ Implemented nearby capabilities:
 - The local project knowledge graph merges PaperMage-style parsed references with collections/tags, OpenAlex concepts, citation edges, evidence, screening, analysis, and report claims for `rforge knowledge query`.
 - Citation-to-evidence trace views link report claims back to parser outputs, passage offsets/text, PDFs, accepted evidence, effect-size rows, and source/reference-manager provenance.
 - Multi-engine parser arbitration scores GROBID/S2ORC-style/PaperMage/CERMINE/Science Parse/Anystyle outputs per field, routes conflicts to review, records reviewer selection reasons, and emits reconciliation outputs.
+- Evidence gap analysis cross-checks the research question, screened-in studies, parsed passages, accepted evidence fields, full-text acquisition, citation-locked claims, and analysis inputs before final inclusion.
 
 - Parsed document model with sections, passages, and references.
 - Parser-run manifests record parser name/version, input checksum, parsed output path, layer counts, and warnings.

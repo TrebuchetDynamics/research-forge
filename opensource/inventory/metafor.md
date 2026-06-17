@@ -35,6 +35,7 @@ Implemented nearby capabilities:
 - The forge workflow DAG includes analyze/report checkpoints with inputs, outputs, provenance actions, and restart-safe skips.
 - Citation-to-evidence trace views link report claims back to metafor effect-size rows, accepted evidence, parser passages, PDFs, reference-manager items, source records, and raw request/response metadata.
 - Bayesian normal-normal approximation alternative through `rforge analysis bayesian <run-id> --method normal-approx`.
+- Evidence gap analysis cross-checks the research question, screened-in studies, parsed passages, accepted evidence fields, full-text acquisition, citation-locked claims, and analysis inputs before final inclusion.
 
 Missing features:
 

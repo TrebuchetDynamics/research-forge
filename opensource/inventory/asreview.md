@@ -32,6 +32,7 @@ Implemented nearby capabilities:
 - Recall/effort curve scaffold through `rforge screen recall --stage <stage>`.
 - Simple recall-threshold stopping recommendation through `rforge screen stopping --stage <stage> [--target-recall 0.95]`.
 - The `/map` local web cockpit combines concept maps, citation neighborhoods, screening priority, parser quality, retrieval hits, and evidence coverage with no-JS server rendering and `/map/snapshot.json` audit exports.
+- Evidence gap analysis cross-checks the research question, screened-in studies, parsed passages, accepted evidence fields, full-text acquisition, citation-locked claims, and analysis inputs before final inclusion.
 
 Missing features:
 
