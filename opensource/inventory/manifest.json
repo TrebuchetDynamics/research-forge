@@ -152,6 +152,123 @@
       "note": "science-parse.md",
       "risk": "Stale parser maintenance status can create reproducibility and security risk.",
       "nextSlice": "Add parser candidate scoring for maintenance, footprint, output coverage, and license constraints."
+    },
+    {
+      "id": "jabref",
+      "name": "JabRef",
+      "repository": "JabRef/jabref",
+      "url": "https://github.com/JabRef/jabref",
+      "area": "reference-management-bibtex",
+      "disposition": "pattern-reference",
+      "licensePolicy": "study BibTeX/BibLaTeX workflows and UX; do not port Java code/assets without review",
+      "note": "jabref.md",
+      "risk": "BibTeX cleanup can silently alter citation keys or LaTeX fields if not reviewable.",
+      "nextSlice": "Add BibTeX/BibLaTeX quality report with citation-key, group, and field-normalization diffs."
+    },
+    {
+      "id": "robotreviewer",
+      "name": "RobotReviewer",
+      "repository": "ijmarshall/robotreviewer",
+      "url": "https://github.com/ijmarshall/robotreviewer",
+      "area": "evidence-extraction-risk-of-bias",
+      "disposition": "pattern-reference",
+      "licensePolicy": "study RCT evidence/risk-of-bias workflow concepts; do not port models or biomedical training data without review",
+      "note": "robotreviewer.md",
+      "risk": "Automated risk-of-bias or evidence extraction can appear authoritative without source-linked reviewer approval.",
+      "nextSlice": "Add risk-of-bias extraction schema and citation-locked suggestion review workflow."
+    },
+    {
+      "id": "revtools",
+      "name": "revtools",
+      "url": "https://revtools.net/",
+      "area": "systematic-review-screening-dedup",
+      "disposition": "pattern-reference",
+      "licensePolicy": "study systematic-review UX and clustering workflows; keep R package integration optional",
+      "note": "revtools.md",
+      "risk": "Visual clustering/dedup decisions need reproducible inputs and human-confirmed merge provenance.",
+      "nextSlice": "Add review-cluster map for deduplication and screening with exportable decision history."
+    },
+    {
+      "id": "pymare",
+      "name": "PyMARE",
+      "repository": "neurostuff/PyMARE",
+      "url": "https://github.com/neurostuff/PyMARE",
+      "area": "meta-analysis-statistics",
+      "disposition": "adapter-only",
+      "licensePolicy": "optional Python engine adapter; record environment and package versions; do not vendor code",
+      "note": "pymare.md",
+      "risk": "Multiple statistics engines can disagree unless model settings, versions, and warnings are made explicit.",
+      "nextSlice": "Add secondary meta-analysis engine comparison report against metafor fixtures."
+    },
+    {
+      "id": "sentence-transformers",
+      "name": "SentenceTransformers",
+      "repository": "UKPLab/sentence-transformers",
+      "url": "https://github.com/UKPLab/sentence-transformers",
+      "area": "semantic-embeddings",
+      "disposition": "adapter-only",
+      "licensePolicy": "call configured local/remote embedding service; model license and text egress require explicit user approval",
+      "note": "sentence-transformers.md",
+      "risk": "Embedding private abstracts/passages can leak sensitive text and model changes break retrieval reproducibility.",
+      "nextSlice": "Add embedding model registry with license, dimension, egress, and reproducibility metadata."
+    },
+    {
+      "id": "bertopic",
+      "name": "BERTopic",
+      "repository": "MaartenGr/BERTopic",
+      "url": "https://github.com/MaartenGr/BERTopic",
+      "area": "topic-modeling-domain-maps",
+      "disposition": "pattern-reference",
+      "licensePolicy": "study topic-modeling workflow; optional external adapter only after dependency/license review",
+      "note": "bertopic.md",
+      "risk": "Topic labels can overstate semantic meaning unless tied to source papers and reproducible model settings.",
+      "nextSlice": "Add topic-cluster/domain-map artifact with source paper links and model provenance."
+    },
+    {
+      "id": "scispacy",
+      "name": "SciSpaCy",
+      "repository": "allenai/scispacy",
+      "url": "https://github.com/allenai/scispacy",
+      "area": "scientific-nlp-entities",
+      "disposition": "adapter-only",
+      "licensePolicy": "optional NLP adapter; model licenses and biomedical text handling require review",
+      "note": "scispacy.md",
+      "risk": "Entity extraction errors can propagate into evidence schemas or query expansion without reviewer validation.",
+      "nextSlice": "Add scientific entity extraction suggestions with confidence and reviewer acceptance state."
+    },
+    {
+      "id": "keybert",
+      "name": "KeyBERT",
+      "repository": "MaartenGr/KeyBERT",
+      "url": "https://github.com/MaartenGr/KeyBERT",
+      "area": "keyword-extraction-query-expansion",
+      "disposition": "pattern-reference",
+      "licensePolicy": "study keyword extraction UX; optional adapter only with model/license review",
+      "note": "keybert.md",
+      "risk": "Keyword suggestions can bias searches if not recorded with source passages and reviewer approval.",
+      "nextSlice": "Add citation-linked keyword/query-expansion suggestions from abstracts and accepted passages."
+    },
+    {
+      "id": "nasa-ads",
+      "name": "NASA ADS",
+      "url": "https://ui.adsabs.harvard.edu/",
+      "area": "physics-astronomy-source",
+      "disposition": "adapter-only",
+      "licensePolicy": "use API under ADS terms with token redaction, rate limits, and field-specific provenance",
+      "note": "nasa-ads.md",
+      "risk": "ADS API tokens, bibcodes, and astronomy-specific metadata need source-specific provenance and caching policy.",
+      "nextSlice": "Add NASA ADS connector for bibcode/DOI search and citation expansion with mocked tests."
+    },
+    {
+      "id": "doaj-core",
+      "name": "DOAJ / CORE",
+      "url": "https://doaj.org/",
+      "area": "open-access-discovery",
+      "disposition": "adapter-only",
+      "licensePolicy": "use public APIs under attribution/rate limits; CORE credentials and redistribution rules must be documented",
+      "note": "doaj-core.md",
+      "risk": "OA metadata does not guarantee full-text redistribution rights; license and source URL must remain explicit.",
+      "nextSlice": "Add DOAJ/CORE OA discovery adapter with license-aware full-text candidate queue."
     }
   ]
 }

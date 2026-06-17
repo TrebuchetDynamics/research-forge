@@ -26,6 +26,32 @@ Policy:
 | Anystyle | Reference parser | `adapter-only` | [anystyle.md](./anystyle.md) |
 | CERMINE | PDF parser fallback | `adapter-only` | [cermine.md](./cermine.md) |
 | Science Parse | Historical PDF parser fallback | `pattern-reference` | [science-parse.md](./science-parse.md) |
+| JabRef | BibTeX/BibLaTeX reference management | `pattern-reference` | [jabref.md](./jabref.md) |
+| RobotReviewer | Evidence extraction / risk of bias | `pattern-reference` | [robotreviewer.md](./robotreviewer.md) |
+| revtools | Screening / dedup clustering | `pattern-reference` | [revtools.md](./revtools.md) |
+| PyMARE | Secondary meta-analysis engine | `adapter-only` | [pymare.md](./pymare.md) |
+| SentenceTransformers | Semantic embeddings | `adapter-only` | [sentence-transformers.md](./sentence-transformers.md) |
+| BERTopic | Topic modeling / domain maps | `pattern-reference` | [bertopic.md](./bertopic.md) |
+| SciSpaCy | Scientific entity extraction | `adapter-only` | [scispacy.md](./scispacy.md) |
+| KeyBERT | Keyword extraction / query expansion | `pattern-reference` | [keybert.md](./keybert.md) |
+| NASA ADS | Physics/astronomy source API | `adapter-only` | [nasa-ads.md](./nasa-ads.md) |
+| DOAJ / CORE | Open-access discovery | `adapter-only` | [doaj-core.md](./doaj-core.md) |
+
+## Feature coverage map
+
+| ResearchForge super-tool area | Inventory examples | Features to study/combine |
+| --- | --- | --- |
+| Reference/library management | Zotero, JabRef | collections, tags, notes, citation keys, BibTeX/BibLaTeX cleanup, linked-file privacy, annotation import/export |
+| Scholarly discovery graph | OpenAlex, Semantic Scholar, NASA ADS | source-specific IDs, author/institution/concept/bibcode search, citation/reference expansion, cursor/resume state, rate-limit provenance |
+| Open-access acquisition | Unpaywall-backed implementation, DOAJ / CORE | OA/license metadata, full-text candidates, acquisition approval queues, shareability flags, source URL provenance |
+| Full-text parsing | GROBID, s2orc-doc2json, PaperMage, CERMINE, Science Parse | parser arbitration, stable offsets, section/passages/references, parser risk scoring, raw-output manifests |
+| Reference parsing/normalization | Anystyle, GROBID, S2ORC-style output | raw reference preservation, DOI/title candidates, confidence, reviewer adjudication, Crossref/OpenAlex/Semantic Scholar normalization |
+| Screening and review | ASReview, revtools | active learning, uncertainty/exploration, cluster review, dedupe visualization, reviewer progress, stopping diagnostics, audit exports |
+| Evidence/risk assessment | RobotReviewer, SciSpaCy, PaperMage | citation-locked extraction suggestions, risk-of-bias schemas, entity extraction, source span links, reviewer acceptance state |
+| Retrieval/semantic search | OpenSearch, Qdrant, SentenceTransformers, KeyBERT | lexical/vector/hybrid ranking, embedding privacy, keyword/query expansion, benchmarked retrieval configurations |
+| Domain maps | BERTopic, OpenAlex concepts, Semantic Scholar graphs | topic clusters, representative passages, concept maps, citation neighborhoods, reviewer-edited labels |
+| Statistics/meta-analysis | metafor, PyMARE | engine comparison, model settings, heterogeneity, sensitivity/influence diagnostics, publication-bias checks, artifact manifests |
+| Reproducible super-tool UX | All entries | `rforge forge` DAG, HTMX cockpit screens, connector capability registry, provenance journal, reproducible-review package |
 
 ## Validation
 
@@ -43,8 +69,10 @@ The verifier checks that every manifest entry has governance metadata (`area`, `
 
 ## Current highest-priority gaps from this inventory
 
-1. Rich Zotero collections/annotations beyond CSL-JSON/RDF metadata.
-2. Parser comparison report and parsed-reference normalization across GROBID, S2ORC-style JSON, and Anystyle-style reference parsing.
-3. Richer PubMed / Europe PMC full-text workflows; PubMed and Europe PMC search plus opt-in biomedical live smoke docs/targets are implemented.
-4. Additional opt-in live connector smoke coverage for API drift beyond current source smoke tests.
-5. Richer ASReview-style ranking loop: model-based prioritization, reviewer feedback metrics, and stopping diagnostics.
+1. Build the `rforge forge` super-tool path: a resumable, provenance-first workflow that combines source discovery, reference-manager import, dedupe, legal full-text acquisition, parser arbitration, retrieval, screening, extraction, statistics, and report packaging.
+2. Deepen reference-manager interoperability: Zotero/JabRef collection/group mapping, citation-key fidelity, annotation import/export, BibTeX cleanup diffs, and linked-file privacy gates.
+3. Add parser arbitration and parsed-reference normalization across GROBID, S2ORC-style JSON, PaperMage, CERMINE, Science Parse, and Anystyle with reviewer-adjudicated conflicts.
+4. Expand source coverage: NASA ADS for physics/astronomy and DOAJ/CORE for OA discovery, plus richer PubMed / Europe PMC full-text workflows.
+5. Combine ASReview/revtools/RobotReviewer patterns into auditable review assistance: active-learning queues, cluster review, risk-of-bias/evidence suggestions, stopping diagnostics, and exportable audit bundles.
+6. Turn retrieval/NLP tools into governed adapters: OpenSearch/Qdrant/SentenceTransformers/KeyBERT/SciSpaCy/BERTopic with privacy profiles, model locks, benchmarks, and citation-linked suggestions.
+7. Add cross-engine statistical validation: metafor remains primary, with PyMARE-style secondary comparison reports and publication-ready artifact manifests.

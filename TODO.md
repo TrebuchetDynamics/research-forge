@@ -609,3 +609,18 @@ These planning tasks turn the super-tool synthesis into concrete product slices 
 - [ ] Add planning artifact: a dashboard information architecture diagram listing routes, partial endpoints, view models, no-JS fallbacks, background jobs, and ownership boundaries for every Forge cockpit screen (`docs/web-gui-plan.md`).
 - [ ] Add planning artifact: a permissions/privacy model for the dashboard that classifies local-only paths, copyrighted PDFs, reviewer notes, credentials, embeddings, cache files, and shareable report fields (`docs/web-gui-plan.md`, `docs/privacy-copyright.md`).
 - [ ] Add planning artifact: an acceptance-test matrix mapping each super-tool workflow state and HTMX dashboard screen to unit tests, handler tests, Playwright paths, screenshot coverage, CLI parity checks, and provenance assertions (`docs/web-gui-plan.md`).
+
+### Expanded OSS inventory study backlog
+
+These tasks come from the expanded OSS inventory and deepen ResearchForge into a super-tool across reference management, source discovery, NLP, screening, retrieval, and statistics.
+
+- [ ] Add JabRef-inspired BibTeX/BibLaTeX quality reports covering citation-key collisions, groups/saved searches, field cleanup diffs, linked-file privacy, and reviewer-approved normalization (`opensource/inventory/jabref.md`).
+- [ ] Add RobotReviewer-inspired risk-of-bias and evidence-suggestion workflows where every automated judgment cites exact support text, uncertainty, model/version metadata, and reviewer accept/correct/reject state (`opensource/inventory/robotreviewer.md`).
+- [ ] Add revtools-inspired visual clustering for duplicate review and screening triage, with exportable cluster decisions and PRISMA/audit provenance (`opensource/inventory/revtools.md`).
+- [ ] Add PyMARE-style secondary meta-analysis engine comparison reports against metafor fixtures, including environment locks, model-setting parity, warning capture, and output deltas (`opensource/inventory/pymare.md`).
+- [ ] Add SentenceTransformers-style embedding model registry entries for local/remote providers, dimensions, license notes, text-egress policy, vector-index invalidation, and retrieval benchmark compatibility (`opensource/inventory/sentence-transformers.md`).
+- [ ] Add BERTopic-inspired topic/domain map artifacts with representative papers/passages, reviewer-edited labels, topic merge/split history, model settings, and citation-graph links (`opensource/inventory/bertopic.md`).
+- [ ] Add SciSpaCy-inspired scientific entity extraction suggestions with passage offsets, abbreviation resolution, entity-link candidates, confidence, model provenance, and reviewer decisions (`opensource/inventory/scispacy.md`).
+- [ ] Add KeyBERT-inspired keyword/query-expansion suggestions linked to abstracts/passages, with diversity scoring, reviewer approval, and before/after search-plan provenance (`opensource/inventory/keybert.md`).
+- [ ] Add NASA ADS connector planning and implementation slices for bibcode/DOI search, physics/astronomy metadata normalization, citation expansion, token redaction, and opt-in live smoke tests (`opensource/inventory/nasa-ads.md`).
+- [ ] Add DOAJ/CORE open-access discovery slices for license-aware full-text candidate queues, source URL provenance, attribution/rate-limit handling, and reviewer-approved acquisition (`opensource/inventory/doaj-core.md`).
