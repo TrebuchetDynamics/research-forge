@@ -24,6 +24,7 @@ type LabNotebookEvent struct {
 	Timestamp string         `json:"timestamp"`
 	Actor     string         `json:"actor"`
 	ActorKind string         `json:"actorKind"`
+	Category  string         `json:"category"`
 	Action    string         `json:"action"`
 	Target    string         `json:"target"`
 	Inputs    map[string]any `json:"inputs,omitempty"`
@@ -39,7 +40,7 @@ func BuildLabNotebookTimelineState(projectPath string) (LabNotebookTimelineState
 	state := LabNotebookTimelineState{SchemaVersion: "1", ProjectPath: projectPath, SnapshotPath: "/notebook/snapshot.json"}
 	for _, event := range events {
 		kind := actorKind(event.Actor)
-		entry := LabNotebookEvent{ID: event.ID, Timestamp: event.Timestamp, Actor: event.Actor, ActorKind: kind, Action: event.Action, Target: event.Target, Inputs: event.Inputs, Outputs: event.Outputs, Warnings: event.Warnings}
+		entry := LabNotebookEvent{ID: event.ID, Timestamp: event.Timestamp, Actor: event.Actor, ActorKind: kind, Category: notebookEventCategory(event.Action), Action: event.Action, Target: event.Target, Inputs: event.Inputs, Outputs: event.Outputs, Warnings: event.Warnings}
 		state.Events = append(state.Events, entry)
 		if kind == "human" {
 			state.HumanEvents++
@@ -83,6 +84,28 @@ func newLabNotebookSnapshotHandler(projectPath func() string) http.Handler {
 		w.Header().Set("Content-Type", "application/json")
 		_ = json.NewEncoder(w).Encode(state)
 	})
+}
+
+func notebookEventCategory(action string) string {
+	action = strings.ToLower(strings.TrimSpace(action))
+	switch {
+	case strings.Contains(action, "import"):
+		return "imports"
+	case strings.Contains(action, "source") || strings.Contains(action, "refresh"):
+		return "source refreshes"
+	case strings.Contains(action, "parser") || strings.Contains(action, "parse"):
+		return "parser runs"
+	case strings.Contains(action, "screening") || strings.Contains(action, "review") || strings.Contains(action, "decision") || strings.Contains(action, "adjudicat"):
+		return "reviewer decisions"
+	case strings.Contains(action, "evidence") || strings.Contains(action, "extract"):
+		return "extraction edits"
+	case strings.Contains(action, "analysis"):
+		return "analysis reruns"
+	case strings.Contains(action, "report"):
+		return "report builds"
+	default:
+		return "other workflow events"
+	}
 }
 
 func actorKind(actor string) string {

@@ -119,7 +119,7 @@ var labNotebookTemplate = template.Must(template.New("lab-notebook").Parse(`<sec
   <h2 id="notebook-title">Lab notebook timeline</h2>
   <p>Total workflow events: {{.TotalEvents}}. Human workflow events: {{.HumanEvents}}. Automated workflow events: {{.AutomatedEvents}}.</p>
   <p>Snapshot export: <a href="{{.SnapshotPath}}">{{.SnapshotPath}}</a></p>
-  <ol>{{range .Events}}<li><strong>{{.Timestamp}}</strong> <span>{{.ActorKind}}</span> <span>{{.Actor}}</span> <code>{{.Action}}</code> {{.Target}}</li>{{else}}<li>No workflow events recorded.</li>{{end}}</ol>
+  <ol>{{range .Events}}<li><strong>{{.Timestamp}}</strong> <span>{{.ActorKind}}</span> <span>{{.Category}}</span> <span>{{.Actor}}</span> <code>{{.Action}}</code> {{.Target}}</li>{{else}}<li>No workflow events recorded.</li>{{end}}</ol>
 </section>`))
 
 var researchMapTemplate = template.Must(template.New("research-map").Parse(`<section aria-labelledby="research-map-title" class="rf-card" hx-get="/map" hx-trigger="refresh-map from:body">
