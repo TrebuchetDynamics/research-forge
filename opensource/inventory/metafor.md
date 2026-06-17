@@ -31,6 +31,7 @@ Implemented nearby capabilities:
 - Weighted numeric moderator meta-regression through `rforge analysis meta-regression <run-id> --moderator <name> --value <paper>=<number>`.
 - Categorical subgroup pooled estimates through `rforge analysis subgroup <run-id> --variable <name> --group <paper>=<group>`.
 - `RunMetafor` writes reproducible SVG forest/funnel plot artifacts with checksums alongside scripts and captured output.
+- `AnalysisArtifactManifest` / `rforge analysis run` bundle forest/funnel SVGs, plot settings, checksums, R/metafor script metadata, engine versions, warnings, and report embedding metadata in `analysis/<run-id>-artifact-manifest.json`.
 - Bayesian normal-normal approximation alternative through `rforge analysis bayesian <run-id> --method normal-approx`.
 
 Missing features:
