@@ -30,7 +30,7 @@ func TestExecuteAnalysisEngineCompareWritesPyMAREStyleReport(t *testing.T) {
 	if err := readJSONFile(out, &report); err != nil {
 		t.Fatalf("read report: %v", err)
 	}
-	if report.PrimaryEngine != "metafor" || report.SecondaryEngine != "pymare-fixture" || !report.Disagreement.RequiresReview || len(report.EnvironmentLocks) != 2 {
+	if report.PrimaryEngine != "metafor" || report.SecondaryEngine != "pymare-fixture" || !report.Disagreement.RequiresReview || len(report.EnvironmentLocks) != 2 || !report.ModelSettingParity || len(report.Warnings) == 0 || report.OutputDeltas.EstimateDelta == 0 {
 		t.Fatalf("report = %#v", report)
 	}
 }

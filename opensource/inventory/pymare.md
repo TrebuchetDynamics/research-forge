@@ -27,11 +27,13 @@ Implemented nearby capabilities:
 
 Missing features:
 
-- Python meta-analysis engine adapter.
-- Cross-engine comparison report against the same input snapshot.
-- Python environment lock/version capture.
-- Explicit handling when engines disagree or do not support a selected model.
+- Real Python meta-analysis engine adapter after dependency/license review.
+- Explicit unsupported-model handling beyond the fixture adapter.
+
+Implemented:
+
+- `CompareAnalysisEngines`, `BuildPyMAREFixtureResult`, and `rforge analysis engine-compare` produce PyMARE-style secondary meta-analysis engine comparison reports against metafor fixtures with environment locks/version capture, model-setting parity, warning capture, output deltas, and reviewer-visible disagreement reasons without changing the primary metafor analysis result.
 
 ## Recommended next slice
 
-Add a secondary-engine comparison report that can run fake-backed PyMARE adapter tests against existing metafor fixtures and show output deltas without changing the primary analysis result.
+Add a real optional PyMARE adapter after dependency/license review, preserving the existing fixture-backed comparison contract and unsupported-model handling.
