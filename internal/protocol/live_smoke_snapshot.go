@@ -42,6 +42,26 @@ type ConnectorLiveSmokeAlert struct {
 	Message     string `json:"message"`
 }
 
+type SourceAPIDriftDashboard struct {
+	SchemaVersion string                         `json:"schemaVersion"`
+	CapturedAt    time.Time                      `json:"capturedAt"`
+	Entries       []SourceAPIDriftDashboardEntry `json:"entries"`
+}
+
+type SourceAPIDriftDashboardEntry struct {
+	ConnectorID         string                    `json:"connectorId"`
+	Label               string                    `json:"label"`
+	Status              string                    `json:"status"`
+	CheckedAt           time.Time                 `json:"checkedAt"`
+	EndpointFingerprint string                    `json:"endpointFingerprint,omitempty"`
+	ObservedFields      []string                  `json:"observedFields,omitempty"`
+	PreviousFields      []string                  `json:"previousFields,omitempty"`
+	AddedFields         []string                  `json:"addedFields,omitempty"`
+	RemovedFields       []string                  `json:"removedFields,omitempty"`
+	Alerts              []ConnectorLiveSmokeAlert `json:"alerts,omitempty"`
+	ProvenanceRef       string                    `json:"provenanceRef"`
+}
+
 func NewLiveSmokeSnapshot(registry ConnectorCapabilityRegistry, capturedAt time.Time) ConnectorLiveSmokeSnapshot {
 	results := make([]ConnectorLiveSmokeResult, 0, len(registry.Connectors))
 	for _, connector := range registry.Connectors {
@@ -106,6 +126,66 @@ func LoadLiveSmokeSnapshot(path string) (ConnectorLiveSmokeSnapshot, error) {
 		return ConnectorLiveSmokeSnapshot{}, err
 	}
 	return snapshot, nil
+}
+
+func BuildSourceAPIDriftDashboard(registry ConnectorCapabilityRegistry, current ConnectorLiveSmokeSnapshot, previous *ConnectorLiveSmokeSnapshot, now time.Time, provenanceRefs map[string]string) SourceAPIDriftDashboard {
+	wanted := map[string]bool{"openalex": true, "semantic-scholar": true, "pubmed": true, "europepmc": true, "crossref": true, "arxiv": true, "unpaywall": true}
+	baseAlerts := ConnectorLiveSmokeAlerts(registry, current, now)
+	entries := []SourceAPIDriftDashboardEntry{}
+	for _, connector := range registry.Connectors {
+		if !wanted[connector.ID] {
+			continue
+		}
+		result, ok := current.Result(connector.ID)
+		if !ok {
+			result = ConnectorLiveSmokeResult{ConnectorID: connector.ID, Label: connector.Label, Status: LiveSmokeMissing, CheckedAt: current.CapturedAt}
+		}
+		entry := SourceAPIDriftDashboardEntry{ConnectorID: connector.ID, Label: connector.Label, Status: result.Status, CheckedAt: result.CheckedAt, EndpointFingerprint: result.EndpointFingerprint, ObservedFields: append([]string{}, result.ObservedFields...), ProvenanceRef: provenanceRefs[connector.ID]}
+		if entry.ProvenanceRef == "" {
+			entry.ProvenanceRef = "data/provenance.jsonl#connector=" + connector.ID
+		}
+		for _, alert := range baseAlerts {
+			if alert.ConnectorID == connector.ID {
+				entry.Alerts = append(entry.Alerts, alert)
+			}
+		}
+		if previous != nil {
+			if prior, ok := previous.Result(connector.ID); ok {
+				entry.PreviousFields = append([]string{}, prior.ObservedFields...)
+				entry.AddedFields = diffStrings(result.ObservedFields, prior.ObservedFields)
+				entry.RemovedFields = diffStrings(prior.ObservedFields, result.ObservedFields)
+				if len(entry.AddedFields) > 0 || len(entry.RemovedFields) > 0 {
+					entry.Alerts = append(entry.Alerts, ConnectorLiveSmokeAlert{ConnectorID: connector.ID, Label: connector.Label, Kind: "response_shape_changed", Severity: "warning", Message: "live-smoke observed fields changed since previous snapshot"})
+				}
+			}
+		}
+		entries = append(entries, entry)
+	}
+	return SourceAPIDriftDashboard{SchemaVersion: "1", CapturedAt: now, Entries: entries}
+}
+
+func (d SourceAPIDriftDashboard) Entry(connectorID string) (SourceAPIDriftDashboardEntry, bool) {
+	for _, entry := range d.Entries {
+		if entry.ConnectorID == connectorID {
+			return entry, true
+		}
+	}
+	return SourceAPIDriftDashboardEntry{}, false
+}
+
+func diffStrings(left, right []string) []string {
+	seen := map[string]bool{}
+	for _, value := range right {
+		seen[value] = true
+	}
+	out := []string{}
+	for _, value := range left {
+		if !seen[value] {
+			out = append(out, value)
+		}
+	}
+	sort.Strings(out)
+	return out
 }
 
 func ConnectorLiveSmokeAlerts(registry ConnectorCapabilityRegistry, snapshot ConnectorLiveSmokeSnapshot, now time.Time) []ConnectorLiveSmokeAlert {

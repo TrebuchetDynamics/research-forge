@@ -42,7 +42,7 @@ Policy:
 | ResearchForge super-tool area | Inventory examples | Features to study/combine |
 | --- | --- | --- |
 | Reference/library management | Zotero, JabRef | collections, tags, notes, citation keys, BibTeX/BibLaTeX cleanup, linked-file privacy, annotation import/export |
-| Scholarly discovery graph | OpenAlex, Semantic Scholar, NASA ADS | source-specific IDs, author/institution/concept/bibcode search, citation/reference expansion, cursor/resume state, rate-limit provenance |
+| Scholarly discovery graph | OpenAlex, Semantic Scholar, NASA ADS | source-specific IDs, author/institution/concept/bibcode search, citation/reference expansion, cursor/resume state, rate-limit provenance, source-API drift dashboards |
 | Open-access acquisition | Unpaywall-backed implementation, DOAJ / CORE | OA/license metadata, full-text candidates, acquisition approval queues, shareability flags, source URL provenance |
 | Full-text parsing | GROBID, s2orc-doc2json, PaperMage, CERMINE, Science Parse | parser arbitration, stable offsets, section/passages/references, parser risk scoring, raw-output manifests |
 | Reference parsing/normalization | Anystyle, GROBID, S2ORC-style output | raw reference preservation, DOI/title candidates, confidence, reviewer adjudication, Crossref/OpenAlex/Semantic Scholar normalization |

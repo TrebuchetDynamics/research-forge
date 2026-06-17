@@ -16,6 +16,9 @@ func executeProtocol(args []string, stdout, stderr io.Writer, opts globalOptions
 	if len(args) > 0 && args[0] == "live-smoke-snapshot" {
 		return executeLiveSmokeSnapshot(args[1:], stdout, stderr, opts)
 	}
+	if len(args) > 0 && args[0] == "live-smoke-dashboard" {
+		return executeLiveSmokeDashboard(args[1:], stdout, stderr, opts)
+	}
 	if len(args) > 0 && args[0] == "suggest-expansions" {
 		return executeSuggestExpansions(args[1:], stdout, stderr, opts)
 	}
@@ -138,6 +141,49 @@ func executeLiveSmokeSnapshot(args []string, stdout, stderr io.Writer, opts glob
 	fmt.Fprintf(stdout, "Wrote live-smoke snapshot: %s\n", output)
 	fmt.Fprintf(stdout, "Connector alerts: %d\n", len(alerts))
 	return 0
+}
+
+func executeLiveSmokeDashboard(args []string, stdout, stderr io.Writer, opts globalOptions) int {
+	values, err := parseKeyValueFlags(args, map[string]bool{"--snapshot": true, "--previous": true, "--provenance": true})
+	if err != nil {
+		return writeError(stdout, stderr, opts, 2, "usage", err.Error())
+	}
+	currentPath := strings.TrimSpace(values["--snapshot"])
+	if currentPath == "" {
+		return writeError(stdout, stderr, opts, 2, "usage", "--snapshot is required")
+	}
+	current, err := protocol.LoadLiveSmokeSnapshot(currentPath)
+	if err != nil {
+		return writeError(stdout, stderr, opts, 1, "live_smoke_snapshot_read_failed", err.Error())
+	}
+	var previous *protocol.ConnectorLiveSmokeSnapshot
+	if previousPath := strings.TrimSpace(values["--previous"]); previousPath != "" {
+		loaded, err := protocol.LoadLiveSmokeSnapshot(previousPath)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "live_smoke_previous_read_failed", err.Error())
+		}
+		previous = &loaded
+	}
+	dashboard := protocol.BuildSourceAPIDriftDashboard(protocol.DefaultConnectorCapabilityRegistry(), current, previous, time.Now().UTC(), parseProvenanceRefs(values["--provenance"]))
+	if opts.JSON {
+		return writeJSON(stdout, 0, map[string]any{"sourceApiDriftDashboard": dashboard})
+	}
+	fmt.Fprintln(stdout, "Source API drift dashboard:")
+	for _, entry := range dashboard.Entries {
+		fmt.Fprintf(stdout, "- %s: %s alerts=%d provenance=%s\n", entry.Label, entry.Status, len(entry.Alerts), entry.ProvenanceRef)
+	}
+	return 0
+}
+
+func parseProvenanceRefs(value string) map[string]string {
+	refs := map[string]string{}
+	for _, item := range splitCSV(value) {
+		connector, ref, ok := strings.Cut(item, "=")
+		if ok && strings.TrimSpace(connector) != "" && strings.TrimSpace(ref) != "" {
+			refs[strings.TrimSpace(connector)] = strings.TrimSpace(ref)
+		}
+	}
+	return refs
 }
 
 func writeCapabilities(registry protocol.ConnectorCapabilityRegistry, stdout io.Writer, opts globalOptions) int {
