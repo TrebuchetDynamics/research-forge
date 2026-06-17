@@ -27,11 +27,12 @@ Implemented nearby capabilities:
 
 Missing features:
 
-- DOAJ metadata connector.
-- CORE metadata/full-text candidate connector.
-- OA candidate comparison across Unpaywall/DOAJ/CORE.
-- License-aware acquisition queue in the HTMX cockpit.
+- Richer live-service drift/rate dashboards for DOAJ and CORE.
+
+Implemented:
+
+- DOAJ and CORE connectors normalize open-access metadata and full-text candidates with license metadata, source URL provenance, attribution/rate-limit policy metadata, API provenance, OA candidate comparison across Unpaywall/DOAJ/CORE, license-aware acquisition queues, and reviewer-approved acquisition gates before download/archive use.
 
 ## Recommended next slice
 
-Add a DOAJ/CORE OA discovery adapter that records license metadata, source URL, API provenance, and reviewer approval state before any full-text acquisition.
+Add richer live-service drift/rate dashboards and optional CORE credential budget reporting on top of implemented DOAJ/CORE discovery and acquisition gates.

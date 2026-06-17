@@ -34,6 +34,9 @@ type LegalAcquisitionQueueItem struct {
 	Reviewer                 string `json:"reviewer,omitempty"`
 	ApprovalReason           string `json:"approvalReason,omitempty"`
 	Provenance               string `json:"provenance"`
+	Attribution              string `json:"attribution,omitempty"`
+	RateLimitPolicy          string `json:"rateLimitPolicy,omitempty"`
+	APIProvenance            string `json:"apiProvenance,omitempty"`
 }
 
 func BuildLegalAcquisitionQueue(projectPath string, comparison sources.OpenAccessCandidateComparison) LegalAcquisitionQueue {
@@ -54,6 +57,9 @@ func BuildLegalAcquisitionQueue(projectPath string, comparison sources.OpenAcces
 			ReviewerApprovalRequired: true,
 			ReviewerApproved:         false,
 			Provenance:               candidate.Provenance,
+			Attribution:              strings.TrimSpace(candidate.Attribution),
+			RateLimitPolicy:          strings.TrimSpace(candidate.RateLimitPolicy),
+			APIProvenance:            strings.TrimSpace(candidate.APIProvenance),
 		})
 	}
 	return LegalAcquisitionQueue{SchemaVersion: "1", Items: items}

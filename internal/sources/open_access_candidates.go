@@ -46,7 +46,7 @@ func (c DOAJConnector) Search(ctx context.Context, query SourceQuery) (SourceRes
 		if len(item.BibJSON.License) > 0 {
 			license = strings.TrimSpace(item.BibJSON.License[0].Type)
 		}
-		records = append(records, SourceRecord{Source: "doaj", SourceID: strings.TrimSpace(item.ID), Title: strings.TrimSpace(item.BibJSON.Title), Identifiers: Identifiers{DOI: doi}, Year: item.BibJSON.YearInt(), Venue: item.BibJSON.Journal.Title, URLs: nonEmptyStrings(links...), License: license, OpenAccess: true, Metadata: map[string]string{"full_text_url": firstNonEmpty(links...), "license": license}})
+		records = append(records, SourceRecord{Source: "doaj", SourceID: strings.TrimSpace(item.ID), Title: strings.TrimSpace(item.BibJSON.Title), Identifiers: Identifiers{DOI: doi}, Year: item.BibJSON.YearInt(), Venue: item.BibJSON.Journal.Title, URLs: nonEmptyStrings(links...), License: license, OpenAccess: true, Metadata: map[string]string{"full_text_url": firstNonEmpty(links...), "license": license, "attribution": "DOAJ article metadata", "rate_limit_policy": "public API; polite pageSize-limited requests with attribution", "api_provenance": "doaj:" + path}})
 	}
 	return SourceResponse{Records: records, RawRef: "doaj:" + path}, nil
 }
@@ -74,7 +74,7 @@ func (c COREConnector) Search(ctx context.Context, query SourceQuery) (SourceRes
 		for _, link := range item.Links {
 			links = append(links, link.URL)
 		}
-		records = append(records, SourceRecord{Source: "core", SourceID: strings.TrimSpace(item.ID), Title: strings.TrimSpace(item.Title), Identifiers: Identifiers{DOI: normalizeSourceDOI(item.DOI)}, Year: item.YearPublished, Publisher: item.Publisher, URLs: nonEmptyStrings(links...), License: strings.TrimSpace(item.License), OpenAccess: true, Metadata: map[string]string{"download_url": strings.TrimSpace(item.DownloadURL), "license": strings.TrimSpace(item.License)}})
+		records = append(records, SourceRecord{Source: "core", SourceID: strings.TrimSpace(item.ID), Title: strings.TrimSpace(item.Title), Identifiers: Identifiers{DOI: normalizeSourceDOI(item.DOI)}, Year: item.YearPublished, Publisher: item.Publisher, URLs: nonEmptyStrings(links...), License: strings.TrimSpace(item.License), OpenAccess: true, Metadata: map[string]string{"download_url": strings.TrimSpace(item.DownloadURL), "license": strings.TrimSpace(item.License), "attribution": "CORE metadata", "rate_limit_policy": "CORE API limits/key policy; request limit recorded", "api_provenance": "core:/v3/search/works?q=" + url.QueryEscape(query.Terms)}})
 	}
 	return SourceResponse{Records: records, RawRef: "core:/v3/search/works?q=" + url.QueryEscape(query.Terms)}, nil
 }
@@ -91,36 +91,39 @@ type OpenAccessCandidate struct {
 	License                  string `json:"license,omitempty"`
 	OAStatus                 string `json:"oaStatus,omitempty"`
 	Provenance               string `json:"provenance"`
+	Attribution              string `json:"attribution,omitempty"`
+	RateLimitPolicy          string `json:"rateLimitPolicy,omitempty"`
+	APIProvenance            string `json:"apiProvenance,omitempty"`
 	ReviewerApprovalRequired bool   `json:"reviewerApprovalRequired"`
 }
 
 func CompareOpenAccessCandidates(records []library.PaperRecord) OpenAccessCandidateComparison {
 	out := []OpenAccessCandidate{}
 	for _, record := range records {
-		add := func(source, candidateURL, license, status, provenance string) {
+		add := func(source, candidateURL, license, status, provenance string, metadata map[string]string) {
 			if strings.TrimSpace(candidateURL) != "" {
-				out = append(out, OpenAccessCandidate{PaperTitle: record.Title, DOI: record.Identifiers.DOI, Source: source, URL: strings.TrimSpace(candidateURL), License: strings.TrimSpace(license), OAStatus: strings.TrimSpace(status), Provenance: provenance, ReviewerApprovalRequired: true})
+				out = append(out, OpenAccessCandidate{PaperTitle: record.Title, DOI: record.Identifiers.DOI, Source: source, URL: strings.TrimSpace(candidateURL), License: strings.TrimSpace(license), OAStatus: strings.TrimSpace(status), Provenance: provenance, Attribution: metadata["attribution"], RateLimitPolicy: metadata["rate_limit_policy"], APIProvenance: firstNonEmpty(metadata["api_provenance"], provenance), ReviewerApprovalRequired: true})
 			}
 		}
 		for _, ref := range record.SourceRefs {
 			m := ref.Metadata
 			switch ref.Source {
 			case "unpaywall":
-				add("unpaywall", firstNonEmpty(m["pdf_url"], m["url_for_pdf"], m["best_url"]), firstNonEmpty(m["license"], record.License), m["oa_status"], ref.RawPayloadRef)
+				add("unpaywall", firstNonEmpty(m["pdf_url"], m["url_for_pdf"], m["best_url"]), firstNonEmpty(m["license"], record.License), m["oa_status"], ref.RawPayloadRef, m)
 			case "doaj":
-				add("doaj", firstNonEmpty(m["full_text_url"], m["url"]), firstNonEmpty(m["license"], record.License), "open", ref.RawPayloadRef)
+				add("doaj", firstNonEmpty(m["full_text_url"], m["url"]), firstNonEmpty(m["license"], record.License), "open", ref.RawPayloadRef, m)
 			case "core":
-				add("core", firstNonEmpty(m["download_url"], m["full_text_url"], m["url"]), firstNonEmpty(m["license"], record.License), "open", ref.RawPayloadRef)
+				add("core", firstNonEmpty(m["download_url"], m["full_text_url"], m["url"]), firstNonEmpty(m["license"], record.License), "open", ref.RawPayloadRef, m)
 			case "europepmc", "pubmed", "pmc":
-				add("pubmed-europepmc-pmc", firstNonEmpty(m["full_text_url"], firstNonEmpty(record.URLs...)), firstNonEmpty(m["license"], record.License), "open", ref.RawPayloadRef)
+				add("pubmed-europepmc-pmc", firstNonEmpty(m["full_text_url"], firstNonEmpty(record.URLs...)), firstNonEmpty(m["license"], record.License), "open", ref.RawPayloadRef, m)
 			}
 		}
 		if record.Identifiers.ArXivID != "" {
-			add("arxiv", "https://arxiv.org/pdf/"+record.Identifiers.ArXivID, record.License, "preprint", "arxiv:"+record.Identifiers.ArXivID)
+			add("arxiv", "https://arxiv.org/pdf/"+record.Identifiers.ArXivID, record.License, "preprint", "arxiv:"+record.Identifiers.ArXivID, map[string]string{"api_provenance": "arxiv:" + record.Identifiers.ArXivID})
 		}
 		for _, u := range record.URLs {
 			if strings.HasPrefix(u, "/") || strings.HasPrefix(u, "file:") {
-				add("local", u, record.License, "local-only", "local-import")
+				add("local", u, record.License, "local-only", "local-import", map[string]string{"api_provenance": "local-import"})
 			}
 		}
 	}

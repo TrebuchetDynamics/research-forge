@@ -53,7 +53,7 @@ ResearchForge keeps scholarly source integrations local-first and explicit about
   - confirm DOAJ API attribution, throttling, and article metadata license;
   - confirm CORE API key requirements, rate limits, content/link redistribution constraints, and PDF URL handling.
 - Outbound data: query terms, DOI/title filters, pagination tokens, optional API key.
-- Credentials/config: CORE API key if required; DOAJ usually public but still subject to rate limits.
+- Credentials/config: CORE API key if required; DOAJ usually public but still subject to rate limits. Candidate records preserve attribution/rate-limit policy and API provenance before reviewer-approved acquisition.
 
 ## Source-specific outbound data and credential requirements
 
