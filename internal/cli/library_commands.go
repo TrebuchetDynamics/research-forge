@@ -10,6 +10,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/TrebuchetDynamics/research-forge/internal/documents"
 	"github.com/TrebuchetDynamics/research-forge/internal/library"
 	"github.com/TrebuchetDynamics/research-forge/internal/provenance"
 	"github.com/TrebuchetDynamics/research-forge/internal/sources"
@@ -307,6 +308,22 @@ func executeLibrary(args []string, stdout, stderr io.Writer, opts globalOptions)
 		}
 		for _, paper := range papers {
 			fmt.Fprintf(stdout, "%s\t%s\n", paper.Identifiers.DOI, paper.Title)
+		}
+		return 0
+	case "pmcid-pmid-links":
+		if len(args) != 1 {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> library pmcid-pmid-links")
+		}
+		papers, err := store.List()
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "library_list_failed", fmt.Sprintf("list library: %v", err))
+		}
+		links := documents.LinkPMCIDPMID(papers)
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"links": links})
+		}
+		for _, link := range links {
+			fmt.Fprintf(stdout, "%s\t%s\t%s\n", link.PMID, link.PMCID, link.DOI)
 		}
 		return 0
 	case "identity-conflicts":

@@ -553,11 +553,42 @@ func safeFileStem(value string) string {
 }
 
 func executePDF(args []string, stdout, stderr io.Writer, opts globalOptions) int {
-	if len(args) == 0 || (args[0] != "fetch" && args[0] != "fetch-arxiv") {
-		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> pdf fetch --doi <doi> --pdf-url <url> --license <license> --oa-status <status> | pdf fetch-arxiv --paper <arxiv-id> --kind pdf|source --url <url>")
+	if len(args) == 0 || (args[0] != "fetch" && args[0] != "fetch-arxiv" && args[0] != "import-biomedical" && args[0] != "biomedical-drift-smoke-plan") {
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> pdf fetch --doi <doi> --pdf-url <url> --license <license> --oa-status <status> | pdf fetch-arxiv --paper <arxiv-id> --kind pdf|source --url <url> | pdf import-biomedical --xml <file> --out <json>")
 	}
 	if opts.Project == "" {
 		return writeError(stdout, stderr, opts, 2, "missing_project", "--project is required for pdf commands")
+	}
+	if args[0] == "biomedical-drift-smoke-plan" {
+		plan := documents.NewBiomedicalLiveDriftSmokeSnapshot()
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"biomedicalDriftSmoke": plan})
+		}
+		for _, connector := range plan.Connectors {
+			fmt.Fprintf(stdout, "%s\t%s\t%s\n", connector.Source, connector.OptInEnv, strings.Join(connector.ExpectedFields, ","))
+		}
+		return 0
+	}
+	if args[0] == "import-biomedical" {
+		xmlPath, outPath, ok := parseBiomedicalImport(args[1:])
+		if !ok {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> pdf import-biomedical --xml <file> --out <json>")
+		}
+		fullText, err := documents.ImportStructuredBiomedicalFullText(xmlPath)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "biomedical_import_failed", err.Error())
+		}
+		if err := fullText.Validate(); err != nil {
+			return writeError(stdout, stderr, opts, 1, "biomedical_import_invalid", err.Error())
+		}
+		if err := writeJSONFile(outPath, fullText); err != nil {
+			return writeError(stdout, stderr, opts, 1, "biomedical_import_write_failed", err.Error())
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"fullText": fullText, "path": outPath})
+		}
+		fmt.Fprintf(stdout, "imported biomedical full text to %s\n", outPath)
+		return 0
 	}
 	if args[0] == "fetch-arxiv" {
 		paperID, kind, assetURL, ok := parseArXivFetch(args[1:])
@@ -587,6 +618,23 @@ func executePDF(args []string, stdout, stderr io.Writer, opts globalOptions) int
 	}
 	fmt.Fprintf(stdout, "fetched PDF %s\n", asset.LocalPath)
 	return 0
+}
+
+func parseBiomedicalImport(args []string) (string, string, bool) {
+	values := map[string]string{}
+	for i := 0; i < len(args); i++ {
+		switch args[i] {
+		case "--xml", "--out":
+			if i+1 >= len(args) {
+				return "", "", false
+			}
+			values[args[i]] = args[i+1]
+			i++
+		default:
+			return "", "", false
+		}
+	}
+	return values["--xml"], values["--out"], values["--xml"] != "" && values["--out"] != ""
 }
 
 func parseArXivFetch(args []string) (string, string, string, bool) {

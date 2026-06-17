@@ -24,6 +24,7 @@ Core commands:
 - Zotero RDF and JabRef/BibTeX imports preserve reference-manager fidelity metadata in source refs: collections/groups, tags, notes, annotations, citation keys, BibTeX cleanup diffs, and linked-file privacy redaction checks
 - `rforge --project <path> library reference-manager-matrix` reports the BibTeX/RIS/CSL-JSON/Zotero RDF interchange fidelity matrix, including Better BibTeX citation keys, tags, notes, collections/groups, redacted attachments, and field-loss notes
 - `rforge --project <path> library identity-resolve` reports source-fusion identity clusters with explainable match rules across DOI, arXiv, PMID, PMCID, OpenAlex, Semantic Scholar, Crossref, Zotero item keys, and NASA ADS bibcodes
+- `rforge --project <path> library pmcid-pmid-links` reports normalized PMID/PMCID/DOI links for biomedical records
 - `rforge --project <path> library identity-conflicts` records and reports identity-cluster conflict records; `rforge --project <path> library identity-decision record --action merge|split ...` appends reversible merge/split decisions to `data/identity-decisions.jsonl`
 - `rforge duplicate report [--source <source>]|merge|split` (use `--source semantic-scholar` for graph-import dedupe review)
 - `rforge oss inventory-check <manifest.json>`
@@ -33,6 +34,7 @@ Core commands:
 - `rforge oss inventory-report <manifest.json> [--area <area>]`
 - `rforge oss add|list|clone|license-check|note|scan|report|refresh`
 - `rforge pdf fetch --doi <doi>`, `rforge pdf fetch-arxiv --paper <arxiv-id> --kind pdf|source --url <url>`
+- `rforge --project <path> pdf import-biomedical --xml <jats-or-pmc.xml> --out <json>` imports structured biomedical full text with PMCID/PMID/DOI metadata, sections, and supplementary-file links; `rforge --project <path> pdf biomedical-drift-smoke-plan` prints PubMed/Europe PMC live-drift smoke expectations
 - `rforge parse --paper <id> --parser grobid --pdf <file>` or `rforge parse --paper <id> --parser tex --tex <file>` or `rforge parse --paper <id> --parser s2orc --s2orc <file>` or `rforge parse --paper <id> --parser papermage --papermage <file>`
 - `rforge parse references --paper <id> --parser anystyle --file <refs.txt> --out <refs.json>` (requires `RFORGE_ANYSTYLE_CMD`)
 - `rforge parse compare --left <parsed.json> --right <parsed.json> --out <report.json>`
