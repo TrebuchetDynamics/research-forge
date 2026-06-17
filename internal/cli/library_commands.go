@@ -309,6 +309,27 @@ func executeLibrary(args []string, stdout, stderr io.Writer, opts globalOptions)
 			fmt.Fprintf(stdout, "%s\t%s\n", paper.Identifiers.DOI, paper.Title)
 		}
 		return 0
+	case "identity-conflicts":
+		if len(args) != 1 {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> library identity-conflicts")
+		}
+		papers, err := store.List()
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "library_list_failed", fmt.Sprintf("list library: %v", err))
+		}
+		conflicts := library.DetectIdentityConflicts(library.ResolveIdentityClusters(papers), papers)
+		for _, conflict := range conflicts {
+			_ = library.AppendIdentityConflict(identityDecisionLogPath(opts.Project), conflict)
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"conflicts": conflicts})
+		}
+		for _, conflict := range conflicts {
+			fmt.Fprintf(stdout, "%s\t%s\t%s\n", conflict.ClusterID, conflict.Severity, conflict.Reason)
+		}
+		return 0
+	case "identity-decision":
+		return executeIdentityDecision(args[1:], stdout, stderr, opts, store)
 	case "identity-resolve":
 		if len(args) != 1 {
 			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> library identity-resolve")
@@ -431,6 +452,71 @@ type crossrefRefreshResult struct {
 	Refreshed int
 	code      string
 	exitCode  int
+}
+
+func executeIdentityDecision(args []string, stdout, stderr io.Writer, opts globalOptions, store library.Store) int {
+	if len(args) == 1 && args[0] == "log" {
+		log, err := library.ReadIdentityDecisionLog(identityDecisionLogPath(opts.Project))
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "identity_decision_log_failed", err.Error())
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"log": log})
+		}
+		fmt.Fprintf(stdout, "%d identity decisions, %d conflicts\n", len(log.Decisions), len(log.Conflicts))
+		return 0
+	}
+	if len(args) == 0 || args[0] != "record" {
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> library identity-decision record --action merge|split --cluster <id> --reason <text> --before-indexes <csv> --after-indexes <csv>")
+	}
+	values, err := parseKeyValueFlags(args[1:], map[string]bool{"--action": true, "--cluster": true, "--reason": true, "--reviewer": true, "--before-indexes": true, "--after-indexes": true})
+	if err != nil {
+		return writeError(stdout, stderr, opts, 2, "usage", err.Error())
+	}
+	papers, err := store.List()
+	if err != nil {
+		return writeError(stdout, stderr, opts, 1, "library_list_failed", fmt.Sprintf("list library: %v", err))
+	}
+	before, ok := papersByCSVIndexes(papers, values["--before-indexes"])
+	if !ok {
+		return writeError(stdout, stderr, opts, 2, "invalid_identity_decision_indexes", "before indexes must reference existing records")
+	}
+	after, ok := papersByCSVIndexes(papers, values["--after-indexes"])
+	if !ok {
+		return writeError(stdout, stderr, opts, 2, "invalid_identity_decision_indexes", "after indexes must reference existing records")
+	}
+	decision := library.IdentityDecision{ID: "identity-decision-" + time.Now().UTC().Format("20060102T150405Z"), ClusterID: values["--cluster"], Action: values["--action"], Reviewer: values["--reviewer"], Reason: values["--reason"], Reversible: true, Before: before, After: after}
+	if err := library.AppendIdentityDecision(identityDecisionLogPath(opts.Project), decision); err != nil {
+		return writeError(stdout, stderr, opts, 1, "identity_decision_record_failed", err.Error())
+	}
+	if err := recordDuplicateEvent(opts.Project, "identity."+decision.Action+".approved", map[string]any{"clusterId": decision.ClusterID, "reason": decision.Reason}, map[string]any{"reversible": true, "before": len(before), "after": len(after)}); err != nil {
+		return writeError(stdout, stderr, opts, 1, "identity_decision_provenance_failed", err.Error())
+	}
+	if opts.JSON {
+		return writeJSON(stdout, 0, map[string]any{"decision": decision})
+	}
+	fmt.Fprintf(stdout, "recorded reversible identity %s decision for %s\n", decision.Action, decision.ClusterID)
+	return 0
+}
+
+func identityDecisionLogPath(projectPath string) string {
+	return filepath.Join(projectPath, "data", "identity-decisions.jsonl")
+}
+
+func papersByCSVIndexes(papers []library.PaperRecord, csv string) ([]library.PaperRecord, bool) {
+	indexes := splitCSV(csv)
+	if len(indexes) == 0 {
+		return nil, false
+	}
+	out := make([]library.PaperRecord, 0, len(indexes))
+	for _, value := range indexes {
+		index, err := strconv.Atoi(value)
+		if err != nil || index < 0 || index >= len(papers) {
+			return nil, false
+		}
+		out = append(out, papers[index])
+	}
+	return out, true
 }
 
 func refreshCrossrefDOIs(store library.Store, dois []string) (crossrefRefreshResult, error) {
