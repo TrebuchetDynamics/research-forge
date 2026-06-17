@@ -12,6 +12,32 @@ import (
 	"github.com/TrebuchetDynamics/research-forge/internal/parsing"
 )
 
+func TestExecuteCitationsImportBibliographyParsedDirImportsFullGraph(t *testing.T) {
+	project := t.TempDir()
+	parsedDir := filepath.Join(project, "parsed")
+	if err := os.MkdirAll(parsedDir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	doc1 := parsing.EnrichParsedDocumentModel(parsing.ParsedDocument{PaperID: "paper-1", References: []parsing.Reference{{Title: "Ref1", DOI: "10.1000/ref1"}}, Sections: []parsing.Section{{ID: "s1", Passages: []parsing.Passage{{ID: "p1", PaperID: "paper-1", SectionID: "s1", Text: "Known [1]."}}}}})
+	doc2 := parsing.EnrichParsedDocumentModel(parsing.ParsedDocument{PaperID: "paper-2", References: []parsing.Reference{{Title: "Ref2", DOI: "10.1000/ref2"}}, Sections: []parsing.Section{{ID: "s1", Passages: []parsing.Passage{{ID: "p2", PaperID: "paper-2", SectionID: "s1", Text: "Known [1]."}}}}})
+	writeParsedFixture(t, filepath.Join(parsedDir, "paper-1.json"), doc1)
+	writeParsedFixture(t, filepath.Join(parsedDir, "paper-2.json"), doc2)
+	graphPath := filepath.Join(project, "data", "citation-graph.json")
+	reportPath := filepath.Join(project, "data", "bibliography-import.json")
+	var stdout, stderr bytes.Buffer
+	code := Execute([]string{"--json", "--project", project, "citations", "import-bibliography", "--parsed-dir", parsedDir, "--out", graphPath, "--report", reportPath}, &stdout, &stderr)
+	if code != 0 {
+		t.Fatalf("code=%d stderr=%s stdout=%s", code, stderr.String(), stdout.String())
+	}
+	var report citations.BibliographyImportReport
+	if err := readJSONFile(reportPath, &report); err != nil {
+		t.Fatalf("read report: %v", err)
+	}
+	if report.EdgeCount != 2 || len(report.DocumentReports) != 2 {
+		t.Fatalf("report = %#v", report)
+	}
+}
+
 func TestExecuteCitationsImportBibliographyLinksSpansAndEvidence(t *testing.T) {
 	project := t.TempDir()
 	doc := parsing.EnrichParsedDocumentModel(parsing.ParsedDocument{PaperID: "paper-1", References: []parsing.Reference{{Title: "Ref", DOI: "10.1000/ref"}}, Sections: []parsing.Section{{ID: "s1", Passages: []parsing.Passage{{ID: "p1", PaperID: "paper-1", SectionID: "s1", Text: "Known [1]."}}}}})

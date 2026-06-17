@@ -11,13 +11,14 @@ import (
 )
 
 type BibliographyImportReport struct {
-	SchemaVersion     string             `json:"schemaVersion"`
-	PaperID           string             `json:"paperId"`
-	EdgeCount         int                `json:"edgeCount"`
-	Edges             []BibliographyEdge `json:"edges"`
-	CitationSpanLinks []CitationSpanLink `json:"citationSpanLinks"`
-	EvidenceLinks     []EvidenceLink     `json:"evidenceLinks"`
-	Graph             *Graph             `json:"-"`
+	SchemaVersion     string                     `json:"schemaVersion"`
+	PaperID           string                     `json:"paperId,omitempty"`
+	DocumentReports   []BibliographyImportReport `json:"documentReports,omitempty"`
+	EdgeCount         int                        `json:"edgeCount"`
+	Edges             []BibliographyEdge         `json:"edges"`
+	CitationSpanLinks []CitationSpanLink         `json:"citationSpanLinks"`
+	EvidenceLinks     []EvidenceLink             `json:"evidenceLinks"`
+	Graph             *Graph                     `json:"-"`
 }
 
 type BibliographyEdge struct {
@@ -45,6 +46,30 @@ type EvidenceLink struct {
 	CitationSpanID      string `json:"citationSpanId"`
 	CitationTargetID    string `json:"citationTargetId"`
 	CitationReferenceID int    `json:"citationReferenceIndex"`
+}
+
+func ImportParsedBibliographies(docs []parsing.ParsedDocument, items []evidence.EvidenceItem) BibliographyImportReport {
+	graph := NewGraph()
+	report := BibliographyImportReport{SchemaVersion: "1", Graph: graph}
+	for _, doc := range docs {
+		docReport := ImportParsedBibliography(doc, items)
+		docReport.Graph = nil
+		report.DocumentReports = append(report.DocumentReports, docReport)
+		report.Edges = append(report.Edges, docReport.Edges...)
+		report.CitationSpanLinks = append(report.CitationSpanLinks, docReport.CitationSpanLinks...)
+		report.EvidenceLinks = append(report.EvidenceLinks, docReport.EvidenceLinks...)
+		for _, edge := range docReport.Edges {
+			graph.AddCitation(edge.SourceID, edge.TargetID)
+		}
+	}
+	report.EdgeCount = len(report.Edges)
+	sort.Slice(report.Edges, func(i, j int) bool {
+		if report.Edges[i].SourceID == report.Edges[j].SourceID {
+			return report.Edges[i].TargetID < report.Edges[j].TargetID
+		}
+		return report.Edges[i].SourceID < report.Edges[j].SourceID
+	})
+	return report
 }
 
 func ImportParsedBibliography(doc parsing.ParsedDocument, items []evidence.EvidenceItem) BibliographyImportReport {

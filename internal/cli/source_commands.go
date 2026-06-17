@@ -96,19 +96,29 @@ func executeCitations(args []string, stdout, stderr io.Writer, opts globalOption
 		return 0
 	}
 	if args[0] == "import-bibliography" {
-		parsedPath, outPath, reportPath, evidencePath, ok := parseCitationsImportBibliography(args[1:], opts.Project)
+		parsedPath, parsedDir, outPath, reportPath, evidencePath, ok := parseCitationsImportBibliography(args[1:], opts.Project)
 		if !ok {
-			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge citations import-bibliography --parsed <parsed.json> --out <graph.json> --report <report.json> [--evidence <evidence.json>]")
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge citations import-bibliography (--parsed <parsed.json>|--parsed-dir <dir>) --out <graph.json> --report <report.json> [--evidence <evidence.json>]")
 		}
-		var doc parsing.ParsedDocument
-		if err := readJSONFile(parsedPath, &doc); err != nil {
-			return writeError(stdout, stderr, opts, 1, "citation_bibliography_read_failed", err.Error())
+		docs := []parsing.ParsedDocument{}
+		if parsedDir != "" {
+			var err error
+			docs, err = readParsedDocuments(parsedDir)
+			if err != nil {
+				return writeError(stdout, stderr, opts, 1, "citation_bibliography_read_failed", err.Error())
+			}
+		} else {
+			var doc parsing.ParsedDocument
+			if err := readJSONFile(parsedPath, &doc); err != nil {
+				return writeError(stdout, stderr, opts, 1, "citation_bibliography_read_failed", err.Error())
+			}
+			docs = append(docs, doc)
 		}
 		var items []evidence.EvidenceItem
 		if evidencePath != "" {
 			_ = readJSONFile(evidencePath, &items)
 		}
-		report := citations.ImportParsedBibliography(doc, items)
+		report := citations.ImportParsedBibliographies(docs, items)
 		graphData, err := report.Graph.ExportJSON()
 		if err != nil {
 			return writeError(stdout, stderr, opts, 1, "citation_bibliography_export_failed", err.Error())
@@ -124,7 +134,7 @@ func executeCitations(args []string, stdout, stderr io.Writer, opts globalOption
 		}
 		if opts.Project != "" {
 			now := time.Now().UTC()
-			if err := provenance.Append(opts.Project, provenance.Event{SchemaVersion: "1", ID: "evt_" + now.Format("20060102T150405Z") + "_bibliography_import", Timestamp: now.Format(time.RFC3339), Actor: "rforge", Action: "citations.bibliography.imported", Target: doc.PaperID, Inputs: map[string]any{"parsed": parsedPath, "evidence": evidencePath}, Outputs: map[string]any{"graph": outPath, "report": reportPath, "edges": report.EdgeCount}}); err != nil {
+			if err := provenance.Append(opts.Project, provenance.Event{SchemaVersion: "1", ID: "evt_" + now.Format("20060102T150405Z") + "_bibliography_import", Timestamp: now.Format(time.RFC3339), Actor: "rforge", Action: "citations.bibliography.imported", Target: outPath, Inputs: map[string]any{"parsed": parsedPath, "parsedDir": parsedDir, "evidence": evidencePath}, Outputs: map[string]any{"graph": outPath, "report": reportPath, "edges": report.EdgeCount}}); err != nil {
 				return writeError(stdout, stderr, opts, 1, "citation_bibliography_provenance_failed", err.Error())
 			}
 		}
@@ -964,24 +974,25 @@ func parseTopicHistoryEvent(value string) (citations.TopicHistoryEvent, bool) {
 	return event, true
 }
 
-func parseCitationsImportBibliography(args []string, project string) (string, string, string, string, bool) {
+func parseCitationsImportBibliography(args []string, project string) (string, string, string, string, string, bool) {
 	values := map[string]string{}
 	if project != "" {
 		values["--evidence"] = evidenceItemsPath(project)
 	}
 	for i := 0; i < len(args); i++ {
 		switch args[i] {
-		case "--parsed", "--out", "--report", "--evidence":
+		case "--parsed", "--parsed-dir", "--out", "--report", "--evidence":
 			if i+1 >= len(args) {
-				return "", "", "", "", false
+				return "", "", "", "", "", false
 			}
 			values[args[i]] = args[i+1]
 			i++
 		default:
-			return "", "", "", "", false
+			return "", "", "", "", "", false
 		}
 	}
-	return values["--parsed"], values["--out"], values["--report"], values["--evidence"], values["--parsed"] != "" && values["--out"] != "" && values["--report"] != ""
+	parsedOK := (values["--parsed"] != "") != (values["--parsed-dir"] != "")
+	return values["--parsed"], values["--parsed-dir"], values["--out"], values["--report"], values["--evidence"], parsedOK && values["--out"] != "" && values["--report"] != ""
 }
 
 func parseCitationsReport(args []string) (string, string, bool) {
