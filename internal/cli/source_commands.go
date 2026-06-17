@@ -23,7 +23,40 @@ import (
 
 func executeCitations(args []string, stdout, stderr io.Writer, opts globalOptions) int {
 	if len(args) == 0 {
-		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge citations <expand|report>")
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge citations <expand|report|import-bibliography|domain-map>")
+	}
+	if args[0] == "domain-map" {
+		parsedDir, graphPath, outPath, labels, history, model, ok := parseCitationsDomainMap(args[1:])
+		if !ok {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge citations domain-map --parsed-dir <dir> --out <domain-map.json> [--graph <graph.json> --label topic=label --history action:topic1,topic2:result:reviewer:reason --model <name>]")
+		}
+		docs, err := readParsedDocuments(parsedDir)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "domain_map_parsed_read_failed", err.Error())
+		}
+		var graphData []byte
+		if graphPath != "" {
+			graphData, err = os.ReadFile(graphPath)
+			if err != nil {
+				return writeError(stdout, stderr, opts, 1, "domain_map_graph_read_failed", err.Error())
+			}
+		}
+		artifact, err := citations.BuildDomainMapArtifact(docs, graphData, citations.DomainMapOptions{ReviewerLabels: labels, MergeSplitHistory: history, ModelSettings: citations.DomainMapModelSettings{Model: model, EmbeddingProvider: "deterministic-keyword", MinTopicSize: 1}})
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "domain_map_failed", err.Error())
+		}
+		if err := writeJSONFile(outPath, artifact); err != nil {
+			return writeError(stdout, stderr, opts, 1, "domain_map_write_failed", err.Error())
+		}
+		if opts.Project != "" {
+			now := time.Now().UTC()
+			_ = provenance.Append(opts.Project, provenance.Event{SchemaVersion: "1", ID: "evt_" + now.Format("20060102T150405Z") + "_domain_map", Timestamp: now.Format(time.RFC3339), Actor: "rforge", Action: "citations.domain_map.created", Target: outPath, Inputs: map[string]any{"parsedDir": parsedDir, "graph": graphPath}, Outputs: map[string]any{"topics": len(artifact.Topics), "path": outPath}})
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"domainMap": artifact, "path": outPath})
+		}
+		fmt.Fprintf(stdout, "wrote domain map to %s\n", outPath)
+		return 0
 	}
 	if args[0] == "import-bibliography" {
 		parsedPath, outPath, reportPath, evidencePath, ok := parseCitationsImportBibliography(args[1:], opts.Project)
@@ -805,6 +838,74 @@ func envInt(name string, fallback int) int {
 		return fallback
 	}
 	return value
+}
+
+func parseCitationsDomainMap(args []string) (string, string, string, map[string]string, []citations.TopicHistoryEvent, string, bool) {
+	values := map[string]string{}
+	labels := map[string]string{}
+	history := []citations.TopicHistoryEvent{}
+	model := ""
+	for i := 0; i < len(args); i++ {
+		switch args[i] {
+		case "--parsed-dir", "--graph", "--out", "--model":
+			if i+1 >= len(args) {
+				return "", "", "", nil, nil, "", false
+			}
+			if args[i] == "--model" {
+				model = args[i+1]
+			} else {
+				values[args[i]] = args[i+1]
+			}
+			i++
+		case "--label":
+			if i+1 >= len(args) {
+				return "", "", "", nil, nil, "", false
+			}
+			parts := strings.SplitN(args[i+1], "=", 2)
+			if len(parts) != 2 || strings.TrimSpace(parts[0]) == "" || strings.TrimSpace(parts[1]) == "" {
+				return "", "", "", nil, nil, "", false
+			}
+			labels[strings.TrimSpace(parts[0])] = strings.TrimSpace(parts[1])
+			i++
+		case "--history":
+			if i+1 >= len(args) {
+				return "", "", "", nil, nil, "", false
+			}
+			event, ok := parseTopicHistoryEvent(args[i+1])
+			if !ok {
+				return "", "", "", nil, nil, "", false
+			}
+			history = append(history, event)
+			i++
+		default:
+			return "", "", "", nil, nil, "", false
+		}
+	}
+	return values["--parsed-dir"], values["--graph"], values["--out"], labels, history, model, values["--parsed-dir"] != "" && values["--out"] != ""
+}
+
+func parseTopicHistoryEvent(value string) (citations.TopicHistoryEvent, bool) {
+	parts := strings.SplitN(value, ":", 5)
+	if len(parts) < 3 {
+		return citations.TopicHistoryEvent{}, false
+	}
+	topicIDs := []string{}
+	for _, topicID := range strings.Split(parts[1], ",") {
+		if trimmed := strings.TrimSpace(topicID); trimmed != "" {
+			topicIDs = append(topicIDs, trimmed)
+		}
+	}
+	if strings.TrimSpace(parts[0]) == "" || len(topicIDs) == 0 || strings.TrimSpace(parts[2]) == "" {
+		return citations.TopicHistoryEvent{}, false
+	}
+	event := citations.TopicHistoryEvent{Action: strings.TrimSpace(parts[0]), TopicIDs: topicIDs, ResultTopicID: strings.TrimSpace(parts[2])}
+	if len(parts) > 3 {
+		event.Reviewer = strings.TrimSpace(parts[3])
+	}
+	if len(parts) > 4 {
+		event.Reason = strings.TrimSpace(parts[4])
+	}
+	return event, true
 }
 
 func parseCitationsImportBibliography(args []string, project string) (string, string, string, string, bool) {

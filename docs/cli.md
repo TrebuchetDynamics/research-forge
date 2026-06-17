@@ -9,6 +9,7 @@ Core commands:
 - `rforge search related --source openalex --paper <work-id> [--limit N]`
 - `rforge citations expand --source semantic-scholar|openalex|crossref --paper <id> --direction references|citations|both --depth N [--max-records N] --out <file> [--import-library]`
 - `rforge citations import-bibliography --parsed <parsed.json> --out <graph.json> --report <report.json> [--evidence <evidence.json>]` imports parsed bibliography references as citation-graph edges and links citation spans back to passages and accepted report evidence support
+- `rforge citations domain-map --parsed-dir <dir> --out <domain-map.json> [--graph <graph.json> --label topic=label --history action:topic1,topic2:result:reviewer:reason --model <name>]` writes BERTopic-style domain-map artifacts with representative papers/passages, reviewer labels, topic merge/split history, model settings, and citation-graph links
 - `rforge citations report --graph <graph.json> --out <report.md>`
 - `rforge protocol compile --type pico|peco|spider|freeform --question <text> [framework flags]` drafts source-specific query plans, inclusion/exclusion criteria, extraction schema seeds, and reviewer prompts; all outputs require reviewer approval before use
 - `rforge protocol plan-sources --type pico|peco|spider|freeform --question <text> [framework flags]` previews the Meta-analysis spine source plan for OpenAlex, Semantic Scholar, Crossref, arXiv, PubMed/Europe PMC, NASA ADS, DOAJ/CORE, Unpaywall, Zotero/JabRef, and local imports with dry-run estimates, auth/privacy warnings, and CLI equivalents

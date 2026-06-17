@@ -558,7 +558,7 @@ This is the canonical build order for the post-1.0 super-tool work. The thematic
 - [x] Add Qdrant adapter hardening: embedding-provider registry, compliance profiles, model/dimension locks, payload privacy, vector-index invalidation, and opt-in Qdrant integration tests (`DefaultEmbeddingProviderRegistry`, `QdrantRebuildReport`, `data/qdrant.vector.lock.json`, `TestOptInQdrantIntegration`).
 - [x] Add calibrated hybrid retrieval tuning files with lexical/vector/backend weights, evaluation scores, selected configuration, and query-set checksums (`CalibrateHybridRetrieval`, `rforge retrieve tune-hybrid`).
 - [x] Add retrieval benchmarks comparing SQLite FTS, OpenSearch, Qdrant vector search, and hybrid ranking on deterministic passage-query fixtures (`RunRetrievalBenchmark`, `rforge retrieve benchmark`).
-- [ ] Add BERTopic-style domain-map artifacts with representative papers/passages, reviewer-edited labels, topic merge/split history, model settings, and citation graph links.
+- [x] Add BERTopic-style domain-map artifacts with representative papers/passages, reviewer-edited labels, topic merge/split history, model settings, and citation graph links (`BuildDomainMapArtifact`, `rforge citations domain-map`).
 - [ ] Add accessible/no-JS citation/domain graph views: filtered node tables, edge lists, graph summaries, keyboard navigation, and exportable graph reports.
 
 #### Phase 6 — Screening and review assistance
