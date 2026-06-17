@@ -90,6 +90,8 @@ func Execute(args []string, stdout, stderr io.Writer) int {
 		return executeRetrieve(remaining[1:], stdout, stderr, opts)
 	case "research":
 		return executeResearch(remaining[1:], stdout, stderr, opts)
+	case "protocol":
+		return executeProtocol(remaining[1:], stdout, stderr, opts)
 	case "screen":
 		return executeScreen(remaining[1:], stdout, stderr, opts)
 	case "prisma":

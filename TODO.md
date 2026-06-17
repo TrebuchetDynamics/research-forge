@@ -522,7 +522,7 @@ This is the canonical build order for the post-1.0 super-tool work. The thematic
 
 #### Phase 1 — Question, protocol, and source plan
 
-- [ ] Add a research-question compiler for PICO/PECO/SPIDER/freeform questions that drafts source-specific query plans, inclusion/exclusion criteria, extraction schema seeds, and reviewer prompts without auto-accepting claims.
+- [x] Add a research-question compiler for PICO/PECO/SPIDER/freeform questions that drafts source-specific query plans, inclusion/exclusion criteria, extraction schema seeds, and reviewer prompts without auto-accepting claims (`internal/protocol/compiler.go`, `rforge protocol compile`).
 - [ ] Add a source-planning cockpit and CLI plan preview for OpenAlex, Semantic Scholar, Crossref, arXiv, PubMed/Europe PMC, NASA ADS, DOAJ/CORE, Unpaywall, Zotero/JabRef, and local imports.
 - [ ] Add connector capability registry records for supported entities, rate limits, auth needs, live-smoke status, license/shareability policy, cacheability, and provenance fields.
 - [ ] Add API drift/live-smoke snapshot storage and dashboard alerts for all source connectors.
@@ -676,7 +676,7 @@ These tasks combine the open-source inventory into one end-to-end ResearchForge 
 
 - [ ] Add a unified research-workflow orchestrator that can run discovery → import → dedupe → legal full-text fetch → parse → index → screen → extract → analyze → report as a resumable DAG with checkpoints, inputs/outputs, provenance, and restart safety (`opensource/inventory/{openalex,semantic-scholar,zotero,grobid,asreview,metafor}.md`).
 - [ ] Add a project knowledge graph that merges Zotero collections/tags, OpenAlex concepts, Semantic Scholar citation edges, parsed references, evidence items, screening decisions, analysis runs, and report claims into one queryable local graph (`opensource/inventory/{zotero,openalex,semantic-scholar,grobid,s2orc-doc2json,papermage}.md`).
-- [ ] Add a research-question compiler that turns a PICO/PECO/SPIDER/freeform question into source-specific query plans, inclusion/exclusion criteria drafts, extraction schema drafts, and provenance-tagged review prompts without auto-accepting scientific claims (`opensource/inventory/{openalex,semantic-scholar,asreview}.md`).
+- [x] Add a research-question compiler that turns a PICO/PECO/SPIDER/freeform question into source-specific query plans, inclusion/exclusion criteria drafts, extraction schema drafts, and provenance-tagged review prompts without auto-accepting scientific claims (`internal/protocol/compiler.go`, `rforge protocol compile`, `opensource/inventory/{openalex,semantic-scholar,asreview}.md`).
 - [ ] Add a citation-to-evidence trace view where every report claim links backward to effect-size rows, accepted evidence, passages, parser outputs, PDFs, reference-manager items, source API records, and raw request/response metadata (`opensource/inventory/{zotero,grobid,papermage,semantic-scholar,metafor}.md`).
 - [ ] Add a multi-engine parser arbitration layer that scores GROBID, S2ORC-style JSON, PaperMage, CERMINE, Science Parse-style metadata, and Anystyle output per field, routes conflicts to review, and records why one output was selected (`opensource/inventory/{grobid,s2orc-doc2json,papermage,cermine,science-parse,anystyle}.md`).
 - [ ] Add a source-fusion identity resolver that merges DOI/arXiv/PMID/PMCID/OpenAlex/Semantic Scholar/Crossref/Zotero IDs using explainable match rules, conflict records, and reversible merge/split operations (`opensource/inventory/{zotero,openalex,semantic-scholar,anystyle}.md`).

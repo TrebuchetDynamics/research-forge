@@ -9,6 +9,7 @@ Core commands:
 - `rforge search related --source openalex --paper <work-id> [--limit N]`
 - `rforge citations expand --source semantic-scholar|openalex|crossref --paper <id> --direction references|citations|both --depth N [--max-records N] --out <file> [--import-library]`
 - `rforge citations report --graph <graph.json> --out <report.md>`
+- `rforge protocol compile --type pico|peco|spider|freeform --question <text> [framework flags]` drafts source-specific query plans, inclusion/exclusion criteria, extraction schema seeds, and reviewer prompts; all outputs require reviewer approval before use
 - `rforge oa lookup <doi>`
 - `rforge library list`, `rforge library refresh-doi <doi>`, `rforge library refresh-crossref`, `rforge library import-crossref-refs <doi>`
 - `rforge import json|csv|bibtex|ris|csl-json|zotero-rdf <file>`
