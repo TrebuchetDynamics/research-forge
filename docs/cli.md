@@ -4,6 +4,7 @@ Core commands:
 
 - `rforge project create [path] --title <title>`
 - `rforge project inspect <path>`
+- `rforge forge init --project <path> --question <text>`, `rforge forge status --project <path>`, `rforge forge next --project <path>`, `rforge forge approve --project <path> --gate <gate> [--note <text>]`, and `rforge forge reopen --project <path> --state <state> --reason <text>` run the guided Meta-analysis spine workflow, persisting `data/forge-state.json`, transition provenance, next safe actions, and reviewer gates for irreversible scientific/data-sharing decisions
 - `rforge search --source openalex|arxiv|crossref|semantic-scholar|europepmc|pubmed --query <query> [--category arxiv-category] [--filter source-filter] [--from-year YYYY] [--to-year YYYY] [--type article] [--open-access true|false] [--concept C41008148] [--entity authors|institutions]`
 - `rforge search import --source openalex --query <query> --pages N [--limit N] [--filter source-filter] [--from-year YYYY] [--to-year YYYY] [--type article] [--open-access true|false] [--concept C41008148] [--resume-state state.json]`
 - `rforge search related --source openalex --paper <work-id> [--limit N]`

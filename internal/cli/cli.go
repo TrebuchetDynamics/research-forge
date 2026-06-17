@@ -14,6 +14,7 @@ import (
 
 	"github.com/TrebuchetDynamics/research-forge/internal/analysis"
 	"github.com/TrebuchetDynamics/research-forge/internal/evidence"
+	"github.com/TrebuchetDynamics/research-forge/internal/forge"
 	"github.com/TrebuchetDynamics/research-forge/internal/library"
 	"github.com/TrebuchetDynamics/research-forge/internal/parsing"
 	"github.com/TrebuchetDynamics/research-forge/internal/project"
@@ -60,6 +61,8 @@ func Execute(args []string, stdout, stderr io.Writer) int {
 		return executeDecisions(remaining[1:], stdout, stderr, opts)
 	case "completion":
 		return executeCompletion(remaining[1:], stdout, stderr, opts)
+	case "forge":
+		return executeForge(remaining[1:], stdout, stderr, opts)
 	case "project":
 		return executeProject(remaining[1:], stdout, stderr, opts)
 	case "doctor":
@@ -123,6 +126,69 @@ func Execute(args []string, stdout, stderr io.Writer) int {
 	default:
 		return writeError(stdout, stderr, opts, 2, "unknown_command", fmt.Sprintf("unknown command %q", remaining[0]))
 	}
+}
+
+func executeForge(args []string, stdout, stderr io.Writer, opts globalOptions) int {
+	if len(args) == 0 {
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge forge init|status|next|approve|reopen|replay --project <path>")
+	}
+	sub := args[0]
+	projectPath, values, ok := parseForgeOptions(args[1:])
+	if !ok || projectPath == "" {
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge forge "+sub+" --project <path>")
+	}
+	var state forge.State
+	var err error
+	switch sub {
+	case "init":
+		state, err = forge.Init(projectPath, forge.InitOptions{Question: values["--question"], Actor: values["--actor"]})
+	case "status":
+		state, err = forge.Status(projectPath)
+	case "next":
+		state, err = forge.Next(projectPath, values["--actor"])
+	case "approve":
+		state, err = forge.Approve(projectPath, forge.ApprovalInput{Gate: values["--gate"], Note: values["--note"], Actor: values["--actor"]})
+	case "reopen":
+		state, err = forge.Reopen(projectPath, forge.StateID(values["--state"]), values["--reason"], values["--actor"])
+	case "replay":
+		state, err = forge.Status(projectPath)
+	default:
+		return writeError(stdout, stderr, opts, 2, "unknown_forge_subcommand", fmt.Sprintf("unknown forge subcommand %q", sub))
+	}
+	if err != nil {
+		return writeError(stdout, stderr, opts, 1, "forge_failed", err.Error())
+	}
+	if opts.JSON {
+		return writeJSON(stdout, 0, map[string]any{"state": state, "reviewGates": forge.ReviewGates()})
+	}
+	fmt.Fprintf(stdout, "state: %s\nquestion: %s\n", state.CurrentState, state.Question)
+	for _, gate := range state.BlockedReviewGates {
+		fmt.Fprintf(stdout, "blocked gate: %s - %s\n", gate.Gate, gate.RequiredDecision)
+	}
+	for _, action := range state.NextSafeActions {
+		fmt.Fprintf(stdout, "next: %s\n  %s\n", action.Label, action.CLI)
+	}
+	for _, receipt := range state.ValidationReceipts {
+		fmt.Fprintf(stdout, "receipt: %s\n", receipt)
+	}
+	return 0
+}
+
+func parseForgeOptions(args []string) (string, map[string]string, bool) {
+	values := map[string]string{}
+	for i := 0; i < len(args); i++ {
+		switch args[i] {
+		case "--project", "--question", "--gate", "--note", "--state", "--reason", "--actor":
+			if i+1 >= len(args) {
+				return "", nil, false
+			}
+			values[args[i]] = args[i+1]
+			i++
+		default:
+			return "", nil, false
+		}
+	}
+	return values["--project"], values, true
 }
 
 func executeDecisions(args []string, stdout, stderr io.Writer, opts globalOptions) int {
