@@ -1223,22 +1223,124 @@ func executeExtract(args []string, stdout, stderr io.Writer, opts globalOptions)
 }
 
 func executeEvidence(args []string, stdout, stderr io.Writer, opts globalOptions) int {
-	if len(args) != 1 || args[0] != "audit" || opts.Project == "" {
-		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge evidence audit")
+	if len(args) == 0 || opts.Project == "" {
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge evidence <audit|risk-bias-templates|risk-bias-suggest|risk-bias-review>")
 	}
-	var items []evidence.EvidenceItem
-	_ = readJSONFile(evidenceItemsPath(opts.Project), &items)
-	issues := evidence.Audit(items)
-	if issues == nil {
-		issues = []evidence.AuditIssue{}
+	switch args[0] {
+	case "audit":
+		if len(args) != 1 {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge evidence audit")
+		}
+		var items []evidence.EvidenceItem
+		_ = readJSONFile(evidenceItemsPath(opts.Project), &items)
+		issues := evidence.Audit(items)
+		if issues == nil {
+			issues = []evidence.AuditIssue{}
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"issues": issues})
+		}
+		for _, issue := range issues {
+			fmt.Fprintln(stdout, issue.Code)
+		}
+		return 0
+	case "risk-bias-templates":
+		outPath, ok := parseSingleFlag(args[1:], "--out")
+		if !ok {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge evidence risk-bias-templates --out <templates.json>")
+		}
+		templates := evidence.DefaultRiskOfBiasSchemaTemplates()
+		if err := writeJSONFile(outPath, templates); err != nil {
+			return writeError(stdout, stderr, opts, 1, "risk_bias_templates_write_failed", err.Error())
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"templates": templates, "path": outPath})
+		}
+		fmt.Fprintf(stdout, "wrote %d risk-of-bias templates to %s\n", len(templates), outPath)
+		return 0
+	case "risk-bias-suggest":
+		request, outPath, ok := parseRiskBiasSuggest(args[1:])
+		if !ok {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge evidence risk-bias-suggest --paper <id> --support <ref=text> --out <queue.json> [--model <name> --version <version>]")
+		}
+		queue := evidence.DraftRiskOfBiasSuggestionQueue(request)
+		if err := writeJSONFile(outPath, queue); err != nil {
+			return writeError(stdout, stderr, opts, 1, "risk_bias_queue_write_failed", err.Error())
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"queue": queue, "path": outPath})
+		}
+		fmt.Fprintf(stdout, "wrote %d risk-of-bias suggestions to %s\n", len(queue.Suggestions), outPath)
+		return 0
+	case "risk-bias-review":
+		queuePath, input, outPath, ok := parseRiskBiasReview(args[1:])
+		if !ok {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge evidence risk-bias-review --queue <queue.json> --id <suggestion-id> --decision accepted|rejected|corrected --reviewer <name> --out <queue.json> [--note <text>]")
+		}
+		var queue evidence.RiskOfBiasSuggestionQueue
+		if err := readJSONFile(queuePath, &queue); err != nil {
+			return writeError(stdout, stderr, opts, 1, "risk_bias_queue_read_failed", err.Error())
+		}
+		reviewed, err := evidence.ReviewRiskOfBiasSuggestion(queue, input)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 2, "risk_bias_review_invalid", err.Error())
+		}
+		if err := writeJSONFile(outPath, reviewed); err != nil {
+			return writeError(stdout, stderr, opts, 1, "risk_bias_review_write_failed", err.Error())
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"queue": reviewed, "path": outPath})
+		}
+		fmt.Fprintf(stdout, "wrote reviewed risk-of-bias queue to %s\n", outPath)
+		return 0
+	default:
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge evidence <audit|risk-bias-templates|risk-bias-suggest|risk-bias-review>")
 	}
-	if opts.JSON {
-		return writeJSON(stdout, 0, map[string]any{"issues": issues})
+}
+
+func parseRiskBiasSuggest(args []string) (evidence.RiskOfBiasSuggestionRequest, string, bool) {
+	values := map[string]string{}
+	passages := []evidence.SupportText{}
+	for i := 0; i < len(args); i++ {
+		switch args[i] {
+		case "--paper", "--support", "--model", "--version", "--out":
+			if i+1 >= len(args) {
+				return evidence.RiskOfBiasSuggestionRequest{}, "", false
+			}
+			if args[i] == "--support" {
+				parts := strings.SplitN(args[i+1], "=", 2)
+				if len(parts) != 2 || parts[0] == "" || parts[1] == "" {
+					return evidence.RiskOfBiasSuggestionRequest{}, "", false
+				}
+				passages = append(passages, evidence.SupportText{Ref: parts[0], Text: parts[1]})
+			} else {
+				values[args[i]] = args[i+1]
+			}
+			i++
+		default:
+			return evidence.RiskOfBiasSuggestionRequest{}, "", false
+		}
 	}
-	for _, issue := range issues {
-		fmt.Fprintln(stdout, issue.Code)
+	request := evidence.RiskOfBiasSuggestionRequest{PaperID: values["--paper"], Passages: passages, ModelName: values["--model"], ModelVersion: values["--version"]}
+	return request, values["--out"], request.PaperID != "" && len(passages) > 0 && values["--out"] != ""
+}
+
+func parseRiskBiasReview(args []string) (string, evidence.RiskOfBiasReviewInput, string, bool) {
+	values := map[string]string{}
+	for i := 0; i < len(args); i++ {
+		switch args[i] {
+		case "--queue", "--id", "--decision", "--reviewer", "--note", "--out":
+			if i+1 >= len(args) {
+				return "", evidence.RiskOfBiasReviewInput{}, "", false
+			}
+			values[args[i]] = args[i+1]
+			i++
+		default:
+			return "", evidence.RiskOfBiasReviewInput{}, "", false
+		}
 	}
-	return 0
+	input := evidence.RiskOfBiasReviewInput{SuggestionID: values["--id"], Decision: evidence.RiskOfBiasSuggestionStatus(values["--decision"]), Reviewer: values["--reviewer"], Note: values["--note"]}
+	return values["--queue"], input, values["--out"], values["--queue"] != "" && values["--id"] != "" && values["--decision"] != "" && values["--reviewer"] != "" && values["--out"] != ""
 }
 
 func parseSingleFlag(args []string, flag string) (string, bool) {

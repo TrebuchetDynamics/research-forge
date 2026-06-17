@@ -566,7 +566,7 @@ This is the canonical build order for the post-1.0 super-tool work. The thematic
 - [x] Persist ASReview-style active-learning runs with input hashes, seed decisions, ranking method, ranked output, reviewer progress, stopping diagnostics, and adjudication state (`BuildActiveLearningRun`, `rforge screen active-run`).
 - [x] Add balanced exploration/exploitation ranking policies, richer recall/effort simulation, and sensitivity diagnostics (`PrioritizeBalancedRecords`, `SimulateRecallEffort`, `ActiveLearningSensitivityDiagnostics`, `rforge screen sensitivity`).
 - [x] Add reviewer assignment, conflict/adjudication panels, uncertain queues, and exportable audit bundles for screening decisions (`AssignReviewers`, `BuildConflictAdjudicationPanel`, `UncertainQueue`, `BuildScreeningAuditBundle`, `rforge screen assign|panel|audit-bundle`).
-- [ ] Add RobotReviewer-inspired risk-of-bias schema templates and evidence-suggestion queues with exact support text, uncertainty, model/version metadata, and reviewer decisions.
+- [x] Add RobotReviewer-inspired risk-of-bias schema templates and evidence-suggestion queues with exact support text, uncertainty, model/version metadata, and reviewer decisions (`DefaultRiskOfBiasSchemaTemplates`, `DraftRiskOfBiasSuggestionQueue`, `ReviewRiskOfBiasSuggestion`, `rforge evidence risk-bias-*`).
 - [ ] Add HTMX screening cockpit views for active-learning queues, uncertainty/exploration flags, progress metrics, stopping diagnostics, and audit-bundle links.
 
 #### Phase 7 — Evidence extraction and gap analysis
