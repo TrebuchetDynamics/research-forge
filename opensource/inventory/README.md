@@ -69,7 +69,7 @@ The verifier checks that every manifest entry has governance metadata (`area`, `
 
 ## Current highest-priority gaps from this inventory
 
-1. Build the `rforge forge` super-tool path: a resumable, provenance-first workflow that combines source discovery, reference-manager import, dedupe, legal full-text acquisition, parser arbitration, retrieval, screening, extraction, statistics, and report packaging.
+1. Build the `rforge forge` super-tool path: a resumable, provenance-first workflow that creates or opens a project, captures the research question and source/tool choices, previews privacy/legal implications, and combines source discovery, reference-manager import, dedupe, legal full-text acquisition, parser arbitration, retrieval, screening, extraction, statistics, and report packaging behind reviewer gates.
 2. Deepen reference-manager interoperability: Zotero/JabRef collection/group mapping, citation-key fidelity, annotation import/export, BibTeX cleanup diffs, and linked-file privacy gates.
 3. Add parser arbitration and parsed-reference normalization across GROBID, S2ORC-style JSON, PaperMage, CERMINE, Science Parse, and Anystyle with reviewer-adjudicated conflicts.
 4. Expand source coverage: NASA ADS for physics/astronomy and DOAJ/CORE for OA discovery; PubMed / Europe PMC / PMC full-text workflows now cover ID linking, OA license capture, structured JATS import, supplementary discovery, and opt-in drift smoke planning.

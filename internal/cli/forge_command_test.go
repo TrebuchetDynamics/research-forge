@@ -10,7 +10,7 @@ import (
 func TestExecuteForgeGuidedWorkflowE2E(t *testing.T) {
 	projectPath := t.TempDir()
 	var stdout, stderr bytes.Buffer
-	code := Execute([]string{"--json", "forge", "init", "--project", projectPath, "--question", "Do catalysts improve hydrogen evolution?"}, &stdout, &stderr)
+	code := Execute([]string{"--json", "forge", "init", "--project", projectPath, "--question", "Do catalysts improve hydrogen evolution?", "--sources", "openalex,semantic-scholar", "--tools", "grobid,qdrant"}, &stdout, &stderr)
 	if code != 0 {
 		t.Fatalf("init code=%d stderr=%s stdout=%s", code, stderr.String(), stdout.String())
 	}
@@ -22,13 +22,16 @@ func TestExecuteForgeGuidedWorkflowE2E(t *testing.T) {
 				BlockedReviewGates []struct {
 					Gate string `json:"gate"`
 				} `json:"blockedReviewGates"`
+				SourceChoices       []string `json:"sourceChoices"`
+				ToolChoices         []string `json:"toolChoices"`
+				PrivacyLegalPreview []string `json:"privacyLegalPreview"`
 			} `json:"state"`
 		} `json:"data"`
 	}
 	if err := json.Unmarshal(stdout.Bytes(), &env); err != nil {
 		t.Fatalf("json: %v\n%s", err, stdout.String())
 	}
-	if !env.OK || env.Data.State.CurrentState != "question_draft" || len(env.Data.State.BlockedReviewGates) == 0 {
+	if !env.OK || env.Data.State.CurrentState != "question_draft" || len(env.Data.State.BlockedReviewGates) == 0 || len(env.Data.State.SourceChoices) != 2 || len(env.Data.State.ToolChoices) != 2 || len(env.Data.State.PrivacyLegalPreview) == 0 {
 		t.Fatalf("unexpected init: %#v", env)
 	}
 

@@ -234,7 +234,7 @@ func executeForge(args []string, stdout, stderr io.Writer, opts globalOptions) i
 	var err error
 	switch sub {
 	case "init":
-		state, err = forge.Init(projectPath, forge.InitOptions{Question: values["--question"], Actor: values["--actor"]})
+		state, err = forge.Init(projectPath, forge.InitOptions{Question: values["--question"], Actor: values["--actor"], SourceChoices: splitCSV(values["--sources"]), ToolChoices: splitCSV(values["--tools"])})
 	case "status":
 		state, err = forge.Status(projectPath)
 	case "next":
@@ -271,7 +271,7 @@ func parseForgeOptions(args []string) (string, map[string]string, bool) {
 	values := map[string]string{}
 	for i := 0; i < len(args); i++ {
 		switch args[i] {
-		case "--project", "--question", "--gate", "--note", "--state", "--reason", "--actor", "--max-steps":
+		case "--project", "--question", "--sources", "--tools", "--gate", "--note", "--state", "--reason", "--actor", "--max-steps":
 			if i+1 >= len(args) {
 				return "", nil, false
 			}

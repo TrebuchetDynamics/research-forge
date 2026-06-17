@@ -34,16 +34,19 @@ const (
 )
 
 type State struct {
-	SchemaVersion      string        `json:"schemaVersion"`
-	ProjectPath        string        `json:"projectPath"`
-	Manifest           string        `json:"manifest"`
-	Question           string        `json:"question"`
-	CurrentState       StateID       `json:"currentState"`
-	Approvals          []Approval    `json:"approvals"`
-	BlockedReviewGates []BlockedGate `json:"blockedReviewGates"`
-	NextSafeActions    []NextAction  `json:"nextSafeActions"`
-	ValidationReceipts []string      `json:"validationReceipts"`
-	UpdatedAt          string        `json:"updatedAt"`
+	SchemaVersion       string        `json:"schemaVersion"`
+	ProjectPath         string        `json:"projectPath"`
+	Manifest            string        `json:"manifest"`
+	Question            string        `json:"question"`
+	SourceChoices       []string      `json:"sourceChoices,omitempty"`
+	ToolChoices         []string      `json:"toolChoices,omitempty"`
+	PrivacyLegalPreview []string      `json:"privacyLegalPreview,omitempty"`
+	CurrentState        StateID       `json:"currentState"`
+	Approvals           []Approval    `json:"approvals"`
+	BlockedReviewGates  []BlockedGate `json:"blockedReviewGates"`
+	NextSafeActions     []NextAction  `json:"nextSafeActions"`
+	ValidationReceipts  []string      `json:"validationReceipts"`
+	UpdatedAt           string        `json:"updatedAt"`
 }
 
 type Approval struct {
@@ -63,7 +66,12 @@ type NextAction struct {
 	Label string `json:"label"`
 	CLI   string `json:"cli"`
 }
-type InitOptions struct{ Question, Actor string }
+type InitOptions struct {
+	Question      string
+	Actor         string
+	SourceChoices []string
+	ToolChoices   []string
+}
 type ApprovalInput struct{ Gate, Note, Actor string }
 
 type GateSpec struct {
@@ -101,7 +109,7 @@ func Init(projectPath string, opts InitOptions) (State, error) {
 			return State{}, err
 		}
 	}
-	state := State{SchemaVersion: schemaVersion, ProjectPath: projectPath, Manifest: "rforge.project.toml", Question: question, CurrentState: StateQuestionDraft}
+	state := State{SchemaVersion: schemaVersion, ProjectPath: projectPath, Manifest: "rforge.project.toml", Question: question, SourceChoices: cleanList(opts.SourceChoices), ToolChoices: cleanList(opts.ToolChoices), PrivacyLegalPreview: privacyLegalPreview(opts.SourceChoices, opts.ToolChoices), CurrentState: StateQuestionDraft}
 	state.refresh()
 	if err := save(projectPath, state); err != nil {
 		return State{}, err
@@ -299,6 +307,33 @@ func load(projectPath string) (State, error) {
 	err = json.Unmarshal(data, &s)
 	return s, err
 }
+func cleanList(values []string) []string {
+	out := []string{}
+	seen := map[string]bool{}
+	for _, value := range values {
+		trimmed := strings.TrimSpace(value)
+		if trimmed != "" && !seen[strings.ToLower(trimmed)] {
+			seen[strings.ToLower(trimmed)] = true
+			out = append(out, trimmed)
+		}
+	}
+	return out
+}
+
+func privacyLegalPreview(sources, tools []string) []string {
+	preview := []string{"Network/API sources require rate-limit, credential, and cache review before live calls", "Full-text acquisition and package sharing require reviewer approval for OA/license and privacy gates"}
+	for _, tool := range cleanList(tools) {
+		lower := strings.ToLower(tool)
+		if strings.Contains(lower, "qdrant") || strings.Contains(lower, "embedding") {
+			preview = append(preview, "Embedding/vector tools require text-egress consent and model/version locks")
+		}
+		if strings.Contains(lower, "grobid") || strings.Contains(lower, "parser") {
+			preview = append(preview, "External parser outputs require parser manifests and arbitration approval")
+		}
+	}
+	return preview
+}
+
 func actor(a string) string {
 	if strings.TrimSpace(a) == "" {
 		return "rforge"

@@ -14,7 +14,7 @@ Core principle:
 
 > Retrieval-first, provenance-first, statistics-first, LLM-assisted.
 
-LLMs may assist with query expansion, screening rationales, extraction suggestions, and report prose, but every suggested sentence must trace back to exact source metadata, passages, tables, equations, datasets, figures, or citations and remain unaccepted until reviewer approval.
+LLMs may assist with query expansion, screening rationales, extraction suggestions, and report prose, but every suggested sentence must trace back to exact source metadata, passages, tables, equations, datasets, figures, or citations and remain unaccepted until reviewer approval. The guided `rforge forge` workflow creates or opens projects, captures source/tool choices, previews privacy/legal implications, and gates irreversible scientific or data-sharing transitions.
 
 ---
 

@@ -5,6 +5,20 @@ import (
 	"testing"
 )
 
+func TestGuidedWorkflowCapturesSourceToolChoicesAndPrivacyPreview(t *testing.T) {
+	projectPath := t.TempDir()
+	state, err := Init(projectPath, InitOptions{Question: "Do catalysts improve hydrogen evolution?", SourceChoices: []string{"openalex", "semantic-scholar"}, ToolChoices: []string{"grobid", "qdrant"}, Actor: "tester"})
+	if err != nil {
+		t.Fatalf("init: %v", err)
+	}
+	if len(state.SourceChoices) != 2 || len(state.ToolChoices) != 2 || len(state.PrivacyLegalPreview) == 0 {
+		t.Fatalf("state missing guided choices/privacy preview: %#v", state)
+	}
+	if !strings.Contains(strings.Join(state.PrivacyLegalPreview, " "), "reviewer approval") {
+		t.Fatalf("preview missing reviewer approval warning: %#v", state.PrivacyLegalPreview)
+	}
+}
+
 func TestGuidedWorkflowRequiresReviewGatesBeforeIrreversibleTransitions(t *testing.T) {
 	projectPath := t.TempDir()
 	state, err := Init(projectPath, InitOptions{Question: "Do catalysts improve hydrogen evolution?", Actor: "tester"})
