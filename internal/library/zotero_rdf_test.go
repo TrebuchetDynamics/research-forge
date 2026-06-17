@@ -21,7 +21,7 @@ func TestImportZoteroRDFPreservesMetadataAndRedactsAttachments(t *testing.T) {
     <dc:subject>zotero</dc:subject>
     <dc:subject>rdf</dc:subject>
     <z:collection>Systematic reviews</z:collection>
-    <z:collection>Crypto ML</z:collection>
+    <z:collection>Systematic reviews/Crypto ML</z:collection>
     <z:note>Important note.</z:note>
     <z:annotation>Highlighted passage.</z:annotation>
     <z:annotation>Margin comment.</z:annotation>
@@ -44,7 +44,7 @@ func TestImportZoteroRDFPreservesMetadataAndRedactsAttachments(t *testing.T) {
 		t.Fatalf("record = %#v", record)
 	}
 	metadata := record.SourceRefs[0].Metadata
-	if metadata["citation_key"] != "smith2026rdf" || metadata["tags"] != "zotero; rdf" || metadata["collections"] != "Systematic reviews; Crypto ML" || metadata["note"] != "Important note." || metadata["annotations"] != "Highlighted passage.\nMargin comment." {
+	if metadata["citation_key"] != "smith2026rdf" || metadata["tags"] != "zotero; rdf" || metadata["collections"] != "Systematic reviews; Systematic reviews/Crypto ML" || metadata["collection_hierarchy"] != "Systematic reviews/Crypto ML" || metadata["note"] != "Important note." || metadata["annotations"] != "Highlighted passage.\nMargin comment." {
 		t.Fatalf("metadata = %#v", metadata)
 	}
 	if metadata["attachment_files"] != "paper.pdf" || strings.Contains(metadata["attachment_files"], "/Users/alice") {
@@ -60,7 +60,7 @@ func TestExportZoteroRDFWritesInteroperableSubset(t *testing.T) {
 		Year:        2026,
 		Venue:       "RDF Journal",
 		Abstract:    "Export abstract.",
-		SourceRefs:  []SourceRef{{Source: "zotero-rdf", Metadata: map[string]string{"zotero_rdf_id": "#item-1", "citation_key": "doe2026rdf", "tags": "zotero; rdf", "collections": "Systematic reviews", "note": "Export note", "annotations": "Export highlight\nExport margin comment"}}},
+		SourceRefs:  []SourceRef{{Source: "zotero-rdf", Metadata: map[string]string{"zotero_rdf_id": "#item-1", "citation_key": "doe2026rdf", "tags": "zotero; rdf", "collections": "Systematic reviews/Systematic maps", "collection_hierarchy": "Systematic reviews/Systematic maps", "note": "Export note", "annotations": "Export highlight\nExport margin comment", "attachment_files": "paper.pdf", "linked_file_privacy_check": "redacted-local-paths"}}},
 	}}
 	if err := ExportZoteroRDF(path, records); err != nil {
 		t.Fatalf("ExportZoteroRDF returned error: %v", err)
@@ -70,7 +70,7 @@ func TestExportZoteroRDFWritesInteroperableSubset(t *testing.T) {
 		t.Fatalf("read export: %v", err)
 	}
 	text := string(data)
-	for _, want := range []string{"<bib:Article", "<dc:title>Exported Zotero RDF fixture</dc:title>", "<prism:doi>10.1000/rdf-export</prism:doi>", "<better-bibtex:citekey>doe2026rdf</better-bibtex:citekey>", "<dc:subject>zotero</dc:subject>", "<z:collection>Systematic reviews</z:collection>", "<z:note>Export note</z:note>", "<z:annotation>Export highlight</z:annotation>", "<z:annotation>Export margin comment</z:annotation>"} {
+	for _, want := range []string{"<bib:Article", "<dc:title>Exported Zotero RDF fixture</dc:title>", "<prism:doi>10.1000/rdf-export</prism:doi>", "<better-bibtex:citekey>doe2026rdf</better-bibtex:citekey>", "<dc:subject>zotero</dc:subject>", "<z:collection>Systematic reviews/Systematic maps</z:collection>", "<z:note>Export note</z:note>", "<z:annotation>Export highlight</z:annotation>", "<z:annotation>Export margin comment</z:annotation>", "<z:attachment>paper.pdf</z:attachment>"} {
 		if !strings.Contains(text, want) {
 			t.Fatalf("export missing %q:\n%s", want, text)
 		}

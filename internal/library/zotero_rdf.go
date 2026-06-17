@@ -55,6 +55,9 @@ func ImportZoteroRDF(path string) ([]PaperRecord, int, error) {
 		}
 		if collections := compactNonEmpty(item.Collection); len(collections) > 0 {
 			metadata["collections"] = strings.Join(collections, "; ")
+			if hierarchy := collectionHierarchy(collections); hierarchy != "" {
+				metadata["collection_hierarchy"] = hierarchy
+			}
 		}
 		if notes := compactNonEmpty(item.Note); len(notes) > 0 {
 			metadata["note"] = strings.Join(notes, "\n")
@@ -112,12 +115,15 @@ func ExportZoteroRDF(path string, records []PaperRecord) error {
 		for _, tag := range splitCSLKeywords(metadataValue(record, "tags")) {
 			writeElement(&b, "dc:subject", tag)
 		}
-		for _, collection := range splitCSLKeywords(metadataValue(record, "collections")) {
+		for _, collection := range splitCSLKeywords(firstNonEmptyRDF(metadataValue(record, "collection_hierarchy"), metadataValue(record, "collections"))) {
 			writeElement(&b, "z:collection", collection)
 		}
 		writeElement(&b, "z:note", metadataValue(record, "note"))
 		for _, annotation := range splitRDFLines(metadataValue(record, "annotations")) {
 			writeElement(&b, "z:annotation", annotation)
+		}
+		for _, attachment := range splitCSLKeywords(metadataValue(record, "attachment_files")) {
+			writeElement(&b, "z:attachment", filepath.Base(attachment))
 		}
 		b.WriteString("  </bib:Article>\n")
 	}
@@ -160,6 +166,16 @@ func rdfAttachments(values []string) []cslAttachment {
 		out = append(out, cslAttachment{Path: value})
 	}
 	return out
+}
+
+func collectionHierarchy(collections []string) string {
+	parts := []string{}
+	for _, collection := range collections {
+		if strings.Contains(collection, "/") || strings.Contains(collection, ">") {
+			parts = append(parts, collection)
+		}
+	}
+	return strings.Join(parts, "; ")
 }
 
 func splitRDFLines(value string) []string {
