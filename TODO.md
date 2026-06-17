@@ -598,7 +598,7 @@ This is the canonical build order for the post-1.0 super-tool work. The thematic
 
 - [x] Add the Forge home timeline showing active project, current state, provenance events, blocked review gates, background jobs, and next safe actions with CLI-equivalent commands (`/forge`, `BuildForgeHomeState`, `NewForgeHomeHandler`).
 - [x] Add HTMX workbenches for source planning, import/dedupe, legal acquisition, parser arbitration, retrieval tuning, screening, evidence extraction, meta-analysis, report traceability, research map, connector health, and reproducibility/export (`/workbenches`, generic workbench routes, CLI-equivalent commands).
-- [ ] Add dashboard information architecture: routes, partial endpoints, view models, no-JS fallbacks, background jobs, and ownership boundaries.
+- [x] Add dashboard information architecture: routes, partial endpoints, view models, no-JS fallbacks, background jobs, and ownership boundaries (`/architecture`, `DashboardInformationArchitecture`, `BuildDashboardInformationArchitecture`).
 - [ ] Add dashboard permissions/privacy model for local-only paths, copyrighted PDFs, reviewer notes, credentials, embeddings, cache files, and shareable report fields.
 - [ ] Add the one-command `rforge forge` guided workflow with review gates at every irreversible scientific or data-sharing decision.
 - [ ] Expand Playwright and screenshot coverage for all Meta-analysis spine cockpit screens and no-JS fallbacks.

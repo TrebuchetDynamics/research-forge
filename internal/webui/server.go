@@ -59,6 +59,7 @@ func Routes() []string {
 		"/",
 		"/acquisition",
 		"/analysis",
+		"/architecture",
 		"/artifacts",
 		"/connectors",
 		"/dedupe",
@@ -98,6 +99,7 @@ func NewRouter(cfg Config) http.Handler {
 	mux.Handle("POST /projects/switch", newSwitchProjectHandler(state))
 	mux.Handle("/search", NewSearchHandler(ui.NewSearchFormState(defaultSearchSources())))
 	mux.Handle("/sources", NewSourcePlanningHandler())
+	mux.Handle("/architecture", NewInformationArchitectureHandler(BuildDashboardInformationArchitecture()))
 	mux.Handle("/workbenches", NewWorkbenchIndexHandler(BuildWorkbenchIndexState()))
 	for _, route := range []string{"/acquisition", "/parsing", "/retrieve", "/evidence", "/analysis", "/report", "/map", "/package"} {
 		mux.Handle(route, newGenericWorkbenchHandler(route))

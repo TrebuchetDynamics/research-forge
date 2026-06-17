@@ -107,6 +107,16 @@ var sourcePlanningTemplate = template.Must(template.New("source-planning").Parse
   </div>
 </section>`))
 
+var informationArchitectureTemplate = template.Must(template.New("dashboard-ia").Parse(`<section aria-labelledby="ia-title" class="rf-card">
+  <h2 id="ia-title">Dashboard information architecture</h2>
+  <h3>Routes</h3>
+  {{range .Routes}}<article><h4>{{.Path}}</h4><p>Partial endpoints: <code>{{.Partial}}</code></p><p>View models: {{.ViewModel}}</p><p>No-JS fallbacks: {{.NoJSFallback}}</p><p>Owner: {{.Owner}}</p></article>{{end}}
+  <h3>Background jobs</h3>
+  {{range .BackgroundJobs}}<p>{{.Name}} — {{.Trigger}} — {{.StatusArtifact}}</p>{{end}}
+  <h3>Ownership boundaries</h3>
+  {{range .OwnershipBoundaries}}<p>{{.Area}} — {{.Boundary}}</p>{{end}}
+</section>`))
+
 var workbenchIndexTemplate = template.Must(template.New("workbench-index").Parse(`<section aria-labelledby="workbenches-title" class="rf-card">
   <h2 id="workbenches-title">HTMX workbenches</h2>
   <p>No-JS fallback: each workbench is server-rendered with CLI-equivalent commands.</p>
@@ -508,6 +518,13 @@ func newDedupeReviewHandler(projectPath func() string) http.Handler {
 		}
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		_ = dedupeReviewTemplate.Execute(w, state)
+	})
+}
+
+func NewInformationArchitectureHandler(state DashboardInformationArchitecture) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		_ = informationArchitectureTemplate.Execute(w, state)
 	})
 }
 
