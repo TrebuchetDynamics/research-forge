@@ -20,6 +20,8 @@ ASReview is a strong reference for reducing screening burden while preserving re
 
 Implemented nearby capabilities:
 
+- The forge workflow DAG includes screen checkpoints with inputs, outputs, provenance actions, and restart-safe skips.
+
 - Screening configuration and decisions.
 - PRISMA counts.
 - Conflict detection, adjudicated conflict resolution, and uncertain queues.

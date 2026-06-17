@@ -25,6 +25,7 @@ Implemented nearby capabilities:
 - `rforge citations accessible-view` provides no-JS review views with graph summaries, filtered node tables, tabular edge lists, domain-topic rows, keyboard-navigation guidance, and exportable graph reports alongside interactive SVGs.
 - OpenAlex source connector with mocked tests, including works, author/institution/concept entity searches, related-work discovery records, and disambiguation review queues for ambiguous people/institutions/concepts.
 - Source refs stored in `PaperRecord` conversion.
+- The forge workflow DAG includes discovery/import checkpoints with inputs, outputs, provenance actions, and restart-safe skips.
 - Live manual searches have been used for ResearchForge-backed reports.
 
 Missing features:

@@ -24,6 +24,7 @@ Implemented nearby capabilities:
 - GROBID client/adapter with mocked TEI tests.
 - Parsed-document model with sections/passages/references.
 - Parser-run manifests record parser source/version/command, input/output checksums, TEI/JSON output kind, license constraints, shareability, warnings, and reviewer gates.
+- The forge workflow DAG includes parse checkpoints with inputs, outputs, provenance actions, and restart-safe skips.
 - Opt-in real GROBID endpoint e2e listed in TODO as complete.
 
 Missing features:

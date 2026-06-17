@@ -58,6 +58,18 @@ func TestExecuteForgeGuidedWorkflowE2E(t *testing.T) {
 	}
 }
 
+func TestExecuteForgeRunDAGWritesCheckpoints(t *testing.T) {
+	projectPath := t.TempDir()
+	var stdout, stderr bytes.Buffer
+	code := Execute([]string{"--json", "forge", "run-dag", "--project", projectPath, "--question", "Q?", "--max-steps", "2"}, &stdout, &stderr)
+	if code != 0 {
+		t.Fatalf("run-dag code=%d stderr=%s stdout=%s", code, stderr.String(), stdout.String())
+	}
+	if !strings.Contains(stdout.String(), "checkpoints") || !strings.Contains(stdout.String(), "discovery") || !strings.Contains(stdout.String(), "import") {
+		t.Fatalf("run-dag output: %s", stdout.String())
+	}
+}
+
 func TestExecuteForgeReopenRecordsReviewerReason(t *testing.T) {
 	projectPath := t.TempDir()
 	var stdout, stderr bytes.Buffer

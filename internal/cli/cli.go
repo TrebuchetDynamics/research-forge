@@ -204,12 +204,31 @@ func parseKnowledgeQuery(args []string) (string, string, bool) {
 
 func executeForge(args []string, stdout, stderr io.Writer, opts globalOptions) int {
 	if len(args) == 0 {
-		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge forge init|status|next|approve|reopen|replay --project <path>")
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge forge init|status|next|approve|reopen|replay|run-dag --project <path>")
 	}
 	sub := args[0]
 	projectPath, values, ok := parseForgeOptions(args[1:])
 	if !ok || projectPath == "" {
 		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge forge "+sub+" --project <path>")
+	}
+	if sub == "run-dag" {
+		maxSteps := 0
+		if values["--max-steps"] != "" {
+			parsed, err := strconv.Atoi(values["--max-steps"])
+			if err != nil || parsed <= 0 {
+				return writeError(stdout, stderr, opts, 2, "usage", "--max-steps must be a positive integer")
+			}
+			maxSteps = parsed
+		}
+		run, err := forge.RunWorkflowDAG(projectPath, forge.DefaultWorkflowDAG(values["--question"]), forge.RunWorkflowOptions{MaxSteps: maxSteps, Actor: values["--actor"]})
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "forge_failed", err.Error())
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"workflowRun": run})
+		}
+		fmt.Fprintf(stdout, "workflow checkpoints: %d skipped: %d\n", len(run.Checkpoints), run.RestartSafeSkipped)
+		return 0
 	}
 	var state forge.State
 	var err error
@@ -252,7 +271,7 @@ func parseForgeOptions(args []string) (string, map[string]string, bool) {
 	values := map[string]string{}
 	for i := 0; i < len(args); i++ {
 		switch args[i] {
-		case "--project", "--question", "--gate", "--note", "--state", "--reason", "--actor":
+		case "--project", "--question", "--gate", "--note", "--state", "--reason", "--actor", "--max-steps":
 			if i+1 >= len(args) {
 				return "", nil, false
 			}

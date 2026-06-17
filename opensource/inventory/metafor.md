@@ -32,6 +32,7 @@ Implemented nearby capabilities:
 - Categorical subgroup pooled estimates through `rforge analysis subgroup <run-id> --variable <name> --group <paper>=<group>`.
 - `RunMetafor` writes reproducible SVG forest/funnel plot artifacts with checksums alongside scripts and captured output.
 - `AnalysisArtifactManifest` / `rforge analysis run` bundle forest/funnel SVGs, plot settings, checksums, R/metafor script metadata, engine versions, warnings, and report embedding metadata in `analysis/<run-id>-artifact-manifest.json`.
+- The forge workflow DAG includes analyze/report checkpoints with inputs, outputs, provenance actions, and restart-safe skips.
 - Bayesian normal-normal approximation alternative through `rforge analysis bayesian <run-id> --method normal-approx`.
 
 Missing features:
