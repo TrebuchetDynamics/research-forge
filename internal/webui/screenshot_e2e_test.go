@@ -74,11 +74,20 @@ func TestPlaywrightScreenshotRegression(t *testing.T) {
 		name     string
 		path     string
 		settleAt string // selector to wait for before capture
+		golden   bool
 	}{
-		{"shell", "/", "h1"},
-		{"papers-list", "/papers", `[role="table"]`},
-		{"paper-detail", "/papers/10-1000-ap", ".rf-paper-view"},
-		{"artifacts", "/artifacts", ".citation-graph-svg"},
+		{"shell", "/", "h1", true},
+		{"papers-list", "/papers", `[role="table"]`, true},
+		{"paper-detail", "/papers/10-1000-ap", ".rf-paper-view", true},
+		{"artifacts", "/artifacts", ".citation-graph-svg", true},
+	}
+	for _, spineView := range metaAnalysisSpineViews() {
+		views = append(views, struct {
+			name     string
+			path     string
+			settleAt string
+			golden   bool
+		}{spineView.name, spineView.path, "body", false})
 	}
 
 	for _, view := range views {
@@ -108,6 +117,12 @@ func TestPlaywrightScreenshotRegression(t *testing.T) {
 			}
 
 			goldenPath := filepath.Join(goldenDir, view.name+".png")
+			if !view.golden && !update {
+				if len(shot) == 0 {
+					t.Fatalf("empty screenshot for %s", view.name)
+				}
+				return
+			}
 			if update {
 				if err := os.WriteFile(goldenPath, shot, 0o644); err != nil {
 					t.Fatalf("write golden %s: %v", goldenPath, err)

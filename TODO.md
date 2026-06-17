@@ -601,7 +601,7 @@ This is the canonical build order for the post-1.0 super-tool work. The thematic
 - [x] Add dashboard information architecture: routes, partial endpoints, view models, no-JS fallbacks, background jobs, and ownership boundaries (`/architecture`, `DashboardInformationArchitecture`, `BuildDashboardInformationArchitecture`).
 - [x] Add dashboard permissions/privacy model for local-only paths, copyrighted PDFs, reviewer notes, credentials, embeddings, cache files, and shareable report fields (`/privacy`, `DashboardPrivacyModel`, `BuildDashboardPrivacyModel`).
 - [x] Add the one-command `rforge forge` guided workflow with review gates at every irreversible scientific or data-sharing decision (`internal/forge`, `rforge forge init/status/next/approve/reopen/replay`, persisted state, blocked gates, transition provenance).
-- [ ] Expand Playwright and screenshot coverage for all Meta-analysis spine cockpit screens and no-JS fallbacks.
+- [x] Expand Playwright and screenshot coverage for all Meta-analysis spine cockpit screens and no-JS fallbacks (`internal/webui/playwright_spine_e2e_test.go`, expanded JS-disabled screenshots).
 
 #### Phase 11 — Broader research cockpit expansion after the spine
 
