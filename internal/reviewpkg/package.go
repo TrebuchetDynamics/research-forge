@@ -35,9 +35,11 @@ type Manifest struct {
 	ProjectTitle             string   `json:"projectTitle,omitempty"`
 	Question                 string   `json:"question,omitempty"`
 	MetaAnalysisSpineVersion string   `json:"metaAnalysisSpineVersion"`
+	PackageRole              string   `json:"packageRole"`
 	ProjectManifestRef       string   `json:"projectManifestRef"`
 	SourcePlanRefs           []string `json:"sourcePlanRefs,omitempty"`
 	LockfileRef              string   `json:"lockfileRef"`
+	LockfileRefs             []string `json:"lockfileRefs,omitempty"`
 	ProvenanceRef            string   `json:"provenanceRef,omitempty"`
 	DedupeDecisionRef        string   `json:"dedupeDecisionRef,omitempty"`
 	ScreeningAuditRef        string   `json:"screeningAuditRef,omitempty"`
@@ -78,12 +80,13 @@ func Create(projectPath, packagePath string, opts Options) (Package, error) {
 	if err := os.MkdirAll(filepath.Join(packagePath, "project"), 0o755); err != nil {
 		return Package{}, err
 	}
-	manifest := Manifest{SchemaVersion: "1", PackageID: "rforgepkg-" + time.Now().UTC().Format("20060102T150405Z"), CreatedAt: time.Now().UTC().Format(time.RFC3339), CreatedBy: strings.TrimSpace(opts.CreatedBy), ResearchForgeVersion: "dev", Question: strings.TrimSpace(opts.Question), MetaAnalysisSpineVersion: "1", ProjectManifestRef: "project/rforge.project.toml", LockfileRef: "project/rforge.lock.json", RedactionReportRef: "redaction-report.json", ChecksumManifestRef: "checksums.sha256", ReplayCommand: "rforge package replay .", AuditCommand: "rforge package audit ."}
+	manifest := Manifest{SchemaVersion: "1", PackageID: "rforgepkg-" + time.Now().UTC().Format("20060102T150405Z"), CreatedAt: time.Now().UTC().Format(time.RFC3339), CreatedBy: strings.TrimSpace(opts.CreatedBy), ResearchForgeVersion: "dev", Question: strings.TrimSpace(opts.Question), MetaAnalysisSpineVersion: "1", PackageRole: "meta-analysis-spine-first-done-artifact", ProjectManifestRef: "project/rforge.project.toml", LockfileRef: "project/rforge.lock.json", LockfileRefs: []string{"project/rforge.lock.json"}, RedactionReportRef: "redaction-report.json", ChecksumManifestRef: "checksums.sha256", ReplayCommand: "rforge package replay .", AuditCommand: "rforge package audit ."}
 	redaction := RedactionReport{SchemaVersion: "1", Policy: "exclude private local paths, credentials, restricted documents, reviewer-private notes, caches"}
 	copyPlan := []string{"rforge.project.toml", "rforge.lock.json", "data/provenance.jsonl", "data/forge-state.json", "data/connector-capabilities.json", "data/identity-decisions.jsonl", "data/screening-audit.jsonl", "data/evidence.schemas.json", "data/evidence.items.json", "data/claim-trace.json"}
 	for _, rel := range copyPlan {
 		_ = copyIfExists(projectPath, packagePath, rel)
 	}
+	copyGlob(projectPath, packagePath, "data/*.lock.json", func(rel string) { manifest.LockfileRefs = append(manifest.LockfileRefs, "project/"+rel) })
 	copyGlob(projectPath, packagePath, "data/source-plans/*", func(rel string) { manifest.SourcePlanRefs = append(manifest.SourcePlanRefs, "project/"+rel) })
 	copyGlob(projectPath, packagePath, "data/parser-manifests/*", func(rel string) { manifest.ParserManifestRefs = append(manifest.ParserManifestRefs, "project/"+rel) })
 	copyGlob(projectPath, packagePath, "analysis/*", func(rel string) {
@@ -118,6 +121,9 @@ func Create(projectPath, packagePath string, opts Options) (Package, error) {
 		return Package{}, err
 	}
 	if err := writeJSON(filepath.Join(packagePath, "manifest.json"), manifest); err != nil {
+		return Package{}, err
+	}
+	if err := writePackageHelperFiles(packagePath); err != nil {
 		return Package{}, err
 	}
 	if err := writeChecksums(packagePath); err != nil {
@@ -208,6 +214,13 @@ func copyIfExists(projectPath, packagePath, rel string) error {
 	defer out.Close()
 	_, err = io.Copy(out, in)
 	return err
+}
+
+func writePackageHelperFiles(packagePath string) error {
+	if err := os.WriteFile(filepath.Join(packagePath, "replay.sh"), []byte("#!/bin/sh\nset -eu\nrforge package replay .\n"), 0o755); err != nil {
+		return err
+	}
+	return writeJSON(filepath.Join(packagePath, "audit-report.json"), map[string]any{"schemaVersion": "1", "status": "created", "message": "run rforge package audit . to verify checksums and replay gates"})
 }
 
 func writeJSON(path string, value any) error {

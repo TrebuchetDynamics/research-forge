@@ -36,6 +36,7 @@ Implemented nearby capabilities:
 - Citation-to-evidence trace views link report claims back to metafor effect-size rows, accepted evidence, parser passages, PDFs, reference-manager items, source records, and raw request/response metadata.
 - Bayesian normal-normal approximation alternative through `rforge analysis bayesian <run-id> --method normal-approx`.
 - Evidence gap analysis cross-checks the research question, screened-in studies, parsed passages, accepted evidence fields, full-text acquisition, citation-locked claims, and analysis inputs before final inclusion.
+- Reproducible review packages bundle the meta-analysis spine first-done artifact with project manifests, lockfiles, source plans, dedupe decisions, parser manifests, screening audit, extraction schema, accepted evidence, analysis/report artifacts, redaction policy, replay helper, audit placeholder, and checksums.
 
 Missing features:
 

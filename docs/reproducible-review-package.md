@@ -58,8 +58,10 @@ The physical archive format may be `.tar`, `.zip`, or a directory during early d
 - `projectTitle`
 - `question`
 - `metaAnalysisSpineVersion`
+- `packageRole`
 - `sourcePlanRefs`
 - `lockfileRef`
+- `lockfileRefs`
 - `provenanceRef`
 - `screeningAuditRef`
 - `extractionSchemaRef`
@@ -71,6 +73,8 @@ The physical archive format may be `.tar`, `.zip`, or a directory during early d
 - `replayCommand`
 - `auditCommand`
 - `warnings`
+
+Current package creation writes `packageRole: meta-analysis-spine-first-done-artifact`, `replay.sh`, a placeholder `audit-report.json`, `redaction-report.json`, and `checksums.sha256` covering every included file.
 
 ## Required contents
 

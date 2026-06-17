@@ -12,7 +12,7 @@ func TestCreateReviewPackageFormatIncludesManifestRedactionAndChecksums(t *testi
 	write(t, filepath.Join(project, "rforge.project.toml"), "title='Review'\n")
 	write(t, filepath.Join(project, "rforge.lock.json"), `{"version":"1"}`)
 	for _, rel := range []string{
-		"data/source-plans/plan.json", "data/identity-decisions.jsonl", "data/parser-manifests/grobid.json", "data/screening-audit.jsonl", "data/evidence.schemas.json", "data/evidence.items.json", "analysis/run1-artifact-manifest.json", "reports/report.md",
+		"data/retrieval.lock.json", "data/source-plans/plan.json", "data/identity-decisions.jsonl", "data/parser-manifests/grobid.json", "data/screening-audit.jsonl", "data/evidence.schemas.json", "data/evidence.items.json", "analysis/run1-artifact-manifest.json", "reports/report.md",
 	} {
 		write(t, filepath.Join(project, rel), rel)
 	}
@@ -21,10 +21,10 @@ func TestCreateReviewPackageFormatIncludesManifestRedactionAndChecksums(t *testi
 	if err != nil {
 		t.Fatalf("Create: %v", err)
 	}
-	if pkg.Manifest.SchemaVersion != "1" || pkg.Manifest.ProjectManifestRef == "" || pkg.Manifest.LockfileRef == "" || pkg.Manifest.ChecksumManifestRef != "checksums.sha256" {
+	if pkg.Manifest.SchemaVersion != "1" || pkg.Manifest.ProjectManifestRef == "" || pkg.Manifest.LockfileRef == "" || len(pkg.Manifest.LockfileRefs) < 2 || pkg.Manifest.ChecksumManifestRef != "checksums.sha256" || pkg.Manifest.PackageRole != "meta-analysis-spine-first-done-artifact" {
 		t.Fatalf("manifest = %#v", pkg.Manifest)
 	}
-	for _, rel := range []string{"manifest.json", "checksums.sha256", "redaction-report.json", "project/rforge.project.toml", "project/data/source-plans/plan.json", "project/analysis/run1-artifact-manifest.json", "project/reports/report.md"} {
+	for _, rel := range []string{"manifest.json", "checksums.sha256", "redaction-report.json", "replay.sh", "audit-report.json", "project/rforge.project.toml", "project/data/retrieval.lock.json", "project/data/source-plans/plan.json", "project/analysis/run1-artifact-manifest.json", "project/reports/report.md"} {
 		if _, err := os.Stat(filepath.Join(out, rel)); err != nil {
 			t.Fatalf("missing %s: %v", rel, err)
 		}
