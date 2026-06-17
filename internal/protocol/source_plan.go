@@ -3,11 +3,12 @@ package protocol
 import "strings"
 
 type SourcePlan struct {
-	SchemaVersion string            `json:"schemaVersion"`
-	Question      string            `json:"question"`
-	Framework     Framework         `json:"framework"`
-	Sources       []SourcePlanEntry `json:"sources"`
-	Warnings      []string          `json:"warnings"`
+	SchemaVersion            string                     `json:"schemaVersion"`
+	Question                 string                     `json:"question"`
+	Framework                Framework                  `json:"framework"`
+	Sources                  []SourcePlanEntry          `json:"sources"`
+	Warnings                 []string                   `json:"warnings"`
+	QueryExpansionProvenance []QueryExpansionProvenance `json:"queryExpansionProvenance,omitempty"`
 }
 
 type SourcePlanEntry struct {

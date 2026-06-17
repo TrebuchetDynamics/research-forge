@@ -27,11 +27,13 @@ Implemented nearby capabilities:
 
 Missing features:
 
-- Citation-linked keyword suggestions from abstracts/passages.
-- Reviewer approval workflow before adding suggestions to search plans.
-- Keyword diversity/scoring metadata.
 - Search-result comparison before/after query expansion.
+- Optional external KeyBERT adapter after embedding model/license review.
+
+Implemented:
+
+- `DraftQueryExpansionSuggestions` and `ApplyApprovedQueryExpansions` provide KeyBERT-inspired keyword/query-expansion suggestions linked to abstracts/passages/source text, with score and diversity metadata, reviewer approval gates, extraction method provenance, and before/after search-plan provenance when approved terms are applied.
 
 ## Recommended next slice
 
-Add keyword/query-expansion suggestion records with source passage IDs, score, extraction method, reviewer decision, and before/after search-plan provenance.
+Add search-result comparison before/after query expansion and optional external KeyBERT adapter after model/license review, preserving citation-linked reviewer-approved provenance.

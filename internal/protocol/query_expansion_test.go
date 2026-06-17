@@ -22,8 +22,8 @@ func TestDraftQueryExpansionSuggestionsRequireSourceTextAndReview(t *testing.T) 
 		if record.ReviewerApprovalRequired != true || record.ReviewerApproved != false {
 			t.Fatalf("suggestion must be gated by reviewer approval: %#v", record)
 		}
-		if record.ProvenanceTag == "" || record.SuggestedTerm == "" {
-			t.Fatalf("suggestion missing provenance/term: %#v", record)
+		if record.ProvenanceTag == "" || record.SuggestedTerm == "" || record.Score <= 0 || record.DiversityScore <= 0 || record.ExtractionMethod == "" {
+			t.Fatalf("suggestion missing provenance/term/scoring: %#v", record)
 		}
 	}
 	for _, assistant := range []SuggestionAssistant{AssistantKeyBERT, AssistantSciSpaCy, AssistantLLM} {
@@ -53,6 +53,9 @@ func TestQueryExpansionCannotChangeSourcePlanWithoutApproval(t *testing.T) {
 	}
 	if !contains(updated.MustSource("openalex").Query, "hydrogen evolution reaction") {
 		t.Fatalf("expanded query missing approved term: %s", updated.MustSource("openalex").Query)
+	}
+	if len(updated.QueryExpansionProvenance) == 0 || updated.QueryExpansionProvenance[0].BeforeQuery == "" || updated.QueryExpansionProvenance[0].AfterQuery == "" || updated.QueryExpansionProvenance[0].SuggestionID != "qe-1" {
+		t.Fatalf("missing before/after search-plan provenance: %#v", updated.QueryExpansionProvenance)
 	}
 }
 

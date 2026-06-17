@@ -31,9 +31,21 @@ type QueryExpansionSuggestion struct {
 	SuggestedTerm            string              `json:"suggestedTerm"`
 	Rationale                string              `json:"rationale"`
 	SourceTextLinks          []SourceTextLink    `json:"sourceTextLinks"`
+	Score                    float64             `json:"score"`
+	DiversityScore           float64             `json:"diversityScore"`
+	ExtractionMethod         string              `json:"extractionMethod"`
 	ProvenanceTag            string              `json:"provenanceTag"`
 	ReviewerApprovalRequired bool                `json:"reviewerApprovalRequired"`
 	ReviewerApproved         bool                `json:"reviewerApproved"`
+}
+
+type QueryExpansionProvenance struct {
+	SuggestionID  string `json:"suggestionId"`
+	Term          string `json:"term"`
+	BeforeQuery   string `json:"beforeQuery"`
+	AfterQuery    string `json:"afterQuery"`
+	SourceTextID  string `json:"sourceTextId"`
+	ProvenanceTag string `json:"provenanceTag"`
 }
 
 func DraftQueryExpansionSuggestions(input QueryExpansionInput) ([]QueryExpansionSuggestion, error) {
@@ -52,12 +64,16 @@ func DraftQueryExpansionSuggestions(input QueryExpansionInput) ([]QueryExpansion
 	assistants := []SuggestionAssistant{AssistantKeyBERT, AssistantSciSpaCy, AssistantLLM}
 	records := make([]QueryExpansionSuggestion, 0, len(assistants))
 	for i, assistant := range assistants {
+		term := terms[i%len(terms)]
 		records = append(records, QueryExpansionSuggestion{
 			ID:                       fmt.Sprintf("qe-%02d", i+1),
 			Assistant:                assistant,
-			SuggestedTerm:            terms[i%len(terms)],
+			SuggestedTerm:            term,
 			Rationale:                rationaleForAssistant(assistant),
 			SourceTextLinks:          []SourceTextLink{links[0]},
+			Score:                    keywordScore(term, links[0].Text),
+			DiversityScore:           diversityScore(term, records),
+			ExtractionMethod:         extractionMethodForAssistant(assistant),
 			ProvenanceTag:            "protocol.query_expansion.suggested",
 			ReviewerApprovalRequired: true,
 			ReviewerApproved:         false,
@@ -91,11 +107,15 @@ func ApplyApprovedQueryExpansions(plan SourcePlan, suggestions []QueryExpansionS
 		if updated.Sources[i].Query == "" {
 			continue
 		}
+		before := updated.Sources[i].Query
 		for _, term := range dedupeStrings(terms) {
 			quoted := quoteTerm(term)
 			if !strings.Contains(updated.Sources[i].Query, quoted) && !strings.Contains(updated.Sources[i].Query, term) {
 				updated.Sources[i].Query += " AND " + quoted
 			}
+		}
+		if before != updated.Sources[i].Query && len(suggestions) > 0 {
+			updated.QueryExpansionProvenance = append(updated.QueryExpansionProvenance, QueryExpansionProvenance{SuggestionID: suggestions[0].ID, Term: suggestions[0].SuggestedTerm, BeforeQuery: before, AfterQuery: updated.Sources[i].Query, SourceTextID: suggestions[0].SourceTextLinks[0].ID, ProvenanceTag: "protocol.query_expansion.applied"})
 		}
 	}
 	return updated, nil
@@ -125,6 +145,37 @@ func candidateExpansionTerms(question, text string) []string {
 		}
 	}
 	return terms
+}
+
+func keywordScore(term, text string) float64 {
+	if term == "" {
+		return 0
+	}
+	score := 0.5 + float64(strings.Count(strings.ToLower(text), strings.ToLower(term)))*0.2
+	if score > 1 {
+		return 1
+	}
+	return score
+}
+
+func diversityScore(term string, existing []QueryExpansionSuggestion) float64 {
+	for _, suggestion := range existing {
+		if suggestion.SuggestedTerm == term || strings.Contains(suggestion.SuggestedTerm, term) || strings.Contains(term, suggestion.SuggestedTerm) {
+			return 0.25
+		}
+	}
+	return 1
+}
+
+func extractionMethodForAssistant(assistant SuggestionAssistant) string {
+	switch assistant {
+	case AssistantKeyBERT:
+		return "keybert-style-keyphrase-ranking"
+	case AssistantSciSpaCy:
+		return "scispacy-style-entity-term"
+	default:
+		return "citation-locked-assistant-suggestion"
+	}
 }
 
 func rationaleForAssistant(assistant SuggestionAssistant) string {
