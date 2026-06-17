@@ -11,6 +11,8 @@ import (
 // ReferenceMatch records how one parsed bibliography reference matched a source connector result.
 type ReferenceMatch struct {
 	Index            int                 `json:"index"`
+	ParserName       string              `json:"parserName,omitempty"`
+	ParserVersion    string              `json:"parserVersion,omitempty"`
 	Title            string              `json:"title"`
 	DOI              string              `json:"doi,omitempty"`
 	Raw              string              `json:"raw,omitempty"`
@@ -32,6 +34,8 @@ type ReferenceMatch struct {
 // ReferenceNormalizationReport summarizes connector normalization for parsed references.
 type ReferenceNormalizationReport struct {
 	PaperID        string                `json:"paperId"`
+	ParserName     string                `json:"parserName,omitempty"`
+	ParserVersion  string                `json:"parserVersion,omitempty"`
 	Connector      string                `json:"connector"`
 	References     int                   `json:"references"`
 	Matched        int                   `json:"matched"`
@@ -40,16 +44,52 @@ type ReferenceNormalizationReport struct {
 	AmbiguityQueue []ReferenceReviewItem `json:"ambiguityQueue,omitempty"`
 }
 
+// MultiSourceReferenceNormalizationReport combines reference normalization across source connectors.
+type MultiSourceReferenceNormalizationReport struct {
+	PaperID        string                         `json:"paperId"`
+	ParserName     string                         `json:"parserName,omitempty"`
+	ParserVersion  string                         `json:"parserVersion,omitempty"`
+	Sources        []string                       `json:"sources"`
+	SourceReports  []ReferenceNormalizationReport `json:"sourceReports"`
+	Matches        []ReferenceMatch               `json:"matches"`
+	AmbiguityQueue []ReferenceReviewItem          `json:"ambiguityQueue,omitempty"`
+}
+
+func (r MultiSourceReferenceNormalizationReport) HasSource(source string) bool {
+	for _, candidate := range r.Sources {
+		if candidate == source {
+			return true
+		}
+	}
+	return false
+}
+
+// NormalizeParsedReferencesAcrossConnectors runs reviewer-visible normalization across Crossref/OpenAlex/Semantic Scholar-style connectors.
+func NormalizeParsedReferencesAcrossConnectors(ctx context.Context, connectors []sources.SourceConnector, doc ParsedDocument) (MultiSourceReferenceNormalizationReport, error) {
+	report := MultiSourceReferenceNormalizationReport{PaperID: doc.PaperID, ParserName: doc.ParserName, ParserVersion: doc.ParserVersion}
+	for _, connector := range connectors {
+		sourceReport, err := NormalizeParsedReferences(ctx, connector, doc)
+		if err != nil {
+			return MultiSourceReferenceNormalizationReport{}, err
+		}
+		report.Sources = append(report.Sources, sourceReport.Connector)
+		report.SourceReports = append(report.SourceReports, sourceReport)
+		report.Matches = append(report.Matches, sourceReport.Matches...)
+		report.AmbiguityQueue = append(report.AmbiguityQueue, sourceReport.AmbiguityQueue...)
+	}
+	return report, nil
+}
+
 // NormalizeParsedReferences queries a source connector for each parsed reference and records the top match.
 func NormalizeParsedReferences(ctx context.Context, connector sources.SourceConnector, doc ParsedDocument) (ReferenceNormalizationReport, error) {
 	if connector == nil {
 		return ReferenceNormalizationReport{}, fmt.Errorf("source connector is required")
 	}
-	report := ReferenceNormalizationReport{PaperID: doc.PaperID, Connector: connector.Name(), References: len(doc.References)}
+	report := ReferenceNormalizationReport{PaperID: doc.PaperID, ParserName: doc.ParserName, ParserVersion: doc.ParserVersion, Connector: connector.Name(), References: len(doc.References)}
 	for i, ref := range doc.References {
 		query := referenceQuery(ref)
 		request := sources.SourceQuery{Terms: query, Limit: 3}
-		match := ReferenceMatch{Index: i, Title: ref.Title, DOI: strings.TrimSpace(ref.DOI), Raw: ref.Raw, ParserConfidence: ref.Confidence, Request: request}
+		match := ReferenceMatch{Index: i, ParserName: doc.ParserName, ParserVersion: doc.ParserVersion, Title: ref.Title, DOI: strings.TrimSpace(ref.DOI), Raw: ref.Raw, ParserConfidence: ref.Confidence, Request: request}
 		if query == "" {
 			match.Ambiguous = true
 			match.AmbiguityReason = "blank_reference"
