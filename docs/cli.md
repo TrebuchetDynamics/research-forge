@@ -52,7 +52,8 @@ Core commands:
 - `rforge retrieve benchmark --out <report.json> [--k N]` compares SQLite FTS, OpenSearch, Qdrant vector search, and hybrid ranking on deterministic passage-query fixtures
 - `rforge retrieve tune-hybrid --queries <queries.json> --lexical <results.json> --vector <results.json> --out <tuning.json> [--k N]` writes calibrated hybrid retrieval tuning files with lexical/vector/backend weights, evaluation scores, selected configuration, and query-set checksums
 - `rforge research parse-pdftotext --paper <id> --pdf <file> --out <parsed.json> [--title <title>] [--chunk-size N]`, `rforge research screen-queue --out <queue.csv> [--markdown <queue.md>] [--library <library.json>] [--search-results <dir>]`, `rforge research leakage-audit --parsed <parsed-dir> --out <audit.json> [--markdown <audit.md>]`
-- `rforge screen configure|decide|adjudicate|queue|prioritize|model-prioritize|uncertainty|progress|recall|stopping|conflicts`, `rforge prisma counts`
+- `rforge screen configure|decide|adjudicate|queue|prioritize|model-prioritize|uncertainty|active-run|progress|recall|stopping|conflicts`, `rforge prisma counts`
+- `rforge screen active-run --stage <stage> --method active-learning|model|uncertainty --out <run.json> [--target-recall 0.95]` persists ASReview-style active-learning runs with input/decision hashes, seed decisions, ranked output, reviewer progress, stopping diagnostics, and adjudication state
 - `rforge extraction schema add`, `rforge extract add|suggest`, `rforge evidence audit`
 - `rforge analysis prepare [--effect smd|log-odds-ratio|risk-ratio]|run|sensitivity|subgroup|meta-regression|publication-bias|bayesian|export`
 - `rforge report build|audit`

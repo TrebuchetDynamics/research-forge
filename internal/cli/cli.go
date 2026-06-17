@@ -1377,6 +1377,39 @@ func executeScreen(args []string, stdout, stderr io.Writer, opts globalOptions) 
 			fmt.Fprintln(stdout, paper)
 		}
 		return 0
+	case "active-run":
+		stage, method, outPath, targetRecall, ok := parseScreenActiveRun(args[1:])
+		if !ok {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge screen active-run --stage <stage> --method active-learning|model|uncertainty --out <run.json> [--target-recall 0.95]")
+		}
+		_, events, err := loadScreening(opts.Project)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "screen_load_failed", err.Error())
+		}
+		store, err := library.OpenStore(filepath.Join(opts.Project, "data", "library.json"))
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "library_open_failed", err.Error())
+		}
+		papers, err := store.List()
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "library_list_failed", err.Error())
+		}
+		records := make([]screening.ScreeningRecord, 0, len(papers))
+		for _, paper := range papers {
+			records = append(records, screening.ScreeningRecord{ID: screeningPaperID(paper), Title: paper.Title, Abstract: paper.Abstract})
+		}
+		run, err := screening.BuildActiveLearningRun(screening.ActiveLearningRunInput{Records: records, Events: events, Stage: stage, RankingMethod: method, TargetRecall: targetRecall})
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "screen_active_run_failed", err.Error())
+		}
+		if err := writeJSONFile(outPath, run); err != nil {
+			return writeError(stdout, stderr, opts, 1, "screen_active_run_write_failed", err.Error())
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"activeLearningRun": run, "path": outPath})
+		}
+		fmt.Fprintf(stdout, "wrote active-learning run to %s\n", outPath)
+		return 0
 	case "prioritize":
 		stage, limit, ok := parseScreenPrioritize(args[1:])
 		if !ok {
@@ -1642,6 +1675,34 @@ func parseScreenStopping(args []string) (screening.Stage, float64, bool) {
 		target = parsed
 	}
 	return screening.Stage(values["--stage"]), target, values["--stage"] != ""
+}
+
+func parseScreenActiveRun(args []string) (screening.Stage, string, string, float64, bool) {
+	values := map[string]string{"--method": "active-learning"}
+	target := 0.95
+	for i := 0; i < len(args); i++ {
+		switch args[i] {
+		case "--stage", "--method", "--out", "--target-recall":
+			if i+1 >= len(args) {
+				return "", "", "", 0, false
+			}
+			if args[i] == "--target-recall" {
+				parsed, err := strconv.ParseFloat(args[i+1], 64)
+				if err != nil || parsed <= 0 || parsed > 1 {
+					return "", "", "", 0, false
+				}
+				target = parsed
+			} else {
+				values[args[i]] = args[i+1]
+			}
+			i++
+		default:
+			return "", "", "", 0, false
+		}
+	}
+	method := values["--method"]
+	validMethod := method == "active-learning" || method == "asreview" || method == "model" || method == "naive-bayes" || method == "uncertainty"
+	return screening.Stage(values["--stage"]), method, values["--out"], target, values["--stage"] != "" && values["--out"] != "" && validMethod
 }
 
 func parseScreenPrioritize(args []string) (screening.Stage, int, bool) {
