@@ -925,6 +925,22 @@ func executeAnalysis(args []string, stdout, stderr io.Writer, opts globalOptions
 		}
 		fmt.Fprintln(stdout, "ran analysis")
 		return 0
+	case "moderators":
+		if len(args) != 2 {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge analysis moderators <run-id>")
+		}
+		var items []evidence.EvidenceItem
+		if err := readJSONFile(evidenceItemsPath(opts.Project), &items); err != nil {
+			return writeError(stdout, stderr, opts, 1, "analysis_evidence_read_failed", err.Error())
+		}
+		preview := analysis.ModeratorPreviewFromEvidence(items)
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"moderators": preview})
+		}
+		for _, field := range preview.Fields {
+			fmt.Fprintf(stdout, "%s\t%d papers\tnumeric=%t\n", field.Name, field.Papers, field.Numeric)
+		}
+		return 0
 	case "sensitivity":
 		if len(args) != 4 || args[2] != "--method" || args[3] != "leave-one-out" {
 			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge analysis sensitivity <run-id> --method leave-one-out")
@@ -947,9 +963,20 @@ func executeAnalysis(args []string, stdout, stderr io.Writer, opts globalOptions
 		fmt.Fprintf(stdout, "wrote sensitivity analysis to %s\n", path)
 		return 0
 	case "subgroup":
-		variable, groups, ok := parseSubgroupArgs(args[2:])
+		variable, groups, evidenceField, ok := parseSubgroupArgs(args[2:])
 		if !ok {
-			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge analysis subgroup <run-id> --variable <name> --group <paper>=<group>")
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge analysis subgroup <run-id> --variable <name> [--group <paper>=<group> | --from-evidence <field>]")
+		}
+		if evidenceField != "" {
+			var items []evidence.EvidenceItem
+			if err := readJSONFile(evidenceItemsPath(opts.Project), &items); err != nil {
+				return writeError(stdout, stderr, opts, 1, "analysis_evidence_read_failed", err.Error())
+			}
+			derived, err := analysis.SubgroupValuesFromEvidence(items, evidenceField)
+			if err != nil {
+				return writeError(stdout, stderr, opts, 1, "analysis_subgroup_moderators_failed", err.Error())
+			}
+			groups = derived
 		}
 		var run analysis.AnalysisRun
 		if err := readJSONFile(runPath, &run); err != nil {
@@ -969,9 +996,20 @@ func executeAnalysis(args []string, stdout, stderr io.Writer, opts globalOptions
 		fmt.Fprintf(stdout, "wrote subgroup analysis to %s\n", path)
 		return 0
 	case "meta-regression":
-		moderator, values, ok := parseMetaRegressionArgs(args[2:])
+		moderator, values, evidenceField, ok := parseMetaRegressionArgs(args[2:])
 		if !ok {
-			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge analysis meta-regression <run-id> --moderator <name> --value <paper>=<number>")
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge analysis meta-regression <run-id> --moderator <name> [--value <paper>=<number> | --from-evidence <field>]")
+		}
+		if evidenceField != "" {
+			var items []evidence.EvidenceItem
+			if err := readJSONFile(evidenceItemsPath(opts.Project), &items); err != nil {
+				return writeError(stdout, stderr, opts, 1, "analysis_evidence_read_failed", err.Error())
+			}
+			derived, err := analysis.MetaRegressionValuesFromEvidence(items, evidenceField)
+			if err != nil {
+				return writeError(stdout, stderr, opts, 1, "analysis_meta_regression_moderators_failed", err.Error())
+			}
+			values = derived
 		}
 		var run analysis.AnalysisRun
 		if err := readJSONFile(runPath, &run); err != nil {
@@ -1096,64 +1134,78 @@ func parseBayesianArgs(args []string) (float64, float64, bool) {
 	return priorMean, priorVariance, methodSeen
 }
 
-func parseSubgroupArgs(args []string) (string, map[string]string, bool) {
+func parseSubgroupArgs(args []string) (string, map[string]string, string, bool) {
 	variable := ""
 	groups := map[string]string{}
+	evidenceField := ""
 	for i := 0; i < len(args); i++ {
 		switch args[i] {
 		case "--variable":
 			if i+1 >= len(args) {
-				return "", nil, false
+				return "", nil, "", false
 			}
 			variable = args[i+1]
 			i++
 		case "--group":
 			if i+1 >= len(args) {
-				return "", nil, false
+				return "", nil, "", false
 			}
 			paper, group, ok := strings.Cut(args[i+1], "=")
 			if !ok || strings.TrimSpace(paper) == "" || strings.TrimSpace(group) == "" {
-				return "", nil, false
+				return "", nil, "", false
 			}
 			groups[strings.TrimSpace(paper)] = strings.TrimSpace(group)
 			i++
+		case "--from-evidence":
+			if i+1 >= len(args) || strings.TrimSpace(args[i+1]) == "" {
+				return "", nil, "", false
+			}
+			evidenceField = args[i+1]
+			i++
 		default:
-			return "", nil, false
+			return "", nil, "", false
 		}
 	}
-	return variable, groups, strings.TrimSpace(variable) != "" && len(groups) > 0
+	return variable, groups, evidenceField, strings.TrimSpace(variable) != "" && (len(groups) > 0 || strings.TrimSpace(evidenceField) != "")
 }
 
-func parseMetaRegressionArgs(args []string) (string, map[string]float64, bool) {
+func parseMetaRegressionArgs(args []string) (string, map[string]float64, string, bool) {
 	moderator := ""
 	values := map[string]float64{}
+	evidenceField := ""
 	for i := 0; i < len(args); i++ {
 		switch args[i] {
 		case "--moderator":
 			if i+1 >= len(args) {
-				return "", nil, false
+				return "", nil, "", false
 			}
 			moderator = args[i+1]
 			i++
 		case "--value":
 			if i+1 >= len(args) {
-				return "", nil, false
+				return "", nil, "", false
 			}
 			paper, raw, ok := strings.Cut(args[i+1], "=")
 			if !ok || strings.TrimSpace(paper) == "" {
-				return "", nil, false
+				return "", nil, "", false
 			}
 			parsed, err := strconv.ParseFloat(raw, 64)
 			if err != nil {
-				return "", nil, false
+				return "", nil, "", false
 			}
 			values[strings.TrimSpace(paper)] = parsed
 			i++
+		case "--from-evidence":
+			if i+1 >= len(args) || strings.TrimSpace(args[i+1]) == "" {
+				return "", nil, "", false
+			}
+			evidenceField = args[i+1]
+			i++
 		default:
-			return "", nil, false
+			return "", nil, "", false
 		}
 	}
-	return moderator, values, strings.TrimSpace(moderator) != "" && len(values) > 0
+	return moderator, values, evidenceField, strings.TrimSpace(moderator) != "" && (len(values) > 0 || strings.TrimSpace(evidenceField) != "")
 }
 
 func parseAnalysisEffect(args []string) (analysis.EffectSizeCalculator, bool) {
