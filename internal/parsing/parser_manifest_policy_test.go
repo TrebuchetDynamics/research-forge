@@ -5,7 +5,7 @@ import "testing"
 func TestParserOutputManifestIncludesLicenseProvenanceAndShareability(t *testing.T) {
 	doc := ParsedDocument{PaperID: "paper-1", ParserName: "grobid", ParserVersion: "0.8", Sections: []Section{{Passages: []Passage{{ID: "p1"}}}}}
 	manifest := NewParserRunManifestWithOutput(doc, []byte("input pdf"), []byte(`{"parsed":true}`), "parsed/paper-1.json", []string{"grobid", "processFulltextDocument"})
-	if manifest.ParserSource != "external-service" || manifest.Command == nil || manifest.OutputChecksum == "" {
+	if manifest.ParserSource != "external-service" || manifest.Command == nil || manifest.OutputChecksum == "" || manifest.OutputKind != "tei-json" {
 		t.Fatalf("manifest missing provenance fields: %#v", manifest)
 	}
 	if manifest.LicenseConstraints == "" || manifest.Shareability == "" || !manifest.ReviewerApprovalRequired {
@@ -15,7 +15,7 @@ func TestParserOutputManifestIncludesLicenseProvenanceAndShareability(t *testing
 
 func TestDefaultParserOutputPoliciesCoverRequiredParsers(t *testing.T) {
 	policies := DefaultParserOutputPolicies()
-	for _, parser := range []string{"grobid", "s2orc", "papermage", "cermine", "science-parse", "anystyle"} {
+	for _, parser := range []string{"grobid", "s2orc", "s2orc-doc2json", "papermage", "cermine", "science-parse", "anystyle"} {
 		policy, ok := policies.Policy(parser)
 		if !ok {
 			t.Fatalf("missing parser policy %s", parser)

@@ -13,6 +13,7 @@ type ParserRunManifest struct {
 	ParserName               string   `json:"parserName"`
 	ParserVersion            string   `json:"parserVersion"`
 	ParserSource             string   `json:"parserSource"`
+	OutputKind               string   `json:"outputKind"`
 	Command                  []string `json:"command,omitempty"`
 	InputChecksum            string   `json:"inputChecksum"`
 	OutputChecksum           string   `json:"outputChecksum"`
@@ -40,7 +41,7 @@ func NewParserRunManifestWithOutput(doc ParsedDocument, input, output []byte, pa
 	inputSum := sha256.Sum256(input)
 	outputSum := sha256.Sum256(output)
 	policy := DefaultParserOutputPolicies().MustPolicy(doc.ParserName)
-	return ParserRunManifest{SchemaVersion: "1", PaperID: doc.PaperID, ParserName: doc.ParserName, ParserVersion: doc.ParserVersion, ParserSource: policy.ParserSource, Command: command, InputChecksum: hex.EncodeToString(inputSum[:]), OutputChecksum: hex.EncodeToString(outputSum[:]), ParsedPath: parsedPath, LicenseConstraints: policy.LicenseConstraints, Shareability: policy.Shareability, ProvenanceFields: append([]string{}, policy.ProvenanceFields...), ReviewerApprovalRequired: true, Sections: len(doc.Sections), Passages: passages, References: len(doc.References), Warnings: append([]string{}, doc.Warnings...)}
+	return ParserRunManifest{SchemaVersion: "1", PaperID: doc.PaperID, ParserName: doc.ParserName, ParserVersion: doc.ParserVersion, ParserSource: policy.ParserSource, OutputKind: parserOutputKind(doc.ParserName), Command: command, InputChecksum: hex.EncodeToString(inputSum[:]), OutputChecksum: hex.EncodeToString(outputSum[:]), ParsedPath: parsedPath, LicenseConstraints: policy.LicenseConstraints, Shareability: policy.Shareability, ProvenanceFields: append([]string{}, policy.ProvenanceFields...), ReviewerApprovalRequired: true, Sections: len(doc.Sections), Passages: passages, References: len(doc.References), Warnings: append([]string{}, doc.Warnings...)}
 }
 
 type ParserOutputPolicyRegistry struct {
@@ -66,6 +67,19 @@ func DefaultParserOutputPolicies() ParserOutputPolicyRegistry {
 		{ParserName: "science-parse", ParserSource: "external-tool", LicenseConstraints: "Science Parse-style metadata output is historical/fallback parser output; verify tool license and document rights.", Shareability: "share metadata only after stale-parser risk and license review", ProvenanceFields: []string{"parser", "version", "command", "input_checksum", "output_checksum"}},
 		{ParserName: "anystyle", ParserSource: "external-tool", LicenseConstraints: "Anystyle reference output follows Anystyle command license and source reference text rights.", Shareability: "share parsed references only after source document/license gate", ProvenanceFields: []string{"parser", "version", "command", "input_checksum", "output_checksum"}},
 	}}
+}
+
+func parserOutputKind(parserName string) string {
+	switch strings.ToLower(strings.TrimSpace(parserName)) {
+	case "grobid", "cermine":
+		return "tei-json"
+	case "anystyle":
+		return "references-json"
+	case "s2orc", "s2orc-doc2json", "papermage", "science-parse":
+		return "json"
+	default:
+		return "parsed-json"
+	}
 }
 
 func (r ParserOutputPolicyRegistry) Policy(parserName string) (ParserOutputPolicy, bool) {

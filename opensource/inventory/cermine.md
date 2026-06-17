@@ -24,6 +24,7 @@ Implemented nearby capabilities:
 - Parsed-document storage.
 - Report/evidence audit paths.
 - Parser comparison reports over two parsed-document JSON files through `rforge parse compare --left <parsed.json> --right <parsed.json> --out <report.json>`, including fallback candidate scoring metadata.
+- Parser-run manifests record parser source/version/command, input/output checksums, TEI/JSON output kind, license constraints, shareability, warnings, and reviewer gates.
 
 Missing features:
 

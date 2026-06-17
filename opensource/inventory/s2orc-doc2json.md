@@ -22,6 +22,7 @@ Implemented nearby capabilities:
 
 - GROBID adapter producing parsed sections/passages/references.
 - S2ORC-style JSON reader available through `rforge parse --parser s2orc --s2orc <file>`.
+- Parser-run manifests record parser source/version/command, input/output checksums, JSON output kind, license constraints, shareability, warnings, and reviewer gates.
 - Citation graph export and reports.
 - Evidence items can cite passage references.
 
