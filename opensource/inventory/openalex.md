@@ -22,7 +22,7 @@ Implemented nearby capabilities:
 
 - `rforge search --source openalex` with cursor/filter support and `rforge search import --source openalex --pages N` paginated library import.
 - `rforge citations expand --source openalex` for reference/citation graph export.
-- OpenAlex source connector with mocked tests, including works, author/institution entity searches, and related-work discovery records.
+- OpenAlex source connector with mocked tests, including works, author/institution/concept entity searches, related-work discovery records, and disambiguation review queues for ambiguous people/institutions/concepts.
 - Source refs stored in `PaperRecord` conversion.
 - Live manual searches have been used for ResearchForge-backed reports.
 
@@ -30,13 +30,13 @@ Missing features:
 
 - Rich cursor-based multi-page import workflow beyond fixed page-count import.
 - Rich concepts/domain-map import beyond source metadata.
-- Rich CLI UX for institution/author search beyond `rforge search --source openalex --entity authors|institutions`.
+- Rich CLI UX for institution/author/concept search beyond JSON disambiguation queues.
 - Higher-level works filter presets beyond generic `--filter`.
 - Opt-in live connector smoke test.
 
 ## Recommended slice
 
-Add paginated search/import so a research project can freeze the exact OpenAlex search query, pages, cursor state, and imported records.
+Build reviewer workflows over OpenAlex disambiguation queues and domain-map import decisions.
 
 Acceptance target:
 

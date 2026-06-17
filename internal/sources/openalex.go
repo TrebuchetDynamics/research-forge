@@ -86,6 +86,11 @@ func (c OpenAlexConnector) SearchInstitutions(ctx context.Context, query SourceQ
 	return c.searchEntities(ctx, "/institutions", "openalex-institution", query)
 }
 
+// SearchConcepts queries OpenAlex concepts.
+func (c OpenAlexConnector) SearchConcepts(ctx context.Context, query SourceQuery) ([]OpenAlexEntity, string, error) {
+	return c.searchEntities(ctx, "/concepts", "openalex-concept", query)
+}
+
 func (c OpenAlexConnector) searchEntities(ctx context.Context, path, source string, query SourceQuery) ([]OpenAlexEntity, string, error) {
 	limit := query.Limit
 	if limit <= 0 {

@@ -1248,6 +1248,26 @@ func TestExecuteSearchOpenAlexAuthorsJSONWithMockHTTP(t *testing.T) {
 	}
 }
 
+func TestExecuteSearchOpenAlexConceptsJSONIncludesDisambiguationQueue(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/concepts" || r.URL.Query().Get("search") != "machine learning" {
+			t.Fatalf("unexpected request: %s?%s", r.URL.Path, r.URL.RawQuery)
+		}
+		_, _ = w.Write([]byte(`{"results":[{"id":"https://openalex.org/C1","display_name":"Machine learning","works_count":100},{"id":"https://openalex.org/C2","display_name":"Machine learning","works_count":80}]}`))
+	}))
+	defer server.Close()
+	t.Setenv("RFORGE_OPENALEX_URL", server.URL)
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+	code := Execute([]string{"--json", "search", "--source", "openalex", "--entity", "concepts", "--query", "machine learning", "--limit", "2"}, stdout, stderr)
+	if code != 0 {
+		t.Fatalf("exit code = %d, stderr = %s", code, stderr.String())
+	}
+	if !strings.Contains(stdout.String(), `"entity":"concepts"`) || !strings.Contains(stdout.String(), "disambiguationQueue") || !strings.Contains(stdout.String(), "multiple_candidates") {
+		t.Fatalf("stdout = %s", stdout.String())
+	}
+}
+
 func TestExecuteSearchOpenAlexInstitutionsJSONWithMockHTTP(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != "/institutions" || r.URL.Query().Get("search") != "University" {

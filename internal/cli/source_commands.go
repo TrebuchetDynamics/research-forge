@@ -627,14 +627,17 @@ func executeOpenAlexEntitySearch(query string, limit int, entity string, stdout,
 		entities, rawRef, err = connector.SearchAuthors(context.Background(), sources.SourceQuery{Terms: query, Limit: limit})
 	case "institutions":
 		entities, rawRef, err = connector.SearchInstitutions(context.Background(), sources.SourceQuery{Terms: query, Limit: limit})
+	case "concepts":
+		entities, rawRef, err = connector.SearchConcepts(context.Background(), sources.SourceQuery{Terms: query, Limit: limit})
 	default:
-		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge search --source openalex --query <query> --entity authors|institutions")
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge search --source openalex --query <query> --entity authors|institutions|concepts")
 	}
 	if err != nil {
 		return writeError(stdout, stderr, opts, 1, "search_failed", fmt.Sprintf("search: %v", err))
 	}
+	disambiguation := sources.BuildOpenAlexDisambiguationQueue(query, entity, entities, rawRef)
 	if opts.JSON {
-		return writeJSON(stdout, 0, map[string]any{"entities": entities, "source": "openalex", "entity": entity, "rawRef": rawRef})
+		return writeJSON(stdout, 0, map[string]any{"entities": entities, "disambiguationQueue": disambiguation, "source": "openalex", "entity": entity, "rawRef": rawRef})
 	}
 	for _, entity := range entities {
 		fmt.Fprintf(stdout, "%s\t%s\t%d\n", entity.SourceID, entity.DisplayName, entity.WorksCount)
