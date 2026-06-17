@@ -818,6 +818,51 @@ func executeReport(args []string, stdout, stderr io.Writer, opts globalOptions) 
 	}
 	data := report.Data{Title: proj.Title, Provenance: []string{"manifest", "lockfile", "provenance"}}
 	switch args[0] {
+	case "claim-panel":
+		tracePath, outPath, ok := parseReportClaimPanel(args[1:])
+		if !ok {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge report claim-panel --trace <trace.json> --out <panel.json>")
+		}
+		var view report.CitationEvidenceTraceView
+		if err := readJSONFile(tracePath, &view); err != nil {
+			return writeError(stdout, stderr, opts, 1, "report_trace_read_failed", err.Error())
+		}
+		panel := report.BuildClaimTraceabilityPanel(view)
+		if err := writeJSONFile(outPath, panel); err != nil {
+			return writeError(stdout, stderr, opts, 1, "report_claim_panel_write_failed", err.Error())
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"claimPanel": panel, "path": outPath})
+		}
+		fmt.Fprintf(stdout, "wrote claim traceability panel to %s\n", outPath)
+		return 0
+	case "final-export":
+		inPath, panelPath, outPath, ok := parseReportFinalExport(args[1:])
+		if !ok {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge report final-export --in <report.md> --panel <panel.json> --out <final.md>")
+		}
+		var panel report.ClaimTraceabilityPanel
+		if err := readJSONFile(panelPath, &panel); err != nil {
+			return writeError(stdout, stderr, opts, 1, "report_claim_panel_read_failed", err.Error())
+		}
+		if err := report.GuardFinalReportExport(panel); err != nil {
+			return writeError(stdout, stderr, opts, 1, "report_final_export_blocked", err.Error())
+		}
+		data, err := os.ReadFile(inPath)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "report_final_export_read_failed", err.Error())
+		}
+		if err := os.MkdirAll(filepath.Dir(outPath), 0o755); err != nil {
+			return writeError(stdout, stderr, opts, 1, "report_final_export_write_failed", err.Error())
+		}
+		if err := os.WriteFile(outPath, data, 0o644); err != nil {
+			return writeError(stdout, stderr, opts, 1, "report_final_export_write_failed", err.Error())
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"path": outPath})
+		}
+		fmt.Fprintf(stdout, "wrote final report export to %s\n", outPath)
+		return 0
 	case "trace":
 		claimsPath, analysisPath, outPath, ok := parseReportTrace(args[1:])
 		if !ok {
@@ -885,6 +930,28 @@ func executeReport(args []string, stdout, stderr io.Writer, opts globalOptions) 
 	default:
 		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge report <build|audit>")
 	}
+}
+
+func parseReportClaimPanel(args []string) (string, string, bool) {
+	if len(args) != 4 {
+		return "", "", false
+	}
+	values := map[string]string{}
+	for i := 0; i < len(args); i += 2 {
+		values[args[i]] = args[i+1]
+	}
+	return values["--trace"], values["--out"], values["--trace"] != "" && values["--out"] != ""
+}
+
+func parseReportFinalExport(args []string) (string, string, string, bool) {
+	if len(args) != 6 {
+		return "", "", "", false
+	}
+	values := map[string]string{}
+	for i := 0; i < len(args); i += 2 {
+		values[args[i]] = args[i+1]
+	}
+	return values["--in"], values["--panel"], values["--out"], values["--in"] != "" && values["--panel"] != "" && values["--out"] != ""
 }
 
 func parseReportTrace(args []string) (string, string, string, bool) {

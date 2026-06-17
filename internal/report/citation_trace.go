@@ -27,6 +27,7 @@ type ClaimTraceView struct {
 	ClaimID               string                  `json:"claimId"`
 	PaperID               string                  `json:"paperId"`
 	ClaimText             string                  `json:"claimText"`
+	ClaimStatus           evidence.Status         `json:"claimStatus"`
 	EffectSizeRows        []analysis.InputRow     `json:"effectSizeRows"`
 	AcceptedEvidence      []evidence.EvidenceItem `json:"acceptedEvidence"`
 	Passages              []TracePassage          `json:"passages"`
@@ -48,7 +49,7 @@ type TracePassage struct {
 func BuildCitationEvidenceTraceView(input CitationEvidenceTraceInput) CitationEvidenceTraceView {
 	view := CitationEvidenceTraceView{SchemaVersion: "1"}
 	for _, claim := range input.Claims {
-		row := ClaimTraceView{ClaimID: claim.ID, PaperID: claim.PaperID, ClaimText: claim.SuggestedText, RawRequestResponse: map[string]string{}}
+		row := ClaimTraceView{ClaimID: claim.ID, PaperID: claim.PaperID, ClaimText: claim.SuggestedText, ClaimStatus: claim.Status, RawRequestResponse: map[string]string{}}
 		for _, effect := range input.AnalysisRun.InputRows {
 			if effect.PaperID == claim.PaperID {
 				row.EffectSizeRows = append(row.EffectSizeRows, effect)
