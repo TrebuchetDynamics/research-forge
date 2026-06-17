@@ -12,11 +12,20 @@ import (
 type ResearchMapCockpitState struct {
 	SchemaVersion         string                  `json:"schemaVersion"`
 	ProjectPath           string                  `json:"projectPath"`
+	Filter                string                  `json:"filter,omitempty"`
+	Neighborhood          string                  `json:"neighborhood,omitempty"`
 	ConceptMap            []ResearchMapItem       `json:"conceptMap"`
 	CitationNeighborhoods []ResearchMapItem       `json:"citationNeighborhoods"`
 	RetrievalClusters     []ResearchMapItem       `json:"retrievalClusters"`
 	EvidenceCoverage      EvidenceCoverageSummary `json:"evidenceCoverage"`
+	ProvenanceOverlays    []ResearchMapItem       `json:"provenanceOverlays,omitempty"`
+	KeyboardAlternatives  []string                `json:"keyboardAlternatives"`
 	SnapshotExportPath    string                  `json:"snapshotExportPath"`
+}
+
+type ResearchMapOptions struct {
+	Filter, Neighborhood string
+	IncludeProvenance    bool
 }
 
 type ResearchMapItem struct {
@@ -32,12 +41,20 @@ type EvidenceCoverageSummary struct {
 }
 
 func BuildResearchMapCockpitState(projectPath string) (ResearchMapCockpitState, error) {
+	return BuildResearchMapCockpitStateWithOptions(projectPath, ResearchMapOptions{})
+}
+
+func BuildResearchMapCockpitStateWithOptions(projectPath string, opts ResearchMapOptions) (ResearchMapCockpitState, error) {
 	graph, err := knowledge.BuildProjectKnowledgeGraphFromProject(projectPath)
 	if err != nil {
 		return ResearchMapCockpitState{}, err
 	}
-	state := ResearchMapCockpitState{SchemaVersion: "1", ProjectPath: projectPath, SnapshotExportPath: "/map/snapshot.json"}
+	filter := strings.ToLower(strings.TrimSpace(opts.Filter))
+	state := ResearchMapCockpitState{SchemaVersion: "1", ProjectPath: projectPath, Filter: opts.Filter, Neighborhood: opts.Neighborhood, SnapshotExportPath: "/map/snapshot.json", KeyboardAlternatives: []string{"Tab through concept, citation, retrieval, and provenance tables", "Use /map/snapshot.json for screen-reader-friendly JSON export"}}
 	for _, node := range graph.Nodes {
+		if !researchMapMatch(node.Label+" "+node.ID, filter) {
+			continue
+		}
 		switch node.Kind {
 		case "concept":
 			state.ConceptMap = append(state.ConceptMap, ResearchMapItem{ID: node.ID, Label: node.Label, Detail: connectedPapers(graph, node.ID)})
@@ -55,13 +72,27 @@ func BuildResearchMapCockpitState(projectPath string) (ResearchMapCockpitState, 
 		}
 	}
 	for _, edge := range graph.Edges {
+		if opts.Neighborhood != "" && !strings.Contains(edge.Source+" "+edge.Target, opts.Neighborhood) {
+			continue
+		}
 		if edge.Kind == "cites" {
 			state.CitationNeighborhoods = append(state.CitationNeighborhoods, ResearchMapItem{ID: edge.ID, Label: labelFor(graph, edge.Source), Detail: "cites " + labelFor(graph, edge.Target)})
+		}
+	}
+	if opts.IncludeProvenance {
+		for _, node := range graph.Nodes {
+			if node.Kind == "provenance_event" && researchMapMatch(node.Label+" "+node.ID, filter) {
+				state.ProvenanceOverlays = append(state.ProvenanceOverlays, ResearchMapItem{ID: node.ID, Label: node.Label, Detail: node.Properties["target"]})
+			}
+		}
+		if len(state.ProvenanceOverlays) == 0 {
+			state.ProvenanceOverlays = append(state.ProvenanceOverlays, ResearchMapItem{ID: "provenance:available", Label: "Project provenance", Detail: "Use /notebook for complete workflow event timeline"})
 		}
 	}
 	sortItems(state.ConceptMap)
 	sortItems(state.CitationNeighborhoods)
 	sortItems(state.RetrievalClusters)
+	sortItems(state.ProvenanceOverlays)
 	return state, nil
 }
 
@@ -73,7 +104,7 @@ func NewResearchMapHandler(state ResearchMapCockpitState) http.Handler {
 }
 func newResearchMapHandler(projectPath func() string) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		state, err := BuildResearchMapCockpitState(projectPath())
+		state, err := BuildResearchMapCockpitStateWithOptions(projectPath(), ResearchMapOptions{Filter: r.URL.Query().Get("filter"), Neighborhood: r.URL.Query().Get("neighborhood"), IncludeProvenance: r.URL.Query().Get("provenance") != ""})
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -91,6 +122,10 @@ func newResearchMapSnapshotHandler(projectPath func() string) http.Handler {
 		w.Header().Set("Content-Type", "application/json")
 		_ = json.NewEncoder(w).Encode(state)
 	})
+}
+
+func researchMapMatch(value, filter string) bool {
+	return filter == "" || strings.Contains(strings.ToLower(value), filter)
 }
 
 func connectedPapers(graph knowledge.ProjectKnowledgeGraph, nodeID string) string {

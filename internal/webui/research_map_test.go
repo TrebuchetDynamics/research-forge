@@ -11,6 +11,25 @@ import (
 	"github.com/TrebuchetDynamics/research-forge/internal/library"
 )
 
+func TestResearchMapCockpitSupportsFilteringNeighborhoodProvenanceAndKeyboardAlternatives(t *testing.T) {
+	project := t.TempDir()
+	writeJSON(t, filepath.Join(project, "data", "library.json"), []library.PaperRecord{{Title: "Catalyst review", Identifiers: library.Identifiers{DOI: "10.1000/cat"}, SourceRefs: []library.SourceRef{{Source: "zotero", Metadata: map[string]string{"concepts": "photocatalysis", "tags": "catalysts"}}}}, {Title: "Battery", Identifiers: library.Identifiers{DOI: "10.1000/bat"}}})
+	writeJSON(t, filepath.Join(project, "data", "citation-graph.json"), map[string]any{"edges": []map[string]string{{"source": "10.1000/cat", "target": "10.1000/ref"}}})
+	state, err := BuildResearchMapCockpitStateWithOptions(project, ResearchMapOptions{Filter: "photo", Neighborhood: "10.1000/cat", IncludeProvenance: true})
+	if err != nil {
+		t.Fatalf("BuildResearchMapCockpitStateWithOptions: %v", err)
+	}
+	if state.Filter != "photo" || state.Neighborhood != "10.1000/cat" || len(state.KeyboardAlternatives) == 0 || len(state.ProvenanceOverlays) == 0 {
+		t.Fatalf("state = %#v", state)
+	}
+	body := renderHandler(t, NewResearchMapHandler(state))
+	for _, want := range []string{"Filter: photo", "Neighborhood: 10.1000/cat", "Provenance overlays", "Keyboard-accessible alternatives"} {
+		if !strings.Contains(body, want) {
+			t.Fatalf("missing %q:\n%s", want, body)
+		}
+	}
+}
+
 func TestResearchMapCockpitShowsLiveFeaturesAndSnapshot(t *testing.T) {
 	project := t.TempDir()
 	writeJSON(t, filepath.Join(project, "data", "library.json"), []library.PaperRecord{{Title: "Catalyst review", Identifiers: library.Identifiers{DOI: "10.1000/cat"}, SourceRefs: []library.SourceRef{{Source: "zotero", Metadata: map[string]string{"concepts": "photocatalysis", "tags": "catalysts"}}}}})
