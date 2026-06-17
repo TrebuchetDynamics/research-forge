@@ -128,18 +128,20 @@ var labNotebookTemplate = template.Must(template.New("lab-notebook").Parse(`<sec
 
 var researchMapTemplate = template.Must(template.New("research-map").Parse(`<section aria-labelledby="research-map-title" class="rf-card" hx-get="/map" hx-trigger="refresh-map from:body">
   <h2 id="research-map-title">Research map cockpit</h2>
+  <p>Unifies citation graph, OpenAlex concepts, Zotero collections/tags, screening status, retrieval clusters, and evidence coverage with filters, keyboard navigation, no-JS tables, and snapshot export.</p>
   <p>Snapshot export: <a href="{{.SnapshotExportPath}}">{{.SnapshotExportPath}}</a></p>
-  {{if .Filter}}<p>Filter: {{.Filter}}</p>{{end}}
+  {{if .Filter}}<p>Filter: {{.Filter}}</p>{{else}}<p>filters: use <code>?filter=&lt;term&gt;</code></p>{{end}}
   {{if .Neighborhood}}<p>Neighborhood: {{.Neighborhood}}</p>{{end}}
   <section><h3>Concept maps</h3>{{range .ConceptMap}}<p>{{.Label}} — {{.Detail}}</p>{{else}}<p>No concepts available.</p>{{end}}</section>
   <section><h3>Citation neighborhoods</h3>{{range .CitationNeighborhoods}}<p>{{.Label}} — {{.Detail}}</p>{{else}}<p>No citation neighborhoods available.</p>{{end}}</section>
   <section><h3>Retrieval clusters</h3>{{range .RetrievalClusters}}<p>{{.Label}} — {{.Detail}}</p>{{else}}<p>No retrieval clusters available.</p>{{end}}</section>
   <section><h3>Retrieval hits</h3>{{range .RetrievalHits}}<p>{{.Label}} — {{.Detail}}</p>{{else}}<p>No retrieval hits available.</p>{{end}}</section>
   <section><h3>Screening priority</h3>{{range .ScreeningPriority}}<p>{{.Label}} — {{.Detail}}</p>{{else}}<p>No screening priority available.</p>{{end}}</section>
+  <section><h3>screening status</h3>{{range .ScreeningStatus}}<p>{{.Label}} — {{.Detail}}</p>{{else}}<p>No screening status available.</p>{{end}}</section>
   <section><h3>Parser quality</h3>{{range .ParserQuality}}<p>{{.Label}} — {{.Detail}}</p>{{else}}<p>No parser quality report available.</p>{{end}}</section>
   <section><h3>Evidence coverage</h3><p>Accepted: {{.EvidenceCoverage.Accepted}} Suggested: {{.EvidenceCoverage.Suggested}} Other: {{.EvidenceCoverage.Other}}</p></section>
   <section><h3>Provenance overlays</h3>{{range .ProvenanceOverlays}}<p>{{.Label}} — {{.Detail}}</p>{{else}}<p>No provenance overlay selected.</p>{{end}}</section>
-  <section><h3>Keyboard-accessible alternatives</h3>{{range .KeyboardAlternatives}}<p>{{.}}</p>{{end}}</section>
+  <section><h3>Keyboard-accessible alternatives</h3><p>keyboard navigation</p>{{range .KeyboardAlternatives}}<p>{{.}}</p>{{end}}</section>
   <p>CLI equivalent: <code>rforge knowledge query --project &lt;path&gt;</code></p>
 </section>`))
 

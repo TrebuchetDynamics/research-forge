@@ -22,6 +22,7 @@ type ResearchMapCockpitState struct {
 	RetrievalClusters     []ResearchMapItem       `json:"retrievalClusters"`
 	RetrievalHits         []ResearchMapItem       `json:"retrievalHits,omitempty"`
 	ScreeningPriority     []ResearchMapItem       `json:"screeningPriority,omitempty"`
+	ScreeningStatus       []ResearchMapItem       `json:"screeningStatus,omitempty"`
 	ParserQuality         []ResearchMapItem       `json:"parserQuality,omitempty"`
 	EvidenceCoverage      EvidenceCoverageSummary `json:"evidenceCoverage"`
 	ProvenanceOverlays    []ResearchMapItem       `json:"provenanceOverlays,omitempty"`
@@ -87,6 +88,7 @@ func BuildResearchMapCockpitStateWithOptions(projectPath string, opts ResearchMa
 	}
 	state.RetrievalHits = readResearchMapItems(filepath.Join(projectPath, "data", "retrieval-hits.json"))
 	state.ScreeningPriority = readResearchMapItems(filepath.Join(projectPath, "data", "screening-priority.json"))
+	state.ScreeningStatus = readResearchMapItems(filepath.Join(projectPath, "data", "screening-status.json"))
 	state.ParserQuality = readParserQualityItems(filepath.Join(projectPath, "data", "parser-quality.json"))
 	if opts.IncludeProvenance {
 		for _, node := range graph.Nodes {
@@ -103,6 +105,7 @@ func BuildResearchMapCockpitStateWithOptions(projectPath string, opts ResearchMa
 	sortItems(state.RetrievalClusters)
 	sortItems(state.RetrievalHits)
 	sortItems(state.ScreeningPriority)
+	sortItems(state.ScreeningStatus)
 	sortItems(state.ParserQuality)
 	sortItems(state.ProvenanceOverlays)
 	return state, nil
