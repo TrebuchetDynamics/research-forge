@@ -945,6 +945,34 @@ func executeAnalysis(args []string, stdout, stderr io.Writer, opts globalOptions
 			fmt.Fprintf(stdout, "%s\t%d papers\tnumeric=%t\n", field.Name, field.Papers, field.Numeric)
 		}
 		return 0
+	case "engine-compare":
+		outPath, secondaryDelta, tolerance, ok := parseEngineCompareArgs(args[2:])
+		if !ok {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge analysis engine-compare <run-id> --out <report.json> [--secondary-delta N --tolerance N]")
+		}
+		var run analysis.AnalysisRun
+		if err := readJSONFile(runPath, &run); err != nil {
+			return writeError(stdout, stderr, opts, 1, "analysis_read_failed", err.Error())
+		}
+		var result analysis.AnalysisResult
+		_ = readJSONFile(filepath.Join(opts.Project, "analysis", safeFileStem(args[1])+"-result.json"), &result)
+		primary, err := analysis.BuildMetaforFixtureResult(run, result)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "analysis_metafor_fixture_failed", err.Error())
+		}
+		secondary, err := analysis.BuildPyMAREFixtureResult(run, secondaryDelta)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "analysis_pymare_fixture_failed", err.Error())
+		}
+		report := analysis.CompareAnalysisEngines(run, primary, secondary, tolerance)
+		if err := writeJSONFile(outPath, report); err != nil {
+			return writeError(stdout, stderr, opts, 1, "analysis_engine_compare_store_failed", err.Error())
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"engineComparison": report, "path": outPath})
+		}
+		fmt.Fprintf(stdout, "wrote engine comparison report to %s\n", outPath)
+		return 0
 	case "sensitivity":
 		if len(args) != 4 || args[2] != "--method" || args[3] != "leave-one-out" {
 			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge analysis sensitivity <run-id> --method leave-one-out")
@@ -1125,6 +1153,45 @@ func executeAnalysis(args []string, stdout, stderr io.Writer, opts globalOptions
 	default:
 		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge analysis <prepare|run|sensitivity|subgroup|meta-regression|publication-bias|bayesian|export>")
 	}
+}
+
+func parseEngineCompareArgs(args []string) (string, float64, float64, bool) {
+	out := ""
+	secondaryDelta := 0.0
+	tolerance := 1e-6
+	for i := 0; i < len(args); i++ {
+		switch args[i] {
+		case "--out":
+			if i+1 >= len(args) {
+				return "", 0, 0, false
+			}
+			out = args[i+1]
+			i++
+		case "--secondary-delta":
+			if i+1 >= len(args) {
+				return "", 0, 0, false
+			}
+			parsed, err := strconv.ParseFloat(args[i+1], 64)
+			if err != nil {
+				return "", 0, 0, false
+			}
+			secondaryDelta = parsed
+			i++
+		case "--tolerance":
+			if i+1 >= len(args) {
+				return "", 0, 0, false
+			}
+			parsed, err := strconv.ParseFloat(args[i+1], 64)
+			if err != nil || parsed <= 0 {
+				return "", 0, 0, false
+			}
+			tolerance = parsed
+			i++
+		default:
+			return "", 0, 0, false
+		}
+	}
+	return out, secondaryDelta, tolerance, out != ""
 }
 
 func parsePublicationBiasArgs(args []string) (string, bool) {
