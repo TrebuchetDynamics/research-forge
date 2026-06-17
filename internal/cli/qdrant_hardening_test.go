@@ -20,7 +20,7 @@ func TestExecuteIndexEmbeddingProvidersListsComplianceProfiles(t *testing.T) {
 	if code != 0 {
 		t.Fatalf("code = %d", code)
 	}
-	if !strings.Contains(stdout.String(), "deterministic-hash") || !strings.Contains(stdout.String(), "textEgress") || !strings.Contains(stdout.String(), "http-embedding") {
+	if !strings.Contains(stdout.String(), "deterministic-hash") || !strings.Contains(stdout.String(), "textEgress") || !strings.Contains(stdout.String(), "http-embedding") || !strings.Contains(stdout.String(), "licenseNotes") || !strings.Contains(stdout.String(), "vectorIndexInvalidation") || !strings.Contains(stdout.String(), "retrievalBenchmarkCompatible") {
 		t.Fatalf("stdout = %s", stdout.String())
 	}
 }

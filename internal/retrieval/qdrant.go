@@ -32,9 +32,14 @@ type EmbeddingProviderRegistry struct {
 }
 
 type EmbeddingProvider struct {
-	Name       string                     `json:"name"`
-	Dimensions int                        `json:"dimensions"`
-	Compliance EmbeddingComplianceProfile `json:"compliance"`
+	Name                         string                     `json:"name"`
+	ModelID                      string                     `json:"modelId"`
+	ProviderKind                 string                     `json:"providerKind"`
+	Dimensions                   int                        `json:"dimensions"`
+	LicenseNotes                 string                     `json:"licenseNotes"`
+	VectorIndexInvalidation      string                     `json:"vectorIndexInvalidation"`
+	RetrievalBenchmarkCompatible bool                       `json:"retrievalBenchmarkCompatible"`
+	Compliance                   EmbeddingComplianceProfile `json:"compliance"`
 }
 
 type EmbeddingComplianceProfile struct {
@@ -49,8 +54,8 @@ type EmbeddingComplianceProfile struct {
 
 func DefaultEmbeddingProviderRegistry() EmbeddingProviderRegistry {
 	return EmbeddingProviderRegistry{SchemaVersion: "1", Providers: []EmbeddingProvider{
-		{Name: "deterministic-hash", Dimensions: 8, Compliance: EmbeddingComplianceProfile{TextEgress: "none", RequiresConsent: false, RequiredConfig: "none", ModelVersionLock: "RFORGE_EMBEDDING_DIMENSIONS recorded in retrieval lock", Dimensionality: "fixed by RFORGE_EMBEDDING_DIMENSIONS or default 8", RetentionPolicy: "local-only", Redaction: "not-required"}},
-		{Name: "http-embedding", Dimensions: 0, Compliance: EmbeddingComplianceProfile{TextEgress: "passage/query text sent to RFORGE_EMBEDDING_URL", RequiresConsent: true, RequiredConfig: "RFORGE_EMBEDDING_URL, RFORGE_EMBEDDING_MODEL, RFORGE_EMBEDDING_CONSENT=1", ModelVersionLock: "RFORGE_EMBEDDING_MODEL recorded in retrieval lock", Dimensionality: "reported by provider response and locked in qdrant report", RetentionPolicy: "provider-configured; reviewer must confirm before use", Redaction: "caller-managed; use RFORGE_QDRANT_PAYLOAD_PRIVACY=redacted-checksum for stored payloads"}},
+		{Name: "deterministic-hash", ModelID: "rforge-deterministic-hash", ProviderKind: "local", Dimensions: 8, LicenseNotes: "ResearchForge fixture scaffold; no external model license", VectorIndexInvalidation: "invalidate when RFORGE_EMBEDDING_DIMENSIONS changes", RetrievalBenchmarkCompatible: true, Compliance: EmbeddingComplianceProfile{TextEgress: "none", RequiresConsent: false, RequiredConfig: "none", ModelVersionLock: "RFORGE_EMBEDDING_DIMENSIONS recorded in retrieval lock", Dimensionality: "fixed by RFORGE_EMBEDDING_DIMENSIONS or default 8", RetentionPolicy: "local-only", Redaction: "not-required"}},
+		{Name: "http-embedding", ModelID: "RFORGE_EMBEDDING_MODEL", ProviderKind: "remote-or-local-service", Dimensions: 0, LicenseNotes: "operator must record model license/terms for the configured SentenceTransformers-compatible service", VectorIndexInvalidation: "invalidate Qdrant collections when RFORGE_EMBEDDING_MODEL or dimensions change", RetrievalBenchmarkCompatible: true, Compliance: EmbeddingComplianceProfile{TextEgress: "passage/query text sent to RFORGE_EMBEDDING_URL", RequiresConsent: true, RequiredConfig: "RFORGE_EMBEDDING_URL, RFORGE_EMBEDDING_MODEL, RFORGE_EMBEDDING_CONSENT=1", ModelVersionLock: "RFORGE_EMBEDDING_MODEL recorded in retrieval lock", Dimensionality: "reported by provider response and locked in qdrant report", RetentionPolicy: "provider-configured; reviewer must confirm before use", Redaction: "caller-managed; use RFORGE_QDRANT_PAYLOAD_PRIVACY=redacted-checksum for stored payloads"}},
 	}}
 }
 

@@ -12,11 +12,11 @@ import (
 func TestEmbeddingProviderRegistryAndComplianceProfiles(t *testing.T) {
 	registry := DefaultEmbeddingProviderRegistry()
 	local, ok := registry.Provider("deterministic-hash")
-	if !ok || local.Compliance.TextEgress != "none" || local.Dimensions != 8 {
+	if !ok || local.ProviderKind != "local" || local.ModelID == "" || local.LicenseNotes == "" || local.Compliance.TextEgress != "none" || local.Dimensions != 8 || local.VectorIndexInvalidation == "" || !local.RetrievalBenchmarkCompatible {
 		t.Fatalf("local provider = %#v ok=%t", local, ok)
 	}
 	httpProvider, ok := registry.Provider("http-embedding")
-	if !ok || !httpProvider.Compliance.RequiresConsent || httpProvider.Compliance.TextEgress == "none" || httpProvider.Compliance.RequiredConfig == "" || httpProvider.Compliance.ModelVersionLock == "" || httpProvider.Compliance.Dimensionality == "" {
+	if !ok || httpProvider.ProviderKind != "remote-or-local-service" || httpProvider.ModelID == "" || httpProvider.LicenseNotes == "" || !httpProvider.Compliance.RequiresConsent || httpProvider.Compliance.TextEgress == "none" || httpProvider.Compliance.RequiredConfig == "" || httpProvider.Compliance.ModelVersionLock == "" || httpProvider.Compliance.Dimensionality == "" || httpProvider.VectorIndexInvalidation == "" || !httpProvider.RetrievalBenchmarkCompatible {
 		t.Fatalf("http provider = %#v ok=%t", httpProvider, ok)
 	}
 	if err := ValidateEmbeddingProviderCompliance("http-embedding:fixture", false, map[string]string{"RFORGE_EMBEDDING_URL": "http://embed"}); err == nil {
