@@ -21,7 +21,7 @@ OpenAlex is a broad open scholarly graph and a strong default discovery source f
 Implemented nearby capabilities:
 
 - `rforge search --source openalex` with cursor/filter support and `rforge search import --source openalex --pages N` paginated library import.
-- `rforge citations expand --source openalex` for reference/citation graph export.
+- `rforge citations expand --source openalex` for reference/citation graph export, with shared depth/node/API-call/retry/resume/dry-run budget controls before live expansion.
 - OpenAlex source connector with mocked tests, including works, author/institution/concept entity searches, related-work discovery records, and disambiguation review queues for ambiguous people/institutions/concepts.
 - Source refs stored in `PaperRecord` conversion.
 - Live manual searches have been used for ResearchForge-backed reports.

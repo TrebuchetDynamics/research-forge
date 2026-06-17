@@ -8,6 +8,7 @@ type SemanticScholarGraphRunOptions struct {
 	Limit, Depth, MaxRecords int
 	RequestedFields          []string
 	QuotaRemaining           int
+	Budget                   GraphExpansionBudget
 }
 type SemanticScholarGraphRun struct {
 	SchemaVersion     string                        `json:"schemaVersion"`
@@ -19,6 +20,9 @@ type SemanticScholarGraphRun struct {
 	RequestedFields   []string                      `json:"requestedFields"`
 	FieldRestrictions []string                      `json:"fieldRestrictions,omitempty"`
 	QuotaRemaining    int                           `json:"quotaRemaining"`
+	Budget            GraphExpansionBudget          `json:"budget"`
+	BudgetEstimate    GraphExpansionBudgetEstimate  `json:"budgetEstimate"`
+	ResumeCursor      string                        `json:"resumeCursor,omitempty"`
 	Visited           []string                      `json:"visited"`
 	NextFrontier      []string                      `json:"nextFrontier"`
 	EdgeCount         int                           `json:"edgeCount"`
@@ -39,7 +43,15 @@ func NewSemanticScholarGraphRun(opts SemanticScholarGraphRunOptions) SemanticSch
 	if depth <= 0 {
 		depth = 1
 	}
-	run := SemanticScholarGraphRun{SchemaVersion: "1", SeedID: strings.TrimSpace(opts.SeedID), Direction: direction, Limit: limit, Depth: depth, MaxRecords: opts.MaxRecords, RequestedFields: append([]string{}, opts.RequestedFields...), QuotaRemaining: opts.QuotaRemaining}
+	budget := NormalizeGraphExpansionBudget(opts.Budget)
+	if opts.MaxRecords > 0 {
+		budget.MaxNodes = opts.MaxRecords
+	}
+	if opts.Depth > 0 {
+		budget.MaxDepth = opts.Depth
+	}
+	run := SemanticScholarGraphRun{SchemaVersion: "1", SeedID: strings.TrimSpace(opts.SeedID), Direction: direction, Limit: limit, Depth: depth, MaxRecords: opts.MaxRecords, RequestedFields: append([]string{}, opts.RequestedFields...), QuotaRemaining: opts.QuotaRemaining, Budget: budget, ResumeCursor: budget.ResumeCursor}
+	run.BudgetEstimate = EstimateGraphExpansionBudget("semantic-scholar", run.SeedID, direction, limit, budget)
 	if run.SeedID != "" {
 		run.NextFrontier = []string{run.SeedID}
 	}

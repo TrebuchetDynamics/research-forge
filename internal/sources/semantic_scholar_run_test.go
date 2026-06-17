@@ -4,7 +4,7 @@ import "testing"
 
 func TestSemanticScholarGraphRunFileTracksQuotaResumeAndFieldRestrictions(t *testing.T) {
 	run := NewSemanticScholarGraphRun(SemanticScholarGraphRunOptions{SeedID: "S2", Direction: SemanticScholarDirectionBoth, Limit: 10, Depth: 2, MaxRecords: 50, RequestedFields: []string{"paperId", "title", "abstract", "embedding"}, QuotaRemaining: 99})
-	if run.SchemaVersion != "1" || run.NextFrontier[0] != "S2" || run.QuotaRemaining != 99 {
+	if run.SchemaVersion != "1" || run.NextFrontier[0] != "S2" || run.QuotaRemaining != 99 || run.BudgetEstimate.EstimatedAPICalls == 0 {
 		t.Fatalf("run = %#v", run)
 	}
 	if !run.HasFieldRestriction("embedding") {

@@ -25,8 +25,8 @@ Implemented nearby capabilities:
 - `ExpandCitationGraph` source adapter for references, citations, or both.
 - `rforge citations expand --source semantic-scholar --paper <id> --direction references|citations|both --depth N --out <file>`.
 - `--import-library` on citation expansion imports discovered graph records into the project library.
-- `--depth N` plus optional `--max-records N` on citation expansion supports recursive graph expansion with deduplication and bounded imports/exports.
-- Project-scoped `citations.expand` provenance events record source, seed paper, direction, limit, depth, output path, edge count, record count, import count, and raw reference.
+- `--depth N`, `--max-records N`, `--max-api-calls N`, `--retry-budget N`, `--resume-cursor <cursor>`, and `--dry-run` on citation expansion support recursive graph expansion with budget estimates, deduplication, bounded imports/exports, and resumability controls before live calls.
+- Project-scoped `citations.expand` provenance events record source, seed paper, direction, limit, depth, output path, edge count, record count, import count, raw reference, and graph-expansion budget settings.
 - `rforge citations report --graph <graph.json> --out <report.md>` generates a Markdown citation-graph summary with top cited/citing papers and co-citation/coupling counts.
 - `rforge duplicate report --source semantic-scholar` filters duplicate-review candidates involving graph-imported Semantic Scholar records and shows left/right source provenance for merge UX.
 - Quota/transient retry policy uses the shared source HTTP backoff, honors `Retry-After`, and can be tuned with `RFORGE_SEMANTIC_SCHOLAR_MAX_RETRIES`.
@@ -51,4 +51,4 @@ rforge --project <project> citations expand --source semantic-scholar --paper <i
 
 ## Recommended next slice
 
-Add Semantic Scholar quota-aware backoff plus a graph-expansion run file that records every visited paper ID for resumability.
+Extend interactive review of graph-expansion runs using the persisted budget estimate, resume cursor, and visited/frontier state.
