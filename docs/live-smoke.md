@@ -39,3 +39,7 @@ Optional biomedical configuration:
 - `RFORGE_EUROPEPMC_URL` — Europe PMC endpoint override.
 
 The live smoke test checks that each connector returns at least one titled record for a lightweight query. PubMed raw provenance redacts API keys, and normal test runs never require network access.
+
+## OpenSearch
+
+`RFORGE_RUN_OPENSEARCH_INTEGRATION=1` with `RFORGE_OPENSEARCH_URL` runs `TestOptInOpenSearchIntegration`, which creates/updates the passage mapping, bulk-indexes a deterministic parsed passage, refreshes the index, and retrieves passage results. Normal validation skips it.

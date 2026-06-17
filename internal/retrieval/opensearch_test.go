@@ -15,6 +15,8 @@ func TestOpenSearchIndexRebuildAndRetrievePassages(t *testing.T) {
 	var sawBulk, sawRefresh, sawSearch bool
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
+		case "/researchforge-passages":
+			_, _ = w.Write([]byte(`{"acknowledged":true}`))
 		case "/researchforge-passages/_bulk":
 			sawBulk = true
 			if r.Header.Get("Content-Type") != "application/x-ndjson" {

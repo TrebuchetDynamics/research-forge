@@ -36,10 +36,11 @@ func (NoopEmbeddingAdapter) EmbeddingBackendName() string { return "noop" }
 
 // PassageResult is one full-text retrieval hit.
 type PassageResult struct {
-	PaperID   string
-	SectionID string
-	PassageID string
-	Text      string
+	PaperID    string
+	SectionID  string
+	PassageID  string
+	Text       string
+	Highlights []string `json:"Highlights,omitempty"`
 }
 
 // SQLiteIndex stores parsed passages in a local SQLite FTS index.

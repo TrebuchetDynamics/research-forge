@@ -2621,6 +2621,8 @@ func TestExecuteIndexAndRetrieveWithOpenSearchBackend(t *testing.T) {
 	}
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
+		case "/researchforge-passages":
+			_, _ = w.Write([]byte(`{"acknowledged":true}`))
 		case "/researchforge-passages/_bulk", "/researchforge-passages/_refresh":
 			_, _ = w.Write([]byte(`{"ok":true}`))
 		case "/researchforge-passages/_search":

@@ -554,7 +554,7 @@ This is the canonical build order for the post-1.0 super-tool work. The thematic
 
 #### Phase 5 — Retrieval, graph, and domain-map layer
 
-- [ ] Add OpenSearch mapping-version lockfiles, bulk indexing with partial-failure provenance, highlighted passage results, and opt-in OpenSearch integration tests.
+- [x] Add OpenSearch mapping-version lockfiles, bulk indexing with partial-failure provenance, highlighted passage results, and opt-in OpenSearch integration tests (`OpenSearchMappingVersion`, `OpenSearchBulkReport`, `TestOptInOpenSearchIntegration`).
 - [ ] Add Qdrant adapter hardening: embedding-provider registry, compliance profiles, model/dimension locks, payload privacy, vector-index invalidation, and opt-in Qdrant integration tests.
 - [ ] Add calibrated hybrid retrieval tuning files with lexical/vector/backend weights, evaluation scores, selected configuration, and query-set checksums.
 - [ ] Add retrieval benchmarks comparing SQLite FTS, OpenSearch, Qdrant vector search, and hybrid ranking on deterministic passage-query fixtures.

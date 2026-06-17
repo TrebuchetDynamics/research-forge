@@ -35,14 +35,31 @@ func executeIndex(args []string, stdout, stderr io.Writer, opts globalOptions) i
 		return writeError(stdout, stderr, opts, 1, "index_open_failed", fmt.Sprintf("open index: %v", err))
 	}
 	defer index.Close()
-	if err := index.Rebuild(docs); err != nil {
+	var openSearchReport *retrieval.OpenSearchBulkReport
+	if osIndex, ok := index.(*retrieval.OpenSearchIndex); ok {
+		report, err := osIndex.RebuildWithReport(docs)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "index_rebuild_failed", fmt.Sprintf("rebuild index: %v", err))
+		}
+		openSearchReport = &report
+		if err := writeJSONFile(filepath.Join(opts.Project, "data", "opensearch.bulk-report.json"), report); err != nil {
+			return writeError(stdout, stderr, opts, 1, "index_bulk_report_failed", fmt.Sprintf("write OpenSearch bulk report: %v", err))
+		}
+		if err := writeOpenSearchMappingLock(opts.Project, report); err != nil {
+			return writeError(stdout, stderr, opts, 1, "index_mapping_lock_failed", fmt.Sprintf("write OpenSearch mapping lock: %v", err))
+		}
+	} else if err := index.Rebuild(docs); err != nil {
 		return writeError(stdout, stderr, opts, 1, "index_rebuild_failed", fmt.Sprintf("rebuild index: %v", err))
 	}
 	if err := writeRetrievalLock(opts.Project, backend, len(docs)); err != nil {
 		return writeError(stdout, stderr, opts, 1, "index_lock_failed", fmt.Sprintf("write retrieval lock: %v", err))
 	}
 	if opts.JSON {
-		return writeJSON(stdout, 0, map[string]any{"indexedDocuments": len(docs), "backend": backend})
+		data := map[string]any{"indexedDocuments": len(docs), "backend": backend}
+		if openSearchReport != nil {
+			data["openSearchBulkReport"] = openSearchReport
+		}
+		return writeJSON(stdout, 0, data)
 	}
 	fmt.Fprintf(stdout, "indexed %d parsed documents with %s\n", len(docs), backend)
 	return 0
@@ -56,6 +73,16 @@ type retrievalLock struct {
 	VectorBackend    string `json:"vectorBackend,omitempty"`
 	EmbeddingBackend string `json:"embeddingBackend,omitempty"`
 	EmbeddingVersion string `json:"embeddingVersion,omitempty"`
+	MappingVersion   string `json:"mappingVersion,omitempty"`
+}
+
+func writeOpenSearchMappingLock(project string, report retrieval.OpenSearchBulkReport) error {
+	return writeJSONFile(filepath.Join(project, "data", "opensearch.mapping.lock.json"), map[string]any{
+		"schemaVersion":  "1",
+		"backend":        "opensearch",
+		"index":          report.Index,
+		"mappingVersion": report.MappingVersion,
+	})
 }
 
 func writeRetrievalLock(project, backend string, indexedDocuments int) error {
@@ -74,6 +101,7 @@ func writeRetrievalLock(project, backend string, indexedDocuments int) error {
 		lock.EmbeddingVersion = embeddingVersionFromEnv()
 	case "opensearch":
 		lock.LexicalBackend = "opensearch"
+		lock.MappingVersion = retrieval.OpenSearchMappingVersion
 	default:
 		lock.LexicalBackend = "sqlite-fts5"
 	}
