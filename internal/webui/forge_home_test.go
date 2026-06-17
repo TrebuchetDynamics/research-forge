@@ -26,7 +26,7 @@ func TestForgeHomeTimelineShowsProjectStateGatesJobsAndNextActions(t *testing.T)
 		t.Fatalf("state = %#v", state)
 	}
 	body := renderHandler(t, NewForgeHomeHandler(state))
-	for _, want := range []string{"Forge home", "source_plan", "source.plan.drafted", "Blocked review gates", "Background jobs", "Next safe actions", "rforge protocol"} {
+	for _, want := range []string{"Forge home", "source_plan", "source.plan.drafted", "Blocked review gates", "Background jobs", "Next safe actions", "CLI equivalent", "rforge protocol"} {
 		if !strings.Contains(body, want) {
 			t.Fatalf("body missing %q:\n%s", want, body)
 		}

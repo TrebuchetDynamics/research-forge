@@ -302,7 +302,7 @@ var forgeHomeTemplate = template.Must(template.New("forge-home").Parse(`<section
   </section>
   <section aria-labelledby="forge-actions-title">
     <h3 id="forge-actions-title">Next safe actions</h3>
-    {{range .NextSafeActions}}<p>{{.Label}} — <code>{{.CLI}}</code></p>{{else}}<p>No next actions available.</p>{{end}}
+    {{range .NextSafeActions}}<p>{{.Label}} — CLI equivalent: <code>{{.CLI}}</code></p>{{else}}<p>No next actions available.</p>{{end}}
   </section>
 </section>`))
 

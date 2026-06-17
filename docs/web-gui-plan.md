@@ -59,7 +59,7 @@ Before expanding the first HTMX slice, decide:
 `rforge ui` now serves a real local research cockpit (`internal/webui.NewRouter`), not a placeholder:
 
 - **Server + multi-port** — `rforge [--project <path>] ui [--addr :8080]` binds an `http.Server` (address also from `RFORGE_UI_ADDR`); multiple instances run concurrently on different ports, one per research folder. `rforge --json ui` reports the resolved address/project/routes without binding. Static assets are embedded (`internal/webui/static`).
-- **Forge home timeline** — `/forge` shows the active project, current Forge state, provenance timeline, blocked review gates, background jobs, and next safe actions with CLI-equivalent commands.
+- **Forge home timeline** — `/forge` shows the active project, current Forge state, latest provenance timeline, blocked review gates, background jobs, and next safe actions with CLI-equivalent commands shown for every guided action/button.
 - **Spine workbenches** — `/workbenches` indexes HTMX/no-JS workbenches for source planning, import/dedupe, legal acquisition, parser arbitration, retrieval tuning, screening, evidence extraction, meta-analysis, report traceability, research map, connector health, and reproducibility/export.
 - **Parser conflict review** — `/parsing` exposes the CERMINE adapter fallback policy, ordered parser candidates, reviewer-required conflict review, and the `rforge parse quality` CLI equivalent; conflicting fields are never auto-accepted.
 - **Research map cockpit** — `/map` live-renders concept maps, citation neighborhoods, retrieval clusters, evidence coverage, filter/neighborhood controls, provenance overlays, keyboard-accessible alternatives, and a `/map/snapshot.json` export from the project knowledge graph.
