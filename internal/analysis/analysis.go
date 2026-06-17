@@ -277,6 +277,10 @@ func writeFunnelPlotArtifact(dir string, run AnalysisRun) (Artifact, error) {
 	return Artifact{Path: path, Checksum: checksum(data)}, nil
 }
 
+func publicationPlotStyle() string {
+	return `<desc>ResearchForge publication-ready plot styling</desc><style>text{font-family:Inter,Arial,sans-serif;fill:#172033}.axis{stroke:#5b6472;stroke-width:1.5}.effect{stroke:#2457a6;stroke-width:2.5}.point{fill:#2457a6}.funnel-point{fill:#b85c1d}</style>`
+}
+
 func forestPlotSVG(run AnalysisRun) string {
 	width := 640
 	height := 80 + len(run.InputRows)*34
@@ -286,7 +290,7 @@ func forestPlotSVG(run AnalysisRun) string {
 	min, max := effectRange(run)
 	var b strings.Builder
 	fmt.Fprintf(&b, `<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Forest plot" viewBox="0 0 %d %d">`, width, height)
-	b.WriteString(`<title>Forest plot</title><line x1="320" y1="30" x2="320" y2="` + fmt.Sprint(height-30) + `" stroke="#888"/>`)
+	b.WriteString(`<title>Forest plot</title>` + publicationPlotStyle() + `<line class="axis" x1="320" y1="30" x2="320" y2="` + fmt.Sprint(height-30) + `"/>`)
 	for i, row := range run.InputRows {
 		y := 55 + i*34
 		x := scaleEffect(row.EffectSize, min, max, 80, 580)
@@ -294,7 +298,7 @@ func forestPlotSVG(run AnalysisRun) string {
 		left := scaleEffect(row.EffectSize-1.96*se, min, max, 80, 580)
 		right := scaleEffect(row.EffectSize+1.96*se, min, max, 80, 580)
 		label := xmlEscape(row.PaperID)
-		fmt.Fprintf(&b, `<line x1="%d" y1="%d" x2="%d" y2="%d" stroke="#2d6cdf"/><circle cx="%d" cy="%d" r="5" fill="#2d6cdf"/><text x="12" y="%d" font-size="12">%s</text>`, left, y, right, y, x, y, y+4, label)
+		fmt.Fprintf(&b, `<line class="effect" x1="%d" y1="%d" x2="%d" y2="%d"/><circle class="point" cx="%d" cy="%d" r="5"/><text x="12" y="%d" font-size="12">%s</text>`, left, y, right, y, x, y, y+4, label)
 	}
 	b.WriteString(`</svg>`)
 	return b.String()
@@ -315,11 +319,11 @@ func funnelPlotSVG(run AnalysisRun) string {
 	}
 	var b strings.Builder
 	fmt.Fprintf(&b, `<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Funnel plot" viewBox="0 0 %d %d">`, width, height)
-	b.WriteString(`<title>Funnel plot</title><line x1="60" y1="360" x2="600" y2="360" stroke="#888"/><line x1="60" y1="40" x2="60" y2="360" stroke="#888"/>`)
+	b.WriteString(`<title>Funnel plot</title>` + publicationPlotStyle() + `<line class="axis" x1="60" y1="360" x2="600" y2="360"/><line class="axis" x1="60" y1="40" x2="60" y2="360"/>`)
 	for _, row := range run.InputRows {
 		x := scaleEffect(row.EffectSize, min, max, 80, 580)
 		y := 60 + int((math.Sqrt(row.Variance)/maxSE)*280)
-		fmt.Fprintf(&b, `<circle cx="%d" cy="%d" r="5" fill="#d66b2d"><title>%s</title></circle>`, x, y, xmlEscape(row.PaperID))
+		fmt.Fprintf(&b, `<circle class="funnel-point" cx="%d" cy="%d" r="5"><title>%s</title></circle>`, x, y, xmlEscape(row.PaperID))
 	}
 	b.WriteString(`</svg>`)
 	return b.String()

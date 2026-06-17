@@ -1452,15 +1452,21 @@ func executeAnalysis(args []string, stdout, stderr io.Writer, opts globalOptions
 		fmt.Fprintf(stdout, "wrote influence diagnostics to %s\n", path)
 		return 0
 	case "bayesian":
-		priorMean, priorVariance, ok := parseBayesianArgs(args[2:])
+		method, priorMean, priorVariance, ok := parseBayesianArgs(args[2:])
 		if !ok {
-			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge analysis bayesian <run-id> --method normal-approx [--prior-mean 0] [--prior-variance 100]")
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge analysis bayesian <run-id> --method normal-approx|grid [--prior-mean 0] [--prior-variance 100]")
 		}
 		var run analysis.AnalysisRun
 		if err := readJSONFile(runPath, &run); err != nil {
 			return writeError(stdout, stderr, opts, 1, "analysis_read_failed", err.Error())
 		}
-		report, err := analysis.BayesianNormalApproximation(run, priorMean, priorVariance)
+		var report analysis.BayesianReport
+		var err error
+		if method == "grid" || method == "grid-engine" {
+			report, err = analysis.RunBayesianEngine(run, analysis.GridBayesianEngine{}, analysis.BayesianEngineOptions{PriorMean: priorMean, PriorVariance: priorVariance})
+		} else {
+			report, err = analysis.BayesianNormalApproximation(run, priorMean, priorVariance)
+		}
 		if err != nil {
 			return writeError(stdout, stderr, opts, 1, "analysis_bayesian_failed", err.Error())
 		}
@@ -1602,43 +1608,43 @@ func parsePublicationBiasArgs(args []string) (string, bool) {
 	}
 }
 
-func parseBayesianArgs(args []string) (float64, float64, bool) {
+func parseBayesianArgs(args []string) (string, float64, float64, bool) {
 	priorMean := 0.0
 	priorVariance := 100.0
-	methodSeen := false
+	method := ""
 	for i := 0; i < len(args); i++ {
 		switch args[i] {
 		case "--method":
-			if i+1 >= len(args) || args[i+1] != "normal-approx" {
-				return 0, 0, false
+			if i+1 >= len(args) || (args[i+1] != "normal-approx" && args[i+1] != "grid" && args[i+1] != "grid-engine") {
+				return "", 0, 0, false
 			}
-			methodSeen = true
+			method = args[i+1]
 			i++
 		case "--prior-mean":
 			if i+1 >= len(args) {
-				return 0, 0, false
+				return "", 0, 0, false
 			}
 			parsed, err := strconv.ParseFloat(args[i+1], 64)
 			if err != nil {
-				return 0, 0, false
+				return "", 0, 0, false
 			}
 			priorMean = parsed
 			i++
 		case "--prior-variance":
 			if i+1 >= len(args) {
-				return 0, 0, false
+				return "", 0, 0, false
 			}
 			parsed, err := strconv.ParseFloat(args[i+1], 64)
 			if err != nil || parsed <= 0 {
-				return 0, 0, false
+				return "", 0, 0, false
 			}
 			priorVariance = parsed
 			i++
 		default:
-			return 0, 0, false
+			return "", 0, 0, false
 		}
 	}
-	return priorMean, priorVariance, methodSeen
+	return method, priorMean, priorVariance, method != ""
 }
 
 func parseSubgroupArgs(args []string) (string, map[string]string, string, bool) {

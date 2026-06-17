@@ -1,11 +1,15 @@
 package analysis
 
-import "fmt"
+import (
+	"fmt"
+	"math"
+)
 
 // BayesianReport records a lightweight normal-normal Bayesian meta-analysis approximation.
 type BayesianReport struct {
 	RunID          string  `json:"runId"`
 	Method         string  `json:"method"`
+	Engine         string  `json:"engine,omitempty"`
 	Studies        int     `json:"studies"`
 	PriorMean      float64 `json:"priorMean"`
 	PriorVariance  float64 `json:"priorVariance"`
@@ -37,6 +41,74 @@ func BayesianNormalApproximation(run AnalysisRun, priorMean, priorVariance float
 	posteriorMean := weighted / precision
 	margin := 1.96 * sqrtFloat(posteriorVariance)
 	return BayesianReport{RunID: run.ID, Method: "normal-approx", Studies: len(run.InputRows), PriorMean: priorMean, PriorVariance: priorVariance, PosteriorMean: posteriorMean, PosteriorVar: posteriorVariance, CredibleLow95: posteriorMean - margin, CredibleHigh95: posteriorMean + margin}, nil
+}
+
+type BayesianEngineOptions struct{ PriorMean, PriorVariance float64 }
+
+type BayesianEngine interface {
+	Name() string
+	Run(AnalysisRun, BayesianEngineOptions) (BayesianReport, error)
+}
+
+type GridBayesianEngine struct{ GridPoints int }
+
+func (GridBayesianEngine) Name() string { return "grid" }
+
+func RunBayesianEngine(run AnalysisRun, engine BayesianEngine, opts BayesianEngineOptions) (BayesianReport, error) {
+	if engine == nil {
+		return BayesianReport{}, fmt.Errorf("bayesian engine is required")
+	}
+	if opts.PriorVariance <= 0 {
+		opts.PriorVariance = 100
+	}
+	return engine.Run(run, opts)
+}
+
+func (g GridBayesianEngine) Run(run AnalysisRun, opts BayesianEngineOptions) (BayesianReport, error) {
+	approx, err := BayesianNormalApproximation(run, opts.PriorMean, opts.PriorVariance)
+	if err != nil {
+		return BayesianReport{}, err
+	}
+	points := g.GridPoints
+	if points < 21 {
+		points = 201
+	}
+	width := 6 * math.Sqrt(approx.PosteriorVar)
+	if width == 0 {
+		width = 1
+	}
+	start := approx.PosteriorMean - width
+	step := 2 * width / float64(points-1)
+	weights := make([]float64, points)
+	total := 0.0
+	for i := 0; i < points; i++ {
+		theta := start + float64(i)*step
+		logp := -0.5 * ((theta - opts.PriorMean) * (theta - opts.PriorMean) / opts.PriorVariance)
+		for _, row := range run.InputRows {
+			logp += -0.5 * ((row.EffectSize - theta) * (row.EffectSize - theta) / row.Variance)
+		}
+		w := math.Exp(logp)
+		weights[i] = w
+		total += w
+	}
+	mean := 0.0
+	for i, w := range weights {
+		mean += (start + float64(i)*step) * w / total
+	}
+	low := gridQuantile(start, step, weights, total, 0.025)
+	high := gridQuantile(start, step, weights, total, 0.975)
+	return BayesianReport{RunID: run.ID, Method: "grid-bayesian-engine", Engine: g.Name(), Studies: len(run.InputRows), PriorMean: opts.PriorMean, PriorVariance: opts.PriorVariance, PosteriorMean: mean, PosteriorVar: approx.PosteriorVar, CredibleLow95: low, CredibleHigh95: high}, nil
+}
+
+func gridQuantile(start, step float64, weights []float64, total, q float64) float64 {
+	acc := 0.0
+	for i, w := range weights {
+		acc += w / total
+		if acc >= q {
+			return start + float64(i)*step
+		}
+	}
+	return start + float64(len(weights)-1)*step
 }
 
 func sqrtFloat(value float64) float64 {
