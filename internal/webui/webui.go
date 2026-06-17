@@ -10,6 +10,7 @@ import (
 
 	"github.com/TrebuchetDynamics/research-forge/internal/project"
 	"github.com/TrebuchetDynamics/research-forge/internal/protocol"
+	"github.com/TrebuchetDynamics/research-forge/internal/provenance"
 	"github.com/TrebuchetDynamics/research-forge/internal/screening"
 	"github.com/TrebuchetDynamics/research-forge/internal/ui"
 )
@@ -31,6 +32,7 @@ var shellTemplate = template.Must(template.New("shell").Parse(`<!doctype html>
       <p>Read papers, browse CLI-generated artifacts, and explore the knowledge graph for the open research project.</p>
       <nav aria-label="Dashboard sections">
         <ul class="rf-nav">
+          <li><a href="/forge">Forge</a></li>
           <li><a href="/papers">Papers</a></li>
           <li><a href="/library">Library</a></li>
           <li><a href="/dedupe">Dedupe</a></li>
@@ -219,6 +221,42 @@ var ossTemplate = template.Must(template.New("oss").Parse(`<section aria-labelle
   </div>
   {{end}}
 </section>`))
+
+var forgeHomeTemplate = template.Must(template.New("forge-home").Parse(`<section aria-labelledby="forge-title" class="rf-card" hx-get="/forge/refresh" hx-trigger="refresh-forge from:body">
+  <h2 id="forge-title">Forge home</h2>
+  <p>Active project: {{if .ProjectTitle}}{{.ProjectTitle}}{{else}}{{.ActiveProject}}{{end}}</p>
+  <p>Current state: <strong>{{.CurrentState}}</strong></p>
+  <section aria-labelledby="forge-provenance-title">
+    <h3 id="forge-provenance-title">Provenance timeline</h3>
+    {{range .ProvenanceEvents}}<p>{{.Timestamp}} {{.Action}} {{.Target}}</p>{{else}}<p>No provenance events recorded.</p>{{end}}
+  </section>
+  <section aria-labelledby="forge-gates-title">
+    <h3 id="forge-gates-title">Blocked review gates</h3>
+    {{range .BlockedReviewGates}}<p>{{.Gate}} — {{.Reason}}</p>{{else}}<p>No blocked review gates detected for this state.</p>{{end}}
+  </section>
+  <section aria-labelledby="forge-jobs-title">
+    <h3 id="forge-jobs-title">Background jobs</h3>
+    {{range .BackgroundJobs}}<p>{{.ID}} — {{.Status}} — <code>{{.Command}}</code></p>{{else}}<p>No background jobs recorded.</p>{{end}}
+  </section>
+  <section aria-labelledby="forge-actions-title">
+    <h3 id="forge-actions-title">Next safe actions</h3>
+    {{range .NextSafeActions}}<p>{{.Label}} — <code>{{.CLI}}</code></p>{{else}}<p>No next actions available.</p>{{end}}
+  </section>
+</section>`))
+
+type ForgeHomeState struct {
+	ActiveProject      string
+	ProjectTitle       string
+	CurrentState       string
+	ProvenanceEvents   []provenance.Event
+	BlockedReviewGates []ForgeGate
+	BackgroundJobs     []ForgeBackgroundJob
+	NextSafeActions    []ForgeNextAction
+}
+
+type ForgeGate struct{ Gate, Reason string }
+type ForgeBackgroundJob struct{ ID, Status, Command string }
+type ForgeNextAction struct{ Label, CLI string }
 
 var screeningCockpitTemplate = template.Must(template.New("screening-cockpit").Parse(`<section aria-labelledby="screening-title" class="rf-card" hx-get="/screening/refresh" hx-trigger="refresh-screening from:body">
   <h2 id="screening-title">Screening cockpit</h2>
@@ -455,6 +493,25 @@ func newDedupeReviewHandler(projectPath func() string) http.Handler {
 		}
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		_ = dedupeReviewTemplate.Execute(w, state)
+	})
+}
+
+func newForgeHomeHandler(projectPath func() string) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		state, err := BuildForgeHomeState(projectPath())
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		NewForgeHomeHandler(state).ServeHTTP(w, r)
+	})
+}
+
+// NewForgeHomeHandler renders the Forge home timeline.
+func NewForgeHomeHandler(state ForgeHomeState) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		_ = forgeHomeTemplate.Execute(w, state)
 	})
 }
 

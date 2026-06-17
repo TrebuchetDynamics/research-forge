@@ -8,10 +8,90 @@ import (
 
 	"github.com/TrebuchetDynamics/research-forge/internal/analysis"
 	"github.com/TrebuchetDynamics/research-forge/internal/library"
+	"github.com/TrebuchetDynamics/research-forge/internal/project"
 	"github.com/TrebuchetDynamics/research-forge/internal/provenance"
 	"github.com/TrebuchetDynamics/research-forge/internal/screening"
 	"github.com/TrebuchetDynamics/research-forge/internal/ui"
 )
+
+// BuildForgeHomeState assembles the Forge home timeline from project-local
+// state, provenance, background jobs, blocked review gates, and next actions.
+func BuildForgeHomeState(projectPath string) (ForgeHomeState, error) {
+	state := ForgeHomeState{ActiveProject: projectPath, CurrentState: "question_draft"}
+	if strings.TrimSpace(projectPath) == "" {
+		state.BlockedReviewGates = []ForgeGate{{Gate: "project", Reason: "open or create a project"}}
+		state.NextSafeActions = []ForgeNextAction{{Label: "Create project", CLI: "rforge project create <path> --title <title>"}}
+		return state, nil
+	}
+	if proj, err := project.Inspect(projectPath); err == nil {
+		state.ProjectTitle = proj.Title
+	}
+	var stored struct {
+		CurrentState string `json:"currentState"`
+		State        string `json:"state"`
+	}
+	if data, err := os.ReadFile(filepath.Join(projectPath, "data", "forge-state.json")); err == nil {
+		_ = json.Unmarshal(data, &stored)
+		if stored.CurrentState != "" {
+			state.CurrentState = stored.CurrentState
+		} else if stored.State != "" {
+			state.CurrentState = stored.State
+		}
+	}
+	if events, err := provenance.Read(projectPath); err == nil {
+		state.ProvenanceEvents = events
+	}
+	if data, err := os.ReadFile(filepath.Join(projectPath, "data", "jobs.json")); err == nil {
+		_ = json.Unmarshal(data, &state.BackgroundJobs)
+	}
+	state.BlockedReviewGates = forgeBlockedGates(projectPath, state.CurrentState)
+	state.NextSafeActions = forgeNextActions(state.CurrentState)
+	return state, nil
+}
+
+func forgeBlockedGates(projectPath, currentState string) []ForgeGate {
+	gates := []ForgeGate{}
+	missing := func(rel string) bool {
+		_, err := os.Stat(filepath.Join(projectPath, filepath.FromSlash(rel)))
+		return os.IsNotExist(err)
+	}
+	switch currentState {
+	case "source_plan":
+		if missing("data/source-plans") && missing("data/source-plan.json") {
+			gates = append(gates, ForgeGate{Gate: "network/API approval", Reason: "source plan artifact or approval is missing"})
+		}
+	case "screening":
+		if missing("data/screening-audit-bundle.json") {
+			gates = append(gates, ForgeGate{Gate: "screening approval", Reason: "screening audit bundle is missing"})
+		}
+	case "report_build":
+		if missing("data/claim-panel.json") {
+			gates = append(gates, ForgeGate{Gate: "claim approval", Reason: "claim traceability panel is missing"})
+		}
+	case "package_export":
+		if missing("review.rforgepkg") {
+			gates = append(gates, ForgeGate{Gate: "package approval", Reason: "review package has not been exported"})
+		}
+	}
+	return gates
+}
+
+func forgeNextActions(currentState string) []ForgeNextAction {
+	switch currentState {
+	case "question_draft":
+		return []ForgeNextAction{{Label: "Compile protocol", CLI: "rforge protocol compile --type pico --question <question>"}}
+	case "source_plan":
+		return []ForgeNextAction{{Label: "Preview source plan", CLI: "rforge protocol plan-sources --question <question>"}, {Label: "Record source approval", CLI: "rforge forge approve --gate source_plan"}}
+	case "screening":
+		return []ForgeNextAction{{Label: "Review screening progress", CLI: "rforge screen progress --stage title_abstract"}, {Label: "Export screening audit", CLI: "rforge screen audit-bundle --stage title_abstract --out data/screening-audit-bundle.json"}}
+	case "report_build":
+		return []ForgeNextAction{{Label: "Build claim panel", CLI: "rforge report claim-panel --trace data/trace.json --out data/claim-panel.json"}}
+	case "package_export":
+		return []ForgeNextAction{{Label: "Create review package", CLI: "rforge package create --out review.rforgepkg"}, {Label: "Audit package", CLI: "rforge package audit review.rforgepkg"}}
+	default:
+		return []ForgeNextAction{{Label: "Inspect project", CLI: "rforge project inspect <path>"}}
+	}
+}
 
 // BuildLibraryViewModel reads a CLI-generated project's library into the cockpit
 // library view model. A project without a library yields an empty view model

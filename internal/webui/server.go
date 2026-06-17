@@ -60,6 +60,7 @@ func Routes() []string {
 		"/artifacts",
 		"/connectors",
 		"/dedupe",
+		"/forge",
 		"/library",
 		"/oss",
 		"/papers",
@@ -90,6 +91,9 @@ func NewRouter(cfg Config) http.Handler {
 	mux.Handle("/sources", NewSourcePlanningHandler())
 	mux.Handle("/connectors", newConnectorHealthHandler(state.get))
 	mux.Handle("/dedupe", newDedupeReviewHandler(state.get))
+	forgeHandler := newForgeHomeHandler(state.get)
+	mux.Handle("/forge", forgeHandler)
+	mux.Handle("/forge/refresh", forgeHandler)
 	screeningHandler := newScreeningCockpitHandler(state.get)
 	mux.Handle("/screening", screeningHandler)
 	mux.Handle("/screening/refresh", screeningHandler)
