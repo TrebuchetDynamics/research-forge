@@ -107,6 +107,11 @@ var sourcePlanningTemplate = template.Must(template.New("source-planning").Parse
   </div>
 </section>`))
 
+var privacyModelTemplate = template.Must(template.New("privacy-model").Parse(`<section aria-labelledby="privacy-title" class="rf-card">
+  <h2 id="privacy-title">Dashboard permissions/privacy model</h2>
+  {{range .Assets}}<article><h3>{{.Name}}</h3><p>Default permission: {{.DefaultPermission}}</p><p>Export rule: {{.ExportRule}}</p><p>Review gate: {{.ReviewGate}}</p><p>UI behavior: {{.UIBehavior}}</p></article>{{end}}
+</section>`))
+
 var informationArchitectureTemplate = template.Must(template.New("dashboard-ia").Parse(`<section aria-labelledby="ia-title" class="rf-card">
   <h2 id="ia-title">Dashboard information architecture</h2>
   <h3>Routes</h3>
@@ -518,6 +523,13 @@ func newDedupeReviewHandler(projectPath func() string) http.Handler {
 		}
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		_ = dedupeReviewTemplate.Execute(w, state)
+	})
+}
+
+func NewPrivacyModelHandler(state DashboardPrivacyModel) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		_ = privacyModelTemplate.Execute(w, state)
 	})
 }
 

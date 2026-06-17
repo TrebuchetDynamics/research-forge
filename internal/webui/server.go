@@ -71,6 +71,7 @@ func Routes() []string {
 		"/package",
 		"/papers",
 		"/parsing",
+		"/privacy",
 		"/projects",
 		"/report",
 		"/retrieve",
@@ -100,6 +101,7 @@ func NewRouter(cfg Config) http.Handler {
 	mux.Handle("/search", NewSearchHandler(ui.NewSearchFormState(defaultSearchSources())))
 	mux.Handle("/sources", NewSourcePlanningHandler())
 	mux.Handle("/architecture", NewInformationArchitectureHandler(BuildDashboardInformationArchitecture()))
+	mux.Handle("/privacy", NewPrivacyModelHandler(BuildDashboardPrivacyModel()))
 	mux.Handle("/workbenches", NewWorkbenchIndexHandler(BuildWorkbenchIndexState()))
 	for _, route := range []string{"/acquisition", "/parsing", "/retrieve", "/evidence", "/analysis", "/report", "/map", "/package"} {
 		mux.Handle(route, newGenericWorkbenchHandler(route))
