@@ -236,19 +236,25 @@ var acquisitionQueueTemplate = template.Must(template.New("acquisition-queue").P
 
 var connectorHealthTemplate = template.Must(template.New("connector-health").Parse(`<section aria-labelledby="connector-health-title" class="rf-card">
   <h2 id="connector-health-title">Connector health/control center</h2>
-  <p>Live service checks are opt-in. This view reads stored API drift/live-smoke snapshots from <code>data/source-live-smoke-snapshots/latest.json</code> and alerts before connector use.</p>
+  <p>Shows live-smoke history, API drift alerts, cache status, credential redaction checks, rate-limit budgets, and adapter capability registry coverage. Live service checks are opt-in. This view reads stored API drift/live-smoke snapshots from <code>data/source-live-smoke-snapshots/latest.json</code> and alerts before connector use.</p>
   <p>Snapshot: {{if .Snapshot.CapturedAt}}{{.Snapshot.CapturedAt}}{{else}}not recorded{{end}}</p>
-  <h3>Alerts</h3>
+  <h3>API drift alerts</h3>
   {{if .Alerts}}
   <ul>
     {{range .Alerts}}<li><strong>{{.Label}}</strong>: {{.Kind}} — {{.Message}}</li>{{end}}
   </ul>
   {{else}}<p>No connector alerts.</p>{{end}}
+  <h3>live-smoke history</h3>
   <div role="table" aria-label="Connector live-smoke snapshots">
     <div role="row"><strong role="columnheader">Connector</strong> <strong role="columnheader">Status</strong> <strong role="columnheader">Checked</strong> <strong role="columnheader">Message</strong></div>
     {{range .Snapshot.Results}}
     <div role="row"><span role="cell">{{.Label}}</span> <span role="cell">{{.Status}}</span> <span role="cell">{{.CheckedAt}}</span> <span role="cell">{{.Message}}</span></div>
     {{end}}
+  </div>
+  <h3>adapter capability registry coverage</h3>
+  <div role="table" aria-label="Connector capability registry">
+    <div role="row"><strong role="columnheader">Connector</strong> <strong role="columnheader">rate-limit budgets</strong> <strong role="columnheader">cache status</strong> <strong role="columnheader">credential redaction checks</strong></div>
+    {{range .Registry.Connectors}}<div role="row"><span role="cell">{{.Label}}</span> <span role="cell">{{.RateLimitPolicy}}</span> <span role="cell">{{.Cacheability}}</span> <span role="cell">{{.AuthNeeds}}; secrets redacted in snapshots/logs</span></div>{{end}}
   </div>
 </section>`))
 
@@ -608,6 +614,7 @@ func NewSourcePlanningHandler() http.Handler {
 type connectorHealthView struct {
 	Snapshot protocol.ConnectorLiveSmokeSnapshot
 	Alerts   []protocol.ConnectorLiveSmokeAlert
+	Registry protocol.ConnectorCapabilityRegistry
 }
 
 func newConnectorHealthHandler(projectPath func() string) http.Handler {
@@ -621,7 +628,7 @@ func newConnectorHealthHandler(projectPath func() string) http.Handler {
 				snapshot = loaded
 			}
 		}
-		view := connectorHealthView{Snapshot: snapshot, Alerts: protocol.ConnectorLiveSmokeAlerts(registry, snapshot, now)}
+		view := connectorHealthView{Snapshot: snapshot, Alerts: protocol.ConnectorLiveSmokeAlerts(registry, snapshot, now), Registry: registry}
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		_ = connectorHealthTemplate.Execute(w, view)
 	})

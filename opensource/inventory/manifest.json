@@ -270,5 +270,8 @@
       "risk": "OA metadata does not guarantee full-text redistribution rights; license and source URL must remain explicit.",
       "nextSlice": "Add DOAJ/CORE OA discovery adapter with license-aware full-text candidate queue."
     }
-  ]
+  ],
+  "dashboardRequirements": {
+    "connectorHealthControlCenter": "The /connectors local cockpit shows live-smoke history, API drift alerts, cache status, credential redaction checks, rate-limit budgets, and adapter capability registry coverage from the protocol registry and project snapshots."
+  }
 }

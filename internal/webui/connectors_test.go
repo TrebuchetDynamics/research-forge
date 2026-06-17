@@ -21,7 +21,7 @@ func TestConnectorHealthHandlerRendersLiveSmokeAlerts(t *testing.T) {
 	rec := httptest.NewRecorder()
 	newConnectorHealthHandler(func() string { return project }).ServeHTTP(rec, req)
 	body := rec.Body.String()
-	for _, want := range []string{"Connector health/control center", "OpenAlex", "failing", "429", "Semantic Scholar", "missing"} {
+	for _, want := range []string{"Connector health/control center", "live-smoke history", "API drift alerts", "cache status", "credential redaction checks", "rate-limit budgets", "adapter capability registry coverage", "OpenAlex", "failing", "429", "Semantic Scholar", "missing", "public polite API", "cache query responses", "secrets redacted"} {
 		if !strings.Contains(body, want) {
 			t.Fatalf("connector health missing %q:\n%s", want, body)
 		}
