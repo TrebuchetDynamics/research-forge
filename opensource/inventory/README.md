@@ -72,7 +72,7 @@ The verifier checks that every manifest entry has governance metadata (`area`, `
 1. Build the `rforge forge` super-tool path: a resumable, provenance-first workflow that combines source discovery, reference-manager import, dedupe, legal full-text acquisition, parser arbitration, retrieval, screening, extraction, statistics, and report packaging.
 2. Deepen reference-manager interoperability: Zotero/JabRef collection/group mapping, citation-key fidelity, annotation import/export, BibTeX cleanup diffs, and linked-file privacy gates.
 3. Add parser arbitration and parsed-reference normalization across GROBID, S2ORC-style JSON, PaperMage, CERMINE, Science Parse, and Anystyle with reviewer-adjudicated conflicts.
-4. Expand source coverage: NASA ADS for physics/astronomy and DOAJ/CORE for OA discovery, plus richer PubMed / Europe PMC full-text workflows.
+4. Expand source coverage: NASA ADS for physics/astronomy and DOAJ/CORE for OA discovery; PubMed / Europe PMC / PMC full-text workflows now cover ID linking, OA license capture, structured JATS import, supplementary discovery, and opt-in drift smoke planning.
 5. Combine ASReview/revtools/RobotReviewer patterns into auditable review assistance: active-learning queues, cluster review, risk-of-bias/evidence suggestions, stopping diagnostics, and exportable audit bundles.
 6. Turn retrieval/NLP tools into governed adapters: OpenSearch/Qdrant/SentenceTransformers/KeyBERT/SciSpaCy/BERTopic with privacy profiles, model locks, benchmarks, and citation-linked suggestions.
 7. Add cross-engine statistical validation: metafor remains primary, with PyMARE-style secondary comparison reports and publication-ready artifact manifests.

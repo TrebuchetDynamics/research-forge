@@ -25,9 +25,9 @@ func TestLinkPMCIDPMIDBuildsBidirectionalIdentifierLinks(t *testing.T) {
 	}
 }
 
-func TestImportStructuredBiomedicalFullTextExtractsSectionsAndSupplements(t *testing.T) {
+func TestImportStructuredBiomedicalFullTextExtractsSectionsLicenseAndSupplements(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "pmc.xml")
-	fixture := []byte(`<article><front><article-meta><article-id pub-id-type="pmid">123</article-id><article-id pub-id-type="pmc">PMC456</article-id><article-id pub-id-type="doi">10.1000/pmc</article-id><title-group><article-title>Biomedical fixture</article-title></title-group><abstract><p>Abstract text.</p></abstract></article-meta></front><body><sec><title>Methods</title><p>Method text.</p></sec><sec><title>Results</title><p>Result text.</p></sec></body><back><sec sec-type="supplementary-material"><title>Supplementary data</title><supplementary-material id="s1" xlink:href="supp1.xlsx" xmlns:xlink="http://www.w3.org/1999/xlink"><label>Table S1</label></supplementary-material></sec></back></article>`)
+	fixture := []byte(`<article><front><article-meta><article-id pub-id-type="pmid">123</article-id><article-id pub-id-type="pmc">PMC456</article-id><article-id pub-id-type="doi">10.1000/pmc</article-id><title-group><article-title>Biomedical fixture</article-title></title-group><permissions><license license-type="open-access" xlink:href="https://creativecommons.org/licenses/by/4.0/" xmlns:xlink="http://www.w3.org/1999/xlink"><license-p>Creative Commons Attribution 4.0 International License</license-p></license></permissions><abstract><p>Abstract text.</p></abstract></article-meta></front><body><sec><title>Methods</title><p>Method text.</p></sec><sec><title>Results</title><p>Result text.</p></sec></body><back><sec sec-type="supplementary-material"><title>Supplementary data</title><supplementary-material id="s1" xlink:href="supp1.xlsx" xmlns:xlink="http://www.w3.org/1999/xlink"><label>Table S1</label></supplementary-material></sec></back></article>`)
 	if err := os.WriteFile(path, fixture, 0o644); err != nil {
 		t.Fatalf("write fixture: %v", err)
 	}
@@ -37,6 +37,9 @@ func TestImportStructuredBiomedicalFullTextExtractsSectionsAndSupplements(t *tes
 	}
 	if fullText.PMID != "123" || fullText.PMCID != "PMC456" || fullText.DOI != "10.1000/pmc" || fullText.Title != "Biomedical fixture" {
 		t.Fatalf("metadata = %#v", fullText)
+	}
+	if fullText.License != "Creative Commons Attribution 4.0 International License" || fullText.LicenseURL != "https://creativecommons.org/licenses/by/4.0/" || fullText.OAStatus != "open-access" {
+		t.Fatalf("license metadata = %#v", fullText)
 	}
 	if len(fullText.Sections) != 3 || fullText.Sections[1].Title != "Methods" || fullText.Sections[2].Text != "Result text." {
 		t.Fatalf("sections = %#v", fullText.Sections)
@@ -48,7 +51,7 @@ func TestImportStructuredBiomedicalFullTextExtractsSectionsAndSupplements(t *tes
 
 func TestBiomedicalLiveDriftSmokeSnapshotPlansExpectedFields(t *testing.T) {
 	snapshot := NewBiomedicalLiveDriftSmokeSnapshot()
-	if len(snapshot.Connectors) != 2 {
+	if len(snapshot.Connectors) != 3 {
 		t.Fatalf("snapshot = %#v", snapshot)
 	}
 	for _, connector := range snapshot.Connectors {

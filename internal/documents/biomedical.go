@@ -22,6 +22,9 @@ type BiomedicalFullText struct {
 	PMCID              string                  `json:"pmcid,omitempty"`
 	DOI                string                  `json:"doi,omitempty"`
 	Title              string                  `json:"title"`
+	OAStatus           string                  `json:"oaStatus,omitempty"`
+	License            string                  `json:"license,omitempty"`
+	LicenseURL         string                  `json:"licenseUrl,omitempty"`
 	Sections           []BiomedicalSection     `json:"sections"`
 	SupplementaryFiles []SupplementaryFileInfo `json:"supplementaryFiles"`
 }
@@ -80,6 +83,11 @@ func ImportStructuredBiomedicalFullText(path string) (BiomedicalFullText, error)
 			fullText.DOI = strings.ToLower(strings.TrimSpace(id.Value))
 		}
 	}
+	if license := article.Front.ArticleMeta.Permissions.License; strings.TrimSpace(license.Type) != "" || strings.TrimSpace(license.Text()) != "" || strings.TrimSpace(license.Href) != "" {
+		fullText.OAStatus = strings.TrimSpace(license.Type)
+		fullText.License = compactBiomedicalText(license.Text())
+		fullText.LicenseURL = strings.TrimSpace(license.Href)
+	}
 	if abstract := compactBiomedicalText(article.Front.ArticleMeta.Abstract.Text()); abstract != "" {
 		fullText.Sections = append(fullText.Sections, BiomedicalSection{Title: "Abstract", Text: abstract})
 	}
@@ -112,7 +120,8 @@ func DiscoverSupplementaryFiles(article jatsArticle) []SupplementaryFileInfo {
 func NewBiomedicalLiveDriftSmokeSnapshot() BiomedicalLiveDriftSmokeSnapshot {
 	return BiomedicalLiveDriftSmokeSnapshot{SchemaVersion: "1", Connectors: []BiomedicalLiveDriftSmokeSource{
 		{Source: "pubmed", OptInEnv: "RFORGE_RUN_LIVE_SOURCE_SMOKE=1", ExpectedFields: []string{"pmid", "pmcid", "doi", "title", "mesh_terms"}},
-		{Source: "europepmc", OptInEnv: "RFORGE_RUN_LIVE_SOURCE_SMOKE=1", ExpectedFields: []string{"pmid", "pmcid", "doi", "title", "full_text_url", "license"}},
+		{Source: "europepmc", OptInEnv: "RFORGE_RUN_LIVE_SOURCE_SMOKE=1", ExpectedFields: []string{"pmid", "pmcid", "doi", "title", "full_text_url", "license", "open_access"}},
+		{Source: "pmc-open-access", OptInEnv: "RFORGE_RUN_LIVE_SOURCE_SMOKE=1", ExpectedFields: []string{"pmcid", "pmid", "doi", "license", "structured_full_text", "supplementary_files"}},
 	}}
 }
 
@@ -140,12 +149,26 @@ type jatsArticleMeta struct {
 	TitleGroup struct {
 		ArticleTitle string `xml:"article-title"`
 	} `xml:"title-group"`
-	Abstract jatsTextBlock `xml:"abstract"`
+	Permissions jatsPermissions `xml:"permissions"`
+	Abstract    jatsTextBlock   `xml:"abstract"`
 }
 type jatsArticleID struct {
 	Type  string `xml:"pub-id-type,attr"`
 	Value string `xml:",chardata"`
 }
+
+type jatsPermissions struct {
+	License jatsLicense `xml:"license"`
+}
+
+type jatsLicense struct {
+	Type       string   `xml:"license-type,attr"`
+	Href       string   `xml:"http://www.w3.org/1999/xlink href,attr"`
+	Paragraphs []string `xml:"license-p"`
+}
+
+func (l jatsLicense) Text() string { return strings.Join(l.Paragraphs, " ") }
+
 type jatsBody struct {
 	Sections []jatsSection `xml:"sec"`
 }

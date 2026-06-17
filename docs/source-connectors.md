@@ -7,7 +7,7 @@ ResearchForge keeps scholarly source integrations local-first and explicit about
 ### PubMed / Europe PMC
 
 - Purpose: biomedical literature discovery, PMID/PMCID metadata, and open biomedical full-text leads.
-- Status: Europe PMC search connector implemented as `rforge search --source europepmc`; PubMed/NCBI E-utilities search connector implemented as `rforge search --source pubmed`; normalized records preserve PMID, PMCID, MeSH terms, and Europe PMC full-text/OA links where source payloads provide them. Opt-in live smoke documentation and `make biomedical-live-smoke` cover the biomedical connectors.
+- Status: Europe PMC search connector implemented as `rforge search --source europepmc`; PubMed/NCBI E-utilities search connector implemented as `rforge search --source pubmed`; normalized records preserve PMID, PMCID, MeSH terms, and Europe PMC full-text/OA links where source payloads provide them. `rforge --project <path> library pmcid-pmid-links` exports normalized PMID/PMCID/DOI linkage, and `rforge --project <path> pdf import-biomedical --xml <pmc-jats.xml> --out <json>` imports PMC/JATS structured full text with OA license/license URL/status metadata and supplementary-file discovery. Opt-in live smoke documentation, `rforge pdf biomedical-drift-smoke-plan`, and `make biomedical-live-smoke` cover PubMed, Europe PMC, and PMC open-access drift expectations.
 - Terms review before further implementation:
   - confirm NCBI E-utilities usage policies, rate limits, API key expectations, and attribution requirements;
   - confirm Europe PMC API terms, rate limits, license metadata availability, and full-text link constraints before full-text acquisition.
