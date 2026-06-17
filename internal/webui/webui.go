@@ -168,6 +168,16 @@ var genericWorkbenchTemplate = template.Must(template.New("generic-workbench").P
   <p><a href="/workbenches">Back to HTMX workbenches</a></p>
 </section>`))
 
+var acquisitionQueueTemplate = template.Must(template.New("acquisition-queue").Parse(`<section aria-labelledby="acquisition-title" class="rf-card">
+  <h2 id="acquisition-title">Legal full-text acquisition queue</h2>
+  <p>OA/license status, source URL, expected stored path, restricted/shareable flags, and explicit reviewer approval before downloading or archiving documents.</p>
+  <p>CLI equivalent: <code>rforge --project {{.ProjectPath}} oa acquisition-queue</code>; approve with <code>rforge --project {{.ProjectPath}} oa acquisition-approve &lt;id&gt; --reviewer &lt;name&gt; --reason &lt;text&gt;</code></p>
+  <div role="table" aria-label="Legal acquisition queue">
+    <div role="row"><strong role="columnheader">Paper</strong><strong role="columnheader">OA/license status</strong><strong role="columnheader">Source URL</strong><strong role="columnheader">Expected stored path</strong><strong role="columnheader">Policy</strong></div>
+    {{range .Items}}<div role="row"><span role="cell">{{.PaperTitle}}</span><span role="cell">{{.OAStatus}} {{.License}}</span><span role="cell">{{.SourceURL}}</span><span role="cell">{{.ExpectedLocalPath}}</span><span role="cell">restricted={{.Restricted}} shareable={{.Shareable}} approved={{.ReviewerApproved}}</span></div>{{else}}<div role="row"><span role="cell">No acquisition queue items. Run the CLI command to build {{$.QueuePath}}.</span></div>{{end}}
+  </div>
+</section>`))
+
 var connectorHealthTemplate = template.Must(template.New("connector-health").Parse(`<section aria-labelledby="connector-health-title" class="rf-card">
   <h2 id="connector-health-title">Connector health/control center</h2>
   <p>Live service checks are opt-in. This view reads stored API drift/live-smoke snapshots from <code>data/source-live-smoke-snapshots/latest.json</code> and alerts before connector use.</p>
@@ -578,6 +588,13 @@ func NewWorkbenchIndexHandler(state WorkbenchIndexState) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		_ = workbenchIndexTemplate.Execute(w, state)
+	})
+}
+
+func newAcquisitionQueueHandler(projectPath func() string) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		_ = acquisitionQueueTemplate.Execute(w, BuildAcquisitionQueueState(projectPath()))
 	})
 }
 

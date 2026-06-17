@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/TrebuchetDynamics/research-forge/internal/analysis"
+	"github.com/TrebuchetDynamics/research-forge/internal/documents"
 	"github.com/TrebuchetDynamics/research-forge/internal/library"
 	"github.com/TrebuchetDynamics/research-forge/internal/project"
 	"github.com/TrebuchetDynamics/research-forge/internal/provenance"
@@ -91,6 +92,25 @@ func forgeNextActions(currentState string) []ForgeNextAction {
 	default:
 		return []ForgeNextAction{{Label: "Inspect project", CLI: "rforge project inspect <path>"}}
 	}
+}
+
+type AcquisitionQueueState struct {
+	ProjectPath string
+	QueuePath   string
+	Items       []documents.LegalAcquisitionQueueItem
+}
+
+func BuildAcquisitionQueueState(projectPath string) AcquisitionQueueState {
+	state := AcquisitionQueueState{ProjectPath: projectPath, QueuePath: "data/legal-acquisition-queue.json"}
+	if strings.TrimSpace(projectPath) == "" {
+		return state
+	}
+	var queue documents.LegalAcquisitionQueue
+	if data, err := os.ReadFile(filepath.Join(projectPath, "data", "legal-acquisition-queue.json")); err == nil {
+		_ = json.Unmarshal(data, &queue)
+		state.Items = queue.Items
+	}
+	return state
 }
 
 // BuildLibraryViewModel reads a CLI-generated project's library into the cockpit

@@ -566,6 +566,7 @@ Requirements:
 - Never bypass paywalls or restricted access controls.
 - Track download URL, license, source, checksum, and retrieval timestamp.
 - Allow user approval before importing or downloading, configurable per project.
+- The local dashboard includes a legal full-text acquisition queue with OA/license status, source URL, expected stored path, restricted/shareable flags, and explicit reviewer approval before download or archive actions.
 - CLI examples:
   - `rforge watch add "ferroelectric HZO compute in memory" --interval weekly`
   - `rforge watch run`
