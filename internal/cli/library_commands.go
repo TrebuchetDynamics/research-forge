@@ -375,7 +375,7 @@ func executeLibrary(args []string, stdout, stderr io.Writer, opts globalOptions)
 		if err != nil {
 			return writeError(stdout, stderr, opts, 1, "library_list_failed", fmt.Sprintf("list library: %v", err))
 		}
-		matrix := library.BuildReferenceManagerInterchangeMatrix(papers)
+		matrix := library.BuildReferenceManagerRoundTripMatrix(papers)
 		if opts.JSON {
 			return writeJSON(stdout, 0, map[string]any{"matrix": matrix})
 		}
@@ -383,7 +383,7 @@ func executeLibrary(args []string, stdout, stderr io.Writer, opts globalOptions)
 		for _, format := range matrix.Formats {
 			fmt.Fprintf(stdout, "- %s (%s)\n", format.Label, format.Format)
 			for field, fidelity := range format.Fields {
-				fmt.Fprintf(stdout, "  %s: %s — %s\n", field, fidelity.Status, fidelity.Note)
+				fmt.Fprintf(stdout, "  %s: %s preserved=%d lost=%d — %s\n", field, fidelity.Status, fidelity.Preserved, fidelity.Lost, fidelity.Note)
 			}
 		}
 		return 0

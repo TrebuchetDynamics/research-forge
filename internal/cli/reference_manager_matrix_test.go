@@ -35,6 +35,10 @@ func TestExecuteLibraryReferenceManagerMatrixJSON(t *testing.T) {
 				FieldsPresent map[string]int `json:"fieldsPresent"`
 				Formats       []struct {
 					Format string `json:"format"`
+					Fields map[string]struct {
+						Preserved int `json:"preserved"`
+						Lost      int `json:"lost"`
+					} `json:"fields"`
 				} `json:"formats"`
 			} `json:"matrix"`
 		} `json:"data"`
@@ -44,5 +48,8 @@ func TestExecuteLibraryReferenceManagerMatrixJSON(t *testing.T) {
 	}
 	if !env.OK || env.Data.Matrix.RecordCount != 1 || env.Data.Matrix.FieldsPresent["better_bibtex_citation_key"] != 1 || len(env.Data.Matrix.Formats) < 4 {
 		t.Fatalf("unexpected matrix: %#v", env)
+	}
+	if env.Data.Matrix.Formats[0].Fields == nil {
+		t.Fatalf("round-trip field loss report missing: %#v", env.Data.Matrix.Formats)
 	}
 }

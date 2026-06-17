@@ -1,5 +1,10 @@
 package library
 
+import (
+	"os"
+	"path/filepath"
+)
+
 // ReferenceManagerFidelityReport summarizes whether imported reference-manager
 // records retained review-relevant fields from Zotero/JabRef style sources.
 type ReferenceManagerFidelitySummary struct {
@@ -52,8 +57,10 @@ type ReferenceManagerFormatFidelity struct {
 }
 
 type FieldFidelity struct {
-	Status string `json:"status"`
-	Note   string `json:"note"`
+	Status    string `json:"status"`
+	Note      string `json:"note"`
+	Preserved int    `json:"preserved,omitempty"`
+	Lost      int    `json:"lost,omitempty"`
 }
 
 func DefaultReferenceManagerInterchangeMatrix() ReferenceManagerInterchangeMatrix {
@@ -143,6 +150,103 @@ func BuildReferenceManagerInterchangeMatrix(records []PaperRecord) ReferenceMana
 	return matrix
 }
 
+func BuildReferenceManagerRoundTripMatrix(records []PaperRecord) ReferenceManagerInterchangeMatrix {
+	matrix := BuildReferenceManagerInterchangeMatrix(records)
+	dir, err := os.MkdirTemp("", "rforge-refman-roundtrip-*")
+	if err != nil {
+		return matrix
+	}
+	defer os.RemoveAll(dir)
+	for i := range matrix.Formats {
+		format := matrix.Formats[i].Format
+		path := filepath.Join(dir, "records."+format)
+		var imported []PaperRecord
+		if exportReferenceManager(format, path, records) == nil {
+			imported, _, _ = importReferenceManager(format, path)
+		}
+		for field, fidelity := range matrix.Formats[i].Fields {
+			present, preserved := 0, 0
+			for _, record := range records {
+				if !recordHasRoundTripField(record, field) {
+					continue
+				}
+				present++
+				if anyRecordHasRoundTripField(imported, field) {
+					preserved++
+				}
+			}
+			fidelity.Preserved = preserved
+			if present > preserved {
+				fidelity.Lost = present - preserved
+			}
+			if fidelity.Lost > 0 && fidelity.Status == FidelitySupported {
+				fidelity.Status = FidelityPartial
+			}
+			matrix.Formats[i].Fields[field] = fidelity
+		}
+	}
+	return matrix
+}
+
+func exportReferenceManager(format, path string, records []PaperRecord) error {
+	switch format {
+	case "bibtex":
+		return ExportBibTeX(path, records)
+	case "ris":
+		return ExportRIS(path, records)
+	case "csl-json":
+		return ExportCSLJSON(path, records)
+	case "zotero-rdf":
+		return ExportZoteroRDF(path, records)
+	default:
+		return nil
+	}
+}
+func importReferenceManager(format, path string) ([]PaperRecord, int, error) {
+	switch format {
+	case "bibtex":
+		return ImportBibTeX(path)
+	case "ris":
+		return ImportRIS(path)
+	case "csl-json":
+		return ImportCSLJSON(path)
+	case "zotero-rdf":
+		return ImportZoteroRDF(path)
+	default:
+		return nil, 0, nil
+	}
+}
+func recordHasRoundTripField(record PaperRecord, field string) bool {
+	switch field {
+	case "core_metadata":
+		return record.Title != "" || record.Identifiers.DOI != ""
+	case "better_bibtex_citation_key":
+		return metadataAny(record, "citation_key")
+	case "tags":
+		return metadataAny(record, "tags")
+	case "notes":
+		return metadataAny(record, "note")
+	case "annotations":
+		return metadataAny(record, "annotations")
+	case "collections":
+		return metadataAny(record, "collections") || metadataAny(record, "groups") || metadataAny(record, "collection_hierarchy")
+	case "bibtex_cleanup_diffs":
+		return metadataAny(record, "cleanup_diff")
+	case "redacted_attachments":
+		return metadataAny(record, "attachment_files") || metadataAny(record, "linked_file_privacy_check")
+	default:
+		return false
+	}
+}
+func anyRecordHasRoundTripField(records []PaperRecord, field string) bool {
+	for _, record := range records {
+		if recordHasRoundTripField(record, field) {
+			return true
+		}
+	}
+	return false
+}
+
 func (m ReferenceManagerInterchangeMatrix) Format(format string) (ReferenceManagerFormatFidelity, bool) {
 	for _, row := range m.Formats {
 		if row.Format == format {
@@ -150,6 +254,11 @@ func (m ReferenceManagerInterchangeMatrix) Format(format string) (ReferenceManag
 		}
 	}
 	return ReferenceManagerFormatFidelity{}, false
+}
+
+func (m ReferenceManagerInterchangeMatrix) HasFormat(format string) bool {
+	_, ok := m.Format(format)
+	return ok
 }
 
 func metadataAny(record PaperRecord, key string) bool {
