@@ -606,7 +606,7 @@ This is the canonical build order for the post-1.0 super-tool work. The thematic
 #### Phase 11 — Broader research cockpit expansion after the spine
 
 - [x] Add project knowledge graph queries that merge collections/tags, concepts, citations, parsed references, evidence, screening decisions, analysis runs, report claims, and provenance events (`internal/knowledge`, `rforge knowledge query`).
-- [ ] Add live research-map cockpit features for concept maps, citation neighborhoods, retrieval clusters, evidence coverage, and snapshot export.
+- [x] Add live research-map cockpit features for concept maps, citation neighborhoods, retrieval clusters, evidence coverage, and snapshot export (`/map`, `/map/snapshot.json`, `BuildResearchMapCockpitState`).
 - [ ] Add lab-notebook timeline views for all human and automated workflow events.
 - [ ] Add OSS-inventory-to-roadmap reports that group `nextSlice` entries by area and detect TODO coverage gaps for new inventory notes.
 - [ ] Add cross-tool benchmarks for discovery recall, dedupe precision, parser accuracy, reference normalization, retrieval quality, screening effort savings, and report/package reproducibility.

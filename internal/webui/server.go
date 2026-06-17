@@ -103,7 +103,9 @@ func NewRouter(cfg Config) http.Handler {
 	mux.Handle("/architecture", NewInformationArchitectureHandler(BuildDashboardInformationArchitecture()))
 	mux.Handle("/privacy", NewPrivacyModelHandler(BuildDashboardPrivacyModel()))
 	mux.Handle("/workbenches", NewWorkbenchIndexHandler(BuildWorkbenchIndexState()))
-	for _, route := range []string{"/acquisition", "/parsing", "/retrieve", "/evidence", "/analysis", "/report", "/map", "/package"} {
+	mux.Handle("/map", newResearchMapHandler(state.get))
+	mux.Handle("/map/snapshot.json", newResearchMapSnapshotHandler(state.get))
+	for _, route := range []string{"/acquisition", "/parsing", "/retrieve", "/evidence", "/analysis", "/report", "/package"} {
 		mux.Handle(route, newGenericWorkbenchHandler(route))
 	}
 	mux.Handle("/connectors", newConnectorHealthHandler(state.get))

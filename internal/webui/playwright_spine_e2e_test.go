@@ -26,7 +26,7 @@ func metaAnalysisSpineViews() []spineE2EView {
 		{"evidence-extraction", "/evidence", "evidence extraction Workbench"},
 		{"meta-analysis", "/analysis", "meta-analysis Workbench"},
 		{"report-traceability", "/report", "report traceability Workbench"},
-		{"research-map", "/map", "research map Workbench"},
+		{"research-map", "/map", "Research map cockpit"},
 		{"connector-health", "/connectors", "Connector health"},
 		{"reproducibility-export", "/package", "reproducibility/export Workbench"},
 		{"information-architecture", "/architecture", "Dashboard information architecture"},

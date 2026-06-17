@@ -107,6 +107,16 @@ var sourcePlanningTemplate = template.Must(template.New("source-planning").Parse
   </div>
 </section>`))
 
+var researchMapTemplate = template.Must(template.New("research-map").Parse(`<section aria-labelledby="research-map-title" class="rf-card" hx-get="/map" hx-trigger="refresh-map from:body">
+  <h2 id="research-map-title">Research map cockpit</h2>
+  <p>Snapshot export: <a href="{{.SnapshotExportPath}}">{{.SnapshotExportPath}}</a></p>
+  <section><h3>Concept maps</h3>{{range .ConceptMap}}<p>{{.Label}} — {{.Detail}}</p>{{else}}<p>No concepts available.</p>{{end}}</section>
+  <section><h3>Citation neighborhoods</h3>{{range .CitationNeighborhoods}}<p>{{.Label}} — {{.Detail}}</p>{{else}}<p>No citation neighborhoods available.</p>{{end}}</section>
+  <section><h3>Retrieval clusters</h3>{{range .RetrievalClusters}}<p>{{.Label}} — {{.Detail}}</p>{{else}}<p>No retrieval clusters available.</p>{{end}}</section>
+  <section><h3>Evidence coverage</h3><p>Accepted: {{.EvidenceCoverage.Accepted}} Suggested: {{.EvidenceCoverage.Suggested}} Other: {{.EvidenceCoverage.Other}}</p></section>
+  <p>CLI equivalent: <code>rforge knowledge query --project &lt;path&gt;</code></p>
+</section>`))
+
 var privacyModelTemplate = template.Must(template.New("privacy-model").Parse(`<section aria-labelledby="privacy-title" class="rf-card">
   <h2 id="privacy-title">Dashboard permissions/privacy model</h2>
   {{range .Assets}}<article><h3>{{.Name}}</h3><p>Default permission: {{.DefaultPermission}}</p><p>Export rule: {{.ExportRule}}</p><p>Review gate: {{.ReviewGate}}</p><p>UI behavior: {{.UIBehavior}}</p></article>{{end}}
