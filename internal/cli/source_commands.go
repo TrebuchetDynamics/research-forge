@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/TrebuchetDynamics/research-forge/internal/citations"
+	"github.com/TrebuchetDynamics/research-forge/internal/documents"
 	"github.com/TrebuchetDynamics/research-forge/internal/library"
 	"github.com/TrebuchetDynamics/research-forge/internal/provenance"
 	"github.com/TrebuchetDynamics/research-forge/internal/sources"
@@ -260,6 +261,32 @@ func sortedStringSet(values map[string]bool) []string {
 }
 
 func executeOA(args []string, stdout, stderr io.Writer, opts globalOptions) int {
+	if len(args) == 1 && args[0] == "acquisition-queue" {
+		if opts.Project == "" {
+			return writeError(stdout, stderr, opts, 2, "missing_project", "--project is required for oa acquisition-queue")
+		}
+		store, err := library.OpenStore(filepath.Join(opts.Project, "data", "library.json"))
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "library_open_failed", err.Error())
+		}
+		records, err := store.List()
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "library_list_failed", err.Error())
+		}
+		queue := documents.BuildLegalAcquisitionQueue(opts.Project, sources.CompareOpenAccessCandidates(records))
+		path := acquisitionQueuePath(opts.Project)
+		if err := writeJSONFile(path, queue); err != nil {
+			return writeError(stdout, stderr, opts, 1, "acquisition_queue_write_failed", err.Error())
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"queue": queue, "path": path})
+		}
+		fmt.Fprintf(stdout, "wrote %d legal acquisition queue items to %s\n", len(queue.Items), path)
+		return 0
+	}
+	if len(args) > 0 && args[0] == "acquisition-approve" {
+		return executeAcquisitionApprove(args[1:], stdout, stderr, opts)
+	}
 	if len(args) == 1 && args[0] == "candidates" {
 		if opts.Project == "" {
 			return writeError(stdout, stderr, opts, 2, "missing_project", "--project is required for oa candidates")
@@ -282,7 +309,7 @@ func executeOA(args []string, stdout, stderr io.Writer, opts globalOptions) int 
 		return 0
 	}
 	if len(args) != 2 || args[0] != "lookup" {
-		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge oa lookup <doi>|candidates")
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge oa lookup <doi>|candidates|acquisition-queue|acquisition-approve <id>")
 	}
 	email := os.Getenv("RFORGE_UNPAYWALL_EMAIL")
 	baseURL := os.Getenv("RFORGE_UNPAYWALL_URL")
@@ -299,6 +326,52 @@ func executeOA(args []string, stdout, stderr io.Writer, opts globalOptions) int 
 	}
 	fmt.Fprintf(stdout, "%s\t%t\t%s\t%s\n", record.DOI, record.OpenAccess, record.OAStatus, record.PDFURL)
 	return 0
+}
+
+func executeAcquisitionApprove(args []string, stdout, stderr io.Writer, opts globalOptions) int {
+	if opts.Project == "" {
+		return writeError(stdout, stderr, opts, 2, "missing_project", "--project is required for oa acquisition-approve")
+	}
+	if len(args) < 1 {
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> oa acquisition-approve <id> --reviewer <name> --reason <text>")
+	}
+	values, err := parseKeyValueFlags(args[1:], map[string]bool{"--reviewer": true, "--reason": true})
+	if err != nil {
+		return writeError(stdout, stderr, opts, 2, "usage", err.Error())
+	}
+	path := acquisitionQueuePath(opts.Project)
+	var queue documents.LegalAcquisitionQueue
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return writeError(stdout, stderr, opts, 1, "acquisition_queue_read_failed", err.Error())
+	}
+	if err := json.Unmarshal(data, &queue); err != nil {
+		return writeError(stdout, stderr, opts, 1, "acquisition_queue_decode_failed", err.Error())
+	}
+	approved := false
+	for i := range queue.Items {
+		if queue.Items[i].ID == args[0] {
+			queue.Items[i] = documents.ApproveAcquisition(queue.Items[i], values["--reviewer"], values["--reason"])
+			approved = true
+		}
+	}
+	if !approved {
+		return writeError(stdout, stderr, opts, 2, "acquisition_queue_item_not_found", "acquisition queue item not found")
+	}
+	if err := writeJSONFile(path, queue); err != nil {
+		return writeError(stdout, stderr, opts, 1, "acquisition_queue_write_failed", err.Error())
+	}
+	now := time.Now().UTC()
+	_ = provenance.Append(opts.Project, provenance.Event{SchemaVersion: "1", ID: "evt_" + now.Format("20060102T150405Z") + "_document_acquisition", Timestamp: now.Format(time.RFC3339), Actor: "rforge", Action: "document.acquisition.approved", Target: args[0], Inputs: map[string]any{"reviewer": values["--reviewer"], "reason": values["--reason"]}, Outputs: map[string]any{"queue": path}, Warnings: []string{}})
+	if opts.JSON {
+		return writeJSON(stdout, 0, map[string]any{"queue": queue, "path": path})
+	}
+	fmt.Fprintf(stdout, "approved acquisition queue item %s\n", args[0])
+	return 0
+}
+
+func acquisitionQueuePath(project string) string {
+	return filepath.Join(project, "data", "legal-acquisition-queue.json")
 }
 
 func executeSearch(args []string, stdout, stderr io.Writer, opts globalOptions) int {
