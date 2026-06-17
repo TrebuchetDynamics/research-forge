@@ -67,6 +67,7 @@ func Routes() []string {
 		"/forge",
 		"/library",
 		"/map",
+		"/notebook",
 		"/oss",
 		"/package",
 		"/papers",
@@ -103,6 +104,8 @@ func NewRouter(cfg Config) http.Handler {
 	mux.Handle("/architecture", NewInformationArchitectureHandler(BuildDashboardInformationArchitecture()))
 	mux.Handle("/privacy", NewPrivacyModelHandler(BuildDashboardPrivacyModel()))
 	mux.Handle("/workbenches", NewWorkbenchIndexHandler(BuildWorkbenchIndexState()))
+	mux.Handle("/notebook", newLabNotebookHandler(state.get))
+	mux.Handle("/notebook/snapshot.json", newLabNotebookSnapshotHandler(state.get))
 	mux.Handle("/map", newResearchMapHandler(state.get))
 	mux.Handle("/map/snapshot.json", newResearchMapSnapshotHandler(state.get))
 	for _, route := range []string{"/acquisition", "/parsing", "/retrieve", "/evidence", "/analysis", "/report", "/package"} {

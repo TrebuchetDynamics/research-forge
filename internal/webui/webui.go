@@ -34,6 +34,7 @@ var shellTemplate = template.Must(template.New("shell").Parse(`<!doctype html>
         <ul class="rf-nav">
           <li><a href="/forge">Forge</a></li>
           <li><a href="/workbenches">Workbenches</a></li>
+          <li><a href="/notebook">Notebook</a></li>
           <li><a href="/papers">Papers</a></li>
           <li><a href="/library">Library</a></li>
           <li><a href="/dedupe">Dedupe</a></li>
@@ -105,6 +106,13 @@ var sourcePlanningTemplate = template.Must(template.New("source-planning").Parse
     </div>
     {{end}}
   </div>
+</section>`))
+
+var labNotebookTemplate = template.Must(template.New("lab-notebook").Parse(`<section aria-labelledby="notebook-title" class="rf-card" hx-get="/notebook" hx-trigger="refresh-notebook from:body">
+  <h2 id="notebook-title">Lab notebook timeline</h2>
+  <p>Total workflow events: {{.TotalEvents}}. Human workflow events: {{.HumanEvents}}. Automated workflow events: {{.AutomatedEvents}}.</p>
+  <p>Snapshot export: <a href="{{.SnapshotPath}}">{{.SnapshotPath}}</a></p>
+  <ol>{{range .Events}}<li><strong>{{.Timestamp}}</strong> <span>{{.ActorKind}}</span> <span>{{.Actor}}</span> <code>{{.Action}}</code> {{.Target}}</li>{{else}}<li>No workflow events recorded.</li>{{end}}</ol>
 </section>`))
 
 var researchMapTemplate = template.Must(template.New("research-map").Parse(`<section aria-labelledby="research-map-title" class="rf-card" hx-get="/map" hx-trigger="refresh-map from:body">
