@@ -20,7 +20,7 @@ func metaAnalysisSpineViews() []spineE2EView {
 		{"source-planning", "/sources?question=Do+catalysts+improve+hydrogen+evolution", "Source planning cockpit"},
 		{"import-dedupe", "/dedupe", "Dedupe/cluster review"},
 		{"legal-acquisition", "/acquisition", "legal acquisition Workbench"},
-		{"parser-arbitration", "/parsing", "parser arbitration Workbench"},
+		{"parser-arbitration", "/parsing", "Parser conflict review"},
 		{"retrieval-tuning", "/retrieve", "retrieval tuning Workbench"},
 		{"screening", "/screening", "Screening cockpit"},
 		{"evidence-extraction", "/evidence", "evidence extraction Workbench"},

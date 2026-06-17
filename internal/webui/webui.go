@@ -108,6 +108,13 @@ var sourcePlanningTemplate = template.Must(template.New("source-planning").Parse
   </div>
 </section>`))
 
+var parserConflictTemplate = template.Must(template.New("parser-conflict").Parse(`<section aria-labelledby="parser-conflict-title" class="rf-card">
+  <h2 id="parser-conflict-title">Parser conflict review</h2>
+  <p>CERMINE participates as an adapter-only fallback alongside {{range .Parsers}}{{.}} {{end}}.</p>
+  <p>{{if .ReviewerRequired}}reviewer required{{else}}reviewer optional{{end}}. {{if .AutoAcceptConflicts}}Conflicts may be auto-accepted.{{else}}No conflicting fields are auto-accepted.{{end}}</p>
+  <p>CLI equivalent: <code>{{.CLIEquivalent}}</code></p>
+</section>`))
+
 var labNotebookTemplate = template.Must(template.New("lab-notebook").Parse(`<section aria-labelledby="notebook-title" class="rf-card" hx-get="/notebook" hx-trigger="refresh-notebook from:body">
   <h2 id="notebook-title">Lab notebook timeline</h2>
   <p>Total workflow events: {{.TotalEvents}}. Human workflow events: {{.HumanEvents}}. Automated workflow events: {{.AutomatedEvents}}.</p>
