@@ -28,6 +28,7 @@ Implemented nearby capabilities:
 - The forge workflow DAG includes discovery/import checkpoints with inputs, outputs, provenance actions, and restart-safe skips.
 - The local project knowledge graph merges OpenAlex concepts with Zotero collections/tags, Semantic Scholar citation edges, parsed references, evidence, screening, analysis, and report claims for `rforge knowledge query`.
 - Live manual searches have been used for ResearchForge-backed reports.
+- Source-fusion identity resolution merges DOI/arXiv/PMID/PMCID/OpenAlex/Semantic Scholar/Crossref/Zotero IDs with explainable rules, conflict records, reversible merge/split decision logs, and `library identity-decision apply` support.
 
 Missing features:
 

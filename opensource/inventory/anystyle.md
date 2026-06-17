@@ -28,6 +28,7 @@ Implemented nearby capabilities:
 - Multi-engine parser arbitration scores GROBID/S2ORC-style/PaperMage/CERMINE/Science Parse/Anystyle outputs per field, routes conflicts to review, records reviewer selection reasons, and emits reconciliation outputs.
 - Crossref/OpenAlex/Semantic Scholar connectors.
 - Duplicate report/merge/split UX.
+- Source-fusion identity resolution merges DOI/arXiv/PMID/PMCID/OpenAlex/Semantic Scholar/Crossref/Zotero IDs with explainable rules, conflict records, reversible merge/split decision logs, and `library identity-decision apply` support.
 
 Missing features:
 

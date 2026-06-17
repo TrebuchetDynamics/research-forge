@@ -68,6 +68,17 @@ func AppendIdentityConflict(path string, conflict IdentityConflictRecord) error 
 	return appendIdentityLogEntry(path, identityLogEntry{Type: "conflict", Conflict: &conflict})
 }
 
+func ApplyIdentityDecision(records []PaperRecord, decision IdentityDecision) ([]PaperRecord, error) {
+	if decision.Action != IdentityDecisionMerge && decision.Action != IdentityDecisionSplit {
+		return nil, fmt.Errorf("identity decision action must be merge or split")
+	}
+	if len(decision.After) == 0 {
+		return nil, fmt.Errorf("identity decision after state is required")
+	}
+	out := append([]PaperRecord{}, decision.After...)
+	return out, nil
+}
+
 func ReadIdentityDecisionLog(path string) (IdentityDecisionLog, error) {
 	file, err := os.Open(path)
 	if os.IsNotExist(err) {

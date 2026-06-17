@@ -30,6 +30,7 @@ Implemented nearby capabilities:
 - CSL-JSON imports and exports Better BibTeX `citation-key` values via source metadata.
 - CSL-JSON preserves Zotero note/tag metadata and imports attachment filenames with local path privacy redaction.
 - Zotero RDF import/export preserves collection metadata through `z:collection` source metadata.
+- Source-fusion identity resolution merges DOI/arXiv/PMID/PMCID/OpenAlex/Semantic Scholar/Crossref/Zotero IDs with explainable rules, conflict records, reversible merge/split decision logs, and `library identity-decision apply` support.
 
 Missing features:
 

@@ -51,4 +51,18 @@ func TestExecuteLibraryIdentityConflictsAndDecisionRecord(t *testing.T) {
 	if len(log.Decisions) != 1 || !log.Decisions[0].Reversible || log.Decisions[0].Action != library.IdentityDecisionMerge || len(log.Decisions[0].Before) != 2 || len(log.Decisions[0].After) != 1 {
 		t.Fatalf("decision log = %#v", log)
 	}
+
+	stdout.Reset()
+	stderr.Reset()
+	code = Execute([]string{"--json", "--project", project, "library", "identity-decision", "apply", "--id", log.Decisions[0].ID}, &stdout, &stderr)
+	if code != 0 {
+		t.Fatalf("identity-decision apply code=%d stderr=%s stdout=%s", code, stderr.String(), stdout.String())
+	}
+	papers, err := store.List()
+	if err != nil {
+		t.Fatalf("list after apply: %v", err)
+	}
+	if len(papers) != 1 || papers[0].Identifiers.DOI != "10.1000/same" {
+		t.Fatalf("papers after apply = %#v", papers)
+	}
 }

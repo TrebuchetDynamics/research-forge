@@ -39,6 +39,26 @@ func TestIdentityDecisionLogRecordsReversibleMergeSplitAndConflicts(t *testing.T
 	}
 }
 
+func TestApplyIdentityDecisionMergeAndSplitAreReversible(t *testing.T) {
+	records := []PaperRecord{{Title: "Left", Identifiers: Identifiers{DOI: "10.1000/a"}}, {Title: "Right", Identifiers: Identifiers{OpenAlexID: "W1", ZoteroItemKey: "ZOT-1"}}}
+	merge := IdentityDecision{ID: "merge-1", ClusterID: "identity-cluster-1", Action: IdentityDecisionMerge, Before: records, After: []PaperRecord{{Title: "Left", Identifiers: Identifiers{DOI: "10.1000/a", OpenAlexID: "W1", ZoteroItemKey: "ZOT-1"}}}}
+	merged, err := ApplyIdentityDecision(records, merge)
+	if err != nil {
+		t.Fatalf("merge: %v", err)
+	}
+	if len(merged) != 1 || merged[0].Identifiers.OpenAlexID != "W1" || merged[0].Identifiers.ZoteroItemKey != "ZOT-1" {
+		t.Fatalf("merged = %#v", merged)
+	}
+	split := IdentityDecision{ID: "split-1", ClusterID: "identity-cluster-1", Action: IdentityDecisionSplit, Before: merged, After: records}
+	restored, err := ApplyIdentityDecision(merged, split)
+	if err != nil {
+		t.Fatalf("split: %v", err)
+	}
+	if len(restored) != 2 || restored[1].Identifiers.OpenAlexID != "W1" {
+		t.Fatalf("restored = %#v", restored)
+	}
+}
+
 func TestDetectIdentityConflictsFlagsConflictingClusterMetadata(t *testing.T) {
 	records := []PaperRecord{
 		{Title: "Catalyst A", Identifiers: Identifiers{DOI: "10.1000/same"}, Year: 2020},

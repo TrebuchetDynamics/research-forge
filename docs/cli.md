@@ -30,7 +30,7 @@ Core commands:
 - `rforge --project <path> library reference-manager-matrix` round-trips BibTeX/RIS/CSL-JSON/Zotero RDF and reports the interchange fidelity matrix, including Better BibTeX citation keys, tags, notes, collections/groups, redacted attachments, and per-field preserved/lost counts
 - `rforge --project <path> library identity-resolve` reports source-fusion identity clusters with explainable match rules across DOI, arXiv, PMID, PMCID, OpenAlex, Semantic Scholar, Crossref, Zotero item keys, and NASA ADS bibcodes
 - `rforge --project <path> library pmcid-pmid-links` reports normalized PMID/PMCID/DOI links for biomedical records
-- `rforge --project <path> library identity-conflicts` records and reports identity-cluster conflict records; `rforge --project <path> library identity-decision record --action merge|split ...` appends reversible merge/split decisions to `data/identity-decisions.jsonl`
+- `rforge --project <path> library identity-conflicts` records and reports identity-cluster conflict records; `rforge --project <path> library identity-decision record --action merge|split ...` appends reversible merge/split decisions to `data/identity-decisions.jsonl`; `library identity-decision apply --id <decision-id>` applies the recorded after-state to the local library
 - `rforge duplicate report [--source <source>]|merge|split` (use `--source semantic-scholar` for graph-import dedupe review)
 - `rforge oss inventory-check <manifest.json>`
 - `rforge oss inventory-refresh <manifest.json> --source github [--base-url <url>]`

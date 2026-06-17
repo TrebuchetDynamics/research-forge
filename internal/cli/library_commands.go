@@ -483,8 +483,38 @@ func executeIdentityDecision(args []string, stdout, stderr io.Writer, opts globa
 		fmt.Fprintf(stdout, "%d identity decisions, %d conflicts\n", len(log.Decisions), len(log.Conflicts))
 		return 0
 	}
+	if len(args) > 0 && args[0] == "apply" {
+		values, err := parseKeyValueFlags(args[1:], map[string]bool{"--id": true})
+		if err != nil || values["--id"] == "" {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> library identity-decision apply --id <decision-id>")
+		}
+		log, err := library.ReadIdentityDecisionLog(identityDecisionLogPath(opts.Project))
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "identity_decision_log_failed", err.Error())
+		}
+		decision, ok := findIdentityDecision(log.Decisions, values["--id"])
+		if !ok {
+			return writeError(stdout, stderr, opts, 1, "identity_decision_not_found", values["--id"])
+		}
+		papers, err := store.List()
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "library_list_failed", fmt.Sprintf("list library: %v", err))
+		}
+		applied, err := library.ApplyIdentityDecision(papers, decision)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "identity_decision_apply_failed", err.Error())
+		}
+		if err := store.ReplaceAll(applied); err != nil {
+			return writeError(stdout, stderr, opts, 1, "identity_decision_store_failed", err.Error())
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"decision": decision, "papers": applied})
+		}
+		fmt.Fprintf(stdout, "applied identity %s decision %s\n", decision.Action, decision.ID)
+		return 0
+	}
 	if len(args) == 0 || args[0] != "record" {
-		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> library identity-decision record --action merge|split --cluster <id> --reason <text> --before-indexes <csv> --after-indexes <csv>")
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> library identity-decision record --action merge|split --cluster <id> --reason <text> --before-indexes <csv> --after-indexes <csv>; identity-decision apply --id <decision-id>")
 	}
 	values, err := parseKeyValueFlags(args[1:], map[string]bool{"--action": true, "--cluster": true, "--reason": true, "--reviewer": true, "--before-indexes": true, "--after-indexes": true})
 	if err != nil {
@@ -514,6 +544,15 @@ func executeIdentityDecision(args []string, stdout, stderr io.Writer, opts globa
 	}
 	fmt.Fprintf(stdout, "recorded reversible identity %s decision for %s\n", decision.Action, decision.ClusterID)
 	return 0
+}
+
+func findIdentityDecision(decisions []library.IdentityDecision, id string) (library.IdentityDecision, bool) {
+	for _, decision := range decisions {
+		if decision.ID == id {
+			return decision, true
+		}
+	}
+	return library.IdentityDecision{}, false
 }
 
 func identityDecisionLogPath(projectPath string) string {
