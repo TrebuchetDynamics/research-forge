@@ -25,6 +25,27 @@ func TestExecuteIndexEmbeddingProvidersListsComplianceProfiles(t *testing.T) {
 	}
 }
 
+func TestExecuteIndexQdrantHTTPEmbeddingRequiresConsentAndModelLock(t *testing.T) {
+	project := t.TempDir()
+	if err := os.MkdirAll(filepath.Join(project, "parsed"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	writeParsedFixture(t, filepath.Join(project, "parsed", "paper-1.json"), parsing.ParsedDocument{PaperID: "paper-1", Sections: []parsing.Section{{ID: "s1", Passages: []parsing.Passage{{ID: "p1", PaperID: "paper-1", SectionID: "s1", Text: "private qdrant text"}}}}})
+	t.Setenv("RFORGE_QDRANT_URL", "http://127.0.0.1:1")
+	t.Setenv("RFORGE_EMBEDDING_URL", "http://127.0.0.1:2/embed")
+	stderr := new(strings.Builder)
+	code := Execute([]string{"--project", project, "index", "rebuild", "--backend", "qdrant"}, ioDiscard{}, stderr)
+	if code == 0 || !strings.Contains(stderr.String(), "requires explicit consent") {
+		t.Fatalf("expected consent failure code=%d stderr=%s", code, stderr.String())
+	}
+	t.Setenv("RFORGE_EMBEDDING_CONSENT", "1")
+	stderr.Reset()
+	code = Execute([]string{"--project", project, "index", "rebuild", "--backend", "qdrant"}, ioDiscard{}, stderr)
+	if code == 0 || !strings.Contains(stderr.String(), "RFORGE_EMBEDDING_MODEL") {
+		t.Fatalf("expected model lock failure code=%d stderr=%s", code, stderr.String())
+	}
+}
+
 func TestExecuteIndexQdrantWritesVectorLockPrivacyAndReport(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {

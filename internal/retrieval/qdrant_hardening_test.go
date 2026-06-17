@@ -16,8 +16,14 @@ func TestEmbeddingProviderRegistryAndComplianceProfiles(t *testing.T) {
 		t.Fatalf("local provider = %#v ok=%t", local, ok)
 	}
 	httpProvider, ok := registry.Provider("http-embedding")
-	if !ok || !httpProvider.Compliance.RequiresConsent || httpProvider.Compliance.TextEgress == "none" {
+	if !ok || !httpProvider.Compliance.RequiresConsent || httpProvider.Compliance.TextEgress == "none" || httpProvider.Compliance.RequiredConfig == "" || httpProvider.Compliance.ModelVersionLock == "" || httpProvider.Compliance.Dimensionality == "" {
 		t.Fatalf("http provider = %#v ok=%t", httpProvider, ok)
+	}
+	if err := ValidateEmbeddingProviderCompliance("http-embedding:fixture", false, map[string]string{"RFORGE_EMBEDDING_URL": "http://embed"}); err == nil {
+		t.Fatalf("expected http provider to require consent")
+	}
+	if err := ValidateEmbeddingProviderCompliance("http-embedding:fixture", true, map[string]string{"RFORGE_EMBEDDING_URL": "http://embed", "RFORGE_EMBEDDING_MODEL": "fixture-v1"}); err != nil {
+		t.Fatalf("consented http provider blocked: %v", err)
 	}
 }
 

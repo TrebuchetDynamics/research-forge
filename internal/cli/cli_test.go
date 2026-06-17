@@ -2587,6 +2587,7 @@ func TestExecuteQdrantBackendUsesHTTPEmbeddingProvider(t *testing.T) {
 	t.Setenv("RFORGE_QDRANT_URL", server.URL)
 	t.Setenv("RFORGE_EMBEDDING_URL", server.URL+"/embed")
 	t.Setenv("RFORGE_EMBEDDING_MODEL", "fixture-embed")
+	t.Setenv("RFORGE_EMBEDDING_CONSENT", "1")
 	stdout := new(bytes.Buffer)
 	stderr := new(bytes.Buffer)
 	if code := Execute([]string{"--json", "--project", dir, "index", "rebuild", "--backend", "qdrant"}, stdout, stderr); code != 0 {

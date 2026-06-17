@@ -38,17 +38,39 @@ type EmbeddingProvider struct {
 }
 
 type EmbeddingComplianceProfile struct {
-	TextEgress      string `json:"textEgress"`
-	RequiresConsent bool   `json:"requiresConsent"`
-	RetentionPolicy string `json:"retentionPolicy"`
-	Redaction       string `json:"redaction"`
+	TextEgress       string `json:"textEgress"`
+	RequiresConsent  bool   `json:"requiresConsent"`
+	RequiredConfig   string `json:"requiredConfig"`
+	ModelVersionLock string `json:"modelVersionLock"`
+	Dimensionality   string `json:"dimensionality"`
+	RetentionPolicy  string `json:"retentionPolicy"`
+	Redaction        string `json:"redaction"`
 }
 
 func DefaultEmbeddingProviderRegistry() EmbeddingProviderRegistry {
 	return EmbeddingProviderRegistry{SchemaVersion: "1", Providers: []EmbeddingProvider{
-		{Name: "deterministic-hash", Dimensions: 8, Compliance: EmbeddingComplianceProfile{TextEgress: "none", RequiresConsent: false, RetentionPolicy: "local-only", Redaction: "not-required"}},
-		{Name: "http-embedding", Dimensions: 0, Compliance: EmbeddingComplianceProfile{TextEgress: "configured-http-endpoint", RequiresConsent: true, RetentionPolicy: "provider-configured", Redaction: "caller-managed"}},
+		{Name: "deterministic-hash", Dimensions: 8, Compliance: EmbeddingComplianceProfile{TextEgress: "none", RequiresConsent: false, RequiredConfig: "none", ModelVersionLock: "RFORGE_EMBEDDING_DIMENSIONS recorded in retrieval lock", Dimensionality: "fixed by RFORGE_EMBEDDING_DIMENSIONS or default 8", RetentionPolicy: "local-only", Redaction: "not-required"}},
+		{Name: "http-embedding", Dimensions: 0, Compliance: EmbeddingComplianceProfile{TextEgress: "passage/query text sent to RFORGE_EMBEDDING_URL", RequiresConsent: true, RequiredConfig: "RFORGE_EMBEDDING_URL, RFORGE_EMBEDDING_MODEL, RFORGE_EMBEDDING_CONSENT=1", ModelVersionLock: "RFORGE_EMBEDDING_MODEL recorded in retrieval lock", Dimensionality: "reported by provider response and locked in qdrant report", RetentionPolicy: "provider-configured; reviewer must confirm before use", Redaction: "caller-managed; use RFORGE_QDRANT_PAYLOAD_PRIVACY=redacted-checksum for stored payloads"}},
 	}}
+}
+
+func ValidateEmbeddingProviderCompliance(providerName string, consent bool, config map[string]string) error {
+	provider, ok := DefaultEmbeddingProviderRegistry().Provider(providerName)
+	if !ok {
+		return fmt.Errorf("unknown embedding provider %q", providerName)
+	}
+	if provider.Compliance.RequiresConsent && !consent {
+		return fmt.Errorf("embedding provider %s requires explicit consent before text egress", provider.Name)
+	}
+	if provider.Name == "http-embedding" {
+		if strings.TrimSpace(config["RFORGE_EMBEDDING_URL"]) == "" {
+			return fmt.Errorf("RFORGE_EMBEDDING_URL is required for http embedding provider")
+		}
+		if strings.TrimSpace(config["RFORGE_EMBEDDING_MODEL"]) == "" {
+			return fmt.Errorf("RFORGE_EMBEDDING_MODEL is required to lock http embedding model version")
+		}
+	}
+	return nil
 }
 
 func (r EmbeddingProviderRegistry) Provider(name string) (EmbeddingProvider, bool) {

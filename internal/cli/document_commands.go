@@ -357,6 +357,19 @@ func qdrantInvalidateFromEnv() bool {
 	return value == "1" || value == "true" || value == "yes"
 }
 
+func ensureEmbeddingComplianceFromEnv() error {
+	providerName := "deterministic-hash"
+	if strings.TrimSpace(os.Getenv("RFORGE_EMBEDDING_URL")) != "" {
+		model := strings.TrimSpace(os.Getenv("RFORGE_EMBEDDING_MODEL"))
+		providerName = "http-embedding"
+		if model != "" {
+			providerName += ":" + model
+		}
+	}
+	consent := strings.EqualFold(strings.TrimSpace(os.Getenv("RFORGE_EMBEDDING_CONSENT")), "1") || strings.EqualFold(strings.TrimSpace(os.Getenv("RFORGE_EMBEDDING_CONSENT")), "true") || strings.EqualFold(strings.TrimSpace(os.Getenv("RFORGE_EMBEDDING_CONSENT")), "yes")
+	return retrieval.ValidateEmbeddingProviderCompliance(providerName, consent, map[string]string{"RFORGE_EMBEDDING_URL": os.Getenv("RFORGE_EMBEDDING_URL"), "RFORGE_EMBEDDING_MODEL": os.Getenv("RFORGE_EMBEDDING_MODEL")})
+}
+
 func openRetrievalBackend(project, backend string) (retrieval.SearchAdapter, error) {
 	switch backend {
 	case "opensearch":
@@ -370,11 +383,17 @@ func openRetrievalBackend(project, backend string) (retrieval.SearchAdapter, err
 		if strings.TrimSpace(baseURL) == "" {
 			return nil, fmt.Errorf("RFORGE_QDRANT_URL is required for qdrant backend")
 		}
+		if err := ensureEmbeddingComplianceFromEnv(); err != nil {
+			return nil, err
+		}
 		return retrieval.NewQdrantIndex(retrieval.QdrantOptions{BaseURL: baseURL, Collection: os.Getenv("RFORGE_QDRANT_COLLECTION"), Embeddings: embeddingModelFromEnv(), PayloadPrivacy: qdrantPayloadPrivacyFromEnv(), InvalidateBeforeUpsert: qdrantInvalidateFromEnv()})
 	case "hybrid":
 		qdrantURL := os.Getenv("RFORGE_QDRANT_URL")
 		if strings.TrimSpace(qdrantURL) == "" {
 			return nil, fmt.Errorf("RFORGE_QDRANT_URL is required for hybrid backend")
+		}
+		if err := ensureEmbeddingComplianceFromEnv(); err != nil {
+			return nil, err
 		}
 		lexical, err := retrieval.OpenSQLiteIndex(filepath.Join(project, "data", "retrieval.db"))
 		if err != nil {
