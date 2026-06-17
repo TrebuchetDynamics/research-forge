@@ -718,7 +718,7 @@ These planning tasks turn the super-tool synthesis into concrete product slices 
 
 These tasks come from the expanded OSS inventory and deepen ResearchForge into a super-tool across reference management, source discovery, NLP, screening, retrieval, and statistics.
 
-- [ ] Add JabRef-inspired BibTeX/BibLaTeX quality reports covering citation-key collisions, groups/saved searches, field cleanup diffs, linked-file privacy, and reviewer-approved normalization (`opensource/inventory/jabref.md`).
+- [x] Add JabRef-inspired BibTeX/BibLaTeX quality reports covering citation-key collisions, groups/saved searches, field cleanup diffs, linked-file privacy, and reviewer-approved normalization (`BuildJabRefQualityReport`, `rforge library jabref-quality`, `opensource/inventory/jabref.md`).
 - [ ] Add RobotReviewer-inspired risk-of-bias and evidence-suggestion workflows where every automated judgment cites exact support text, uncertainty, model/version metadata, and reviewer accept/correct/reject state (`opensource/inventory/robotreviewer.md`).
 - [ ] Add revtools-inspired visual clustering for duplicate review and screening triage, with exportable cluster decisions and PRISMA/audit provenance (`opensource/inventory/revtools.md`).
 - [ ] Add PyMARE-style secondary meta-analysis engine comparison reports against metafor fixtures, including environment locks, model-setting parity, warning capture, and output deltas (`opensource/inventory/pymare.md`).

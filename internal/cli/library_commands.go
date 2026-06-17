@@ -285,7 +285,7 @@ func paperSources(paper library.PaperRecord) []string {
 
 func executeLibrary(args []string, stdout, stderr io.Writer, opts globalOptions) int {
 	if len(args) == 0 {
-		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> library <list|identity-resolve|reference-manager-matrix|refresh-doi|import-crossref-refs>")
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> library <list|identity-resolve|reference-manager-matrix|jabref-quality|refresh-doi|import-crossref-refs>")
 	}
 	if opts.Project == "" {
 		return writeError(stdout, stderr, opts, 2, "missing_project", "--project is required for library commands")
@@ -365,6 +365,23 @@ func executeLibrary(args []string, stdout, stderr io.Writer, opts globalOptions)
 			for _, match := range cluster.Matches {
 				fmt.Fprintf(stdout, "  %s: %s=%s (%.2f) %s\n", match.Rule, match.Identifier, match.Value, match.Confidence, match.Explanation)
 			}
+		}
+		return 0
+	case "jabref-quality":
+		if len(args) != 1 {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> library jabref-quality")
+		}
+		papers, err := store.List()
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "library_list_failed", fmt.Sprintf("list library: %v", err))
+		}
+		report := library.BuildJabRefQualityReport(papers)
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"report": report})
+		}
+		fmt.Fprintln(stdout, "JabRef BibTeX/BibLaTeX quality report:")
+		for _, issue := range report.Issues {
+			fmt.Fprintf(stdout, "- %s %s: %s\n", issue.Severity, issue.Kind, issue.Message)
 		}
 		return 0
 	case "reference-manager-matrix":

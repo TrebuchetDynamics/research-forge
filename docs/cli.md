@@ -28,6 +28,7 @@ Core commands:
 - `rforge export json|csv|bibtex|ris|csl-json|zotero-rdf <file>`
 - Zotero RDF and JabRef/BibTeX imports preserve reference-manager fidelity metadata in source refs: collections/groups, tags, notes, annotations, citation keys, BibTeX cleanup diffs, and linked-file privacy redaction checks
 - `rforge --project <path> library reference-manager-matrix` round-trips BibTeX/RIS/CSL-JSON/Zotero RDF and reports the interchange fidelity matrix, including Better BibTeX citation keys, tags, notes, collections/groups, redacted attachments, and per-field preserved/lost counts
+- `rforge --project <path> library jabref-quality` writes a JabRef-inspired BibTeX/BibLaTeX quality report for citation-key collisions, groups/saved searches, field cleanup diffs, linked-file privacy, and reviewer-approved normalization
 - `rforge --project <path> library identity-resolve` reports source-fusion identity clusters with explainable match rules across DOI, arXiv, PMID, PMCID, OpenAlex, Semantic Scholar, Crossref, Zotero item keys, and NASA ADS bibcodes
 - `rforge --project <path> library pmcid-pmid-links` reports normalized PMID/PMCID/DOI links for biomedical records
 - `rforge --project <path> library identity-conflicts` records and reports identity-cluster conflict records; `rforge --project <path> library identity-decision record --action merge|split ...` appends reversible merge/split decisions to `data/identity-decisions.jsonl`; `library identity-decision apply --id <decision-id>` applies the recorded after-state to the local library

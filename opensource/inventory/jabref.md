@@ -28,11 +28,14 @@ Implemented nearby capabilities:
 Missing features:
 
 - BibLaTeX-specific field preservation beyond current BibTeX coverage.
-- Citation-key quality report and collision repair workflow.
+- Collision repair workflow for reviewer-selected citation-key changes.
 - JabRef-style groups/saved searches mapped into ResearchForge collections.
-- Linked-file audit that separates private local paths from shareable attachment metadata.
 - BibTeX cleanup diff UI before applying normalization.
+
+Implemented:
+
+- `BuildJabRefQualityReport` and `rforge library jabref-quality` report citation-key collisions/missing keys, groups/saved searches, field cleanup diffs, linked-file privacy context, and reviewer-approved normalization without mutating records.
 
 ## Recommended next slice
 
-Add a BibTeX/BibLaTeX quality report that flags missing citation keys, duplicate keys, non-portable fields, local linked-file paths, and normalization diffs without mutating the library until reviewed.
+Add reviewer-driven citation-key repair and BibTeX cleanup application flows on top of the existing quality report, preserving before/after diffs and approval provenance.
