@@ -25,6 +25,7 @@ Implemented nearby capabilities:
 - `rforge parse review-refs` creates a manual review queue for low-confidence or incomplete parsed references.
 - Parser-run manifests record parser source/version/command, input/output checksums, reference JSON output kind, license constraints, shareability, warnings, and reviewer gates.
 - `rforge parse adjudicate-ref` and `rforge parse adjudicated-refs --ambiguity-out` persist reviewer accept/correct/reject/defer decisions, provenance links, corrected reference fields, and exportable ambiguity queues for Anystyle/GROBID/S2ORC-normalized matches.
+- Multi-engine parser arbitration scores GROBID/S2ORC-style/PaperMage/CERMINE/Science Parse/Anystyle outputs per field, routes conflicts to review, records reviewer selection reasons, and emits reconciliation outputs.
 - Crossref/OpenAlex/Semantic Scholar connectors.
 - Duplicate report/merge/split UX.
 

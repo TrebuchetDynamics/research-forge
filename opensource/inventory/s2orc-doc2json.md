@@ -24,6 +24,7 @@ Implemented nearby capabilities:
 - S2ORC-style JSON reader available through `rforge parse --parser s2orc --s2orc <file>`.
 - Parser-run manifests record parser source/version/command, input/output checksums, JSON output kind, license constraints, shareability, warnings, and reviewer gates.
 - The local project knowledge graph merges S2ORC-style parsed references with collections/tags, OpenAlex concepts, citation edges, evidence, screening, analysis, and report claims for `rforge knowledge query`.
+- Multi-engine parser arbitration scores GROBID/S2ORC-style/PaperMage/CERMINE/Science Parse/Anystyle outputs per field, routes conflicts to review, records reviewer selection reasons, and emits reconciliation outputs.
 - Citation graph export and reports.
 - Evidence items can cite passage references.
 

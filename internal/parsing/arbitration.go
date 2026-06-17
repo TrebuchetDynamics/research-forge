@@ -8,6 +8,7 @@ type ParserArbitrationReport struct {
 	FieldScores           map[string][]FieldScore      `json:"fieldScores"`
 	Comparisons           []FieldComparison            `json:"comparisons"`
 	WarningComparison     []ParserWarnings             `json:"warningComparison"`
+	ConflictReviewQueue   []ParserConflictReviewItem   `json:"conflictReviewQueue,omitempty"`
 	ReconciliationOutputs []ParserReconciliationOutput `json:"reconciliationOutputs"`
 	Decision              ParserArbitrationDecision    `json:"decision"`
 }
@@ -37,6 +38,12 @@ type TextOffset struct {
 type ParserWarnings struct {
 	ParserName string   `json:"parserName"`
 	Warnings   []string `json:"warnings"`
+}
+
+type ParserConflictReviewItem struct {
+	Field        string             `json:"field"`
+	Reason       string             `json:"reason"`
+	ParserValues []ParserFieldValue `json:"parserValues"`
 }
 
 type ParserArbitrationDecision struct {
@@ -71,6 +78,7 @@ func ArbitrateParserOutputs(docs []ParsedDocument, input ArbitrationDecisionInpu
 	for _, doc := range docs {
 		report.WarningComparison = append(report.WarningComparison, ParserWarnings{ParserName: doc.ParserName, Warnings: append([]string{}, doc.Warnings...)})
 	}
+	report.ConflictReviewQueue = buildParserConflictReviewQueue(report.Comparisons)
 	if report.Decision.AcceptedParser == "" {
 		report.Decision.AcceptedParser = bestParserByFieldScores(report.FieldScores)
 	}
@@ -146,6 +154,23 @@ func bestParserByFieldScores(scores map[string][]FieldScore) string {
 		}
 	}
 	return best
+}
+
+func buildParserConflictReviewQueue(comparisons []FieldComparison) []ParserConflictReviewItem {
+	queue := []ParserConflictReviewItem{}
+	for _, comparison := range comparisons {
+		seen := map[string]bool{}
+		for _, value := range comparison.ParserValues {
+			trimmed := strings.TrimSpace(value.RawText)
+			if trimmed != "" {
+				seen[trimmed] = true
+			}
+		}
+		if len(seen) > 1 {
+			queue = append(queue, ParserConflictReviewItem{Field: comparison.Field, Reason: "parser outputs disagree; reviewer must select accepted field value", ParserValues: comparison.ParserValues})
+		}
+	}
+	return queue
 }
 
 func buildReconciliationOutputs(comparisons []FieldComparison, docs []ParsedDocument, decision ParserArbitrationDecision) []ParserReconciliationOutput {

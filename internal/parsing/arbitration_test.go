@@ -25,7 +25,38 @@ func TestArbitrateParserOutputsScoresFieldsAndRecordsDecision(t *testing.T) {
 	if len(report.WarningComparison) != 2 || report.WarningComparison[1].Warnings[0] != "missing abstract" {
 		t.Fatalf("warnings missing: %#v", report.WarningComparison)
 	}
+	if len(report.ConflictReviewQueue) == 0 || report.ConflictReviewQueue[0].Field != "sections" || len(report.ConflictReviewQueue[0].ParserValues) != 2 {
+		t.Fatalf("conflict review queue = %#v", report.ConflictReviewQueue)
+	}
 	if report.Decision.AcceptedParser != "grobid" || report.Decision.Reason == "" || !report.Decision.ReviewerApprovalRequired {
 		t.Fatalf("decision = %#v", report.Decision)
 	}
+}
+
+func TestArbitrateParserOutputsSupportsRequiredParserEngines(t *testing.T) {
+	parsers := []string{"grobid", "s2orc-doc2json", "papermage", "cermine", "science-parse", "anystyle"}
+	docs := []ParsedDocument{}
+	for _, parser := range parsers {
+		docs = append(docs, ParsedDocument{PaperID: "paper-1", ParserName: parser, Title: parser + " title", References: []Reference{{Title: parser + " ref"}}})
+	}
+	report := ArbitrateParserOutputs(docs, ArbitrationDecisionInput{})
+	for _, parser := range parsers {
+		if !arbitrationHasParser(report, parser) {
+			t.Fatalf("missing parser %s in report %#v", parser, report.FieldScores)
+		}
+	}
+	if len(report.ConflictReviewQueue) == 0 {
+		t.Fatalf("expected conflicts routed to review")
+	}
+}
+
+func arbitrationHasParser(report ParserArbitrationReport, parser string) bool {
+	for _, scores := range report.FieldScores {
+		for _, score := range scores {
+			if score.ParserName == parser {
+				return true
+			}
+		}
+	}
+	return false
 }

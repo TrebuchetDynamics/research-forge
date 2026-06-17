@@ -33,6 +33,21 @@ func TestExecuteParseArbitrateWritesDecisionReport(t *testing.T) {
 	if report.Decision.AcceptedParser != "grobid" || report.Decision.Reason != "best field coverage" || len(report.FieldScores["abstract"]) != 2 || len(report.Comparisons) == 0 || len(report.WarningComparison) != 2 {
 		t.Fatalf("report = %#v", report)
 	}
+
+	multiOut := filepath.Join(project, "multi-arbitration.json")
+	paperMage := filepath.Join(project, "papermage.json")
+	writeParsedFixture(t, paperMage, parsing.ParsedDocument{SchemaVersion: "1", PaperID: "paper-1", ParserName: "papermage", Title: "Different", Abstract: "Layered"})
+	code = Execute([]string{"--json", "--project", project, "parse", "arbitrate", "--parsed", left, "--parsed", right, "--parsed", paperMage, "--out", multiOut}, &stdout, &stderr)
+	if code != 0 {
+		t.Fatalf("multi code=%d stderr=%s stdout=%s", code, stderr.String(), stdout.String())
+	}
+	var multi parsing.ParserArbitrationReport
+	if err := readJSONFile(multiOut, &multi); err != nil {
+		t.Fatalf("read multi: %v", err)
+	}
+	if len(multi.FieldScores["title"]) != 3 || len(multi.ConflictReviewQueue) == 0 {
+		t.Fatalf("multi report = %#v", multi)
+	}
 }
 
 func writeParsedFixture(t *testing.T, path string, doc parsing.ParsedDocument) {

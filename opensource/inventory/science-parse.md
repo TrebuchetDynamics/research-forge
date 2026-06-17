@@ -23,6 +23,7 @@ Implemented nearby capabilities:
 - Parsed reference model.
 - OSS inventory governance for adapter decisions.
 - Parser comparison reports include Science Parse as stale-reference fallback metadata when present in parsed outputs.
+- Multi-engine parser arbitration scores GROBID/S2ORC-style/PaperMage/CERMINE/Science Parse/Anystyle outputs per field, routes conflicts to review, records reviewer selection reasons, and emits reconciliation outputs.
 
 Missing features:
 
