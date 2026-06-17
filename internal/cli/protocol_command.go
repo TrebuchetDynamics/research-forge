@@ -9,8 +9,11 @@ import (
 )
 
 func executeProtocol(args []string, stdout, stderr io.Writer, opts globalOptions) int {
+	if len(args) == 1 && args[0] == "capabilities" {
+		return writeCapabilities(protocol.DefaultConnectorCapabilityRegistry(), stdout, opts)
+	}
 	if len(args) == 0 || (args[0] != "compile" && args[0] != "plan-sources") {
-		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge protocol compile|plan-sources --question <text> [--type pico|peco|spider|freeform] [framework flags]")
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge protocol compile|plan-sources|capabilities --question <text> [--type pico|peco|spider|freeform] [framework flags]")
 	}
 	values, err := parseProtocolCompileFlags(args[1:])
 	if err != nil {
@@ -70,6 +73,24 @@ func executeProtocol(args []string, stdout, stderr io.Writer, opts globalOptions
 	return 0
 }
 
+func writeCapabilities(registry protocol.ConnectorCapabilityRegistry, stdout io.Writer, opts globalOptions) int {
+	if opts.JSON {
+		return writeJSON(stdout, 0, map[string]any{"registry": registry})
+	}
+	fmt.Fprintln(stdout, "Connector capabilities:")
+	for _, connector := range registry.Connectors {
+		fmt.Fprintf(stdout, "- %s (%s)\n", connector.Label, connector.Kind)
+		fmt.Fprintf(stdout, "  Entities: %s\n", strings.Join(connector.SupportedEntities, ", "))
+		fmt.Fprintf(stdout, "  Rate limits: %s\n", connector.RateLimitPolicy)
+		fmt.Fprintf(stdout, "  Auth: %s\n", connector.AuthNeeds)
+		fmt.Fprintf(stdout, "  Live smoke: %s\n", connector.LiveSmokeStatus)
+		fmt.Fprintf(stdout, "  License/shareability: %s\n", connector.LicenseShareabilityPolicy)
+		fmt.Fprintf(stdout, "  Cacheability: %s\n", connector.Cacheability)
+		fmt.Fprintf(stdout, "  Provenance: %s\n", strings.Join(connector.ProvenanceFields, ", "))
+	}
+	return 0
+}
+
 func writeSourcePlan(plan protocol.SourcePlan, stdout io.Writer, opts globalOptions) int {
 	if opts.JSON {
 		return writeJSON(stdout, 0, map[string]any{"sourcePlan": plan})
@@ -82,7 +103,12 @@ func writeSourcePlan(plan protocol.SourcePlan, stdout io.Writer, opts globalOpti
 			fmt.Fprintf(stdout, "  Query: %s\n", source.Query)
 		}
 		fmt.Fprintf(stdout, "  Dry run: %s\n", source.DryRunEstimate)
+		fmt.Fprintf(stdout, "  Rate limits: %s\n", source.RateLimitPolicy)
 		fmt.Fprintf(stdout, "  Auth: %s\n", source.AuthRequirement)
+		fmt.Fprintf(stdout, "  Live smoke: %s\n", source.LiveSmokeStatus)
+		fmt.Fprintf(stdout, "  License/shareability: %s\n", source.LicenseShareabilityPolicy)
+		fmt.Fprintf(stdout, "  Cacheability: %s\n", source.Cacheability)
+		fmt.Fprintf(stdout, "  Provenance: %s\n", strings.Join(source.ProvenanceFields, ", "))
 		fmt.Fprintf(stdout, "  Privacy: %s\n", source.PrivacyWarning)
 		fmt.Fprintf(stdout, "  CLI: %s\n", source.CLICommand)
 	}

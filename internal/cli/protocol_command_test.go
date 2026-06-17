@@ -87,6 +87,42 @@ func TestExecuteProtocolPlanSourcesJSON(t *testing.T) {
 	}
 }
 
+func TestExecuteProtocolCapabilitiesJSON(t *testing.T) {
+	var stdout, stderr bytes.Buffer
+	code := Execute([]string{"--json", "protocol", "capabilities"}, &stdout, &stderr)
+	if code != 0 {
+		t.Fatalf("exit code = %d, stderr = %s", code, stderr.String())
+	}
+	var env struct {
+		OK   bool `json:"ok"`
+		Data struct {
+			Registry struct {
+				Connectors []struct {
+					ID                        string   `json:"id"`
+					SupportedEntities         []string `json:"supportedEntities"`
+					RateLimitPolicy           string   `json:"rateLimitPolicy"`
+					AuthNeeds                 string   `json:"authNeeds"`
+					LiveSmokeStatus           string   `json:"liveSmokeStatus"`
+					LicenseShareabilityPolicy string   `json:"licenseShareabilityPolicy"`
+					Cacheability              string   `json:"cacheability"`
+					ProvenanceFields          []string `json:"provenanceFields"`
+				} `json:"connectors"`
+			} `json:"registry"`
+		} `json:"data"`
+	}
+	if err := json.Unmarshal(stdout.Bytes(), &env); err != nil {
+		t.Fatalf("json decode: %v\n%s", err, stdout.String())
+	}
+	if !env.OK || len(env.Data.Registry.Connectors) < 13 {
+		t.Fatalf("unexpected registry: %#v", env)
+	}
+	for _, connector := range env.Data.Registry.Connectors {
+		if connector.ID == "openalex" && (len(connector.SupportedEntities) == 0 || connector.RateLimitPolicy == "" || connector.AuthNeeds == "" || connector.LiveSmokeStatus == "" || connector.LicenseShareabilityPolicy == "" || connector.Cacheability == "" || len(connector.ProvenanceFields) == 0) {
+			t.Fatalf("openalex capability incomplete: %#v", connector)
+		}
+	}
+}
+
 func sourcePlanHas(entries []struct {
 	Source                   string `json:"source"`
 	ReviewerApprovalRequired bool   `json:"reviewerApprovalRequired"`
