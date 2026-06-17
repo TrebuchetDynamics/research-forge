@@ -1279,6 +1279,49 @@ func executeEvidence(args []string, stdout, stderr io.Writer, opts globalOptions
 		}
 		fmt.Fprintf(stdout, "wrote evidence extraction grid with %d rows to %s\n", len(grid.Rows), outPath)
 		return 0
+	case "entity-suggest":
+		parsedPath, model, version, outPath, ok := parseEntitySuggest(args[1:])
+		if !ok {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge evidence entity-suggest --parsed <parsed.json> --out <queue.json> [--model <name> --version <version>]")
+		}
+		var doc parsing.ParsedDocument
+		if err := readJSONFile(parsedPath, &doc); err != nil {
+			return writeError(stdout, stderr, opts, 1, "parsed_read_failed", err.Error())
+		}
+		passages := []parsing.Passage{}
+		for _, section := range doc.Sections {
+			passages = append(passages, section.Passages...)
+		}
+		queue := evidence.DraftScientificEntitySuggestions(evidence.ScientificEntitySuggestionRequest{PaperID: doc.PaperID, Passages: passages, ModelName: model, ModelVersion: version})
+		if err := writeJSONFile(outPath, queue); err != nil {
+			return writeError(stdout, stderr, opts, 1, "entity_queue_write_failed", err.Error())
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"queue": queue, "path": outPath})
+		}
+		fmt.Fprintf(stdout, "wrote %d scientific entity suggestions to %s\n", len(queue.Suggestions), outPath)
+		return 0
+	case "entity-review":
+		queuePath, input, outPath, ok := parseEntityReview(args[1:])
+		if !ok {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge evidence entity-review --queue <queue.json> --id <suggestion-id> --decision accepted|rejected|corrected --reviewer <name> --out <queue.json> [--note <text>]")
+		}
+		var queue evidence.ScientificEntitySuggestionQueue
+		if err := readJSONFile(queuePath, &queue); err != nil {
+			return writeError(stdout, stderr, opts, 1, "entity_queue_read_failed", err.Error())
+		}
+		reviewed, err := evidence.ReviewScientificEntitySuggestion(queue, input)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 2, "entity_review_invalid", err.Error())
+		}
+		if err := writeJSONFile(outPath, reviewed); err != nil {
+			return writeError(stdout, stderr, opts, 1, "entity_review_write_failed", err.Error())
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"queue": reviewed, "path": outPath})
+		}
+		fmt.Fprintf(stdout, "wrote reviewed scientific entity queue to %s\n", outPath)
+		return 0
 	case "risk-bias-templates":
 		outPath, ok := parseSingleFlag(args[1:], "--out")
 		if !ok {
@@ -1353,6 +1396,41 @@ func parseEvidenceGrid(args []string) ([]string, string, string, bool) {
 		}
 	}
 	return parsed, values["--analysis"], values["--out"], values["--out"] != ""
+}
+
+func parseEntitySuggest(args []string) (string, string, string, string, bool) {
+	values := map[string]string{}
+	for i := 0; i < len(args); i++ {
+		switch args[i] {
+		case "--parsed", "--model", "--version", "--out":
+			if i+1 >= len(args) {
+				return "", "", "", "", false
+			}
+			values[args[i]] = args[i+1]
+			i++
+		default:
+			return "", "", "", "", false
+		}
+	}
+	return values["--parsed"], values["--model"], values["--version"], values["--out"], values["--parsed"] != "" && values["--out"] != ""
+}
+
+func parseEntityReview(args []string) (string, evidence.ScientificEntityReviewInput, string, bool) {
+	values := map[string]string{}
+	for i := 0; i < len(args); i++ {
+		switch args[i] {
+		case "--queue", "--id", "--decision", "--reviewer", "--note", "--out":
+			if i+1 >= len(args) {
+				return "", evidence.ScientificEntityReviewInput{}, "", false
+			}
+			values[args[i]] = args[i+1]
+			i++
+		default:
+			return "", evidence.ScientificEntityReviewInput{}, "", false
+		}
+	}
+	input := evidence.ScientificEntityReviewInput{SuggestionID: values["--id"], Decision: evidence.EntitySuggestionStatus(values["--decision"]), Reviewer: values["--reviewer"], Note: values["--note"]}
+	return values["--queue"], input, values["--out"], values["--queue"] != "" && values["--id"] != "" && values["--decision"] != "" && values["--reviewer"] != "" && values["--out"] != ""
 }
 
 func parseRiskBiasSuggest(args []string) (evidence.RiskOfBiasSuggestionRequest, string, bool) {
