@@ -200,8 +200,10 @@ var dedupeReviewTemplate = template.Must(template.New("dedupe-review").Parse(`<s
   </article>
   {{end}}
   {{else}}<p>No duplicate identity clusters detected.</p>{{end}}
-  <h3>Conflicts</h3>
+  <h3>Conflicting source fields</h3>
   {{if .Conflicts}}<ul>{{range .Conflicts}}<li>{{.ClusterID}} — {{.Severity}} — {{.Reason}}</li>{{end}}</ul>{{else}}<p>No unresolved identity conflicts.</p>{{end}}
+  <h3>Zotero collection/tag context and citation-key preservation</h3>
+  {{range .Records}}{{range .SourceRefs}}<p>{{.Source}} — collections={{index .Metadata "collections"}} tags={{index .Metadata "tags"}} citation-key preservation={{index .Metadata "citation-key"}}</p>{{end}}{{end}}
   <h3>Decision history</h3>
   {{if .DecisionLog.Decisions}}<ul>{{range .DecisionLog.Decisions}}<li>{{.ID}} — {{.Action}} — reversible={{.Reversible}} — {{.Reason}}</li>{{end}}</ul>{{else}}<p>No identity decisions recorded.</p>{{end}}
   <h3>PRISMA/audit provenance</h3>

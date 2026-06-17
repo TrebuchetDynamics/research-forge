@@ -16,8 +16,8 @@ func TestDedupeReviewHandlerRendersClustersDecisionHistoryAndAuditProvenance(t *
 	if err != nil {
 		t.Fatalf("open store: %v", err)
 	}
-	left, _ := library.NewPaperRecord(library.PaperRecordInput{Title: "Catalyst A", Identifiers: library.Identifiers{DOI: "10.1000/same"}, Year: 2020})
-	right, _ := library.NewPaperRecord(library.PaperRecordInput{Title: "Unrelated title", Identifiers: library.Identifiers{CrossrefID: "10.1000/same"}, Year: 2024})
+	left, _ := library.NewPaperRecord(library.PaperRecordInput{Title: "Catalyst A", Identifiers: library.Identifiers{DOI: "10.1000/same"}, Year: 2020, SourceRefs: []library.SourceRef{{Source: "zotero", Metadata: map[string]string{"collections": "Included", "tags": "catalyst", "citation-key": "smith2026cat"}}}})
+	right, _ := library.NewPaperRecord(library.PaperRecordInput{Title: "Unrelated title", Identifiers: library.Identifiers{CrossrefID: "10.1000/same", OpenAlexID: "W123"}, Year: 2024, SourceRefs: []library.SourceRef{{Source: "openalex", Metadata: map[string]string{"concepts": "chemistry"}}}})
 	if err := store.ReplaceAll([]library.PaperRecord{left, right}); err != nil {
 		t.Fatalf("replace: %v", err)
 	}
@@ -32,7 +32,7 @@ func TestDedupeReviewHandlerRendersClustersDecisionHistoryAndAuditProvenance(t *
 	rec := httptest.NewRecorder()
 	newDedupeReviewHandler(func() string { return project }).ServeHTTP(rec, req)
 	body := rec.Body.String()
-	for _, want := range []string{"Dedupe/cluster review", "revtools-inspired", "identity-cluster-1", "Catalyst A", "Unrelated title", "Decision history", "decision-1", "PRISMA/audit provenance", "identity.merge.approved", "rforge --json --project", "identity-decision log"} {
+	for _, want := range []string{"Dedupe/cluster review", "revtools-inspired", "identity-cluster-1", "Catalyst A", "Unrelated title", "Conflicting source fields", "Zotero collection/tag context", "citation-key preservation", "Included", "catalyst", "smith2026cat", "Decision history", "decision-1", "PRISMA/audit provenance", "identity.merge.approved", "rforge --json --project", "identity-decision log"} {
 		if !strings.Contains(body, want) {
 			t.Fatalf("dedupe screen missing %q:\n%s", want, body)
 		}

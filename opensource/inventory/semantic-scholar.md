@@ -40,6 +40,7 @@ Implemented nearby capabilities:
 - Source-fusion identity resolution merges DOI/arXiv/PMID/PMCID/OpenAlex/Semantic Scholar/Crossref/Zotero IDs with explainable rules, conflict records, reversible merge/split decision logs, and `library identity-decision apply` support.
 - The `/map` local web cockpit combines concept maps, citation neighborhoods, screening priority, parser quality, retrieval hits, and evidence coverage with no-JS server rendering and `/map/snapshot.json` audit exports.
 - Cross-tool benchmarks report deterministic fixture metrics for discovery recall, dedupe precision, parser field accuracy, reference normalization, retrieval quality, screening effort savings, and report/package reproducibility.
+- The `/dedupe` workbench shows identity clusters, conflicting source fields, Zotero collection/tag context, citation-key preservation, merge/split history, and reversible identity decisions.
 
 Missing features:
 
