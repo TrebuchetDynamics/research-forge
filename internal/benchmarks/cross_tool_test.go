@@ -22,6 +22,11 @@ func TestBuildCrossToolBenchmarkReportCoversMetaAnalysisSpineMetrics(t *testing.
 	if report.Score("discovery_recall") != 0.9 || report.Score("screening_effort_savings") != 0.6 || report.Score("report_package_reproducibility") != 0.9 {
 		t.Fatalf("unexpected scores: %#v", report.Metrics)
 	}
+	for _, want := range []string{"discovery", "dedupe", "parsing", "reference-normalization", "retrieval", "screening", "report-package"} {
+		if !report.HasFixture(want) {
+			t.Fatalf("missing deterministic fixture %s in %#v", want, report.Fixtures)
+		}
+	}
 }
 
 func TestDefaultCrossToolBenchmarkInputIsDeterministic(t *testing.T) {

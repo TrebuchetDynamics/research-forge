@@ -29,6 +29,7 @@ Implemented nearby capabilities:
 - Crossref/OpenAlex/Semantic Scholar connectors.
 - Duplicate report/merge/split UX.
 - Source-fusion identity resolution merges DOI/arXiv/PMID/PMCID/OpenAlex/Semantic Scholar/Crossref/Zotero IDs with explainable rules, conflict records, reversible merge/split decision logs, and `library identity-decision apply` support.
+- Cross-tool benchmarks report deterministic fixture metrics for discovery recall, dedupe precision, parser field accuracy, reference normalization, retrieval quality, screening effort savings, and report/package reproducibility.
 
 Missing features:
 

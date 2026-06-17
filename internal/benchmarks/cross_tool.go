@@ -18,9 +18,16 @@ type CrossToolBenchmarkInput struct {
 }
 
 type CrossToolBenchmarkReport struct {
-	SchemaVersion string            `json:"schemaVersion"`
-	Metrics       []BenchmarkMetric `json:"metrics"`
-	Markdown      string            `json:"markdown"`
+	SchemaVersion string             `json:"schemaVersion"`
+	Fixtures      []BenchmarkFixture `json:"fixtures"`
+	Metrics       []BenchmarkMetric  `json:"metrics"`
+	Markdown      string             `json:"markdown"`
+}
+
+type BenchmarkFixture struct {
+	ID          string   `json:"id"`
+	Description string   `json:"description"`
+	Tools       []string `json:"tools"`
 }
 
 type BenchmarkMetric struct {
@@ -38,6 +45,15 @@ func DefaultCrossToolBenchmarkInput() CrossToolBenchmarkInput {
 
 func BuildCrossToolBenchmarkReport(input CrossToolBenchmarkInput) CrossToolBenchmarkReport {
 	report := CrossToolBenchmarkReport{SchemaVersion: "1"}
+	report.Fixtures = []BenchmarkFixture{
+		{ID: "discovery", Description: "deterministic source-query fixture with known relevant seed records", Tools: []string{"openalex", "semantic-scholar"}},
+		{ID: "dedupe", Description: "identity-cluster fixture with known true merges and false positives", Tools: []string{"openalex", "semantic-scholar"}},
+		{ID: "parsing", Description: "gold parsed-field fixture for title/abstract/sections/references", Tools: []string{"grobid", "anystyle"}},
+		{ID: "reference-normalization", Description: "parsed bibliography fixture with DOI/arXiv/PMID target identifiers", Tools: []string{"anystyle", "openalex", "semantic-scholar"}},
+		{ID: "retrieval", Description: "passage relevance fixture for lexical/vector/hybrid backends", Tools: []string{"opensearch", "qdrant"}},
+		{ID: "screening", Description: "frozen screening decisions fixture for effort-savings curves", Tools: []string{"asreview"}},
+		{ID: "report-package", Description: "offline report and package replay fixture with checksum expectations", Tools: []string{"research-forge"}},
+	}
 	report.Metrics = []BenchmarkMetric{
 		metric("discovery_recall", "Discovery recall", input.DiscoveryRelevantFound, input.DiscoveryRelevantTotal, ratio(input.DiscoveryRelevantFound, input.DiscoveryRelevantTotal), "relevant seed/source records recovered"),
 		metric("dedupe_precision", "Dedupe precision", input.DedupeTrueMerges, input.DedupeProposedMerges, ratio(input.DedupeTrueMerges, input.DedupeProposedMerges), "proposed identity merges that are true duplicates"),
@@ -55,6 +71,14 @@ func BuildCrossToolBenchmarkReport(input CrossToolBenchmarkInput) CrossToolBench
 func (r CrossToolBenchmarkReport) HasMetric(id string) bool {
 	for _, m := range r.Metrics {
 		if m.ID == id {
+			return true
+		}
+	}
+	return false
+}
+func (r CrossToolBenchmarkReport) HasFixture(id string) bool {
+	for _, f := range r.Fixtures {
+		if f.ID == id {
 			return true
 		}
 	}
