@@ -152,7 +152,10 @@ var privacyModelTemplate = template.Must(template.New("privacy-model").Parse(`<s
 
 var informationArchitectureTemplate = template.Must(template.New("dashboard-ia").Parse(`<section aria-labelledby="ia-title" class="rf-card">
   <h2 id="ia-title">Dashboard information architecture</h2>
-  <h3>Routes</h3>
+  <h3>Diagram</h3>
+  <pre aria-label="Dashboard information architecture diagram">{{range .Diagram}}{{.}}
+{{end}}</pre>
+  <h3>routes</h3>
   {{range .Routes}}<article><h4>{{.Path}}</h4><p>Partial endpoints: <code>{{.Partial}}</code></p><p>View models: {{.ViewModel}}</p><p>No-JS fallbacks: {{.NoJSFallback}}</p><p>Owner: {{.Owner}}</p></article>{{end}}
   <h3>Background jobs</h3>
   {{range .BackgroundJobs}}<p>{{.Name}} — {{.Trigger}} — {{.StatusArtifact}}</p>{{end}}

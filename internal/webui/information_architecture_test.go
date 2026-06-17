@@ -8,16 +8,16 @@ import (
 
 func TestDashboardInformationArchitectureDocumentsRoutesPartialsViewModelsFallbacksJobsAndOwnership(t *testing.T) {
 	ia := BuildDashboardInformationArchitecture()
-	if ia.SchemaVersion != "1" || len(ia.Routes) == 0 || len(ia.BackgroundJobs) == 0 || len(ia.OwnershipBoundaries) == 0 {
+	if ia.SchemaVersion != "1" || len(ia.Routes) == 0 || len(ia.BackgroundJobs) == 0 || len(ia.OwnershipBoundaries) == 0 || len(ia.Diagram) == 0 {
 		t.Fatalf("ia = %#v", ia)
 	}
-	for _, route := range []string{"/forge", "/workbenches", "/screening", "/package"} {
+	for _, route := range []string{"/forge", "/workbenches", "/notebook", "/parsing", "/map", "/acquisition", "/retrieve", "/screening", "/evidence", "/analysis", "/report", "/package", "/connectors", "/dedupe", "/privacy", "/architecture"} {
 		if !ia.HasRoute(route) {
 			t.Fatalf("missing route %s", route)
 		}
 	}
 	body := renderHandler(t, NewInformationArchitectureHandler(ia))
-	for _, want := range []string{"Dashboard information architecture", "Partial endpoints", "View models", "No-JS fallbacks", "Background jobs", "Ownership boundaries"} {
+	for _, want := range []string{"Dashboard information architecture", "Diagram", "routes", "Partial endpoints", "View models", "No-JS fallbacks", "Background jobs", "Ownership boundaries", "ForgeHomeState", "PackageExportCenterState"} {
 		if !strings.Contains(body, want) {
 			t.Fatalf("body missing %q:\n%s", want, body)
 		}

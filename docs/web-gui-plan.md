@@ -65,7 +65,17 @@ Before expanding the first HTMX slice, decide:
 - **Parser arbitration review** — `/parsing` compares GROBID, S2ORC-style JSON, PaperMage, CERMINE, Science Parse-style metadata, and Anystyle outputs field-by-field with confidence, raw text, offsets, warnings, and accept/correct/reject controls; conflicting fields are never auto-accepted and the CLI equivalent is `rforge parse arbitrate`.
 - **Research map cockpit** — `/map` unifies citation graph, OpenAlex concepts, Zotero collections/tags, screening status, retrieval clusters, and evidence coverage with filters, keyboard navigation, no-JS tables, provenance overlays, and a `/map/snapshot.json` export from the project knowledge graph.
 - **Lab notebook timeline** — `/notebook` renders all project provenance events as human vs automated workflow events with counts and a `/notebook/snapshot.json` export.
-- **Information architecture** — `/architecture` documents dashboard routes, partial endpoints, view models, no-JS fallbacks, background-job status artifacts, and ownership boundaries between HTMX templates and core Go services.
+- **Information architecture** — `/architecture` documents a dashboard information architecture diagram plus routes, partial endpoints, view models, no-JS fallbacks, background-job status artifacts, and ownership boundaries between HTMX templates and core Go services.
+
+```mermaid
+flowchart TD
+  CLI[rforge CLI artifacts] --> Web[local HTMX dashboard]
+  Web --> Forge[/forge ForgeHomeState]
+  Web --> Map[/map ResearchMapCockpitState]
+  Web --> Package[/package PackageExportCenterState]
+  Web --> Jobs[data/jobs.json background jobs]
+  Web --> Privacy[package/redaction gates]
+```
 - **Permissions/privacy model** — `/privacy` documents local-only paths, copyrighted PDFs, reviewer notes, credentials, embeddings, cache files, and shareable report fields with default permissions, export rules, review gates, and UI behavior.
 - **Source planning cockpit** — `/sources` previews the Meta-analysis spine source plan from a research question, covering OpenAlex, Semantic Scholar, Crossref, arXiv, PubMed/Europe PMC, NASA ADS, DOAJ/CORE, Unpaywall, Zotero/JabRef, and local imports with dry-run estimates, auth/privacy warnings, reviewer-approval language, and CLI-equivalent commands before network calls/imports/downloads.
 - **Legal acquisition queue** — `/acquisition` shows OA/license status, source URL, expected stored path, restricted/shareable flags, and explicit reviewer approval commands before downloading or archiving documents.
