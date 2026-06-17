@@ -33,7 +33,7 @@ func TestScreeningCockpitRendersActiveLearningProgressStoppingAndAuditLinks(t *t
 		t.Fatalf("state = %#v", state)
 	}
 	body := renderHandler(t, NewScreeningCockpitHandler(state))
-	for _, want := range []string{"Screening cockpit", "Active-learning queue", "uncertainty", "exploration", "Progress metrics", "Stopping diagnostics", "screening-audit-bundle.json"} {
+	for _, want := range []string{"Screening cockpit", "ASReview-inspired", "Active-learning queue", "uncertainty", "exploration", "Reviewer assignment", "Conflict/adjudication panels", "Recall/effort curves", "Progress metrics", "Stopping diagnostics", "Exportable audit bundle", "screening-audit-bundle.json"} {
 		if !strings.Contains(body, want) {
 			t.Fatalf("body missing %q:\n%s", want, body)
 		}

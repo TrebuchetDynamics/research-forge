@@ -38,6 +38,7 @@ Implemented nearby capabilities:
 - Citation-locked synthesis can draft query expansions, screening rationales, extraction candidates, and report prose only when every suggested sentence has exact source support and remains unaccepted until reviewer review.
 - The `/notebook` lab-notebook timeline records human and automated provenance events across imports, source refreshes, parser runs, reviewer decisions, extraction edits, analysis reruns, and report builds as a browsable journal with JSON snapshots.
 - The method-comparison workbench compares parser choices, retrieval backends, screening rankers, effect-size models, and publication-bias diagnostics side-by-side before recording the reviewer-selected method locked into the final report.
+- The `/screening` cockpit shows active-learning queues, uncertainty/exploration flags, reviewer assignment, conflict/adjudication panels, recall/effort curves, stopping diagnostics, and exportable audit-bundle links.
 
 Missing features:
 

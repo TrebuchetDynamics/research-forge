@@ -353,6 +353,7 @@ type ForgeNextAction struct{ Label, CLI string }
 
 var screeningCockpitTemplate = template.Must(template.New("screening-cockpit").Parse(`<section aria-labelledby="screening-title" class="rf-card" hx-get="/screening/refresh" hx-trigger="refresh-screening from:body">
   <h2 id="screening-title">Screening cockpit</h2>
+  <p>ASReview-inspired screening cockpit for active-learning review and auditable human decisions.</p>
   <p>Stage: {{.Stage}} Records: {{.TotalRecords}} Active run: {{if .ActiveRunID}}{{.ActiveRunID}}{{else}}not generated{{end}}</p>
   <section aria-labelledby="screening-active-title">
     <h3 id="screening-active-title">Active-learning queue</h3>
@@ -367,10 +368,22 @@ var screeningCockpitTemplate = template.Must(template.New("screening-cockpit").P
     <h4>Uncertain reviewer decisions</h4>
     {{range .UncertainQueue}}<p>{{.PaperID}}</p>{{else}}<p>No unresolved uncertain decisions.</p>{{end}}
   </section>
+  <section aria-labelledby="screening-assignment-title">
+    <h3 id="screening-assignment-title">Reviewer assignment</h3>
+    <p>CLI equivalent: <code>rforge screen assign --stage {{.Stage}} --reviewer &lt;name&gt; --out data/screening-assignments.json</code></p>
+  </section>
+  <section aria-labelledby="screening-conflict-title">
+    <h3 id="screening-conflict-title">Conflict/adjudication panels</h3>
+    <p>{{.Progress.Conflicts}} conflicts. CLI equivalent: <code>rforge screen panel --stage {{.Stage}} --out data/screening-panel.json</code></p>
+  </section>
   <section aria-labelledby="screening-progress-title">
     <h3 id="screening-progress-title">Progress metrics</h3>
     <p>{{.Progress.ScreenedRecords}} screened, {{.Progress.Remaining}} remaining, {{.Progress.Conflicts}} conflicts</p>
     {{range .Progress.Reviewers}}<p>{{.Reviewer}}: {{.Decisions}} decisions</p>{{end}}
+  </section>
+  <section aria-labelledby="screening-recall-title">
+    <h3 id="screening-recall-title">Recall/effort curves</h3>
+    <p>CLI equivalent: <code>rforge screen recall --stage {{.Stage}}</code></p>
   </section>
   <section aria-labelledby="screening-stopping-title">
     <h3 id="screening-stopping-title">Stopping diagnostics</h3>
@@ -378,7 +391,7 @@ var screeningCockpitTemplate = template.Must(template.New("screening-cockpit").P
     <p>{{.Stopping.Reason}}</p>
   </section>
   <section aria-labelledby="screening-audit-title">
-    <h3 id="screening-audit-title">Audit-bundle links</h3>
+    <h3 id="screening-audit-title">Exportable audit bundle links</h3>
     {{if .HasAuditBundle}}<p><a href="/{{.AuditBundlePath}}">screening-audit-bundle.json</a></p>{{else}}<p>No screening audit bundle exported yet. Run <code>rforge screen audit-bundle --stage {{.Stage}} --out {{.AuditBundlePath}}</code>.</p>{{end}}
   </section>
 </section>`))
