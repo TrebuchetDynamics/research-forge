@@ -589,6 +589,21 @@ func executeParse(args []string, stdout, stderr io.Writer, opts globalOptions) i
 		fmt.Fprintf(stdout, "wrote parser arbitration to %s\n", out)
 		return 0
 	}
+	if len(args) > 0 && args[0] == "maintenance-risk" {
+		out, ok := parseParseMaintenanceRiskArgs(args[1:])
+		if !ok {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge parse maintenance-risk --out <report.json>")
+		}
+		report := parsing.BuildParserMaintenanceRiskReport(parsing.DefaultParserBenchmarkFixtures())
+		if err := writeJSONFile(out, report); err != nil {
+			return writeError(stdout, stderr, opts, 1, "parse_maintenance_risk_write_failed", err.Error())
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"maintenanceRisk": report, "path": out})
+		}
+		fmt.Fprintf(stdout, "wrote parser maintenance risk report to %s\n", out)
+		return 0
+	}
 	if len(args) > 0 && args[0] == "quality" {
 		parsedPaths, out, ok := parseParseQualityArgs(args[1:])
 		if !ok {
@@ -720,6 +735,13 @@ func parserCommand(parserName, inputPath string) []string {
 
 func validReferenceNormalizationSource(sourceName string) bool {
 	return sourceName == "crossref" || sourceName == "openalex" || sourceName == "semantic-scholar" || sourceName == "ads"
+}
+
+func parseParseMaintenanceRiskArgs(args []string) (string, bool) {
+	if len(args) != 2 || args[0] != "--out" || strings.TrimSpace(args[1]) == "" {
+		return "", false
+	}
+	return args[1], true
 }
 
 func parseParseQualityArgs(args []string) ([]string, string, bool) {
