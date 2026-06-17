@@ -41,15 +41,28 @@ type ScreeningAuditBundleInput struct {
 }
 
 type ScreeningAuditBundle struct {
-	SchemaVersion string                    `json:"schemaVersion"`
-	Stage         Stage                     `json:"stage"`
-	InputHash     string                    `json:"inputHash"`
-	DecisionHash  string                    `json:"decisionHash"`
-	Assignments   []ReviewerAssignment      `json:"assignments"`
-	Panel         ConflictAdjudicationPanel `json:"conflictAdjudicationPanel"`
-	Uncertain     []UncertainQueueItem      `json:"uncertainQueue"`
-	Progress      ProgressReport            `json:"progress"`
-	ActiveRunRef  string                    `json:"activeRunRef,omitempty"`
+	SchemaVersion       string                    `json:"schemaVersion"`
+	Stage               Stage                     `json:"stage"`
+	InputHash           string                    `json:"inputHash"`
+	DecisionHash        string                    `json:"decisionHash"`
+	Assignments         []ReviewerAssignment      `json:"assignments"`
+	Panel               ConflictAdjudicationPanel `json:"conflictAdjudicationPanel"`
+	Uncertain           []UncertainQueueItem      `json:"uncertainQueue"`
+	Progress            ProgressReport            `json:"progress"`
+	ActiveRunRef        string                    `json:"activeRunRef,omitempty"`
+	FrozenDataset       []ScreeningRecord         `json:"frozenDataset,omitempty"`
+	SeedLabels          []DecisionEvent           `json:"seedLabels,omitempty"`
+	RankingIterations   []PrioritizedRecord       `json:"rankingIterations,omitempty"`
+	ReviewerActions     []DecisionEvent           `json:"reviewerActions,omitempty"`
+	StoppingDiagnostics StoppingRecommendation    `json:"stoppingDiagnostics"`
+	RandomSeeds         []string                  `json:"randomSeeds,omitempty"`
+	ModelMetadata       ModelMetadata             `json:"modelMetadata"`
+}
+
+type ModelMetadata struct {
+	Name    string `json:"name"`
+	Version string `json:"version"`
+	Method  string `json:"method"`
 }
 
 func AssignReviewers(records []ScreeningRecord, reviewers []string, reviewersPerRecord int) []ReviewerAssignment {
@@ -138,5 +151,19 @@ func BuildScreeningAuditBundle(input ScreeningAuditBundleInput) ScreeningAuditBu
 	if stage == "" {
 		stage = StageTitleAbstract
 	}
-	return ScreeningAuditBundle{SchemaVersion: "1", Stage: stage, InputHash: hashJSON(input.Records), DecisionHash: hashJSON(input.Events), Assignments: append([]ReviewerAssignment{}, input.Assignments...), Panel: BuildConflictAdjudicationPanel(input.Events, stage), Uncertain: UncertainQueue(input.Events, stage), Progress: Progress(input.Events, stage, len(input.Records)), ActiveRunRef: input.ActiveRun.RunID}
+	active := input.ActiveRun
+	seedLabels := append([]DecisionEvent{}, active.SeedDecisions...)
+	if len(seedLabels) == 0 {
+		seedLabels = seedDecisions(input.Events, stage)
+	}
+	ranking := append([]PrioritizedRecord{}, active.RankedOutput...)
+	stopping := active.StoppingDiagnostics
+	if stopping.Stage == "" {
+		stopping = StoppingCriteria(input.Events, stage, 0.95)
+	}
+	method := strings.TrimSpace(active.RankingMethod)
+	if method == "" {
+		method = "active-learning"
+	}
+	return ScreeningAuditBundle{SchemaVersion: "1", Stage: stage, InputHash: hashJSON(input.Records), DecisionHash: hashJSON(input.Events), Assignments: append([]ReviewerAssignment{}, input.Assignments...), Panel: BuildConflictAdjudicationPanel(input.Events, stage), Uncertain: UncertainQueue(input.Events, stage), Progress: Progress(input.Events, stage, len(input.Records)), ActiveRunRef: active.RunID, FrozenDataset: append([]ScreeningRecord{}, input.Records...), SeedLabels: seedLabels, RankingIterations: ranking, ReviewerActions: append([]DecisionEvent{}, input.Events...), StoppingDiagnostics: stopping, RandomSeeds: []string{hashJSON(input.Records)[:12], hashJSON(input.Events)[:12]}, ModelMetadata: ModelMetadata{Name: "ResearchForge ASReview-style ranker", Version: "1", Method: method}}
 }
