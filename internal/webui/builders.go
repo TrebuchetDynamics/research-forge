@@ -12,6 +12,7 @@ import (
 	"github.com/TrebuchetDynamics/research-forge/internal/library"
 	"github.com/TrebuchetDynamics/research-forge/internal/project"
 	"github.com/TrebuchetDynamics/research-forge/internal/provenance"
+	reportpkg "github.com/TrebuchetDynamics/research-forge/internal/report"
 	"github.com/TrebuchetDynamics/research-forge/internal/retrieval"
 	"github.com/TrebuchetDynamics/research-forge/internal/screening"
 	"github.com/TrebuchetDynamics/research-forge/internal/ui"
@@ -94,6 +95,29 @@ func forgeNextActions(currentState string) []ForgeNextAction {
 	default:
 		return []ForgeNextAction{{Label: "Inspect project", CLI: "rforge project inspect <path>"}}
 	}
+}
+
+type ReportClaimPanelState struct {
+	ProjectPath      string
+	PanelPath        string
+	Rows             []reportpkg.ClaimTracePanelRow
+	BlockFinalExport bool
+	Blockers         []string
+}
+
+func BuildReportClaimPanelState(projectPath string) ReportClaimPanelState {
+	state := ReportClaimPanelState{ProjectPath: projectPath, PanelPath: "data/claim-panel.json"}
+	if strings.TrimSpace(projectPath) == "" {
+		return state
+	}
+	var panel reportpkg.ClaimTraceabilityPanel
+	if data, err := os.ReadFile(filepath.Join(projectPath, "data", "claim-panel.json")); err == nil {
+		_ = json.Unmarshal(data, &panel)
+		state.Rows = panel.Rows
+		state.BlockFinalExport = panel.BlockFinalExport
+		state.Blockers = panel.Blockers
+	}
+	return state
 }
 
 type AnalysisWorkbenchState struct {

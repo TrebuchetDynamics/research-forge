@@ -172,6 +172,18 @@ var genericWorkbenchTemplate = template.Must(template.New("generic-workbench").P
   <p><a href="/workbenches">Back to HTMX workbenches</a></p>
 </section>`))
 
+var reportClaimPanelTemplate = template.Must(template.New("report-claim-panel").Parse(`<section aria-labelledby="report-title" class="rf-card">
+  <h2 id="report-title">Claim traceability panel</h2>
+  <p>Every generated paragraph/table/figure must reference accepted evidence; unresolved or weakly supported claims block final export.</p>
+  <p>block final export: {{.BlockFinalExport}}</p>
+  <p>CLI equivalent: <code>rforge report claim-panel --trace data/trace.json --out {{.PanelPath}} && rforge report final-export --panel {{.PanelPath}}</code></p>
+  <div role="table" aria-label="Claim traceability panel">
+    <div role="row"><strong role="columnheader">Claim</strong><strong role="columnheader">Kind</strong><strong role="columnheader">Status</strong><strong role="columnheader">Reason</strong><strong role="columnheader">accepted evidence</strong></div>
+    {{range .Rows}}<div role="row"><span role="cell">{{.ClaimID}}</span><span role="cell">{{.Kind}}</span><span role="cell">{{.Status}}</span><span role="cell">{{.Reason}}</span><span role="cell">{{len .Trace.AcceptedEvidence}}</span></div>{{else}}<div role="row"><span role="cell">No claim panel rows. Run the CLI command to build {{$.PanelPath}}.</span></div>{{end}}
+  </div>
+  {{if .Blockers}}<h3>Export blockers</h3>{{range .Blockers}}<p>{{.}}</p>{{end}}{{end}}
+</section>`))
+
 var analysisWorkbenchTemplate = template.Must(template.New("analysis-workbench").Parse(`<section aria-labelledby="analysis-title" class="rf-card">
   <h2 id="analysis-title">meta-analysis Workbench</h2>
   <p>Shows prepared effect-size inputs, model choices, metafor script, warnings, heterogeneity, sensitivity/influence diagnostics, forest/funnel artifacts, and publication-ready artifact manifests.</p>
@@ -643,6 +655,13 @@ func NewWorkbenchIndexHandler(state WorkbenchIndexState) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		_ = workbenchIndexTemplate.Execute(w, state)
+	})
+}
+
+func newReportClaimPanelHandler(projectPath func() string) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		_ = reportClaimPanelTemplate.Execute(w, BuildReportClaimPanelState(projectPath()))
 	})
 }
 
