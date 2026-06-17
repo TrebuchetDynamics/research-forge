@@ -589,6 +589,25 @@ func executeParse(args []string, stdout, stderr io.Writer, opts globalOptions) i
 		fmt.Fprintf(stdout, "wrote parser arbitration to %s\n", out)
 		return 0
 	}
+	if len(args) > 0 && args[0] == "quality" {
+		parsedPaths, out, ok := parseParseQualityArgs(args[1:])
+		if !ok {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge parse quality --parsed <parsed.json> [--parsed <parsed.json>...] --out <report.json>")
+		}
+		docs, err := readParsedDocumentFiles(parsedPaths)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "parse_quality_read_failed", err.Error())
+		}
+		report := parsing.BuildParserQualityReport(docs)
+		if err := writeJSONFile(out, report); err != nil {
+			return writeError(stdout, stderr, opts, 1, "parse_quality_write_failed", err.Error())
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"quality": report, "path": out})
+		}
+		fmt.Fprintf(stdout, "wrote parser quality report to %s\n", out)
+		return 0
+	}
 	if len(args) > 0 && args[0] == "compare" {
 		left, right, out, ok := parseParseCompareArgs(args[1:])
 		if !ok {
@@ -703,6 +722,30 @@ func validReferenceNormalizationSource(sourceName string) bool {
 	return sourceName == "crossref" || sourceName == "openalex" || sourceName == "semantic-scholar" || sourceName == "ads"
 }
 
+func parseParseQualityArgs(args []string) ([]string, string, bool) {
+	paths := []string{}
+	out := ""
+	for i := 0; i < len(args); i++ {
+		switch args[i] {
+		case "--parsed":
+			if i+1 >= len(args) {
+				return nil, "", false
+			}
+			paths = append(paths, args[i+1])
+			i++
+		case "--out":
+			if i+1 >= len(args) {
+				return nil, "", false
+			}
+			out = args[i+1]
+			i++
+		default:
+			return nil, "", false
+		}
+	}
+	return paths, out, len(paths) > 0 && strings.TrimSpace(out) != ""
+}
+
 func compareParsedFiles(left, right string) (parsing.ComparisonReport, error) {
 	docs, err := readParsedDocumentPair(left, right)
 	if err != nil {
@@ -712,8 +755,12 @@ func compareParsedFiles(left, right string) (parsing.ComparisonReport, error) {
 }
 
 func readParsedDocumentPair(left, right string) ([]parsing.ParsedDocument, error) {
+	return readParsedDocumentFiles([]string{left, right})
+}
+
+func readParsedDocumentFiles(paths []string) ([]parsing.ParsedDocument, error) {
 	docs := []parsing.ParsedDocument{}
-	for _, path := range []string{left, right} {
+	for _, path := range paths {
 		data, err := os.ReadFile(path)
 		if err != nil {
 			return nil, err
