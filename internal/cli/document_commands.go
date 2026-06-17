@@ -233,6 +233,16 @@ func executeParse(args []string, stdout, stderr io.Writer, opts globalOptions) i
 	if opts.Project == "" {
 		return writeError(stdout, stderr, opts, 2, "missing_project", "--project is required for parse commands")
 	}
+	if len(args) > 0 && args[0] == "manifest-policies" {
+		policies := parsing.DefaultParserOutputPolicies()
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"policies": policies})
+		}
+		for _, policy := range policies.Policies {
+			fmt.Fprintf(stdout, "%s\t%s\t%s\n", policy.ParserName, policy.ParserSource, policy.Shareability)
+		}
+		return 0
+	}
 	if len(args) > 0 && args[0] == "review-refs" {
 		parsedPath, out, threshold, ok := parseReviewRefsArgs(args[1:])
 		if !ok {
@@ -270,11 +280,24 @@ func executeParse(args []string, stdout, stderr io.Writer, opts globalOptions) i
 		if err != nil {
 			return writeError(stdout, stderr, opts, 1, "parse_references_failed", err.Error())
 		}
-		if err := writeJSONFile(out, doc); err != nil {
+		parsedData, err := json.MarshalIndent(doc, "", "  ")
+		if err != nil {
 			return writeError(stdout, stderr, opts, 1, "parse_references_write_failed", err.Error())
 		}
+		parsedData = append(parsedData, '\n')
+		if err := os.MkdirAll(filepath.Dir(out), 0o755); err != nil {
+			return writeError(stdout, stderr, opts, 1, "parse_references_write_failed", err.Error())
+		}
+		if err := os.WriteFile(out, parsedData, 0o644); err != nil {
+			return writeError(stdout, stderr, opts, 1, "parse_references_write_failed", err.Error())
+		}
+		manifestPath := strings.TrimSuffix(out, filepath.Ext(out)) + ".manifest.json"
+		manifest := parsing.NewParserRunManifestWithOutput(doc, input, parsedData, out, command)
+		if err := writeJSONFile(manifestPath, manifest); err != nil {
+			return writeError(stdout, stderr, opts, 1, "parse_references_manifest_failed", err.Error())
+		}
 		if opts.JSON {
-			return writeJSON(stdout, 0, map[string]any{"parsed": doc, "path": out})
+			return writeJSON(stdout, 0, map[string]any{"parsed": doc, "path": out, "manifestPath": manifestPath})
 		}
 		fmt.Fprintf(stdout, "wrote parsed references to %s\n", out)
 		return 0
@@ -386,7 +409,7 @@ func executeParse(args []string, stdout, stderr io.Writer, opts globalOptions) i
 		return writeError(stdout, stderr, opts, 1, "parse_store_failed", fmt.Sprintf("write parsed doc: %v", err))
 	}
 	manifestPath := filepath.Join(parsedDir, safeFileStem(paperID)+".manifest.json")
-	manifest := parsing.NewParserRunManifest(doc, inputData, parsedPath)
+	manifest := parsing.NewParserRunManifestWithOutput(doc, inputData, data, parsedPath, parserCommand(parserName, inputPath))
 	if err := writeJSONFile(manifestPath, manifest); err != nil {
 		return writeError(stdout, stderr, opts, 1, "parse_manifest_failed", fmt.Sprintf("write parser manifest: %v", err))
 	}
@@ -398,6 +421,21 @@ func executeParse(args []string, stdout, stderr io.Writer, opts globalOptions) i
 	}
 	fmt.Fprintf(stdout, "parsed %s to %s\n", paperID, parsedPath)
 	return 0
+}
+
+func parserCommand(parserName, inputPath string) []string {
+	switch parserName {
+	case "grobid":
+		return []string{"grobid", "processFulltextDocument", inputPath}
+	case "s2orc":
+		return []string{"rforge", "parse", "--parser", "s2orc", "--s2orc", inputPath}
+	case "papermage":
+		return []string{"rforge", "parse", "--parser", "papermage", "--papermage", inputPath}
+	case "tex":
+		return []string{"rforge", "parse", "--parser", "tex", "--tex", inputPath}
+	default:
+		return []string{"rforge", "parse", "--parser", parserName, inputPath}
+	}
 }
 
 func validReferenceNormalizationSource(sourceName string) bool {

@@ -35,8 +35,9 @@ Core commands:
 - `rforge oss add|list|clone|license-check|note|scan|report|refresh`
 - `rforge pdf fetch --doi <doi>`, `rforge pdf fetch-arxiv --paper <arxiv-id> --kind pdf|source --url <url>`
 - `rforge --project <path> pdf import-biomedical --xml <jats-or-pmc.xml> --out <json>` imports structured biomedical full text with PMCID/PMID/DOI metadata, sections, and supplementary-file links; `rforge --project <path> pdf biomedical-drift-smoke-plan` prints PubMed/Europe PMC live-drift smoke expectations
-- `rforge parse --paper <id> --parser grobid --pdf <file>` or `rforge parse --paper <id> --parser tex --tex <file>` or `rforge parse --paper <id> --parser s2orc --s2orc <file>` or `rforge parse --paper <id> --parser papermage --papermage <file>`
-- `rforge parse references --paper <id> --parser anystyle --file <refs.txt> --out <refs.json>` (requires `RFORGE_ANYSTYLE_CMD`)
+- `rforge parse --paper <id> --parser grobid --pdf <file>` or `rforge parse --paper <id> --parser tex --tex <file>` or `rforge parse --paper <id> --parser s2orc --s2orc <file>` or `rforge parse --paper <id> --parser papermage --papermage <file>` writes parser-output manifests with source/version/command, input/output checksums, license constraints, shareability, and reviewer-gate fields
+- `rforge parse manifest-policies` lists parser-output license/provenance policies for GROBID, S2ORC-style JSON, PaperMage, CERMINE, Science Parse-style metadata, and Anystyle outputs
+- `rforge parse references --paper <id> --parser anystyle --file <refs.txt> --out <refs.json>` (requires `RFORGE_ANYSTYLE_CMD`) writes an Anystyle parser-output manifest beside the parsed references
 - `rforge parse compare --left <parsed.json> --right <parsed.json> --out <report.json>`
 - `rforge parse normalize-refs --parsed <parsed.json> --source crossref|openalex|semantic-scholar --out <report.json>`
 - `rforge parse review-refs --parsed <parsed.json> --out <report.json> [--threshold 0.75]`
