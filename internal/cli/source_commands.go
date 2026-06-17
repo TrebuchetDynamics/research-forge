@@ -693,6 +693,12 @@ func searchConnector(source string) (sourceConnector, bool) {
 		return sources.NewCrossrefConnector(defaultSourceHTTPClient(baseURL)), true
 	case "semantic-scholar":
 		return sources.NewSemanticScholarConnector(defaultSemanticScholarHTTPClient()), true
+	case "ads":
+		baseURL := os.Getenv("RFORGE_ADS_URL")
+		if baseURL == "" {
+			baseURL = "https://api.adsabs.harvard.edu"
+		}
+		return sources.NewNASAADSConnector(defaultSourceHTTPClient(baseURL)), true
 	case "europepmc":
 		baseURL := os.Getenv("RFORGE_EUROPEPMC_URL")
 		if baseURL == "" {

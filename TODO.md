@@ -549,7 +549,7 @@ This is the canonical build order for the post-1.0 super-tool work. The thematic
 - [x] Add a multi-engine parser arbitration layer that scores parser output per field, compares raw text/offsets/warnings, and records why one output was accepted (`ArbitrateParserOutputs`, `rforge parse arbitrate`).
 - [x] Extend parsed-document models with stable offsets, layered annotations, citation spans, parser confidence, and multi-parser reconciliation outputs (`EnrichParsedDocumentModel`, `ParserReconciliationOutput`, parser adapters, arbitration reports).
 - [x] Add reviewer-persistent parsed-reference adjudication for accept/correct/reject/defer decisions (`ReferenceAdjudication`, `rforge parse adjudicate-ref`, `rforge parse adjudicated-refs`).
-- [ ] Normalize parsed references against Crossref, OpenAlex, Semantic Scholar, and ADS while preserving raw strings, confidence, provenance, and ambiguity queues.
+- [x] Normalize parsed references against Crossref, OpenAlex, Semantic Scholar, and ADS while preserving raw strings, confidence, provenance, and ambiguity queues (`NormalizeParsedReferences`, `NewNASAADSConnector`, `rforge parse normalize-refs --source ads`).
 - [ ] Import full bibliography-to-citation-graph edges and link citation spans back to passages and report evidence.
 
 #### Phase 5 — Retrieval, graph, and domain-map layer

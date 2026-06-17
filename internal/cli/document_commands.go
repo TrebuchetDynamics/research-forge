@@ -359,7 +359,7 @@ func executeParse(args []string, stdout, stderr io.Writer, opts globalOptions) i
 	if len(args) > 0 && args[0] == "normalize-refs" {
 		parsedPath, sourceName, out, ok := parseNormalizeRefsArgs(args[1:])
 		if !ok || !validReferenceNormalizationSource(sourceName) {
-			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> parse normalize-refs --parsed <parsed.json> --source crossref|openalex|semantic-scholar --out <report.json>")
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> parse normalize-refs --parsed <parsed.json> --source crossref|openalex|semantic-scholar|ads --out <report.json>")
 		}
 		var doc parsing.ParsedDocument
 		if err := readJSONFile(parsedPath, &doc); err != nil {
@@ -515,7 +515,7 @@ func parserCommand(parserName, inputPath string) []string {
 }
 
 func validReferenceNormalizationSource(sourceName string) bool {
-	return sourceName == "crossref" || sourceName == "openalex" || sourceName == "semantic-scholar"
+	return sourceName == "crossref" || sourceName == "openalex" || sourceName == "semantic-scholar" || sourceName == "ads"
 }
 
 func compareParsedFiles(left, right string) (parsing.ComparisonReport, error) {

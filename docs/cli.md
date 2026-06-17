@@ -40,7 +40,7 @@ Core commands:
 - `rforge parse references --paper <id> --parser anystyle --file <refs.txt> --out <refs.json>` (requires `RFORGE_ANYSTYLE_CMD`) writes an Anystyle parser-output manifest beside the parsed references
 - `rforge parse compare --left <parsed.json> --right <parsed.json> --out <report.json>`
 - `rforge parse arbitrate --left <parsed.json> --right <parsed.json> --out <report.json> [--accept <parser> --reason <text> --reviewer <name>]` scores parser output per field, compares raw text/offsets/warnings, and records why one parser output was accepted, including field-level multi-parser reconciliation outputs
-- `rforge parse normalize-refs --parsed <parsed.json> --source crossref|openalex|semantic-scholar --out <report.json>`
+- `rforge parse normalize-refs --parsed <parsed.json> --source crossref|openalex|semantic-scholar|ads --out <report.json>` preserves raw reference strings, parser confidence, request/response provenance, match confidence, candidate counts, and reviewer-visible ambiguity queues
 - `rforge parse review-refs --parsed <parsed.json> --out <report.json> [--threshold 0.75]`
 - `rforge parse adjudicate-ref --parsed <parsed.json> --index <n> --decision accept|correct|reject|defer --reviewer <name> --reason <text> [--title <text> --doi <doi> --raw <text> --log <jsonl>]` persists parsed-reference reviewer decisions to `data/reference-adjudications.jsonl` by default
 - `rforge parse adjudicated-refs --parsed <parsed.json> [--log <jsonl> --out <report.json>]` exports adjudicated references with accepted/corrected/rejected/deferred/unreviewed counts
