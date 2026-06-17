@@ -818,6 +818,34 @@ func executeReport(args []string, stdout, stderr io.Writer, opts globalOptions) 
 	}
 	data := report.Data{Title: proj.Title, Provenance: []string{"manifest", "lockfile", "provenance"}}
 	switch args[0] {
+	case "trace":
+		claimsPath, analysisPath, outPath, ok := parseReportTrace(args[1:])
+		if !ok {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge report trace --claims <queue.json> --analysis <run.json> --out <trace.json>")
+		}
+		var queue evidence.CitationLockedSuggestionQueue
+		if err := readJSONFile(claimsPath, &queue); err != nil {
+			return writeError(stdout, stderr, opts, 1, "report_trace_claims_read_failed", err.Error())
+		}
+		var run analysis.AnalysisRun
+		if err := readJSONFile(analysisPath, &run); err != nil {
+			return writeError(stdout, stderr, opts, 1, "report_trace_analysis_read_failed", err.Error())
+		}
+		var items []evidence.EvidenceItem
+		_ = readJSONFile(evidenceItemsPath(opts.Project), &items)
+		records := []library.PaperRecord{}
+		if store, err := library.OpenStore(filepath.Join(opts.Project, "data", "library.json")); err == nil {
+			records, _ = store.List()
+		}
+		view := report.BuildCitationEvidenceTraceView(report.CitationEvidenceTraceInput{Claims: queue.Suggestions, EvidenceItems: items, AnalysisRun: run, LibraryRecords: records, PDFBaseURL: "/papers"})
+		if err := writeJSONFile(outPath, view); err != nil {
+			return writeError(stdout, stderr, opts, 1, "report_trace_write_failed", err.Error())
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"trace": view, "path": outPath})
+		}
+		fmt.Fprintf(stdout, "wrote citation evidence trace to %s\n", outPath)
+		return 0
 	case "build":
 		out, parsedPaths, ok := parseReportBuild(args[1:])
 		if !ok {
@@ -857,6 +885,23 @@ func executeReport(args []string, stdout, stderr io.Writer, opts globalOptions) 
 	default:
 		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge report <build|audit>")
 	}
+}
+
+func parseReportTrace(args []string) (string, string, string, bool) {
+	values := map[string]string{}
+	for i := 0; i < len(args); i++ {
+		switch args[i] {
+		case "--claims", "--analysis", "--out":
+			if i+1 >= len(args) {
+				return "", "", "", false
+			}
+			values[args[i]] = args[i+1]
+			i++
+		default:
+			return "", "", "", false
+		}
+	}
+	return values["--claims"], values["--analysis"], values["--out"], values["--claims"] != "" && values["--analysis"] != "" && values["--out"] != ""
 }
 
 func parseReportBuild(args []string) (string, []string, bool) {

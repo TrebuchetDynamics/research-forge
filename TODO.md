@@ -588,7 +588,7 @@ This is the canonical build order for the post-1.0 super-tool work. The thematic
 
 #### Phase 9 — Report, traceability, and Reproducible review package
 
-- [ ] Add citation-to-evidence trace views from every report claim back to effect-size rows, accepted evidence, passages, parser outputs, PDFs, reference-manager items, source API records, and raw request/response metadata.
+- [x] Add citation-to-evidence trace views from every report claim back to effect-size rows, accepted evidence, passages, parser outputs, PDFs, reference-manager items, source API records, and raw request/response metadata (`CitationEvidenceTraceView`, `BuildCitationEvidenceTraceView`, `rforge report trace`).
 - [ ] Add a claim traceability panel that blocks final export for unresolved or weakly supported generated paragraphs, tables, or figures.
 - [ ] Add the Reproducible review package format with project manifest, lockfiles, source query plans, dedupe decisions, parser manifests, screening audit, extraction schema, accepted evidence, analysis artifacts, report outputs, redaction policy, and checksums.
 - [ ] Add package replay/audit commands that verify all checksums, lockfiles, analysis inputs, report outputs, redactions, and provenance links.
