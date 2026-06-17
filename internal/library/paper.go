@@ -14,6 +14,8 @@ type Identifiers struct {
 	OpenAlexID        string
 	CrossrefID        string
 	SemanticScholarID string
+	ZoteroItemKey     string
+	ADSBibcode        string
 }
 
 // Author is one normalized paper author.
@@ -152,6 +154,8 @@ func normalizeIdentifiers(ids Identifiers) Identifiers {
 	ids.PMCID = normalizePMCID(ids.PMCID)
 	ids.OpenAlexID = strings.TrimPrefix(strings.TrimSpace(ids.OpenAlexID), "https://openalex.org/")
 	ids.SemanticScholarID = strings.TrimSpace(ids.SemanticScholarID)
+	ids.ZoteroItemKey = strings.TrimSpace(ids.ZoteroItemKey)
+	ids.ADSBibcode = strings.TrimSpace(ids.ADSBibcode)
 	return ids
 }
 
@@ -172,5 +176,5 @@ func normalizeDOI(value string) string {
 }
 
 func (ids Identifiers) any() bool {
-	return ids.DOI != "" || ids.ArXivID != "" || ids.PMID != "" || ids.PMCID != "" || ids.OpenAlexID != "" || ids.CrossrefID != "" || ids.SemanticScholarID != ""
+	return ids.DOI != "" || ids.ArXivID != "" || ids.PMID != "" || ids.PMCID != "" || ids.OpenAlexID != "" || ids.CrossrefID != "" || ids.SemanticScholarID != "" || ids.ZoteroItemKey != "" || ids.ADSBibcode != ""
 }

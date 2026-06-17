@@ -57,6 +57,12 @@ func MergeDuplicate(left, right PaperRecord) PaperRecord {
 	if merged.Identifiers.SemanticScholarID == "" {
 		merged.Identifiers.SemanticScholarID = right.Identifiers.SemanticScholarID
 	}
+	if merged.Identifiers.ZoteroItemKey == "" {
+		merged.Identifiers.ZoteroItemKey = right.Identifiers.ZoteroItemKey
+	}
+	if merged.Identifiers.ADSBibcode == "" {
+		merged.Identifiers.ADSBibcode = right.Identifiers.ADSBibcode
+	}
 	merged.SourceRefs = append(append([]SourceRef{}, left.SourceRefs...), right.SourceRefs...)
 	return merged
 }

@@ -187,6 +187,10 @@ func recordKey(record PaperRecord) string {
 		return "crossref:" + ids.CrossrefID
 	case ids.SemanticScholarID != "":
 		return "s2:" + ids.SemanticScholarID
+	case ids.ZoteroItemKey != "":
+		return "zotero:" + ids.ZoteroItemKey
+	case ids.ADSBibcode != "":
+		return "ads:" + ids.ADSBibcode
 	default:
 		return ""
 	}

@@ -20,6 +20,7 @@ Core commands:
 - `rforge export json|csv|bibtex|ris|csl-json|zotero-rdf <file>`
 - Zotero RDF and JabRef/BibTeX imports preserve reference-manager fidelity metadata in source refs: collections/groups, tags, notes, annotations, citation keys, BibTeX cleanup diffs, and linked-file privacy redaction checks
 - `rforge --project <path> library reference-manager-matrix` reports the BibTeX/RIS/CSL-JSON/Zotero RDF interchange fidelity matrix, including Better BibTeX citation keys, tags, notes, collections/groups, redacted attachments, and field-loss notes
+- `rforge --project <path> library identity-resolve` reports source-fusion identity clusters with explainable match rules across DOI, arXiv, PMID, PMCID, OpenAlex, Semantic Scholar, Crossref, Zotero item keys, and NASA ADS bibcodes
 - `rforge duplicate report [--source <source>]|merge|split` (use `--source semantic-scholar` for graph-import dedupe review)
 - `rforge oss inventory-check <manifest.json>`
 - `rforge oss inventory-refresh <manifest.json> --source github [--base-url <url>]`

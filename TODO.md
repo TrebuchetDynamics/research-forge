@@ -532,7 +532,7 @@ This is the canonical build order for the post-1.0 super-tool work. The thematic
 
 - [x] Add Zotero/JabRef reference-manager fidelity work: collections/groups, tags, notes, annotations, citation keys, BibTeX/BibLaTeX cleanup diffs, and linked-file privacy checks (`ImportZoteroRDF`, `ImportBibTeX`, `ReferenceManagerFidelityReport`).
 - [x] Add a reference-manager interchange fidelity matrix across BibTeX, RIS, CSL-JSON, Zotero RDF, Better BibTeX citation keys, tags, notes, collections, and redacted attachments (`BuildReferenceManagerInterchangeMatrix`, `rforge library reference-manager-matrix`).
-- [ ] Add source-fusion identity resolution for DOI, arXiv, PMID, PMCID, OpenAlex, Semantic Scholar, Crossref, Zotero, and ADS bibcode identifiers with explainable match rules.
+- [x] Add source-fusion identity resolution for DOI, arXiv, PMID, PMCID, OpenAlex, Semantic Scholar, Crossref, Zotero, and ADS bibcode identifiers with explainable match rules (`ResolveIdentityClusters`, `rforge library identity-resolve`).
 - [ ] Add reversible merge/split decisions and conflict records for identity clusters.
 - [ ] Add a revtools-inspired visual dedupe/cluster review screen with exportable decision history and PRISMA/audit provenance.
 

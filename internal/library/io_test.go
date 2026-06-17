@@ -171,7 +171,9 @@ func TestExportJSONWritesGoldenPaperRecords(t *testing.T) {
       "PMCID": "",
       "OpenAlexID": "",
       "CrossrefID": "",
-      "SemanticScholarID": ""
+      "SemanticScholarID": "",
+      "ZoteroItemKey": "",
+      "ADSBibcode": ""
     },
     "Authors": [],
     "Abstract": "",

@@ -284,7 +284,7 @@ func paperSources(paper library.PaperRecord) []string {
 
 func executeLibrary(args []string, stdout, stderr io.Writer, opts globalOptions) int {
 	if len(args) == 0 {
-		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> library <list|reference-manager-matrix|refresh-doi|import-crossref-refs>")
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> library <list|identity-resolve|reference-manager-matrix|refresh-doi|import-crossref-refs>")
 	}
 	if opts.Project == "" {
 		return writeError(stdout, stderr, opts, 2, "missing_project", "--project is required for library commands")
@@ -307,6 +307,26 @@ func executeLibrary(args []string, stdout, stderr io.Writer, opts globalOptions)
 		}
 		for _, paper := range papers {
 			fmt.Fprintf(stdout, "%s\t%s\n", paper.Identifiers.DOI, paper.Title)
+		}
+		return 0
+	case "identity-resolve":
+		if len(args) != 1 {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> library identity-resolve")
+		}
+		papers, err := store.List()
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "library_list_failed", fmt.Sprintf("list library: %v", err))
+		}
+		report := library.ResolveIdentityClusters(papers)
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"report": report})
+		}
+		fmt.Fprintln(stdout, "Source-fusion identity resolution:")
+		for _, cluster := range report.Clusters {
+			fmt.Fprintf(stdout, "- %s records=%v identifiers=%v\n", cluster.ID, cluster.RecordIndexes, cluster.Identifiers)
+			for _, match := range cluster.Matches {
+				fmt.Fprintf(stdout, "  %s: %s=%s (%.2f) %s\n", match.Rule, match.Identifier, match.Value, match.Confidence, match.Explanation)
+			}
 		}
 		return 0
 	case "reference-manager-matrix":
@@ -403,7 +423,7 @@ func executeLibrary(args []string, stdout, stderr io.Writer, opts globalOptions)
 		fmt.Fprintf(stdout, "refreshed %d Crossref DOI records\n", result.Refreshed)
 		return 0
 	default:
-		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> library <list|reference-manager-matrix|refresh-doi|refresh-crossref|import-crossref-refs>")
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> library <list|identity-resolve|reference-manager-matrix|refresh-doi|refresh-crossref|import-crossref-refs>")
 	}
 }
 
