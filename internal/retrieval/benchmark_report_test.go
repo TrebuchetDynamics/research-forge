@@ -8,13 +8,16 @@ func TestRunRetrievalBenchmarkComparesBackendsOnDeterministicFixtures(t *testing
 	if err != nil {
 		t.Fatalf("RunRetrievalBenchmark returned error: %v", err)
 	}
-	if report.SchemaVersion != "1" || report.QuerySetChecksum == "" || report.QueryCount == 0 {
+	if report.SchemaVersion != "1" || report.QuerySetChecksum == "" || report.QueryCount == 0 || report.FixtureID == "" {
 		t.Fatalf("report metadata = %#v", report)
+	}
+	if len(report.ReproducibilityNotes) == 0 || len(report.PrivacyNotes) == 0 {
+		t.Fatalf("benchmark notes missing: %#v", report)
 	}
 	want := map[string]bool{"sqlite-fts": false, "opensearch": false, "qdrant": false, "hybrid": false}
 	for _, result := range report.Backends {
 		want[result.Backend] = true
-		if result.RecallAtK < 0 || result.RecallAtK > 1 || result.MRR < 0 || result.MRR > 1 {
+		if result.RecallAtK < 0 || result.RecallAtK > 1 || result.MRR < 0 || result.MRR > 1 || result.ReproducibilityNote == "" || result.PrivacyNote == "" {
 			t.Fatalf("bad result = %#v", result)
 		}
 	}

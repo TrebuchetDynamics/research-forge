@@ -29,16 +29,17 @@ Implemented nearby capabilities:
 - Opt-in HTTP embedding provider via `RFORGE_EMBEDDING_URL` and `RFORGE_EMBEDDING_MODEL`, with backend/model metadata recorded in `data/retrieval.lock.json`.
 - Hybrid lexical + vector retrieval through `--backend hybrid`, combining SQLite FTS with Qdrant results using reciprocal-rank fusion and deterministic de-duplication.
 - Retrieval rebuilds write `data/retrieval.lock.json` with backend and deterministic embedding metadata.
+- Retrieval benchmark report compares Qdrant fixture results against SQLite FTS, OpenSearch, and hybrid ranking with reproducibility/privacy notes.
 
 Missing features:
 
 - Production embedding provider presets beyond the generic HTTP embedding contract.
-- Rich hybrid ranking beyond reciprocal-rank fusion, such as calibrated backend weights and learned rerankers.
+- Learned rerankers beyond calibrated deterministic hybrid weighting.
 - Opt-in Qdrant integration test.
 
 ## Recommended slice
 
-Add configurable embedding provider/model selection and richer hybrid ranking over SQLite/OpenSearch plus Qdrant results.
+Keep Qdrant benchmark fixtures and privacy notes current with embedding/payload changes, then add learned reranker experiments behind deterministic reports.
 
 Acceptance target:
 

@@ -31,11 +31,12 @@ Missing features:
 - Mapping version recorded in lockfile.
 - Bulk indexing command with partial-failure provenance.
 - Highlighted passage search results.
+- Retrieval benchmark report now compares OpenSearch fixture results against SQLite FTS, Qdrant, and hybrid ranking with reproducibility/privacy notes.
 - Opt-in OpenSearch integration test.
 
 ## Recommended slice
 
-Add mapping-version provenance, partial bulk-failure reporting, highlighted passage results, and opt-in live OpenSearch integration tests.
+Keep OpenSearch benchmark fixtures aligned with mapping changes, and use opt-in live integration tests only for service drift.
 
 Acceptance target:
 
