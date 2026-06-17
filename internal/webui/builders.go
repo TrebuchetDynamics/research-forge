@@ -89,6 +89,71 @@ func BuildDedupeReviewState(projectPath string) (DedupeReviewState, error) {
 	return state, nil
 }
 
+// BuildScreeningCockpitState reads screening decisions and library records into
+// the HTMX screening cockpit: active-learning queue, uncertainty/exploration
+// flags, progress metrics, stopping diagnostics, and audit-bundle links.
+func BuildScreeningCockpitState(projectPath string) (ScreeningCockpitState, error) {
+	state := ScreeningCockpitState{ProjectPath: projectPath, Stage: screening.StageTitleAbstract, AuditBundlePath: "data/screening-audit-bundle.json"}
+	if strings.TrimSpace(projectPath) == "" {
+		return state, nil
+	}
+	records, err := buildScreeningRecords(projectPath)
+	if err != nil {
+		return state, err
+	}
+	state.TotalRecords = len(records)
+	var events []screening.DecisionEvent
+	if data, err := os.ReadFile(filepath.Join(projectPath, "data", "screening.events.json")); err == nil {
+		_ = json.Unmarshal(data, &events)
+	}
+	run, err := screening.BuildActiveLearningRun(screening.ActiveLearningRunInput{Records: records, Events: events, Stage: state.Stage, RankingMethod: "active-learning", TargetRecall: 0.95})
+	if err == nil {
+		state.ActiveLearningQueue = run.RankedOutput
+		state.ActiveRunID = run.RunID
+	}
+	state.UncertaintyQueue = screening.PrioritizeUncertaintyRecords(records, events, state.Stage)
+	state.UncertainQueue = screening.UncertainQueue(events, state.Stage)
+	state.Progress = screening.Progress(events, state.Stage, len(records))
+	state.Stopping = screening.StoppingCriteria(events, state.Stage, 0.95)
+	if _, err := os.Stat(filepath.Join(projectPath, state.AuditBundlePath)); err == nil {
+		state.HasAuditBundle = true
+	}
+	return state, nil
+}
+
+func buildScreeningRecords(projectPath string) ([]screening.ScreeningRecord, error) {
+	libPath := filepath.Join(projectPath, "data", "library.json")
+	if _, err := os.Stat(libPath); os.IsNotExist(err) {
+		return nil, nil
+	}
+	store, err := library.OpenStore(libPath)
+	if err != nil {
+		return nil, err
+	}
+	papers, err := store.List()
+	if err != nil {
+		return nil, err
+	}
+	records := make([]screening.ScreeningRecord, 0, len(papers))
+	for _, paper := range papers {
+		records = append(records, screening.ScreeningRecord{ID: webScreeningPaperID(paper), Title: paper.Title, Abstract: paper.Abstract})
+	}
+	return records, nil
+}
+
+func webScreeningPaperID(paper library.PaperRecord) string {
+	if strings.TrimSpace(paper.Identifiers.DOI) != "" {
+		return paper.Identifiers.DOI
+	}
+	if strings.TrimSpace(paper.Identifiers.PMID) != "" {
+		return paper.Identifiers.PMID
+	}
+	if strings.TrimSpace(paper.Identifiers.ArXivID) != "" {
+		return paper.Identifiers.ArXivID
+	}
+	return paper.Title
+}
+
 // BuildArtifactDashboardState assembles the artifacts cockpit view from a
 // CLI-generated project workspace: imported papers, screening-derived PRISMA
 // counts, and meta-analysis readiness.

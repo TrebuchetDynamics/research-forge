@@ -10,6 +10,7 @@ import (
 
 	"github.com/TrebuchetDynamics/research-forge/internal/project"
 	"github.com/TrebuchetDynamics/research-forge/internal/protocol"
+	"github.com/TrebuchetDynamics/research-forge/internal/screening"
 	"github.com/TrebuchetDynamics/research-forge/internal/ui"
 )
 
@@ -33,6 +34,7 @@ var shellTemplate = template.Must(template.New("shell").Parse(`<!doctype html>
           <li><a href="/papers">Papers</a></li>
           <li><a href="/library">Library</a></li>
           <li><a href="/dedupe">Dedupe</a></li>
+          <li><a href="/screening">Screening</a></li>
           <li><a href="/artifacts">Artifacts</a></li>
           <li><a href="/oss">OSS studies</a></li>
           <li><a href="/search">Search</a></li>
@@ -217,6 +219,54 @@ var ossTemplate = template.Must(template.New("oss").Parse(`<section aria-labelle
   </div>
   {{end}}
 </section>`))
+
+var screeningCockpitTemplate = template.Must(template.New("screening-cockpit").Parse(`<section aria-labelledby="screening-title" class="rf-card" hx-get="/screening/refresh" hx-trigger="refresh-screening from:body">
+  <h2 id="screening-title">Screening cockpit</h2>
+  <p>Stage: {{.Stage}} Records: {{.TotalRecords}} Active run: {{if .ActiveRunID}}{{.ActiveRunID}}{{else}}not generated{{end}}</p>
+  <section aria-labelledby="screening-active-title">
+    <h3 id="screening-active-title">Active-learning queue</h3>
+    <div role="table" aria-label="Active-learning queue with uncertainty and exploration flags">
+      <div role="row"><strong role="columnheader">Paper</strong><strong role="columnheader">Score</strong><strong role="columnheader">uncertainty</strong><strong role="columnheader">exploration</strong><strong role="columnheader">policy</strong></div>
+      {{range .ActiveLearningQueue}}<div role="row"><span role="cell">{{.ID}}</span><span role="cell">{{printf "%.3f" .Score}}</span><span role="cell">{{printf "%.3f" .Uncertainty}}</span><span role="cell">{{printf "%.3f" .ExplorationScore}}</span><span role="cell">{{.Policy}}</span></div>{{else}}<p>No active-learning records queued.</p>{{end}}
+    </div>
+  </section>
+  <section aria-labelledby="screening-uncertainty-title">
+    <h3 id="screening-uncertainty-title">Uncertainty/exploration flags</h3>
+    {{range .UncertaintyQueue}}<p>{{.ID}} uncertainty={{printf "%.3f" .Uncertainty}} exploration={{printf "%.3f" .ExplorationScore}}</p>{{else}}<p>No uncertainty queue records.</p>{{end}}
+    <h4>Uncertain reviewer decisions</h4>
+    {{range .UncertainQueue}}<p>{{.PaperID}}</p>{{else}}<p>No unresolved uncertain decisions.</p>{{end}}
+  </section>
+  <section aria-labelledby="screening-progress-title">
+    <h3 id="screening-progress-title">Progress metrics</h3>
+    <p>{{.Progress.ScreenedRecords}} screened, {{.Progress.Remaining}} remaining, {{.Progress.Conflicts}} conflicts</p>
+    {{range .Progress.Reviewers}}<p>{{.Reviewer}}: {{.Decisions}} decisions</p>{{end}}
+  </section>
+  <section aria-labelledby="screening-stopping-title">
+    <h3 id="screening-stopping-title">Stopping diagnostics</h3>
+    <p>Can stop: {{.Stopping.CanStop}} Current recall: {{printf "%.3f" .Stopping.CurrentRecall}} Target: {{printf "%.3f" .Stopping.TargetRecall}}</p>
+    <p>{{.Stopping.Reason}}</p>
+  </section>
+  <section aria-labelledby="screening-audit-title">
+    <h3 id="screening-audit-title">Audit-bundle links</h3>
+    {{if .HasAuditBundle}}<p><a href="/{{.AuditBundlePath}}">screening-audit-bundle.json</a></p>{{else}}<p>No screening audit bundle exported yet. Run <code>rforge screen audit-bundle --stage {{.Stage}} --out {{.AuditBundlePath}}</code>.</p>{{end}}
+  </section>
+</section>`))
+
+// ScreeningCockpitState combines active-learning, uncertainty, progress,
+// stopping, and audit-bundle state for the HTMX screening cockpit.
+type ScreeningCockpitState struct {
+	ProjectPath         string
+	Stage               screening.Stage
+	TotalRecords        int
+	ActiveRunID         string
+	ActiveLearningQueue []screening.PrioritizedRecord
+	UncertaintyQueue    []screening.PrioritizedRecord
+	UncertainQueue      []screening.UncertainQueueItem
+	Progress            screening.ProgressReport
+	Stopping            screening.StoppingRecommendation
+	HasAuditBundle      bool
+	AuditBundlePath     string
+}
 
 // PRISMAFlowState summarizes CLI-generated screening counts for the web artifacts view.
 type PRISMAFlowState struct {
@@ -405,6 +455,25 @@ func newDedupeReviewHandler(projectPath func() string) http.Handler {
 		}
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		_ = dedupeReviewTemplate.Execute(w, state)
+	})
+}
+
+func newScreeningCockpitHandler(projectPath func() string) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		state, err := BuildScreeningCockpitState(projectPath())
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		NewScreeningCockpitHandler(state).ServeHTTP(w, r)
+	})
+}
+
+// NewScreeningCockpitHandler renders the HTMX screening cockpit.
+func NewScreeningCockpitHandler(state ScreeningCockpitState) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		_ = screeningCockpitTemplate.Execute(w, state)
 	})
 }
 
