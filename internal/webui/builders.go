@@ -8,6 +8,7 @@ import (
 
 	"github.com/TrebuchetDynamics/research-forge/internal/analysis"
 	"github.com/TrebuchetDynamics/research-forge/internal/documents"
+	"github.com/TrebuchetDynamics/research-forge/internal/evidence"
 	"github.com/TrebuchetDynamics/research-forge/internal/library"
 	"github.com/TrebuchetDynamics/research-forge/internal/project"
 	"github.com/TrebuchetDynamics/research-forge/internal/provenance"
@@ -93,6 +94,25 @@ func forgeNextActions(currentState string) []ForgeNextAction {
 	default:
 		return []ForgeNextAction{{Label: "Inspect project", CLI: "rforge project inspect <path>"}}
 	}
+}
+
+type EvidenceGridState struct {
+	ProjectPath string
+	GridPath    string
+	Rows        []evidence.ExtractionGridRow
+}
+
+func BuildEvidenceGridState(projectPath string) EvidenceGridState {
+	state := EvidenceGridState{ProjectPath: projectPath, GridPath: "data/evidence-grid.json"}
+	if strings.TrimSpace(projectPath) == "" {
+		return state
+	}
+	var grid evidence.ExtractionGrid
+	if data, err := os.ReadFile(filepath.Join(projectPath, "data", "evidence-grid.json")); err == nil {
+		_ = json.Unmarshal(data, &grid)
+		state.Rows = grid.Rows
+	}
+	return state
 }
 
 type RetrievalTuningState struct {

@@ -172,6 +172,16 @@ var genericWorkbenchTemplate = template.Must(template.New("generic-workbench").P
   <p><a href="/workbenches">Back to HTMX workbenches</a></p>
 </section>`))
 
+var evidenceGridTemplate = template.Must(template.New("evidence-grid").Parse(`<section aria-labelledby="evidence-title" class="rf-card">
+  <h2 id="evidence-title">Evidence extraction grid</h2>
+  <p>Links each field to source passage/table/figure/equation support, parser offset, PDF view, reviewer status, correction history, and downstream analysis inclusion.</p>
+  <p>CLI equivalent: <code>rforge evidence grid --out {{.GridPath}} [--parsed &lt;parsed.json&gt;] [--analysis &lt;run.json&gt;]</code></p>
+  <div role="table" aria-label="Evidence extraction grid">
+    <div role="row"><strong role="columnheader">Paper</strong><strong role="columnheader">Field</strong><strong role="columnheader">Support</strong><strong role="columnheader">parser offset</strong><strong role="columnheader">PDF view</strong><strong role="columnheader">reviewer status</strong><strong role="columnheader">correction history</strong><strong role="columnheader">downstream analysis inclusion</strong></div>
+    {{range .Rows}}<div role="row"><span role="cell">{{.PaperID}}</span><span role="cell">{{.FieldName}}={{.FieldValue}}</span><span role="cell">{{.SupportKind}} {{.SupportRef}}</span><span role="cell">{{.ParserName}} {{.ParserOffset.Start}}-{{.ParserOffset.End}}</span><span role="cell"><a href="{{.PDFViewURL}}">PDF view</a></span><span role="cell">{{.ReviewerStatus}}</span><span role="cell">{{range .CorrectionHistory}}{{.Reviewer}} {{.Status}} {{.Note}}; {{end}}</span><span role="cell">{{.DownstreamAnalysisIncluded}}</span></div>{{else}}<div role="row"><span role="cell">No evidence grid rows. Run the CLI command to build {{$.GridPath}}.</span></div>{{end}}
+  </div>
+</section>`))
+
 var retrievalTuningTemplate = template.Must(template.New("retrieval-tuning").Parse(`<section aria-labelledby="retrieval-title" class="rf-card">
   <h2 id="retrieval-title">Retrieval tuning</h2>
   <p>Compare SQLite FTS, OpenSearch, Qdrant vector, and hybrid results for the same query set with passage provenance, ranking explanations, embedding privacy status, and benchmark scores.</p>
@@ -620,6 +630,13 @@ func NewWorkbenchIndexHandler(state WorkbenchIndexState) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		_ = workbenchIndexTemplate.Execute(w, state)
+	})
+}
+
+func newEvidenceGridHandler(projectPath func() string) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		_ = evidenceGridTemplate.Execute(w, BuildEvidenceGridState(projectPath()))
 	})
 }
 

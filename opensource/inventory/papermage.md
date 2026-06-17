@@ -26,6 +26,7 @@ Implemented nearby capabilities:
 - The `/parsing` HTMX arbitration screen compares parser outputs field-by-field with confidence, raw text, offsets, warnings, and accept/correct/reject controls.
 - Evidence gap analysis cross-checks the research question, screened-in studies, parsed passages, accepted evidence fields, full-text acquisition, citation-locked claims, and analysis inputs before final inclusion.
 - Citation-locked synthesis can draft query expansions, screening rationales, extraction candidates, and report prose only when every suggested sentence has exact source support and remains unaccepted until reviewer review.
+- The `/evidence` extraction grid links fields to source passage/table/figure/equation support, parser offsets, PDF views, reviewer status, correction history, and downstream analysis inclusion.
 
 - Parsed document model with sections, passages, and references.
 - Parser-run manifests record parser name/version, input checksum, parsed output path, layer counts, and warnings.
