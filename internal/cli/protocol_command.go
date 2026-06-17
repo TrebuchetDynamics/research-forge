@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"strings"
+	"time"
 
 	"github.com/TrebuchetDynamics/research-forge/internal/protocol"
 )
@@ -11,6 +12,9 @@ import (
 func executeProtocol(args []string, stdout, stderr io.Writer, opts globalOptions) int {
 	if len(args) == 1 && args[0] == "capabilities" {
 		return writeCapabilities(protocol.DefaultConnectorCapabilityRegistry(), stdout, opts)
+	}
+	if len(args) > 0 && args[0] == "live-smoke-snapshot" {
+		return executeLiveSmokeSnapshot(args[1:], stdout, stderr, opts)
 	}
 	if len(args) == 0 || (args[0] != "compile" && args[0] != "plan-sources") {
 		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge protocol compile|plan-sources|capabilities --question <text> [--type pico|peco|spider|freeform] [framework flags]")
@@ -73,6 +77,41 @@ func executeProtocol(args []string, stdout, stderr io.Writer, opts globalOptions
 	return 0
 }
 
+func executeLiveSmokeSnapshot(args []string, stdout, stderr io.Writer, opts globalOptions) int {
+	values, err := parseKeyValueFlags(args, map[string]bool{"--output": true, "--connector": true, "--status": true, "--message": true, "--fields": true})
+	if err != nil {
+		return writeError(stdout, stderr, opts, 2, "usage", err.Error())
+	}
+	output := strings.TrimSpace(values["--output"])
+	if output == "" {
+		return writeError(stdout, stderr, opts, 2, "usage", "--output is required")
+	}
+	registry := protocol.DefaultConnectorCapabilityRegistry()
+	now := time.Now().UTC()
+	snapshot := protocol.NewLiveSmokeSnapshot(registry, now)
+	if connector := strings.TrimSpace(values["--connector"]); connector != "" {
+		capability, ok := registry.ByID(connector)
+		if !ok {
+			return writeError(stdout, stderr, opts, 2, "usage", fmt.Sprintf("unknown connector %q", connector))
+		}
+		status := strings.TrimSpace(values["--status"])
+		if status == "" {
+			status = protocol.LiveSmokeSkipped
+		}
+		snapshot.UpsertResult(protocol.ConnectorLiveSmokeResult{ConnectorID: connector, Label: capability.Label, Status: status, CheckedAt: now, Message: values["--message"], ObservedFields: splitCSV(values["--fields"])})
+	}
+	if err := protocol.SaveLiveSmokeSnapshot(output, snapshot); err != nil {
+		return writeError(stdout, stderr, opts, 1, "live_smoke_snapshot_failed", err.Error())
+	}
+	alerts := protocol.ConnectorLiveSmokeAlerts(registry, snapshot, now)
+	if opts.JSON {
+		return writeJSON(stdout, 0, map[string]any{"snapshot": snapshot, "alerts": alerts})
+	}
+	fmt.Fprintf(stdout, "Wrote live-smoke snapshot: %s\n", output)
+	fmt.Fprintf(stdout, "Connector alerts: %d\n", len(alerts))
+	return 0
+}
+
 func writeCapabilities(registry protocol.ConnectorCapabilityRegistry, stdout io.Writer, opts globalOptions) int {
 	if opts.JSON {
 		return writeJSON(stdout, 0, map[string]any{"registry": registry})
@@ -116,23 +155,46 @@ func writeSourcePlan(plan protocol.SourcePlan, stdout io.Writer, opts globalOpti
 	return 0
 }
 
-func parseProtocolCompileFlags(args []string) (map[string]string, error) {
-	allowed := map[string]bool{
-		"--type": true, "--question": true, "--population": true, "--intervention": true,
-		"--comparator": true, "--outcome": true, "--exposure": true, "--sample": true,
-		"--phenomenon": true, "--design": true, "--evaluation": true, "--research-type": true,
+func splitCSV(value string) []string {
+	parts := strings.Split(value, ",")
+	out := []string{}
+	for _, part := range parts {
+		part = strings.TrimSpace(part)
+		if part != "" {
+			out = append(out, part)
+		}
 	}
-	values := map[string]string{"--type": "freeform"}
+	return out
+}
+
+func parseKeyValueFlags(args []string, allowed map[string]bool) (map[string]string, error) {
+	values := map[string]string{}
 	for i := 0; i < len(args); i++ {
 		arg := args[i]
 		if !strings.HasPrefix(arg, "--") || !allowed[arg] {
-			return nil, fmt.Errorf("unknown protocol compile flag %q", arg)
+			return nil, fmt.Errorf("unknown flag %q", arg)
 		}
 		if i+1 >= len(args) {
 			return nil, fmt.Errorf("missing value for %s", arg)
 		}
 		values[arg] = args[i+1]
 		i++
+	}
+	return values, nil
+}
+
+func parseProtocolCompileFlags(args []string) (map[string]string, error) {
+	allowed := map[string]bool{
+		"--type": true, "--question": true, "--population": true, "--intervention": true,
+		"--comparator": true, "--outcome": true, "--exposure": true, "--sample": true,
+		"--phenomenon": true, "--design": true, "--evaluation": true, "--research-type": true,
+	}
+	values, err := parseKeyValueFlags(args, allowed)
+	if err != nil {
+		return nil, fmt.Errorf("%s", strings.NewReplacer("unknown flag", "unknown protocol compile flag").Replace(err.Error()))
+	}
+	if values["--type"] == "" {
+		values["--type"] = "freeform"
 	}
 	return values, nil
 }

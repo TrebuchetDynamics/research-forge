@@ -12,6 +12,7 @@ Core commands:
 - `rforge protocol compile --type pico|peco|spider|freeform --question <text> [framework flags]` drafts source-specific query plans, inclusion/exclusion criteria, extraction schema seeds, and reviewer prompts; all outputs require reviewer approval before use
 - `rforge protocol plan-sources --type pico|peco|spider|freeform --question <text> [framework flags]` previews the Meta-analysis spine source plan for OpenAlex, Semantic Scholar, Crossref, arXiv, PubMed/Europe PMC, NASA ADS, DOAJ/CORE, Unpaywall, Zotero/JabRef, and local imports with dry-run estimates, auth/privacy warnings, and CLI equivalents
 - `rforge protocol capabilities` prints the connector capability registry: supported entities, rate-limit policy, auth needs, live-smoke status, license/shareability policy, cacheability, and provenance fields
+- `rforge protocol live-smoke-snapshot --output <project>/data/source-live-smoke-snapshots/latest.json [--connector <id> --status pass|fail|skipped --message <text> --fields <csv>]` stores API drift/live-smoke snapshots for connector dashboard alerts
 - `rforge oa lookup <doi>`
 - `rforge library list`, `rforge library refresh-doi <doi>`, `rforge library refresh-crossref`, `rforge library import-crossref-refs <doi>`
 - `rforge import json|csv|bibtex|ris|csl-json|zotero-rdf <file>`

@@ -525,7 +525,7 @@ This is the canonical build order for the post-1.0 super-tool work. The thematic
 - [x] Add a research-question compiler for PICO/PECO/SPIDER/freeform questions that drafts source-specific query plans, inclusion/exclusion criteria, extraction schema seeds, and reviewer prompts without auto-accepting claims (`internal/protocol/compiler.go`, `rforge protocol compile`).
 - [x] Add a source-planning cockpit and CLI plan preview for OpenAlex, Semantic Scholar, Crossref, arXiv, PubMed/Europe PMC, NASA ADS, DOAJ/CORE, Unpaywall, Zotero/JabRef, and local imports (`rforge protocol plan-sources`, `/sources`).
 - [x] Add connector capability registry records for supported entities, rate limits, auth needs, live-smoke status, license/shareability policy, cacheability, and provenance fields (`protocol.DefaultConnectorCapabilityRegistry`, `rforge protocol capabilities`).
-- [ ] Add API drift/live-smoke snapshot storage and dashboard alerts for all source connectors.
+- [x] Add API drift/live-smoke snapshot storage and dashboard alerts for all source connectors (`protocol.ConnectorLiveSmokeSnapshot`, `rforge protocol live-smoke-snapshot`, `/connectors`).
 - [ ] Add query-expansion suggestion records from KeyBERT/SciSpaCy/LLM assistants, requiring source text links and reviewer approval before a source plan changes.
 
 #### Phase 2 — Library import, identity, and deduplication

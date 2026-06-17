@@ -3,6 +3,8 @@ package cli
 import (
 	"bytes"
 	"encoding/json"
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 )
@@ -84,6 +86,22 @@ func TestExecuteProtocolPlanSourcesJSON(t *testing.T) {
 		if !sourcePlanHas(env.Data.SourcePlan.Sources, want) {
 			t.Fatalf("missing source %q in %s", want, stdout.String())
 		}
+	}
+}
+
+func TestExecuteProtocolLiveSmokeSnapshotWritesStorage(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "snapshots", "latest.json")
+	var stdout, stderr bytes.Buffer
+	code := Execute([]string{"protocol", "live-smoke-snapshot", "--output", path, "--connector", "openalex", "--status", "pass", "--message", "ok", "--fields", "source,query,work_id,raw_ref"}, &stdout, &stderr)
+	if code != 0 {
+		t.Fatalf("exit code = %d stderr=%s stdout=%s", code, stderr.String(), stdout.String())
+	}
+	payload, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatalf("snapshot was not written: %v", err)
+	}
+	if !strings.Contains(string(payload), `"connectorId": "openalex"`) || !strings.Contains(string(payload), `"status": "pass"`) {
+		t.Fatalf("snapshot payload missing openalex pass result:\n%s", string(payload))
 	}
 }
 

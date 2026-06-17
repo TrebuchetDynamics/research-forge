@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/TrebuchetDynamics/research-forge/internal/project"
 	"github.com/TrebuchetDynamics/research-forge/internal/protocol"
@@ -34,6 +36,7 @@ var shellTemplate = template.Must(template.New("shell").Parse(`<!doctype html>
           <li><a href="/oss">OSS studies</a></li>
           <li><a href="/search">Search</a></li>
           <li><a href="/sources">Source plan</a></li>
+          <li><a href="/connectors">Connector health</a></li>
           <li><a href="/projects">Projects</a></li>
         </ul>
       </nav>
@@ -94,6 +97,24 @@ var sourcePlanningTemplate = template.Must(template.New("source-planning").Parse
       <span role="cell">{{.PrivacyWarning}} Auth: {{.AuthRequirement}}</span>
       <code role="cell">{{.CLICommand}}</code>
     </div>
+    {{end}}
+  </div>
+</section>`))
+
+var connectorHealthTemplate = template.Must(template.New("connector-health").Parse(`<section aria-labelledby="connector-health-title" class="rf-card">
+  <h2 id="connector-health-title">Connector health/control center</h2>
+  <p>Live service checks are opt-in. This view reads stored API drift/live-smoke snapshots from <code>data/source-live-smoke-snapshots/latest.json</code> and alerts before connector use.</p>
+  <p>Snapshot: {{if .Snapshot.CapturedAt}}{{.Snapshot.CapturedAt}}{{else}}not recorded{{end}}</p>
+  <h3>Alerts</h3>
+  {{if .Alerts}}
+  <ul>
+    {{range .Alerts}}<li><strong>{{.Label}}</strong>: {{.Kind}} — {{.Message}}</li>{{end}}
+  </ul>
+  {{else}}<p>No connector alerts.</p>{{end}}
+  <div role="table" aria-label="Connector live-smoke snapshots">
+    <div role="row"><strong role="columnheader">Connector</strong> <strong role="columnheader">Status</strong> <strong role="columnheader">Checked</strong> <strong role="columnheader">Message</strong></div>
+    {{range .Snapshot.Results}}
+    <div role="row"><span role="cell">{{.Label}}</span> <span role="cell">{{.Status}}</span> <span role="cell">{{.CheckedAt}}</span> <span role="cell">{{.Message}}</span></div>
     {{end}}
   </div>
 </section>`))
@@ -322,6 +343,28 @@ func NewSourcePlanningHandler() http.Handler {
 		}
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		_ = sourcePlanningTemplate.Execute(w, plan)
+	})
+}
+
+type connectorHealthView struct {
+	Snapshot protocol.ConnectorLiveSmokeSnapshot
+	Alerts   []protocol.ConnectorLiveSmokeAlert
+}
+
+func newConnectorHealthHandler(projectPath func() string) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		registry := protocol.DefaultConnectorCapabilityRegistry()
+		now := time.Now().UTC()
+		snapshot := protocol.NewLiveSmokeSnapshot(registry, now)
+		if project := strings.TrimSpace(projectPath()); project != "" {
+			path := filepath.Join(project, "data", "source-live-smoke-snapshots", "latest.json")
+			if loaded, err := protocol.LoadLiveSmokeSnapshot(path); err == nil {
+				snapshot = loaded
+			}
+		}
+		view := connectorHealthView{Snapshot: snapshot, Alerts: protocol.ConnectorLiveSmokeAlerts(registry, snapshot, now)}
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		_ = connectorHealthTemplate.Execute(w, view)
 	})
 }
 

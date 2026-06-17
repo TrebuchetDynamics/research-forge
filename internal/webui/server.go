@@ -58,6 +58,7 @@ func Routes() []string {
 	routes := []string{
 		"/",
 		"/artifacts",
+		"/connectors",
 		"/library",
 		"/oss",
 		"/papers",
@@ -85,6 +86,7 @@ func NewRouter(cfg Config) http.Handler {
 	mux.Handle("POST /projects/switch", newSwitchProjectHandler(state))
 	mux.Handle("/search", NewSearchHandler(ui.NewSearchFormState(defaultSearchSources())))
 	mux.Handle("/sources", NewSourcePlanningHandler())
+	mux.Handle("/connectors", newConnectorHealthHandler(state.get))
 
 	libraryHandler := newProjectLibraryHandler(state.get)
 	mux.Handle("/library", libraryHandler)
