@@ -508,6 +508,109 @@ The MVP checklist above is complete. This section tracks follow-on validation an
 - [x] Add import/export round-trip e2e preserving identifiers across formats and projects.
 - [x] Add project archive/restore round-trip e2e preserving manifest and library.
 
+### Ordered Meta-analysis spine implementation plan
+
+This is the canonical build order for the post-1.0 super-tool work. The thematic OSS-derived backlogs below remain the evidence/source pool, but implementation should proceed through this sequence so ResearchForge reaches the first done artifact: a Reproducible review package for meta-analysis authors.
+
+#### Phase 0 — Product blueprint and acceptance gates
+
+- [ ] Write the ResearchForge super-tool blueprint: modules, CLI command families, HTMX pages, storage files/tables, provenance events, validation gates, and OSS adapter dispositions.
+- [ ] Write the phased Meta-analysis spine roadmap and explicitly defer broad research-cockpit-only features until the Reproducible review package is audit/replay safe.
+- [ ] Define the `rforge forge` state machine: question draft, source plan, import plan, dedupe review, full-text acquisition, parser arbitration, indexing, screening, extraction, analysis, package/export, archive, and reopen/resume.
+- [ ] Define Reproducible review package acceptance criteria: required files, manifests, checksums, redaction report, replay command, audit report, and failure modes.
+- [ ] Add an acceptance-test matrix mapping every phase to unit tests, CLI e2e tests, handler tests, Playwright paths, screenshot coverage, provenance assertions, and package replay checks.
+
+#### Phase 1 — Question, protocol, and source plan
+
+- [ ] Add a research-question compiler for PICO/PECO/SPIDER/freeform questions that drafts source-specific query plans, inclusion/exclusion criteria, extraction schema seeds, and reviewer prompts without auto-accepting claims.
+- [ ] Add a source-planning cockpit and CLI plan preview for OpenAlex, Semantic Scholar, Crossref, arXiv, PubMed/Europe PMC, NASA ADS, DOAJ/CORE, Unpaywall, Zotero/JabRef, and local imports.
+- [ ] Add connector capability registry records for supported entities, rate limits, auth needs, live-smoke status, license/shareability policy, cacheability, and provenance fields.
+- [ ] Add API drift/live-smoke snapshot storage and dashboard alerts for all source connectors.
+- [ ] Add query-expansion suggestion records from KeyBERT/SciSpaCy/LLM assistants, requiring source text links and reviewer approval before a source plan changes.
+
+#### Phase 2 — Library import, identity, and deduplication
+
+- [ ] Add Zotero/JabRef reference-manager fidelity work: collections/groups, tags, notes, annotations, citation keys, BibTeX/BibLaTeX cleanup diffs, and linked-file privacy checks.
+- [ ] Add a reference-manager interchange fidelity matrix across BibTeX, RIS, CSL-JSON, Zotero RDF, Better BibTeX citation keys, tags, notes, collections, and redacted attachments.
+- [ ] Add source-fusion identity resolution for DOI, arXiv, PMID, PMCID, OpenAlex, Semantic Scholar, Crossref, Zotero, and ADS bibcode identifiers with explainable match rules.
+- [ ] Add reversible merge/split decisions and conflict records for identity clusters.
+- [ ] Add a revtools-inspired visual dedupe/cluster review screen with exportable decision history and PRISMA/audit provenance.
+
+#### Phase 3 — Legal full-text acquisition
+
+- [ ] Add DOAJ/CORE OA discovery adapters and compare full-text candidates from Unpaywall, DOAJ, CORE, PubMed/Europe PMC/PMC, arXiv, and local files.
+- [ ] Add legal acquisition queues with OA/license status, source URL, expected local path, restricted/shareable flags, and explicit reviewer approval before download or archive inclusion.
+- [ ] Add privacy/licensing review gates for imported attachments, notes, annotations, local paths, copyrighted PDFs, and shareable reports.
+- [ ] Add PMCID/PMID linking, structured biomedical full-text import, supplementary-file discovery, and biomedical live drift smoke tests.
+
+#### Phase 4 — Parser arbitration and reference normalization
+
+- [ ] Add parser-output license/provenance manifests for GROBID, S2ORC-style JSON, PaperMage, CERMINE, Science Parse-style metadata, and Anystyle outputs.
+- [ ] Add a multi-engine parser arbitration layer that scores parser output per field, compares raw text/offsets/warnings, and records why one output was accepted.
+- [ ] Extend parsed-document models with stable offsets, layered annotations, citation spans, parser confidence, and multi-parser reconciliation outputs.
+- [ ] Add reviewer-persistent parsed-reference adjudication for accept/correct/reject/defer decisions.
+- [ ] Normalize parsed references against Crossref, OpenAlex, Semantic Scholar, and ADS while preserving raw strings, confidence, provenance, and ambiguity queues.
+- [ ] Import full bibliography-to-citation-graph edges and link citation spans back to passages and report evidence.
+
+#### Phase 5 — Retrieval, graph, and domain-map layer
+
+- [ ] Add OpenSearch mapping-version lockfiles, bulk indexing with partial-failure provenance, highlighted passage results, and opt-in OpenSearch integration tests.
+- [ ] Add Qdrant adapter hardening: embedding-provider registry, compliance profiles, model/dimension locks, payload privacy, vector-index invalidation, and opt-in Qdrant integration tests.
+- [ ] Add calibrated hybrid retrieval tuning files with lexical/vector/backend weights, evaluation scores, selected configuration, and query-set checksums.
+- [ ] Add retrieval benchmarks comparing SQLite FTS, OpenSearch, Qdrant vector search, and hybrid ranking on deterministic passage-query fixtures.
+- [ ] Add BERTopic-style domain-map artifacts with representative papers/passages, reviewer-edited labels, topic merge/split history, model settings, and citation graph links.
+- [ ] Add accessible/no-JS citation/domain graph views: filtered node tables, edge lists, graph summaries, keyboard navigation, and exportable graph reports.
+
+#### Phase 6 — Screening and review assistance
+
+- [ ] Persist ASReview-style active-learning runs with input hashes, seed decisions, ranking method, ranked output, reviewer progress, stopping diagnostics, and adjudication state.
+- [ ] Add balanced exploration/exploitation ranking policies, richer recall/effort simulation, and sensitivity diagnostics.
+- [ ] Add reviewer assignment, conflict/adjudication panels, uncertain queues, and exportable audit bundles for screening decisions.
+- [ ] Add RobotReviewer-inspired risk-of-bias schema templates and evidence-suggestion queues with exact support text, uncertainty, model/version metadata, and reviewer decisions.
+- [ ] Add HTMX screening cockpit views for active-learning queues, uncertainty/exploration flags, progress metrics, stopping diagnostics, and audit-bundle links.
+
+#### Phase 7 — Evidence extraction and gap analysis
+
+- [ ] Add an evidence extraction grid linking every field to passage/table/figure/equation support, parser offsets, PDF view, reviewer status, correction history, and downstream analysis inclusion.
+- [ ] Add scientific entity extraction suggestions with passage offsets, abbreviation resolution, entity-link candidates, confidence, model provenance, and reviewer decisions.
+- [ ] Add LLM-assisted but citation-locked extraction/report-prose suggestions that remain unaccepted until reviewer approval.
+- [ ] Add an evidence gap analyzer for missing outcomes, missing comparators, unsupported claims, incomplete full-text acquisition, and analysis-input readiness.
+- [ ] Add per-passage provenance and parser/version/source-offset links in generated reports and package audits.
+
+#### Phase 8 — Statistical analysis and method comparison
+
+- [ ] Add additional effect-size calculators beyond standardized mean difference, log odds ratio, and risk ratio.
+- [ ] Improve subgroup analysis and meta-regression UX beyond direct CLI value entry.
+- [ ] Add influence diagnostics, richer sensitivity artifacts, and publication-bias tests beyond Egger-style regression.
+- [ ] Add publication-ready analysis artifact manifests for forest/funnel plots, plot settings, checksums, R/metafor scripts, engine versions, warnings, and report embedding metadata.
+- [ ] Add PyMARE-style secondary engine comparison reports against metafor fixtures, including environment locks, model-setting parity, warning capture, output deltas, and disagreement handling.
+- [ ] Add a method-comparison workbench for parser choices, retrieval backends, screening rankers, effect-size models, and publication-bias diagnostics.
+
+#### Phase 9 — Report, traceability, and Reproducible review package
+
+- [ ] Add citation-to-evidence trace views from every report claim back to effect-size rows, accepted evidence, passages, parser outputs, PDFs, reference-manager items, source API records, and raw request/response metadata.
+- [ ] Add a claim traceability panel that blocks final export for unresolved or weakly supported generated paragraphs, tables, or figures.
+- [ ] Add the Reproducible review package format with project manifest, lockfiles, source query plans, dedupe decisions, parser manifests, screening audit, extraction schema, accepted evidence, analysis artifacts, report outputs, redaction policy, and checksums.
+- [ ] Add package replay/audit commands that verify all checksums, lockfiles, analysis inputs, report outputs, redactions, and provenance links.
+- [ ] Add package archive/restore compatibility tests that prove a package can be moved, reopened, audited, and replayed without private local state.
+
+#### Phase 10 — HTMX cockpit and one-command Forge workflow
+
+- [ ] Add the Forge home timeline showing active project, current state, provenance events, blocked review gates, background jobs, and next safe actions with CLI-equivalent commands.
+- [ ] Add HTMX workbenches for source planning, import/dedupe, legal acquisition, parser arbitration, retrieval tuning, screening, evidence extraction, meta-analysis, report traceability, research map, connector health, and reproducibility/export.
+- [ ] Add dashboard information architecture: routes, partial endpoints, view models, no-JS fallbacks, background jobs, and ownership boundaries.
+- [ ] Add dashboard permissions/privacy model for local-only paths, copyrighted PDFs, reviewer notes, credentials, embeddings, cache files, and shareable report fields.
+- [ ] Add the one-command `rforge forge` guided workflow with review gates at every irreversible scientific or data-sharing decision.
+- [ ] Expand Playwright and screenshot coverage for all Meta-analysis spine cockpit screens and no-JS fallbacks.
+
+#### Phase 11 — Broader research cockpit expansion after the spine
+
+- [ ] Add project knowledge graph queries that merge collections/tags, concepts, citations, parsed references, evidence, screening decisions, analysis runs, report claims, and provenance events.
+- [ ] Add live research-map cockpit features for concept maps, citation neighborhoods, retrieval clusters, evidence coverage, and snapshot export.
+- [ ] Add lab-notebook timeline views for all human and automated workflow events.
+- [ ] Add OSS-inventory-to-roadmap reports that group `nextSlice` entries by area and detect TODO coverage gaps for new inventory notes.
+- [ ] Add cross-tool benchmarks for discovery recall, dedupe precision, parser accuracy, reference normalization, retrieval quality, screening effort savings, and report/package reproducibility.
+
 ### Post-1.0 backlog
 
 - [x] Make `import` resilient to duplicate identifiers: skip in-file/in-store duplicates and no-identifier records and report them, instead of aborting the whole import and leaving partial state (parsers skip+count unstorable records, `Store.ImportRecords` skips+reports duplicates; merging stays in `duplicate merge`). See `docs/superpowers/specs/2026-06-13-import-duplicate-handling-design.md`.
