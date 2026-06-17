@@ -9,8 +9,8 @@ import (
 )
 
 func executeProtocol(args []string, stdout, stderr io.Writer, opts globalOptions) int {
-	if len(args) == 0 || args[0] != "compile" {
-		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge protocol compile --question <text> [--type pico|peco|spider|freeform] [framework flags]")
+	if len(args) == 0 || (args[0] != "compile" && args[0] != "plan-sources") {
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge protocol compile|plan-sources --question <text> [--type pico|peco|spider|freeform] [framework flags]")
 	}
 	values, err := parseProtocolCompileFlags(args[1:])
 	if err != nil {
@@ -32,6 +32,9 @@ func executeProtocol(args []string, stdout, stderr io.Writer, opts globalOptions
 	})
 	if err != nil {
 		return writeError(stdout, stderr, opts, 1, "protocol_compile_failed", err.Error())
+	}
+	if args[0] == "plan-sources" {
+		return writeSourcePlan(protocol.CompileSourcePlan(plan), stdout, opts)
 	}
 	if opts.JSON {
 		return writeJSON(stdout, 0, map[string]any{"plan": plan})
@@ -64,6 +67,26 @@ func executeProtocol(args []string, stdout, stderr io.Writer, opts globalOptions
 	}
 	fmt.Fprintln(stdout, "\nReviewer approval required: true")
 	fmt.Fprintln(stdout, "Auto-accepted claims: false")
+	return 0
+}
+
+func writeSourcePlan(plan protocol.SourcePlan, stdout io.Writer, opts globalOptions) int {
+	if opts.JSON {
+		return writeJSON(stdout, 0, map[string]any{"sourcePlan": plan})
+	}
+	fmt.Fprintf(stdout, "Question: %s\n", plan.Question)
+	fmt.Fprintln(stdout, "\nSource plan preview:")
+	for _, source := range plan.Sources {
+		fmt.Fprintf(stdout, "- %s (%s)\n", source.Label, source.SourceKind)
+		if source.Query != "" {
+			fmt.Fprintf(stdout, "  Query: %s\n", source.Query)
+		}
+		fmt.Fprintf(stdout, "  Dry run: %s\n", source.DryRunEstimate)
+		fmt.Fprintf(stdout, "  Auth: %s\n", source.AuthRequirement)
+		fmt.Fprintf(stdout, "  Privacy: %s\n", source.PrivacyWarning)
+		fmt.Fprintf(stdout, "  CLI: %s\n", source.CLICommand)
+	}
+	fmt.Fprintln(stdout, "\nReviewer approval required before network calls, imports, downloads, or package inclusion.")
 	return 0
 }
 

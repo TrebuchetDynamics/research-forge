@@ -31,18 +31,18 @@ type QuestionInput struct {
 }
 
 type CompiledQuestionPlan struct {
-	SchemaVersion           string                     `json:"schemaVersion"`
-	Framework               Framework                  `json:"framework"`
-	Question                string                     `json:"question"`
-	Components              map[string]string          `json:"components"`
-	SourceQueries           map[string]SourceQueryPlan `json:"sourceQueries"`
-	InclusionCriteria       []string                   `json:"inclusionCriteria"`
-	ExclusionCriteria       []string                   `json:"exclusionCriteria"`
-	ExtractionSchema        ExtractionSchemaSeed       `json:"extractionSchema"`
-	ReviewerPrompts         []ReviewerPrompt         `json:"reviewerPrompts"`
+	SchemaVersion            string                     `json:"schemaVersion"`
+	Framework                Framework                  `json:"framework"`
+	Question                 string                     `json:"question"`
+	Components               map[string]string          `json:"components"`
+	SourceQueries            map[string]SourceQueryPlan `json:"sourceQueries"`
+	InclusionCriteria        []string                   `json:"inclusionCriteria"`
+	ExclusionCriteria        []string                   `json:"exclusionCriteria"`
+	ExtractionSchema         ExtractionSchemaSeed       `json:"extractionSchema"`
+	ReviewerPrompts          []ReviewerPrompt           `json:"reviewerPrompts"`
 	ReviewerApprovalRequired bool                       `json:"reviewerApprovalRequired"`
-	AutoAcceptedClaims      bool                       `json:"autoAcceptedClaims"`
-	Warnings                []string                   `json:"warnings,omitempty"`
+	AutoAcceptedClaims       bool                       `json:"autoAcceptedClaims"`
+	Warnings                 []string                   `json:"warnings,omitempty"`
 }
 
 type SourceQueryPlan struct {
@@ -87,18 +87,18 @@ func CompileQuestion(input QuestionInput) (CompiledQuestionPlan, error) {
 	}
 	queries["unpaywall"] = SourceQueryPlan{Source: "unpaywall", Query: "DOI lookup for included/imported records", Note: "not a discovery query; use after DOI-bearing records exist"}
 	return CompiledQuestionPlan{
-		SchemaVersion:           "1",
-		Framework:               framework,
-		Question:                question,
-		Components:              components,
-		SourceQueries:           queries,
-		InclusionCriteria:       inclusionCriteria(framework, components),
-		ExclusionCriteria:       exclusionCriteria(framework, components),
-		ExtractionSchema:        extractionSchema(framework),
-		ReviewerPrompts:         reviewerPrompts(framework),
+		SchemaVersion:            "1",
+		Framework:                framework,
+		Question:                 question,
+		Components:               components,
+		SourceQueries:            queries,
+		InclusionCriteria:        inclusionCriteria(framework, components),
+		ExclusionCriteria:        exclusionCriteria(framework, components),
+		ExtractionSchema:         extractionSchema(framework),
+		ReviewerPrompts:          reviewerPrompts(framework),
 		ReviewerApprovalRequired: true,
-		AutoAcceptedClaims:      false,
-		Warnings:                warningsFor(framework, components),
+		AutoAcceptedClaims:       false,
+		Warnings:                 warningsFor(framework, components),
 	}, nil
 }
 

@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/TrebuchetDynamics/research-forge/internal/project"
+	"github.com/TrebuchetDynamics/research-forge/internal/protocol"
 	"github.com/TrebuchetDynamics/research-forge/internal/ui"
 )
 
@@ -32,6 +33,7 @@ var shellTemplate = template.Must(template.New("shell").Parse(`<!doctype html>
           <li><a href="/artifacts">Artifacts</a></li>
           <li><a href="/oss">OSS studies</a></li>
           <li><a href="/search">Search</a></li>
+          <li><a href="/sources">Source plan</a></li>
           <li><a href="/projects">Projects</a></li>
         </ul>
       </nav>
@@ -64,6 +66,36 @@ var searchTemplate = template.Must(template.New("search").Parse(`<section aria-l
   </form>
   <p id="search-loading" class="htmx-indicator">Loading</p>
   <div id="search-results" role="status">No results yet</div>
+</section>`))
+
+var sourcePlanningTemplate = template.Must(template.New("source-planning").Parse(`<section aria-labelledby="source-planning-title" class="rf-card">
+  <h2 id="source-planning-title">Source planning cockpit</h2>
+  <form method="get" action="/sources">
+    <label for="source-question">Research question</label>
+    <input id="source-question" name="question" value="{{.Question}}" required>
+    <label for="source-type">Framework</label>
+    <select id="source-type" name="type">
+      <option value="freeform">freeform</option>
+      <option value="pico">pico</option>
+      <option value="peco">peco</option>
+      <option value="spider">spider</option>
+    </select>
+    <button type="submit">Preview sources</button>
+  </form>
+  <p>CLI equivalent: <code>rforge protocol plan-sources --question '{{.Question}}'</code></p>
+  <p><strong>Reviewer approval required</strong> before network calls, imports, downloads, or package inclusion.</p>
+  <div role="table" aria-label="Source plan preview">
+    <div role="row"><strong role="columnheader">Source</strong> <strong role="columnheader">Kind</strong> <strong role="columnheader">Dry run</strong> <strong role="columnheader">Privacy/Auth</strong></div>
+    {{range .Sources}}
+    <div role="row">
+      <span role="cell">{{.Label}}</span>
+      <span role="cell">{{.SourceKind}}</span>
+      <span role="cell">{{.DryRunEstimate}}</span>
+      <span role="cell">{{.PrivacyWarning}} Auth: {{.AuthRequirement}}</span>
+      <code role="cell">{{.CLICommand}}</code>
+    </div>
+    {{end}}
+  </div>
 </section>`))
 
 var libraryTemplate = template.Must(template.New("library").Parse(`<section aria-labelledby="library-title" class="rf-card" hx-get="/library/rows" hx-trigger="refresh-library from:body">
@@ -260,6 +292,36 @@ func NewSearchHandler(state ui.SearchFormState) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		_ = searchTemplate.Execute(w, state)
+	})
+}
+
+// NewSourcePlanningHandler renders the source-planning cockpit over protocol compiler output.
+func NewSourcePlanningHandler() http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		question := strings.TrimSpace(r.URL.Query().Get("question"))
+		if question == "" {
+			question = "Does the intervention improve the outcome compared with control?"
+		}
+		plan, err := protocol.CompileSourcePlanFromQuestion(protocol.QuestionInput{
+			Framework:    r.URL.Query().Get("type"),
+			Question:     question,
+			Population:   r.URL.Query().Get("population"),
+			Intervention: r.URL.Query().Get("intervention"),
+			Comparator:   r.URL.Query().Get("comparator"),
+			Outcome:      r.URL.Query().Get("outcome"),
+			Exposure:     r.URL.Query().Get("exposure"),
+			Sample:       r.URL.Query().Get("sample"),
+			Phenomenon:   r.URL.Query().Get("phenomenon"),
+			Design:       r.URL.Query().Get("design"),
+			Evaluation:   r.URL.Query().Get("evaluation"),
+			ResearchType: r.URL.Query().Get("research-type"),
+		})
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		_ = sourcePlanningTemplate.Execute(w, plan)
 	})
 }
 

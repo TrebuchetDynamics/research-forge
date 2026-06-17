@@ -63,6 +63,7 @@ func Routes() []string {
 		"/papers",
 		"/projects",
 		"/search",
+		"/sources",
 	}
 	sort.Strings(routes)
 	return routes
@@ -83,6 +84,7 @@ func NewRouter(cfg Config) http.Handler {
 	mux.Handle("GET /projects/active", newActiveProjectHandler(state))
 	mux.Handle("POST /projects/switch", newSwitchProjectHandler(state))
 	mux.Handle("/search", NewSearchHandler(ui.NewSearchFormState(defaultSearchSources())))
+	mux.Handle("/sources", NewSourcePlanningHandler())
 
 	libraryHandler := newProjectLibraryHandler(state.get)
 	mux.Handle("/library", libraryHandler)
