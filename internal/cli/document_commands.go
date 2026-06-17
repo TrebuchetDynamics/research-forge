@@ -243,6 +243,60 @@ func executeParse(args []string, stdout, stderr io.Writer, opts globalOptions) i
 		}
 		return 0
 	}
+	if len(args) > 0 && args[0] == "adjudicate-ref" {
+		parsedPath, logPath, index, decision, reviewer, reason, correction, ok := parseAdjudicateRefArgs(args[1:], opts.Project)
+		if !ok {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> parse adjudicate-ref --parsed <parsed.json> --index <n> --decision accept|correct|reject|defer --reviewer <name> --reason <text> [--title <text> --doi <doi> --raw <text> --log <jsonl>]")
+		}
+		var doc parsing.ParsedDocument
+		if err := readJSONFile(parsedPath, &doc); err != nil {
+			return writeError(stdout, stderr, opts, 1, "parse_refs_read_failed", err.Error())
+		}
+		record, err := parsing.NewReferenceAdjudication(doc, index, decision, reviewer, reason, correction)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "parse_ref_adjudication_invalid", err.Error())
+		}
+		if err := parsing.AppendReferenceAdjudication(logPath, record); err != nil {
+			return writeError(stdout, stderr, opts, 1, "parse_ref_adjudication_write_failed", err.Error())
+		}
+		if err := recordDuplicateEvent(opts.Project, "reference.adjudication.recorded", map[string]any{"parsed": parsedPath, "paperId": record.PaperID, "referenceIndex": record.ReferenceIndex, "decision": record.Decision}, map[string]any{"path": logPath, "reviewer": record.Reviewer, "reason": record.Reason}); err != nil {
+			return writeError(stdout, stderr, opts, 1, "parse_ref_adjudication_provenance_failed", err.Error())
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"referenceAdjudication": record, "path": logPath})
+		}
+		fmt.Fprintf(stdout, "recorded reference adjudication in %s\n", logPath)
+		return 0
+	}
+	if len(args) > 0 && args[0] == "adjudicated-refs" {
+		parsedPath, logPath, out, ok := parseAdjudicatedRefsArgs(args[1:], opts.Project)
+		if !ok {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> parse adjudicated-refs --parsed <parsed.json> [--log <jsonl> --out <report.json>]")
+		}
+		var doc parsing.ParsedDocument
+		if err := readJSONFile(parsedPath, &doc); err != nil {
+			return writeError(stdout, stderr, opts, 1, "parse_refs_read_failed", err.Error())
+		}
+		records, err := parsing.LoadReferenceAdjudications(logPath)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "parse_ref_adjudication_read_failed", err.Error())
+		}
+		report := parsing.ApplyReferenceAdjudications(doc, records)
+		if out != "" {
+			if err := writeJSONFile(out, report); err != nil {
+				return writeError(stdout, stderr, opts, 1, "parse_ref_adjudication_report_write_failed", err.Error())
+			}
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"referenceAdjudication": report, "path": out, "logPath": logPath})
+		}
+		if out != "" {
+			fmt.Fprintf(stdout, "wrote reference adjudication report to %s\n", out)
+		} else {
+			fmt.Fprintf(stdout, "reference adjudication: accepted=%d corrected=%d rejected=%d deferred=%d unreviewed=%d\n", report.Accepted, report.Corrected, report.Rejected, report.Deferred, report.Unreviewed)
+		}
+		return 0
+	}
 	if len(args) > 0 && args[0] == "review-refs" {
 		parsedPath, out, threshold, ok := parseReviewRefsArgs(args[1:])
 		if !ok {
@@ -509,6 +563,50 @@ func readParsePDF(path string) ([]byte, error) {
 		return nil, fmt.Errorf("pdf input too large: exceeds %d", maxParsePDFBytes)
 	}
 	return data, nil
+}
+
+func defaultReferenceAdjudicationLog(project string) string {
+	return filepath.Join(project, "data", "reference-adjudications.jsonl")
+}
+
+func parseAdjudicateRefArgs(args []string, project string) (string, string, int, string, string, string, parsing.ReferenceCorrection, bool) {
+	values := map[string]string{"--log": defaultReferenceAdjudicationLog(project)}
+	for i := 0; i < len(args); i++ {
+		switch args[i] {
+		case "--parsed", "--log", "--index", "--decision", "--reviewer", "--reason", "--title", "--doi", "--raw":
+			if i+1 >= len(args) {
+				return "", "", 0, "", "", "", parsing.ReferenceCorrection{}, false
+			}
+			values[args[i]] = args[i+1]
+			i++
+		default:
+			return "", "", 0, "", "", "", parsing.ReferenceCorrection{}, false
+		}
+	}
+	index, err := strconv.Atoi(values["--index"])
+	if err != nil {
+		return "", "", 0, "", "", "", parsing.ReferenceCorrection{}, false
+	}
+	correction := parsing.ReferenceCorrection{Title: values["--title"], DOI: values["--doi"], Raw: values["--raw"]}
+	ok := values["--parsed"] != "" && values["--log"] != "" && values["--decision"] != "" && values["--reviewer"] != "" && values["--reason"] != ""
+	return values["--parsed"], values["--log"], index, values["--decision"], values["--reviewer"], values["--reason"], correction, ok
+}
+
+func parseAdjudicatedRefsArgs(args []string, project string) (string, string, string, bool) {
+	values := map[string]string{"--log": defaultReferenceAdjudicationLog(project)}
+	for i := 0; i < len(args); i++ {
+		switch args[i] {
+		case "--parsed", "--log", "--out":
+			if i+1 >= len(args) {
+				return "", "", "", false
+			}
+			values[args[i]] = args[i+1]
+			i++
+		default:
+			return "", "", "", false
+		}
+	}
+	return values["--parsed"], values["--log"], values["--out"], values["--parsed"] != "" && values["--log"] != ""
 }
 
 func parseReviewRefsArgs(args []string) (string, string, float64, bool) {
