@@ -173,7 +173,7 @@ func executeCitations(args []string, stdout, stderr io.Writer, opts globalOption
 	if args[0] != "expand" {
 		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge citations <expand|report>")
 	}
-	source, paperID, direction, out, limit, depth, maxRecords, importLibrary, ok := parseCitationsExpand(args[1:])
+	source, paperID, direction, out, runStatePath, limit, depth, maxRecords, importLibrary, ok := parseCitationsExpand(args[1:])
 	if !ok || (source != "semantic-scholar" && source != "openalex" && source != "crossref") {
 		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge citations expand --source semantic-scholar|openalex|crossref --paper <id> --direction <references|citations|both> --out <file>")
 	}
@@ -207,6 +207,13 @@ func executeCitations(args []string, stdout, stderr io.Writer, opts globalOption
 	}
 	if err := os.WriteFile(out, data, 0o644); err != nil {
 		return writeError(stdout, stderr, opts, 1, "citation_graph_write_failed", err.Error())
+	}
+	if runStatePath != "" && source == "semantic-scholar" {
+		run := sources.NewSemanticScholarGraphRun(sources.SemanticScholarGraphRunOptions{SeedID: paperID, Direction: sources.SemanticScholarGraphDirection(direction), Limit: limit, Depth: depth, MaxRecords: maxRecords, RequestedFields: []string{"paperId", "title", "abstract", "year", "venue", "externalIds"}})
+		run = run.RecordExpansion(expansion, nil, 0)
+		if err := writeJSONFile(runStatePath, run); err != nil {
+			return writeError(stdout, stderr, opts, 1, "citation_run_state_write_failed", err.Error())
+		}
 	}
 	imported := 0
 	if importLibrary {
@@ -261,7 +268,7 @@ func executeCitations(args []string, stdout, stderr io.Writer, opts globalOption
 		}
 	}
 	if opts.JSON {
-		return writeJSON(stdout, 0, map[string]any{"path": out, "edges": len(expansion.Edges), "rawRef": expansion.RawRef, "imported": imported, "depth": depth, "maxRecords": maxRecords})
+		return writeJSON(stdout, 0, map[string]any{"path": out, "runState": runStatePath, "edges": len(expansion.Edges), "rawRef": expansion.RawRef, "imported": imported, "depth": depth, "maxRecords": maxRecords})
 	}
 	fmt.Fprintf(stdout, "wrote citation graph with %d edges to %s\n", len(expansion.Edges), out)
 	return 0
@@ -1012,7 +1019,7 @@ func parseCitationsReport(args []string) (string, string, bool) {
 	return values["--graph"], values["--out"], values["--graph"] != "" && values["--out"] != ""
 }
 
-func parseCitationsExpand(args []string) (string, string, string, string, int, int, int, bool, bool) {
+func parseCitationsExpand(args []string) (string, string, string, string, string, int, int, int, bool, bool) {
 	values := map[string]string{}
 	limit := 25
 	depth := 1
@@ -1022,14 +1029,14 @@ func parseCitationsExpand(args []string) (string, string, string, string, int, i
 		switch args[i] {
 		case "--import-library":
 			importLibrary = true
-		case "--source", "--paper", "--direction", "--out", "--limit", "--depth", "--max-records":
+		case "--source", "--paper", "--direction", "--out", "--run-state", "--limit", "--depth", "--max-records":
 			if i+1 >= len(args) {
-				return "", "", "", "", 0, 0, 0, false, false
+				return "", "", "", "", "", 0, 0, 0, false, false
 			}
 			if args[i] == "--limit" || args[i] == "--depth" || args[i] == "--max-records" {
 				parsed, err := strconv.Atoi(args[i+1])
 				if err != nil || parsed <= 0 {
-					return "", "", "", "", 0, 0, 0, false, false
+					return "", "", "", "", "", 0, 0, 0, false, false
 				}
 				if args[i] == "--limit" {
 					limit = parsed
@@ -1043,7 +1050,7 @@ func parseCitationsExpand(args []string) (string, string, string, string, int, i
 			}
 			i++
 		default:
-			return "", "", "", "", 0, 0, 0, false, false
+			return "", "", "", "", "", 0, 0, 0, false, false
 		}
 	}
 	direction := values["--direction"]
@@ -1051,7 +1058,7 @@ func parseCitationsExpand(args []string) (string, string, string, string, int, i
 		direction = "both"
 	}
 	validDirection := direction == string(sources.SemanticScholarDirectionReferences) || direction == string(sources.SemanticScholarDirectionCitations) || direction == string(sources.SemanticScholarDirectionBoth)
-	return values["--source"], values["--paper"], direction, values["--out"], limit, depth, maxRecords, importLibrary, values["--source"] != "" && values["--paper"] != "" && values["--out"] != "" && validDirection
+	return values["--source"], values["--paper"], direction, values["--out"], values["--run-state"], limit, depth, maxRecords, importLibrary, values["--source"] != "" && values["--paper"] != "" && values["--out"] != "" && validDirection
 }
 
 func parseSearchRelated(args []string) (string, string, int, bool) {
