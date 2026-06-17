@@ -108,6 +108,18 @@ func DraftRiskOfBiasSuggestionQueue(request RiskOfBiasSuggestionRequest) RiskOfB
 	return queue
 }
 
+func EveryRiskOfBiasJudgmentAuditable(queue RiskOfBiasSuggestionQueue) bool {
+	for _, suggestion := range queue.Suggestions {
+		if strings.TrimSpace(suggestion.ExactSupportText) == "" || strings.TrimSpace(suggestion.SupportRef) == "" || strings.TrimSpace(suggestion.ModelName) == "" || strings.TrimSpace(suggestion.ModelVersion) == "" || suggestion.Uncertainty <= 0 {
+			return false
+		}
+		if suggestion.Status != RiskOfBiasSuggested && strings.TrimSpace(suggestion.ReviewerDecision.Reviewer) == "" {
+			return false
+		}
+	}
+	return true
+}
+
 func ReviewRiskOfBiasSuggestion(queue RiskOfBiasSuggestionQueue, input RiskOfBiasReviewInput) (RiskOfBiasSuggestionQueue, error) {
 	if strings.TrimSpace(input.SuggestionID) == "" {
 		return queue, fmt.Errorf("suggestion id is required")

@@ -27,12 +27,13 @@ Implemented nearby capabilities:
 
 Missing features:
 
-- Risk-of-bias schema templates with domain-specific fields.
-- Suggestion cards with quoted support, uncertainty, and reviewer decision state.
-- Model/version/provenance records for automated extraction suggestions.
 - Calibration/evaluation reports for suggestion quality.
 - Dashboard panels for unresolved extraction/risk-of-bias suggestions.
 
+Implemented:
+
+- `DefaultRiskOfBiasSchemaTemplates`, `DraftRiskOfBiasSuggestionQueue`, `EveryRiskOfBiasJudgmentAuditable`, and `rforge evidence risk-bias-*` implement RobotReviewer-inspired risk-of-bias/evidence-suggestion workflows where every automated judgment carries exact support text/ref, uncertainty, model/version metadata, and accept/correct/reject reviewer state.
+
 ## Recommended next slice
 
-Add a risk-of-bias extraction schema template and an evidence-suggestion review queue where every suggested judgment cites a passage and remains unaccepted until reviewer action.
+Add calibration/evaluation reporting and dashboard panels for unresolved RobotReviewer-inspired extraction/risk-of-bias suggestions.
