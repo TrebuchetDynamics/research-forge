@@ -19,6 +19,16 @@ import (
 const maxParsePDFBytes int64 = 100 << 20
 
 func executeIndex(args []string, stdout, stderr io.Writer, opts globalOptions) int {
+	if len(args) == 1 && args[0] == "embedding-providers" {
+		registry := retrieval.DefaultEmbeddingProviderRegistry()
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"embeddingProviders": registry})
+		}
+		for _, provider := range registry.Providers {
+			fmt.Fprintf(stdout, "%s\t%d\t%s\n", provider.Name, provider.Dimensions, provider.Compliance.TextEgress)
+		}
+		return 0
+	}
 	backend, ok := parseIndexArgs(args)
 	if !ok {
 		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> index rebuild [--backend sqlite|opensearch|qdrant|hybrid]")
@@ -36,6 +46,7 @@ func executeIndex(args []string, stdout, stderr io.Writer, opts globalOptions) i
 	}
 	defer index.Close()
 	var openSearchReport *retrieval.OpenSearchBulkReport
+	var qdrantReport *retrieval.QdrantRebuildReport
 	if osIndex, ok := index.(*retrieval.OpenSearchIndex); ok {
 		report, err := osIndex.RebuildWithReport(docs)
 		if err != nil {
@@ -48,6 +59,18 @@ func executeIndex(args []string, stdout, stderr io.Writer, opts globalOptions) i
 		if err := writeOpenSearchMappingLock(opts.Project, report); err != nil {
 			return writeError(stdout, stderr, opts, 1, "index_mapping_lock_failed", fmt.Sprintf("write OpenSearch mapping lock: %v", err))
 		}
+	} else if qdrantIndex, ok := index.(*retrieval.QdrantIndex); ok {
+		report, err := qdrantIndex.RebuildWithReport(docs)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "index_rebuild_failed", fmt.Sprintf("rebuild index: %v", err))
+		}
+		qdrantReport = &report
+		if err := writeJSONFile(filepath.Join(opts.Project, "data", "qdrant.index-report.json"), report); err != nil {
+			return writeError(stdout, stderr, opts, 1, "index_qdrant_report_failed", fmt.Sprintf("write Qdrant report: %v", err))
+		}
+		if err := writeQdrantVectorLock(opts.Project, report); err != nil {
+			return writeError(stdout, stderr, opts, 1, "index_qdrant_lock_failed", fmt.Sprintf("write Qdrant vector lock: %v", err))
+		}
 	} else if err := index.Rebuild(docs); err != nil {
 		return writeError(stdout, stderr, opts, 1, "index_rebuild_failed", fmt.Sprintf("rebuild index: %v", err))
 	}
@@ -58,6 +81,9 @@ func executeIndex(args []string, stdout, stderr io.Writer, opts globalOptions) i
 		data := map[string]any{"indexedDocuments": len(docs), "backend": backend}
 		if openSearchReport != nil {
 			data["openSearchBulkReport"] = openSearchReport
+		}
+		if qdrantReport != nil {
+			data["qdrantIndexReport"] = qdrantReport
 		}
 		return writeJSON(stdout, 0, data)
 	}
@@ -74,6 +100,21 @@ type retrievalLock struct {
 	EmbeddingBackend string `json:"embeddingBackend,omitempty"`
 	EmbeddingVersion string `json:"embeddingVersion,omitempty"`
 	MappingVersion   string `json:"mappingVersion,omitempty"`
+	VectorDimension  int    `json:"vectorDimension,omitempty"`
+	PayloadPrivacy   string `json:"payloadPrivacy,omitempty"`
+}
+
+func writeQdrantVectorLock(project string, report retrieval.QdrantRebuildReport) error {
+	return writeJSONFile(filepath.Join(project, "data", "qdrant.vector.lock.json"), map[string]any{
+		"schemaVersion":           "1",
+		"backend":                 "qdrant",
+		"collection":              report.Collection,
+		"embeddingProvider":       report.EmbeddingProvider,
+		"dimension":               report.Dimension,
+		"payloadPrivacy":          report.PayloadPrivacy,
+		"textEgress":              report.TextEgress,
+		"invalidatedBeforeUpsert": report.InvalidatedBeforeUpsert,
+	})
 }
 
 func writeOpenSearchMappingLock(project string, report retrieval.OpenSearchBulkReport) error {
@@ -93,6 +134,8 @@ func writeRetrievalLock(project, backend string, indexedDocuments int) error {
 		lock.VectorBackend = "qdrant"
 		lock.EmbeddingBackend = embedding.EmbeddingBackendName()
 		lock.EmbeddingVersion = embeddingVersionFromEnv()
+		lock.VectorDimension = embeddingDimensionsFromEnv()
+		lock.PayloadPrivacy = qdrantPayloadPrivacyFromEnv()
 	case "hybrid":
 		embedding := embeddingModelFromEnv()
 		lock.LexicalBackend = "sqlite-fts5"
@@ -200,6 +243,19 @@ func embeddingDimensionsFromEnv() int {
 	return dimensions
 }
 
+func qdrantPayloadPrivacyFromEnv() string {
+	privacy := strings.TrimSpace(os.Getenv("RFORGE_QDRANT_PAYLOAD_PRIVACY"))
+	if privacy == retrieval.PayloadPrivacyRedacted {
+		return retrieval.PayloadPrivacyRedacted
+	}
+	return retrieval.PayloadPrivacyFull
+}
+
+func qdrantInvalidateFromEnv() bool {
+	value := strings.TrimSpace(strings.ToLower(os.Getenv("RFORGE_QDRANT_INVALIDATE")))
+	return value == "1" || value == "true" || value == "yes"
+}
+
 func openRetrievalBackend(project, backend string) (retrieval.SearchAdapter, error) {
 	switch backend {
 	case "opensearch":
@@ -213,7 +269,7 @@ func openRetrievalBackend(project, backend string) (retrieval.SearchAdapter, err
 		if strings.TrimSpace(baseURL) == "" {
 			return nil, fmt.Errorf("RFORGE_QDRANT_URL is required for qdrant backend")
 		}
-		return retrieval.NewQdrantIndex(retrieval.QdrantOptions{BaseURL: baseURL, Collection: os.Getenv("RFORGE_QDRANT_COLLECTION"), Embeddings: embeddingModelFromEnv()})
+		return retrieval.NewQdrantIndex(retrieval.QdrantOptions{BaseURL: baseURL, Collection: os.Getenv("RFORGE_QDRANT_COLLECTION"), Embeddings: embeddingModelFromEnv(), PayloadPrivacy: qdrantPayloadPrivacyFromEnv(), InvalidateBeforeUpsert: qdrantInvalidateFromEnv()})
 	case "hybrid":
 		qdrantURL := os.Getenv("RFORGE_QDRANT_URL")
 		if strings.TrimSpace(qdrantURL) == "" {
@@ -223,7 +279,7 @@ func openRetrievalBackend(project, backend string) (retrieval.SearchAdapter, err
 		if err != nil {
 			return nil, err
 		}
-		vector, err := retrieval.NewQdrantIndex(retrieval.QdrantOptions{BaseURL: qdrantURL, Collection: os.Getenv("RFORGE_QDRANT_COLLECTION"), Embeddings: embeddingModelFromEnv()})
+		vector, err := retrieval.NewQdrantIndex(retrieval.QdrantOptions{BaseURL: qdrantURL, Collection: os.Getenv("RFORGE_QDRANT_COLLECTION"), Embeddings: embeddingModelFromEnv(), PayloadPrivacy: qdrantPayloadPrivacyFromEnv(), InvalidateBeforeUpsert: qdrantInvalidateFromEnv()})
 		if err != nil {
 			_ = lexical.Close()
 			return nil, err

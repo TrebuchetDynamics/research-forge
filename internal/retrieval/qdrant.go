@@ -15,10 +15,49 @@ import (
 	"github.com/TrebuchetDynamics/research-forge/internal/parsing"
 )
 
+const (
+	PayloadPrivacyFull     = "full-text"
+	PayloadPrivacyRedacted = "redacted-checksum"
+)
+
 // EmbeddingModel embeds passage/query text for vector retrieval.
 type EmbeddingModel interface {
 	EmbeddingBackendName() string
 	Embed(string) ([]float64, error)
+}
+
+type EmbeddingProviderRegistry struct {
+	SchemaVersion string              `json:"schemaVersion"`
+	Providers     []EmbeddingProvider `json:"providers"`
+}
+
+type EmbeddingProvider struct {
+	Name       string                     `json:"name"`
+	Dimensions int                        `json:"dimensions"`
+	Compliance EmbeddingComplianceProfile `json:"compliance"`
+}
+
+type EmbeddingComplianceProfile struct {
+	TextEgress      string `json:"textEgress"`
+	RequiresConsent bool   `json:"requiresConsent"`
+	RetentionPolicy string `json:"retentionPolicy"`
+	Redaction       string `json:"redaction"`
+}
+
+func DefaultEmbeddingProviderRegistry() EmbeddingProviderRegistry {
+	return EmbeddingProviderRegistry{SchemaVersion: "1", Providers: []EmbeddingProvider{
+		{Name: "deterministic-hash", Dimensions: 8, Compliance: EmbeddingComplianceProfile{TextEgress: "none", RequiresConsent: false, RetentionPolicy: "local-only", Redaction: "not-required"}},
+		{Name: "http-embedding", Dimensions: 0, Compliance: EmbeddingComplianceProfile{TextEgress: "configured-http-endpoint", RequiresConsent: true, RetentionPolicy: "provider-configured", Redaction: "caller-managed"}},
+	}}
+}
+
+func (r EmbeddingProviderRegistry) Provider(name string) (EmbeddingProvider, bool) {
+	for _, provider := range r.Providers {
+		if provider.Name == name || strings.HasPrefix(name, provider.Name+":") {
+			return provider, true
+		}
+	}
+	return EmbeddingProvider{}, false
 }
 
 // DeterministicEmbedding is a local, dependency-free embedding scaffold for tests and offline workflows.
@@ -53,18 +92,35 @@ func (d DeterministicEmbedding) Embed(text string) ([]float64, error) {
 
 // QdrantIndex is an optional passage vector retrieval adapter backed by Qdrant.
 type QdrantIndex struct {
-	baseURL    string
-	collection string
-	client     *http.Client
-	embeddings EmbeddingModel
+	baseURL                string
+	collection             string
+	client                 *http.Client
+	embeddings             EmbeddingModel
+	payloadPrivacy         string
+	invalidateBeforeUpsert bool
 }
 
 // QdrantOptions configures the optional Qdrant adapter.
 type QdrantOptions struct {
-	BaseURL    string
-	Collection string
-	Timeout    time.Duration
-	Embeddings EmbeddingModel
+	BaseURL                string
+	Collection             string
+	Timeout                time.Duration
+	Embeddings             EmbeddingModel
+	PayloadPrivacy         string
+	InvalidateBeforeUpsert bool
+}
+
+type QdrantRebuildReport struct {
+	SchemaVersion           string `json:"schemaVersion"`
+	Backend                 string `json:"backend"`
+	Collection              string `json:"collection"`
+	EmbeddingProvider       string `json:"embeddingProvider"`
+	Dimension               int    `json:"dimension"`
+	PayloadPrivacy          string `json:"payloadPrivacy"`
+	InvalidatedBeforeUpsert bool   `json:"invalidatedBeforeUpsert"`
+	Attempted               int    `json:"attempted"`
+	Indexed                 int    `json:"indexed"`
+	TextEgress              string `json:"textEgress"`
 }
 
 func NewQdrantIndex(options QdrantOptions) (*QdrantIndex, error) {
@@ -84,28 +140,106 @@ func NewQdrantIndex(options QdrantOptions) (*QdrantIndex, error) {
 	if embeddings == nil {
 		embeddings = DeterministicEmbedding{Dimensions: 8}
 	}
-	return &QdrantIndex{baseURL: baseURL, collection: collection, client: &http.Client{Timeout: timeout}, embeddings: embeddings}, nil
+	privacy := strings.TrimSpace(options.PayloadPrivacy)
+	if privacy == "" {
+		privacy = PayloadPrivacyFull
+	}
+	return &QdrantIndex{baseURL: baseURL, collection: collection, client: &http.Client{Timeout: timeout}, embeddings: embeddings, payloadPrivacy: privacy, invalidateBeforeUpsert: options.InvalidateBeforeUpsert}, nil
 }
 
 func (q *QdrantIndex) VectorBackendName() string { return "qdrant" }
 
 // Rebuild upserts parsed passages into Qdrant with deterministic point IDs.
 func (q *QdrantIndex) Rebuild(docs []parsing.ParsedDocument) error {
+	_, err := q.RebuildWithReport(docs)
+	return err
+}
+
+func (q *QdrantIndex) RebuildWithReport(docs []parsing.ParsedDocument) (QdrantRebuildReport, error) {
+	providerName := q.embeddings.EmbeddingBackendName()
+	report := QdrantRebuildReport{SchemaVersion: "1", Backend: "qdrant", Collection: q.collection, EmbeddingProvider: providerName, PayloadPrivacy: q.payloadPrivacy, InvalidatedBeforeUpsert: q.invalidateBeforeUpsert}
 	points := []qdrantPoint{}
 	for _, doc := range docs {
 		for _, section := range doc.Sections {
 			for _, passage := range section.Passages {
 				vector, err := q.embeddings.Embed(passage.Text)
 				if err != nil {
-					return err
+					return report, err
 				}
-				points = append(points, qdrantPoint{ID: stablePointID(passage), Vector: vector, Payload: PassageResult{PaperID: passage.PaperID, SectionID: passage.SectionID, PassageID: passage.ID, Text: passage.Text}})
+				if report.Dimension == 0 {
+					report.Dimension = len(vector)
+				}
+				points = append(points, qdrantPoint{ID: stablePointID(passage), Vector: vector, Payload: q.payloadForPassage(passage)})
+				report.Attempted++
 			}
+		}
+	}
+	if report.Dimension == 0 {
+		if probe, err := q.embeddings.Embed("dimension probe"); err == nil {
+			report.Dimension = len(probe)
+		}
+	}
+	if provider, ok := DefaultEmbeddingProviderRegistry().Provider(providerName); ok {
+		report.TextEgress = provider.Compliance.TextEgress
+	}
+	if err := q.ensureCollection(context.Background(), report.Dimension); err != nil {
+		return report, err
+	}
+	if q.invalidateBeforeUpsert {
+		if err := q.invalidateCollection(context.Background()); err != nil {
+			return report, err
 		}
 	}
 	request := map[string]any{"points": points}
 	body, _ := json.Marshal(request)
-	return q.do(context.Background(), http.MethodPut, "/collections/"+q.collection+"/points?wait=true", body, nil)
+	if err := q.do(context.Background(), http.MethodPut, "/collections/"+q.collection+"/points?wait=true", body, nil); err != nil {
+		return report, err
+	}
+	report.Indexed = len(points)
+	return report, nil
+}
+
+func (q *QdrantIndex) payloadForPassage(passage parsing.Passage) any {
+	if q.payloadPrivacy == PayloadPrivacyRedacted {
+		sum := sha256.Sum256([]byte(passage.Text))
+		return map[string]any{"PaperID": passage.PaperID, "SectionID": passage.SectionID, "PassageID": passage.ID, "TextChecksum": fmt.Sprintf("%x", sum[:]), "PayloadRedacted": true}
+	}
+	return PassageResult{PaperID: passage.PaperID, SectionID: passage.SectionID, PassageID: passage.ID, Text: passage.Text}
+}
+
+func (q *QdrantIndex) ensureCollection(ctx context.Context, dimension int) error {
+	if dimension <= 0 {
+		dimension = 8
+	}
+	request := map[string]any{"vectors": map[string]any{"size": dimension, "distance": "Cosine"}}
+	body, _ := json.Marshal(request)
+	requestHTTP, err := http.NewRequestWithContext(ctx, http.MethodPut, q.baseURL+"/collections/"+q.collection, bytes.NewReader(body))
+	if err != nil {
+		return err
+	}
+	requestHTTP.Header.Set("Content-Type", "application/json")
+	response, err := q.client.Do(requestHTTP)
+	if err != nil {
+		return err
+	}
+	defer response.Body.Close()
+	data, err := io.ReadAll(io.LimitReader(response.Body, 10<<20))
+	if err != nil {
+		return err
+	}
+	if response.StatusCode >= 200 && response.StatusCode < 300 {
+		return nil
+	}
+	if response.StatusCode == http.StatusBadRequest && strings.Contains(string(data), "already") {
+		return nil
+	}
+	return fmt.Errorf("qdrant HTTP status %d: %s", response.StatusCode, strings.TrimSpace(string(data)))
+}
+
+func (q *QdrantIndex) invalidateCollection(ctx context.Context) error {
+	request := map[string]any{"filter": map[string]any{}}
+	body, _ := json.Marshal(request)
+	return q.do(ctx, http.MethodPost, "/collections/"+q.collection+"/points/delete?wait=true", body, nil)
 }
 
 // Retrieve searches Qdrant by embedded query vector.
@@ -169,9 +303,9 @@ func stablePointID(passage parsing.Passage) string {
 }
 
 type qdrantPoint struct {
-	ID      string        `json:"id"`
-	Vector  []float64     `json:"vector"`
-	Payload PassageResult `json:"payload"`
+	ID      string    `json:"id"`
+	Vector  []float64 `json:"vector"`
+	Payload any       `json:"payload"`
 }
 
 type qdrantSearchResponse struct {

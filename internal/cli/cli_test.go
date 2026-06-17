@@ -2440,6 +2440,8 @@ func TestExecuteIndexAndRetrieveWithHybridBackend(t *testing.T) {
 	}
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
+		case "/collections/researchforge_passages":
+			_, _ = w.Write([]byte(`{"result":true}`))
 		case "/collections/researchforge_passages/points":
 			_, _ = w.Write([]byte(`{"result":{"status":"completed"}}`))
 		case "/collections/researchforge_passages/points/search":
@@ -2487,6 +2489,8 @@ func TestExecuteIndexAndRetrieveWithQdrantBackend(t *testing.T) {
 	}
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
+		case "/collections/researchforge_passages":
+			_, _ = w.Write([]byte(`{"result":true}`))
 		case "/collections/researchforge_passages/points":
 			var request struct {
 				Points []struct {
@@ -2559,6 +2563,8 @@ func TestExecuteQdrantBackendUsesHTTPEmbeddingProvider(t *testing.T) {
 	var embeddingCalls int
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
+		case "/collections/researchforge_passages":
+			_, _ = w.Write([]byte(`{"result":true}`))
 		case "/embed":
 			embeddingCalls++
 			var request map[string]string

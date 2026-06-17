@@ -43,3 +43,7 @@ The live smoke test checks that each connector returns at least one titled recor
 ## OpenSearch
 
 `RFORGE_RUN_OPENSEARCH_INTEGRATION=1` with `RFORGE_OPENSEARCH_URL` runs `TestOptInOpenSearchIntegration`, which creates/updates the passage mapping, bulk-indexes a deterministic parsed passage, refreshes the index, and retrieves passage results. Normal validation skips it.
+
+## Qdrant
+
+`RFORGE_RUN_QDRANT_INTEGRATION=1` with `RFORGE_QDRANT_URL` runs `TestOptInQdrantIntegration`, which creates/updates the collection vector size, optionally invalidates the vector index before upsert, writes vectors with the configured payload privacy mode, and retrieves passage results. Normal validation skips it.

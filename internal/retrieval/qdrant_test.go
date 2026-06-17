@@ -35,6 +35,8 @@ func TestQdrantIndexRebuildAndRetrievePassages(t *testing.T) {
 	var sawUpsert, sawSearch bool
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
+		case "/collections/researchforge_passages":
+			_, _ = w.Write([]byte(`{"result":true}`))
 		case "/collections/researchforge_passages/points":
 			sawUpsert = true
 			if r.URL.Query().Get("wait") != "true" {
