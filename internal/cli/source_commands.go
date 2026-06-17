@@ -1133,6 +1133,16 @@ func parseSearchImport(args []string) (string, string, int, int, map[string]stri
 			}
 			filters["filter"] = appendCommaFilter(filters["filter"], args[i+1])
 			i++
+		case "--preset":
+			if i+1 >= len(args) {
+				return "", "", 0, 0, nil, "", false
+			}
+			preset, ok := sources.OpenAlexFilterPreset(args[i+1])
+			if !ok {
+				return "", "", 0, 0, nil, "", false
+			}
+			mergeOpenAlexFilters(filters, preset)
+			i++
 		case "--from-year", "--to-year", "--type", "--open-access", "--concept":
 			if i+1 >= len(args) || !appendOpenAlexAdvancedFilter(filters, args[i], args[i+1]) {
 				return "", "", 0, 0, nil, "", false
@@ -1191,6 +1201,16 @@ func parseSearch(args []string) (string, string, int, map[string]string, bool) {
 			}
 			filters["filter"] = appendCommaFilter(filters["filter"], args[i+1])
 			i++
+		case "--preset":
+			if i+1 >= len(args) {
+				return "", "", 0, nil, false
+			}
+			preset, ok := sources.OpenAlexFilterPreset(args[i+1])
+			if !ok {
+				return "", "", 0, nil, false
+			}
+			mergeOpenAlexFilters(filters, preset)
+			i++
 		case "--from-year", "--to-year", "--type", "--open-access", "--concept":
 			if i+1 >= len(args) || !appendOpenAlexAdvancedFilter(filters, args[i], args[i+1]) {
 				return "", "", 0, nil, false
@@ -1207,6 +1227,16 @@ func parseSearch(args []string) (string, string, int, map[string]string, bool) {
 		}
 	}
 	return source, query, limit, filters, source != "" && (strings.TrimSpace(query) != "" || strings.TrimSpace(filters["category"]) != "" || strings.TrimSpace(filters["filter"]) != "")
+}
+
+func mergeOpenAlexFilters(filters, preset map[string]string) {
+	for key, value := range preset {
+		if key == "filter" {
+			filters[key] = appendCommaFilter(filters[key], value)
+			continue
+		}
+		filters[key] = value
+	}
 }
 
 func appendOpenAlexAdvancedFilter(filters map[string]string, flag, value string) bool {
