@@ -15,6 +15,7 @@ import (
 	"github.com/TrebuchetDynamics/research-forge/internal/analysis"
 	"github.com/TrebuchetDynamics/research-forge/internal/evidence"
 	"github.com/TrebuchetDynamics/research-forge/internal/forge"
+	"github.com/TrebuchetDynamics/research-forge/internal/knowledge"
 	"github.com/TrebuchetDynamics/research-forge/internal/library"
 	"github.com/TrebuchetDynamics/research-forge/internal/parsing"
 	"github.com/TrebuchetDynamics/research-forge/internal/project"
@@ -91,6 +92,8 @@ func Execute(args []string, stdout, stderr io.Writer) int {
 		return executeParse(remaining[1:], stdout, stderr, opts)
 	case "index":
 		return executeIndex(remaining[1:], stdout, stderr, opts)
+	case "knowledge":
+		return executeKnowledge(remaining[1:], stdout, stderr, opts)
 	case "retrieve":
 		return executeRetrieve(remaining[1:], stdout, stderr, opts)
 	case "research":
@@ -126,6 +129,48 @@ func Execute(args []string, stdout, stderr io.Writer) int {
 	default:
 		return writeError(stdout, stderr, opts, 2, "unknown_command", fmt.Sprintf("unknown command %q", remaining[0]))
 	}
+}
+
+func executeKnowledge(args []string, stdout, stderr io.Writer, opts globalOptions) int {
+	if len(args) == 0 || args[0] != "query" {
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge knowledge query --project <path> [--term <text>]")
+	}
+	projectPath, term, ok := parseKnowledgeQuery(args[1:])
+	if !ok || projectPath == "" {
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge knowledge query --project <path> [--term <text>]")
+	}
+	graph, err := knowledge.BuildProjectKnowledgeGraphFromProject(projectPath)
+	if err != nil {
+		return writeError(stdout, stderr, opts, 1, "knowledge_graph_failed", err.Error())
+	}
+	if term != "" {
+		graph = knowledge.QueryProjectKnowledgeGraph(graph, term)
+	}
+	if opts.JSON {
+		return writeJSON(stdout, 0, map[string]any{"graph": graph})
+	}
+	fmt.Fprintf(stdout, "nodes: %d\nedges: %d\n", len(graph.Nodes), len(graph.Edges))
+	for _, node := range graph.Nodes {
+		fmt.Fprintf(stdout, "%s\t%s\t%s\n", node.Kind, node.ID, node.Label)
+	}
+	return 0
+}
+
+func parseKnowledgeQuery(args []string) (string, string, bool) {
+	values := map[string]string{}
+	for i := 0; i < len(args); i++ {
+		switch args[i] {
+		case "--project", "--term":
+			if i+1 >= len(args) {
+				return "", "", false
+			}
+			values[args[i]] = args[i+1]
+			i++
+		default:
+			return "", "", false
+		}
+	}
+	return values["--project"], values["--term"], true
 }
 
 func executeForge(args []string, stdout, stderr io.Writer, opts globalOptions) int {
