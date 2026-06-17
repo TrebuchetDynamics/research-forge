@@ -76,7 +76,7 @@ flowchart TD
   Web --> Jobs[data/jobs.json background jobs]
   Web --> Privacy[package/redaction gates]
 ```
-- **Permissions/privacy model** — `/privacy` documents local-only paths, copyrighted PDFs, reviewer notes, credentials, embeddings, cache files, and shareable report fields with default permissions, export rules, review gates, and UI behavior.
+- **Permissions/privacy model** — `/privacy` and `docs/privacy-copyright.md` classify local-only paths, copyrighted PDFs, reviewer notes, credentials, embeddings, cache files, and shareable report fields with default permissions, export rules, review gates, and UI behavior.
 - **Source planning cockpit** — `/sources` previews the Meta-analysis spine source plan from a research question, covering OpenAlex, Semantic Scholar, Crossref, arXiv, PubMed/Europe PMC, NASA ADS, DOAJ/CORE, Unpaywall, Zotero/JabRef, and local imports with dry-run estimates, auth/privacy warnings, reviewer-approval language, and CLI-equivalent commands before network calls/imports/downloads.
 - **Legal acquisition queue** — `/acquisition` shows OA/license status, source URL, expected stored path, restricted/shareable flags, and explicit reviewer approval commands before downloading or archiving documents.
 - **Retrieval tuning** — `/retrieve` compares SQLite FTS, OpenSearch, Qdrant vector, and hybrid results for the same query set with passage provenance, ranking explanations, embedding privacy status, and benchmark scores.

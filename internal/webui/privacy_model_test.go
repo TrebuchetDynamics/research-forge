@@ -15,7 +15,7 @@ func TestDashboardPrivacyModelCoversSensitiveAssetClasses(t *testing.T) {
 		}
 	}
 	body := renderHandler(t, NewPrivacyModelHandler(model))
-	for _, want := range []string{"Dashboard permissions/privacy model", "local-only paths", "copyrighted PDFs", "reviewer notes", "credentials", "embeddings", "cache files", "shareable report fields"} {
+	for _, want := range []string{"Dashboard permissions/privacy model", "Default permission", "Export rule", "Review gate", "UI behavior", "local-only paths", "copyrighted PDFs", "reviewer notes", "credentials", "embeddings", "cache files", "shareable report fields"} {
 		if !strings.Contains(body, want) {
 			t.Fatalf("body missing %q:\n%s", want, body)
 		}
