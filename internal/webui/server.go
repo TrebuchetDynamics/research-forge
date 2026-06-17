@@ -112,7 +112,8 @@ func NewRouter(cfg Config) http.Handler {
 	mux.Handle("/acquisition", newAcquisitionQueueHandler(state.get))
 	mux.Handle("/retrieve", newRetrievalTuningHandler(state.get))
 	mux.Handle("/evidence", newEvidenceGridHandler(state.get))
-	for _, route := range []string{"/analysis", "/report", "/package"} {
+	mux.Handle("/analysis", newAnalysisWorkbenchHandler(state.get))
+	for _, route := range []string{"/report", "/package"} {
 		mux.Handle(route, newGenericWorkbenchHandler(route))
 	}
 	mux.Handle("/connectors", newConnectorHealthHandler(state.get))

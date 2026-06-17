@@ -96,6 +96,36 @@ func forgeNextActions(currentState string) []ForgeNextAction {
 	}
 }
 
+type AnalysisWorkbenchState struct {
+	ProjectPath string
+	Runs        []analysis.AnalysisRun
+	Manifests   []analysis.AnalysisArtifactManifest
+}
+
+func BuildAnalysisWorkbenchState(projectPath string) AnalysisWorkbenchState {
+	state := AnalysisWorkbenchState{ProjectPath: projectPath}
+	if strings.TrimSpace(projectPath) == "" {
+		return state
+	}
+	matches, _ := filepath.Glob(filepath.Join(projectPath, "analysis", "*.json"))
+	for _, match := range matches {
+		data, err := os.ReadFile(match)
+		if err != nil {
+			continue
+		}
+		var manifest analysis.AnalysisArtifactManifest
+		if json.Unmarshal(data, &manifest) == nil && manifest.RunID != "" && (len(manifest.Plots) > 0 || manifest.Script.Path != "") {
+			state.Manifests = append(state.Manifests, manifest)
+			continue
+		}
+		var run analysis.AnalysisRun
+		if json.Unmarshal(data, &run) == nil && run.ID != "" {
+			state.Runs = append(state.Runs, run)
+		}
+	}
+	return state
+}
+
 type EvidenceGridState struct {
 	ProjectPath string
 	GridPath    string

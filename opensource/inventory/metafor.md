@@ -40,6 +40,7 @@ Implemented nearby capabilities:
 - The `/notebook` lab-notebook timeline records human and automated provenance events across imports, source refreshes, parser runs, reviewer decisions, extraction edits, analysis reruns, and report builds as a browsable journal with JSON snapshots.
 - The method-comparison workbench compares parser choices, retrieval backends, screening rankers, effect-size models, and publication-bias diagnostics side-by-side before recording the reviewer-selected method locked into the final report.
 - The `/evidence` extraction grid links fields to source passage/table/figure/equation support, parser offsets, PDF views, reviewer status, correction history, and downstream analysis inclusion.
+- The `/analysis` meta-analysis workbench shows prepared effect-size inputs, model choices, metafor script, warnings, heterogeneity, sensitivity/influence diagnostics, forest/funnel artifacts, and publication-ready artifact manifests.
 
 Missing features:
 

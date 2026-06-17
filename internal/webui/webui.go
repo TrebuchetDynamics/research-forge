@@ -172,6 +172,19 @@ var genericWorkbenchTemplate = template.Must(template.New("generic-workbench").P
   <p><a href="/workbenches">Back to HTMX workbenches</a></p>
 </section>`))
 
+var analysisWorkbenchTemplate = template.Must(template.New("analysis-workbench").Parse(`<section aria-labelledby="analysis-title" class="rf-card">
+  <h2 id="analysis-title">meta-analysis Workbench</h2>
+  <p>Shows prepared effect-size inputs, model choices, metafor script, warnings, heterogeneity, sensitivity/influence diagnostics, forest/funnel artifacts, and publication-ready artifact manifests.</p>
+  <p>CLI equivalent: <code>rforge analysis prepare &lt;run-id&gt; && rforge analysis run &lt;run-id&gt;</code></p>
+  <section><h3>prepared effect-size inputs</h3>{{range .Runs}}{{range .InputRows}}<p>{{.PaperID}} effect={{.EffectSize}} variance={{.Variance}}</p>{{end}}{{else}}<p>No prepared analysis input rows.</p>{{end}}</section>
+  <section><h3>model choices</h3><p>Effect-size models and random/fixed analysis choices are locked by analysis run artifacts.</p></section>
+  <section><h3>metafor script and warnings</h3>{{range .Manifests}}<p>metafor script: {{.Script.Path}} engine={{.Script.Engine}}</p>{{range .Warnings}}<p>warnings: {{.}}</p>{{end}}{{else}}<p>No metafor artifact manifest available.</p>{{end}}</section>
+  <section><h3>heterogeneity</h3><p>Inspect <code>analysis/*-result.json</code> for I², τ², and Q.</p></section>
+  <section><h3>sensitivity/influence diagnostics</h3><p>CLI equivalent: <code>rforge analysis sensitivity &lt;run-id&gt; --method influence</code></p></section>
+  <section><h3>forest/funnel artifacts</h3>{{range .Manifests}}{{range .Plots}}<p>{{.Kind}} — {{.Path}}</p>{{end}}{{else}}<p>No forest/funnel plots registered.</p>{{end}}</section>
+  <section><h3>publication-ready artifact manifests</h3>{{range .Manifests}}<p>{{.RunID}} manifest with {{len .Plots}} plot(s)</p>{{else}}<p>No artifact manifests found.</p>{{end}}</section>
+</section>`))
+
 var evidenceGridTemplate = template.Must(template.New("evidence-grid").Parse(`<section aria-labelledby="evidence-title" class="rf-card">
   <h2 id="evidence-title">Evidence extraction grid</h2>
   <p>Links each field to source passage/table/figure/equation support, parser offset, PDF view, reviewer status, correction history, and downstream analysis inclusion.</p>
@@ -630,6 +643,13 @@ func NewWorkbenchIndexHandler(state WorkbenchIndexState) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		_ = workbenchIndexTemplate.Execute(w, state)
+	})
+}
+
+func newAnalysisWorkbenchHandler(projectPath func() string) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		_ = analysisWorkbenchTemplate.Execute(w, BuildAnalysisWorkbenchState(projectPath()))
 	})
 }
 

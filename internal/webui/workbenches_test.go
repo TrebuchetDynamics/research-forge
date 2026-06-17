@@ -27,7 +27,7 @@ func TestRouterServesWorkbenchRoutes(t *testing.T) {
 	defer ts.Close()
 	for _, path := range []string{"/workbenches", "/acquisition", "/parsing", "/retrieve", "/evidence", "/analysis", "/report", "/map", "/package"} {
 		body := httpGetBody(t, ts.URL+path)
-		if !strings.Contains(body, "Workbench") && !strings.Contains(body, "HTMX workbenches") && !strings.Contains(body, "Research map cockpit") && !strings.Contains(body, "Parser conflict review") && !strings.Contains(body, "Legal full-text acquisition queue") && !strings.Contains(body, "Retrieval tuning") && !strings.Contains(body, "Evidence extraction grid") {
+		if !strings.Contains(body, "Workbench") && !strings.Contains(body, "HTMX workbenches") && !strings.Contains(body, "Research map cockpit") && !strings.Contains(body, "Parser conflict review") && !strings.Contains(body, "Legal full-text acquisition queue") && !strings.Contains(body, "Retrieval tuning") && !strings.Contains(body, "Evidence extraction grid") && !strings.Contains(body, "meta-analysis Workbench") {
 			t.Fatalf("%s missing workbench UI: %s", path, body)
 		}
 	}
