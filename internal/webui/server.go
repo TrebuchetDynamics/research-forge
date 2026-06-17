@@ -57,17 +57,26 @@ func defaultSearchSources() []string {
 func Routes() []string {
 	routes := []string{
 		"/",
+		"/acquisition",
+		"/analysis",
 		"/artifacts",
 		"/connectors",
 		"/dedupe",
+		"/evidence",
 		"/forge",
 		"/library",
+		"/map",
 		"/oss",
+		"/package",
 		"/papers",
+		"/parsing",
 		"/projects",
+		"/report",
+		"/retrieve",
 		"/screening",
 		"/search",
 		"/sources",
+		"/workbenches",
 	}
 	sort.Strings(routes)
 	return routes
@@ -89,6 +98,10 @@ func NewRouter(cfg Config) http.Handler {
 	mux.Handle("POST /projects/switch", newSwitchProjectHandler(state))
 	mux.Handle("/search", NewSearchHandler(ui.NewSearchFormState(defaultSearchSources())))
 	mux.Handle("/sources", NewSourcePlanningHandler())
+	mux.Handle("/workbenches", NewWorkbenchIndexHandler(BuildWorkbenchIndexState()))
+	for _, route := range []string{"/acquisition", "/parsing", "/retrieve", "/evidence", "/analysis", "/report", "/map", "/package"} {
+		mux.Handle(route, newGenericWorkbenchHandler(route))
+	}
 	mux.Handle("/connectors", newConnectorHealthHandler(state.get))
 	mux.Handle("/dedupe", newDedupeReviewHandler(state.get))
 	forgeHandler := newForgeHomeHandler(state.get)

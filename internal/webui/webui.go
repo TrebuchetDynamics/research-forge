@@ -33,6 +33,7 @@ var shellTemplate = template.Must(template.New("shell").Parse(`<!doctype html>
       <nav aria-label="Dashboard sections">
         <ul class="rf-nav">
           <li><a href="/forge">Forge</a></li>
+          <li><a href="/workbenches">Workbenches</a></li>
           <li><a href="/papers">Papers</a></li>
           <li><a href="/library">Library</a></li>
           <li><a href="/dedupe">Dedupe</a></li>
@@ -104,6 +105,20 @@ var sourcePlanningTemplate = template.Must(template.New("source-planning").Parse
     </div>
     {{end}}
   </div>
+</section>`))
+
+var workbenchIndexTemplate = template.Must(template.New("workbench-index").Parse(`<section aria-labelledby="workbenches-title" class="rf-card">
+  <h2 id="workbenches-title">HTMX workbenches</h2>
+  <p>No-JS fallback: each workbench is server-rendered with CLI-equivalent commands.</p>
+  {{range .Workbenches}}<article><h3><a href="{{.Route}}">{{.Label}}</a></h3><p>{{.Purpose}}</p><p>CLI equivalent: <code>{{.CLI}}</code></p><p>No-JS fallback: {{.Fallback}}</p></article>{{end}}
+</section>`))
+
+var genericWorkbenchTemplate = template.Must(template.New("generic-workbench").Parse(`<section aria-labelledby="workbench-title" class="rf-card">
+  <h2 id="workbench-title">{{.Label}} Workbench</h2>
+  <p>{{.Purpose}}</p>
+  <p>CLI equivalent: <code>{{.CLI}}</code></p>
+  <p>No-JS fallback: {{.Fallback}}</p>
+  <p><a href="/workbenches">Back to HTMX workbenches</a></p>
 </section>`))
 
 var connectorHealthTemplate = template.Must(template.New("connector-health").Parse(`<section aria-labelledby="connector-health-title" class="rf-card">
@@ -493,6 +508,26 @@ func newDedupeReviewHandler(projectPath func() string) http.Handler {
 		}
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		_ = dedupeReviewTemplate.Execute(w, state)
+	})
+}
+
+func NewWorkbenchIndexHandler(state WorkbenchIndexState) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		_ = workbenchIndexTemplate.Execute(w, state)
+	})
+}
+
+func newGenericWorkbenchHandler(route string) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		state := BuildWorkbenchIndexState()
+		card, ok := state.CardByRoute(route)
+		if !ok {
+			http.NotFound(w, r)
+			return
+		}
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		_ = genericWorkbenchTemplate.Execute(w, card)
 	})
 }
 
