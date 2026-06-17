@@ -31,6 +31,127 @@ func ReferenceManagerFidelityReport(records []PaperRecord) ReferenceManagerFidel
 	return ReferenceManagerFidelitySummary{SchemaVersion: "1", Records: entries}
 }
 
+const (
+	FidelitySupported   = "supported"
+	FidelityPartial     = "partial"
+	FidelityRedacted    = "redacted"
+	FidelityUnsupported = "unsupported"
+)
+
+type ReferenceManagerInterchangeMatrix struct {
+	SchemaVersion string                           `json:"schemaVersion"`
+	RecordCount   int                              `json:"recordCount"`
+	FieldsPresent map[string]int                   `json:"fieldsPresent,omitempty"`
+	Formats       []ReferenceManagerFormatFidelity `json:"formats"`
+}
+
+type ReferenceManagerFormatFidelity struct {
+	Format string                   `json:"format"`
+	Label  string                   `json:"label"`
+	Fields map[string]FieldFidelity `json:"fields"`
+}
+
+type FieldFidelity struct {
+	Status string `json:"status"`
+	Note   string `json:"note"`
+}
+
+func DefaultReferenceManagerInterchangeMatrix() ReferenceManagerInterchangeMatrix {
+	return ReferenceManagerInterchangeMatrix{SchemaVersion: "1", FieldsPresent: map[string]int{}, Formats: []ReferenceManagerFormatFidelity{
+		{Format: "bibtex", Label: "BibTeX / JabRef", Fields: map[string]FieldFidelity{
+			"core_metadata":              {Status: FidelitySupported, Note: "title, DOI, year, journal"},
+			"better_bibtex_citation_key": {Status: FidelitySupported, Note: "entry key is preserved as citation_key"},
+			"tags":                       {Status: FidelitySupported, Note: "keywords field"},
+			"notes":                      {Status: FidelitySupported, Note: "note field"},
+			"annotations":                {Status: FidelitySupported, Note: "annote field"},
+			"collections":                {Status: FidelityPartial, Note: "JabRef groups preserved as collections/groups context"},
+			"bibtex_cleanup_diffs":       {Status: FidelitySupported, Note: "normalization diffs recorded in source metadata"},
+			"redacted_attachments":       {Status: FidelityRedacted, Note: "file paths are reduced to basenames with privacy check metadata"},
+		}},
+		{Format: "ris", Label: "RIS", Fields: map[string]FieldFidelity{
+			"core_metadata":              {Status: FidelitySupported, Note: "title, DOI, year, journal"},
+			"better_bibtex_citation_key": {Status: FidelityUnsupported, Note: "RIS has no Better BibTeX citation key convention in current adapter"},
+			"tags":                       {Status: FidelityUnsupported, Note: "not preserved by current minimal RIS adapter"},
+			"notes":                      {Status: FidelityUnsupported, Note: "not preserved by current minimal RIS adapter"},
+			"annotations":                {Status: FidelityUnsupported, Note: "not preserved by current minimal RIS adapter"},
+			"collections":                {Status: FidelityUnsupported, Note: "not preserved by current minimal RIS adapter"},
+			"bibtex_cleanup_diffs":       {Status: FidelityUnsupported, Note: "BibTeX-specific"},
+			"redacted_attachments":       {Status: FidelityUnsupported, Note: "not imported by current minimal RIS adapter"},
+		}},
+		{Format: "csl-json", Label: "CSL-JSON / Zotero export", Fields: map[string]FieldFidelity{
+			"core_metadata":              {Status: FidelitySupported, Note: "title, DOI, authors, abstract, issued, venue, publisher, URL"},
+			"better_bibtex_citation_key": {Status: FidelitySupported, Note: "citation-key field"},
+			"tags":                       {Status: FidelitySupported, Note: "keyword field"},
+			"notes":                      {Status: FidelitySupported, Note: "note field"},
+			"annotations":                {Status: FidelityUnsupported, Note: "not represented in current CSL-JSON adapter"},
+			"collections":                {Status: FidelityUnsupported, Note: "not represented in CSL-JSON item records"},
+			"bibtex_cleanup_diffs":       {Status: FidelityUnsupported, Note: "BibTeX-specific"},
+			"redacted_attachments":       {Status: FidelityRedacted, Note: "attachment paths are reduced to basenames"},
+		}},
+		{Format: "zotero-rdf", Label: "Zotero RDF", Fields: map[string]FieldFidelity{
+			"core_metadata":              {Status: FidelitySupported, Note: "title, DOI, abstract, date, publication, publisher"},
+			"better_bibtex_citation_key": {Status: FidelitySupported, Note: "better-bibtex:citekey"},
+			"tags":                       {Status: FidelitySupported, Note: "dc:subject"},
+			"notes":                      {Status: FidelitySupported, Note: "z:note"},
+			"annotations":                {Status: FidelitySupported, Note: "z:annotation"},
+			"collections":                {Status: FidelitySupported, Note: "z:collection"},
+			"bibtex_cleanup_diffs":       {Status: FidelityUnsupported, Note: "BibTeX-specific"},
+			"redacted_attachments":       {Status: FidelityRedacted, Note: "z:attachment paths are reduced to basenames with privacy check metadata"},
+		}},
+	}}
+}
+
+func BuildReferenceManagerInterchangeMatrix(records []PaperRecord) ReferenceManagerInterchangeMatrix {
+	matrix := DefaultReferenceManagerInterchangeMatrix()
+	matrix.RecordCount = len(records)
+	matrix.FieldsPresent = map[string]int{
+		"better_bibtex_citation_key": 0,
+		"tags":                       0,
+		"notes":                      0,
+		"annotations":                0,
+		"collections":                0,
+		"groups":                     0,
+		"bibtex_cleanup_diffs":       0,
+		"redacted_attachments":       0,
+	}
+	for _, record := range records {
+		if metadataAny(record, "citation_key") {
+			matrix.FieldsPresent["better_bibtex_citation_key"]++
+		}
+		if metadataAny(record, "tags") {
+			matrix.FieldsPresent["tags"]++
+		}
+		if metadataAny(record, "note") {
+			matrix.FieldsPresent["notes"]++
+		}
+		if metadataAny(record, "annotations") {
+			matrix.FieldsPresent["annotations"]++
+		}
+		if metadataAny(record, "collections") {
+			matrix.FieldsPresent["collections"]++
+		}
+		if metadataAny(record, "groups") {
+			matrix.FieldsPresent["groups"]++
+		}
+		if metadataAny(record, "cleanup_diff") {
+			matrix.FieldsPresent["bibtex_cleanup_diffs"]++
+		}
+		if metadataAny(record, "attachment_files") || metadataAny(record, "linked_file_privacy_check") {
+			matrix.FieldsPresent["redacted_attachments"]++
+		}
+	}
+	return matrix
+}
+
+func (m ReferenceManagerInterchangeMatrix) Format(format string) (ReferenceManagerFormatFidelity, bool) {
+	for _, row := range m.Formats {
+		if row.Format == format {
+			return row, true
+		}
+	}
+	return ReferenceManagerFormatFidelity{}, false
+}
+
 func metadataAny(record PaperRecord, key string) bool {
 	return metadataValue(record, key) != ""
 }

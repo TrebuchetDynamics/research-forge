@@ -284,7 +284,7 @@ func paperSources(paper library.PaperRecord) []string {
 
 func executeLibrary(args []string, stdout, stderr io.Writer, opts globalOptions) int {
 	if len(args) == 0 {
-		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> library <list|refresh-doi|import-crossref-refs>")
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> library <list|reference-manager-matrix|refresh-doi|import-crossref-refs>")
 	}
 	if opts.Project == "" {
 		return writeError(stdout, stderr, opts, 2, "missing_project", "--project is required for library commands")
@@ -307,6 +307,26 @@ func executeLibrary(args []string, stdout, stderr io.Writer, opts globalOptions)
 		}
 		for _, paper := range papers {
 			fmt.Fprintf(stdout, "%s\t%s\n", paper.Identifiers.DOI, paper.Title)
+		}
+		return 0
+	case "reference-manager-matrix":
+		if len(args) != 1 {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> library reference-manager-matrix")
+		}
+		papers, err := store.List()
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "library_list_failed", fmt.Sprintf("list library: %v", err))
+		}
+		matrix := library.BuildReferenceManagerInterchangeMatrix(papers)
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"matrix": matrix})
+		}
+		fmt.Fprintln(stdout, "Reference-manager interchange fidelity matrix:")
+		for _, format := range matrix.Formats {
+			fmt.Fprintf(stdout, "- %s (%s)\n", format.Label, format.Format)
+			for field, fidelity := range format.Fields {
+				fmt.Fprintf(stdout, "  %s: %s — %s\n", field, fidelity.Status, fidelity.Note)
+			}
 		}
 		return 0
 	case "import-crossref-refs":
@@ -383,7 +403,7 @@ func executeLibrary(args []string, stdout, stderr io.Writer, opts globalOptions)
 		fmt.Fprintf(stdout, "refreshed %d Crossref DOI records\n", result.Refreshed)
 		return 0
 	default:
-		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> library <list|refresh-doi|refresh-crossref|import-crossref-refs>")
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> library <list|reference-manager-matrix|refresh-doi|refresh-crossref|import-crossref-refs>")
 	}
 }
 
