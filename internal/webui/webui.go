@@ -32,6 +32,7 @@ var shellTemplate = template.Must(template.New("shell").Parse(`<!doctype html>
         <ul class="rf-nav">
           <li><a href="/papers">Papers</a></li>
           <li><a href="/library">Library</a></li>
+          <li><a href="/dedupe">Dedupe</a></li>
           <li><a href="/artifacts">Artifacts</a></li>
           <li><a href="/oss">OSS studies</a></li>
           <li><a href="/search">Search</a></li>
@@ -116,6 +117,33 @@ var connectorHealthTemplate = template.Must(template.New("connector-health").Par
     {{range .Snapshot.Results}}
     <div role="row"><span role="cell">{{.Label}}</span> <span role="cell">{{.Status}}</span> <span role="cell">{{.CheckedAt}}</span> <span role="cell">{{.Message}}</span></div>
     {{end}}
+  </div>
+</section>`))
+
+var dedupeReviewTemplate = template.Must(template.New("dedupe-review").Parse(`<section aria-labelledby="dedupe-title" class="rf-card">
+  <h2 id="dedupe-title">Dedupe/cluster review</h2>
+  <p>A revtools-inspired visual cluster review screen for identity matches, conflicts, reversible decisions, and PRISMA/audit provenance.</p>
+  <p>Export decision history: <code>rforge --json --project {{.ProjectPath}} library identity-decision log</code></p>
+  <h3>Identity clusters</h3>
+  {{if .Clusters}}
+  {{range .Clusters}}
+  <article class="identity-cluster">
+    <h4>{{.ID}}</h4>
+    <p>Records: {{.RecordIndexes}} Identifiers: {{.Identifiers}}</p>
+    <ul>{{range .Matches}}<li>{{.Rule}} — {{.Explanation}}</li>{{end}}</ul>
+  </article>
+  {{end}}
+  {{else}}<p>No duplicate identity clusters detected.</p>{{end}}
+  <h3>Conflicts</h3>
+  {{if .Conflicts}}<ul>{{range .Conflicts}}<li>{{.ClusterID}} — {{.Severity}} — {{.Reason}}</li>{{end}}</ul>{{else}}<p>No unresolved identity conflicts.</p>{{end}}
+  <h3>Decision history</h3>
+  {{if .DecisionLog.Decisions}}<ul>{{range .DecisionLog.Decisions}}<li>{{.ID}} — {{.Action}} — reversible={{.Reversible}} — {{.Reason}}</li>{{end}}</ul>{{else}}<p>No identity decisions recorded.</p>{{end}}
+  <h3>PRISMA/audit provenance</h3>
+  <p>Records: {{.PRISMA.Records}} Screened: {{.PRISMA.Screened}} Included: {{.PRISMA.Included}}</p>
+  {{if .AuditEvents}}<ul>{{range .AuditEvents}}<li>{{.Action}} — {{.Target}}</li>{{end}}</ul>{{else}}<p>No identity audit events recorded.</p>{{end}}
+  <div role="table" aria-label="Cluster record titles">
+    <div role="row"><strong role="columnheader">Record</strong><strong role="columnheader">DOI</strong></div>
+    {{range .Records}}<div role="row"><span role="cell">{{.Title}}</span><span role="cell">{{.Identifiers.DOI}}</span></div>{{end}}
   </div>
 </section>`))
 
@@ -365,6 +393,18 @@ func newConnectorHealthHandler(projectPath func() string) http.Handler {
 		view := connectorHealthView{Snapshot: snapshot, Alerts: protocol.ConnectorLiveSmokeAlerts(registry, snapshot, now)}
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		_ = connectorHealthTemplate.Execute(w, view)
+	})
+}
+
+func newDedupeReviewHandler(projectPath func() string) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		state, err := BuildDedupeReviewState(projectPath())
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		_ = dedupeReviewTemplate.Execute(w, state)
 	})
 }
 

@@ -8,6 +8,7 @@ import (
 
 	"github.com/TrebuchetDynamics/research-forge/internal/analysis"
 	"github.com/TrebuchetDynamics/research-forge/internal/library"
+	"github.com/TrebuchetDynamics/research-forge/internal/provenance"
 	"github.com/TrebuchetDynamics/research-forge/internal/screening"
 	"github.com/TrebuchetDynamics/research-forge/internal/ui"
 )
@@ -33,6 +34,59 @@ func BuildLibraryViewModel(projectPath string) (ui.LibraryViewModel, error) {
 		rows = append(rows, ui.PaperRow{Title: paper.Title})
 	}
 	return ui.NewLibraryViewModel(rows), nil
+}
+
+// DedupeReviewState powers the visual identity-cluster review screen.
+type DedupeReviewState struct {
+	ProjectPath string
+	Records     []library.PaperRecord
+	Clusters    []library.IdentityCluster
+	Conflicts   []library.IdentityConflictRecord
+	DecisionLog library.IdentityDecisionLog
+	PRISMA      PRISMAFlowState
+	AuditEvents []provenance.Event
+}
+
+// BuildDedupeReviewState reads identity clusters, reversible decision history,
+// conflict records, PRISMA counts, and audit provenance for the dedupe cockpit.
+func BuildDedupeReviewState(projectPath string) (DedupeReviewState, error) {
+	state := DedupeReviewState{ProjectPath: projectPath, DecisionLog: library.IdentityDecisionLog{SchemaVersion: "1"}}
+	if strings.TrimSpace(projectPath) == "" {
+		return state, nil
+	}
+	libPath := filepath.Join(projectPath, "data", "library.json")
+	if _, err := os.Stat(libPath); os.IsNotExist(err) {
+		return state, nil
+	}
+	store, err := library.OpenStore(libPath)
+	if err != nil {
+		return state, err
+	}
+	records, err := store.List()
+	if err != nil {
+		return state, err
+	}
+	state.Records = records
+	report := library.ResolveIdentityClusters(records)
+	state.Clusters = report.Clusters
+	state.Conflicts = library.DetectIdentityConflicts(report, records)
+	if log, err := library.ReadIdentityDecisionLog(filepath.Join(projectPath, "data", "identity-decisions.jsonl")); err == nil {
+		state.DecisionLog = log
+		state.Conflicts = append(state.Conflicts, log.Conflicts...)
+	}
+	prisma, err := buildPRISMAFlowState(projectPath, len(records))
+	if err != nil {
+		return state, err
+	}
+	state.PRISMA = prisma
+	if events, err := provenance.Read(projectPath); err == nil {
+		for _, event := range events {
+			if strings.HasPrefix(event.Action, "identity.") || strings.HasPrefix(event.Action, "duplicate.") {
+				state.AuditEvents = append(state.AuditEvents, event)
+			}
+		}
+	}
+	return state, nil
 }
 
 // BuildArtifactDashboardState assembles the artifacts cockpit view from a
