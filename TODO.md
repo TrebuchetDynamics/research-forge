@@ -582,7 +582,7 @@ This is the canonical build order for the post-1.0 super-tool work. The thematic
 - [x] Add additional effect-size calculators beyond standardized mean difference, log odds ratio, and risk ratio (`MeanDifference`, `RiskDifference`, `FisherZCorrelation`; `rforge analysis prepare --effect mean-difference|risk-difference|fisher-z-correlation`).
 - [x] Improve subgroup analysis and meta-regression UX beyond direct CLI value entry (`ModeratorPreviewFromEvidence`, `SubgroupValuesFromEvidence`, `MetaRegressionValuesFromEvidence`, `rforge analysis moderators`, `--from-evidence`).
 - [x] Add influence diagnostics, richer sensitivity artifacts, and publication-bias tests beyond Egger-style regression (`InfluenceDiagnostics`, richer `LeaveOneOut`, `BeggRankCorrelation`, `rforge analysis influence`, `publication-bias --method begg`).
-- [ ] Add publication-ready analysis artifact manifests for forest/funnel plots, plot settings, checksums, R/metafor scripts, engine versions, warnings, and report embedding metadata.
+- [x] Add publication-ready analysis artifact manifests for forest/funnel plots, plot settings, checksums, R/metafor scripts, engine versions, warnings, and report embedding metadata (`AnalysisArtifactManifest`, `NewAnalysisArtifactManifest`, `run1-artifact-manifest.json`).
 - [ ] Add PyMARE-style secondary engine comparison reports against metafor fixtures, including environment locks, model-setting parity, warning capture, output deltas, and disagreement handling.
 - [ ] Add a method-comparison workbench for parser choices, retrieval backends, screening rankers, effect-size models, and publication-bias diagnostics.
 

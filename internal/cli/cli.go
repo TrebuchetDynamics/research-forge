@@ -920,6 +920,10 @@ func executeAnalysis(args []string, stdout, stderr io.Writer, opts globalOptions
 		if err := writeJSONFile(filepath.Join(opts.Project, "analysis", safeFileStem(args[1])+"-result.json"), result); err != nil {
 			return writeError(stdout, stderr, opts, 1, "analysis_result_store_failed", err.Error())
 		}
+		manifest := analysis.NewAnalysisArtifactManifest(run, result)
+		if err := analysis.WriteAnalysisArtifactManifest(filepath.Join(opts.Project, "analysis", safeFileStem(args[1])+"-artifact-manifest.json"), manifest); err != nil {
+			return writeError(stdout, stderr, opts, 1, "analysis_manifest_store_failed", err.Error())
+		}
 		if opts.JSON {
 			return writeJSON(stdout, 0, map[string]any{"result": result})
 		}
