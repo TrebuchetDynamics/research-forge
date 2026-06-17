@@ -287,6 +287,12 @@ func executeOA(args []string, stdout, stderr io.Writer, opts globalOptions) int 
 	if len(args) > 0 && args[0] == "acquisition-approve" {
 		return executeAcquisitionApprove(args[1:], stdout, stderr, opts)
 	}
+	if len(args) > 0 && args[0] == "privacy-review" {
+		return executePrivacyReview(args[1:], stdout, stderr, opts)
+	}
+	if len(args) > 0 && args[0] == "privacy-approve" {
+		return executePrivacyApprove(args[1:], stdout, stderr, opts)
+	}
 	if len(args) == 1 && args[0] == "candidates" {
 		if opts.Project == "" {
 			return writeError(stdout, stderr, opts, 2, "missing_project", "--project is required for oa candidates")
@@ -309,7 +315,7 @@ func executeOA(args []string, stdout, stderr io.Writer, opts globalOptions) int 
 		return 0
 	}
 	if len(args) != 2 || args[0] != "lookup" {
-		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge oa lookup <doi>|candidates|acquisition-queue|acquisition-approve <id>")
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge oa lookup <doi>|candidates|acquisition-queue|acquisition-approve <id>|privacy-review|privacy-approve")
 	}
 	email := os.Getenv("RFORGE_UNPAYWALL_EMAIL")
 	baseURL := os.Getenv("RFORGE_UNPAYWALL_URL")
@@ -326,6 +332,76 @@ func executeOA(args []string, stdout, stderr io.Writer, opts globalOptions) int 
 	}
 	fmt.Fprintf(stdout, "%s\t%t\t%s\t%s\n", record.DOI, record.OpenAccess, record.OAStatus, record.PDFURL)
 	return 0
+}
+
+func executePrivacyReview(args []string, stdout, stderr io.Writer, opts globalOptions) int {
+	if opts.Project == "" {
+		return writeError(stdout, stderr, opts, 2, "missing_project", "--project is required for oa privacy-review")
+	}
+	values, err := parseKeyValueFlags(args, map[string]bool{"--report": true})
+	if err != nil {
+		return writeError(stdout, stderr, opts, 2, "usage", err.Error())
+	}
+	store, err := library.OpenStore(filepath.Join(opts.Project, "data", "library.json"))
+	if err != nil {
+		return writeError(stdout, stderr, opts, 1, "library_open_failed", err.Error())
+	}
+	records, err := store.List()
+	if err != nil {
+		return writeError(stdout, stderr, opts, 1, "library_list_failed", err.Error())
+	}
+	reportText := ""
+	if reportPath := strings.TrimSpace(values["--report"]); reportPath != "" {
+		data, err := os.ReadFile(reportPath)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "privacy_report_read_failed", err.Error())
+		}
+		reportText = string(data)
+	}
+	review := documents.ReviewPrivacyLicensing(documents.PrivacyLicensingReviewInput{Records: records, ShareableReport: reportText})
+	path := privacyReviewPath(opts.Project)
+	if err := writeJSONFile(path, review); err != nil {
+		return writeError(stdout, stderr, opts, 1, "privacy_review_write_failed", err.Error())
+	}
+	if opts.JSON {
+		return writeJSON(stdout, 0, map[string]any{"review": review, "path": path})
+	}
+	fmt.Fprintf(stdout, "privacy/licensing review found %d issue(s)\n", len(review.Issues))
+	return 0
+}
+
+func executePrivacyApprove(args []string, stdout, stderr io.Writer, opts globalOptions) int {
+	if opts.Project == "" {
+		return writeError(stdout, stderr, opts, 2, "missing_project", "--project is required for oa privacy-approve")
+	}
+	values, err := parseKeyValueFlags(args, map[string]bool{"--reviewer": true, "--reason": true})
+	if err != nil {
+		return writeError(stdout, stderr, opts, 2, "usage", err.Error())
+	}
+	path := privacyReviewPath(opts.Project)
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return writeError(stdout, stderr, opts, 1, "privacy_review_read_failed", err.Error())
+	}
+	var review documents.PrivacyLicensingReview
+	if err := json.Unmarshal(data, &review); err != nil {
+		return writeError(stdout, stderr, opts, 1, "privacy_review_decode_failed", err.Error())
+	}
+	review = documents.ApprovePrivacyLicensing(review, values["--reviewer"], values["--reason"])
+	if err := writeJSONFile(path, review); err != nil {
+		return writeError(stdout, stderr, opts, 1, "privacy_review_write_failed", err.Error())
+	}
+	now := time.Now().UTC()
+	_ = provenance.Append(opts.Project, provenance.Event{SchemaVersion: "1", ID: "evt_" + now.Format("20060102T150405Z") + "_privacy_review", Timestamp: now.Format(time.RFC3339), Actor: "rforge", Action: "privacy.licensing.approved", Target: path, Inputs: map[string]any{"reviewer": values["--reviewer"], "reason": values["--reason"]}, Outputs: map[string]any{"issues": len(review.Issues)}, Warnings: []string{}})
+	if opts.JSON {
+		return writeJSON(stdout, 0, map[string]any{"review": review, "path": path})
+	}
+	fmt.Fprintln(stdout, "approved privacy/licensing review")
+	return 0
+}
+
+func privacyReviewPath(project string) string {
+	return filepath.Join(project, "data", "privacy-licensing-review.json")
 }
 
 func executeAcquisitionApprove(args []string, stdout, stderr io.Writer, opts globalOptions) int {

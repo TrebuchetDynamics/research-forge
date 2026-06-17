@@ -17,6 +17,7 @@ Core commands:
 - `rforge oa lookup <doi>`
 - `rforge --project <path> oa candidates` compares legal full-text candidates from Unpaywall, DOAJ, CORE, PubMed/Europe PMC/PMC, arXiv, and local files; every candidate requires reviewer approval before acquisition
 - `rforge --project <path> oa acquisition-queue` writes `data/legal-acquisition-queue.json` with OA/license status, source URL, expected local path, restricted/shareable flags, and reviewer approval gates; `rforge --project <path> oa acquisition-approve <id> --reviewer <name> --reason <text>` records explicit approval before download/archive inclusion
+- `rforge --project <path> oa privacy-review [--report <file>]` writes `data/privacy-licensing-review.json` with gates for imported attachments, notes, annotations, local paths, copyrighted/missing-license PDFs, and shareable-report leaks; `rforge --project <path> oa privacy-approve --reviewer <name> --reason <text>` records explicit approval
 - `rforge library list`, `rforge library refresh-doi <doi>`, `rforge library refresh-crossref`, `rforge library import-crossref-refs <doi>`
 - `rforge import json|csv|bibtex|ris|csl-json|zotero-rdf <file>`
 - `rforge export json|csv|bibtex|ris|csl-json|zotero-rdf <file>`
