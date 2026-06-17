@@ -152,6 +152,36 @@ func writeRetrievalLock(project, backend string, indexedDocuments int) error {
 }
 
 func executeRetrieve(args []string, stdout, stderr io.Writer, opts globalOptions) int {
+	if len(args) > 0 && args[0] == "tune-hybrid" {
+		queriesPath, lexicalPath, vectorPath, outPath, k, ok := parseTuneHybridArgs(args[1:])
+		if !ok {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> retrieve tune-hybrid --queries <queries.json> --lexical <results.json> --vector <results.json> --out <tuning.json> [--k N]")
+		}
+		var queries []retrieval.HybridTuningQuery
+		if err := readJSONFile(queriesPath, &queries); err != nil {
+			return writeError(stdout, stderr, opts, 1, "hybrid_tuning_queries_read_failed", err.Error())
+		}
+		var lexical map[string][]retrieval.PassageResult
+		if err := readJSONFile(lexicalPath, &lexical); err != nil {
+			return writeError(stdout, stderr, opts, 1, "hybrid_tuning_lexical_read_failed", err.Error())
+		}
+		var vector map[string][]retrieval.PassageResult
+		if err := readJSONFile(vectorPath, &vector); err != nil {
+			return writeError(stdout, stderr, opts, 1, "hybrid_tuning_vector_read_failed", err.Error())
+		}
+		file, err := retrieval.CalibrateHybridRetrieval(queries, lexical, vector, nil, k)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "hybrid_tuning_failed", err.Error())
+		}
+		if err := writeJSONFile(outPath, file); err != nil {
+			return writeError(stdout, stderr, opts, 1, "hybrid_tuning_write_failed", err.Error())
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"hybridTuning": file, "path": outPath})
+		}
+		fmt.Fprintf(stdout, "wrote hybrid retrieval tuning to %s\n", outPath)
+		return 0
+	}
 	query, backend, ok := parseRetrieveArgs(args)
 	if !ok {
 		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> retrieve --query <query> [--backend sqlite|opensearch|qdrant|hybrid]")
@@ -185,6 +215,33 @@ func parseIndexArgs(args []string) (string, bool) {
 		return args[2], true
 	}
 	return "", false
+}
+
+func parseTuneHybridArgs(args []string) (string, string, string, string, int, bool) {
+	values := map[string]string{}
+	k := 10
+	for i := 0; i < len(args); i++ {
+		switch args[i] {
+		case "--queries", "--lexical", "--vector", "--out", "--k":
+			if i+1 >= len(args) {
+				return "", "", "", "", 0, false
+			}
+			if args[i] == "--k" {
+				parsed, err := strconv.Atoi(args[i+1])
+				if err != nil || parsed <= 0 {
+					return "", "", "", "", 0, false
+				}
+				k = parsed
+			} else {
+				values[args[i]] = args[i+1]
+			}
+			i++
+		default:
+			return "", "", "", "", 0, false
+		}
+	}
+	ok := values["--queries"] != "" && values["--lexical"] != "" && values["--vector"] != "" && values["--out"] != ""
+	return values["--queries"], values["--lexical"], values["--vector"], values["--out"], k, ok
 }
 
 func parseRetrieveArgs(args []string) (string, string, bool) {
