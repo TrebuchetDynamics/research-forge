@@ -997,11 +997,46 @@ func parseReportBuild(args []string) (string, []string, bool) {
 }
 
 func executePackage(args []string, stdout, stderr io.Writer, opts globalOptions) int {
-	if len(args) == 0 || opts.Project == "" {
-		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge package create --out <dir> [--created-by <name> --question <text>]")
+	if len(args) == 0 {
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge package <create|audit|replay>")
 	}
 	switch args[0] {
+	case "audit":
+		if len(args) != 2 {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge package audit <package-dir>")
+		}
+		report, err := reviewpkg.Audit(args[1])
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "package_audit_failed", err.Error())
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"audit": report, "ok": report.OK})
+		}
+		fmt.Fprintf(stdout, "package audit ok=%t checks=%d\n", report.OK, len(report.Checks))
+		if !report.OK {
+			return 1
+		}
+		return 0
+	case "replay":
+		if len(args) != 2 {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge package replay <package-dir>")
+		}
+		report, err := reviewpkg.Replay(args[1])
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "package_replay_failed", err.Error())
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"replay": report, "ok": report.OK})
+		}
+		fmt.Fprintf(stdout, "package replay ok=%t checks=%d\n", report.OK, len(report.Checks))
+		if !report.OK {
+			return 1
+		}
+		return 0
 	case "create":
+		if opts.Project == "" {
+			return writeError(stdout, stderr, opts, 2, "missing_project", "--project is required")
+		}
 		outPath, createdBy, question, ok := parsePackageCreate(args[1:])
 		if !ok {
 			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge package create --out <dir> [--created-by <name> --question <text>]")
