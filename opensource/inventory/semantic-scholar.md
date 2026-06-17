@@ -32,6 +32,7 @@ Implemented nearby capabilities:
 - Quota/transient retry policy uses the shared source HTTP backoff, honors `Retry-After`, and can be tuned with `RFORGE_SEMANTIC_SCHOLAR_MAX_RETRIES`.
 - Opt-in live smoke target `make semantic-scholar-live-smoke` supports `RFORGE_SEMANTIC_SCHOLAR_API_KEY`.
 - Web artifacts view renders exported citation graphs as an accessible SVG preview.
+- `rforge citations accessible-view` provides no-JS review views with graph summaries, filtered node tables, tabular edge lists, domain-topic rows, keyboard-navigation guidance, and exportable graph reports alongside interactive SVGs.
 - Deterministic mocked HTTP tests for search, graph expansion, recursive expansion, library import, graph-import dedupe filtering, web visualization, and report generation.
 
 Missing features:

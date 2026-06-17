@@ -15,6 +15,7 @@ type AccessibleGraphView struct {
 	SchemaVersion      string                     `json:"schemaVersion"`
 	Filter             string                     `json:"filter,omitempty"`
 	Summary            GraphAccessibleSummary     `json:"summary"`
+	Report             GraphReport                `json:"report"`
 	KeyboardNavigation []string                   `json:"keyboardNavigation"`
 	NodeRows           []AccessibleNodeRow        `json:"nodeRows"`
 	EdgeRows           []AccessibleEdgeRow        `json:"edgeRows"`
@@ -93,6 +94,9 @@ func BuildAccessibleGraphView(graphData []byte, domain DomainMapArtifact, opts A
 		return view.EdgeRows[i].Source < view.EdgeRows[j].Source
 	})
 	view.Summary = GraphAccessibleSummary{NodeCount: len(nodeIDs), EdgeCount: len(exported.Edges), FilteredNodes: len(view.NodeRows), FilteredEdges: len(view.EdgeRows), DomainTopicCount: len(view.DomainTopicRows)}
+	if report, err := BuildGraphReport(graphData); err == nil {
+		view.Report = report
+	}
 	return view, nil
 }
 
@@ -100,7 +104,9 @@ func AccessibleGraphMarkdown(view AccessibleGraphView) string {
 	var b strings.Builder
 	b.WriteString("# Accessible graph view\n\n")
 	fmt.Fprintf(&b, "- Nodes: %d\n- Edges: %d\n- Filtered nodes: %d\n- Filtered edges: %d\n- Domain topics: %d\n\n", view.Summary.NodeCount, view.Summary.EdgeCount, view.Summary.FilteredNodes, view.Summary.FilteredEdges, view.Summary.DomainTopicCount)
-	b.WriteString("## Keyboard navigation\n\n")
+	b.WriteString("## Graph summary\n\n")
+	b.WriteString(GraphReportMarkdown(view.Report))
+	b.WriteString("\n## Keyboard navigation\n\n")
 	for _, item := range view.KeyboardNavigation {
 		fmt.Fprintf(&b, "- %s\n", item)
 	}

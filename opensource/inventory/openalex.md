@@ -22,6 +22,7 @@ Implemented nearby capabilities:
 
 - `rforge search --source openalex` with cursor/filter support and `rforge search import --source openalex --pages N` paginated library import.
 - `rforge citations expand --source openalex` for reference/citation graph export, with shared depth/node/API-call/retry/resume/dry-run budget controls before live expansion.
+- `rforge citations accessible-view` provides no-JS review views with graph summaries, filtered node tables, tabular edge lists, domain-topic rows, keyboard-navigation guidance, and exportable graph reports alongside interactive SVGs.
 - OpenAlex source connector with mocked tests, including works, author/institution/concept entity searches, related-work discovery records, and disambiguation review queues for ambiguous people/institutions/concepts.
 - Source refs stored in `PaperRecord` conversion.
 - Live manual searches have been used for ResearchForge-backed reports.

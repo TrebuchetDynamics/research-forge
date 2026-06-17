@@ -18,7 +18,7 @@ func TestBuildAccessibleGraphViewFiltersNodesEdgesDomainTopicsAndRendersKeyboard
 	if err != nil {
 		t.Fatalf("BuildAccessibleGraphView returned error: %v", err)
 	}
-	if view.Summary.NodeCount != 3 || view.Summary.EdgeCount != 2 || view.Filter != "paper-1" {
+	if view.Summary.NodeCount != 3 || view.Summary.EdgeCount != 2 || view.Filter != "paper-1" || view.Report.NodeCount != 3 || view.Report.EdgeCount != 2 {
 		t.Fatalf("summary/filter = %#v", view)
 	}
 	if len(view.NodeRows) != 1 || view.NodeRows[0].NodeID != "paper-1" || view.NodeRows[0].InDegree != 1 || view.NodeRows[0].OutDegree != 1 {
@@ -31,7 +31,7 @@ func TestBuildAccessibleGraphViewFiltersNodesEdgesDomainTopicsAndRendersKeyboard
 		t.Fatalf("domain rows = %#v", view.DomainTopicRows)
 	}
 	markdown := AccessibleGraphMarkdown(view)
-	for _, want := range []string{"# Accessible graph view", "## Keyboard navigation", "| Node | In degree | Out degree |", "| Source | Target |", "Solar fuels"} {
+	for _, want := range []string{"# Accessible graph view", "## Graph summary", "## Keyboard navigation", "| Node | In degree | Out degree |", "| Source | Target |", "Solar fuels"} {
 		if !strings.Contains(markdown, want) {
 			t.Fatalf("markdown missing %q:\n%s", want, markdown)
 		}
