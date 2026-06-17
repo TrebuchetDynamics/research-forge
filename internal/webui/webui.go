@@ -130,6 +130,9 @@ var researchMapTemplate = template.Must(template.New("research-map").Parse(`<sec
   <section><h3>Concept maps</h3>{{range .ConceptMap}}<p>{{.Label}} — {{.Detail}}</p>{{else}}<p>No concepts available.</p>{{end}}</section>
   <section><h3>Citation neighborhoods</h3>{{range .CitationNeighborhoods}}<p>{{.Label}} — {{.Detail}}</p>{{else}}<p>No citation neighborhoods available.</p>{{end}}</section>
   <section><h3>Retrieval clusters</h3>{{range .RetrievalClusters}}<p>{{.Label}} — {{.Detail}}</p>{{else}}<p>No retrieval clusters available.</p>{{end}}</section>
+  <section><h3>Retrieval hits</h3>{{range .RetrievalHits}}<p>{{.Label}} — {{.Detail}}</p>{{else}}<p>No retrieval hits available.</p>{{end}}</section>
+  <section><h3>Screening priority</h3>{{range .ScreeningPriority}}<p>{{.Label}} — {{.Detail}}</p>{{else}}<p>No screening priority available.</p>{{end}}</section>
+  <section><h3>Parser quality</h3>{{range .ParserQuality}}<p>{{.Label}} — {{.Detail}}</p>{{else}}<p>No parser quality report available.</p>{{end}}</section>
   <section><h3>Evidence coverage</h3><p>Accepted: {{.EvidenceCoverage.Accepted}} Suggested: {{.EvidenceCoverage.Suggested}} Other: {{.EvidenceCoverage.Other}}</p></section>
   <section><h3>Provenance overlays</h3>{{range .ProvenanceOverlays}}<p>{{.Label}} — {{.Detail}}</p>{{else}}<p>No provenance overlay selected.</p>{{end}}</section>
   <section><h3>Keyboard-accessible alternatives</h3>{{range .KeyboardAlternatives}}<p>{{.}}</p>{{end}}</section>

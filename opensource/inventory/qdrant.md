@@ -31,6 +31,7 @@ Implemented nearby capabilities:
 - Retrieval rebuilds write `data/retrieval.lock.json` with backend and deterministic embedding metadata.
 - Retrieval benchmark report compares Qdrant fixture results against SQLite FTS, OpenSearch, and hybrid ranking with reproducibility/privacy notes.
 - Embedding-provider compliance profiles document text egress, required consent/config, model version locks, dimensionality, retention policy, and redaction behavior before Qdrant/HTTP indexing runs.
+- The `/map` local web cockpit combines concept maps, citation neighborhoods, screening priority, parser quality, retrieval hits, and evidence coverage with no-JS server rendering and `/map/snapshot.json` audit exports.
 
 Missing features:
 

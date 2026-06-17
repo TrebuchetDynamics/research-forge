@@ -38,6 +38,7 @@ Implemented nearby capabilities:
 - The local project knowledge graph merges Semantic Scholar citation edges with Zotero collections/tags, OpenAlex concepts, parsed references, evidence, screening, analysis, and report claims for `rforge knowledge query`.
 - Citation-to-evidence trace views link report claims back to source API records and raw request/response metadata along with evidence, parser passages, PDFs, and effect-size rows.
 - Source-fusion identity resolution merges DOI/arXiv/PMID/PMCID/OpenAlex/Semantic Scholar/Crossref/Zotero IDs with explainable rules, conflict records, reversible merge/split decision logs, and `library identity-decision apply` support.
+- The `/map` local web cockpit combines concept maps, citation neighborhoods, screening priority, parser quality, retrieval hits, and evidence coverage with no-JS server rendering and `/map/snapshot.json` audit exports.
 
 Missing features:
 

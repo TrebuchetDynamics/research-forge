@@ -2,7 +2,10 @@ package webui
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
+	"os"
+	"path/filepath"
 	"sort"
 	"strings"
 
@@ -17,6 +20,9 @@ type ResearchMapCockpitState struct {
 	ConceptMap            []ResearchMapItem       `json:"conceptMap"`
 	CitationNeighborhoods []ResearchMapItem       `json:"citationNeighborhoods"`
 	RetrievalClusters     []ResearchMapItem       `json:"retrievalClusters"`
+	RetrievalHits         []ResearchMapItem       `json:"retrievalHits,omitempty"`
+	ScreeningPriority     []ResearchMapItem       `json:"screeningPriority,omitempty"`
+	ParserQuality         []ResearchMapItem       `json:"parserQuality,omitempty"`
 	EvidenceCoverage      EvidenceCoverageSummary `json:"evidenceCoverage"`
 	ProvenanceOverlays    []ResearchMapItem       `json:"provenanceOverlays,omitempty"`
 	KeyboardAlternatives  []string                `json:"keyboardAlternatives"`
@@ -79,6 +85,9 @@ func BuildResearchMapCockpitStateWithOptions(projectPath string, opts ResearchMa
 			state.CitationNeighborhoods = append(state.CitationNeighborhoods, ResearchMapItem{ID: edge.ID, Label: labelFor(graph, edge.Source), Detail: "cites " + labelFor(graph, edge.Target)})
 		}
 	}
+	state.RetrievalHits = readResearchMapItems(filepath.Join(projectPath, "data", "retrieval-hits.json"))
+	state.ScreeningPriority = readResearchMapItems(filepath.Join(projectPath, "data", "screening-priority.json"))
+	state.ParserQuality = readParserQualityItems(filepath.Join(projectPath, "data", "parser-quality.json"))
 	if opts.IncludeProvenance {
 		for _, node := range graph.Nodes {
 			if node.Kind == "provenance_event" && researchMapMatch(node.Label+" "+node.ID, filter) {
@@ -92,6 +101,9 @@ func BuildResearchMapCockpitStateWithOptions(projectPath string, opts ResearchMa
 	sortItems(state.ConceptMap)
 	sortItems(state.CitationNeighborhoods)
 	sortItems(state.RetrievalClusters)
+	sortItems(state.RetrievalHits)
+	sortItems(state.ScreeningPriority)
+	sortItems(state.ParserQuality)
 	sortItems(state.ProvenanceOverlays)
 	return state, nil
 }
@@ -122,6 +134,53 @@ func newResearchMapSnapshotHandler(projectPath func() string) http.Handler {
 		w.Header().Set("Content-Type", "application/json")
 		_ = json.NewEncoder(w).Encode(state)
 	})
+}
+
+func readResearchMapItems(path string) []ResearchMapItem {
+	payload, err := os.ReadFile(path)
+	if err != nil {
+		return nil
+	}
+	var items []ResearchMapItem
+	if err := json.Unmarshal(payload, &items); err == nil {
+		return items
+	}
+	var generic []map[string]any
+	if err := json.Unmarshal(payload, &generic); err != nil {
+		return nil
+	}
+	for _, item := range generic {
+		items = append(items, ResearchMapItem{ID: fmt.Sprint(item["id"]), Label: fmt.Sprint(item["label"]), Detail: fmt.Sprint(item["detail"])})
+	}
+	return items
+}
+
+func readParserQualityItems(path string) []ResearchMapItem {
+	payload, err := os.ReadFile(path)
+	if err != nil {
+		return nil
+	}
+	var report struct {
+		ParserRuns []struct {
+			ParserName   string  `json:"parserName"`
+			QualityScore float64 `json:"qualityScore"`
+		} `json:"parserRuns"`
+		Conflicts []struct {
+			Field  string `json:"field"`
+			Status string `json:"status"`
+		} `json:"conflicts"`
+	}
+	if err := json.Unmarshal(payload, &report); err != nil {
+		return nil
+	}
+	items := []ResearchMapItem{}
+	for _, run := range report.ParserRuns {
+		items = append(items, ResearchMapItem{ID: "parser:" + run.ParserName, Label: run.ParserName, Detail: fmt.Sprintf("quality %.2f", run.QualityScore)})
+	}
+	for _, conflict := range report.Conflicts {
+		items = append(items, ResearchMapItem{ID: "parser-conflict:" + conflict.Field, Label: conflict.Field, Detail: conflict.Status})
+	}
+	return items
 }
 
 func researchMapMatch(value, filter string) bool {

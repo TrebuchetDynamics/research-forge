@@ -33,6 +33,7 @@ Missing features:
 - Highlighted passage search results.
 - Retrieval benchmark report now compares OpenSearch fixture results against SQLite FTS, Qdrant, and hybrid ranking with reproducibility/privacy notes.
 - Hybrid retrieval tuning files persist lexical/vector/backend weights, deterministic calibration method, evaluation scores, selected configuration, reproducibility notes, and query-set checksums.
+- The `/map` local web cockpit combines concept maps, citation neighborhoods, screening priority, parser quality, retrieval hits, and evidence coverage with no-JS server rendering and `/map/snapshot.json` audit exports.
 - Opt-in OpenSearch integration test.
 
 ## Recommended slice

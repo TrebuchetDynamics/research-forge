@@ -35,15 +35,18 @@ func TestResearchMapCockpitShowsLiveFeaturesAndSnapshot(t *testing.T) {
 	writeJSON(t, filepath.Join(project, "data", "library.json"), []library.PaperRecord{{Title: "Catalyst review", Identifiers: library.Identifiers{DOI: "10.1000/cat"}, SourceRefs: []library.SourceRef{{Source: "zotero", Metadata: map[string]string{"concepts": "photocatalysis", "tags": "catalysts"}}}}})
 	writeJSON(t, filepath.Join(project, "data", "citation-graph.json"), map[string]any{"edges": []map[string]string{{"source": "10.1000/cat", "target": "10.1000/ref"}}})
 	writeJSON(t, filepath.Join(project, "data", "evidence.json"), []evidence.EvidenceItem{{PaperID: "10.1000/cat", SchemaName: "outcomes", Status: evidence.StatusAccepted}})
+	writeJSON(t, filepath.Join(project, "data", "parser-quality.json"), map[string]any{"parserRuns": []map[string]any{{"parserName": "grobid", "qualityScore": 3.5}}, "conflicts": []map[string]any{{"field": "title", "status": "review-required"}}})
+	writeJSON(t, filepath.Join(project, "data", "screening-priority.json"), []map[string]any{{"id": "paper-1", "label": "Catalyst review", "detail": "uncertainty 0.51"}})
+	writeJSON(t, filepath.Join(project, "data", "retrieval-hits.json"), []map[string]any{{"id": "hit-1", "label": "opensearch hit", "detail": "BM25+vector"}})
 	state, err := BuildResearchMapCockpitState(project)
 	if err != nil {
 		t.Fatalf("BuildResearchMapCockpitState: %v", err)
 	}
-	if len(state.ConceptMap) == 0 || len(state.CitationNeighborhoods) == 0 || len(state.RetrievalClusters) == 0 || state.EvidenceCoverage.Accepted == 0 || state.SnapshotExportPath != "/map/snapshot.json" {
+	if len(state.ConceptMap) == 0 || len(state.CitationNeighborhoods) == 0 || len(state.RetrievalClusters) == 0 || len(state.RetrievalHits) == 0 || len(state.ScreeningPriority) == 0 || len(state.ParserQuality) == 0 || state.EvidenceCoverage.Accepted == 0 || state.SnapshotExportPath != "/map/snapshot.json" {
 		t.Fatalf("state = %#v", state)
 	}
 	body := renderHandler(t, NewResearchMapHandler(state))
-	for _, want := range []string{"Research map cockpit", "Concept maps", "Citation neighborhoods", "Retrieval clusters", "Evidence coverage", "Snapshot export", "photocatalysis"} {
+	for _, want := range []string{"Research map cockpit", "Concept maps", "Citation neighborhoods", "Retrieval clusters", "Retrieval hits", "Screening priority", "Parser quality", "Evidence coverage", "Snapshot export", "photocatalysis"} {
 		if !strings.Contains(body, want) {
 			t.Fatalf("missing %q:\n%s", want, body)
 		}
