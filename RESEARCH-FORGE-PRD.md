@@ -14,7 +14,7 @@ Core principle:
 
 > Retrieval-first, provenance-first, statistics-first, LLM-assisted.
 
-LLMs may assist with query expansion, summarization, and extraction suggestions, but every scientific claim must trace back to exact source metadata, passages, tables, equations, datasets, figures, or citations.
+LLMs may assist with query expansion, screening rationales, extraction suggestions, and report prose, but every suggested sentence must trace back to exact source metadata, passages, tables, equations, datasets, figures, or citations and remain unaccepted until reviewer approval.
 
 ---
 

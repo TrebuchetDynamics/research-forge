@@ -8,8 +8,10 @@ import (
 type CitationLockedSuggestionKind string
 
 const (
-	CitationLockedExtraction  CitationLockedSuggestionKind = "extraction"
-	CitationLockedReportProse CitationLockedSuggestionKind = "report_prose"
+	CitationLockedQueryExpansion     CitationLockedSuggestionKind = "query_expansion"
+	CitationLockedScreeningRationale CitationLockedSuggestionKind = "screening_rationale"
+	CitationLockedExtraction         CitationLockedSuggestionKind = "extraction"
+	CitationLockedReportProse        CitationLockedSuggestionKind = "report_prose"
 )
 
 type CitationLockedSupport struct {
@@ -67,7 +69,7 @@ func DraftCitationLockedSuggestions(request CitationLockedSuggestionRequest) (Ci
 	if kind == "" {
 		kind = CitationLockedExtraction
 	}
-	if kind != CitationLockedExtraction && kind != CitationLockedReportProse {
+	if !supportedCitationLockedKind(kind) {
 		return CitationLockedSuggestionQueue{}, fmt.Errorf("unsupported citation-locked suggestion kind")
 	}
 	locks := validCitationLocks(request.Supports)
@@ -107,6 +109,15 @@ func ReviewCitationLockedSuggestion(queue CitationLockedSuggestionQueue, input C
 	return queue, fmt.Errorf("suggestion not found")
 }
 
+func supportedCitationLockedKind(kind CitationLockedSuggestionKind) bool {
+	switch kind {
+	case CitationLockedQueryExpansion, CitationLockedScreeningRationale, CitationLockedExtraction, CitationLockedReportProse:
+		return true
+	default:
+		return false
+	}
+}
+
 func (s CitationLockedSuggestion) AcceptWithoutReview() error {
 	return fmt.Errorf("citation-locked LLM suggestions require reviewer approval before acceptance")
 }
@@ -124,17 +135,42 @@ func validCitationLocks(supports []CitationLockedSupport) []CitationLockedSuppor
 	return locks
 }
 
+func EverySuggestedSentenceCitationLocked(s CitationLockedSuggestion) bool {
+	if s.Status != StatusSuggested || len(s.CitationLocks) == 0 {
+		return false
+	}
+	for _, sentence := range strings.Split(s.SuggestedText, "\n") {
+		sentence = strings.TrimSpace(sentence)
+		if sentence == "" {
+			continue
+		}
+		locked := false
+		for _, lock := range s.CitationLocks {
+			if strings.Contains(sentence, "["+lock.Ref+"]") && strings.TrimSpace(lock.ExactText) != "" {
+				locked = true
+				break
+			}
+		}
+		if !locked {
+			return false
+		}
+	}
+	return true
+}
+
 func citationLockedSuggestedText(kind CitationLockedSuggestionKind, prompt string, locks []CitationLockedSupport) string {
-	prefix := "Extracted claim"
-	if kind == CitationLockedReportProse {
-		prefix = "Report prose"
+	prefix := map[CitationLockedSuggestionKind]string{CitationLockedQueryExpansion: "Query expansion", CitationLockedScreeningRationale: "Screening rationale", CitationLockedExtraction: "Extraction candidate", CitationLockedReportProse: "Report prose"}[kind]
+	lines := []string{}
+	for _, lock := range locks {
+		basis := lock.ExactText
+		if len(basis) > 160 {
+			basis = basis[:160]
+		}
+		if prompt != "" {
+			lines = append(lines, fmt.Sprintf("%s for %q: %s [%s]", prefix, prompt, basis, lock.Ref))
+		} else {
+			lines = append(lines, fmt.Sprintf("%s: %s [%s]", prefix, basis, lock.Ref))
+		}
 	}
-	basis := locks[0].ExactText
-	if len(basis) > 160 {
-		basis = basis[:160]
-	}
-	if prompt != "" {
-		return fmt.Sprintf("%s for %q: %s [%s]", prefix, prompt, basis, locks[0].Ref)
-	}
-	return fmt.Sprintf("%s: %s [%s]", prefix, basis, locks[0].Ref)
+	return strings.Join(lines, "\n")
 }

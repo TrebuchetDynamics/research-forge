@@ -2,6 +2,18 @@ package evidence
 
 import "testing"
 
+func TestCitationLockedSynthesisSupportsAllAssistedKindsWithSentenceLocks(t *testing.T) {
+	for _, kind := range []CitationLockedSuggestionKind{CitationLockedQueryExpansion, CitationLockedScreeningRationale, CitationLockedExtraction, CitationLockedReportProse} {
+		queue, err := DraftCitationLockedSuggestions(CitationLockedSuggestionRequest{PaperID: "paper-1", Kind: kind, Prompt: "draft", Supports: []CitationLockedSupport{{Ref: "paper-1:p1", ExactText: "First supported sentence."}, {Ref: "paper-1:p2", ExactText: "Second supported sentence."}}})
+		if err != nil {
+			t.Fatalf("kind %s: %v", kind, err)
+		}
+		if queue.Suggestions[0].Status != StatusSuggested || !EverySuggestedSentenceCitationLocked(queue.Suggestions[0]) {
+			t.Fatalf("kind %s suggestion not locked/unaccepted: %#v", kind, queue.Suggestions[0])
+		}
+	}
+}
+
 func TestCitationLockedLLMSuggestionsRequireSupportAndReviewerApproval(t *testing.T) {
 	queue, err := DraftCitationLockedSuggestions(CitationLockedSuggestionRequest{
 		PaperID:      "paper-1",

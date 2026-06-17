@@ -40,4 +40,19 @@ func TestExecuteEvidenceCitationLockedSuggestAndReview(t *testing.T) {
 	if reviewed.Suggestions[0].Status != evidence.StatusAccepted || reviewed.Suggestions[0].ReviewerDecision.Reviewer != "ada" {
 		t.Fatalf("reviewed = %#v", reviewed)
 	}
+
+	queryOut := filepath.Join(project, "data", "citation-locked-query.json")
+	stdout.Reset()
+	stderr.Reset()
+	code = Execute([]string{"--json", "--project", project, "evidence", "citation-suggest", "--paper", "paper-1", "--kind", "query_expansion", "--prompt", "suggest expansion", "--support", "paper-1:p2=The trial studied hospitalization outcomes.", "--out", queryOut}, &stdout, &stderr)
+	if code != 0 {
+		t.Fatalf("query suggest code=%d stderr=%s stdout=%s", code, stderr.String(), stdout.String())
+	}
+	var queryQueue evidence.CitationLockedSuggestionQueue
+	if err := readJSONFile(queryOut, &queryQueue); err != nil {
+		t.Fatalf("read query queue: %v", err)
+	}
+	if queryQueue.Suggestions[0].Kind != evidence.CitationLockedQueryExpansion || !evidence.EverySuggestedSentenceCitationLocked(queryQueue.Suggestions[0]) {
+		t.Fatalf("query queue = %#v", queryQueue)
+	}
 }

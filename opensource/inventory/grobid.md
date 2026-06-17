@@ -30,6 +30,7 @@ Implemented nearby capabilities:
 - Evidence gap analysis cross-checks the research question, screened-in studies, parsed passages, accepted evidence fields, full-text acquisition, citation-locked claims, and analysis inputs before final inclusion.
 - Reproducible review packages bundle the meta-analysis spine first-done artifact with project manifests, lockfiles, source plans, dedupe decisions, parser manifests, screening audit, extraction schema, accepted evidence, analysis/report artifacts, redaction policy, replay helper, audit placeholder, and checksums.
 - Cross-tool benchmarks report deterministic fixture metrics for discovery recall, dedupe precision, parser field accuracy, reference normalization, retrieval quality, screening effort savings, and report/package reproducibility.
+- Citation-locked synthesis can draft query expansions, screening rationales, extraction candidates, and report prose only when every suggested sentence has exact source support and remains unaccepted until reviewer review.
 - Citation-to-evidence trace views link report claims back to parser outputs, passage offsets/text, PDFs, accepted evidence, effect-size rows, and source/reference-manager provenance.
 - Opt-in real GROBID endpoint e2e listed in TODO as complete.
 
