@@ -35,6 +35,7 @@ Implemented nearby capabilities:
 - `rforge citations accessible-view` provides no-JS review views with graph summaries, filtered node tables, tabular edge lists, domain-topic rows, keyboard-navigation guidance, and exportable graph reports alongside interactive SVGs.
 - Deterministic mocked HTTP tests for search, graph expansion, recursive expansion, library import, graph-import dedupe filtering, web visualization, and report generation.
 - The forge workflow DAG includes discovery/import checkpoints with inputs, outputs, provenance actions, and restart-safe skips.
+- The local project knowledge graph merges Semantic Scholar citation edges with Zotero collections/tags, OpenAlex concepts, parsed references, evidence, screening, analysis, and report claims for `rforge knowledge query`.
 
 Missing features:
 

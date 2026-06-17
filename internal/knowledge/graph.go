@@ -121,10 +121,14 @@ func BuildProjectKnowledgeGraphFromProject(projectPath string) (ProjectKnowledge
 	_ = readJSON(filepath.Join(projectPath, "data", "library.json"), &input.LibraryRecords)
 	input.CitationEdges = readCitationEdges(filepath.Join(projectPath, "data", "citation-graph.json"))
 	input.ParsedDocuments = readParsedDocuments(filepath.Join(projectPath, "parsed"))
-	_ = readJSON(filepath.Join(projectPath, "data", "evidence.json"), &input.EvidenceItems)
+	if err := readJSON(filepath.Join(projectPath, "data", "evidence.items.json"), &input.EvidenceItems); err != nil {
+		_ = readJSON(filepath.Join(projectPath, "data", "evidence.json"), &input.EvidenceItems)
+	}
 	_ = readJSON(filepath.Join(projectPath, "data", "screening.events.json"), &input.ScreeningEvents)
 	input.AnalysisRuns = readAnalysisRuns(filepath.Join(projectPath, "analysis"))
-	_ = readJSON(filepath.Join(projectPath, "data", "report-trace.json"), &input.ReportTrace)
+	if err := readJSON(filepath.Join(projectPath, "data", "claim-trace.json"), &input.ReportTrace); err != nil {
+		_ = readJSON(filepath.Join(projectPath, "data", "report-trace.json"), &input.ReportTrace)
+	}
 	if events, err := provenance.Read(projectPath); err == nil {
 		input.ProvenanceEvents = events
 	}

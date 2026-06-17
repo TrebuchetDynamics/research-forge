@@ -21,6 +21,7 @@ Zotero is the dominant open-source reference-manager ecosystem. ResearchForge sh
 Implemented nearby capabilities:
 
 - The forge workflow DAG includes import/dedupe checkpoints with inputs, outputs, provenance actions, and restart-safe skips.
+- The local project knowledge graph merges Zotero collections/tags with source concepts, citations, parsed references, evidence, screening, analysis, and report claims for `rforge knowledge query`.
 
 - JSON, CSV, BibTeX, RIS, CSL-JSON, and Zotero RDF import/export.
 - Normalized `PaperRecord` identifiers including DOI, arXiv, PMID, OpenAlex, Crossref, and Semantic Scholar IDs.

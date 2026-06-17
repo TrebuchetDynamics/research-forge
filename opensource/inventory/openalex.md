@@ -26,6 +26,7 @@ Implemented nearby capabilities:
 - OpenAlex source connector with mocked tests, including works, author/institution/concept entity searches, related-work discovery records, and disambiguation review queues for ambiguous people/institutions/concepts.
 - Source refs stored in `PaperRecord` conversion.
 - The forge workflow DAG includes discovery/import checkpoints with inputs, outputs, provenance actions, and restart-safe skips.
+- The local project knowledge graph merges OpenAlex concepts with Zotero collections/tags, Semantic Scholar citation edges, parsed references, evidence, screening, analysis, and report claims for `rforge knowledge query`.
 - Live manual searches have been used for ResearchForge-backed reports.
 
 Missing features:

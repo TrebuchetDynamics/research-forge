@@ -46,10 +46,10 @@ func TestBuildProjectKnowledgeGraphFromProjectReadsLocalArtifacts(t *testing.T) 
 	writeJSON(t, filepath.Join(project, "data", "library.json"), []library.PaperRecord{{Title: "Catalyst review", Identifiers: library.Identifiers{DOI: "10.1000/cat"}, SourceRefs: []library.SourceRef{{Source: "zotero", Metadata: map[string]string{"tags": "catalysts"}}}}})
 	writeJSON(t, filepath.Join(project, "data", "citation-graph.json"), map[string]any{"nodes": []map[string]string{{"id": "10.1000/cat"}, {"id": "10.1000/ref"}}, "edges": []map[string]string{{"source": "10.1000/cat", "target": "10.1000/ref"}}})
 	writeJSON(t, filepath.Join(project, "parsed", "cat.json"), parsing.ParsedDocument{PaperID: "10.1000/cat", References: []parsing.Reference{{Title: "Reference paper", DOI: "10.1000/ref"}}})
-	writeJSON(t, filepath.Join(project, "data", "evidence.json"), []evidence.EvidenceItem{{PaperID: "10.1000/cat", SchemaName: "outcomes", Status: evidence.StatusAccepted}})
+	writeJSON(t, filepath.Join(project, "data", "evidence.items.json"), []evidence.EvidenceItem{{PaperID: "10.1000/cat", SchemaName: "outcomes", Status: evidence.StatusAccepted}})
 	writeJSON(t, filepath.Join(project, "data", "screening.events.json"), []screening.DecisionEvent{{PaperID: "10.1000/cat", Stage: screening.StageTitleAbstract, Decision: screening.DecisionInclude}})
 	writeJSON(t, filepath.Join(project, "analysis", "run1-run.json"), analysis.AnalysisRun{ID: "run1", InputRows: []analysis.InputRow{{PaperID: "10.1000/cat", EffectSize: 1}}})
-	writeJSON(t, filepath.Join(project, "data", "report-trace.json"), report.CitationEvidenceTraceView{Claims: []report.ClaimTraceView{{ClaimID: "claim1", PaperID: "10.1000/cat", ClaimText: "claim"}}})
+	writeJSON(t, filepath.Join(project, "data", "claim-trace.json"), report.CitationEvidenceTraceView{Claims: []report.ClaimTraceView{{ClaimID: "claim1", PaperID: "10.1000/cat", ClaimText: "claim"}}})
 	if err := provenance.Append(project, provenance.Event{ID: "evt1", Action: "forge.state.transition", Target: "10.1000/cat"}); err != nil {
 		t.Fatalf("provenance: %v", err)
 	}
