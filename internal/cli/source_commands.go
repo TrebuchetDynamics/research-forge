@@ -14,7 +14,9 @@ import (
 
 	"github.com/TrebuchetDynamics/research-forge/internal/citations"
 	"github.com/TrebuchetDynamics/research-forge/internal/documents"
+	"github.com/TrebuchetDynamics/research-forge/internal/evidence"
 	"github.com/TrebuchetDynamics/research-forge/internal/library"
+	"github.com/TrebuchetDynamics/research-forge/internal/parsing"
 	"github.com/TrebuchetDynamics/research-forge/internal/provenance"
 	"github.com/TrebuchetDynamics/research-forge/internal/sources"
 )
@@ -22,6 +24,45 @@ import (
 func executeCitations(args []string, stdout, stderr io.Writer, opts globalOptions) int {
 	if len(args) == 0 {
 		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge citations <expand|report>")
+	}
+	if args[0] == "import-bibliography" {
+		parsedPath, outPath, reportPath, evidencePath, ok := parseCitationsImportBibliography(args[1:], opts.Project)
+		if !ok {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge citations import-bibliography --parsed <parsed.json> --out <graph.json> --report <report.json> [--evidence <evidence.json>]")
+		}
+		var doc parsing.ParsedDocument
+		if err := readJSONFile(parsedPath, &doc); err != nil {
+			return writeError(stdout, stderr, opts, 1, "citation_bibliography_read_failed", err.Error())
+		}
+		var items []evidence.EvidenceItem
+		if evidencePath != "" {
+			_ = readJSONFile(evidencePath, &items)
+		}
+		report := citations.ImportParsedBibliography(doc, items)
+		graphData, err := report.Graph.ExportJSON()
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "citation_bibliography_export_failed", err.Error())
+		}
+		if err := os.MkdirAll(filepath.Dir(outPath), 0o755); err != nil {
+			return writeError(stdout, stderr, opts, 1, "citation_bibliography_write_failed", err.Error())
+		}
+		if err := os.WriteFile(outPath, graphData, 0o644); err != nil {
+			return writeError(stdout, stderr, opts, 1, "citation_bibliography_write_failed", err.Error())
+		}
+		if err := writeJSONFile(reportPath, report); err != nil {
+			return writeError(stdout, stderr, opts, 1, "citation_bibliography_report_write_failed", err.Error())
+		}
+		if opts.Project != "" {
+			now := time.Now().UTC()
+			if err := provenance.Append(opts.Project, provenance.Event{SchemaVersion: "1", ID: "evt_" + now.Format("20060102T150405Z") + "_bibliography_import", Timestamp: now.Format(time.RFC3339), Actor: "rforge", Action: "citations.bibliography.imported", Target: doc.PaperID, Inputs: map[string]any{"parsed": parsedPath, "evidence": evidencePath}, Outputs: map[string]any{"graph": outPath, "report": reportPath, "edges": report.EdgeCount}}); err != nil {
+				return writeError(stdout, stderr, opts, 1, "citation_bibliography_provenance_failed", err.Error())
+			}
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"bibliographyImport": report, "graphPath": outPath, "reportPath": reportPath})
+		}
+		fmt.Fprintf(stdout, "imported %d bibliography edges to %s\n", report.EdgeCount, outPath)
+		return 0
 	}
 	if args[0] == "report" {
 		graphPath, outPath, ok := parseCitationsReport(args[1:])
@@ -764,6 +805,26 @@ func envInt(name string, fallback int) int {
 		return fallback
 	}
 	return value
+}
+
+func parseCitationsImportBibliography(args []string, project string) (string, string, string, string, bool) {
+	values := map[string]string{}
+	if project != "" {
+		values["--evidence"] = evidenceItemsPath(project)
+	}
+	for i := 0; i < len(args); i++ {
+		switch args[i] {
+		case "--parsed", "--out", "--report", "--evidence":
+			if i+1 >= len(args) {
+				return "", "", "", "", false
+			}
+			values[args[i]] = args[i+1]
+			i++
+		default:
+			return "", "", "", "", false
+		}
+	}
+	return values["--parsed"], values["--out"], values["--report"], values["--evidence"], values["--parsed"] != "" && values["--out"] != "" && values["--report"] != ""
 }
 
 func parseCitationsReport(args []string) (string, string, bool) {
