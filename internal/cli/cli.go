@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/TrebuchetDynamics/research-forge/internal/analysis"
+	"github.com/TrebuchetDynamics/research-forge/internal/benchmarks"
 	"github.com/TrebuchetDynamics/research-forge/internal/evidence"
 	"github.com/TrebuchetDynamics/research-forge/internal/forge"
 	"github.com/TrebuchetDynamics/research-forge/internal/knowledge"
@@ -60,6 +61,8 @@ func Execute(args []string, stdout, stderr io.Writer) int {
 		return 0
 	case "decisions":
 		return executeDecisions(remaining[1:], stdout, stderr, opts)
+	case "benchmark":
+		return executeBenchmark(remaining[1:], stdout, stderr, opts)
 	case "completion":
 		return executeCompletion(remaining[1:], stdout, stderr, opts)
 	case "forge":
@@ -129,6 +132,32 @@ func Execute(args []string, stdout, stderr io.Writer) int {
 	default:
 		return writeError(stdout, stderr, opts, 2, "unknown_command", fmt.Sprintf("unknown command %q", remaining[0]))
 	}
+}
+
+func executeBenchmark(args []string, stdout, stderr io.Writer, opts globalOptions) int {
+	if len(args) == 0 || args[0] != "cross-tool" {
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge benchmark cross-tool --out <report.json>")
+	}
+	out, ok := parseBenchmarkCrossTool(args[1:])
+	if !ok {
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge benchmark cross-tool --out <report.json>")
+	}
+	report := benchmarks.BuildCrossToolBenchmarkReport(benchmarks.DefaultCrossToolBenchmarkInput())
+	if err := writeJSONFile(out, report); err != nil {
+		return writeError(stdout, stderr, opts, 1, "benchmark_write_failed", err.Error())
+	}
+	if opts.JSON {
+		return writeJSON(stdout, 0, map[string]any{"benchmark": "cross-tool", "report": report, "out": out})
+	}
+	fmt.Fprintf(stdout, "wrote cross-tool benchmark report to %s\n", out)
+	return 0
+}
+
+func parseBenchmarkCrossTool(args []string) (string, bool) {
+	if len(args) != 2 || args[0] != "--out" || strings.TrimSpace(args[1]) == "" {
+		return "", false
+	}
+	return args[1], true
 }
 
 func executeKnowledge(args []string, stdout, stderr io.Writer, opts globalOptions) int {
