@@ -514,11 +514,11 @@ This is the canonical build order for the post-1.0 super-tool work. The thematic
 
 #### Phase 0 — Product blueprint and acceptance gates
 
-- [ ] Write the ResearchForge super-tool blueprint: modules, CLI command families, HTMX pages, storage files/tables, provenance events, validation gates, and OSS adapter dispositions.
-- [ ] Write the phased Meta-analysis spine roadmap and explicitly defer broad research-cockpit-only features until the Reproducible review package is audit/replay safe.
-- [ ] Define the `rforge forge` state machine: question draft, source plan, import plan, dedupe review, full-text acquisition, parser arbitration, indexing, screening, extraction, analysis, package/export, archive, and reopen/resume.
-- [ ] Define Reproducible review package acceptance criteria: required files, manifests, checksums, redaction report, replay command, audit report, and failure modes.
-- [ ] Add an acceptance-test matrix mapping every phase to unit tests, CLI e2e tests, handler tests, Playwright paths, screenshot coverage, provenance assertions, and package replay checks.
+- [x] Write the ResearchForge super-tool blueprint: modules, CLI command families, HTMX pages, storage files/tables, provenance events, validation gates, and OSS adapter dispositions (`docs/meta-analysis-spine-blueprint.md`).
+- [x] Write the phased Meta-analysis spine roadmap and explicitly defer broad research-cockpit-only features until the Reproducible review package is audit/replay safe (`docs/meta-analysis-spine-roadmap.md`).
+- [x] Define the `rforge forge` state machine: question draft, source plan, import plan, dedupe review, full-text acquisition, parser arbitration, indexing, screening, extraction, analysis, package/export, archive, and reopen/resume (`docs/rforge-forge-state-machine.md`).
+- [x] Define Reproducible review package acceptance criteria: required files, manifests, checksums, redaction report, replay command, audit report, and failure modes (`docs/reproducible-review-package.md`).
+- [x] Add an acceptance-test matrix mapping every phase to unit tests, CLI e2e tests, handler tests, Playwright paths, screenshot coverage, provenance assertions, and package replay checks (`docs/meta-analysis-spine-acceptance-matrix.md`).
 
 #### Phase 1 — Question, protocol, and source plan
 
@@ -694,9 +694,9 @@ These tasks combine the open-source inventory into one end-to-end ResearchForge 
 
 These planning tasks turn the super-tool synthesis into concrete product slices and local Go + HTMX cockpit requirements. The dashboard should remain a review/control surface over shared Go services, not a separate source of scientific truth.
 
-- [ ] Write a ResearchForge super-tool blueprint that maps each open-source-inspired capability to a first-class ResearchForge module, CLI command family, HTMX page, storage tables/files, provenance events, and validation gate, prioritizing the Meta-analysis spine for meta-analysis authors before broad general-purpose research-cockpit expansion (`RESEARCH-FORGE-PRD.md`, `opensource/inventory/README.md`, `docs/web-gui-plan.md`).
-- [ ] Add a phased super-tool roadmap that makes the Meta-analysis spine the first product path: source plan → import/dedupe → legal full text → parser arbitration → screening → evidence extraction → statistics → Reproducible review package, then layers broader knowledge-cockpit features after that package is audit/replay safe (`RESEARCH-FORGE-PRD.md`, `TODO.md`).
-- [ ] Define an end-to-end project state machine for `rforge forge`: question draft, source plan, import plan, dedupe review, full-text acquisition, parser arbitration, indexing, screening, extraction, analysis, report, archive, and reopen/resume states (`RESEARCH-FORGE-PRD.md`).
+- [x] Write a ResearchForge super-tool blueprint that maps each open-source-inspired capability to a first-class ResearchForge module, CLI command family, HTMX page, storage tables/files, provenance events, and validation gate, prioritizing the Meta-analysis spine for meta-analysis authors before broad general-purpose research-cockpit expansion (`docs/meta-analysis-spine-blueprint.md`, `RESEARCH-FORGE-PRD.md`, `opensource/inventory/README.md`, `docs/web-gui-plan.md`).
+- [x] Add a phased super-tool roadmap that makes the Meta-analysis spine the first product path: source plan → import/dedupe → legal full text → parser arbitration → screening → evidence extraction → statistics → Reproducible review package, then layers broader knowledge-cockpit features after that package is audit/replay safe (`docs/meta-analysis-spine-roadmap.md`, `RESEARCH-FORGE-PRD.md`, `TODO.md`).
+- [x] Define an end-to-end project state machine for `rforge forge`: question draft, source plan, import plan, dedupe review, full-text acquisition, parser arbitration, indexing, screening, extraction, analysis, report, archive, and reopen/resume states (`docs/rforge-forge-state-machine.md`, `RESEARCH-FORGE-PRD.md`).
 - [ ] Add HTMX dashboard requirement: a Forge home timeline showing active project, current workflow state, latest provenance events, blocked review gates, background jobs, and next safe actions with CLI-equivalent commands shown for every button (`docs/web-gui-plan.md`).
 - [ ] Add HTMX dashboard requirement: a source-planning cockpit for OpenAlex, Semantic Scholar, Crossref, arXiv, PubMed/Europe PMC, Unpaywall, Zotero, and local imports, including rate-limit/auth/privacy warnings and dry-run result estimates before network calls (`opensource/inventory/{openalex,semantic-scholar,zotero}.md`).
 - [ ] Add HTMX dashboard requirement: an import/deduplication workbench that shows identity clusters, conflicting source fields, Zotero collection/tag context, citation-key preservation, merge/split history, and reversible decisions (`opensource/inventory/{zotero,openalex,semantic-scholar}.md`).
@@ -712,7 +712,7 @@ These planning tasks turn the super-tool synthesis into concrete product slices 
 - [ ] Add HTMX dashboard requirement: a reproducibility/export center that previews the Reproducible review package contents, redaction results, checksums, lockfiles, external-tool versions, parser manifests, analysis artifacts, report outputs, and reviewer decision logs before package creation (`CONTEXT.md`, `opensource/inventory/{zotero,grobid,asreview,metafor}.md`).
 - [ ] Add planning artifact: a dashboard information architecture diagram listing routes, partial endpoints, view models, no-JS fallbacks, background jobs, and ownership boundaries for every Forge cockpit screen (`docs/web-gui-plan.md`).
 - [ ] Add planning artifact: a permissions/privacy model for the dashboard that classifies local-only paths, copyrighted PDFs, reviewer notes, credentials, embeddings, cache files, and shareable report fields (`docs/web-gui-plan.md`, `docs/privacy-copyright.md`).
-- [ ] Add planning artifact: an acceptance-test matrix mapping each super-tool workflow state and HTMX dashboard screen to unit tests, handler tests, Playwright paths, screenshot coverage, CLI parity checks, and provenance assertions (`docs/web-gui-plan.md`).
+- [x] Add planning artifact: an acceptance-test matrix mapping each super-tool workflow state and HTMX dashboard screen to unit tests, handler tests, Playwright paths, screenshot coverage, CLI parity checks, and provenance assertions (`docs/meta-analysis-spine-acceptance-matrix.md`, `docs/web-gui-plan.md`).
 
 ### Expanded OSS inventory study backlog
 
