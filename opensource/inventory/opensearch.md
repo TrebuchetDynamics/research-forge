@@ -35,6 +35,7 @@ Missing features:
 - Hybrid retrieval tuning files persist lexical/vector/backend weights, deterministic calibration method, evaluation scores, selected configuration, reproducibility notes, and query-set checksums.
 - The `/map` local web cockpit combines concept maps, citation neighborhoods, screening priority, parser quality, retrieval hits, and evidence coverage with no-JS server rendering and `/map/snapshot.json` audit exports.
 - Cross-tool benchmarks report deterministic fixture metrics for discovery recall, dedupe precision, parser field accuracy, reference normalization, retrieval quality, screening effort savings, and report/package reproducibility.
+- The method-comparison workbench compares parser choices, retrieval backends, screening rankers, effect-size models, and publication-bias diagnostics side-by-side before recording the reviewer-selected method locked into the final report.
 - Opt-in OpenSearch integration test.
 
 ## Recommended slice

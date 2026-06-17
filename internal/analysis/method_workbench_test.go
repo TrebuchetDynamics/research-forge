@@ -19,6 +19,17 @@ func TestDefaultMethodComparisonWorkbenchCoversSpineMethodFamilies(t *testing.T)
 	}
 }
 
+func TestMethodComparisonWorkbenchCanLockReviewerSelectedMethod(t *testing.T) {
+	workbench := DefaultMethodComparisonWorkbench()
+	report := workbench.CompareWithSelection("retrieval backends", []string{"opensearch", "qdrant"}, MethodSelectionInput{SelectedMethod: "qdrant", Reviewer: "ada", Reason: "best vector recall with approved embedding policy"})
+	if report.Category != "retrieval backends" || len(report.Options) != 2 || !report.RequiresReviewerChoice {
+		t.Fatalf("report = %#v", report)
+	}
+	if report.LockedSelection.Method != "qdrant" || report.LockedSelection.Reviewer != "ada" || !report.LockedSelection.LockedIntoFinalReport {
+		t.Fatalf("selection = %#v", report.LockedSelection)
+	}
+}
+
 func TestMethodComparisonWorkbenchRecommendationFlagsReviewRequiredTradeoffs(t *testing.T) {
 	workbench := DefaultMethodComparisonWorkbench()
 	report := workbench.Compare("publication-bias diagnostics", []string{"egger", "begg"})

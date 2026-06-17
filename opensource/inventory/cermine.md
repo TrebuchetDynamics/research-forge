@@ -26,6 +26,7 @@ Implemented nearby capabilities:
 - Parser comparison reports over two parsed-document JSON files through `rforge parse compare --left <parsed.json> --right <parsed.json> --out <report.json>`, including fallback candidate scoring metadata.
 - Parser-run manifests record parser source/version/command, input/output checksums, TEI/JSON output kind, license constraints, shareability, warnings, and reviewer gates.
 - Multi-engine parser arbitration scores GROBID/S2ORC-style/PaperMage/CERMINE/Science Parse/Anystyle outputs per field, routes conflicts to review, records reviewer selection reasons, and emits reconciliation outputs.
+- The method-comparison workbench compares parser choices, retrieval backends, screening rankers, effect-size models, and publication-bias diagnostics side-by-side before recording the reviewer-selected method locked into the final report.
 
 Missing features:
 

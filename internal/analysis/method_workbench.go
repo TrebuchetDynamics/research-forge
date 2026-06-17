@@ -22,10 +22,24 @@ type MethodOption struct {
 }
 
 type MethodComparisonReport struct {
-	Category               string         `json:"category"`
-	Options                []MethodOption `json:"options"`
-	RequiresReviewerChoice bool           `json:"requiresReviewerChoice"`
-	Recommendation         string         `json:"recommendation"`
+	Category               string              `json:"category"`
+	Options                []MethodOption      `json:"options"`
+	RequiresReviewerChoice bool                `json:"requiresReviewerChoice"`
+	Recommendation         string              `json:"recommendation"`
+	LockedSelection        MethodLockSelection `json:"lockedSelection,omitempty"`
+}
+
+type MethodSelectionInput struct {
+	SelectedMethod string
+	Reviewer       string
+	Reason         string
+}
+
+type MethodLockSelection struct {
+	Method                string `json:"method"`
+	Reviewer              string `json:"reviewer"`
+	Reason                string `json:"reason"`
+	LockedIntoFinalReport bool   `json:"lockedIntoFinalReport"`
 }
 
 func DefaultMethodComparisonWorkbench() MethodComparisonWorkbench {
@@ -65,6 +79,10 @@ func (w MethodComparisonWorkbench) OptionsByCategory(category string) []MethodOp
 }
 
 func (w MethodComparisonWorkbench) Compare(category string, names []string) MethodComparisonReport {
+	return w.CompareWithSelection(category, names, MethodSelectionInput{})
+}
+
+func (w MethodComparisonWorkbench) CompareWithSelection(category string, names []string, selection MethodSelectionInput) MethodComparisonReport {
 	available := w.OptionsByCategory(category)
 	want := map[string]bool{}
 	for _, name := range names {
@@ -83,6 +101,15 @@ func (w MethodComparisonWorkbench) Compare(category string, names []string) Meth
 		report.Recommendation = "single method selected; verify required audit artifact exists"
 	} else {
 		report.Recommendation = "no matching methods found"
+	}
+	selected := strings.TrimSpace(selection.SelectedMethod)
+	if selected != "" {
+		for _, option := range report.Options {
+			if strings.EqualFold(option.Name, selected) {
+				report.LockedSelection = MethodLockSelection{Method: option.Name, Reviewer: strings.TrimSpace(selection.Reviewer), Reason: strings.TrimSpace(selection.Reason), LockedIntoFinalReport: strings.TrimSpace(selection.Reviewer) != "" && strings.TrimSpace(selection.Reason) != ""}
+				break
+			}
+		}
 	}
 	return report
 }

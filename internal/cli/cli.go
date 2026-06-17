@@ -1321,12 +1321,12 @@ func executeAnalysis(args []string, stdout, stderr io.Writer, opts globalOptions
 		}
 		return 0
 	case "method-workbench":
-		category, methods, outPath, ok := parseMethodWorkbenchArgs(args[2:])
+		category, methods, selection, outPath, ok := parseMethodWorkbenchArgs(args[2:])
 		if !ok {
-			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge analysis method-workbench <run-id> --category <name> --out <report.json> [--method <name>]")
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge analysis method-workbench <run-id> --category <name> --out <report.json> [--method <name> --select <method> --reviewer <name> --reason <text>]")
 		}
 		workbench := analysis.DefaultMethodComparisonWorkbench()
-		report := workbench.Compare(category, methods)
+		report := workbench.CompareWithSelection(category, methods, selection)
 		if err := writeJSONFile(outPath, report); err != nil {
 			return writeError(stdout, stderr, opts, 1, "analysis_method_workbench_store_failed", err.Error())
 		}
@@ -1551,30 +1551,37 @@ func executeAnalysis(args []string, stdout, stderr io.Writer, opts globalOptions
 	}
 }
 
-func parseMethodWorkbenchArgs(args []string) (string, []string, string, bool) {
+func parseMethodWorkbenchArgs(args []string) (string, []string, analysis.MethodSelectionInput, string, bool) {
 	category := ""
 	methods := []string{}
+	selection := analysis.MethodSelectionInput{}
 	out := ""
 	for i := 0; i < len(args); i++ {
 		switch args[i] {
-		case "--category", "--method", "--out":
+		case "--category", "--method", "--select", "--reviewer", "--reason", "--out":
 			if i+1 >= len(args) {
-				return "", nil, "", false
+				return "", nil, analysis.MethodSelectionInput{}, "", false
 			}
 			switch args[i] {
 			case "--category":
 				category = args[i+1]
 			case "--method":
 				methods = append(methods, args[i+1])
+			case "--select":
+				selection.SelectedMethod = args[i+1]
+			case "--reviewer":
+				selection.Reviewer = args[i+1]
+			case "--reason":
+				selection.Reason = args[i+1]
 			case "--out":
 				out = args[i+1]
 			}
 			i++
 		default:
-			return "", nil, "", false
+			return "", nil, analysis.MethodSelectionInput{}, "", false
 		}
 	}
-	return category, methods, out, strings.TrimSpace(category) != "" && out != ""
+	return category, methods, selection, out, strings.TrimSpace(category) != "" && out != ""
 }
 
 func parseEngineCompareArgs(args []string) (string, float64, float64, bool) {
