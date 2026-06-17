@@ -152,6 +152,24 @@ func writeRetrievalLock(project, backend string, indexedDocuments int) error {
 }
 
 func executeRetrieve(args []string, stdout, stderr io.Writer, opts globalOptions) int {
+	if len(args) > 0 && args[0] == "benchmark" {
+		outPath, k, ok := parseRetrieveBenchmarkArgs(args[1:])
+		if !ok {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> retrieve benchmark --out <report.json> [--k N]")
+		}
+		report, err := retrieval.RunRetrievalBenchmark(retrieval.DefaultRetrievalBenchmarkFixture(), k)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "retrieval_benchmark_failed", err.Error())
+		}
+		if err := writeJSONFile(outPath, report); err != nil {
+			return writeError(stdout, stderr, opts, 1, "retrieval_benchmark_write_failed", err.Error())
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"retrievalBenchmark": report, "path": outPath})
+		}
+		fmt.Fprintf(stdout, "wrote retrieval benchmark to %s\n", outPath)
+		return 0
+	}
 	if len(args) > 0 && args[0] == "tune-hybrid" {
 		queriesPath, lexicalPath, vectorPath, outPath, k, ok := parseTuneHybridArgs(args[1:])
 		if !ok {
@@ -215,6 +233,32 @@ func parseIndexArgs(args []string) (string, bool) {
 		return args[2], true
 	}
 	return "", false
+}
+
+func parseRetrieveBenchmarkArgs(args []string) (string, int, bool) {
+	out := ""
+	k := 10
+	for i := 0; i < len(args); i++ {
+		switch args[i] {
+		case "--out", "--k":
+			if i+1 >= len(args) {
+				return "", 0, false
+			}
+			if args[i] == "--out" {
+				out = args[i+1]
+			} else {
+				parsed, err := strconv.Atoi(args[i+1])
+				if err != nil || parsed <= 0 {
+					return "", 0, false
+				}
+				k = parsed
+			}
+			i++
+		default:
+			return "", 0, false
+		}
+	}
+	return out, k, out != ""
 }
 
 func parseTuneHybridArgs(args []string) (string, string, string, string, int, bool) {
