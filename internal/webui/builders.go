@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 
 	"github.com/TrebuchetDynamics/research-forge/internal/analysis"
@@ -95,6 +96,54 @@ func forgeNextActions(currentState string) []ForgeNextAction {
 	default:
 		return []ForgeNextAction{{Label: "Inspect project", CLI: "rforge project inspect <path>"}}
 	}
+}
+
+type PackageExportCenterState struct {
+	ProjectPath          string
+	PackageContents      []string
+	RedactionResults     []string
+	Checksums            []string
+	Lockfiles            []string
+	ExternalToolVersions []string
+	ParserManifests      []string
+	AnalysisArtifacts    []string
+	ReportOutputs        []string
+	ReviewerDecisionLogs []string
+}
+
+func BuildPackageExportCenterState(projectPath string) PackageExportCenterState {
+	state := PackageExportCenterState{ProjectPath: projectPath, RedactionResults: []string{"documents/ excluded until shareability approval", "cache/ excluded as private local state"}, Checksums: []string{"checksums.sha256 preview for copied package files"}, ExternalToolVersions: []string{"rforge.lock.json and data/*.lock.json capture external-tool versions"}}
+	for _, rel := range []string{"rforge.project.toml", "rforge.lock.json", "data/provenance.jsonl", "data/forge-state.json", "data/connector-capabilities.json", "data/evidence.schemas.json", "data/evidence.items.json", "data/claim-trace.json"} {
+		if fileExists(filepath.Join(projectPath, filepath.FromSlash(rel))) {
+			state.PackageContents = append(state.PackageContents, rel)
+		}
+	}
+	state.Lockfiles = appendExistingGlobs(projectPath, state.Lockfiles, "rforge.lock.json", "data/*.lock.json")
+	state.ParserManifests = appendExistingGlobs(projectPath, state.ParserManifests, "data/parser-manifests/*")
+	state.AnalysisArtifacts = appendExistingGlobs(projectPath, state.AnalysisArtifacts, "analysis/*")
+	state.ReportOutputs = appendExistingGlobs(projectPath, state.ReportOutputs, "reports/*")
+	state.ReviewerDecisionLogs = appendExistingGlobs(projectPath, state.ReviewerDecisionLogs, "data/identity-decisions.jsonl", "data/screening-audit.jsonl", "data/reviewer-decisions.jsonl")
+	return state
+}
+
+func fileExists(path string) bool {
+	info, err := os.Stat(path)
+	return err == nil && !info.IsDir()
+}
+
+func appendExistingGlobs(projectPath string, out []string, patterns ...string) []string {
+	for _, pattern := range patterns {
+		matches, _ := filepath.Glob(filepath.Join(projectPath, filepath.FromSlash(pattern)))
+		sort.Strings(matches)
+		for _, match := range matches {
+			if info, err := os.Stat(match); err == nil && !info.IsDir() {
+				if rel, err := filepath.Rel(projectPath, match); err == nil {
+					out = append(out, filepath.ToSlash(rel))
+				}
+			}
+		}
+	}
+	return out
 }
 
 type ReportClaimPanelState struct {

@@ -70,7 +70,7 @@ A generated research report export with citations, evidence tables, screening su
 
 ### Reproducible review package
 
-The first "done" artifact for the Meta-analysis spine: a portable ResearchForge package that proves the review can be audited and replayed, including report outputs plus manifests, lockfiles, source query plans, deduplication decisions, parser manifests, screening audit, extraction schema, accepted evidence, analysis artifacts, redaction policy, and checksums.
+The first "done" artifact for the Meta-analysis spine: a portable ResearchForge package that proves the review can be audited and replayed, including report outputs plus manifests, lockfiles, source query plans, deduplication decisions, parser manifests, screening audit, extraction schema, accepted evidence, analysis artifacts, redaction policy, and checksums. The `/package` reproducibility/export center previews package contents, redaction results, checksums, lockfiles, external-tool versions, parser manifests, analysis artifacts, report outputs, and reviewer decision logs before package creation.
 
 ### Local web GUI
 

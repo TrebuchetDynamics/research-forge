@@ -174,6 +174,21 @@ var genericWorkbenchTemplate = template.Must(template.New("generic-workbench").P
   <p><a href="/workbenches">Back to HTMX workbenches</a></p>
 </section>`))
 
+var packageExportCenterTemplate = template.Must(template.New("package-export-center").Parse(`<section aria-labelledby="package-title" class="rf-card">
+  <h2 id="package-title">reproducibility/export Workbench</h2>
+  <p>Preview Reproducible review package contents, redaction results, checksums, lockfiles, external-tool versions, parser manifests, analysis artifacts, report outputs, and reviewer decision logs before package creation.</p>
+  <p>CLI equivalent: <code>rforge package create --project {{.ProjectPath}} --out packages/latest</code></p>
+  <section><h3>Reproducible review package contents</h3>{{range .PackageContents}}<p>{{.}}</p>{{else}}<p>No core package contents found yet.</p>{{end}}</section>
+  <section><h3>redaction results</h3>{{range .RedactionResults}}<p>{{.}}</p>{{end}}</section>
+  <section><h3>checksums</h3>{{range .Checksums}}<p>{{.}}</p>{{end}}</section>
+  <section><h3>lockfiles</h3>{{range .Lockfiles}}<p>{{.}}</p>{{else}}<p>No lockfiles found.</p>{{end}}</section>
+  <section><h3>external-tool versions</h3>{{range .ExternalToolVersions}}<p>{{.}}</p>{{end}}</section>
+  <section><h3>parser manifests</h3>{{range .ParserManifests}}<p>{{.}}</p>{{else}}<p>No parser manifests found.</p>{{end}}</section>
+  <section><h3>analysis artifacts</h3>{{range .AnalysisArtifacts}}<p>{{.}}</p>{{else}}<p>No analysis artifacts found.</p>{{end}}</section>
+  <section><h3>report outputs</h3>{{range .ReportOutputs}}<p>{{.}}</p>{{else}}<p>No report outputs found.</p>{{end}}</section>
+  <section><h3>reviewer decision logs</h3>{{range .ReviewerDecisionLogs}}<p>{{.}}</p>{{else}}<p>No reviewer decision logs found.</p>{{end}}</section>
+</section>`))
+
 var reportClaimPanelTemplate = template.Must(template.New("report-claim-panel").Parse(`<section aria-labelledby="report-title" class="rf-card">
   <h2 id="report-title">Claim traceability panel</h2>
   <p>Every generated paragraph/table/figure must reference accepted evidence; unresolved or weakly supported claims block final export.</p>
@@ -664,6 +679,13 @@ func NewWorkbenchIndexHandler(state WorkbenchIndexState) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		_ = workbenchIndexTemplate.Execute(w, state)
+	})
+}
+
+func newPackageExportCenterHandler(projectPath func() string) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		_ = packageExportCenterTemplate.Execute(w, BuildPackageExportCenterState(projectPath()))
 	})
 }
 
