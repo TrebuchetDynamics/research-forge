@@ -7,14 +7,19 @@ type LeaveOneOutRow struct {
 	OmittedPaperID string  `json:"omittedPaperId"`
 	Estimate       float64 `json:"estimate"`
 	Variance       float64 `json:"variance"`
+	Delta          float64 `json:"delta"`
+	AbsoluteDelta  float64 `json:"absoluteDelta"`
 	Studies        int     `json:"studies"`
 }
 
 // SensitivityReport records deterministic sensitivity-analysis artifacts.
 type SensitivityReport struct {
-	RunID  string           `json:"runId"`
-	Method string           `json:"method"`
-	Rows   []LeaveOneOutRow `json:"rows"`
+	RunID            string           `json:"runId"`
+	Method           string           `json:"method"`
+	BaselineEstimate float64          `json:"baselineEstimate"`
+	BaselineVariance float64          `json:"baselineVariance"`
+	MaxAbsoluteDelta float64          `json:"maxAbsoluteDelta"`
+	Rows             []LeaveOneOutRow `json:"rows"`
 }
 
 // LeaveOneOut computes inverse-variance fixed-effect estimates after omitting each study.
@@ -22,13 +27,25 @@ func LeaveOneOut(run AnalysisRun) (SensitivityReport, error) {
 	if len(run.InputRows) < 2 {
 		return SensitivityReport{}, fmt.Errorf("leave-one-out sensitivity requires at least two input rows")
 	}
-	report := SensitivityReport{RunID: run.ID, Method: "leave-one-out"}
+	baselineEstimate, baselineVariance, _, err := pooledEstimateExcluding(run.InputRows, -1)
+	if err != nil {
+		return SensitivityReport{}, err
+	}
+	report := SensitivityReport{RunID: run.ID, Method: "leave-one-out", BaselineEstimate: baselineEstimate, BaselineVariance: baselineVariance}
 	for omit := range run.InputRows {
 		estimate, variance, studies, err := pooledEstimateExcluding(run.InputRows, omit)
 		if err != nil {
 			return SensitivityReport{}, err
 		}
-		report.Rows = append(report.Rows, LeaveOneOutRow{OmittedPaperID: run.InputRows[omit].PaperID, Estimate: estimate, Variance: variance, Studies: studies})
+		delta := estimate - baselineEstimate
+		absDelta := delta
+		if absDelta < 0 {
+			absDelta = -absDelta
+		}
+		if absDelta > report.MaxAbsoluteDelta {
+			report.MaxAbsoluteDelta = absDelta
+		}
+		report.Rows = append(report.Rows, LeaveOneOutRow{OmittedPaperID: run.InputRows[omit].PaperID, Estimate: estimate, Variance: variance, Delta: delta, AbsoluteDelta: absDelta, Studies: studies})
 	}
 	return report, nil
 }

@@ -1028,6 +1028,27 @@ func executeAnalysis(args []string, stdout, stderr io.Writer, opts globalOptions
 		}
 		fmt.Fprintf(stdout, "wrote meta-regression analysis to %s\n", path)
 		return 0
+	case "influence":
+		if len(args) != 2 {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge analysis influence <run-id>")
+		}
+		var run analysis.AnalysisRun
+		if err := readJSONFile(runPath, &run); err != nil {
+			return writeError(stdout, stderr, opts, 1, "analysis_read_failed", err.Error())
+		}
+		report, err := analysis.InfluenceDiagnostics(run)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "analysis_influence_failed", err.Error())
+		}
+		path := filepath.Join(opts.Project, "analysis", safeFileStem(args[1])+"-influence.json")
+		if err := writeJSONFile(path, report); err != nil {
+			return writeError(stdout, stderr, opts, 1, "analysis_influence_store_failed", err.Error())
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"influence": report, "path": path})
+		}
+		fmt.Fprintf(stdout, "wrote influence diagnostics to %s\n", path)
+		return 0
 	case "bayesian":
 		priorMean, priorVariance, ok := parseBayesianArgs(args[2:])
 		if !ok {
@@ -1051,14 +1072,21 @@ func executeAnalysis(args []string, stdout, stderr io.Writer, opts globalOptions
 		fmt.Fprintf(stdout, "wrote Bayesian analysis to %s\n", path)
 		return 0
 	case "publication-bias":
-		if len(args) != 4 || args[2] != "--method" || args[3] != "egger" {
-			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge analysis publication-bias <run-id> --method egger")
+		method, ok := parsePublicationBiasArgs(args[2:])
+		if !ok {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge analysis publication-bias <run-id> --method egger|begg")
 		}
 		var run analysis.AnalysisRun
 		if err := readJSONFile(runPath, &run); err != nil {
 			return writeError(stdout, stderr, opts, 1, "analysis_read_failed", err.Error())
 		}
-		report, err := analysis.EggerRegression(run)
+		var report analysis.PublicationBiasReport
+		var err error
+		if method == "begg" || method == "begg-rank-correlation" {
+			report, err = analysis.BeggRankCorrelation(run)
+		} else {
+			report, err = analysis.EggerRegression(run)
+		}
 		if err != nil {
 			return writeError(stdout, stderr, opts, 1, "analysis_publication_bias_failed", err.Error())
 		}
@@ -1092,6 +1120,18 @@ func executeAnalysis(args []string, stdout, stderr io.Writer, opts globalOptions
 		return 0
 	default:
 		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge analysis <prepare|run|sensitivity|subgroup|meta-regression|publication-bias|bayesian|export>")
+	}
+}
+
+func parsePublicationBiasArgs(args []string) (string, bool) {
+	if len(args) != 2 || args[0] != "--method" {
+		return "", false
+	}
+	switch args[1] {
+	case "egger", "begg", "begg-rank-correlation":
+		return args[1], true
+	default:
+		return "", false
 	}
 }
 
