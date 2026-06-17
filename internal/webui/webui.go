@@ -278,8 +278,10 @@ var connectorHealthTemplate = template.Must(template.New("connector-health").Par
 
 var dedupeReviewTemplate = template.Must(template.New("dedupe-review").Parse(`<section aria-labelledby="dedupe-title" class="rf-card">
   <h2 id="dedupe-title">Dedupe/cluster review</h2>
-  <p>A revtools-inspired visual cluster review screen for identity matches, conflicts, reversible decisions, and PRISMA/audit provenance.</p>
-  <p>Export decision history: <code>rforge --json --project {{.ProjectPath}} library identity-decision log</code></p>
+  <p>A revtools-inspired visual clustering screen for duplicate review and screening triage, covering identity matches, conflicts, reversible decisions, exportable cluster decisions, and PRISMA/audit provenance.</p>
+  <p>Export decision history: <code>rforge --json --project {{.ProjectPath}} library identity-decision log</code>; screening audit bundle: <code>rforge --project {{.ProjectPath}} screen audit-bundle --stage title-abstract --out data/screening-audit-bundle.json</code></p>
+  <h3>Visual clustering for duplicate review</h3>
+  <p>Cluster decisions are exportable through the reversible identity decision log and can be cross-checked against PRISMA counts.</p>
   <h3>Identity clusters</h3>
   {{if .Clusters}}
   {{range .Clusters}}
@@ -296,6 +298,8 @@ var dedupeReviewTemplate = template.Must(template.New("dedupe-review").Parse(`<s
   {{range .Records}}{{range .SourceRefs}}<p>{{.Source}} — collections={{index .Metadata "collections"}} tags={{index .Metadata "tags"}} citation-key preservation={{index .Metadata "citation-key"}}</p>{{end}}{{end}}
   <h3>Decision history</h3>
   {{if .DecisionLog.Decisions}}<ul>{{range .DecisionLog.Decisions}}<li>{{.ID}} — {{.Action}} — reversible={{.Reversible}} — {{.Reason}}</li>{{end}}</ul>{{else}}<p>No identity decisions recorded.</p>{{end}}
+  <h3>screening triage</h3>
+  <p>Use the linked screening audit bundle and PRISMA counts to route uncertain records from duplicate review into screening triage.</p>
   <h3>PRISMA/audit provenance</h3>
   <p>Records: {{.PRISMA.Records}} Screened: {{.PRISMA.Screened}} Included: {{.PRISMA.Included}}</p>
   {{if .AuditEvents}}<ul>{{range .AuditEvents}}<li>{{.Action}} — {{.Target}}</li>{{end}}</ul>{{else}}<p>No identity audit events recorded.</p>{{end}}

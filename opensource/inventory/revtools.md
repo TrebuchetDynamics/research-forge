@@ -27,11 +27,13 @@ Implemented nearby capabilities:
 
 Missing features:
 
-- Visual dedupe/screening cluster map tied to reviewer decisions.
 - Field-cleanup suggestions with before/after provenance.
-- Exportable cluster-review audit bundle.
-- HTMX dashboard for batch dedupe adjudication and topic cluster review.
+- Topic cluster review beyond duplicate identity clusters.
+
+Implemented:
+
+- `/dedupe` provides a revtools-inspired visual clustering screen for duplicate review and screening triage, with exportable reversible cluster decisions (`library identity-decision log`) and PRISMA/audit provenance linked to screening audit bundles.
 
 ## Recommended next slice
 
-Add a review-cluster map that groups records by duplicate/topic similarity, lets reviewers confirm merges or screening labels, and exports decision history with source-record provenance.
+Add field-cleanup suggestions and broader topic-cluster review on top of the existing duplicate-cluster decision/provenance workflow.

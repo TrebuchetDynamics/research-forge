@@ -32,7 +32,7 @@ func TestDedupeReviewHandlerRendersClustersDecisionHistoryAndAuditProvenance(t *
 	rec := httptest.NewRecorder()
 	newDedupeReviewHandler(func() string { return project }).ServeHTTP(rec, req)
 	body := rec.Body.String()
-	for _, want := range []string{"Dedupe/cluster review", "revtools-inspired", "identity-cluster-1", "Catalyst A", "Unrelated title", "Conflicting source fields", "Zotero collection/tag context", "citation-key preservation", "Included", "catalyst", "smith2026cat", "Decision history", "decision-1", "PRISMA/audit provenance", "identity.merge.approved", "rforge --json --project", "identity-decision log"} {
+	for _, want := range []string{"Dedupe/cluster review", "revtools-inspired", "visual clustering", "duplicate review", "screening triage", "exportable cluster decisions", "identity-cluster-1", "Catalyst A", "Unrelated title", "Conflicting source fields", "Zotero collection/tag context", "citation-key preservation", "Included", "catalyst", "smith2026cat", "Decision history", "decision-1", "PRISMA/audit provenance", "identity.merge.approved", "rforge --json --project", "identity-decision log", "screening audit bundle"} {
 		if !strings.Contains(body, want) {
 			t.Fatalf("dedupe screen missing %q:\n%s", want, body)
 		}
