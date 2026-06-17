@@ -25,6 +25,43 @@ func executeCitations(args []string, stdout, stderr io.Writer, opts globalOption
 	if len(args) == 0 {
 		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge citations <expand|report|import-bibliography|domain-map>")
 	}
+	if args[0] == "accessible-view" {
+		graphPath, domainPath, outPath, filter, format, ok := parseCitationsAccessibleView(args[1:])
+		if !ok {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge citations accessible-view --graph <graph.json> --out <view.md|view.json> [--domain-map <domain-map.json> --filter <text> --format markdown|json]")
+		}
+		graphData, err := os.ReadFile(graphPath)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "accessible_graph_read_failed", err.Error())
+		}
+		var domain citations.DomainMapArtifact
+		if domainPath != "" {
+			if err := readJSONFile(domainPath, &domain); err != nil {
+				return writeError(stdout, stderr, opts, 1, "accessible_domain_read_failed", err.Error())
+			}
+		}
+		view, err := citations.BuildAccessibleGraphView(graphData, domain, citations.AccessibleGraphOptions{Filter: filter})
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "accessible_graph_failed", err.Error())
+		}
+		if format == "json" {
+			if err := writeJSONFile(outPath, view); err != nil {
+				return writeError(stdout, stderr, opts, 1, "accessible_graph_write_failed", err.Error())
+			}
+		} else {
+			if err := os.MkdirAll(filepath.Dir(outPath), 0o755); err != nil {
+				return writeError(stdout, stderr, opts, 1, "accessible_graph_write_failed", err.Error())
+			}
+			if err := os.WriteFile(outPath, []byte(citations.AccessibleGraphMarkdown(view)), 0o644); err != nil {
+				return writeError(stdout, stderr, opts, 1, "accessible_graph_write_failed", err.Error())
+			}
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"accessibleGraph": view, "path": outPath})
+		}
+		fmt.Fprintf(stdout, "wrote accessible graph view to %s\n", outPath)
+		return 0
+	}
 	if args[0] == "domain-map" {
 		parsedDir, graphPath, outPath, labels, history, model, ok := parseCitationsDomainMap(args[1:])
 		if !ok {
@@ -838,6 +875,25 @@ func envInt(name string, fallback int) int {
 		return fallback
 	}
 	return value
+}
+
+func parseCitationsAccessibleView(args []string) (string, string, string, string, string, bool) {
+	values := map[string]string{"--format": "markdown"}
+	for i := 0; i < len(args); i++ {
+		switch args[i] {
+		case "--graph", "--domain-map", "--out", "--filter", "--format":
+			if i+1 >= len(args) {
+				return "", "", "", "", "", false
+			}
+			values[args[i]] = args[i+1]
+			i++
+		default:
+			return "", "", "", "", "", false
+		}
+	}
+	format := values["--format"]
+	okFormat := format == "markdown" || format == "json"
+	return values["--graph"], values["--domain-map"], values["--out"], values["--filter"], format, okFormat && values["--graph"] != "" && values["--out"] != ""
 }
 
 func parseCitationsDomainMap(args []string) (string, string, string, map[string]string, []citations.TopicHistoryEvent, string, bool) {
