@@ -19,6 +19,7 @@ import (
 	"github.com/TrebuchetDynamics/research-forge/internal/project"
 	"github.com/TrebuchetDynamics/research-forge/internal/provenance"
 	"github.com/TrebuchetDynamics/research-forge/internal/report"
+	"github.com/TrebuchetDynamics/research-forge/internal/reviewpkg"
 	"github.com/TrebuchetDynamics/research-forge/internal/screening"
 	rwatch "github.com/TrebuchetDynamics/research-forge/internal/watch"
 )
@@ -107,6 +108,8 @@ func Execute(args []string, stdout, stderr io.Writer) int {
 		return executeAnalysis(remaining[1:], stdout, stderr, opts)
 	case "report":
 		return executeReport(remaining[1:], stdout, stderr, opts)
+	case "package":
+		return executePackage(remaining[1:], stdout, stderr, opts)
 	case "archive":
 		return executeArchive(remaining[1:], stdout, stderr, opts)
 	case "ui":
@@ -991,6 +994,47 @@ func parseReportBuild(args []string) (string, []string, bool) {
 		}
 	}
 	return values["--out"], parsed, values["--out"] != ""
+}
+
+func executePackage(args []string, stdout, stderr io.Writer, opts globalOptions) int {
+	if len(args) == 0 || opts.Project == "" {
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge package create --out <dir> [--created-by <name> --question <text>]")
+	}
+	switch args[0] {
+	case "create":
+		outPath, createdBy, question, ok := parsePackageCreate(args[1:])
+		if !ok {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge package create --out <dir> [--created-by <name> --question <text>]")
+		}
+		pkg, err := reviewpkg.Create(opts.Project, outPath, reviewpkg.Options{CreatedBy: createdBy, Question: question})
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "package_create_failed", err.Error())
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"package": pkg, "path": outPath})
+		}
+		fmt.Fprintf(stdout, "created review package at %s\n", outPath)
+		return 0
+	default:
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge package create --out <dir> [--created-by <name> --question <text>]")
+	}
+}
+
+func parsePackageCreate(args []string) (string, string, string, bool) {
+	values := map[string]string{}
+	for i := 0; i < len(args); i++ {
+		switch args[i] {
+		case "--out", "--created-by", "--question":
+			if i+1 >= len(args) {
+				return "", "", "", false
+			}
+			values[args[i]] = args[i+1]
+			i++
+		default:
+			return "", "", "", false
+		}
+	}
+	return values["--out"], values["--created-by"], values["--question"], values["--out"] != ""
 }
 
 func executeAnalysis(args []string, stdout, stderr io.Writer, opts globalOptions) int {
