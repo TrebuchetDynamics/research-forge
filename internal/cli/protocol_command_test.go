@@ -89,6 +89,37 @@ func TestExecuteProtocolPlanSourcesJSON(t *testing.T) {
 	}
 }
 
+func TestExecuteProtocolSuggestExpansionsJSON(t *testing.T) {
+	var stdout, stderr bytes.Buffer
+	code := Execute([]string{"--json", "protocol", "suggest-expansions", "--question", "Do catalysts improve hydrogen evolution?", "--source-text", "High entropy alloy catalysts accelerate the hydrogen evolution reaction.", "--source-ref", "abstract:0-80", "--paper-id", "paper-1"}, &stdout, &stderr)
+	if code != 0 {
+		t.Fatalf("exit code = %d stderr=%s stdout=%s", code, stderr.String(), stdout.String())
+	}
+	var env struct {
+		OK   bool `json:"ok"`
+		Data struct {
+			Suggestions []struct {
+				Assistant                string                `json:"assistant"`
+				SuggestedTerm            string                `json:"suggestedTerm"`
+				SourceTextLinks          []struct{ ID string } `json:"sourceTextLinks"`
+				ReviewerApprovalRequired bool                  `json:"reviewerApprovalRequired"`
+				ReviewerApproved         bool                  `json:"reviewerApproved"`
+			} `json:"suggestions"`
+		} `json:"data"`
+	}
+	if err := json.Unmarshal(stdout.Bytes(), &env); err != nil {
+		t.Fatalf("json decode: %v\n%s", err, stdout.String())
+	}
+	if !env.OK || len(env.Data.Suggestions) < 3 {
+		t.Fatalf("missing suggestions: %#v", env)
+	}
+	for _, suggestion := range env.Data.Suggestions {
+		if suggestion.Assistant == "" || suggestion.SuggestedTerm == "" || len(suggestion.SourceTextLinks) == 0 || !suggestion.ReviewerApprovalRequired || suggestion.ReviewerApproved {
+			t.Fatalf("suggestion is not a gated source-linked record: %#v", suggestion)
+		}
+	}
+}
+
 func TestExecuteProtocolLiveSmokeSnapshotWritesStorage(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "snapshots", "latest.json")
 	var stdout, stderr bytes.Buffer

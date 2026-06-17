@@ -16,6 +16,9 @@ func executeProtocol(args []string, stdout, stderr io.Writer, opts globalOptions
 	if len(args) > 0 && args[0] == "live-smoke-snapshot" {
 		return executeLiveSmokeSnapshot(args[1:], stdout, stderr, opts)
 	}
+	if len(args) > 0 && args[0] == "suggest-expansions" {
+		return executeSuggestExpansions(args[1:], stdout, stderr, opts)
+	}
 	if len(args) == 0 || (args[0] != "compile" && args[0] != "plan-sources") {
 		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge protocol compile|plan-sources|capabilities --question <text> [--type pico|peco|spider|freeform] [framework flags]")
 	}
@@ -74,6 +77,31 @@ func executeProtocol(args []string, stdout, stderr io.Writer, opts globalOptions
 	}
 	fmt.Fprintln(stdout, "\nReviewer approval required: true")
 	fmt.Fprintln(stdout, "Auto-accepted claims: false")
+	return 0
+}
+
+func executeSuggestExpansions(args []string, stdout, stderr io.Writer, opts globalOptions) int {
+	values, err := parseKeyValueFlags(args, map[string]bool{"--question": true, "--source-text": true, "--source-ref": true, "--paper-id": true})
+	if err != nil {
+		return writeError(stdout, stderr, opts, 2, "usage", err.Error())
+	}
+	link := protocol.SourceTextLink{ID: values["--source-ref"], PassageRef: values["--source-ref"], PaperID: values["--paper-id"], Text: values["--source-text"]}
+	if link.ID == "" {
+		link.ID = "source-text-1"
+	}
+	suggestions, err := protocol.DraftQueryExpansionSuggestions(protocol.QueryExpansionInput{Question: values["--question"], SourceTexts: []protocol.SourceTextLink{link}})
+	if err != nil {
+		return writeError(stdout, stderr, opts, 1, "query_expansion_failed", err.Error())
+	}
+	if opts.JSON {
+		return writeJSON(stdout, 0, map[string]any{"suggestions": suggestions})
+	}
+	fmt.Fprintln(stdout, "Query expansion suggestions:")
+	for _, suggestion := range suggestions {
+		fmt.Fprintf(stdout, "- %s: %s\n", suggestion.Assistant, suggestion.SuggestedTerm)
+		fmt.Fprintf(stdout, "  Source text links: %d\n", len(suggestion.SourceTextLinks))
+		fmt.Fprintln(stdout, "  Reviewer approval required before source plan changes: true")
+	}
 	return 0
 }
 
