@@ -945,6 +945,21 @@ func executeAnalysis(args []string, stdout, stderr io.Writer, opts globalOptions
 			fmt.Fprintf(stdout, "%s\t%d papers\tnumeric=%t\n", field.Name, field.Papers, field.Numeric)
 		}
 		return 0
+	case "method-workbench":
+		category, methods, outPath, ok := parseMethodWorkbenchArgs(args[2:])
+		if !ok {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge analysis method-workbench <run-id> --category <name> --out <report.json> [--method <name>]")
+		}
+		workbench := analysis.DefaultMethodComparisonWorkbench()
+		report := workbench.Compare(category, methods)
+		if err := writeJSONFile(outPath, report); err != nil {
+			return writeError(stdout, stderr, opts, 1, "analysis_method_workbench_store_failed", err.Error())
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"methodComparison": report, "path": outPath})
+		}
+		fmt.Fprintf(stdout, "wrote method comparison workbench to %s\n", outPath)
+		return 0
 	case "engine-compare":
 		outPath, secondaryDelta, tolerance, ok := parseEngineCompareArgs(args[2:])
 		if !ok {
@@ -1153,6 +1168,32 @@ func executeAnalysis(args []string, stdout, stderr io.Writer, opts globalOptions
 	default:
 		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge analysis <prepare|run|sensitivity|subgroup|meta-regression|publication-bias|bayesian|export>")
 	}
+}
+
+func parseMethodWorkbenchArgs(args []string) (string, []string, string, bool) {
+	category := ""
+	methods := []string{}
+	out := ""
+	for i := 0; i < len(args); i++ {
+		switch args[i] {
+		case "--category", "--method", "--out":
+			if i+1 >= len(args) {
+				return "", nil, "", false
+			}
+			switch args[i] {
+			case "--category":
+				category = args[i+1]
+			case "--method":
+				methods = append(methods, args[i+1])
+			case "--out":
+				out = args[i+1]
+			}
+			i++
+		default:
+			return "", nil, "", false
+		}
+	}
+	return category, methods, out, strings.TrimSpace(category) != "" && out != ""
 }
 
 func parseEngineCompareArgs(args []string) (string, float64, float64, bool) {
