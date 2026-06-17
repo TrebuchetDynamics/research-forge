@@ -6,12 +6,13 @@ import (
 )
 
 type Data struct {
-	Title        string
-	Citations    []Citation
-	EvidenceRows []EvidenceRow
-	Screening    ScreeningSummary
-	Analysis     AnalysisSummary
-	Provenance   []string
+	Title             string
+	Citations         []Citation
+	EvidenceRows      []EvidenceRow
+	PassageProvenance []PassageProvenance
+	Screening         ScreeningSummary
+	Analysis          AnalysisSummary
+	Provenance        []string
 }
 type Citation struct {
 	ID    string
@@ -20,6 +21,15 @@ type Citation struct {
 type EvidenceRow struct {
 	PaperID string
 	Summary string
+}
+type PassageProvenance struct {
+	PaperID           string
+	PassageID         string
+	ParserName        string
+	ParserVersion     string
+	SourceOffsetStart int
+	SourceOffsetEnd   int
+	SourceRef         string
 }
 type ScreeningSummary struct {
 	Included  int
@@ -47,6 +57,15 @@ func BuildMarkdown(data Data) string {
 	for _, e := range data.EvidenceRows {
 		fmt.Fprintf(&b, "| %s | %s |\n", e.PaperID, e.Summary)
 	}
+	b.WriteString("\n## Passage provenance\n\n")
+	if len(data.PassageProvenance) == 0 {
+		b.WriteString("No per-passage provenance links recorded.\n")
+	} else {
+		b.WriteString("| Paper | Passage | Parser | Version | Source offset | Source ref |\n| --- | --- | --- | --- | --- | --- |\n")
+		for _, p := range data.PassageProvenance {
+			fmt.Fprintf(&b, "| %s | %s | %s | %s | %d-%d | %s |\n", p.PaperID, p.PassageID, p.ParserName, p.ParserVersion, p.SourceOffsetStart, p.SourceOffsetEnd, p.SourceRef)
+		}
+	}
 	b.WriteString("\n## Screening summary\n\n")
 	fmt.Fprintf(&b, "Included: %d Excluded: %d Uncertain: %d\n\nPRISMA: records flow summarized from stored screening events.\n", data.Screening.Included, data.Screening.Excluded, data.Screening.Uncertain)
 	b.WriteString("\n## Analysis results\n\n")
@@ -70,8 +89,15 @@ func RedactShareable(text string) string {
 	return text
 }
 func Audit(data Data) []string {
+	issues := []string{}
 	if len(data.Provenance) == 0 {
-		return []string{"missing provenance"}
+		issues = append(issues, "missing provenance")
 	}
-	return nil
+	if len(data.EvidenceRows) > 0 && len(data.PassageProvenance) == 0 {
+		issues = append(issues, "missing passage provenance")
+	}
+	if len(issues) == 0 {
+		return nil
+	}
+	return issues
 }

@@ -32,9 +32,22 @@ func TestReportExportsHTMLLaTeXNotebookAndRedactsShareableData(t *testing.T) {
 	}
 }
 
+func TestReportIncludesPerPassageParserProvenanceAndAuditLinks(t *testing.T) {
+	data := Data{Title: "Traceable report", Provenance: []string{"provenance"}, EvidenceRows: []EvidenceRow{{PaperID: "paper-1", Summary: "claim"}}, PassageProvenance: []PassageProvenance{{PaperID: "paper-1", PassageID: "p1", ParserName: "grobid", ParserVersion: "0.8", SourceOffsetStart: 42, SourceOffsetEnd: 88, SourceRef: "parsed/paper-1.json#p1"}}}
+	markdown := BuildMarkdown(data)
+	for _, want := range []string{"## Passage provenance", "paper-1", "p1", "grobid", "0.8", "42-88", "parsed/paper-1.json#p1"} {
+		if !strings.Contains(markdown, want) {
+			t.Fatalf("report missing %q:\n%s", want, markdown)
+		}
+	}
+	if issues := Audit(data); len(issues) != 0 {
+		t.Fatalf("expected provenance audit clean, got %#v", issues)
+	}
+}
+
 func TestReportAuditDetectsMissingProvenance(t *testing.T) {
-	issues := Audit(Data{Title: "No provenance"})
-	if len(issues) == 0 || issues[0] != "missing provenance" {
+	issues := Audit(Data{Title: "No provenance", EvidenceRows: []EvidenceRow{{PaperID: "paper-1", Summary: "claim"}}})
+	if len(issues) < 2 || issues[0] != "missing provenance" || issues[1] != "missing passage provenance" {
 		t.Fatalf("issues = %#v", issues)
 	}
 }

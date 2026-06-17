@@ -819,9 +819,16 @@ func executeReport(args []string, stdout, stderr io.Writer, opts globalOptions) 
 	data := report.Data{Title: proj.Title, Provenance: []string{"manifest", "lockfile", "provenance"}}
 	switch args[0] {
 	case "build":
-		out, ok := parseSingleFlag(args[1:], "--out")
+		out, parsedPaths, ok := parseReportBuild(args[1:])
 		if !ok {
-			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge report build --out <file>")
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge report build --out <file> [--parsed <parsed.json>]")
+		}
+		for _, path := range parsedPaths {
+			var doc parsing.ParsedDocument
+			if err := readJSONFile(path, &doc); err != nil {
+				return writeError(stdout, stderr, opts, 1, "report_parsed_read_failed", err.Error())
+			}
+			data.PassageProvenance = append(data.PassageProvenance, report.BuildPassageProvenanceFromParsedDocuments([]parsing.ParsedDocument{doc}, path)...)
 		}
 		md := report.BuildMarkdown(data)
 		if err := os.MkdirAll(filepath.Dir(out), 0o755); err != nil {
@@ -850,6 +857,28 @@ func executeReport(args []string, stdout, stderr io.Writer, opts globalOptions) 
 	default:
 		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge report <build|audit>")
 	}
+}
+
+func parseReportBuild(args []string) (string, []string, bool) {
+	values := map[string]string{}
+	parsed := []string{}
+	for i := 0; i < len(args); i++ {
+		switch args[i] {
+		case "--out", "--parsed":
+			if i+1 >= len(args) {
+				return "", nil, false
+			}
+			if args[i] == "--parsed" {
+				parsed = append(parsed, args[i+1])
+			} else {
+				values[args[i]] = args[i+1]
+			}
+			i++
+		default:
+			return "", nil, false
+		}
+	}
+	return values["--out"], parsed, values["--out"] != ""
 }
 
 func executeAnalysis(args []string, stdout, stderr io.Writer, opts globalOptions) int {
