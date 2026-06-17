@@ -260,8 +260,29 @@ func sortedStringSet(values map[string]bool) []string {
 }
 
 func executeOA(args []string, stdout, stderr io.Writer, opts globalOptions) int {
+	if len(args) == 1 && args[0] == "candidates" {
+		if opts.Project == "" {
+			return writeError(stdout, stderr, opts, 2, "missing_project", "--project is required for oa candidates")
+		}
+		store, err := library.OpenStore(filepath.Join(opts.Project, "data", "library.json"))
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "library_open_failed", err.Error())
+		}
+		records, err := store.List()
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "library_list_failed", err.Error())
+		}
+		comparison := sources.CompareOpenAccessCandidates(records)
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"comparison": comparison})
+		}
+		for _, candidate := range comparison.Candidates {
+			fmt.Fprintf(stdout, "%s\t%s\t%s\t%s\n", candidate.Source, candidate.DOI, candidate.License, candidate.URL)
+		}
+		return 0
+	}
 	if len(args) != 2 || args[0] != "lookup" {
-		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge oa lookup <doi>")
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge oa lookup <doi>|candidates")
 	}
 	email := os.Getenv("RFORGE_UNPAYWALL_EMAIL")
 	baseURL := os.Getenv("RFORGE_UNPAYWALL_URL")
@@ -529,6 +550,18 @@ func searchConnector(source string) (sourceConnector, bool) {
 			baseURL = "https://www.ebi.ac.uk/europepmc"
 		}
 		return sources.NewEuropePMCConnector(defaultSourceHTTPClient(baseURL)), true
+	case "doaj":
+		baseURL := os.Getenv("RFORGE_DOAJ_URL")
+		if baseURL == "" {
+			baseURL = "https://doaj.org"
+		}
+		return sources.NewDOAJConnector(defaultSourceHTTPClient(baseURL)), true
+	case "core":
+		baseURL := os.Getenv("RFORGE_CORE_URL")
+		if baseURL == "" {
+			baseURL = "https://api.core.ac.uk"
+		}
+		return sources.NewCOREConnector(defaultSourceHTTPClient(baseURL)), true
 	case "pubmed":
 		baseURL := os.Getenv("RFORGE_PUBMED_URL")
 		if baseURL == "" {

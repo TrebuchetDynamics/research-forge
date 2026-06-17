@@ -538,7 +538,7 @@ This is the canonical build order for the post-1.0 super-tool work. The thematic
 
 #### Phase 3 — Legal full-text acquisition
 
-- [ ] Add DOAJ/CORE OA discovery adapters and compare full-text candidates from Unpaywall, DOAJ, CORE, PubMed/Europe PMC/PMC, arXiv, and local files.
+- [x] Add DOAJ/CORE OA discovery adapters and compare full-text candidates from Unpaywall, DOAJ, CORE, PubMed/Europe PMC/PMC, arXiv, and local files (`NewDOAJConnector`, `NewCOREConnector`, `CompareOpenAccessCandidates`, `rforge oa candidates`).
 - [ ] Add legal acquisition queues with OA/license status, source URL, expected local path, restricted/shareable flags, and explicit reviewer approval before download or archive inclusion.
 - [ ] Add privacy/licensing review gates for imported attachments, notes, annotations, local paths, copyrighted PDFs, and shareable reports.
 - [ ] Add PMCID/PMID linking, structured biomedical full-text import, supplementary-file discovery, and biomedical live drift smoke tests.

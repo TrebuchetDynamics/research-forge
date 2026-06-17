@@ -70,6 +70,9 @@ func (c UnpaywallConnector) LookupDOI(ctx context.Context, doi string) (OpenAcce
 			Metadata: map[string]string{
 				"oa_status": strings.TrimSpace(payload.OAStatus),
 				"host_type": strings.TrimSpace(location.HostType),
+				"license":   strings.TrimSpace(location.License),
+				"best_url":  strings.TrimSpace(location.URL),
+				"pdf_url":   strings.TrimSpace(location.PDFURL),
 			},
 		},
 	}, nil

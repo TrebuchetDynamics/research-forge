@@ -15,6 +15,7 @@ Core commands:
 - `rforge protocol live-smoke-snapshot --output <project>/data/source-live-smoke-snapshots/latest.json [--connector <id> --status pass|fail|skipped --message <text> --fields <csv>]` stores API drift/live-smoke snapshots for connector dashboard alerts
 - `rforge protocol suggest-expansions --question <text> --source-text <quoted passage> [--source-ref <id> --paper-id <id>]` drafts KeyBERT/SciSpaCy/LLM-style query-expansion suggestion records with source text links; suggestions cannot change a source plan until reviewer-approved
 - `rforge oa lookup <doi>`
+- `rforge --project <path> oa candidates` compares legal full-text candidates from Unpaywall, DOAJ, CORE, PubMed/Europe PMC/PMC, arXiv, and local files; every candidate requires reviewer approval before acquisition
 - `rforge library list`, `rforge library refresh-doi <doi>`, `rforge library refresh-crossref`, `rforge library import-crossref-refs <doi>`
 - `rforge import json|csv|bibtex|ris|csl-json|zotero-rdf <file>`
 - `rforge export json|csv|bibtex|ris|csl-json|zotero-rdf <file>`

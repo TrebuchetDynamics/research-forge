@@ -40,6 +40,7 @@ func (c EuropePMCConnector) Search(ctx context.Context, query SourceQuery) (Sour
 	records := make([]SourceRecord, 0, len(payload.ResultList.Result))
 	for _, item := range payload.ResultList.Result {
 		pmid := strings.TrimSpace(firstNonEmpty(item.PMID, item.ID))
+		fullTextURLs := item.FullTextURLList.URLs()
 		records = append(records, SourceRecord{
 			Source:   "europepmc",
 			SourceID: pmid,
@@ -52,12 +53,14 @@ func (c EuropePMCConnector) Search(ctx context.Context, query SourceQuery) (Sour
 			Year:       parseSourceYear(item.PubYear),
 			Abstract:   strings.TrimSpace(item.AbstractText),
 			Venue:      strings.TrimSpace(item.JournalTitle),
-			URLs:       item.FullTextURLList.URLs(),
+			URLs:       fullTextURLs,
 			License:    strings.TrimSpace(item.License),
 			OpenAccess: strings.EqualFold(strings.TrimSpace(item.IsOpenAccess), "Y"),
 			Metadata: map[string]string{
 				"author_string": strings.TrimSpace(item.AuthorString),
 				"mesh_terms":    strings.Join(item.MeshHeadingList.Terms(), "; "),
+				"full_text_url": firstNonEmpty(fullTextURLs...),
+				"license":       strings.TrimSpace(item.License),
 			},
 		})
 	}
