@@ -35,6 +35,7 @@ Core commands:
 - `rforge oss inventory-refresh <manifest.json> --source github [--base-url <url>]`
 - `rforge oss inventory-policy <manifest.json> [--stale-after 18mo]`
 - `rforge oss inventory-drift <manifest.json>`
+- `rforge oss inventory-roadmap <manifest.json> --todo TODO.md` groups inventory `nextSlice` entries by area and reports notes/next slices missing TODO coverage
 - `rforge oss inventory-report <manifest.json> [--area <area>]`
 - `rforge oss add|list|clone|license-check|note|scan|report|refresh`
 - `rforge pdf fetch --doi <doi>`, `rforge pdf fetch-arxiv --paper <arxiv-id> --kind pdf|source --url <url>`

@@ -3239,6 +3239,7 @@ func printHelp(w io.Writer) {
 	fmt.Fprintln(w, "  rforge oss inventory-refresh <manifest.json> --source github [--base-url <url>]")
 	fmt.Fprintln(w, "  rforge oss inventory-policy <manifest.json> [--stale-after 18mo]")
 	fmt.Fprintln(w, "  rforge oss inventory-drift <manifest.json>")
+	fmt.Fprintln(w, "  rforge oss inventory-roadmap <manifest.json> --todo TODO.md")
 	fmt.Fprintln(w, "  rforge oss inventory-report <manifest.json> [--area <area>]")
 	fmt.Fprintln(w, "  rforge oss add|list|license-check")
 	fmt.Fprintln(w, "  rforge parse --paper <id> --parser grobid|tex|s2orc|papermage --pdf|--tex|--s2orc|--papermage <file>")

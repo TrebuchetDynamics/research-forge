@@ -52,6 +52,21 @@ func executeOSS(args []string, stdout, stderr io.Writer, opts globalOptions) int
 		fmt.Fprint(stdout, report.Markdown)
 		return 0
 	}
+	if args[0] == "inventory-roadmap" {
+		manifestPath, todoPath, ok := parseOSSInventoryRoadmap(args[1:])
+		if !ok {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge oss inventory-roadmap <manifest.json> --todo <TODO.md>")
+		}
+		report, err := oss.BuildInventoryRoadmapReport(manifestPath, todoPath)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "oss_inventory_roadmap_failed", fmt.Sprintf("build inventory roadmap: %v", err))
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, report)
+		}
+		fmt.Fprint(stdout, report.Markdown)
+		return 0
+	}
 	if args[0] == "inventory-drift" {
 		if len(args) != 2 {
 			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge oss inventory-drift <manifest.json>")
@@ -295,6 +310,13 @@ func parseOSSInventoryRefresh(args []string) (string, string, string, bool) {
 		}
 	}
 	return manifestPath, values["--source"], values["--base-url"], manifestPath != "" && values["--source"] != ""
+}
+
+func parseOSSInventoryRoadmap(args []string) (string, string, bool) {
+	if len(args) != 3 || args[1] != "--todo" {
+		return "", "", false
+	}
+	return args[0], args[2], strings.TrimSpace(args[0]) != "" && strings.TrimSpace(args[2]) != ""
 }
 
 func parseOSSInventoryReport(args []string) (string, string, bool) {
