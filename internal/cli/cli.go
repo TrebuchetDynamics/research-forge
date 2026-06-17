@@ -1279,6 +1279,44 @@ func executeEvidence(args []string, stdout, stderr io.Writer, opts globalOptions
 		}
 		fmt.Fprintf(stdout, "wrote evidence extraction grid with %d rows to %s\n", len(grid.Rows), outPath)
 		return 0
+	case "citation-suggest":
+		request, outPath, ok := parseCitationSuggest(args[1:])
+		if !ok {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge evidence citation-suggest --paper <id> --support <ref=text> --out <queue.json> [--kind extraction|report_prose --prompt <text> --model <name> --version <version>]")
+		}
+		queue, err := evidence.DraftCitationLockedSuggestions(request)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 2, "citation_suggest_invalid", err.Error())
+		}
+		if err := writeJSONFile(outPath, queue); err != nil {
+			return writeError(stdout, stderr, opts, 1, "citation_queue_write_failed", err.Error())
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"queue": queue, "path": outPath})
+		}
+		fmt.Fprintf(stdout, "wrote %d citation-locked suggestions to %s\n", len(queue.Suggestions), outPath)
+		return 0
+	case "citation-review":
+		queuePath, input, outPath, ok := parseCitationReview(args[1:])
+		if !ok {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge evidence citation-review --queue <queue.json> --id <suggestion-id> --decision accepted|rejected|corrected --reviewer <name> --out <queue.json> [--note <text>]")
+		}
+		var queue evidence.CitationLockedSuggestionQueue
+		if err := readJSONFile(queuePath, &queue); err != nil {
+			return writeError(stdout, stderr, opts, 1, "citation_queue_read_failed", err.Error())
+		}
+		reviewed, err := evidence.ReviewCitationLockedSuggestion(queue, input)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 2, "citation_review_invalid", err.Error())
+		}
+		if err := writeJSONFile(outPath, reviewed); err != nil {
+			return writeError(stdout, stderr, opts, 1, "citation_review_write_failed", err.Error())
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"queue": reviewed, "path": outPath})
+		}
+		fmt.Fprintf(stdout, "wrote reviewed citation-locked queue to %s\n", outPath)
+		return 0
 	case "entity-suggest":
 		parsedPath, model, version, outPath, ok := parseEntitySuggest(args[1:])
 		if !ok {
@@ -1396,6 +1434,51 @@ func parseEvidenceGrid(args []string) ([]string, string, string, bool) {
 		}
 	}
 	return parsed, values["--analysis"], values["--out"], values["--out"] != ""
+}
+
+func parseCitationSuggest(args []string) (evidence.CitationLockedSuggestionRequest, string, bool) {
+	values := map[string]string{"--kind": string(evidence.CitationLockedExtraction)}
+	supports := []evidence.CitationLockedSupport{}
+	for i := 0; i < len(args); i++ {
+		switch args[i] {
+		case "--paper", "--kind", "--prompt", "--support", "--model", "--version", "--out":
+			if i+1 >= len(args) {
+				return evidence.CitationLockedSuggestionRequest{}, "", false
+			}
+			if args[i] == "--support" {
+				parts := strings.SplitN(args[i+1], "=", 2)
+				if len(parts) != 2 || parts[0] == "" || parts[1] == "" {
+					return evidence.CitationLockedSuggestionRequest{}, "", false
+				}
+				supports = append(supports, evidence.CitationLockedSupport{Ref: parts[0], ExactText: parts[1]})
+			} else {
+				values[args[i]] = args[i+1]
+			}
+			i++
+		default:
+			return evidence.CitationLockedSuggestionRequest{}, "", false
+		}
+	}
+	request := evidence.CitationLockedSuggestionRequest{PaperID: values["--paper"], Kind: evidence.CitationLockedSuggestionKind(values["--kind"]), Prompt: values["--prompt"], Supports: supports, ModelName: values["--model"], ModelVersion: values["--version"]}
+	return request, values["--out"], request.PaperID != "" && len(supports) > 0 && values["--out"] != ""
+}
+
+func parseCitationReview(args []string) (string, evidence.CitationLockedReviewInput, string, bool) {
+	values := map[string]string{}
+	for i := 0; i < len(args); i++ {
+		switch args[i] {
+		case "--queue", "--id", "--decision", "--reviewer", "--note", "--out":
+			if i+1 >= len(args) {
+				return "", evidence.CitationLockedReviewInput{}, "", false
+			}
+			values[args[i]] = args[i+1]
+			i++
+		default:
+			return "", evidence.CitationLockedReviewInput{}, "", false
+		}
+	}
+	input := evidence.CitationLockedReviewInput{SuggestionID: values["--id"], Decision: evidence.Status(values["--decision"]), Reviewer: values["--reviewer"], Note: values["--note"]}
+	return values["--queue"], input, values["--out"], values["--queue"] != "" && values["--id"] != "" && values["--decision"] != "" && values["--reviewer"] != "" && values["--out"] != ""
 }
 
 func parseEntitySuggest(args []string) (string, string, string, string, bool) {
