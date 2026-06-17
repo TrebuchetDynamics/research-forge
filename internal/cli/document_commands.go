@@ -454,9 +454,9 @@ func executeParse(args []string, stdout, stderr io.Writer, opts globalOptions) i
 		return 0
 	}
 	if len(args) > 0 && args[0] == "adjudicated-refs" {
-		parsedPath, logPath, out, ok := parseAdjudicatedRefsArgs(args[1:], opts.Project)
+		parsedPath, logPath, out, matchesPath, ambiguityOut, ok := parseAdjudicatedRefsArgs(args[1:], opts.Project)
 		if !ok {
-			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> parse adjudicated-refs --parsed <parsed.json> [--log <jsonl> --out <report.json>]")
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> parse adjudicated-refs --parsed <parsed.json> [--log <jsonl> --out <report.json> --matches <normalization.json> --ambiguity-out <queue.json>]")
 		}
 		var doc parsing.ParsedDocument
 		if err := readJSONFile(parsedPath, &doc); err != nil {
@@ -467,13 +467,25 @@ func executeParse(args []string, stdout, stderr io.Writer, opts globalOptions) i
 			return writeError(stdout, stderr, opts, 1, "parse_ref_adjudication_read_failed", err.Error())
 		}
 		report := parsing.ApplyReferenceAdjudications(doc, records)
+		var ambiguityQueue *parsing.ReferenceAmbiguityExport
+		if ambiguityOut != "" {
+			matches, err := loadReferenceMatches(matchesPath)
+			if err != nil {
+				return writeError(stdout, stderr, opts, 1, "parse_ref_matches_read_failed", err.Error())
+			}
+			queue := parsing.ExportReferenceAmbiguityQueue(doc, matches, records)
+			if err := writeJSONFile(ambiguityOut, queue); err != nil {
+				return writeError(stdout, stderr, opts, 1, "parse_ref_ambiguity_write_failed", err.Error())
+			}
+			ambiguityQueue = &queue
+		}
 		if out != "" {
 			if err := writeJSONFile(out, report); err != nil {
 				return writeError(stdout, stderr, opts, 1, "parse_ref_adjudication_report_write_failed", err.Error())
 			}
 		}
 		if opts.JSON {
-			return writeJSON(stdout, 0, map[string]any{"referenceAdjudication": report, "path": out, "logPath": logPath})
+			return writeJSON(stdout, 0, map[string]any{"referenceAdjudication": report, "ambiguityQueue": ambiguityQueue, "path": out, "ambiguityPath": ambiguityOut, "logPath": logPath})
 		}
 		if out != "" {
 			fmt.Fprintf(stdout, "wrote reference adjudication report to %s\n", out)
@@ -846,21 +858,36 @@ func parseAdjudicateRefArgs(args []string, project string) (string, string, int,
 	return values["--parsed"], values["--log"], index, values["--decision"], values["--reviewer"], values["--reason"], correction, ok
 }
 
-func parseAdjudicatedRefsArgs(args []string, project string) (string, string, string, bool) {
+func loadReferenceMatches(path string) ([]parsing.ReferenceMatch, error) {
+	if strings.TrimSpace(path) == "" {
+		return nil, nil
+	}
+	var multi parsing.MultiSourceReferenceNormalizationReport
+	if err := readJSONFile(path, &multi); err == nil && len(multi.Matches) > 0 {
+		return multi.Matches, nil
+	}
+	var single parsing.ReferenceNormalizationReport
+	if err := readJSONFile(path, &single); err != nil {
+		return nil, err
+	}
+	return single.Matches, nil
+}
+
+func parseAdjudicatedRefsArgs(args []string, project string) (string, string, string, string, string, bool) {
 	values := map[string]string{"--log": defaultReferenceAdjudicationLog(project)}
 	for i := 0; i < len(args); i++ {
 		switch args[i] {
-		case "--parsed", "--log", "--out":
+		case "--parsed", "--log", "--out", "--matches", "--ambiguity-out":
 			if i+1 >= len(args) {
-				return "", "", "", false
+				return "", "", "", "", "", false
 			}
 			values[args[i]] = args[i+1]
 			i++
 		default:
-			return "", "", "", false
+			return "", "", "", "", "", false
 		}
 	}
-	return values["--parsed"], values["--log"], values["--out"], values["--parsed"] != "" && values["--log"] != ""
+	return values["--parsed"], values["--log"], values["--out"], values["--matches"], values["--ambiguity-out"], values["--parsed"] != "" && values["--log"] != ""
 }
 
 func parseReviewRefsArgs(args []string) (string, string, float64, bool) {

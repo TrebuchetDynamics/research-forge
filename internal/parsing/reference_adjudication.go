@@ -21,7 +21,9 @@ type ReferenceAdjudication struct {
 	Reviewer       string              `json:"reviewer"`
 	Reason         string              `json:"reason"`
 	Original       Reference           `json:"original"`
+	Match          *ReferenceMatch     `json:"match,omitempty"`
 	Correction     ReferenceCorrection `json:"correction,omitempty"`
+	ProvenanceRef  string              `json:"provenanceRef,omitempty"`
 	CreatedAt      string              `json:"createdAt"`
 }
 
@@ -46,6 +48,27 @@ type AdjudicatedReferenceItem struct {
 	Status    string                 `json:"status"`
 	Reference Reference              `json:"reference"`
 	Decision  *ReferenceAdjudication `json:"decision,omitempty"`
+}
+
+type ReferenceAmbiguityExport struct {
+	SchemaVersion string                        `json:"schemaVersion"`
+	PaperID       string                        `json:"paperId"`
+	Items         []ReferenceAmbiguityQueueItem `json:"items"`
+}
+
+type ReferenceAmbiguityQueueItem struct {
+	Index          int    `json:"index"`
+	Status         string `json:"status"`
+	Title          string `json:"title,omitempty"`
+	DOI            string `json:"doi,omitempty"`
+	Raw            string `json:"raw,omitempty"`
+	ParserName     string `json:"parserName,omitempty"`
+	ParserVersion  string `json:"parserVersion,omitempty"`
+	Source         string `json:"source,omitempty"`
+	SourceID       string `json:"sourceId,omitempty"`
+	Reason         string `json:"reason,omitempty"`
+	ProvenanceRef  string `json:"provenanceRef,omitempty"`
+	ResponseRawRef string `json:"responseRawRef,omitempty"`
 }
 
 func NewReferenceAdjudication(doc ParsedDocument, index int, decision, reviewer, reason string, correction ReferenceCorrection) (ReferenceAdjudication, error) {
@@ -153,6 +176,42 @@ func ApplyReferenceAdjudications(doc ParsedDocument, records []ReferenceAdjudica
 		report.Items = append(report.Items, item)
 	}
 	return report
+}
+
+func ExportReferenceAmbiguityQueue(doc ParsedDocument, matches []ReferenceMatch, records []ReferenceAdjudication) ReferenceAmbiguityExport {
+	latest := map[int]ReferenceAdjudication{}
+	for _, record := range records {
+		if record.PaperID == doc.PaperID {
+			latest[record.ReferenceIndex] = record
+		}
+	}
+	matchByIndex := map[int]ReferenceMatch{}
+	for _, match := range matches {
+		matchByIndex[match.Index] = match
+	}
+	queue := ReferenceAmbiguityExport{SchemaVersion: ReferenceAdjudicationSchemaVersion, PaperID: doc.PaperID}
+	for i, ref := range doc.References {
+		decision, reviewed := latest[i]
+		if reviewed && (decision.Decision == "accept" || decision.Decision == "correct" || decision.Decision == "reject") {
+			continue
+		}
+		match := matchByIndex[i]
+		if !match.Ambiguous && reviewed && decision.Decision != "defer" {
+			continue
+		}
+		status := "unreviewed"
+		reason := match.AmbiguityReason
+		provenance := ""
+		if reviewed {
+			status = "deferred"
+			provenance = decision.ProvenanceRef
+			if strings.TrimSpace(decision.Reason) != "" {
+				reason = decision.Reason
+			}
+		}
+		queue.Items = append(queue.Items, ReferenceAmbiguityQueueItem{Index: i, Status: status, Title: ref.Title, DOI: ref.DOI, Raw: ref.Raw, ParserName: doc.ParserName, ParserVersion: doc.ParserVersion, Source: match.Source, SourceID: match.SourceID, Reason: reason, ProvenanceRef: provenance, ResponseRawRef: match.ResponseRawRef})
+	}
+	return queue
 }
 
 func applyReferenceCorrection(ref Reference, correction ReferenceCorrection) Reference {

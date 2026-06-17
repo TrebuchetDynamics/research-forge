@@ -23,6 +23,7 @@ Implemented nearby capabilities:
 - Parsed reference records from parser outputs.
 - `rforge parse references --parser anystyle` preserves parsed DOI/title, raw reference strings, confidence scores, parser name, and parser version.
 - `rforge parse review-refs` creates a manual review queue for low-confidence or incomplete parsed references.
+- `rforge parse adjudicate-ref` and `rforge parse adjudicated-refs --ambiguity-out` persist reviewer accept/correct/reject/defer decisions, provenance links, corrected reference fields, and exportable ambiguity queues for Anystyle/GROBID/S2ORC-normalized matches.
 - Crossref/OpenAlex/Semantic Scholar connectors.
 - Duplicate report/merge/split UX.
 
@@ -31,8 +32,8 @@ Missing features:
 - Rich Anystyle adapter options beyond JSON-producing `RFORGE_ANYSTYLE_CMD`.
 - Rich plain-text bibliography import workflow beyond `rforge parse references --parser anystyle`.
 - Rich parsed-reference normalization workflow beyond Crossref/OpenAlex/Semantic Scholar top-match reports.
-- Rich confidence-aware review workflow beyond static ambiguous-reference queues.
+- Higher-touch UI for confidence-aware review beyond CLI/exported ambiguity queues.
 
 ## Recommended slice
 
-Extend `rforge parse references --parser anystyle --file refs.txt --out refs.json` and `rforge parse review-refs` with reviewer decision persistence for ambiguous parsed references.
+Build an HTMX reviewer screen over the persisted reference-adjudication log and ambiguity queue exports.

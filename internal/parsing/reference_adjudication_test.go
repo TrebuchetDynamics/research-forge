@@ -26,6 +26,22 @@ func TestRecordAndLoadReferenceAdjudicationsPersistsReviewerDecisions(t *testing
 	}
 }
 
+func TestExportReferenceAmbiguityQueueIncludesDeferredUnreviewedAndMatchProvenance(t *testing.T) {
+	doc := ParsedDocument{PaperID: "paper-1", ParserName: "grobid", ParserVersion: "0.8", References: []Reference{{Title: "Accepted"}, {Title: "Deferred", Raw: "raw deferred"}, {Title: "Unreviewed"}}}
+	matches := []ReferenceMatch{{Index: 1, Source: "crossref", SourceID: "cr-1", Ambiguous: true, AmbiguityReason: "multiple_candidates", ResponseRawRef: "crossref:req"}}
+	decisions := []ReferenceAdjudication{{PaperID: "paper-1", ReferenceIndex: 0, Decision: "accept", ProvenanceRef: "data/provenance.jsonl#evt-1"}, {PaperID: "paper-1", ReferenceIndex: 1, Decision: "defer", ProvenanceRef: "data/provenance.jsonl#evt-2"}}
+	queue := ExportReferenceAmbiguityQueue(doc, matches, decisions)
+	if queue.PaperID != "paper-1" || len(queue.Items) != 2 {
+		t.Fatalf("queue = %#v", queue)
+	}
+	if queue.Items[0].Status != "deferred" || queue.Items[0].Source != "crossref" || queue.Items[0].ProvenanceRef != "data/provenance.jsonl#evt-2" {
+		t.Fatalf("deferred item = %#v", queue.Items[0])
+	}
+	if queue.Items[1].Status != "unreviewed" || queue.Items[1].ParserName != "grobid" {
+		t.Fatalf("unreviewed item = %#v", queue.Items[1])
+	}
+}
+
 func TestApplyReferenceAdjudicationsAcceptCorrectRejectDefer(t *testing.T) {
 	doc := ParsedDocument{PaperID: "paper-1", References: []Reference{{Title: "A"}, {Title: "B"}, {Title: "C"}, {Title: "D"}}}
 	records := []ReferenceAdjudication{

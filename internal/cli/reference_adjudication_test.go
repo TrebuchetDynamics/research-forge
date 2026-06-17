@@ -41,6 +41,20 @@ func TestExecuteParseAdjudicateRefPersistsAndReportsDecisions(t *testing.T) {
 	if env.Data.Report.Corrected != 1 || env.Data.Report.Items[0].Reference.Title != "Corrected" {
 		t.Fatalf("report = %#v", env.Data.Report)
 	}
+	ambiguityOut := filepath.Join(project, "ambiguity.json")
+	matchesPath := filepath.Join(project, "matches.json")
+	writeJSONFixture(t, matchesPath, parsing.ReferenceNormalizationReport{PaperID: "paper-1", Matches: []parsing.ReferenceMatch{{Index: 0, Ambiguous: true, AmbiguityReason: "low_confidence", Source: "crossref"}}})
+	code = Execute([]string{"--json", "--project", project, "parse", "adjudicate-ref", "--parsed", parsed, "--index", "0", "--decision", "defer", "--reviewer", "reviewer-a", "--reason", "needs source check"}, &stdout, &stderr)
+	if code != 0 {
+		t.Fatalf("defer code=%d stderr=%s stdout=%s", code, stderr.String(), stdout.String())
+	}
+	code = Execute([]string{"--json", "--project", project, "parse", "adjudicated-refs", "--parsed", parsed, "--matches", matchesPath, "--ambiguity-out", ambiguityOut}, &stdout, &stderr)
+	if code != 0 {
+		t.Fatalf("ambiguity code=%d stderr=%s stdout=%s", code, stderr.String(), stdout.String())
+	}
+	if data, err := os.ReadFile(ambiguityOut); err != nil || !bytes.Contains(data, []byte("needs source check")) || !bytes.Contains(data, []byte("crossref")) {
+		t.Fatalf("ambiguity data=%s err=%v", string(data), err)
+	}
 	if _, err := os.Stat(logPath); err != nil {
 		t.Fatalf("log missing: %v", err)
 	}
