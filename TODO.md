@@ -564,7 +564,7 @@ This is the canonical build order for the post-1.0 super-tool work. The thematic
 #### Phase 6 — Screening and review assistance
 
 - [x] Persist ASReview-style active-learning runs with input hashes, seed decisions, ranking method, ranked output, reviewer progress, stopping diagnostics, and adjudication state (`BuildActiveLearningRun`, `rforge screen active-run`).
-- [ ] Add balanced exploration/exploitation ranking policies, richer recall/effort simulation, and sensitivity diagnostics.
+- [x] Add balanced exploration/exploitation ranking policies, richer recall/effort simulation, and sensitivity diagnostics (`PrioritizeBalancedRecords`, `SimulateRecallEffort`, `ActiveLearningSensitivityDiagnostics`, `rforge screen sensitivity`).
 - [ ] Add reviewer assignment, conflict/adjudication panels, uncertain queues, and exportable audit bundles for screening decisions.
 - [ ] Add RobotReviewer-inspired risk-of-bias schema templates and evidence-suggestion queues with exact support text, uncertainty, model/version metadata, and reviewer decisions.
 - [ ] Add HTMX screening cockpit views for active-learning queues, uncertainty/exploration flags, progress metrics, stopping diagnostics, and audit-bundle links.

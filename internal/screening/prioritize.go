@@ -16,9 +16,12 @@ type ScreeningRecord struct {
 
 // PrioritizedRecord is an unscreened record plus its deterministic relevance score.
 type PrioritizedRecord struct {
-	ID          string  `json:"id"`
-	Score       float64 `json:"score"`
-	Uncertainty float64 `json:"uncertainty,omitempty"`
+	ID                string  `json:"id"`
+	Score             float64 `json:"score"`
+	Uncertainty       float64 `json:"uncertainty,omitempty"`
+	ExploitationScore float64 `json:"exploitationScore,omitempty"`
+	ExplorationScore  float64 `json:"explorationScore,omitempty"`
+	Policy            string  `json:"policy,omitempty"`
 }
 
 // PrioritizeActiveLearningRecords is a deterministic ASReview-style scaffold:

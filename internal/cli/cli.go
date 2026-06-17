@@ -1377,6 +1377,39 @@ func executeScreen(args []string, stdout, stderr io.Writer, opts globalOptions) 
 			fmt.Fprintln(stdout, paper)
 		}
 		return 0
+	case "sensitivity":
+		stage, relevant, targets, outPath, ok := parseScreenSensitivity(args[1:])
+		if !ok {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge screen sensitivity --stage <stage> --relevant <paper-id> --out <report.json> [--target-recall 0.95]")
+		}
+		_, events, err := loadScreening(opts.Project)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "screen_load_failed", err.Error())
+		}
+		store, err := library.OpenStore(filepath.Join(opts.Project, "data", "library.json"))
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "library_open_failed", err.Error())
+		}
+		papers, err := store.List()
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "library_list_failed", err.Error())
+		}
+		records := make([]screening.ScreeningRecord, 0, len(papers))
+		for _, paper := range papers {
+			records = append(records, screening.ScreeningRecord{ID: screeningPaperID(paper), Title: paper.Title, Abstract: paper.Abstract})
+		}
+		report, err := screening.ActiveLearningSensitivityDiagnostics(screening.ActiveLearningSensitivityInput{Records: records, Events: events, Stage: stage, RelevantPaperIDs: relevant, TargetRecalls: targets})
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "screen_sensitivity_failed", err.Error())
+		}
+		if err := writeJSONFile(outPath, report); err != nil {
+			return writeError(stdout, stderr, opts, 1, "screen_sensitivity_write_failed", err.Error())
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"sensitivity": report, "path": outPath})
+		}
+		fmt.Fprintf(stdout, "wrote screening sensitivity diagnostics to %s\n", outPath)
+		return 0
 	case "active-run":
 		stage, method, outPath, targetRecall, ok := parseScreenActiveRun(args[1:])
 		if !ok {
@@ -1675,6 +1708,36 @@ func parseScreenStopping(args []string) (screening.Stage, float64, bool) {
 		target = parsed
 	}
 	return screening.Stage(values["--stage"]), target, values["--stage"] != ""
+}
+
+func parseScreenSensitivity(args []string) (screening.Stage, []string, []float64, string, bool) {
+	values := map[string]string{}
+	relevant := []string{}
+	targets := []float64{}
+	for i := 0; i < len(args); i++ {
+		switch args[i] {
+		case "--stage", "--out", "--relevant", "--target-recall":
+			if i+1 >= len(args) {
+				return "", nil, nil, "", false
+			}
+			switch args[i] {
+			case "--relevant":
+				relevant = append(relevant, args[i+1])
+			case "--target-recall":
+				parsed, err := strconv.ParseFloat(args[i+1], 64)
+				if err != nil || parsed <= 0 || parsed > 1 {
+					return "", nil, nil, "", false
+				}
+				targets = append(targets, parsed)
+			default:
+				values[args[i]] = args[i+1]
+			}
+			i++
+		default:
+			return "", nil, nil, "", false
+		}
+	}
+	return screening.Stage(values["--stage"]), relevant, targets, values["--out"], values["--stage"] != "" && values["--out"] != "" && len(relevant) > 0
 }
 
 func parseScreenActiveRun(args []string) (screening.Stage, string, string, float64, bool) {
