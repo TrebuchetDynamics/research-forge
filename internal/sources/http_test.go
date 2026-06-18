@@ -117,6 +117,66 @@ func TestHTTPClientHonorsRetryAfterForRateLimitWithInjectedSleep(t *testing.T) {
 	}
 }
 
+func TestHTTPClientBacksOffExponentiallyWithoutRetryAfterOnRateLimit(t *testing.T) {
+	requests := 0
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		requests++
+		if requests <= 2 {
+			http.Error(w, "rate limited", http.StatusTooManyRequests)
+			return
+		}
+		_, _ = w.Write([]byte(`{"ok":true}`))
+	}))
+	defer server.Close()
+
+	var slept []time.Duration
+	client := NewHTTPClient(HTTPClientOptions{
+		BaseURL:    server.URL,
+		MaxRetries: 2,
+		Sleep:      func(d time.Duration) { slept = append(slept, d) },
+	})
+	_, err := client.Get(context.Background(), "/works", nil)
+	if err != nil {
+		t.Fatalf("Get returned error: %v", err)
+	}
+	if requests != 3 {
+		t.Fatalf("requests = %d, want 3", requests)
+	}
+	if len(slept) != 2 {
+		t.Fatalf("sleep count = %d, want 2", len(slept))
+	}
+	if slept[0] != 1*time.Second || slept[1] != 2*time.Second {
+		t.Fatalf("slept = %v, want [1s 2s]", slept)
+	}
+}
+
+func TestHTTPClientDoesNotBackOffOnServerErrorWithoutRetryAfter(t *testing.T) {
+	requests := 0
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		requests++
+		if requests == 1 {
+			http.Error(w, "internal error", http.StatusInternalServerError)
+			return
+		}
+		_, _ = w.Write([]byte(`{"ok":true}`))
+	}))
+	defer server.Close()
+
+	var slept []time.Duration
+	client := NewHTTPClient(HTTPClientOptions{
+		BaseURL:    server.URL,
+		MaxRetries: 1,
+		Sleep:      func(d time.Duration) { slept = append(slept, d) },
+	})
+	_, err := client.Get(context.Background(), "/works", nil)
+	if err != nil {
+		t.Fatalf("Get returned error: %v", err)
+	}
+	if len(slept) != 0 {
+		t.Fatalf("slept = %v, want no sleep on 500 retry", slept)
+	}
+}
+
 func TestHTTPClientAppliesTimeout(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		time.Sleep(50 * time.Millisecond)

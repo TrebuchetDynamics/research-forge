@@ -113,6 +113,9 @@ func (c HTTPClient) Get(ctx context.Context, path string, query map[string]strin
 		delay := retryDelay(response)
 		_ = response.Body.Close()
 		if attempt < c.maxRetries && retryableStatus(lastStatus) {
+			if delay == 0 && lastStatus == http.StatusTooManyRequests {
+				delay = time.Duration(1<<uint(attempt)) * time.Second
+			}
 			if delay > 0 {
 				c.sleep(delay)
 			}
