@@ -61,6 +61,63 @@ Decision-gated roadmap items are tracked through `rforge decisions`, `docs/owner
 - Records are stored and deduplicated with provenance preserved.
 - User can export a library to BibTeX/CSV/JSON.
 
+## Source connector expansion
+
+The source connector interface established in Milestone 1 is the seam for adding new sources. Connectors below are sequenced by breadth of coverage, API quality, and domain-criticality. Each can ship independently once the interface is stable.
+
+### Tier 1 — High value, free API, broad coverage
+
+| Source | Domain | API endpoint | Priority |
+|---|---|---|---|
+| bioRxiv / medRxiv | Biology, medicine | biorxiv.org/api | High — largest life sciences preprint server; not covered by PubMed (preprints only) |
+| Zenodo | Multidisciplinary | zenodo.org/api | High — CERN open archive; covers data, software, grey literature |
+| Lens.org | All fields + patents | lens.org/api | High — only source combining scholarly and patent literature |
+| BASE | Aggregator | base-search.net OAI-PMH + REST | High — 300M+ documents from 10k+ repositories; strong European coverage |
+| INSPIRE HEP | High-energy physics | inspirehep.net/api | High — authoritative for HEP; OpenAlex coverage is inadequate for this domain |
+| dblp | Computer science | dblp.org REST + XML | Medium — authoritative CS bibliography; clean structured data |
+| zbMATH Open | Mathematics | zbmath.org/api | Medium — opened 2021; authoritative for mathematics literature |
+
+### Tier 2 — Domain-critical, free, narrower scope
+
+| Source | Domain | API endpoint | Priority |
+|---|---|---|---|
+| ClinicalTrials.gov | Clinical research | clinicaltrials.gov/api | High — trial registrations; required for clinical evidence synthesis |
+| ERIC | Education | api.ies.ed.gov/eric | Medium — US Dept of Education; 2M+ education research records |
+| HAL | Multidisciplinary | api.archives-ouvertes.fr | Medium — French national open archive; strong humanities and European science |
+| OSF Preprints | Multidisciplinary | api.osf.io | Medium — single API covers PsyArXiv, SocArXiv, EarthArXiv, and others |
+| AGRIS | Agriculture | agris.fao.org OAI-PMH | Low — FAO database; 12M+ records; unique food/agriculture coverage |
+
+### Tier 3 — Specialist preprint servers
+
+Each is a single-domain preprint server. Prefer implementing these via the OSF aggregation API where possible (`--source osf`) rather than one adapter per server.
+
+| Source | Domain |
+|---|---|
+| ChemRxiv | Chemistry |
+| TechRxiv | Engineering / IEEE |
+| SSRN | Economics, law, social sciences |
+| PhilArchive | Philosophy |
+
+### Intentionally out of scope
+
+| Source | Reason |
+|---|---|
+| Google Scholar | No official API; scraping violates ToS |
+| Scopus / Web of Science | Subscription only |
+| IEEE Xplore / ACM DL | API requires institutional key |
+| ResearchGate / Academia.edu | No API |
+
+### Recommended implementation order
+
+1. bioRxiv / medRxiv — closes the largest single gap for life sciences users
+2. Zenodo — fills data, software, and grey literature
+3. INSPIRE HEP — physics researchers will notice the gap immediately
+4. dblp — CS/engineering; clean data, easy to parse
+5. ClinicalTrials.gov — required for any clinical evidence synthesis
+6. OSF — one adapter covers five preprint communities
+
+---
+
 ## Milestone 2 — OSS repository intelligence MVP
 
 **Goal:** safely study open-source research tooling and maintain an auditable repository catalog.
