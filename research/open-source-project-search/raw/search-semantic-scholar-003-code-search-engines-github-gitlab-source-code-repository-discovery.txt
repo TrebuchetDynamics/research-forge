@@ -1,0 +1,20 @@
+10.1109/ibcast54850.2022.9990499	A Pragmatic Decision Making Mechanism for Reusable Source Code Snippets Retrieval using Semantic Approach
+	A code search engine for software ecosystems
+10.1007/s10664-017-9544-y	Augmenting and structuring user queries to support efficient free-form code search
+10.1145/3540250.3558935	CodeMatcher: a tool for large-scale code search based on query semantics matching
+10.1007/978-3-030-30106-4_6	Mining Source Code for Component Reuse
+10.1145/3586182.3616648	AutoSurveyGPT: GPT-Enhanced Automated Literature Discovery
+10.1109/access.2019.2939543	A Centralised Cloud Services Repository (CCSR) Framework for Optimal Cloud Service Advertisement Discovery From Heterogenous Web Portals
+10.1109/tse.2022.3218859	DiffSearch: A Scalable and Precise Search Engine for Code Changes
+10.1371/journal.pone.0291260	ORFanID: A web-based search engine for the discovery and identification of orphan and taxonomically restricted genes
+	A Centralised Cloud Services Repository (CCSR) Framework for Optimal Cloud Service Advertisement Discovery From Heterogenous Web Portals
+10.1007/s10664-016-9436-6	Why and how developers fork what from whom in GitHub
+10.1093/bioadv/vbag058	HERMES: an open-source mining tool for open-access literature
+10.1109/e-science58273.2023.10254873	Mapping the Repository Landscape: Harnessing Similarity with RepoSim and RepoSnipy
+10.1038/s41598-026-56911-w	RefactoCNN-system: an optimized deep learning framework for predicting software refactoring opportunities using CNN-based code analysis.
+10.48550/arxiv.2510.02798	OptunaHub: A Platform for Black-Box Optimization
+10.1145/3524610.3528390	An Exploratory Study of Analyzing JavaScript Online Code Clones
+10.3847/2515-5172/adef56	reLAISS: A Python Package for Flexible Similarity Searches of Supernovae and Their Host Galaxies
+10.1007/978-1-4614-6170-8_100906	Search Engine
+10.7759/cureus.66763	OnetoMap Meta-Data: Healthcare Analytics Through Research
+	LabelGit: A Dataset for Software Repositories Classification using Attributed Dependency Graphs

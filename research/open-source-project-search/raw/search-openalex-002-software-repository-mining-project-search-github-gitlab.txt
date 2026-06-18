@@ -1,0 +1,20 @@
+10.1109/icsme55016.2022.00029	On the Use of GitHub Actions in Software Development Repositories
+10.1093/nar/gkz935	CARD 2020: antibiotic resistome surveillance with the comprehensive antibiotic resistance database
+10.3389/fgene.2020.610798	State of the Field in Multi-Omics Research: From Computational Needs to Data Mining and Sharing
+10.1007/s10664-021-10057-7	Ethics in the mining of software repositories
+10.1093/nar/gkac920	CARD 2023: expanded curation, support for machine learning, and resistome prediction at the Comprehensive Antibiotic Resistance Database
+10.1109/saner.2016.105	Analyzing the State of Static Analysis: A Large-Scale Evaluation in Open Source Software
+	Software Heritage: Why and How to Preserve Software Source Code
+10.1016/j.jss.2021.110911	A ground-truth dataset and classification model for detecting bots in GitHub issue and PR comments
+10.1016/j.jss.2020.110613	Integrating GitLab metrics into coursework consultation sessions in a software engineering course
+10.1017/dsj.2018.15	How participative is open source hardware? Insights from online repository mining
+10.1007/s10664-023-10417-5	Insights into software development approaches: mining Q &amp;A repositories
+10.1007/978-3-319-74730-9_33	Developer-Centric Knowledge Mining from Large Open-Source Software Repositories (CROSSMINER)
+10.1007/s41781-018-0018-8	A Roadmap for HEP Software and Computing R&amp;D for the 2020s
+10.1145/3476042	Don't Disturb Me: Challenges of Interacting with SoftwareBots on Open Source Software Projects
+10.1021/acs.chemmater.0c01907	Machine Learning for Materials Scientists: An Introductory Guide toward Best Practices
+10.1109/access.2023.3262138	Machine Learning Operations (MLOps): Overview, Definition, and Architecture
+10.1007/s10664-019-09750-5	How developers engage with static analysis tools in different contexts
+10.48550/arxiv.2303.16393	Analyzing the Effects of CI/CD on Open Source Repositories in GitHub and GitLab
+10.1111/2041-210x.14108	Not just for programmers: How <scp>GitHub</scp> can accelerate collaborative and reproducible research in ecology and evolution
+10.1109/msr52588.2021.00053	Mining DEV for social and technical insights about software development

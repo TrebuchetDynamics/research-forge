@@ -1,0 +1,93 @@
+{
+  "citation_expand_attempted": [
+    "10.1016/j.infsof.2020.106274",
+    "10.1016/j.jss.2018.09.016",
+    "10.1007/s10664-020-09825-8",
+    "10.1145/2972958.2972966",
+    "10.1007/978-3-319-74730-9_33"
+  ],
+  "citation_expand_succeeded": [
+    "10.1016/j.infsof.2020.106274",
+    "10.1016/j.jss.2018.09.016",
+    "10.1007/s10664-020-09825-8",
+    "10.1145/2972958.2972966",
+    "10.1007/978-3-319-74730-9_33"
+  ],
+  "depth": "standard",
+  "errors": [
+    "crossref / open source project search GitHub GitLab repository discovery: paper title is required",
+    "semantic-scholar / open source project search GitHub GitLab repository discovery: source HTTP status 429",
+    "crossref / software repository mining project search GitHub GitLab: paper title is required",
+    "semantic-scholar / software repository mining project search GitHub GitLab: source HTTP status 429",
+    "crossref / code search engines GitHub GitLab source code repository discovery: paper title is required",
+    "crossref / open source software discovery package registry repository metadata: paper title is required",
+    "semantic-scholar / open source software discovery package registry repository metadata: source HTTP status 429",
+    "crossref / software supply chain repository search dependency graph open source: paper title is required",
+    "openalex / GitHub repository recommendation code search semantic search: paper title is required",
+    "crossref / GitHub repository recommendation code search semantic search: paper title is required"
+  ],
+  "notes": [
+    "No repository clones or package downloads performed",
+    "No integration/license decisions self-approved",
+    "Research informed rforge oss search-plan implementation"
+  ],
+  "outputs": [
+    "citation-expand-crossminer.log",
+    "citation-expand-github-stars.log",
+    "citation-expand-maintenance.log",
+    "citation-expand-phantom.log",
+    "citation-expand-popularity.log",
+    "citation-graph-crossminer.json",
+    "citation-graph-github-stars.json",
+    "citation-graph-maintenance.json",
+    "citation-graph-phantom.json",
+    "citation-graph-popularity.json",
+    "evidence-grid.csv",
+    "failures.jsonl",
+    "manifest.json",
+    "queries.txt",
+    "raw/search-arxiv-001-open-source-project-search-github-gitlab-repository-discovery.txt",
+    "raw/search-arxiv-002-software-repository-mining-project-search-github-gitlab.txt",
+    "raw/search-arxiv-003-code-search-engines-github-gitlab-source-code-repository-discovery.txt",
+    "raw/search-arxiv-004-open-source-software-discovery-package-registry-repository-metadata.txt",
+    "raw/search-arxiv-005-software-supply-chain-repository-search-dependency-graph-open-source.txt",
+    "raw/search-arxiv-006-github-repository-recommendation-code-search-semantic-search.txt",
+    "raw/search-openalex-001-open-source-project-search-github-gitlab-repository-discovery.txt",
+    "raw/search-openalex-002-software-repository-mining-project-search-github-gitlab.txt",
+    "raw/search-openalex-003-code-search-engines-github-gitlab-source-code-repository-discovery.txt",
+    "raw/search-openalex-004-open-source-software-discovery-package-registry-repository-metadata.txt",
+    "raw/search-openalex-005-software-supply-chain-repository-search-dependency-graph-open-source.txt",
+    "raw/search-semantic-scholar-003-code-search-engines-github-gitlab-source-code-repository-discovery.txt",
+    "raw/search-semantic-scholar-005-software-supply-chain-repository-search-dependency-graph-open-source.txt",
+    "raw/search-semantic-scholar-006-github-repository-recommendation-code-search-semantic-search.txt",
+    "report.md",
+    "results-deduped.jsonl",
+    "results.jsonl",
+    "results.md",
+    "search-stats-rforge.txt",
+    "search-stats.txt"
+  ],
+  "queries": [
+    "open source project search GitHub GitLab repository discovery",
+    "software repository mining project search GitHub GitLab",
+    "code search engines GitHub GitLab source code repository discovery",
+    "open source software discovery package registry repository metadata",
+    "software supply chain repository search dependency graph open source",
+    "GitHub repository recommendation code search semantic search"
+  ],
+  "question": "Research ways to improve open-source project search across GitHub, GitLab, package registries, archives, and related providers so ResearchForge can add it",
+  "rforge_version": "rforge v0.1.5 (9b947d5, 2026-06-18T17:43:59Z)",
+  "search_stats": {
+    "arxiv": 120,
+    "openalex": 100,
+    "semantic-scholar": 60,
+    "total_unique_dois": 237
+  },
+  "sources": [
+    "openalex",
+    "crossref",
+    "semantic-scholar",
+    "arxiv"
+  ],
+  "timestamp": "2026-06-18T20:15:22.738991+00:00"
+}

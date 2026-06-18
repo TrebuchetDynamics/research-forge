@@ -1,0 +1,20 @@
+10.21105/joss.07891	SpecpolFlow: a new software package for spectropolarimetry using Python
+	BotHawk: An Approach for Bots Detection in Open Source Software Projects
+	An Overview and Catalogue of Dependency Challenges in Open Source Software Package Registries
+	A Proposal for the Measurement and Documentation of Research Software Sustainability in Interactive Metadata Repositories
+	Quality Classifiers for Open Source Software Repositories
+10.5479/ads/bib/2007ivoa.spec.0302h	IVOA Recommendation: Resource Metadata for the Virtual Observatory Version 1.12
+	Nine Best Practices for Research Software Registries and Repositories: A Concise Guide
+10.4018/ijossp.2020100101	Open Source Software Development Challenges: A Systematic Literature Review on GitHub
+	On the Diversity of Software Package Popularity Metrics: An Empirical Study of npm
+10.1145/3530019.3530022	Text and Team: What Article Metadata Characteristics Drive Citations in Software Engineering?
+10.21105/joss.01399	Fruitbat: A Python Package for Estimating Redshifts of Fast Radio Bursts
+10.21105/joss.08103	SPM 25: open source neuroimaging analysis software
+	Bug shallowness in open-source, Macintosh software
+10.1371/journal.pone.0208561	Open source software in quantum computing
+10.1504/ijmso.2020.107792	EngMeta -- Metadata for Computational Engineering
+10.1109/msr.2019.0006	A Manually-Curated Dataset of Fixes to Vulnerabilities of Open-Source Software
+10.1007/978-3-319-69191-6_10	Coopetition of software firms in Open source software ecosystems
+10.21105/joss.02854	deeplenstronomy: A dataset simulation package for strong gravitational lensing
+	Signing in Four Public Software Package Registries: Quantity, Quality, and Influencing Factors
+10.2174/1875107x01004010052	Myths and Realities about Online Forums in Open Source Software Development: An Empirical Study

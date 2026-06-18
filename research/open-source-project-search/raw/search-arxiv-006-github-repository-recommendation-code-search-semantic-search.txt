@@ -1,0 +1,20 @@
+	A Case-Driven Multi-Agent Framework for E-Commerce Search Relevance
+	Health System Scale Semantic Search Across Unstructured Clinical Notes
+	Scalable Dynamic Embedding Size Search for Streaming Recommendation
+	Joint Modeling and Optimization of Search and Recommendation
+	What Users See - Structures in Search Engine Results Pages
+	Semi-Supervised Record Linkage for Construction of Large-Scale Sociocentric Networks in Resource-limited Settings: An application to the SEARCH Study in Rural Uganda and Kenya
+	SynerGen: Contextualized Generative Recommender for Unified Search and Recommendation
+	Search Arena: Analyzing Search-Augmented LLMs
+	Personalized Search Via Neural Contextual Semantic Relevance Ranking
+	Semantically-Enriched Search Engine for Geoportals: A Case Study with ArcGIS Online
+	Tree Search for Language Model Agents
+	Pink for Princesses, Blue for Superheroes: The Need to Examine Gender Stereotypes in Kid's Products in Search and Recommendations
+	Continuous Input Embedding Size Search For Recommender Systems
+	Search Based Code Generation for Machine Learning Programs
+10.1145/3366423.3380145	paper2repo: GitHub Repository Recommendation for Academic Papers
+	Dep-Search: Learning Dependency-Aware Reasoning Traces with Persistent Memory
+	MMSearch-R1: Incentivizing LMMs to Search
+	ManuSearch: Democratizing Deep Search in Large Language Models with a Transparent and Open Multi-Agent Framework
+	Making Differentiable Architecture Search less local
+	Problems with the use of Web search engines to find results in foreign languages

@@ -1,0 +1,20 @@
+10.1145/3366423.3380145	paper2repo: GitHub Repository Recommendation for Academic Papers
+10.1109/forge66646.2025.00009	RepoHyper: Search-Expand-Refine on Semantic Graphs for Repository-Level Code Completion
+10.48550/arxiv.2408.11058	LLM Agents Improve Semantic Code Search
+10.1109/ocit66168.2025.11400280	RAG-Enhanced Semantic Code Retrieval & AI-Enhanced Communication for Developer Efficiency
+10.23939/ujit2025.01.16	CODE SEARCH METHOD IN PUBLIC REPOSITORIES USING WMC METRIC
+10.1109/smc58881.2025.11342508	A Multi-Structural Graph Fusion Approach for Code Representation in Code Search
+10.65563/jeaai.v1i7.65	SemanticForge: Repository-Level Code Generation through Semantic Knowledge Graphs and Constraint Satisfaction
+10.18653/v1/2025.findings-emnlp.1147	Beyond Function-Level Search: Repository-Aware Dual-Encoder Code Retrieval with Adversarial Verification
+10.1145/3705328.3759300	Semantic IDs for Joint Generative Search and Recommendation
+10.1101/2025.10.01.25335910	PubChat: Evaluating the Effectiveness of Semantic Search in Establishing Drug Safety in Children
+10.1109/cisat62382.2024.10695201	A study of code search technology
+10.1145/3674805.3686664	Unsupervised and Supervised Co-learning for Comment-based Codebase Refining and its Application in Code Search
+10.24017/science.2025.2.9	Fine-tuning SBERT for Semantic Research Title Classification in Trilingual University Repository
+10.3390/app16010012	Early-Stage Graph Fusion with Refined Graph Neural Networks for Semantic Code Search
+10.1145/3711896.3736979	Generating Long Semantic IDs in Parallel for Recommendation
+10.1109/tse.2022.3233901	GraphSearchNet: Enhancing GNNs via Capturing Global Dependencies for Semantic Code Search
+10.1287/ijoc.2022.0333.cd	Code and Data Repository Product Redesign and Innovation Based on Online Reviews: A Multistage Combined Search Method
+10.1080/09540091.2022.2072471	KG4Py: A toolkit for generating Python knowledge graph and code semantic search
+10.1109/icws60048.2023.00064	Personalized Repository Recommendation Service for Developers with Multi-modal Features Learning
+10.38124/ijisrt/24apr1132	Code Companion: A Cross Repository Intelligent Code Assistant

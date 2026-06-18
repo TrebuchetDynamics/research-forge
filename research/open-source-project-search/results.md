@@ -1,0 +1,254 @@
+# Search batch results
+
+Deduped records: 237
+
+- Towards reproducible computational drug discovery — DOI: `10.1186/s13321-020-0408-x`
+- Materials Cloud, a platform for open computational science — DOI: `10.1038/s41597-020-00637-5`
+- CARD 2020: antibiotic resistome surveillance with the comprehensive antibiotic resistance database — DOI: `10.1093/nar/gkz935`
+- Demystifying MLOps and Presenting a Recipe for the Selection of Open-Source Tools — DOI: `10.3390/app11198861`
+- Open-Source Machine Learning in Computational Chemistry — DOI: `10.1021/acs.jcim.3c00643`
+- A ground-truth dataset and classification model for detecting bots in GitHub issue and PR comments — DOI: `10.1016/j.jss.2021.110911`
+- CARD 2023: expanded curation, support for machine learning, and resistome prediction at the Comprehensive Antibiotic Resistance Database — DOI: `10.1093/nar/gkac920`
+- Twinbase: Open-Source Server Software for the Digital Twin Web — DOI: `10.1109/access.2021.3119487`
+- Open science saves lives: lessons from the COVID-19 pandemic — DOI: `10.1186/s12874-021-01304-y`
+- Don't Disturb Me: Challenges of Interacting with SoftwareBots on Open Source Software Projects — DOI: `10.1145/3476042`
+- Machine Learning Operations (MLOps): Overview, Definition, and Architecture — DOI: `10.1109/access.2023.3262138`
+- Software Heritage: Why and How to Preserve Software Source Code
+- Free and open source software for computational chemistry education — DOI: `10.1002/wcms.1610`
+- Machine Learning for Materials Scientists: An Introductory Guide toward Best Practices — DOI: `10.1021/acs.chemmater.0c01907`
+- Open and Reproducible Research on Open Science Framework — DOI: `10.1002/cpet.32`
+- Developer-Centric Knowledge Mining from Large Open-Source Software Repositories (CROSSMINER) — DOI: `10.1007/978-3-319-74730-9_33`
+- Ethics in the mining of software repositories — DOI: `10.1007/s10664-021-10057-7`
+- The Abinitproject: Impact, environment and recent developments — DOI: `10.1016/j.cpc.2019.107042`
+- Extracting Knowledge from Data through Catalysis Informatics — DOI: `10.1021/acscatal.8b01708`
+- What the Fork? Finding and Analyzing Malware in GitHub Forks — DOI: `10.14722/madweb.2022.23001`
+- Analyzing the Effects of CI/CD on Open Source Repositories in GitHub and GitLab
+- Open Source Software Development Challenges: A Systematic Literature Review on GitHub — DOI: `10.4018/ijossp.2020100101`
+- The Araucaria Project: Improving the cosmic distance scale
+- Classifying Issues in Open-source GitHub Repositories
+- OSS PESTO: An Open Source Software Project Evaluation and Selection TOol
+- GitHub open source project recommendation system
+- BotHawk: An Approach for Bots Detection in Open Source Software Projects
+- Predicting the Popularity of GitHub Repositories — DOI: `10.1145/2972958.2972966`
+- Revealing the value of Repository Centrality in lifespan prediction of Open Source Software Projects
+- The Empirical Commit Frequency Distribution of Open Source Projects — DOI: `10.1145/2491055.2491073`
+- GitHub Repository Complexity Leads to Diminished Web Archive Availability — DOI: `10.1145/3717867.3717920`
+- Generating GitHub Repository Descriptions: A Comparison of Manual and Automated Approaches
+- When the Open Source Community Meets COVID-19: Characterizing COVID-19 themed GitHub Repositories
+- The ATLAS Pixel Project
+- What's in a GitHub Star? Understanding Repository Starring Practices in a Social Coding Platform — DOI: `10.1016/j.jss.2018.09.016`
+- SeCQC: An open-source program code for the numerical Search for the classical Capacity of Quantum Channels
+- Towards Understanding the Open Source Interest in Gender-Related GitHub Projects
+- Is this GitHub Project Maintained? Measuring the Level of Maintenance Activity of Open-Source Projects — DOI: `10.1016/j.infsof.2020.106274`
+- How to characterize the health of an Open Source Software project? A snowball literature review of an emerging practice
+- Automatically Categorising GitHub Repositories by Application Domain
+- On the Use of GitHub Actions in Software Development Repositories — DOI: `10.1109/icsme55016.2022.00029`
+- State of the Field in Multi-Omics Research: From Computational Needs to Data Mining and Sharing — DOI: `10.3389/fgene.2020.610798`
+- Analyzing the State of Static Analysis: A Large-Scale Evaluation in Open Source Software — DOI: `10.1109/saner.2016.105`
+- Integrating GitLab metrics into coursework consultation sessions in a software engineering course — DOI: `10.1016/j.jss.2020.110613`
+- How participative is open source hardware? Insights from online repository mining — DOI: `10.1017/dsj.2018.15`
+- Insights into software development approaches: mining Q &amp;A repositories — DOI: `10.1007/s10664-023-10417-5`
+- A Roadmap for HEP Software and Computing R&amp;D for the 2020s — DOI: `10.1007/s41781-018-0018-8`
+- How developers engage with static analysis tools in different contexts — DOI: `10.1007/s10664-019-09750-5`
+- Analyzing the Effects of CI/CD on Open Source Repositories in GitHub and GitLab — DOI: `10.48550/arxiv.2303.16393`
+- Not just for programmers: How <scp>GitHub</scp> can accelerate collaborative and reproducible research in ecology and evolution — DOI: `10.1111/2041-210x.14108`
+- Mining DEV for social and technical insights about software development — DOI: `10.1109/msr52588.2021.00053`
+- Thirteen Years of Mining Software Repositories (MSR) Conference - What is the Bibliography Data Telling Us?
+- PHANTOM: Curating GitHub for engineered software projects using time-series clustering — DOI: `10.1007/s10664-020-09825-8`
+- Teaching Mining Software Repositories
+- Sampling Projects in GitHub for MSR Studies
+- Mining Software Repair Models for Reasoning on the Search Space of Automated Program Fixing — DOI: `10.1007/s10664-013-9282-8`
+- Mining for Process Improvements: Analyzing Software Repositories in Agile Retrospectives — DOI: `10.1145/3387940.3392168`
+- Quality Classifiers for Open Source Software Repositories
+- We Don't Need Another Hero? The Impact of "Heroes" on Software Development — DOI: `10.1145/3183519.3183549`
+- An Analytical Approach for Project Managers in Effective Defect Management in Software Process — DOI: `10.1109/mysec.2011.6140669`
+- On the Creation of Representative Samples of Software Repositories
+- More Effective Software Repository Mining
+- The SmartSHARK Ecosystem for Software Repository Mining
+- What's in a GitHub Repository? -- A Software Documentation Perspective
+- To Type or Not to Type? A Systematic Comparison of the Software Quality of JavaScript and TypeScript Applications on GitHub — DOI: `10.1145/3524842.3528454`
+- Should I Get Involved? On the Privacy Perils of Mining Software Repositories for Research Participants
+- Recommender Systems for Software Project Managers — DOI: `10.1145/3463274.3463951`
+- GraphRepo: Fast Exploration in Software Repository Mining
+- Big Code Search: A Bibliography — DOI: `10.1145/3604905`
+- An efficient and scalable search engine for models — DOI: `10.1007/s10270-021-00960-4`
+- Computational strategies to combat COVID-19: useful tools to accelerate SARS-CoV-2 and coronavirus research — DOI: `10.1093/bib/bbaa232`
+- World of Code: Enabling a Research Workflow for Mining and Analyzing the Universe of Open Source VCS data — DOI: `10.48550/arxiv.2010.16196`
+- Scientific workflows for computational reproducibility in the life sciences: Status, challenges and opportunities — DOI: `10.1016/j.future.2017.01.012`
+- A Review on Vibe Coding: Fundamentals, State-of-the-art, Challenges and Future Directions — DOI: `10.36227/techrxiv.174681482.27435614/v1`
+- A how-to guide for code sharing in biology — DOI: `10.1371/journal.pbio.3002815`
+- New software tools, databases, and resources in metabolomics: updates from 2020 — DOI: `10.1007/s11306-021-01796-1`
+- How does fake news spread? Understanding pathways of disinformation spread through APIs — DOI: `10.1002/poi3.268`
+- A Pragmatic Decision Making Mechanism for Reusable Source Code Snippets Retrieval using Semantic Approach — DOI: `10.1109/ibcast54850.2022.9990499`
+- A code search engine for software ecosystems
+- Augmenting and structuring user queries to support efficient free-form code search — DOI: `10.1007/s10664-017-9544-y`
+- CodeMatcher: a tool for large-scale code search based on query semantics matching — DOI: `10.1145/3540250.3558935`
+- Mining Source Code for Component Reuse — DOI: `10.1007/978-3-030-30106-4_6`
+- AutoSurveyGPT: GPT-Enhanced Automated Literature Discovery — DOI: `10.1145/3586182.3616648`
+- A Centralised Cloud Services Repository (CCSR) Framework for Optimal Cloud Service Advertisement Discovery From Heterogenous Web Portals — DOI: `10.1109/access.2019.2939543`
+- DiffSearch: A Scalable and Precise Search Engine for Code Changes — DOI: `10.1109/tse.2022.3218859`
+- ORFanID: A web-based search engine for the discovery and identification of orphan and taxonomically restricted genes — DOI: `10.1371/journal.pone.0291260`
+- A Centralised Cloud Services Repository (CCSR) Framework for Optimal Cloud Service Advertisement Discovery From Heterogenous Web Portals
+- Why and how developers fork what from whom in GitHub — DOI: `10.1007/s10664-016-9436-6`
+- HERMES: an open-source mining tool for open-access literature — DOI: `10.1093/bioadv/vbag058`
+- Mapping the Repository Landscape: Harnessing Similarity with RepoSim and RepoSnipy — DOI: `10.1109/e-science58273.2023.10254873`
+- RefactoCNN-system: an optimized deep learning framework for predicting software refactoring opportunities using CNN-based code analysis. — DOI: `10.1038/s41598-026-56911-w`
+- OptunaHub: A Platform for Black-Box Optimization — DOI: `10.48550/arxiv.2510.02798`
+- An Exploratory Study of Analyzing JavaScript Online Code Clones — DOI: `10.1145/3524610.3528390`
+- reLAISS: A Python Package for Flexible Similarity Searches of Supernovae and Their Host Galaxies — DOI: `10.3847/2515-5172/adef56`
+- Search Engine — DOI: `10.1007/978-1-4614-6170-8_100906`
+- OnetoMap Meta-Data: Healthcare Analytics Through Research — DOI: `10.7759/cureus.66763`
+- LabelGit: A Dataset for Software Repositories Classification using Attributed Dependency Graphs
+- Estimating defectiveness of source code: A predictive model using GitHub content
+- What Users See - Structures in Search Engine Results Pages
+- Comment Generation for Source Code: State of the Art, Challenges and Opportunities
+- JaCoText: A Pretrained Model for Java Code-Text Generation
+- SCC: Automatic Classification of Code Snippets
+- Toward Interactive Optimization of Source Code Differences: An Empirical Study of Its Performance — DOI: `10.1109/scam63643.2024.00030`
+- pynucastro: an interface to nuclear reaction rates and code generator for reaction network equations — DOI: `10.21105/joss.00588`
+- GitHub Copilot: the perfect Code compLeeter?
+- Problems with the use of Web search engines to find results in foreign languages
+- Recommending Insightful Comments for Source Code using Crowdsourced Knowledge — DOI: `10.1109/scam.2015.7335404`
+- AlchemistCoder: Harmonizing and Eliciting Code Capability by Hindsight Tuning on Multi-source Data
+- Use of Source Code Similarity Metrics in Software Defect Prediction
+- DeepCode: Open Agentic Coding
+- On the Use of Context in Recommending Exception Handling Code Examples — DOI: `10.1109/scam.2014.15`
+- The Retrieval Effectiveness of Web Search Engines: Considering Results Descriptions
+- Source Forager: A Search Engine for Similar Source Code
+- Measuring the effectiveness of code review comments in GitHub repositories: A machine learning approach
+- Repository-level Code Search with Neural Retrieval Methods
+- Bioconductor: open software development for computational biology and bioinformatics — DOI: `10.1186/gb-2004-5-10-r80`
+- The PRIDE database resources in 2022: a hub for mass spectrometry-based proteomics evidences — DOI: `10.1093/nar/gkab1038`
+- ImmPort, toward repurposing of open access immunological assay data for translational and clinical research — DOI: `10.1038/sdata.2018.15`
+- Introducing the FAIR Principles for research software — DOI: `10.1038/s41597-022-01710-x`
+- SoK: Taxonomy of Attacks on Open-Source Software Supply Chains — DOI: `10.1109/sp46215.2023.10179304`
+- The PRIDE database at 20 years: 2025 update — DOI: `10.1093/nar/gkae1011`
+- myExperiment: a repository and social network for the sharing of bioinformatics workflows — DOI: `10.1093/nar/gkq429`
+- A Survey on the Internet of Things (IoT) Forensics: Challenges, Approaches, and Open Issues — DOI: `10.1109/comst.2019.2962586`
+- Packaging research artefacts with RO-Crate — DOI: `10.3233/ds-210053`
+- The Hyper Suprime-Cam software pipeline — DOI: `10.1093/pasj/psx080`
+- Software citation principles — DOI: `10.7717/peerj-cs.86`
+- Tools and data services registry: a community effort to document bioinformatics resources — DOI: `10.1093/nar/gkv1116`
+- A proteomics sample metadata representation for multiomics integration and big data analysis — DOI: `10.1038/s41467-021-26111-3`
+- Database resources of the National Center for Biotechnology Information — DOI: `10.1093/nar/gkv1290`
+- Towards Measuring Supply Chain Attacks on Package Managers for Interpreted Languages — DOI: `10.14722/ndss.2021.23055`
+- If We Share Data, Will Anyone Use Them? Data Sharing and Reuse in the Long Tail of Science and Technology — DOI: `10.1371/journal.pone.0067332`
+- Recommendations for the packaging and containerizing of bioinformatics software — DOI: `10.12688/f1000research.15140.2`
+- Pan-cancer analysis of whole genomes — DOI: `10.1038/s41586-020-1969-6`
+- SpecpolFlow: a new software package for spectropolarimetry using Python — DOI: `10.21105/joss.07891`
+- An Overview and Catalogue of Dependency Challenges in Open Source Software Package Registries
+- A Proposal for the Measurement and Documentation of Research Software Sustainability in Interactive Metadata Repositories
+- IVOA Recommendation: Resource Metadata for the Virtual Observatory Version 1.12 — DOI: `10.5479/ads/bib/2007ivoa.spec.0302h`
+- Nine Best Practices for Research Software Registries and Repositories: A Concise Guide
+- On the Diversity of Software Package Popularity Metrics: An Empirical Study of npm
+- Text and Team: What Article Metadata Characteristics Drive Citations in Software Engineering? — DOI: `10.1145/3530019.3530022`
+- Fruitbat: A Python Package for Estimating Redshifts of Fast Radio Bursts — DOI: `10.21105/joss.01399`
+- SPM 25: open source neuroimaging analysis software — DOI: `10.21105/joss.08103`
+- Bug shallowness in open-source, Macintosh software
+- Open source software in quantum computing — DOI: `10.1371/journal.pone.0208561`
+- EngMeta -- Metadata for Computational Engineering — DOI: `10.1504/ijmso.2020.107792`
+- A Manually-Curated Dataset of Fixes to Vulnerabilities of Open-Source Software — DOI: `10.1109/msr.2019.0006`
+- Coopetition of software firms in Open source software ecosystems — DOI: `10.1007/978-3-319-69191-6_10`
+- deeplenstronomy: A dataset simulation package for strong gravitational lensing — DOI: `10.21105/joss.02854`
+- Signing in Four Public Software Package Registries: Quantity, Quality, and Influencing Factors
+- Myths and Realities about Online Forums in Open Source Software Development: An Empirical Study — DOI: `10.2174/1875107x01004010052`
+- Open Babel: An open chemical toolbox — DOI: `10.1186/1758-2946-3-33`
+- OpenMS: a flexible open-source software platform for mass spectrometry data analysis — DOI: `10.1038/nmeth.3959`
+- Identifying supply risks by mapping the cobalt supply chain — DOI: `10.1016/j.resconrec.2020.104743`
+- Vulnerable open source dependencies — DOI: `10.1145/3239235.3268920`
+- The ITensor Software Library for Tensor Network Calculations — DOI: `10.21468/scipostphyscodeb.4`
+- Generative artificial intelligence in supply chain and operations management: a capability-based framework for analysis and implementation — DOI: `10.1080/00207543.2024.2309309`
+- Blockchain for AI: Review and Open Research Challenges — DOI: `10.1109/access.2018.2890507`
+- Blockchain Implementations and Use Cases for Supply Chains-A Survey — DOI: `10.1109/access.2020.2964880`
+- Version models for software configuration management — DOI: `10.1145/280277.280280`
+- A Review on Large Language Models: Architectures, Applications, Taxonomies, Open Issues and Challenges — DOI: `10.1109/access.2024.3365742`
+- Artificial intelligence in supply chain management: A systematic literature review of empirical studies and research directions — DOI: `10.1016/j.compind.2024.104132`
+- Graph Neural Network for Traffic Forecasting: The Research Progress — DOI: `10.3390/ijgi12030100`
+- Managing Technical Debt in Software Engineering (Dagstuhl Seminar 16162) — DOI: `10.4230/dagrep.6.4.110`
+- UManSysProp v1.0: an online and open-source facility for molecular property prediction and atmospheric aerosol calculations — DOI: `10.5194/gmd-9-899-2016`
+- Risk assessment in supply chains: a state-of-the-art review of methodologies and their applications — DOI: `10.1007/s10479-022-04700-9`
+- Formal methods — DOI: `10.1145/1592434.1592436`
+- Business model metrics: an open repository — DOI: `10.1007/s10257-015-0286-3`
+- SBOM-BASED VULNERABILITY PRIORITIZATION IN SOFTWARE SUPPLY CHAIN USING MACHINE LEARNING — DOI: `10.17721/ait.2025.2.04`
+- A Landscape Study of Open-Source Tools for Software Bill of Materials (SBOM) and Supply Chain Security — DOI: `10.1109/svm66695.2025.00010`
+- Finding Software Supply Chain Attack Paths with Logical Attack Graphs — DOI: `10.48550/arxiv.2511.11171`
+- Secure Software Supply Chain Engineering and Dependency Risk Management — DOI: `10.2139/ssrn.6623318`
+- Software Supply Chain Risk Assessment Framework — DOI: `10.1109/icse-companion58688.2023.00068`
+- Research on Open-Source Component Homology Analysis Model Based on Graph Neural Network and Attention Mechanism — DOI: `10.1109/iccece61317.2024.10504200`
+- Pinning Is Futile: You Need More Than Local Dependency Versioning to Defend against Supply Chain Attacks — DOI: `10.1145/3715728`
+- Backstabber’s Knife Collection: A Review of Open Source Software Supply Chain Attacks — DOI: `10.1007/978-3-030-52683-2_2`
+- DEPTEX: Organization-First, Open Source Dependency Risk Monitoring
+- Macaron: A Logic-based Framework for Software Supply Chain Security Assurance — DOI: `10.1145/3605770.3625213`
+- A Landscape Study of Open Source and Proprietary Tools for Software Bill of Materials (SBOM) — DOI: `10.48550/arxiv.2402.11151`
+- Estimating the Attack Surface from Residual Vulnerabilities in Open Source Software Supply Chain — DOI: `10.1109/qrs54544.2021.00060`
+- Large Scale Study of Orphan Vulnerabilities in the Software Supply Chain — DOI: `10.1145/3617555.3617872`
+- SOFTWARE SUPPLY CHAIN SECURITY: CONCEPTS, MODELS AND CHALLENGES OF TODAY — DOI: `10.31474/1996-1588-2026-1-42-102-108`
+- Securing CI/CD against Software Supply-Chain Attacks Using DevSecOps + AI Anomaly Detection — DOI: `10.54660/.jfmr.2023.4.1.614-621`
+- The State of Software Diversity in the Software Supply Chain of Ethereum Clients
+- Towards a comprehensive framework for verifying open-source software license compatibility — DOI: `10.1007/s10664-025-10751-w`
+- Unlocking Reproducibility: Automating re-Build Process for Open-Source Software — DOI: `10.1109/ase63991.2025.00280`
+- Distributed Temporal Graph Learning with Provenance for APT Detection in Supply Chains — DOI: `10.1109/icdcsw63273.2025.00071`
+- VFArchē: A Dual-Mode Framework for Locating Vulnerable Functions in Open-Source Software — DOI: `10.48550/arxiv.2506.18050`
+- SoK: Analysis of Software Supply Chain Security by Establishing Secure Design Properties
+- Exploitation of material consolidation trade-offs in multi-tier complex supply networks — DOI: `10.1016/j.sca.2023.100050`
+- Maven-Hijack: Software Supply Chain Attack Exploiting Packaging Order
+- GoSurf: Identifying Software Supply Chain Attack Vectors in Go — DOI: `10.1145/3689944.3696166`
+- Dislocated Accountabilities in the AI Supply Chain: Modularity and Developers' Notions of Responsibility — DOI: `10.1177/20539517231177620`
+- Backstabber's Knife Collection: A Review of Open Source Software Supply Chain Attacks
+- Dirty-Waters: Detecting Software Supply Chain Smells — DOI: `10.1145/3696630.3728578`
+- Towards Predicting Multi-Vulnerability Attack Chains in Software Supply Chains from Software Bill of Materials Graphs
+- Cascaded Vulnerability Attacks in Software Supply Chains
+- Taxonomy of Attacks on Open-Source Software Supply Chains — DOI: `10.1109/sp46215.2023.00010`
+- Software Supply Chain Security of Web3 — DOI: `10.1109/apsec66846.2025.00012`
+- Synergizing LLMs and Knowledge Graphs: A Novel Approach to Software Repository-Related Question Answering
+- Reproducible Builds: Increasing the Integrity of Software Supply Chains — DOI: `10.1109/ms.2021.3073045`
+- paper2repo: GitHub Repository Recommendation for Academic Papers — DOI: `10.1145/3366423.3380145`
+- RepoHyper: Search-Expand-Refine on Semantic Graphs for Repository-Level Code Completion — DOI: `10.1109/forge66646.2025.00009`
+- LLM Agents Improve Semantic Code Search — DOI: `10.48550/arxiv.2408.11058`
+- RAG-Enhanced Semantic Code Retrieval & AI-Enhanced Communication for Developer Efficiency — DOI: `10.1109/ocit66168.2025.11400280`
+- CODE SEARCH METHOD IN PUBLIC REPOSITORIES USING WMC METRIC — DOI: `10.23939/ujit2025.01.16`
+- A Multi-Structural Graph Fusion Approach for Code Representation in Code Search — DOI: `10.1109/smc58881.2025.11342508`
+- SemanticForge: Repository-Level Code Generation through Semantic Knowledge Graphs and Constraint Satisfaction — DOI: `10.65563/jeaai.v1i7.65`
+- Beyond Function-Level Search: Repository-Aware Dual-Encoder Code Retrieval with Adversarial Verification — DOI: `10.18653/v1/2025.findings-emnlp.1147`
+- Semantic IDs for Joint Generative Search and Recommendation — DOI: `10.1145/3705328.3759300`
+- PubChat: Evaluating the Effectiveness of Semantic Search in Establishing Drug Safety in Children — DOI: `10.1101/2025.10.01.25335910`
+- A study of code search technology — DOI: `10.1109/cisat62382.2024.10695201`
+- Unsupervised and Supervised Co-learning for Comment-based Codebase Refining and its Application in Code Search — DOI: `10.1145/3674805.3686664`
+- Fine-tuning SBERT for Semantic Research Title Classification in Trilingual University Repository — DOI: `10.24017/science.2025.2.9`
+- Early-Stage Graph Fusion with Refined Graph Neural Networks for Semantic Code Search — DOI: `10.3390/app16010012`
+- Generating Long Semantic IDs in Parallel for Recommendation — DOI: `10.1145/3711896.3736979`
+- GraphSearchNet: Enhancing GNNs via Capturing Global Dependencies for Semantic Code Search — DOI: `10.1109/tse.2022.3233901`
+- Code and Data Repository Product Redesign and Innovation Based on Online Reviews: A Multistage Combined Search Method — DOI: `10.1287/ijoc.2022.0333.cd`
+- KG4Py: A toolkit for generating Python knowledge graph and code semantic search — DOI: `10.1080/09540091.2022.2072471`
+- Personalized Repository Recommendation Service for Developers with Multi-modal Features Learning — DOI: `10.1109/icws60048.2023.00064`
+- Code Companion: A Cross Repository Intelligent Code Assistant — DOI: `10.38124/ijisrt/24apr1132`
+- A Case-Driven Multi-Agent Framework for E-Commerce Search Relevance
+- Health System Scale Semantic Search Across Unstructured Clinical Notes
+- Scalable Dynamic Embedding Size Search for Streaming Recommendation
+- Joint Modeling and Optimization of Search and Recommendation
+- Semi-Supervised Record Linkage for Construction of Large-Scale Sociocentric Networks in Resource-limited Settings: An application to the SEARCH Study in Rural Uganda and Kenya
+- SynerGen: Contextualized Generative Recommender for Unified Search and Recommendation
+- Search Arena: Analyzing Search-Augmented LLMs
+- Personalized Search Via Neural Contextual Semantic Relevance Ranking
+- Semantically-Enriched Search Engine for Geoportals: A Case Study with ArcGIS Online
+- Tree Search for Language Model Agents
+- Pink for Princesses, Blue for Superheroes: The Need to Examine Gender Stereotypes in Kid's Products in Search and Recommendations
+- Continuous Input Embedding Size Search For Recommender Systems
+- Search Based Code Generation for Machine Learning Programs
+- Dep-Search: Learning Dependency-Aware Reasoning Traces with Persistent Memory
+- MMSearch-R1: Incentivizing LMMs to Search
+- ManuSearch: Democratizing Deep Search in Large Language Models with a Transparent and Open Multi-Agent Framework
+- Making Differentiable Architecture Search less local
+
+## Failures
+
+- crossref / "open source project search GitHub GitLab repository discovery": paper title is required
+- semantic-scholar / "open source project search GitHub GitLab repository discovery": source HTTP status 429
+- crossref / "software repository mining project search GitHub GitLab": paper title is required
+- semantic-scholar / "software repository mining project search GitHub GitLab": source HTTP status 429
+- crossref / "code search engines GitHub GitLab source code repository discovery": paper title is required
+- crossref / "open source software discovery package registry repository metadata": paper title is required
+- semantic-scholar / "open source software discovery package registry repository metadata": source HTTP status 429
+- crossref / "software supply chain repository search dependency graph open source": paper title is required
+- openalex / "GitHub repository recommendation code search semantic search": paper title is required
+- crossref / "GitHub repository recommendation code search semantic search": paper title is required

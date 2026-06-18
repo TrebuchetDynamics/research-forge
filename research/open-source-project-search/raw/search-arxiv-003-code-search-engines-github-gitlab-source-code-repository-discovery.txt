@@ -1,0 +1,20 @@
+	Estimating defectiveness of source code: A predictive model using GitHub content
+	Analyzing the Effects of CI/CD on Open Source Repositories in GitHub and GitLab
+	What Users See - Structures in Search Engine Results Pages
+	SeCQC: An open-source program code for the numerical Search for the classical Capacity of Quantum Channels
+	Comment Generation for Source Code: State of the Art, Challenges and Opportunities
+	JaCoText: A Pretrained Model for Java Code-Text Generation
+	SCC: Automatic Classification of Code Snippets
+10.1109/scam63643.2024.00030	Toward Interactive Optimization of Source Code Differences: An Empirical Study of Its Performance
+10.21105/joss.00588	pynucastro: an interface to nuclear reaction rates and code generator for reaction network equations
+	GitHub Copilot: the perfect Code compLeeter?
+	Problems with the use of Web search engines to find results in foreign languages
+10.1109/scam.2015.7335404	Recommending Insightful Comments for Source Code using Crowdsourced Knowledge
+	AlchemistCoder: Harmonizing and Eliciting Code Capability by Hindsight Tuning on Multi-source Data
+	Use of Source Code Similarity Metrics in Software Defect Prediction
+	DeepCode: Open Agentic Coding
+10.1109/scam.2014.15	On the Use of Context in Recommending Exception Handling Code Examples
+	The Retrieval Effectiveness of Web Search Engines: Considering Results Descriptions
+	Source Forager: A Search Engine for Similar Source Code
+	Measuring the effectiveness of code review comments in GitHub repositories: A machine learning approach
+	Repository-level Code Search with Neural Retrieval Methods

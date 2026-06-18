@@ -1,0 +1,20 @@
+10.17721/ait.2025.2.04	SBOM-BASED VULNERABILITY PRIORITIZATION IN SOFTWARE SUPPLY CHAIN USING MACHINE LEARNING
+10.1109/svm66695.2025.00010	A Landscape Study of Open-Source Tools for Software Bill of Materials (SBOM) and Supply Chain Security
+10.48550/arxiv.2511.11171	Finding Software Supply Chain Attack Paths with Logical Attack Graphs
+10.2139/ssrn.6623318	Secure Software Supply Chain Engineering and Dependency Risk Management
+10.1109/icse-companion58688.2023.00068	Software Supply Chain Risk Assessment Framework
+10.1109/iccece61317.2024.10504200	Research on Open-Source Component Homology Analysis Model Based on Graph Neural Network and Attention Mechanism
+10.1145/3715728	Pinning Is Futile: You Need More Than Local Dependency Versioning to Defend against Supply Chain Attacks
+10.1007/978-3-030-52683-2_2	Backstabber’s Knife Collection: A Review of Open Source Software Supply Chain Attacks
+	DEPTEX: Organization-First, Open Source Dependency Risk Monitoring
+10.1145/3605770.3625213	Macaron: A Logic-based Framework for Software Supply Chain Security Assurance
+10.48550/arxiv.2402.11151	A Landscape Study of Open Source and Proprietary Tools for Software Bill of Materials (SBOM)
+10.1109/qrs54544.2021.00060	Estimating the Attack Surface from Residual Vulnerabilities in Open Source Software Supply Chain
+10.1145/3617555.3617872	Large Scale Study of Orphan Vulnerabilities in the Software Supply Chain
+10.31474/1996-1588-2026-1-42-102-108	SOFTWARE SUPPLY CHAIN SECURITY: CONCEPTS, MODELS AND CHALLENGES OF TODAY
+10.54660/.jfmr.2023.4.1.614-621	Securing CI/CD against Software Supply-Chain Attacks Using DevSecOps + AI Anomaly Detection
+	The State of Software Diversity in the Software Supply Chain of Ethereum Clients
+10.1007/s10664-025-10751-w	Towards a comprehensive framework for verifying open-source software license compatibility
+10.1109/ase63991.2025.00280	Unlocking Reproducibility: Automating re-Build Process for Open-Source Software
+10.1109/icdcsw63273.2025.00071	Distributed Temporal Graph Learning with Provenance for APT Detection in Supply Chains
+10.48550/arxiv.2506.18050	VFArchē: A Dual-Mode Framework for Locating Vulnerable Functions in Open-Source Software

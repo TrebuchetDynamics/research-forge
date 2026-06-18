@@ -1,0 +1,20 @@
+	Analyzing the Effects of CI/CD on Open Source Repositories in GitHub and GitLab
+10.4018/ijossp.2020100101	Open Source Software Development Challenges: A Systematic Literature Review on GitHub
+	The Araucaria Project: Improving the cosmic distance scale
+	Classifying Issues in Open-source GitHub Repositories
+	OSS PESTO: An Open Source Software Project Evaluation and Selection TOol
+	GitHub open source project recommendation system
+	BotHawk: An Approach for Bots Detection in Open Source Software Projects
+10.1145/2972958.2972966	Predicting the Popularity of GitHub Repositories
+	Revealing the value of Repository Centrality in lifespan prediction of Open Source Software Projects
+10.1145/2491055.2491073	The Empirical Commit Frequency Distribution of Open Source Projects
+10.1145/3717867.3717920	GitHub Repository Complexity Leads to Diminished Web Archive Availability
+	Generating GitHub Repository Descriptions: A Comparison of Manual and Automated Approaches
+	When the Open Source Community Meets COVID-19: Characterizing COVID-19 themed GitHub Repositories
+	The ATLAS Pixel Project
+10.1016/j.jss.2018.09.016	What's in a GitHub Star? Understanding Repository Starring Practices in a Social Coding Platform
+	SeCQC: An open-source program code for the numerical Search for the classical Capacity of Quantum Channels
+	Towards Understanding the Open Source Interest in Gender-Related GitHub Projects
+10.1016/j.infsof.2020.106274	Is this GitHub Project Maintained? Measuring the Level of Maintenance Activity of Open-Source Projects
+	How to characterize the health of an Open Source Software project? A snowball literature review of an emerging practice
+	Automatically Categorising GitHub Repositories by Application Domain

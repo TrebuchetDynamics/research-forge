@@ -1,0 +1,20 @@
+10.1186/1758-2946-3-33	Open Babel: An open chemical toolbox
+10.1038/nmeth.3959	OpenMS: a flexible open-source software platform for mass spectrometry data analysis
+10.1109/sp46215.2023.10179304	SoK: Taxonomy of Attacks on Open-Source Software Supply Chains
+10.1016/j.resconrec.2020.104743	Identifying supply risks by mapping the cobalt supply chain
+10.1145/3239235.3268920	Vulnerable open source dependencies
+10.21468/scipostphyscodeb.4	The ITensor Software Library for Tensor Network Calculations
+10.1080/00207543.2024.2309309	Generative artificial intelligence in supply chain and operations management: a capability-based framework for analysis and implementation
+10.1109/access.2018.2890507	Blockchain for AI: Review and Open Research Challenges
+10.1109/access.2020.2964880	Blockchain Implementations and Use Cases for Supply Chains-A Survey
+10.1145/280277.280280	Version models for software configuration management
+10.14722/ndss.2021.23055	Towards Measuring Supply Chain Attacks on Package Managers for Interpreted Languages
+10.1109/access.2024.3365742	A Review on Large Language Models: Architectures, Applications, Taxonomies, Open Issues and Challenges
+10.7717/peerj-cs.86	Software citation principles
+10.1016/j.compind.2024.104132	Artificial intelligence in supply chain management: A systematic literature review of empirical studies and research directions
+10.3390/ijgi12030100	Graph Neural Network for Traffic Forecasting: The Research Progress
+10.4230/dagrep.6.4.110	Managing Technical Debt in Software Engineering (Dagstuhl Seminar 16162)
+10.5194/gmd-9-899-2016	UManSysProp v1.0: an online and open-source facility for molecular property prediction and atmospheric aerosol calculations
+10.1007/s10479-022-04700-9	Risk assessment in supply chains: a state-of-the-art review of methodologies and their applications
+10.1145/1592434.1592436	Formal methods
+10.1007/s10257-015-0286-3	Business model metrics: an open repository

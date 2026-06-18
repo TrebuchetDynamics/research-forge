@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "1",
+  "createdAt": "2026-06-18T20:11:55Z",
+  "queries": [
+    "open source project search GitHub GitLab repository discovery",
+    "software repository mining project search GitHub GitLab",
+    "code search engines GitHub GitLab source code repository discovery",
+    "open source software discovery package registry repository metadata",
+    "software supply chain repository search dependency graph open source",
+    "GitHub repository recommendation code search semantic search"
+  ],
+  "sources": [
+    "openalex",
+    "crossref",
+    "semantic-scholar",
+    "arxiv"
+  ],
+  "limit": 20,
+  "results": 280,
+  "deduped": 237,
+  "failures": 10
+}

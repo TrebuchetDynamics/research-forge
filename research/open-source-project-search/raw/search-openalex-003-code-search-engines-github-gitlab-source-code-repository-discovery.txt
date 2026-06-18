@@ -1,0 +1,20 @@
+	Software Heritage: Why and How to Preserve Software Source Code
+10.1186/s13321-020-0408-x	Towards reproducible computational drug discovery
+10.1093/nar/gkz935	CARD 2020: antibiotic resistome surveillance with the comprehensive antibiotic resistance database
+10.1038/s41597-020-00637-5	Materials Cloud, a platform for open computational science
+10.1145/3604905	Big Code Search: A Bibliography
+10.1007/s10270-021-00960-4	An efficient and scalable search engine for models
+10.1021/acs.jcim.3c00643	Open-Source Machine Learning in Computational Chemistry
+10.1093/bib/bbaa232	Computational strategies to combat COVID-19: useful tools to accelerate SARS-CoV-2 and coronavirus research
+10.1109/access.2021.3119487	Twinbase: Open-Source Server Software for the Digital Twin Web
+10.1021/acscatal.8b01708	Extracting Knowledge from Data through Catalysis Informatics
+10.3390/app11198861	Demystifying MLOps and Presenting a Recipe for the Selection of Open-Source Tools
+10.14722/madweb.2022.23001	What the Fork? Finding and Analyzing Malware in GitHub Forks
+10.1002/wcms.1610	Free and open source software for computational chemistry education
+10.48550/arxiv.2010.16196	World of Code: Enabling a Research Workflow for Mining and Analyzing the Universe of Open Source VCS data
+10.3389/fgene.2020.610798	State of the Field in Multi-Omics Research: From Computational Needs to Data Mining and Sharing
+10.1016/j.future.2017.01.012	Scientific workflows for computational reproducibility in the life sciences: Status, challenges and opportunities
+10.36227/techrxiv.174681482.27435614/v1	A Review on Vibe Coding: Fundamentals, State-of-the-art, Challenges and Future Directions
+10.1371/journal.pbio.3002815	A how-to guide for code sharing in biology
+10.1007/s11306-021-01796-1	New software tools, databases, and resources in metabolomics: updates from 2020
+10.1002/poi3.268	How does fake news spread? Understanding pathways of disinformation spread through APIs

@@ -1,0 +1,20 @@
+10.1186/gb-2004-5-10-r80	Bioconductor: open software development for computational biology and bioinformatics
+10.1093/nar/gkab1038	The PRIDE database resources in 2022: a hub for mass spectrometry-based proteomics evidences
+10.1038/sdata.2018.15	ImmPort, toward repurposing of open access immunological assay data for translational and clinical research
+10.1038/s41597-022-01710-x	Introducing the FAIR Principles for research software
+10.1109/sp46215.2023.10179304	SoK: Taxonomy of Attacks on Open-Source Software Supply Chains
+10.1093/nar/gkae1011	The PRIDE database at 20 years: 2025 update
+10.1093/nar/gkq429	myExperiment: a repository and social network for the sharing of bioinformatics workflows
+10.1109/comst.2019.2962586	A Survey on the Internet of Things (IoT) Forensics: Challenges, Approaches, and Open Issues
+10.3233/ds-210053	Packaging research artefacts with RO-Crate
+10.1093/pasj/psx080	The Hyper Suprime-Cam software pipeline
+10.7717/peerj-cs.86	Software citation principles
+10.1038/s41597-020-00637-5	Materials Cloud, a platform for open computational science
+10.1093/nar/gkv1116	Tools and data services registry: a community effort to document bioinformatics resources
+10.1109/access.2021.3119487	Twinbase: Open-Source Server Software for the Digital Twin Web
+10.1038/s41467-021-26111-3	A proteomics sample metadata representation for multiomics integration and big data analysis
+10.1093/nar/gkv1290	Database resources of the National Center for Biotechnology Information
+10.14722/ndss.2021.23055	Towards Measuring Supply Chain Attacks on Package Managers for Interpreted Languages
+10.1371/journal.pone.0067332	If We Share Data, Will Anyone Use Them? Data Sharing and Reuse in the Long Tail of Science and Technology
+10.12688/f1000research.15140.2	Recommendations for the packaging and containerizing of bioinformatics software
+10.1038/s41586-020-1969-6	Pan-cancer analysis of whole genomes

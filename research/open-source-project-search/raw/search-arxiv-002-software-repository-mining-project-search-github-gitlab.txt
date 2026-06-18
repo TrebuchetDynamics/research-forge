@@ -1,0 +1,20 @@
+	Analyzing the Effects of CI/CD on Open Source Repositories in GitHub and GitLab
+	Thirteen Years of Mining Software Repositories (MSR) Conference - What is the Bibliography Data Telling Us?
+10.1007/s10664-020-09825-8	PHANTOM: Curating GitHub for engineered software projects using time-series clustering
+	Teaching Mining Software Repositories
+10.1109/msr52588.2021.00053	Mining DEV for social and technical insights about software development
+	Sampling Projects in GitHub for MSR Studies
+10.1016/j.jss.2018.09.016	What's in a GitHub Star? Understanding Repository Starring Practices in a Social Coding Platform
+10.1007/s10664-013-9282-8	Mining Software Repair Models for Reasoning on the Search Space of Automated Program Fixing
+10.1145/3387940.3392168	Mining for Process Improvements: Analyzing Software Repositories in Agile Retrospectives
+	Quality Classifiers for Open Source Software Repositories
+10.1145/3183519.3183549	We Don't Need Another Hero? The Impact of "Heroes" on Software Development
+10.1109/mysec.2011.6140669	An Analytical Approach for Project Managers in Effective Defect Management in Software Process
+	On the Creation of Representative Samples of Software Repositories
+	More Effective Software Repository Mining
+	The SmartSHARK Ecosystem for Software Repository Mining
+	What's in a GitHub Repository? -- A Software Documentation Perspective
+10.1145/3524842.3528454	To Type or Not to Type? A Systematic Comparison of the Software Quality of JavaScript and TypeScript Applications on GitHub
+	Should I Get Involved? On the Privacy Perils of Mining Software Repositories for Research Participants
+10.1145/3463274.3463951	Recommender Systems for Software Project Managers
+	GraphRepo: Fast Exploration in Software Repository Mining

@@ -1,0 +1,20 @@
+10.1186/s13321-020-0408-x	Towards reproducible computational drug discovery
+10.1038/s41597-020-00637-5	Materials Cloud, a platform for open computational science
+10.1093/nar/gkz935	CARD 2020: antibiotic resistome surveillance with the comprehensive antibiotic resistance database
+10.3390/app11198861	Demystifying MLOps and Presenting a Recipe for the Selection of Open-Source Tools
+10.1021/acs.jcim.3c00643	Open-Source Machine Learning in Computational Chemistry
+10.1016/j.jss.2021.110911	A ground-truth dataset and classification model for detecting bots in GitHub issue and PR comments
+10.1093/nar/gkac920	CARD 2023: expanded curation, support for machine learning, and resistome prediction at the Comprehensive Antibiotic Resistance Database
+10.1109/access.2021.3119487	Twinbase: Open-Source Server Software for the Digital Twin Web
+10.1186/s12874-021-01304-y	Open science saves lives: lessons from the COVID-19 pandemic
+10.1145/3476042	Don't Disturb Me: Challenges of Interacting with SoftwareBots on Open Source Software Projects
+10.1109/access.2023.3262138	Machine Learning Operations (MLOps): Overview, Definition, and Architecture
+	Software Heritage: Why and How to Preserve Software Source Code
+10.1002/wcms.1610	Free and open source software for computational chemistry education
+10.1021/acs.chemmater.0c01907	Machine Learning for Materials Scientists: An Introductory Guide toward Best Practices
+10.1002/cpet.32	Open and Reproducible Research on Open Science Framework
+10.1007/978-3-319-74730-9_33	Developer-Centric Knowledge Mining from Large Open-Source Software Repositories (CROSSMINER)
+10.1007/s10664-021-10057-7	Ethics in the mining of software repositories
+10.1016/j.cpc.2019.107042	The Abinitproject: Impact, environment and recent developments
+10.1021/acscatal.8b01708	Extracting Knowledge from Data through Catalysis Informatics
+10.14722/madweb.2022.23001	What the Fork? Finding and Analyzing Malware in GitHub Forks
