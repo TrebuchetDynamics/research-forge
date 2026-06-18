@@ -54,12 +54,20 @@ func (c OSFConnector) Search(ctx context.Context, query SourceQuery) (SourceResp
 		if attrs.License.Name != "" {
 			license = strings.TrimSpace(attrs.License.Name)
 		}
+		osfID := strings.TrimSpace(item.ID)
+		// OSF preprints without a DOI use their OSF ID via CrossrefID so that
+		// library.PaperRecords passes identifier validation.
+		crossrefID := ""
+		if doi == "" {
+			crossrefID = osfID
+		}
 		records = append(records, SourceRecord{
 			Source:   "osf",
-			SourceID: strings.TrimSpace(item.ID),
+			SourceID: osfID,
 			Title:    strings.TrimSpace(attrs.Title),
 			Identifiers: Identifiers{
-				DOI: doi,
+				DOI:        doi,
+				CrossrefID: crossrefID,
 			},
 			Year:       year,
 			Abstract:   strings.TrimSpace(attrs.Description),

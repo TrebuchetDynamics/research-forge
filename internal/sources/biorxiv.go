@@ -131,11 +131,11 @@ type bioRxivResponse struct {
 }
 
 type bioRxivMessage struct {
-	Status   string `json:"status"`
-	Total    int    `json:"total"`
-	Cursor   string `json:"cursor"`
-	Count    int    `json:"count"`
-	Interval string `json:"interval"`
+	Status   string          `json:"status"`
+	Total    json.RawMessage `json:"total"`    // API returns int or string depending on version
+	Cursor   json.RawMessage `json:"cursor"`   // same
+	Count    json.RawMessage `json:"count"`    // same
+	Interval string          `json:"interval"`
 }
 
 type bioRxivPreprint struct {
