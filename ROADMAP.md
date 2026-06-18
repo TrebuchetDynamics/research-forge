@@ -129,6 +129,16 @@ Three connectors covering NASA technical reports, open access books, and the Eur
 | DOAB (Directory of Open Access Books) | `doab` | DSpace REST API; flat key-value metadata; DOI from `oapen.identifier.doi` |
 | OpenAIRE Research Graph | `openaire` | EU Open Science infrastructure; polymorphic JSON (single/array) for title and pid fields |
 
+### Wave 6 — OA publisher, government science, and research data (shipped 2026-06-18)
+
+Three connectors covering the PLOS OA publisher, US DOE technical literature, and a research data repository.
+
+| Source | `--source` flag | Notes |
+|---|---|---|
+| PLOS (Public Library of Science) | `plos` | Solr API; `id` field is the DOI; abstract is a JSON array; all records are OA |
+| OSTI.gov (US DOE Office of Scientific and Technical Information) | `osti` | Response is a bare JSON array; CrossrefID fallback `osti:<id>` when no DOI |
+| Dryad Research Data Repository | `dryad` | HAL-style JSON under `_embedded.stash:datasets`; HTML abstract stripped; all CC0 |
+
 ### Intentionally out of scope
 
 | Source | Reason |
