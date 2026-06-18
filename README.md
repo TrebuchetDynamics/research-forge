@@ -131,4 +131,8 @@ An [agent skill](./skills/research-forge/SKILL.md) is included for LLM agents ru
 
 ## License
 
-MIT License, Copyright (c) 2026 Trebuchet Dynamics. See [LICENSE](LICENSE).
+MIT License (SPDX: `MIT`), Copyright (c) 2026 Trebuchet Dynamics. See [LICENSE](LICENSE). The license was selected by the repository owner on 2026-06-13; the decision record is tracked in issue #1 and [docs/owner-decisions.md](docs/owner-decisions.md).
+
+## Decision-gated scope
+
+Local web GUI delivery targets Go + HTMX; the implementation tracker is recorded in issue #2 and ADR 0006. Run `make todo-audit` to verify that remaining unchecked `TODO.md` items are covered by owner decisions, `make todo-completion-audit` for the closeout prompt-to-artifact checklist, or `make decisions-markdown` for a review-friendly blocker table.

@@ -74,7 +74,7 @@ func (c CrossrefConnector) Search(ctx context.Context, query SourceQuery) (Sourc
 		limit = 25
 	}
 	params := map[string]string{"query": query.Terms, "rows": strconv.Itoa(limit)}
-	if filter := strings.TrimSpace(query.Filters["filter"]); filter != "" {
+	if filter := translateCrossrefFilter(query.Filters["filter"]); filter != "" {
 		params["filter"] = filter
 	}
 	body, err := c.http.Get(ctx, "/works", params)
@@ -263,6 +263,64 @@ func crossrefYear(work crossrefWork) int {
 		}
 	}
 	return 0
+}
+
+// translateCrossrefFilter converts a comma-separated filter string that may
+// contain OpenAlex-format tokens into Crossref-native filter syntax. Tokens
+// with no Crossref equivalent are dropped rather than forwarded, which prevents
+// HTTP 400 responses when CLI flags like --from-year or --preset are used with
+// --source crossref.
+func translateCrossrefFilter(raw string) string {
+	raw = strings.TrimSpace(raw)
+	if raw == "" {
+		return ""
+	}
+	var out []string
+	for _, token := range strings.Split(raw, ",") {
+		token = strings.TrimSpace(token)
+		if token == "" {
+			continue
+		}
+		// OpenAlex: from_publication_date:YYYY-MM-DD → Crossref: from-pub-date:YYYY
+		if after, ok := strings.CutPrefix(token, "from_publication_date:"); ok {
+			if year := dateYear(after); year != "" {
+				out = append(out, "from-pub-date:"+year)
+			}
+			continue
+		}
+		// OpenAlex: to_publication_date:YYYY-MM-DD → Crossref: until-pub-date:YYYY
+		if after, ok := strings.CutPrefix(token, "to_publication_date:"); ok {
+			if year := dateYear(after); year != "" {
+				out = append(out, "until-pub-date:"+year)
+			}
+			continue
+		}
+		// OpenAlex type:article → Crossref type:journal-article
+		if token == "type:article" {
+			out = append(out, "type:journal-article")
+			continue
+		}
+		// Drop OpenAlex-only filters that have no Crossref equivalent.
+		if strings.HasPrefix(token, "is_oa:") ||
+			strings.HasPrefix(token, "open_access.") ||
+			strings.HasPrefix(token, "concepts.id:") {
+			continue
+		}
+		// Pass native Crossref filter tokens through unchanged.
+		out = append(out, token)
+	}
+	return strings.Join(out, ",")
+}
+
+// dateYear extracts the four-digit year from YYYY-MM-DD or plain YYYY.
+func dateYear(s string) string {
+	if len(s) >= 4 {
+		year := s[:4]
+		if _, err := strconv.Atoi(year); err == nil {
+			return year
+		}
+	}
+	return ""
 }
 
 func stripSimpleJATS(value string) string {

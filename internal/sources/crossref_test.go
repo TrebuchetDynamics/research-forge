@@ -57,6 +57,70 @@ func TestCrossrefConnectorReferencesExtractsReferenceList(t *testing.T) {
 	}
 }
 
+func TestCrossrefConnectorSearchTranslatesOpenAlexFilters(t *testing.T) {
+	cases := []struct {
+		name            string
+		inputFilter     string
+		wantFilterParam string
+	}{
+		{
+			name:            "from_publication_date translates to from-pub-date year",
+			inputFilter:     "from_publication_date:2020-01-01",
+			wantFilterParam: "from-pub-date:2020",
+		},
+		{
+			name:            "to_publication_date translates to until-pub-date year",
+			inputFilter:     "to_publication_date:2022-12-31",
+			wantFilterParam: "until-pub-date:2022",
+		},
+		{
+			name:            "OpenAlex type:article maps to journal-article",
+			inputFilter:     "type:article",
+			wantFilterParam: "type:journal-article",
+		},
+		{
+			name:            "is_oa filter is dropped (no Crossref equivalent)",
+			inputFilter:     "is_oa:true",
+			wantFilterParam: "",
+		},
+		{
+			name:            "open_access.is_oa filter is dropped",
+			inputFilter:     "open_access.is_oa:true",
+			wantFilterParam: "",
+		},
+		{
+			name:            "concepts.id filter is dropped",
+			inputFilter:     "concepts.id:C41008148",
+			wantFilterParam: "",
+		},
+		{
+			name:            "mixed OpenAlex preset translates supported and drops unsupported",
+			inputFilter:     "from_publication_date:2020-01-01,type:article,is_oa:true",
+			wantFilterParam: "from-pub-date:2020,type:journal-article",
+		},
+		{
+			name:            "native Crossref filter is passed through unchanged",
+			wantFilterParam: "from-pub-date:2019,type:journal-article",
+			inputFilter:     "from-pub-date:2019,type:journal-article",
+		},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				if got := r.URL.Query().Get("filter"); got != tc.wantFilterParam {
+					t.Errorf("filter param = %q, want %q", got, tc.wantFilterParam)
+				}
+				_, _ = w.Write([]byte(`{"message":{"items":[]}}`))
+			}))
+			defer server.Close()
+			_, _ = NewCrossrefConnector(NewHTTPClient(HTTPClientOptions{BaseURL: server.URL})).Search(
+				context.Background(),
+				SourceQuery{Terms: "test", Limit: 1, Filters: map[string]string{"filter": tc.inputFilter}},
+			)
+		})
+	}
+}
+
 func TestCrossrefConnectorSearchPassesWorksFilters(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != "/works" || r.URL.Query().Get("filter") != "from-pub-date:2020,type:journal-article" {
