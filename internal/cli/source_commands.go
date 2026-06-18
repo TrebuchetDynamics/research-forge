@@ -709,7 +709,7 @@ func executeSearchStats(args []string, stdout, stderr io.Writer, opts globalOpti
 	}
 	if opts.JSON {
 		return writeJSON(stdout, 0, map[string]any{
-			"sources":       sourceCounts,
+			"sources":         sourceCounts,
 			"totalUniqueDOIs": len(uniqueDOIs),
 		})
 	}
