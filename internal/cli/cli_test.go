@@ -1121,6 +1121,35 @@ func TestExecuteSearchSemanticScholarRetriesRateLimit(t *testing.T) {
 	}
 }
 
+func TestExecuteSearchSemanticScholarDefaultMaxRetriesIsThree(t *testing.T) {
+	// Default should be 3 retries (4 total attempts) so the exponential backoff
+	// reaches 4s, giving S2's burst limit time to reset on heavy multi-query scans.
+	requests := 0
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		requests++
+		if requests <= 3 {
+			http.Error(w, "quota", http.StatusTooManyRequests)
+			return
+		}
+		_, _ = w.Write([]byte(`{"data":[{"paperId":"s2-fourth","title":"Succeeded on fourth attempt"}]}`))
+	}))
+	defer server.Close()
+	t.Setenv("RFORGE_SEMANTIC_SCHOLAR_URL", server.URL)
+
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+	code := Execute([]string{"--json", "search", "--source", "semantic-scholar", "--query", "burst retry", "--limit", "1"}, stdout, stderr)
+	if code != 0 {
+		t.Fatalf("exit code = %d, stderr = %s (requests=%d)", code, stderr.String(), requests)
+	}
+	if requests != 4 {
+		t.Fatalf("requests = %d, want 4 (default 3 retries)", requests)
+	}
+	if !strings.Contains(stdout.String(), "s2-fourth") {
+		t.Fatalf("stdout = %s", stdout.String())
+	}
+}
+
 func TestExecuteSearchRelatedOpenAlex(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != "/works/W1" {

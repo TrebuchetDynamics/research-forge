@@ -996,7 +996,7 @@ func defaultSemanticScholarHTTPClient() sources.HTTPClient {
 		BaseURL:    baseURL,
 		UserAgent:  "ResearchForge/dev",
 		Timeout:    10 * time.Second,
-		MaxRetries: envInt("RFORGE_SEMANTIC_SCHOLAR_MAX_RETRIES", 2),
+		MaxRetries: envInt("RFORGE_SEMANTIC_SCHOLAR_MAX_RETRIES", 3),
 	}
 	if apiKey := strings.TrimSpace(os.Getenv("RFORGE_SEMANTIC_SCHOLAR_API_KEY")); apiKey != "" {
 		options.Headers = map[string]string{"x-api-key": apiKey}
