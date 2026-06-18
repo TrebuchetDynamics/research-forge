@@ -1,4 +1,9 @@
-.PHONY: fmt test vet vuln check inventory-check decisions decisions-markdown decision-issues todo-audit todo-completion-audit license-decision-live-audit license-decision-approval-gate build-release checksums sbom install-smoke web-gui-smoke source-live-smoke biomedical-live-smoke semantic-scholar-live-smoke external-e2e-artificial-photosynthesis
+.PHONY: fmt test vet vuln check inventory-check decisions decisions-markdown decision-issues todo-audit todo-completion-audit license-decision-live-audit license-decision-approval-gate build-release checksums sbom install install-smoke web-gui-smoke source-live-smoke biomedical-live-smoke semantic-scholar-live-smoke external-e2e-artificial-photosynthesis
+
+VERSION ?= $(shell git describe --tags --always --dirty 2>/dev/null || echo dev)
+COMMIT  ?= $(shell git rev-parse --short HEAD 2>/dev/null || echo unknown)
+DATE    ?= $(shell date -u +%Y-%m-%dT%H:%M:%SZ)
+LDFLAGS  = -X main.version=$(VERSION) -X main.commit=$(COMMIT) -X main.date=$(DATE)
 
 fmt:
 	gofmt -w cmd internal
@@ -40,11 +45,14 @@ license-decision-live-audit:
 license-decision-approval-gate:
 	@$(MAKE) -s license-decision-live-audit | grep -q '"approved":true' || (echo "license decision approval missing: issue #1 must report approved:true" >&2; exit 1)
 
+install:
+	go install -ldflags "$(LDFLAGS)" ./cmd/rforge
+
 build-release:
 	mkdir -p dist
-	GOOS=linux GOARCH=amd64 go build -o dist/rforge-linux-amd64 ./cmd/rforge
-	GOOS=darwin GOARCH=amd64 go build -o dist/rforge-darwin-amd64 ./cmd/rforge
-	GOOS=windows GOARCH=amd64 go build -o dist/rforge-windows-amd64.exe ./cmd/rforge
+	GOOS=linux   GOARCH=amd64 go build -ldflags "$(LDFLAGS)" -o dist/rforge-linux-amd64       ./cmd/rforge
+	GOOS=darwin  GOARCH=amd64 go build -ldflags "$(LDFLAGS)" -o dist/rforge-darwin-amd64      ./cmd/rforge
+	GOOS=windows GOARCH=amd64 go build -ldflags "$(LDFLAGS)" -o dist/rforge-windows-amd64.exe ./cmd/rforge
 
 checksums:
 	sha256sum dist/* > dist/checksums.txt
