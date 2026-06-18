@@ -134,7 +134,7 @@ ResearchForge does not replace scientific judgment with AI answers. It gives res
 
 LLM outputs that enter the workflow are stored with provenance like any other step. The system is model-agnostic and works without any LLM connection.
 
-ResearchForge includes repo-local agent skills under [`skills/`](./skills/) — see [`SKILLS.md`](./SKILLS.md) for the index. The usage skill at [`skills/research-forge/SKILL.md`](./skills/research-forge/SKILL.md) teaches an agent how to run `rforge`, preserve provenance, and follow the review workflow.
+ResearchForge includes repo-local agent skills under [`skills/`](./skills/) — see [`SKILLS.md`](./SKILLS.md) for the index. The usage skill at [`skills/rforge/SKILL.md`](./skills/rforge/SKILL.md) teaches an agent how to run `rforge`, preserve provenance, and follow the review workflow.
 
 ### Agent skill
 

@@ -1,11 +1,11 @@
 ---
 name: rforge
-description: Research any academic topic using rforge. Installs rforge automatically if not available. Covers literature search, systematic review, evidence extraction, and reproducible review packages.
+description: Research any academic topic using rforge. Installs rforge automatically if not available. Covers literature search, OSS study, systematic review, evidence extraction, meta-analysis, and reproducible review packages.
 ---
 
 # rforge — Academic Research Skill
 
-Use this skill to search, collect, and synthesize academic literature using the `rforge` CLI. Works in any project — rforge is a standalone tool, not a dependency of your codebase.
+Use this skill to conduct academic research with the `rforge` CLI. Works in any project — rforge is a standalone tool, not a dependency of your codebase.
 
 ## Step 0 — Check and install rforge
 
@@ -23,63 +23,227 @@ If Go is not installed, tell the user:
 
 > rforge requires Go 1.22+. Install from https://go.dev/dl/ then run the above command.
 
-## Step 1 — Create a project workspace
+---
+
+## Quick-start routing
+
+| Goal | Entry phase |
+|---|---|
+| Find papers on a topic | Phase 2 — Discover |
+| Study an open-source project | Phase 2 — Discover (OSS) |
+| Full systematic review | Phase 1 → 2 → 3 → 4 → 5 |
+| Save research notes or artifacts to a folder | Phase 5 — Save |
+
+---
+
+## Phase 1 — Setup
+
+### Option A: ResearchForge project folder (preferred)
 
 ```sh
 rforge project create <path> --title "<title>"
+rforge project inspect <path>
 ```
 
-All subsequent commands use `--project <path>`. The project folder holds all outputs, sources, and the provenance log.
+Creates `<path>/manifest.json`, `<path>/data/`, and `<path>/research-forge.lock.json`. All subsequent commands use `--project <path>`.
 
-## Step 2 — Search and import papers
-
-```sh
-rforge search import \
-  --source openalex \
-  --query "<query>" \
-  --pages 3 \
-  --project <path>
-```
-
-Available sources: `openalex`, `arxiv`, `crossref`, `semantic-scholar`, `pubmed`, `europepmc`, `nasa-ads`, `doaj`, `core`
-
-Run once per source to pull from multiple databases. Use `--from-year YYYY` to narrow the date range.
-
-## Step 3 — Deduplicate
+For a guided end-to-end workflow:
 
 ```sh
-rforge duplicate report --project <path>
-```
-
-## Step 4 — Build a report
-
-```sh
-rforge report build --out <path>/report.md
-rforge --project <path> ui          # open local web UI to browse results
-```
-
-## Guided systematic review workflow
-
-For a full reproducible review package (question → search → screen → extract → analyze → package):
-
-```sh
-rforge forge init --project <path> --question "<research question>"
+rforge forge init --project <path> --question "<research question>" \
+  [--sources openalex,semantic-scholar --tools grobid,qdrant]
 rforge forge status --project <path>
 rforge forge next --project <path>
 ```
 
-`rforge forge` walks through decision gates for protocol, sources, acquisition, parsing, screening, evidence extraction, analysis, and final packaging. Each gate requires human approval before proceeding.
+### Option B: Arbitrary folder
 
-To audit and replay a finished package:
+Use any directory. Save all outputs there with consistent naming:
 
-```sh
-rforge package audit <path>
-rforge package replay <path>
+```
+<folder>/search-results-<timestamp>.json
+<folder>/papers.json
+<folder>/provenance.json    ← always required (see Provenance rules)
+<folder>/report.md
 ```
 
-## Provenance (always required)
+When `rforge` is not available or not initialized, write outputs directly to these files and populate `provenance.json` manually before finishing.
 
-Before finishing any run, ensure `<path>/provenance.json` exists and is populated:
+---
+
+## Phase 2 — Discover
+
+### Academic literature search
+
+```sh
+rforge search --source openalex|arxiv|crossref|semantic-scholar|europepmc|pubmed \
+  --query "<query>" \
+  [--from-year YYYY] [--to-year YYYY] \
+  [--preset systematic-review|open-access-review|recent-domain-map] \
+  [--open-access true|false]
+
+rforge search import --source openalex --query "<query>" --pages N \
+  [--project <path>]
+
+rforge citations expand --source semantic-scholar --paper <id> \
+  --direction references|citations|both --depth N --out <graph.json>
+
+rforge search related --source openalex --paper <work-id>
+```
+
+Draft a source-specific query plan (requires human review before use):
+
+```sh
+rforge protocol compile --type pico|peco|spider|freeform --question "<text>"
+rforge protocol plan-sources --type pico --question "<text>"
+rforge protocol capabilities
+```
+
+### OSS study
+
+```sh
+rforge oss add <owner/repo>
+rforge oss scan --topic "<topic>"
+rforge oss report --area <area>
+rforge oss inventory-check <manifest.json>
+```
+
+### Fallback when rforge is not available
+
+Save raw API responses to `<folder>/search-results-<timestamp>.json` and record the query, source, and timestamp in `provenance.json`.
+
+---
+
+## Phase 3 — Collect
+
+```sh
+rforge import bibtex|ris|csl-json|zotero-rdf|json|csv <file>
+rforge library list
+rforge library refresh-doi <doi>
+rforge duplicate report [--source <source>]
+rforge duplicate merge | split
+```
+
+### Full-text acquisition — irreversible gate: surface to human
+
+Review candidates first; do not download without explicit human approval:
+
+```sh
+rforge --project <path> oa candidates
+rforge --project <path> oa acquisition-queue
+```
+
+Stop and surface this to the human invoker before proceeding:
+
+```
+Acquisition requires human approval. Please run:
+  rforge --project <path> oa acquisition-approve <id> \
+    --reviewer <name> --reason "<text>"
+Waiting — do not download any files until approval is confirmed.
+```
+
+Same pattern for privacy review:
+
+```sh
+rforge --project <path> oa privacy-review
+# Stop and surface before running:
+# rforge --project <path> oa privacy-approve --reviewer <name> --reason "<text>"
+```
+
+---
+
+## Phase 4 — Analyze
+
+### Screening
+
+```sh
+rforge screen configure
+rforge screen queue --out <queue.csv>
+rforge screen decide
+rforge screen progress
+rforge prisma counts
+```
+
+### Evidence extraction
+
+```sh
+rforge extraction schema add
+rforge extract add|suggest
+rforge evidence grid --out <grid.json>
+rforge evidence gaps --out <report.json>
+```
+
+### Document parsing
+
+```sh
+rforge parse --paper <id> --parser grobid --pdf <file>
+rforge parse quality --parsed <parsed.json> --out <report.json>
+rforge parse arbitrate --left <parsed.json> --right <parsed.json> --out <report.json>
+```
+
+### Meta-analysis
+
+```sh
+rforge analysis prepare [--effect smd|log-odds-ratio|risk-ratio|mean-difference]
+rforge analysis run
+rforge analysis sensitivity
+rforge analysis publication-bias --method egger|begg
+```
+
+### LLM-generated suggestions — do not self-accept
+
+Commands like `entity-suggest`, `citation-suggest`, and `risk-bias-suggest` produce queues with `suggested` status. Do **not** call the corresponding `-review` commands to self-accept them. Surface the queue path to the human invoker:
+
+```
+LLM suggestions written to <queue.json>.
+Human review required before acceptance:
+  rforge evidence entity-review --queue <queue.json> --id <id> \
+    --decision accepted|rejected|corrected --reviewer <name> --out <queue.json>
+```
+
+### Report
+
+```sh
+rforge report build --out <report.md> [--parsed <parsed.json>]
+rforge report trace --claims <queue.json> --analysis <run.json> --out <trace.json>
+rforge report audit
+```
+
+---
+
+## Phase 5 — Save
+
+### ResearchForge project package
+
+```sh
+rforge package create --out <dir> --created-by <name> --question "<text>"
+rforge package archive <dir> <archive.tar>
+rforge package audit <dir>
+```
+
+Do not package before `oa privacy-review` has been human-approved.
+
+### Export to arbitrary folder
+
+```sh
+rforge export json|csv|bibtex|ris|csl-json <file>
+rforge report build --out <folder>/report.md
+```
+
+Or write directly without `rforge`:
+
+```
+<folder>/report.md
+<folder>/papers.json
+<folder>/provenance.json
+<folder>/search-results-<timestamp>.json
+```
+
+---
+
+## Provenance rules (always required)
+
+Every run must write or append `provenance.json` before finishing:
 
 ```json
 {
@@ -87,16 +251,20 @@ Before finishing any run, ensure `<path>/provenance.json` exists and is populate
   "sources": ["openalex", "arxiv"],
   "queries": ["<exact query string used>"],
   "timestamp": "<ISO 8601>",
-  "rforge_version": "<output of rforge --version>",
+  "rforge_version": "<from rforge --version, or 'not available'>",
   "outputs": ["<relative paths to all saved files>"]
 }
 ```
 
-A run without `provenance.json` is incomplete. If `rforge` is not available, write this file manually.
+If `rforge` is not available, write this file manually. A run without `provenance.json` is incomplete.
 
-## Rules
+---
 
-- Do not self-accept acquisition approval, privacy review, or LLM-suggestion queues. Surface them to the human and stop.
-- Do not hit live scholarly APIs inside automated tests or CI.
-- Do not package or distribute a review before privacy review is human-approved.
-- A run without `provenance.json` is incomplete.
+## Red lines
+
+- Do not self-approve acquisition, privacy, or LLM-suggestion gates — surface them to the human invoker and stop.
+- Do not hit live scholarly APIs inside any automated test or CI context.
+- Do not finish a run without writing `provenance.json`.
+- Do not accept LLM-generated suggestions without surfacing the queue to the human invoker first.
+- Do not package or distribute reports before `oa privacy-review` is human-approved.
+- Do not store copyrighted full text without an acquisition-approved record.
