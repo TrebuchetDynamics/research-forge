@@ -781,7 +781,7 @@ func TestExecuteSearchBatchWritesDedupedSweepArtifacts(t *testing.T) {
 
 func TestSearchBatchSourcePresetsExpandAllAndNamedGroups(t *testing.T) {
 	all := splitSearchBatchList("all")
-	for _, want := range []string{"openalex", "crossref", "semantic-scholar", "arxiv", "pubmed", "chemrxiv", "datacite", "biostudies", "clinicaltrials"} {
+	for _, want := range []string{"openalex", "crossref", "semantic-scholar", "arxiv", "pubmed", "chemrxiv", "datacite", "biostudies", "clinicaltrials", "nasa-ads"} {
 		if !containsString(all, want) {
 			t.Fatalf("all preset missing %q: %#v", want, all)
 		}
@@ -805,6 +805,30 @@ func containsString(values []string, want string) bool {
 		}
 	}
 	return false
+}
+
+func TestExecuteSearchNASAADSAliasWithMockHTTP(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/v1/search/query" {
+			t.Fatalf("path = %q", r.URL.Path)
+		}
+		if r.URL.Query().Get("q") != "exoplanet" {
+			t.Fatalf("q = %q", r.URL.Query().Get("q"))
+		}
+		_, _ = w.Write([]byte(`{"response":{"docs":[{"bibcode":"2024ApJ...123A...1B","title":["ADS fixture title"],"doi":["10.1000/ADS"],"year":"2024","pub":"Astrophysical Journal"}]}}`))
+	}))
+	defer server.Close()
+	t.Setenv("RFORGE_ADS_URL", server.URL)
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+
+	code := Execute([]string{"--json", "search", "--source", "nasa-ads", "--query", "exoplanet", "--limit", "1"}, stdout, stderr)
+	if code != 0 {
+		t.Fatalf("exit code = %d, stderr = %s", code, stderr.String())
+	}
+	if !strings.Contains(stdout.String(), "ADS fixture title") {
+		t.Fatalf("stdout missing ADS result: %s", stdout.String())
+	}
 }
 
 func TestExecuteSearchOpenAlexJSONWithMockHTTP(t *testing.T) {

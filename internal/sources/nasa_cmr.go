@@ -108,15 +108,15 @@ type nasaCMRResponse struct {
 }
 
 type nasaCMREntry struct {
-	ID            string       `json:"id"`
-	Title         string       `json:"title"`
-	Summary       string       `json:"summary"`
-	Updated       string       `json:"updated"`
-	ArchiveCenter string       `json:"archive_center"`
-	Organizations []string     `json:"organizations"`
-	ShortName     string       `json:"short_name"`
-	VersionID     string       `json:"version_id"`
-	OnlineAccess  bool         `json:"online_access_flag"`
+	ID            string        `json:"id"`
+	Title         string        `json:"title"`
+	Summary       string        `json:"summary"`
+	Updated       string        `json:"updated"`
+	ArchiveCenter string        `json:"archive_center"`
+	Organizations []string      `json:"organizations"`
+	ShortName     string        `json:"short_name"`
+	VersionID     string        `json:"version_id"`
+	OnlineAccess  bool          `json:"online_access_flag"`
 	Links         []nasaCMRLink `json:"links"`
 }
 

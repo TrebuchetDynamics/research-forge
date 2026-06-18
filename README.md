@@ -51,7 +51,7 @@ See [ROADMAP.md](./ROADMAP.md) for milestone sequencing.
 go install github.com/TrebuchetDynamics/research-forge/cmd/rforge@latest
 ```
 
-Requires Go 1.22+. Run `rforge --version` to verify.
+Requires Go 1.22+. Run `rforge version` to verify.
 
 To build from source:
 
