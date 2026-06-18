@@ -736,7 +736,7 @@ func searchFileSource(filename string) string {
 	// search-semantic-scholar-some-query.txt → semantic-scholar
 	name := strings.TrimPrefix(filename, "search-")
 	name = strings.TrimSuffix(name, ".txt")
-	knownSources := []string{"semantic-scholar", "inspire-hep", "openalex", "crossref", "clinicaltrials", "arxiv", "pubmed", "europepmc", "biorxiv", "core", "doaj", "nasa-ads", "zenodo", "dblp", "osf"}
+	knownSources := []string{"semantic-scholar", "inspire-hep", "openalex", "crossref", "clinicaltrials", "arxiv", "pubmed", "europepmc", "biorxiv", "core", "doaj", "nasa-ads", "zenodo", "dblp", "osf", "opencitations", "base", "zbmath", "figshare", "datacite", "lens"}
 	for _, src := range knownSources {
 		if strings.HasPrefix(name, src) {
 			return src
@@ -1000,6 +1000,53 @@ func searchConnector(source string) (sourceConnector, bool) {
 			baseURL = "https://api.biorxiv.org"
 		}
 		return sources.NewBioRxivConnector(defaultSourceHTTPClient(baseURL)), true
+	case "opencitations":
+		baseURL := os.Getenv("RFORGE_OPENCITATIONS_URL")
+		if baseURL == "" {
+			baseURL = "https://opencitations.net"
+		}
+		return sources.NewOpenCitationsConnector(defaultSourceHTTPClient(baseURL)), true
+	case "base":
+		baseURL := os.Getenv("RFORGE_BASE_URL")
+		if baseURL == "" {
+			baseURL = "https://api.base-search.net"
+		}
+		return sources.NewBASEConnector(defaultSourceHTTPClient(baseURL)), true
+	case "zbmath":
+		baseURL := os.Getenv("RFORGE_ZBMATH_URL")
+		if baseURL == "" {
+			baseURL = "https://api.zbmath.org"
+		}
+		return sources.NewZbMATHConnector(defaultSourceHTTPClient(baseURL)), true
+	case "figshare":
+		baseURL := os.Getenv("RFORGE_FIGSHARE_URL")
+		if baseURL == "" {
+			baseURL = "https://api.figshare.com"
+		}
+		return sources.NewFigshareConnector(defaultSourceHTTPClient(baseURL)), true
+	case "datacite":
+		baseURL := os.Getenv("RFORGE_DATACITE_URL")
+		if baseURL == "" {
+			baseURL = "https://api.datacite.org"
+		}
+		return sources.NewDataCiteConnector(defaultSourceHTTPClient(baseURL)), true
+	case "lens":
+		baseURL := os.Getenv("RFORGE_LENS_URL")
+		if baseURL == "" {
+			baseURL = "https://api.lens.org"
+		}
+		token := os.Getenv("RFORGE_LENS_TOKEN")
+		headers := map[string]string{}
+		if token != "" {
+			headers["Authorization"] = "Bearer " + token
+		}
+		return sources.NewLensConnector(sources.NewHTTPClient(sources.HTTPClientOptions{
+			BaseURL:    baseURL,
+			UserAgent:  "ResearchForge/dev",
+			Timeout:    15 * time.Second,
+			MaxRetries: 2,
+			Headers:    headers,
+		})), true
 	default:
 		return nil, false
 	}

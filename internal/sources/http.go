@@ -1,6 +1,7 @@
 package sources
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"io"
@@ -154,4 +155,58 @@ func retryDelay(response *http.Response) time.Duration {
 		return 0
 	}
 	return time.Duration(seconds) * time.Second
+}
+
+// Post sends a JSON POST request to a relative source path and returns the response body.
+func (c HTTPClient) Post(ctx context.Context, path string, body []byte) ([]byte, error) {
+	if path == "" || strings.Contains(path, "://") || strings.HasPrefix(path, "//") {
+		return nil, fmt.Errorf("source request path must be relative")
+	}
+	if c.baseURL == "" {
+		return nil, fmt.Errorf("source base URL is required")
+	}
+	endpoint, err := url.Parse(c.baseURL + "/" + strings.TrimLeft(path, "/"))
+	if err != nil {
+		return nil, err
+	}
+
+	var lastStatus int
+	for attempt := 0; attempt <= c.maxRetries; attempt++ {
+		request, err := http.NewRequestWithContext(ctx, http.MethodPost, endpoint.String(), bytes.NewReader(body))
+		if err != nil {
+			return nil, err
+		}
+		request.Header.Set("Content-Type", "application/json")
+		if c.userAgent != "" {
+			request.Header.Set("User-Agent", c.userAgent)
+		}
+		for key, value := range c.headers {
+			request.Header.Set(key, value)
+		}
+		response, err := c.client.Do(request)
+		if err != nil {
+			if attempt < c.maxRetries {
+				continue
+			}
+			return nil, err
+		}
+		lastStatus = response.StatusCode
+		if response.StatusCode >= 200 && response.StatusCode < 300 {
+			defer response.Body.Close()
+			return readBoundedResponse(response, c.maxResponseBytes)
+		}
+		delay := retryDelay(response)
+		_ = response.Body.Close()
+		if attempt < c.maxRetries && retryableStatus(lastStatus) {
+			if delay == 0 && lastStatus == http.StatusTooManyRequests {
+				delay = time.Duration(1<<uint(attempt)) * time.Second
+			}
+			if delay > 0 {
+				c.sleep(delay)
+			}
+			continue
+		}
+		break
+	}
+	return nil, fmt.Errorf("source HTTP status %d", lastStatus)
 }

@@ -78,18 +78,18 @@ All six high-priority connectors from the original plan are live.
 | ClinicalTrials.gov | `clinicaltrials` | v2 API; NCT ID stored via CrossrefID for library compatibility |
 | OSF Preprints | `osf` | `filter[title]` search; covers PsyArXiv, SocArXiv, EarthArXiv, and others |
 
-### Wave 2 — High value, free API (next priority)
+### Wave 2 — Implemented (shipped 2026-06-18)
 
 Sourced from two literature reviews: "New trends in bibliometric APIs" (doi:10.1016/j.ipm.2023.103385) and "Which academic search systems are suitable for systematic reviews?" (doi:10.1002/jrsm.1378), which evaluated 28 systems.
 
-| Source | Domain | API endpoint | Priority rationale |
-|---|---|---|---|
-| Lens.org | All fields + patents | api.lens.org (JWT) | Only source combining 225M scholarly works with patent literature; fills citation gaps confirmed by doi:10.1162/qss_a_00112 |
-| BASE | Aggregator | base-search.net OAI-PMH + REST | 300M+ docs from 10k+ repos; highest recall across European institutional archives |
-| OpenCitations (COCI) | Citation graph | opencitations.net/index/api | Free citation network; critical for reference/citation chaining in systematic reviews; no auth required |
-| figshare | Research data + preprints | api.figshare.com | Sister to Zenodo; covers data, software, presentations; free API; significant overlap with Zenodo but unique coverage |
-| DataCite | Research data DOIs | api.datacite.org | DOI registration for 50M+ research data objects; free REST API; complements Zenodo for data citation |
-| zbMATH Open | Mathematics | api.zbmath.org | Opened API in 2021; authoritative for mathematics; not covered by any current source |
+| Source | `--source` flag | Notes |
+|---|---|---|
+| OpenCitations (COCI) | `opencitations` | Query = DOI; returns citing papers with metadata batch-fetch |
+| BASE | `base` | OAI-PMH style GET; DOI extracted from `dcidentifier` array |
+| zbMATH Open | `zbmath` | ZBL ID fallback identifier when no DOI |
+| figshare | `figshare` | CC license URL drives OA flag; null license handled gracefully |
+| DataCite | `datacite` | `descriptions[].descriptionType=="Abstract"` for abstract selection |
+| Lens.org | `lens` | POST-based; requires `RFORGE_LENS_TOKEN`; covers patents + scholarly |
 
 ### Wave 3 — Domain-critical, free, narrower scope
 

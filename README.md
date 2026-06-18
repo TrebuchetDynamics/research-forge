@@ -12,7 +12,7 @@ The command-line tool is `rforge`.
 
 ## What it does
 
-- Search fifteen scholarly sources: OpenAlex, arXiv, Crossref, Semantic Scholar, PubMed, Europe PMC, NASA ADS, DOAJ, CORE, bioRxiv/medRxiv, Zenodo, INSPIRE HEP, dblp, ClinicalTrials.gov, OSF
+- Search twenty-one scholarly sources: OpenAlex, arXiv, Crossref, Semantic Scholar, PubMed, Europe PMC, NASA ADS, DOAJ, CORE, bioRxiv/medRxiv, Zenodo, INSPIRE HEP, dblp, ClinicalTrials.gov, OSF, OpenCitations, BASE, zbMATH Open, figshare, DataCite, Lens.org
 - Import and deduplicate papers into a local project store
 - Track provenance end to end; every reference knows where it came from
 - Screen studies with recorded inclusion and exclusion decisions
@@ -183,7 +183,7 @@ Research question / domain query
 | Database | SQLite (PostgreSQL adapter seam planned) |
 | Search | SQLite FTS; OpenSearch and Qdrant as optional adapters |
 | PDF parsing | GROBID (optional); S2ORC, PaperMage, Anystyle adapter seams |
-| Metadata sources | OpenAlex, Crossref, arXiv, Semantic Scholar, PubMed, Europe PMC, NASA ADS, Unpaywall, DOAJ, CORE, bioRxiv/medRxiv, Zenodo, INSPIRE HEP, dblp, ClinicalTrials.gov, OSF |
+| Metadata sources | OpenAlex, Crossref, arXiv, Semantic Scholar, PubMed, Europe PMC, NASA ADS, Unpaywall, DOAJ, CORE, bioRxiv/medRxiv, Zenodo, INSPIRE HEP, dblp, ClinicalTrials.gov, OSF, OpenCitations, BASE, zbMATH Open, figshare, DataCite, Lens.org |
 | Meta-analysis | R `metafor`; PyMARE adapter seam |
 
 ## Development
