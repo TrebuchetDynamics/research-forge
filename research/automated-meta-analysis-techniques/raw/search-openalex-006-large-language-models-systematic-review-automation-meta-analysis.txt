@@ -1,0 +1,20 @@
+10.1186/s13643-016-0384-4	Rayyan—a web and mobile app for systematic reviews
+10.1136/bmj.n160	PRISMA 2020 explanation and elaboration: updated guidance and exemplars for reporting systematic reviews
+10.1111/1468-0009.12210	The Mass Production of Redundant, Misleading, and Conflicted Systematic Reviews and Meta‐analyses
+10.48550/arxiv.2107.03374	Evaluating Large Language Models Trained on Code
+10.1111/bjet.13370	Practical and ethical challenges of large language models in education: A systematic scoping review
+10.1007/s11704-024-40231-1	A survey on large language model based autonomous agents
+10.3390/healthcare11060887	ChatGPT Utility in Healthcare Education, Research, and Practice: Systematic Review on the Promising Perspectives and Valid Concerns
+10.1186/2046-4053-3-74	Systematic review automation technologies
+10.1107/s0907444909042073	<i>MolProbity</i>: all-atom structure validation for macromolecular crystallography
+10.1093/jamia/ocy072	Conversational agents in healthcare: a systematic review
+10.1111/joms.12639	A Systematic Review of the Literature on Digital Transformation: Insights and Implications for Strategy and Organizational Change
+10.1109/access.2024.3365742	A Review on Large Language Models: Architectures, Applications, Taxonomies, Open Issues and Challenges
+10.1016/j.jclinepi.2020.01.008	A full systematic review was completed in 2 weeks using automation tools: a case study
+10.3138/jammi-2020-0030	Estimating the extent of asymptomatic COVID-19 and its potential for community transmission: Systematic review and meta-analysis
+10.1007/s11831-021-09694-4	Particle Swarm Optimization Algorithm and Its Applications: A Systematic Review
+10.1088/1361-648x/aa8f79	Advanced capabilities for materials modelling with Quantum ESPRESSO
+10.1257/jep.33.2.3	Automation and New Tasks: How Technology Displaces and Reinstates Labor
+10.1007/s12559-023-10179-8	Interpreting Black-Box Models: A Review on Explainable Artificial Intelligence
+10.1186/s13643-023-02243-z	Are ChatGPT and large language models “the answer” to bringing us closer to systematic review automation?
+10.1016/j.chb.2017.03.010	The relation between 21st-century skills and digital skills: A systematic literature review

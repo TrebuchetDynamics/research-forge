@@ -1,0 +1,20 @@
+10.1186/s13643-016-0384-4	Rayyan—a web and mobile app for systematic reviews
+10.7326/m18-0850	PRISMA Extension for Scoping Reviews (PRISMA-ScR): Checklist and Explanation
+10.1136/bmj.n160	PRISMA 2020 explanation and elaboration: updated guidance and exemplars for reporting systematic reviews
+10.1136/bmj.c3666	The clinical importance of white matter hyperintensities on brain magnetic resonance imaging: systematic review and meta-analysis
+10.1186/s41239-019-0171-0	Systematic review of research on artificial intelligence applications in higher education – where are the educators?
+10.7554/elife.34408	The MR-Base platform supports systematic causal inference across the human phenome
+10.1136/bmj.m1328	Prediction models for diagnosis and prognosis of covid-19: systematic review and critical appraisal
+10.1002/lio2.354	Automated assessment of psychiatric disorders using speech: A systematic review
+10.1136/bmj.m2516	Diagnostic accuracy of serological tests for covid-19: systematic review and meta-analysis
+10.2196/mhealth.8873	The Impact of mHealth Interventions: Systematic Review of Systematic Reviews
+10.1371/journal.pmed.1001363	The Effectiveness of Mobile-Health Technologies to Improve Health Care Service Delivery Processes: A Systematic Review and Meta-Analysis
+10.1038/s41746-021-00438-z	Diagnostic accuracy of deep learning in medical imaging: a systematic review and meta-analysis
+10.1136/bmj.f1325	Effect of longer term modest salt reduction on blood pressure: Cochrane systematic review and meta-analysis of randomised trials
+10.1371/journal.pone.0155431	Screening for Depression in the General Population with the Center for Epidemiologic Studies Depression (CES-D): A Systematic Review with Meta-Analysis
+10.1186/s13643-015-0066-7	Automating data extraction in systematic reviews: a systematic review
+10.1016/j.algal.2019.101422	Ulvan: A systematic review of extraction, composition and function
+10.1016/j.eururo.2015.07.072	Systematic Review and Meta-analysis of Diagnostic Accuracy of Percutaneous Renal Tumour Biopsy
+10.1016/s2215-0366(19)30291-3	Cognitive function following a major depressive episode: a systematic review and meta-analysis
+10.1186/s12966-017-0471-5	The neighbourhood physical environment and active travel in older adults: a systematic review and meta-analysis
+10.1016/j.ajic.2020.07.011	Systematic review with meta-analysis of the accuracy of diagnostic tests for COVID-19

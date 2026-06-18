@@ -1,0 +1,20 @@
+10.21203/rs.3.rs-9308492/v1	A Living Systematic Review Engine: LLM-Automated Evidence Surveillance Validated Against a Published Meta-Analysis of Statins for Sepsis
+10.1111/dom.70161/v2/review1	Review for "A systematic literature review and meta‐analysis of real‐world evidence on commercially available automated insulin delivery systems in people with type 1 diabetes"
+10.1111/dom.70161/v1/review1	Review for "A systematic literature review and meta‐analysis of real‐world evidence on commercially available automated insulin delivery systems in people with type 1 diabetes"
+10.1111/dom.70161/v1/review2	Review for "A systematic literature review and meta‐analysis of real‐world evidence on commercially available automated insulin delivery systems in people with type 1 diabetes"
+10.37473/dac/10.1101/2020.06.02.20120733	Hyaluronic acid for tissue and bone regeneration after tooth extraction. Systematic review and meta-analysis.
+10.1111/dom.70161/v1/review3	Review for "A systematic literature review and meta‐analysis of real‐world evidence on commercially available automated insulin delivery systems in people with type 1 diabetes"
+10.1016/b978-0-443-13428-9.00007-0	Data extraction
+10.1891/9780826152268.0010	Systematic Review of Interventional Evidence: Meta-Analysis
+10.1111/dom.70161/v2/decision1	Decision letter for "A systematic literature review and meta‐analysis of real‐world evidence on commercially available automated insulin delivery systems in people with type 1 diabetes"
+10.1111/dom.70161/v1/decision1	Decision letter for "A systematic literature review and meta‐analysis of real‐world evidence on commercially available automated insulin delivery systems in people with type 1 diabetes"
+10.1891/9780826131867.0008	Systematic Review of Experimental Evidence: Meta-Analysis of Interventions
+10.2139/ssrn.5864720	Benchmarking Automated Metadata Extraction for Vision-Language Models in Radiology: A Systematic, Schema-Constrained Meta-analysis (2019-2025)
+10.17504/protocols.io.m65c9g6	Does chlorhexidine reduce bacteremia following tooth extraction?. Systematic Review and Meta-analysis v1
+10.17504/protocols.io.n6fdhbn	Does chlorhexidine reduce bacteremia following tooth extraction?. Systematic Review and Meta-analysis v4
+10.1111/dom.16499/v1/review1	Review for "Fully automated insulin delivery systems in type 1 diabetes: A systematic review and meta-analysis"
+10.1111/dom.16499/v2/review1	Review for "Fully automated insulin delivery systems in type 1 diabetes: A systematic review and meta-analysis"
+10.1111/odi.14902/v1/review1	Review for "Efficacy of adjunctive modalities during tooth extraction for the prevention of osteoradionecrosis: A systematic review and meta‐analysis"
+10.1111/odi.14902/v3/review2	Review for "Efficacy of adjunctive modalities during tooth extraction for the prevention of osteoradionecrosis: A systematic review and meta‐analysis"
+10.1111/odi.14902/v2/review2	Review for "Efficacy of adjunctive modalities during tooth extraction for the prevention of osteoradionecrosis: A systematic review and meta‐analysis"
+10.5256/f1000research.137478.r155957	Peer Review Report For: (Semi)automated approaches to data extraction for systematic reviews and meta-analyses in social sciences: A living review protocol [version 1; peer review: 3 approved with reservations]

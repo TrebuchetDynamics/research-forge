@@ -1,0 +1,20 @@
+10.1186/s13643-021-01881-5	Automation of literature screening using machine learning in medical evidence synthesis: a diagnostic test accuracy systematic review protocol
+10.1017/rsm.2025.10065	Transforming evidence synthesis: A systematic review of the evolution of automated meta-analysis in the age of AI
+10.1017/rsm.2025.16	Generative artificial intelligence use in evidence synthesis: A systematic review
+10.1136/bmjment-2025-301762	Development and evaluation of prompts for a large language model to screen titles and abstracts in a living systematic review
+10.1186/s13750-025-00360-x	Testing the utility of GPT for title and abstract screening in environmental systematic evidence synthesis
+10.1002/cesm.70046	Artificial Intelligence and Automation in Evidence Synthesis: An Investigation of Methods Employed in Cochrane, Campbell Collaboration, and Environmental Evidence Reviews
+10.23970/ahrqepcwhitepapermachine2	Machine Learning Tools To (Semi-)Automate Evidence Synthesis: A Rapid Review and Evidence Map
+10.3389/fphar.2025.1454245	How much can we save by applying artificial intelligence in evidence synthesis? Results from a pragmatic review to quantify workload efficiencies and cost savings
+10.1007/978-3-031-56027-9_25	Zero-shot Generative Large Language Models for Systematic Review Screening Automation
+10.1042/cs20220494	Systematic online living evidence summaries: emerging tools to accelerate evidence synthesis
+10.1093/stcltm/szac038	Updated Living Systematic Review and Meta-analysis of Controlled Trials of Mesenchymal Stromal Cells to Treat COVID-19: A Framework for Accelerated Synthesis of Trial Evidence for Rapid Approval—FASTER Approval
+10.1089/neu.2015.4124	A New Approach to Evidence Synthesis in Traumatic Brain Injury: A Living Systematic Review
+10.1016/j.jclinepi.2021.06.030	Systematic review automation tools improve efficiency but lack of knowledge impedes their adoption: a survey.
+10.1371/journal.pntd.0010761	Experiences of living with leprosy: A systematic review and qualitative evidence synthesis
+10.23736/s1973-9087.21.06870-2	Rehabilitation and COVID-19: a rapid living systematic review by Cochrane Rehabilitation Field updated as of December 31st, 2020 and synthesis of the scientific literature of 2020.
+10.1186/s13643-019-1074-9	Toward systematic review automation: a practical guide to using machine learning tools in research synthesis
+10.1016/j.zefq.2023.06.007	A narrative review of recent tools and innovations toward automating living systematic reviews and evidence syntheses.
+10.1007/s10567-025-00519-5	Artificial Intelligence Software to Accelerate Screening for Living Systematic Reviews.
+10.1001/jamaoncol.2022.7762	First-line Systemic Treatment Options for Metastatic Castration-Sensitive Prostate Cancer: A Living Systematic Review and Network Meta-analysis.
+10.12688/f1000research.51117.3	Data extraction methods for systematic review (semi)automation: Update of a living systematic review

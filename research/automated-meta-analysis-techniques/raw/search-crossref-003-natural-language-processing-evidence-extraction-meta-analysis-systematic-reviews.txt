@@ -1,0 +1,20 @@
+10.1007/978-3-030-71921-0_1	Systematic Reviews, Meta-Analysis, and Evidence-Based Medicine
+10.1370/afm.22.s1.6188	Reducing The Effort for Performing Systematic Reviews Using Natural Language Processing And Large Language Models
+10.1201/b19467-17	Meta-Analysis
+10.35542/osf.io/wn3cd	MetaMate: Large Language Model to the Rescue of Automated Data Extraction for Educational Systematic Reviews and Meta-analyses
+10.14745/ccdr.v46i06a04	Towards automating systematic reviews on immunization using an advanced natural language processing–based extraction system
+10.1002/cl2.1391	Correction to “Oral language interventions can improve language outcomes in children with neurodevelopmental disorders: A systematic review and meta‐analysis”
+10.3109/9780203484401-20	Analyzing and integrating a body of knowledge. Systematic reviews and meta-analysis of evidence
+10.4135/9781849209793.n11	Synthesising Evidence: Systematic Reviews, Meta-Analysis and Preference Analysis
+10.1093/acprof:oso/9780195326543.003.0004	Data Extraction and Study Quality Assessment
+10.1136/ebm.13.3.67	Interpreting meta-analysis in systematic reviews
+10.18653/v1/2023.bionlp-1.37	Zero-Shot Information Extraction for Clinical Meta-Analysis using Large Language Models
+10.1016/j.neubiorev.2023.105283	Neural evidence of face processing in social anxiety disorder: A systematic review with meta-analysis
+10.1101/2025.10.11.25337799	Early Detection of Cognitive Decline in Parkinson’s Disease Using Natural Language Processing of Speech: Protocol for a Systematic Review and Meta-Analysis
+10.1002/9780470693926.ch22	Using Systematic Reviews for Evidence Based Policy Making
+10.1101/2025.10.11.25337798	Early Detection of Cognitive Decline in Parkinson's Disease Using Natural Language Processing of Clinical Notes: A Systematic Review and Meta-Analysis Protocol
+10.1007/978-3-030-71921-0_6	Data Extraction from Included Studies
+10.1016/j.neubiorev.2014.10.018	Complex associative memory processing and sleep: A systematic review and meta-analysis of behavioural evidence and underlying EEG mechanisms
+10.1111/jebm.70036	Meta‐Epidemiology: A Combination of Epidemiology and Meta‐Analysis in Response to the Challenges of Systematic Reviews and Meta‐Analysis
+10.2139/ssrn.5864720	Benchmarking Automated Metadata Extraction for Vision-Language Models in Radiology: A Systematic, Schema-Constrained Meta-analysis (2019-2025)
+10.37473/dac/10.1101/2020.06.02.20120733	Hyaluronic acid for tissue and bone regeneration after tooth extraction. Systematic review and meta-analysis.

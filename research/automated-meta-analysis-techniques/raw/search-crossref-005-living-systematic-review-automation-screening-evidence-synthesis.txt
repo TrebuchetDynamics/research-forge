@@ -1,0 +1,20 @@
+10.21956/openreseurope.15135.r27710	Peer Review Report For: Methods for living evidence synthesis: a systematic review protocol [version 1; peer review: 2 approved with reservations]
+10.21956/openreseurope.15135.r27711	Peer Review Report For: Methods for living evidence synthesis: a systematic review protocol [version 1; peer review: 2 approved with reservations]
+10.2196/preprints.54653	Accelerating Evidence Synthesis in Observational Studies: A Living NLP-Assisted Intelligent Systematic Literature Review System (Preprint)
+10.5256/f1000research.54235.r85692	Peer Review Report For: Data extraction methods for systematic review (semi)automation: A living systematic review [version 1; peer review: 3 approved]
+10.5256/f1000research.54235.r89348	Peer Review Report For: Data extraction methods for systematic review (semi)automation: A living systematic review [version 1; peer review: 3 approved]
+10.5256/f1000research.54235.r89347	Peer Review Report For: Data extraction methods for systematic review (semi)automation: A living systematic review [version 1; peer review: 3 approved]
+10.11124/jbisrir-d-19-00098	Effectiveness of strategies for reducing risky alcohol consumption among youth living in rural or remote areas
+10.1186/s13643-021-01881-5	Automation of literature screening using machine learning in medical evidence synthesis: a diagnostic test accuracy systematic review protocol
+10.11124/jbisrir-d-19-00239	Experiences of adults living with an implantable cardioverter defibrillator for cardiovascular disease: a systematic review of qualitative evidence
+10.11124/jbies-20-00148	Adults’ experience of living with multimorbidity: a qualitative systematic review protocol
+10.11124/jbies-23-00428	Experiences of school-age children living with food allergies: a qualitative systematic review protocol
+10.5256/f1000research.27003.r64379	Peer Review Report For: Data extraction methods for systematic review (semi)automation: A living review protocol [version 2; peer review: 2 approved]
+10.11124/jbies-20-00516	Prevalence of COVID-19 genomic variation in Africa: a living systematic review protocol
+10.11124/jbies-21-00139	Experiences of living with juvenile idiopathic arthritis: a qualitative systematic review
+10.31222/osf.io/nbe5q	Systematic Online Living Evidence Summaries: emerging tools to accelerate evidence synthesis
+10.1002/cesm.70084	Correction to “Artificial Intelligence and Automation in Evidence Synthesis: An Investigation of Methods Employed in Cochrane, Campbell Collaboration, and Environmental Evidence Reviews,” “Creating Interactive Data Dashboards for Evidence Syntheses,” and “Using GPT‐4 for Title and Abstract Screening in a Literature Review of Public Policies: A Feasibility Study”
+10.11124/jbies-24-00557	Experiences of perinatal depression screening in women during perinatal period: a qualitative systematic review protocol
+10.3389/fspor.2025.1650741	Evaluation of methods to quantify aerobic-anaerobic energy contributions during sports and exercise — a systematic review and best-evidence synthesis
+10.2139/ssrn.5668523	Living mode parameters and automation in living Evidence and Gap Maps (L-EGMs): a scoping review
+10.5256/f1000research.25153.r61722	Peer Review Report For: Data extraction methods for systematic review (semi)automation: A living review protocol [version 1; peer review: 1 approved, 1 approved with reservations]

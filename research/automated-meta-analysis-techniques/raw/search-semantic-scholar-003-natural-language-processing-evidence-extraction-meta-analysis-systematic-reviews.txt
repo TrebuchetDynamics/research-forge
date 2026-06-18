@@ -1,0 +1,20 @@
+10.1007/s00261-025-04810-5	Identifying abdominal aortic aneurysm size and presence using Natural Language Processing of radiology reports: a systematic review and meta-analysis
+10.1007/s10278-025-01728-8	Performance of Natural Language Processing Model in Extracting Information from Free-Text Radiology Reports: A Systematic Review and Meta-Analysis.
+10.2196/59560	Self-Administered Interventions Based on Natural Language Processing Models for Reducing Depressive and Anxiety Symptoms: Systematic Review and Meta-Analysis
+10.1017/rsm.2025.10065	Transforming evidence synthesis: A systematic review of the evolution of automated meta-analysis in the age of AI
+10.1016/j.mcpdig.2025.100205	A Systematic Review of Natural Language Processing Techniques for Early Detection of Cognitive Impairment
+10.1007/s10462-024-10844-w	Towards the automation of systematic reviews using natural language processing, machine learning, and deep learning: a comprehensive review
+10.63125/r3sq6p80	SENTIMENT ANALYSIS IN SOCIAL MEDIA: HOW DATA SCIENCE IMPACTS PUBLIC OPINION KNOWLEDGE INTEGRATES NATURAL LANGUAGE PROCESSING (NLP) WITH ARTIFICIAL INTELLIGENCE (AI)
+10.1016/j.igie.2023.07.012	Performance of natural language processing in identifying adenomas from colonoscopy reports: a systematic review and meta-analysis
+10.1101/2025.10.11.25337798	Early Detection of Cognitive Decline in Parkinson's Disease Using Natural Language Processing of Clinical Notes: A Systematic Review and Meta-Analysis Protocol
+10.1101/2025.06.13.25329541	Automation of Systematic Reviews with Large Language Models
+10.1007/s11069-023-05842-0	A systematic review of natural language processing applications for hydrometeorological hazards assessment
+10.18653/v1/2023.bionlp-1.37	Zero-Shot Information Extraction for Clinical Meta-Analysis using Large Language Models
+10.3390/app132212346	Natural Language Processing Adoption in Governments and Future Research Directions: A Systematic Review
+10.1182/bloodadvances.2023012200	Machine learning natural language processing for identifying venous thromboembolism: systematic review and meta-analysis
+10.1093/rap/rkae120	Advancing rheumatology with natural language processing: insights and prospects from a systematic review
+10.21203/rs.3.rs-8067325/v1	Language-Based Detection of Depression with Machine Learning: Systematic Review and Meta- Analysis
+10.1016/j.neubiorev.2025.106236	Acoustic and phonological processes in Williams Syndrome: a systematic review and meta-analysis.
+10.1093/nutrit/nuaf020	Association Between Circulating Levels of Magnesium and Metabolic Syndrome: A Systematic Review and Meta-Analysis of Observational Studies with GRADE Assessment.
+10.1016/j.compbiomed.2023.106649	Natural Language Processing in Electronic Health Records in relation to healthcare decision-making: A systematic review
+10.1038/s41415-023-6132-y	Application ChatGPT in conducting systematic reviews and meta-analyses

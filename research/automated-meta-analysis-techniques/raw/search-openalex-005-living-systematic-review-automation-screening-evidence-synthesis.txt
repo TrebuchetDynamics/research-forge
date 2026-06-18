@@ -1,0 +1,20 @@
+10.1136/bmj.n160	PRISMA 2020 explanation and elaboration: updated guidance and exemplars for reporting systematic reviews
+10.31222/osf.io/v7gm2	The PRISMA 2020 statement: an updated guideline for reporting systematic reviews
+10.1186/s13643-019-1074-9	Toward systematic review automation: a practical guide to using machine learning tools in research synthesis
+10.1371/journal.pmed.1001603	Living Systematic Reviews: An Emerging Opportunity to Narrow the Evidence-Practice Gap
+10.1186/2046-4053-3-74	Systematic review automation technologies
+10.1002/cl2.1230	<i>PRISMA2020</i> : An R package and Shiny app for producing PRISMA 2020‐compliant flow diagrams, with interactivity for optimised digital transparency and Open Synthesis
+10.1093/jamia/ocy072	Conversational agents in healthcare: a systematic review
+10.1186/2046-4053-4-5	Using text mining for study identification in systematic reviews: a systematic review of current approaches
+10.1016/j.jclinepi.2017.08.011	Living systematic reviews: 2. Combining human and machine effort
+10.1016/j.jclinepi.2020.10.007	Cochrane Rapid Reviews Methods Group offers evidence-informed guidance to conduct rapid reviews
+10.31222/osf.io/v7gm2_v1	The PRISMA 2020 statement: an updated guideline for reporting systematic reviews
+10.12688/f1000research.51117.1	Data extraction methods for systematic review (semi)automation: A living systematic review
+10.1186/s13643-015-0066-7	Automating data extraction in systematic reviews: a systematic review
+10.1007/978-3-658-27602-7_1	Systematic Reviews in Educational Research: Methodology, Perspectives and Application
+10.1186/s13643-019-1062-0	A question of trust: can we build an evidence base to gain trust in systematic review automation technologies?
+10.1007/s12525-016-0219-0	Big data analytics in E-commerce: a systematic review and agenda for future research
+10.3310/hta14080	Dissemination and publication of research findings: an updated review of related biases
+10.2196/15360	The Personalization of Conversational Agents in Health Care: Systematic Review
+10.1371/journal.pmed.1002611	Sexual transmission of Zika virus and other flaviviruses: A living systematic review
+10.1186/s13643-021-01635-3	Research Screener: a machine learning tool to semi-automate abstract screening for systematic reviews

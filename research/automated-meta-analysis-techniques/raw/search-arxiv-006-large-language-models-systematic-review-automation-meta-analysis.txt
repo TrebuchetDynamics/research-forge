@@ -1,0 +1,20 @@
+	Efficacy of Large Language Models in Systematic Reviews
+10.1016/j.inffus.2025.103575	Object Detection with Multimodal Large Vision-Language Models: An In-depth Review
+	A Critical Review of Causal Reasoning Benchmarks for Large Language Models
+	Document Automation Architectures: Updated Survey in Light of Large Language Models
+10.1093/bmb/ldaf017	AI chatbots versus human healthcare professionals: a systematic review and meta-analysis of empathy in patient care
+	Enhancing Human-Like Responses in Large Language Models
+	Game Theory Meets Large Language Models: A Systematic Survey with Taxonomy and New Frontiers
+	A systematic review of research on large language models for computer programming education
+	Unmasking the Shadows of AI: Investigating Deceptive Capabilities in Large Language Models
+10.1145/3763002	Advances in Pre-trained Language Models for Domain-Specific Text Classification: A Systematic Review
+	Is Self-knowledge and Action Consistent or Not: Investigating Large Language Model's Personality
+	Large Language Models Lack Understanding of Character Composition of Words
+	Computational analysis of the language of pain: a systematic review
+10.12688/f1000research.74223.2	ALL-IN meta-analysis: breathing life into living systematic reviews and prospective meta-analyses
+	Reinforcement Learning Meets Large Language Models: A Survey of Advancements and Applications Across the LLM Lifecycle
+	Transforming Evidence Synthesis: A Systematic Review of the Evolution of Automated Meta-Analysis in the Age of AI
+	Making Large Language Models Better Reasoners with Alignment
+10.1093/nsr/nwae403	A Survey on Multimodal Large Language Models
+	Self-Cognition in Large Language Models: An Exploratory Study
+10.3390/robotics15030055	Embodied AI with Foundation Models for Mobile Service Robots: A Systematic Review

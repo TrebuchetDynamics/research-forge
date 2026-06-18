@@ -1,0 +1,86 @@
+{
+  "citation_expand_attempted": [
+    "10.1186/s13643-015-0066-7",
+    "10.1186/s13643-016-0384-4",
+    "10.21203/rs.3.rs-9308492/v1"
+  ],
+  "citation_expand_succeeded": [
+    "10.1186/s13643-015-0066-7",
+    "10.1186/s13643-016-0384-4",
+    "10.21203/rs.3.rs-9308492/v1"
+  ],
+  "depth": "standard",
+  "errors": [
+    "semantic-scholar / automated meta-analysis systematic review evidence extraction: source HTTP status 429",
+    "semantic-scholar / machine learning automated systematic review meta-analysis: source HTTP status 429",
+    "crossref / automated data extraction clinical trial meta-analysis: paper title is required",
+    "semantic-scholar / automated data extraction clinical trial meta-analysis: source HTTP status 429",
+    "semantic-scholar / large language models systematic review automation meta-analysis: source HTTP status 429"
+  ],
+  "notes": [
+    "No copyrighted full text downloaded",
+    "Semantic Scholar rate limits caused partial coverage",
+    "Crossref returned one record normalization failure"
+  ],
+  "outputs": [
+    "citation-expand-data-extraction.log",
+    "citation-expand-living-llm.log",
+    "citation-expand-rayyan.log",
+    "citation-graph-data-extraction.json",
+    "citation-graph-living-llm.json",
+    "citation-graph-rayyan.json",
+    "evidence-grid.csv",
+    "failures.jsonl",
+    "manifest.json",
+    "queries.txt",
+    "raw/search-arxiv-001-automated-meta-analysis-systematic-review-evidence-extraction.txt",
+    "raw/search-arxiv-002-machine-learning-automated-systematic-review-meta-analysis.txt",
+    "raw/search-arxiv-003-natural-language-processing-evidence-extraction-meta-analysis-systematic-reviews.txt",
+    "raw/search-arxiv-004-automated-data-extraction-clinical-trial-meta-analysis.txt",
+    "raw/search-arxiv-005-living-systematic-review-automation-screening-evidence-synthesis.txt",
+    "raw/search-arxiv-006-large-language-models-systematic-review-automation-meta-analysis.txt",
+    "raw/search-crossref-001-automated-meta-analysis-systematic-review-evidence-extraction.txt",
+    "raw/search-crossref-002-machine-learning-automated-systematic-review-meta-analysis.txt",
+    "raw/search-crossref-003-natural-language-processing-evidence-extraction-meta-analysis-systematic-reviews.txt",
+    "raw/search-crossref-005-living-systematic-review-automation-screening-evidence-synthesis.txt",
+    "raw/search-crossref-006-large-language-models-systematic-review-automation-meta-analysis.txt",
+    "raw/search-openalex-001-automated-meta-analysis-systematic-review-evidence-extraction.txt",
+    "raw/search-openalex-002-machine-learning-automated-systematic-review-meta-analysis.txt",
+    "raw/search-openalex-003-natural-language-processing-evidence-extraction-meta-analysis-systematic-reviews.txt",
+    "raw/search-openalex-004-automated-data-extraction-clinical-trial-meta-analysis.txt",
+    "raw/search-openalex-005-living-systematic-review-automation-screening-evidence-synthesis.txt",
+    "raw/search-openalex-006-large-language-models-systematic-review-automation-meta-analysis.txt",
+    "raw/search-semantic-scholar-003-natural-language-processing-evidence-extraction-meta-analysis-systematic-reviews.txt",
+    "raw/search-semantic-scholar-005-living-systematic-review-automation-screening-evidence-synthesis.txt",
+    "report.md",
+    "results-deduped.jsonl",
+    "results.jsonl",
+    "results.md",
+    "search-stats-rforge.txt",
+    "search-stats.txt"
+  ],
+  "queries": [
+    "automated meta-analysis systematic review evidence extraction",
+    "machine learning automated systematic review meta-analysis",
+    "natural language processing evidence extraction meta-analysis systematic reviews",
+    "automated data extraction clinical trial meta-analysis",
+    "living systematic review automation screening evidence synthesis",
+    "large language models systematic review automation meta-analysis"
+  ],
+  "question": "Research techniques to do automated meta-analysis for ResearchForge",
+  "rforge_version": "rforge v0.1.5 (9b947d5, 2026-06-18T17:43:59Z)",
+  "search_stats": {
+    "arxiv": 120,
+    "crossref": 100,
+    "openalex": 120,
+    "semantic-scholar": 40,
+    "total_unique_dois": 328
+  },
+  "sources": [
+    "openalex",
+    "crossref",
+    "semantic-scholar",
+    "arxiv"
+  ],
+  "timestamp": "2026-06-18T18:08:56.998935+00:00"
+}

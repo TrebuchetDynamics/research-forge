@@ -1,0 +1,20 @@
+	Changing Data Sources in the Age of Machine Learning for Official Statistics
+	DOME: Recommendations for supervised machine learning validation in biology
+	Distilling Information from a Flood: A Possibility for the Use of Meta-Analysis and Systematic Review in Machine Learning Research
+10.1007/s10994-023-06454-2	Active learning for data streams: a survey
+10.1007/s10994-024-06619-7	Learning Curves for Decision Making in Supervised Machine Learning: A Survey
+10.1007/978-3-031-39539-0_3	Privacy-preserving machine learning for healthcare: open challenges and future perspectives
+	Physics-Inspired Interpretability Of Machine Learning Models
+	MerLin: A Discovery Engine for Photonic and Hybrid Quantum Machine Learning
+10.1145/3800686	FPGA-Enabled Machine Learning Applications in Earth Observation: A Systematic Review
+10.1007/s10994-017-5666-0	Emotion in Reinforcement Learning Agents and Robots: A Survey
+	Lale: Consistent Automated Machine Learning
+10.1016/j.ijmedinf.2024.105469	Sensing technologies and machine learning methods for emotion recognition in autism: Systematic review
+10.1016/j.mlwa.2021.100032	A Benchmark Study of Machine Learning Models for Online Fake News Detection
+	Alpha MAML: Adaptive Model-Agnostic Meta-Learning
+	Fourier Learning Machines: Nonharmonic Fourier-Based Neural Networks for Scientific Machine Learning
+	Federated Learning in Distributed Medical Databases: Meta-Analysis of Large-Scale Subcortical Brain Data
+10.3390/e21060551	MEMe: An Accurate Maximum Entropy Method for Efficient Approximations in Large-Scale Machine Learning
+	Automatic Machine Learning by Pipeline Synthesis using Model-Based Reinforcement Learning and a Grammar
+	Regression Networks for Meta-Learning Few-Shot Classification
+	Generalizing Machine Learning Evaluation through the Integration of Shannon Entropy and Rough Set Theory

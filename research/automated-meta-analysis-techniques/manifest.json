@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "1",
+  "createdAt": "2026-06-18T18:07:22Z",
+  "queries": [
+    "automated meta-analysis systematic review evidence extraction",
+    "machine learning automated systematic review meta-analysis",
+    "natural language processing evidence extraction meta-analysis systematic reviews",
+    "automated data extraction clinical trial meta-analysis",
+    "living systematic review automation screening evidence synthesis",
+    "large language models systematic review automation meta-analysis"
+  ],
+  "sources": [
+    "openalex",
+    "crossref",
+    "semantic-scholar",
+    "arxiv"
+  ],
+  "limit": 20,
+  "results": 380,
+  "deduped": 328,
+  "failures": 5
+}

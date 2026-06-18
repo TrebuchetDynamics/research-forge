@@ -1,0 +1,20 @@
+10.1136/bmj.c3666	The clinical importance of white matter hyperintensities on brain magnetic resonance imaging: systematic review and meta-analysis
+10.1136/bmj.f1325	Effect of longer term modest salt reduction on blood pressure: Cochrane systematic review and meta-analysis of randomised trials
+10.1186/s13643-016-0384-4	Rayyan—a web and mobile app for systematic reviews
+10.7326/m18-0850	PRISMA Extension for Scoping Reviews (PRISMA-ScR): Checklist and Explanation
+10.1016/j.cpr.2016.03.009	Effectiveness of online mindfulness-based interventions in improving mental health: A review and meta-analysis of randomised controlled trials
+10.1371/journal.pmed.1001363	The Effectiveness of Mobile-Health Technologies to Improve Health Care Service Delivery Processes: A Systematic Review and Meta-Analysis
+10.1038/s41576-019-0113-7	Clinical metagenomics
+10.1371/journal.pmed.1002389	Self-monitoring of blood pressure in hypertension: A systematic review and individual patient data meta-analysis
+10.1136/bmj.f657	Features of effective computerised clinical decision support systems: meta-regression of 162 randomised trials
+10.1186/s40537-019-0217-0	Big data in healthcare: management, analysis and future prospects
+10.1186/s13643-015-0066-7	Automating data extraction in systematic reviews: a systematic review
+10.1001/jamanetworkopen.2019.6700	Quantifying Sex Bias in Clinical Studies at Scale With Automated Data Extraction
+10.1136/bmj.m2516	Diagnostic accuracy of serological tests for covid-19: systematic review and meta-analysis
+10.1371/journal.pmed.1002595	Adherence interventions and outcomes of tuberculosis treatment: A systematic review and meta-analysis of trials and observational studies
+10.1093/cid/cir935	The Clinical Significance of Vancomycin Minimum Inhibitory Concentration in Staphylococcus aureus Infections: A Systematic Review and Meta-analysis
+10.1093/cid/ciw649	The Effect of Molecular Rapid Diagnostic Testing on Clinical Outcomes in Bloodstream Infections: A Systematic Review and Meta-analysis
+10.1038/sdata.2018.15	ImmPort, toward repurposing of open access immunological assay data for translational and clinical research
+10.1038/s41746-020-0302-y	Digitizing clinical trials
+10.1136/bmj.39156.536968.55	Telemonitoring or structured telephone support programmes for patients with chronic heart failure: systematic review and meta-analysis
+10.1038/s41746-021-00438-z	Diagnostic accuracy of deep learning in medical imaging: a systematic review and meta-analysis

@@ -1,0 +1,20 @@
+10.1186/s13643-016-0384-4	Rayyan—a web and mobile app for systematic reviews
+10.1038/s42254-021-00314-5	Physics-informed machine learning
+10.1136/bmj.n160	PRISMA 2020 explanation and elaboration: updated guidance and exemplars for reporting systematic reviews
+10.1038/s41586-018-0337-2	Machine learning for molecular and materials science
+10.1016/j.ymssp.2019.106587	Applications of machine learning to machine fault diagnosis: A review and roadmap
+10.1186/s40537-019-0197-0	A survey on Image Data Augmentation for Deep Learning
+10.1007/978-3-030-05318-5	Automated Machine Learning
+10.1186/s41239-019-0171-0	Systematic review of research on artificial intelligence applications in higher education – where are the educators?
+10.1007/s00134-019-05872-y	Machine learning for the prediction of sepsis: a systematic review and meta-analysis of diagnostic test accuracy
+10.1038/s42256-020-00287-7	An open source machine learning framework for efficient and transparent systematic reviews
+10.1038/s41746-021-00438-z	Diagnostic accuracy of deep learning in medical imaging: a systematic review and meta-analysis
+	Automatic differentiation in machine learning: a survey
+10.1038/s41587-023-01767-y	Dictionary learning for integrative, multimodal and scalable single-cell analysis
+10.1002/lio2.354	Automated assessment of psychiatric disorders using speech: A systematic review
+10.1109/access.2021.3083060	Machine Learning for Anomaly Detection: A Systematic Review
+10.7554/elife.34408	The MR-Base platform supports systematic causal inference across the human phenome
+10.1561/2200000083	Advances and Open Problems in Federated Learning
+10.1109/access.2020.3048415	Machine Learning Applications for Precision Agriculture: A Comprehensive Review
+10.1016/j.biotechadv.2021.107739	Using machine learning approaches for multi-omics data analysis: A review
+10.1136/bmj.m1328	Prediction models for diagnosis and prognosis of covid-19: systematic review and critical appraisal

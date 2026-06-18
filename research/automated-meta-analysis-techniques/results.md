@@ -1,0 +1,340 @@
+# Search batch results
+
+Deduped records: 328
+
+- Rayyan—a web and mobile app for systematic reviews — DOI: `10.1186/s13643-016-0384-4`
+- PRISMA Extension for Scoping Reviews (PRISMA-ScR): Checklist and Explanation — DOI: `10.7326/m18-0850`
+- PRISMA 2020 explanation and elaboration: updated guidance and exemplars for reporting systematic reviews — DOI: `10.1136/bmj.n160`
+- The clinical importance of white matter hyperintensities on brain magnetic resonance imaging: systematic review and meta-analysis — DOI: `10.1136/bmj.c3666`
+- Systematic review of research on artificial intelligence applications in higher education – where are the educators? — DOI: `10.1186/s41239-019-0171-0`
+- The MR-Base platform supports systematic causal inference across the human phenome — DOI: `10.7554/elife.34408`
+- Prediction models for diagnosis and prognosis of covid-19: systematic review and critical appraisal — DOI: `10.1136/bmj.m1328`
+- Automated assessment of psychiatric disorders using speech: A systematic review — DOI: `10.1002/lio2.354`
+- Diagnostic accuracy of serological tests for covid-19: systematic review and meta-analysis — DOI: `10.1136/bmj.m2516`
+- The Impact of mHealth Interventions: Systematic Review of Systematic Reviews — DOI: `10.2196/mhealth.8873`
+- The Effectiveness of Mobile-Health Technologies to Improve Health Care Service Delivery Processes: A Systematic Review and Meta-Analysis — DOI: `10.1371/journal.pmed.1001363`
+- Diagnostic accuracy of deep learning in medical imaging: a systematic review and meta-analysis — DOI: `10.1038/s41746-021-00438-z`
+- Effect of longer term modest salt reduction on blood pressure: Cochrane systematic review and meta-analysis of randomised trials — DOI: `10.1136/bmj.f1325`
+- Screening for Depression in the General Population with the Center for Epidemiologic Studies Depression (CES-D): A Systematic Review with Meta-Analysis — DOI: `10.1371/journal.pone.0155431`
+- Automating data extraction in systematic reviews: a systematic review — DOI: `10.1186/s13643-015-0066-7`
+- Ulvan: A systematic review of extraction, composition and function — DOI: `10.1016/j.algal.2019.101422`
+- Systematic Review and Meta-analysis of Diagnostic Accuracy of Percutaneous Renal Tumour Biopsy — DOI: `10.1016/j.eururo.2015.07.072`
+- Cognitive function following a major depressive episode: a systematic review and meta-analysis — DOI: `10.1016/s2215-0366(19)30291-3`
+- The neighbourhood physical environment and active travel in older adults: a systematic review and meta-analysis — DOI: `10.1186/s12966-017-0471-5`
+- Systematic review with meta-analysis of the accuracy of diagnostic tests for COVID-19 — DOI: `10.1016/j.ajic.2020.07.011`
+- A Living Systematic Review Engine: LLM-Automated Evidence Surveillance Validated Against a Published Meta-Analysis of Statins for Sepsis — DOI: `10.21203/rs.3.rs-9308492/v1`
+- Review for "A systematic literature review and meta‐analysis of real‐world evidence on commercially available automated insulin delivery systems in people with type 1 diabetes" — DOI: `10.1111/dom.70161/v2/review1`
+- Review for "A systematic literature review and meta‐analysis of real‐world evidence on commercially available automated insulin delivery systems in people with type 1 diabetes" — DOI: `10.1111/dom.70161/v1/review1`
+- Review for "A systematic literature review and meta‐analysis of real‐world evidence on commercially available automated insulin delivery systems in people with type 1 diabetes" — DOI: `10.1111/dom.70161/v1/review2`
+- Hyaluronic acid for tissue and bone regeneration after tooth extraction. Systematic review and meta-analysis. — DOI: `10.37473/dac/10.1101/2020.06.02.20120733`
+- Review for "A systematic literature review and meta‐analysis of real‐world evidence on commercially available automated insulin delivery systems in people with type 1 diabetes" — DOI: `10.1111/dom.70161/v1/review3`
+- Data extraction — DOI: `10.1016/b978-0-443-13428-9.00007-0`
+- Systematic Review of Interventional Evidence: Meta-Analysis — DOI: `10.1891/9780826152268.0010`
+- Decision letter for "A systematic literature review and meta‐analysis of real‐world evidence on commercially available automated insulin delivery systems in people with type 1 diabetes" — DOI: `10.1111/dom.70161/v2/decision1`
+- Decision letter for "A systematic literature review and meta‐analysis of real‐world evidence on commercially available automated insulin delivery systems in people with type 1 diabetes" — DOI: `10.1111/dom.70161/v1/decision1`
+- Systematic Review of Experimental Evidence: Meta-Analysis of Interventions — DOI: `10.1891/9780826131867.0008`
+- Benchmarking Automated Metadata Extraction for Vision-Language Models in Radiology: A Systematic, Schema-Constrained Meta-analysis (2019-2025) — DOI: `10.2139/ssrn.5864720`
+- Does chlorhexidine reduce bacteremia following tooth extraction?. Systematic Review and Meta-analysis v1 — DOI: `10.17504/protocols.io.m65c9g6`
+- Does chlorhexidine reduce bacteremia following tooth extraction?. Systematic Review and Meta-analysis v4 — DOI: `10.17504/protocols.io.n6fdhbn`
+- Review for "Fully automated insulin delivery systems in type 1 diabetes: A systematic review and meta-analysis" — DOI: `10.1111/dom.16499/v1/review1`
+- Review for "Fully automated insulin delivery systems in type 1 diabetes: A systematic review and meta-analysis" — DOI: `10.1111/dom.16499/v2/review1`
+- Review for "Efficacy of adjunctive modalities during tooth extraction for the prevention of osteoradionecrosis: A systematic review and meta‐analysis" — DOI: `10.1111/odi.14902/v1/review1`
+- Review for "Efficacy of adjunctive modalities during tooth extraction for the prevention of osteoradionecrosis: A systematic review and meta‐analysis" — DOI: `10.1111/odi.14902/v3/review2`
+- Review for "Efficacy of adjunctive modalities during tooth extraction for the prevention of osteoradionecrosis: A systematic review and meta‐analysis" — DOI: `10.1111/odi.14902/v2/review2`
+- Peer Review Report For: (Semi)automated approaches to data extraction for systematic reviews and meta-analyses in social sciences: A living review protocol [version 1; peer review: 3 approved with reservations] — DOI: `10.5256/f1000research.137478.r155957`
+- Transforming Evidence Synthesis: A Systematic Review of the Evolution of Automated Meta-Analysis in the Age of AI
+- ALL-IN meta-analysis: breathing life into living systematic reviews and prospective meta-analyses — DOI: `10.12688/f1000research.74223.2`
+- AI chatbots versus human healthcare professionals: a systematic review and meta-analysis of empathy in patient care — DOI: `10.1093/bmb/ldaf017`
+- A Systematic Literature Review of Automated Techniques for Functional GUI Testing of Mobile Applications
+- Generative AI and Creativity: A Systematic Literature Review and Meta-Analysis
+- Reformulation Techniques for Automated Planning: A Systematic Review — DOI: `10.1017/s0269888923000097`
+- A Systematic Review of Computational Thinking in Early Ages — DOI: `10.1080/09669760.2022.2107491`
+- Artificial intelligence in digital pathology: a systematic review and meta-analysis of diagnostic test accuracy — DOI: `10.1038/s41746-024-01106-8`
+- Non-invasive Techniques for Flow Rate Measurement in Water Pipes: Protocol for a Systematic Review
+- Challenges in systematic reviews and meta-analyses of mediation analyses
+- P-value evaluation, variability index and biomarker categorization for adaptively weighted Fisher's meta-analysis method in omics applications
+- OpenExtract: Automated Data Extraction for Systematic Reviews in Health
+- Machine Learning Applications to Diffuse Reflectance Spectroscopy in Optical Diagnosis; A Systematic Review
+- Computational analysis of the language of pain: a systematic review
+- Computational-Assisted Systematic Review and Meta-Analysis (CASMA): Effect of a Subclass of GnRH-a on Endometriosis Recurrence
+- Drivers' attention detection: a systematic literature review
+- Diagnosing Structural Failures in LLM-Based Evidence Extraction for Meta-Analysis
+- Trust and Trustworthiness from Human-Centered Perspective in HRI -- A Systematic Literature Review — DOI: `10.3390/electronics14081557`
+- Extracting Entities of Interest from Comparative Product Reviews — DOI: `10.1145/3132847.3133141`
+- Prompt-Driven Code Summarization: A Systematic Literature Review
+- Physics-informed machine learning — DOI: `10.1038/s42254-021-00314-5`
+- Machine learning for molecular and materials science — DOI: `10.1038/s41586-018-0337-2`
+- Applications of machine learning to machine fault diagnosis: A review and roadmap — DOI: `10.1016/j.ymssp.2019.106587`
+- A survey on Image Data Augmentation for Deep Learning — DOI: `10.1186/s40537-019-0197-0`
+- Automated Machine Learning — DOI: `10.1007/978-3-030-05318-5`
+- Machine learning for the prediction of sepsis: a systematic review and meta-analysis of diagnostic test accuracy — DOI: `10.1007/s00134-019-05872-y`
+- An open source machine learning framework for efficient and transparent systematic reviews — DOI: `10.1038/s42256-020-00287-7`
+- Automatic differentiation in machine learning: a survey
+- Dictionary learning for integrative, multimodal and scalable single-cell analysis — DOI: `10.1038/s41587-023-01767-y`
+- Machine Learning for Anomaly Detection: A Systematic Review — DOI: `10.1109/access.2021.3083060`
+- Advances and Open Problems in Federated Learning — DOI: `10.1561/2200000083`
+- Machine Learning Applications for Precision Agriculture: A Comprehensive Review — DOI: `10.1109/access.2020.3048415`
+- Using machine learning approaches for multi-omics data analysis: A review — DOI: `10.1016/j.biotechadv.2021.107739`
+- Review for "Molecular Biomarkers and Machine Learning in Oral Cancer: A Systematic Review and Meta‐Analysis" — DOI: `10.1111/odi.70121/v2/review1`
+- Review for "Molecular Biomarkers and Machine Learning in Oral Cancer: A Systematic Review and Meta‐Analysis" — DOI: `10.1111/odi.70121/v1/review1`
+- Review for "Molecular Biomarkers and Machine Learning in Oral Cancer: A Systematic Review and Meta‐Analysis" — DOI: `10.1111/odi.70121/v1/review3`
+- Review for "Molecular Biomarkers and Machine Learning in Oral Cancer: A Systematic Review and Meta‐Analysis" — DOI: `10.1111/odi.70121/v2/review2`
+- Artificial Intelligence and Machine Learning for Automated Cephalometric Landmark Identification: A Meta-Analysis Previewed by a Systematic Review — DOI: `10.7759/cureus.40934`
+- Review for "Molecular Biomarkers and Machine Learning in Oral Cancer: A Systematic Review and Meta‐Analysis" — DOI: `10.1111/odi.70121/v1/review2`
+- Review for "Accuracy of Machine Learning in Predicting Post‐Stroke Depression: A Systematic Review and Meta‐Analysis" — DOI: `10.1002/brb3.70557/v1/review1`
+- Deep Learning and Machine Learning for Early Detection of Alzheimer’s Disease: A Systematic Review and Meta-Analysis — DOI: `10.64898/2026.05.21.26353815`
+- Decision letter for "Molecular Biomarkers and Machine Learning in Oral Cancer: A Systematic Review and Meta‐Analysis" — DOI: `10.1111/odi.70121/v2/decision1`
+- Decision letter for "Molecular Biomarkers and Machine Learning in Oral Cancer: A Systematic Review and Meta‐Analysis" — DOI: `10.1111/odi.70121/v1/decision1`
+- Review for "Value of Machine Learning Models for Cell-Free DNA-Based Multi-Cancer Early Detection: A Systematic Review and Meta-Analysis" — DOI: `10.1177/15330338261425328/v1/review1`
+- Review for "Value of Machine Learning Models for Cell-Free DNA-Based Multi-Cancer Early Detection: A Systematic Review and Meta-Analysis" — DOI: `10.1177/15330338261425328/v1/review2`
+- Review for "Value of Machine Learning Models for Cell-Free DNA-Based Multi-Cancer Early Detection: A Systematic Review and Meta-Analysis" — DOI: `10.1177/15330338261425328/v2/review1`
+- Automated Machine Learning — DOI: `10.1007/978-3-030-88132-0_1`
+- Weed detection using machine learning: A systematic literature review — DOI: `10.54480/slrm.v2i2.21`
+- Predicting Sepsis Onset in ICU Using Machine Learning Models: A Systematic Review and Meta-Analysis — DOI: `10.21203/rs.3.rs-2961713/v1`
+- Supervised Machine Learning for Aiding Diagnosis of Knee Osteoarthritis: A Systematic Review and Meta-Analysis — DOI: `10.36227/techrxiv.13132931`
+- Supervised Machine Learning for Aiding Diagnosis of Knee Osteoarthritis: A Systematic Review and Meta-Analysis — DOI: `10.36227/techrxiv.13132931.v1`
+- Optimal Machine Learning- and Deep Learning- driven algorithms for predicting the future value of investments: A systematic review and meta-analysis — DOI: `10.21203/rs.3.rs-2658566/v1`
+- Automated Machine Learning for Multimedia — DOI: `10.1007/978-3-030-88132-0_3`
+- Changing Data Sources in the Age of Machine Learning for Official Statistics
+- DOME: Recommendations for supervised machine learning validation in biology
+- Distilling Information from a Flood: A Possibility for the Use of Meta-Analysis and Systematic Review in Machine Learning Research
+- Active learning for data streams: a survey — DOI: `10.1007/s10994-023-06454-2`
+- Learning Curves for Decision Making in Supervised Machine Learning: A Survey — DOI: `10.1007/s10994-024-06619-7`
+- Privacy-preserving machine learning for healthcare: open challenges and future perspectives — DOI: `10.1007/978-3-031-39539-0_3`
+- Physics-Inspired Interpretability Of Machine Learning Models
+- MerLin: A Discovery Engine for Photonic and Hybrid Quantum Machine Learning
+- FPGA-Enabled Machine Learning Applications in Earth Observation: A Systematic Review — DOI: `10.1145/3800686`
+- Emotion in Reinforcement Learning Agents and Robots: A Survey — DOI: `10.1007/s10994-017-5666-0`
+- Lale: Consistent Automated Machine Learning
+- Sensing technologies and machine learning methods for emotion recognition in autism: Systematic review — DOI: `10.1016/j.ijmedinf.2024.105469`
+- A Benchmark Study of Machine Learning Models for Online Fake News Detection — DOI: `10.1016/j.mlwa.2021.100032`
+- Alpha MAML: Adaptive Model-Agnostic Meta-Learning
+- Fourier Learning Machines: Nonharmonic Fourier-Based Neural Networks for Scientific Machine Learning
+- Federated Learning in Distributed Medical Databases: Meta-Analysis of Large-Scale Subcortical Brain Data
+- MEMe: An Accurate Maximum Entropy Method for Efficient Approximations in Large-Scale Machine Learning — DOI: `10.3390/e21060551`
+- Automatic Machine Learning by Pipeline Synthesis using Model-Based Reinforcement Learning and a Grammar
+- Regression Networks for Meta-Learning Few-Shot Classification
+- Generalizing Machine Learning Evaluation through the Integration of Shannon Entropy and Rough Set Theory
+- The PRISMA Statement for Reporting Systematic Reviews and Meta-Analyses of Studies That Evaluate Health Care Interventions: Explanation and Elaboration — DOI: `10.1371/journal.pmed.1000100`
+- Preferred reporting items for systematic review and meta-analysis protocols (PRISMA-P) 2015: elaboration and explanation — DOI: `10.1136/bmj.g7647`
+- The PRISMA statement for reporting systematic reviews and meta-analyses of studies that evaluate healthcare interventions: explanation and elaboration — DOI: `10.1136/bmj.b2700`
+- Social Relationships and Mortality Risk: A Meta-analytic Review — DOI: `10.1371/journal.pmed.1000316`
+- The Long-Term Health Consequences of Child Physical Abuse, Emotional Abuse, and Neglect: A Systematic Review and Meta-Analysis — DOI: `10.1371/journal.pmed.1001349`
+- The PRISMA statement for reporting systematic reviews and meta-analyses of studies that evaluate health care interventions: explanation and elaboration — DOI: `10.2427/5768`
+- More than 50 long-term effects of COVID-19: a systematic review and meta-analysis — DOI: `10.1038/s41598-021-95565-8`
+- The PRISMA 2020 statement: an updated guideline for reporting systematic reviews — DOI: `10.31222/osf.io/v7gm2`
+- What Is the Evidence for Physical Therapy Poststroke? A Systematic Review and Meta-Analysis — DOI: `10.1371/journal.pone.0087987`
+- Natural language processing: state of the art, current trends and challenges — DOI: `10.1007/s11042-022-13428-4`
+- Incidence, prevalence, and predictors of chemotherapy-induced peripheral neuropathy: A systematic review and meta-analysis — DOI: `10.1016/j.pain.2014.09.020`
+- A Systematic Review and Meta-Analysis of Recovery in Schizophrenia — DOI: `10.1093/schbul/sbs130`
+- Loneliness and social isolation as risk factors for coronary heart disease and stroke: systematic review and meta-analysis of longitudinal observational studies — DOI: `10.1136/heartjnl-2015-308790`
+- FREQUENCY EFFECTS IN LANGUAGE PROCESSING — DOI: `10.1017/s0272263102002024`
+- Natural Language Processing of Clinical Notes on Chronic Diseases: Systematic Review — DOI: `10.2196/12239`
+- Dietary sugars and body weight: systematic review and meta-analyses of randomised controlled trials and cohort studies — DOI: `10.1136/bmj.e7492`
+- Machine Learning and Natural Language Processing in Mental Health: Systematic Review — DOI: `10.2196/15708`
+- Migraine and cardiovascular disease: systematic review and meta-analysis — DOI: `10.1136/bmj.b3914`
+- Fruit and vegetable consumption and mortality from all causes, cardiovascular disease, and cancer: systematic review and dose-response meta-analysis of prospective cohort studies — DOI: `10.1136/bmj.g4490`
+- Systematic Reviews, Meta-Analysis, and Evidence-Based Medicine — DOI: `10.1007/978-3-030-71921-0_1`
+- Reducing The Effort for Performing Systematic Reviews Using Natural Language Processing And Large Language Models — DOI: `10.1370/afm.22.s1.6188`
+- Meta-Analysis — DOI: `10.1201/b19467-17`
+- MetaMate: Large Language Model to the Rescue of Automated Data Extraction for Educational Systematic Reviews and Meta-analyses — DOI: `10.35542/osf.io/wn3cd`
+- Towards automating systematic reviews on immunization using an advanced natural language processing–based extraction system — DOI: `10.14745/ccdr.v46i06a04`
+- Correction to “Oral language interventions can improve language outcomes in children with neurodevelopmental disorders: A systematic review and meta‐analysis” — DOI: `10.1002/cl2.1391`
+- Analyzing and integrating a body of knowledge. Systematic reviews and meta-analysis of evidence — DOI: `10.3109/9780203484401-20`
+- Synthesising Evidence: Systematic Reviews, Meta-Analysis and Preference Analysis — DOI: `10.4135/9781849209793.n11`
+- Data Extraction and Study Quality Assessment — DOI: `10.1093/acprof:oso/9780195326543.003.0004`
+- Interpreting meta-analysis in systematic reviews — DOI: `10.1136/ebm.13.3.67`
+- Zero-Shot Information Extraction for Clinical Meta-Analysis using Large Language Models — DOI: `10.18653/v1/2023.bionlp-1.37`
+- Neural evidence of face processing in social anxiety disorder: A systematic review with meta-analysis — DOI: `10.1016/j.neubiorev.2023.105283`
+- Early Detection of Cognitive Decline in Parkinson’s Disease Using Natural Language Processing of Speech: Protocol for a Systematic Review and Meta-Analysis — DOI: `10.1101/2025.10.11.25337799`
+- Using Systematic Reviews for Evidence Based Policy Making — DOI: `10.1002/9780470693926.ch22`
+- Early Detection of Cognitive Decline in Parkinson's Disease Using Natural Language Processing of Clinical Notes: A Systematic Review and Meta-Analysis Protocol — DOI: `10.1101/2025.10.11.25337798`
+- Data Extraction from Included Studies — DOI: `10.1007/978-3-030-71921-0_6`
+- Complex associative memory processing and sleep: A systematic review and meta-analysis of behavioural evidence and underlying EEG mechanisms — DOI: `10.1016/j.neubiorev.2014.10.018`
+- Meta‐Epidemiology: A Combination of Epidemiology and Meta‐Analysis in Response to the Challenges of Systematic Reviews and Meta‐Analysis — DOI: `10.1111/jebm.70036`
+- Identifying abdominal aortic aneurysm size and presence using Natural Language Processing of radiology reports: a systematic review and meta-analysis — DOI: `10.1007/s00261-025-04810-5`
+- Performance of Natural Language Processing Model in Extracting Information from Free-Text Radiology Reports: A Systematic Review and Meta-Analysis. — DOI: `10.1007/s10278-025-01728-8`
+- Self-Administered Interventions Based on Natural Language Processing Models for Reducing Depressive and Anxiety Symptoms: Systematic Review and Meta-Analysis — DOI: `10.2196/59560`
+- Transforming evidence synthesis: A systematic review of the evolution of automated meta-analysis in the age of AI — DOI: `10.1017/rsm.2025.10065`
+- A Systematic Review of Natural Language Processing Techniques for Early Detection of Cognitive Impairment — DOI: `10.1016/j.mcpdig.2025.100205`
+- Towards the automation of systematic reviews using natural language processing, machine learning, and deep learning: a comprehensive review — DOI: `10.1007/s10462-024-10844-w`
+- SENTIMENT ANALYSIS IN SOCIAL MEDIA: HOW DATA SCIENCE IMPACTS PUBLIC OPINION KNOWLEDGE INTEGRATES NATURAL LANGUAGE PROCESSING (NLP) WITH ARTIFICIAL INTELLIGENCE (AI) — DOI: `10.63125/r3sq6p80`
+- Performance of natural language processing in identifying adenomas from colonoscopy reports: a systematic review and meta-analysis — DOI: `10.1016/j.igie.2023.07.012`
+- Automation of Systematic Reviews with Large Language Models — DOI: `10.1101/2025.06.13.25329541`
+- A systematic review of natural language processing applications for hydrometeorological hazards assessment — DOI: `10.1007/s11069-023-05842-0`
+- Natural Language Processing Adoption in Governments and Future Research Directions: A Systematic Review — DOI: `10.3390/app132212346`
+- Machine learning natural language processing for identifying venous thromboembolism: systematic review and meta-analysis — DOI: `10.1182/bloodadvances.2023012200`
+- Advancing rheumatology with natural language processing: insights and prospects from a systematic review — DOI: `10.1093/rap/rkae120`
+- Language-Based Detection of Depression with Machine Learning: Systematic Review and Meta- Analysis — DOI: `10.21203/rs.3.rs-8067325/v1`
+- Acoustic and phonological processes in Williams Syndrome: a systematic review and meta-analysis. — DOI: `10.1016/j.neubiorev.2025.106236`
+- Association Between Circulating Levels of Magnesium and Metabolic Syndrome: A Systematic Review and Meta-Analysis of Observational Studies with GRADE Assessment. — DOI: `10.1093/nutrit/nuaf020`
+- Natural Language Processing in Electronic Health Records in relation to healthcare decision-making: A systematic review — DOI: `10.1016/j.compbiomed.2023.106649`
+- Application ChatGPT in conducting systematic reviews and meta-analyses — DOI: `10.1038/s41415-023-6132-y`
+- An Open Natural Language Processing Development Framework for EHR-based Clinical Research: A case demonstration using the National COVID Cohort Collaborative (N3C)
+- A Comprehensive Review of State-of-The-Art Methods for Java Code Generation from Natural Language Text — DOI: `10.1016/j.nlp.2023.100013`
+- Towards the Study of Morphological Processing of the Tangkhul Language
+- An Automated Multiple-Choice Question Generation Using Natural Language Processing Techniques — DOI: `10.5121/ijnlc.2021.10201`
+- SpeechPrompt: Prompting Speech Language Models for Speech Processing Tasks — DOI: `10.1109/taslp.2024.3436618`
+- Bridging Gaps in Natural Language Processing for Yorùbá: A Systematic Review of a Decade of Progress and Prospects — DOI: `10.1016/j.nlp.2025.100194`
+- FASTUS: A Cascaded Finite-State Transducer for Extracting Information from Natural-Language Text
+- Time, Tense and Aspect in Natural Language Database Interfaces
+- Exploring the Landscape of Natural Language Processing Research — DOI: `10.26615/978-954-452-092-2_111`
+- Modular Mechanistic Networks: On Bridging Mechanistic and Phenomenological Models with Deep Neural Networks in Natural Language Processing
+- Exploring the use of a Large Language Model for data extraction in systematic reviews: a rapid feasibility study
+- Challenges Encountered in Turkish Natural Language Processing Studies
+- PyThaiNLP: Thai Natural Language Processing in Python — DOI: `10.18653/v1/2023.nlposs-1.4`
+- Clinical information extraction for Low-resource languages with Few-shot learning using Pre-trained language models and Prompting — DOI: `10.1017/nlp.2024.52`
+- Situated Data, Situated Systems: A Methodology to Engage with Power Relations in Natural Language Processing Research
+- Natural Language Processing for Requirements Traceability
+- Comparative Analysis of Word Embeddings for Capturing Word Similarities — DOI: `10.5121/csit.2020.100402`
+- This Reads Like That: Deep Learning for Interpretable Natural Language Processing — DOI: `10.18653/v1/2023.emnlp-main.869`
+- Effectiveness of online mindfulness-based interventions in improving mental health: A review and meta-analysis of randomised controlled trials — DOI: `10.1016/j.cpr.2016.03.009`
+- Clinical metagenomics — DOI: `10.1038/s41576-019-0113-7`
+- Self-monitoring of blood pressure in hypertension: A systematic review and individual patient data meta-analysis — DOI: `10.1371/journal.pmed.1002389`
+- Features of effective computerised clinical decision support systems: meta-regression of 162 randomised trials — DOI: `10.1136/bmj.f657`
+- Big data in healthcare: management, analysis and future prospects — DOI: `10.1186/s40537-019-0217-0`
+- Quantifying Sex Bias in Clinical Studies at Scale With Automated Data Extraction — DOI: `10.1001/jamanetworkopen.2019.6700`
+- Adherence interventions and outcomes of tuberculosis treatment: A systematic review and meta-analysis of trials and observational studies — DOI: `10.1371/journal.pmed.1002595`
+- The Clinical Significance of Vancomycin Minimum Inhibitory Concentration in Staphylococcus aureus Infections: A Systematic Review and Meta-analysis — DOI: `10.1093/cid/cir935`
+- The Effect of Molecular Rapid Diagnostic Testing on Clinical Outcomes in Bloodstream Infections: A Systematic Review and Meta-analysis — DOI: `10.1093/cid/ciw649`
+- ImmPort, toward repurposing of open access immunological assay data for translational and clinical research — DOI: `10.1038/sdata.2018.15`
+- Digitizing clinical trials — DOI: `10.1038/s41746-020-0302-y`
+- Telemonitoring or structured telephone support programmes for patients with chronic heart failure: systematic review and meta-analysis — DOI: `10.1136/bmj.39156.536968.55`
+- Data Encoding for Byzantine-Resilient Distributed Optimization
+- Byzantine-Resilient SGD in High Dimensions on Heterogeneous Data
+- Bidirectional LSTM-CRF for Clinical Concept Extraction
+- Constraints on dark energy from H II starburst galaxy apparent magnitude versus redshift data — DOI: `10.1016/j.physletb.2012.07.011`
+- Eligibility-Aware Evidence Synthesis: An Agentic Framework for Clinical Trial Meta-Analysis
+- TerraGen: A Unified Multi-Task Layout Generation Framework for Remote Sensing Data Augmentation
+- Data Mining and Electronic Health Records: Selecting Optimal Clinical Treatments in Practice
+- Assurance for clinical trial design with normally distributed outcomes: eliciting uncertainty about variances
+- AeroGen: Enhancing Remote Sensing Object Detection with Diffusion-Driven Data Generation
+- Lightweight Transformers for Clinical Natural Language Processing — DOI: `10.1017/s1351324923000542`
+- Factors Affecting the Performance of Automated Speaker Verification in Alzheimer's Disease Clinical Trials
+- Clinical Trial Information Extraction with BERT
+- Towards a New Science of a Clinical Data Intelligence
+- A 20 Gbps Data Transmitting ASIC with PAM4 for Particle Physics Experiments
+- Using clinical trial registries to inform Copas selection model for publication bias in meta-analysis
+- Test Sensitivity in the Computer-Aided Detection of Breast Cancer from Clinical Mammographic Screening: a Meta-analysis
+- A Bias Correction Method in Meta-analysis of Randomized Clinical Trials with no Adjustments for Zero-inflated Outcomes — DOI: `10.1002/sim.9161`
+- Toward systematic review automation: a practical guide to using machine learning tools in research synthesis — DOI: `10.1186/s13643-019-1074-9`
+- Living Systematic Reviews: An Emerging Opportunity to Narrow the Evidence-Practice Gap — DOI: `10.1371/journal.pmed.1001603`
+- Systematic review automation technologies — DOI: `10.1186/2046-4053-3-74`
+- <i>PRISMA2020</i> : An R package and Shiny app for producing PRISMA 2020‐compliant flow diagrams, with interactivity for optimised digital transparency and Open Synthesis — DOI: `10.1002/cl2.1230`
+- Conversational agents in healthcare: a systematic review — DOI: `10.1093/jamia/ocy072`
+- Using text mining for study identification in systematic reviews: a systematic review of current approaches — DOI: `10.1186/2046-4053-4-5`
+- Living systematic reviews: 2. Combining human and machine effort — DOI: `10.1016/j.jclinepi.2017.08.011`
+- Cochrane Rapid Reviews Methods Group offers evidence-informed guidance to conduct rapid reviews — DOI: `10.1016/j.jclinepi.2020.10.007`
+- The PRISMA 2020 statement: an updated guideline for reporting systematic reviews — DOI: `10.31222/osf.io/v7gm2_v1`
+- Data extraction methods for systematic review (semi)automation: A living systematic review — DOI: `10.12688/f1000research.51117.1`
+- Systematic Reviews in Educational Research: Methodology, Perspectives and Application — DOI: `10.1007/978-3-658-27602-7_1`
+- A question of trust: can we build an evidence base to gain trust in systematic review automation technologies? — DOI: `10.1186/s13643-019-1062-0`
+- Big data analytics in E-commerce: a systematic review and agenda for future research — DOI: `10.1007/s12525-016-0219-0`
+- Dissemination and publication of research findings: an updated review of related biases — DOI: `10.3310/hta14080`
+- The Personalization of Conversational Agents in Health Care: Systematic Review — DOI: `10.2196/15360`
+- Sexual transmission of Zika virus and other flaviviruses: A living systematic review — DOI: `10.1371/journal.pmed.1002611`
+- Research Screener: a machine learning tool to semi-automate abstract screening for systematic reviews — DOI: `10.1186/s13643-021-01635-3`
+- Peer Review Report For: Methods for living evidence synthesis: a systematic review protocol [version 1; peer review: 2 approved with reservations] — DOI: `10.21956/openreseurope.15135.r27710`
+- Peer Review Report For: Methods for living evidence synthesis: a systematic review protocol [version 1; peer review: 2 approved with reservations] — DOI: `10.21956/openreseurope.15135.r27711`
+- Accelerating Evidence Synthesis in Observational Studies: A Living NLP-Assisted Intelligent Systematic Literature Review System (Preprint) — DOI: `10.2196/preprints.54653`
+- Peer Review Report For: Data extraction methods for systematic review (semi)automation: A living systematic review [version 1; peer review: 3 approved] — DOI: `10.5256/f1000research.54235.r85692`
+- Peer Review Report For: Data extraction methods for systematic review (semi)automation: A living systematic review [version 1; peer review: 3 approved] — DOI: `10.5256/f1000research.54235.r89348`
+- Peer Review Report For: Data extraction methods for systematic review (semi)automation: A living systematic review [version 1; peer review: 3 approved] — DOI: `10.5256/f1000research.54235.r89347`
+- Effectiveness of strategies for reducing risky alcohol consumption among youth living in rural or remote areas — DOI: `10.11124/jbisrir-d-19-00098`
+- Automation of literature screening using machine learning in medical evidence synthesis: a diagnostic test accuracy systematic review protocol — DOI: `10.1186/s13643-021-01881-5`
+- Experiences of adults living with an implantable cardioverter defibrillator for cardiovascular disease: a systematic review of qualitative evidence — DOI: `10.11124/jbisrir-d-19-00239`
+- Adults’ experience of living with multimorbidity: a qualitative systematic review protocol — DOI: `10.11124/jbies-20-00148`
+- Experiences of school-age children living with food allergies: a qualitative systematic review protocol — DOI: `10.11124/jbies-23-00428`
+- Peer Review Report For: Data extraction methods for systematic review (semi)automation: A living review protocol [version 2; peer review: 2 approved] — DOI: `10.5256/f1000research.27003.r64379`
+- Prevalence of COVID-19 genomic variation in Africa: a living systematic review protocol — DOI: `10.11124/jbies-20-00516`
+- Experiences of living with juvenile idiopathic arthritis: a qualitative systematic review — DOI: `10.11124/jbies-21-00139`
+- Systematic Online Living Evidence Summaries: emerging tools to accelerate evidence synthesis — DOI: `10.31222/osf.io/nbe5q`
+- Correction to “Artificial Intelligence and Automation in Evidence Synthesis: An Investigation of Methods Employed in Cochrane, Campbell Collaboration, and Environmental Evidence Reviews,” “Creating Interactive Data Dashboards for Evidence Syntheses,” and “Using GPT‐4 for Title and Abstract Screening in a Literature Review of Public Policies: A Feasibility Study” — DOI: `10.1002/cesm.70084`
+- Experiences of perinatal depression screening in women during perinatal period: a qualitative systematic review protocol — DOI: `10.11124/jbies-24-00557`
+- Evaluation of methods to quantify aerobic-anaerobic energy contributions during sports and exercise — a systematic review and best-evidence synthesis — DOI: `10.3389/fspor.2025.1650741`
+- Living mode parameters and automation in living Evidence and Gap Maps (L-EGMs): a scoping review — DOI: `10.2139/ssrn.5668523`
+- Peer Review Report For: Data extraction methods for systematic review (semi)automation: A living review protocol [version 1; peer review: 1 approved, 1 approved with reservations] — DOI: `10.5256/f1000research.25153.r61722`
+- Generative artificial intelligence use in evidence synthesis: A systematic review — DOI: `10.1017/rsm.2025.16`
+- Development and evaluation of prompts for a large language model to screen titles and abstracts in a living systematic review — DOI: `10.1136/bmjment-2025-301762`
+- Testing the utility of GPT for title and abstract screening in environmental systematic evidence synthesis — DOI: `10.1186/s13750-025-00360-x`
+- Artificial Intelligence and Automation in Evidence Synthesis: An Investigation of Methods Employed in Cochrane, Campbell Collaboration, and Environmental Evidence Reviews — DOI: `10.1002/cesm.70046`
+- Machine Learning Tools To (Semi-)Automate Evidence Synthesis: A Rapid Review and Evidence Map — DOI: `10.23970/ahrqepcwhitepapermachine2`
+- How much can we save by applying artificial intelligence in evidence synthesis? Results from a pragmatic review to quantify workload efficiencies and cost savings — DOI: `10.3389/fphar.2025.1454245`
+- Zero-shot Generative Large Language Models for Systematic Review Screening Automation — DOI: `10.1007/978-3-031-56027-9_25`
+- Systematic online living evidence summaries: emerging tools to accelerate evidence synthesis — DOI: `10.1042/cs20220494`
+- Updated Living Systematic Review and Meta-analysis of Controlled Trials of Mesenchymal Stromal Cells to Treat COVID-19: A Framework for Accelerated Synthesis of Trial Evidence for Rapid Approval—FASTER Approval — DOI: `10.1093/stcltm/szac038`
+- A New Approach to Evidence Synthesis in Traumatic Brain Injury: A Living Systematic Review — DOI: `10.1089/neu.2015.4124`
+- Systematic review automation tools improve efficiency but lack of knowledge impedes their adoption: a survey. — DOI: `10.1016/j.jclinepi.2021.06.030`
+- Experiences of living with leprosy: A systematic review and qualitative evidence synthesis — DOI: `10.1371/journal.pntd.0010761`
+- Rehabilitation and COVID-19: a rapid living systematic review by Cochrane Rehabilitation Field updated as of December 31st, 2020 and synthesis of the scientific literature of 2020. — DOI: `10.23736/s1973-9087.21.06870-2`
+- A narrative review of recent tools and innovations toward automating living systematic reviews and evidence syntheses. — DOI: `10.1016/j.zefq.2023.06.007`
+- Artificial Intelligence Software to Accelerate Screening for Living Systematic Reviews. — DOI: `10.1007/s10567-025-00519-5`
+- First-line Systemic Treatment Options for Metastatic Castration-Sensitive Prostate Cancer: A Living Systematic Review and Network Meta-analysis. — DOI: `10.1001/jamaoncol.2022.7762`
+- Data extraction methods for systematic review (semi)automation: Update of a living systematic review — DOI: `10.12688/f1000research.51117.3`
+- Fragment Descriptors in Virtual Screening — DOI: `10.2174/9781608057450113010005`
+- A Living Review of Machine Learning for Particle Physics
+- Synthesis of Reversible Functions Beyond Gate Count and Quantum Cost
+- MCP4EDA: LLM-Powered Model Context Protocol RTL-to-GDSII Automation with Backend Aware Synthesis Optimization
+- An AI-Driven Live Systematic Reviews in the Brain-Heart Interconnectome: Minimizing Research Waste and Advancing Evidence Synthesis
+- Algorithms for screening of Cervical Cancer: A chronological review
+- CRUISE-Screening: Living Literature Reviews Toolbox — DOI: `10.1145/3583780.3614736`
+- Automating Systematic Literature Reviews with Natural Language Processing and Text Mining: a Systematic Literature Review
+- The Mass Production of Redundant, Misleading, and Conflicted Systematic Reviews and Meta‐analyses — DOI: `10.1111/1468-0009.12210`
+- Evaluating Large Language Models Trained on Code — DOI: `10.48550/arxiv.2107.03374`
+- Practical and ethical challenges of large language models in education: A systematic scoping review — DOI: `10.1111/bjet.13370`
+- A survey on large language model based autonomous agents — DOI: `10.1007/s11704-024-40231-1`
+- ChatGPT Utility in Healthcare Education, Research, and Practice: Systematic Review on the Promising Perspectives and Valid Concerns — DOI: `10.3390/healthcare11060887`
+- <i>MolProbity</i>: all-atom structure validation for macromolecular crystallography — DOI: `10.1107/s0907444909042073`
+- A Systematic Review of the Literature on Digital Transformation: Insights and Implications for Strategy and Organizational Change — DOI: `10.1111/joms.12639`
+- A Review on Large Language Models: Architectures, Applications, Taxonomies, Open Issues and Challenges — DOI: `10.1109/access.2024.3365742`
+- A full systematic review was completed in 2 weeks using automation tools: a case study — DOI: `10.1016/j.jclinepi.2020.01.008`
+- Estimating the extent of asymptomatic COVID-19 and its potential for community transmission: Systematic review and meta-analysis — DOI: `10.3138/jammi-2020-0030`
+- Particle Swarm Optimization Algorithm and Its Applications: A Systematic Review — DOI: `10.1007/s11831-021-09694-4`
+- Advanced capabilities for materials modelling with Quantum ESPRESSO — DOI: `10.1088/1361-648x/aa8f79`
+- Automation and New Tasks: How Technology Displaces and Reinstates Labor — DOI: `10.1257/jep.33.2.3`
+- Interpreting Black-Box Models: A Review on Explainable Artificial Intelligence — DOI: `10.1007/s12559-023-10179-8`
+- Are ChatGPT and large language models “the answer” to bringing us closer to systematic review automation? — DOI: `10.1186/s13643-023-02243-z`
+- The relation between 21st-century skills and digital skills: A systematic literature review — DOI: `10.1016/j.chb.2017.03.010`
+- Artificial Intelligence Beyond Stochastic Parrots: A Systematic Review and Bayesian Meta-Analysis of Consciousness in Large Language Models (Manuscript) — DOI: `10.2139/ssrn.6223818`
+- Evaluating the Efficacy of Large Language Models for Systematic Review and Meta-Analysis Screening — DOI: `10.1101/2024.06.03.24308405`
+- Performance of Large Language Models in Automated Medical Literature Screening: A Systematic Review and Meta-analysis — DOI: `10.64898/2026.03.17.26348656`
+- Systematic analysis of large language models for automating document-to-smart contract transformation — DOI: `10.1016/j.autcon.2025.106209`
+- Performance of Large Language Models in Nursing Licensure Examinations: A Systematic Review and Meta-Analysis — DOI: `10.21203/rs.3.rs-8671859/v1`
+- Large language models in neurosurgery: a systematic review and meta-analysis — DOI: `10.1007/s00701-024-06372-9`
+- Large language models in systematic review and meta-analysis of surgical treatments for vaginal vault prolapse — DOI: `10.1038/s41746-026-02431-w`
+- Diagnostic accuracy of large language models for emergency department triage: a systematic review and meta-analysis — DOI: `10.1186/s12873-026-01639-z`
+- Retrieval Augmented Generation (RAG) and Large Language Models (LLMs) for Enterprise Knowledge Management and Document Automation: A Systematic Literature Review — DOI: `10.20944/preprints202512.0359.v1`
+- Around meta-analysis (15): emerging Large Language Models (LLM) tools — DOI: `10.53962/krmv-p5c5`
+- Reasoning capabilities of large language models: a systematic review and meta-analysis of benchmarks, methods, and emergent behaviours (2018–2025) — DOI: `10.55529/jaimlnn.51.63.75`
+- Large Language Models for Sentiment Analysis in Healthcare: A Systematic Review Protocol — DOI: `10.1101/2025.06.10.25329350`
+- Enhancing Electronic Design Automation with Large Language Models: A Taxonomy, Analysis, and Opportunities — DOI: `10.36227/techrxiv.174673261.12570174/v1`
+- A systematic review and meta-analysis of the Diagnostic Performance of Large Language Models in Rare Diseases — DOI: `10.21203/rs.3.rs-10011746/v1`
+- A Systematic Review of Vulnerability Scanning Tools for Large Language Models (LLMs) — DOI: `10.21275/sr251207022056`
+- Large Language Models for Material Science: A Systematic Review — DOI: `10.21203/rs.3.rs-9377879/v1`
+- Review for "Using Large Language Models to Address Contextual Questions in Systematic Reviews" — DOI: `10.1002/cesm.70060/v1/review1`
+- Review for "Using Large Language Models to Address Contextual Questions in Systematic Reviews" — DOI: `10.1002/cesm.70060/v1/review3`
+- Review for "Using Large Language Models to Address Contextual Questions in Systematic Reviews" — DOI: `10.1002/cesm.70060/v1/review2`
+- Efficacy of Large Language Models in Systematic Reviews
+- Object Detection with Multimodal Large Vision-Language Models: An In-depth Review — DOI: `10.1016/j.inffus.2025.103575`
+- A Critical Review of Causal Reasoning Benchmarks for Large Language Models
+- Document Automation Architectures: Updated Survey in Light of Large Language Models
+- Enhancing Human-Like Responses in Large Language Models
+- Game Theory Meets Large Language Models: A Systematic Survey with Taxonomy and New Frontiers
+- A systematic review of research on large language models for computer programming education
+- Unmasking the Shadows of AI: Investigating Deceptive Capabilities in Large Language Models
+- Advances in Pre-trained Language Models for Domain-Specific Text Classification: A Systematic Review — DOI: `10.1145/3763002`
+- Is Self-knowledge and Action Consistent or Not: Investigating Large Language Model's Personality
+- Large Language Models Lack Understanding of Character Composition of Words
+- Reinforcement Learning Meets Large Language Models: A Survey of Advancements and Applications Across the LLM Lifecycle
+- Making Large Language Models Better Reasoners with Alignment
+- A Survey on Multimodal Large Language Models — DOI: `10.1093/nsr/nwae403`
+- Self-Cognition in Large Language Models: An Exploratory Study
+- Embodied AI with Foundation Models for Mobile Service Robots: A Systematic Review — DOI: `10.3390/robotics15030055`
+
+## Failures
+
+- semantic-scholar / "automated meta-analysis systematic review evidence extraction": source HTTP status 429
+- semantic-scholar / "machine learning automated systematic review meta-analysis": source HTTP status 429
+- crossref / "automated data extraction clinical trial meta-analysis": paper title is required
+- semantic-scholar / "automated data extraction clinical trial meta-analysis": source HTTP status 429
+- semantic-scholar / "large language models systematic review automation meta-analysis": source HTTP status 429

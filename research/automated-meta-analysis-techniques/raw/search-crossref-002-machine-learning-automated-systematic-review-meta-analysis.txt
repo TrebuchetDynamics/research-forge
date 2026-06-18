@@ -1,0 +1,20 @@
+10.1111/odi.70121/v2/review1	Review for "Molecular Biomarkers and Machine Learning in Oral Cancer: A Systematic Review and Meta‐Analysis"
+10.1111/odi.70121/v1/review1	Review for "Molecular Biomarkers and Machine Learning in Oral Cancer: A Systematic Review and Meta‐Analysis"
+10.1111/odi.70121/v1/review3	Review for "Molecular Biomarkers and Machine Learning in Oral Cancer: A Systematic Review and Meta‐Analysis"
+10.1111/odi.70121/v2/review2	Review for "Molecular Biomarkers and Machine Learning in Oral Cancer: A Systematic Review and Meta‐Analysis"
+10.7759/cureus.40934	Artificial Intelligence and Machine Learning for Automated Cephalometric Landmark Identification: A Meta-Analysis Previewed by a Systematic Review
+10.1111/odi.70121/v1/review2	Review for "Molecular Biomarkers and Machine Learning in Oral Cancer: A Systematic Review and Meta‐Analysis"
+10.1002/brb3.70557/v1/review1	Review for "Accuracy of Machine Learning in Predicting Post‐Stroke Depression: A Systematic Review and Meta‐Analysis"
+10.64898/2026.05.21.26353815	Deep Learning and Machine Learning for Early Detection of Alzheimer’s Disease: A Systematic Review and Meta-Analysis
+10.1111/odi.70121/v2/decision1	Decision letter for "Molecular Biomarkers and Machine Learning in Oral Cancer: A Systematic Review and Meta‐Analysis"
+10.1111/odi.70121/v1/decision1	Decision letter for "Molecular Biomarkers and Machine Learning in Oral Cancer: A Systematic Review and Meta‐Analysis"
+10.1177/15330338261425328/v1/review1	Review for "Value of Machine Learning Models for Cell-Free DNA-Based Multi-Cancer Early Detection: A Systematic Review and Meta-Analysis"
+10.1177/15330338261425328/v1/review2	Review for "Value of Machine Learning Models for Cell-Free DNA-Based Multi-Cancer Early Detection: A Systematic Review and Meta-Analysis"
+10.1177/15330338261425328/v2/review1	Review for "Value of Machine Learning Models for Cell-Free DNA-Based Multi-Cancer Early Detection: A Systematic Review and Meta-Analysis"
+10.1007/978-3-030-88132-0_1	Automated Machine Learning
+10.54480/slrm.v2i2.21	Weed detection using machine learning: A systematic literature review
+10.21203/rs.3.rs-2961713/v1	Predicting Sepsis Onset in ICU Using Machine Learning Models: A Systematic Review and Meta-Analysis
+10.36227/techrxiv.13132931	Supervised Machine Learning for Aiding Diagnosis of Knee Osteoarthritis: A Systematic Review and Meta-Analysis
+10.36227/techrxiv.13132931.v1	Supervised Machine Learning for Aiding Diagnosis of Knee Osteoarthritis: A Systematic Review and Meta-Analysis
+10.21203/rs.3.rs-2658566/v1	Optimal Machine Learning- and Deep Learning- driven algorithms for predicting the future value of investments: A systematic review and meta-analysis
+10.1007/978-3-030-88132-0_3	Automated Machine Learning for Multimedia

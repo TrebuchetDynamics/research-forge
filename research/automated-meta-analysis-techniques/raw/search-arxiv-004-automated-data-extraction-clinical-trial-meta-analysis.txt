@@ -1,0 +1,20 @@
+	Data Encoding for Byzantine-Resilient Distributed Optimization
+	Byzantine-Resilient SGD in High Dimensions on Heterogeneous Data
+	Bidirectional LSTM-CRF for Clinical Concept Extraction
+10.1016/j.physletb.2012.07.011	Constraints on dark energy from H II starburst galaxy apparent magnitude versus redshift data
+	Eligibility-Aware Evidence Synthesis: An Agentic Framework for Clinical Trial Meta-Analysis
+	TerraGen: A Unified Multi-Task Layout Generation Framework for Remote Sensing Data Augmentation
+	Bidirectional LSTM-CRF for Clinical Concept Extraction
+	Data Mining and Electronic Health Records: Selecting Optimal Clinical Treatments in Practice
+	Assurance for clinical trial design with normally distributed outcomes: eliciting uncertainty about variances
+	AeroGen: Enhancing Remote Sensing Object Detection with Diffusion-Driven Data Generation
+10.1017/s1351324923000542	Lightweight Transformers for Clinical Natural Language Processing
+	Factors Affecting the Performance of Automated Speaker Verification in Alzheimer's Disease Clinical Trials
+	Clinical Trial Information Extraction with BERT
+	Towards a New Science of a Clinical Data Intelligence
+	A 20 Gbps Data Transmitting ASIC with PAM4 for Particle Physics Experiments
+	Using clinical trial registries to inform Copas selection model for publication bias in meta-analysis
+	Test Sensitivity in the Computer-Aided Detection of Breast Cancer from Clinical Mammographic Screening: a Meta-analysis
+10.1002/sim.9161	A Bias Correction Method in Meta-analysis of Randomized Clinical Trials with no Adjustments for Zero-inflated Outcomes
+	Federated Learning in Distributed Medical Databases: Meta-Analysis of Large-Scale Subcortical Brain Data
+	P-value evaluation, variability index and biomarker categorization for adaptively weighted Fisher's meta-analysis method in omics applications

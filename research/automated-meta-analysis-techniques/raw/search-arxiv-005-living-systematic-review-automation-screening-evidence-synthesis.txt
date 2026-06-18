@@ -1,0 +1,20 @@
+10.2174/9781608057450113010005	Fragment Descriptors in Virtual Screening
+	Transforming Evidence Synthesis: A Systematic Review of the Evolution of Automated Meta-Analysis in the Age of AI
+10.1080/09669760.2022.2107491	A Systematic Review of Computational Thinking in Early Ages
+	A Systematic Literature Review of Automated Techniques for Functional GUI Testing of Mobile Applications
+	A Living Review of Machine Learning for Particle Physics
+10.1017/s0269888923000097	Reformulation Techniques for Automated Planning: A Systematic Review
+	Computational-Assisted Systematic Review and Meta-Analysis (CASMA): Effect of a Subclass of GnRH-a on Endometriosis Recurrence
+	Synthesis of Reversible Functions Beyond Gate Count and Quantum Cost
+10.3390/electronics14081557	Trust and Trustworthiness from Human-Centered Perspective in HRI -- A Systematic Literature Review
+	Non-invasive Techniques for Flow Rate Measurement in Water Pipes: Protocol for a Systematic Review
+	Drivers' attention detection: a systematic literature review
+	MCP4EDA: LLM-Powered Model Context Protocol RTL-to-GDSII Automation with Backend Aware Synthesis Optimization
+	An AI-Driven Live Systematic Reviews in the Brain-Heart Interconnectome: Minimizing Research Waste and Advancing Evidence Synthesis
+10.12688/f1000research.74223.2	ALL-IN meta-analysis: breathing life into living systematic reviews and prospective meta-analyses
+	Machine Learning Applications to Diffuse Reflectance Spectroscopy in Optical Diagnosis; A Systematic Review
+	Algorithms for screening of Cervical Cancer: A chronological review
+	Computational analysis of the language of pain: a systematic review
+10.1145/3583780.3614736	CRUISE-Screening: Living Literature Reviews Toolbox
+	Prompt-Driven Code Summarization: A Systematic Literature Review
+	Automating Systematic Literature Reviews with Natural Language Processing and Text Mining: a Systematic Literature Review

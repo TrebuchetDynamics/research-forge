@@ -1,0 +1,20 @@
+	An Open Natural Language Processing Development Framework for EHR-based Clinical Research: A case demonstration using the National COVID Cohort Collaborative (N3C)
+10.1016/j.nlp.2023.100013	A Comprehensive Review of State-of-The-Art Methods for Java Code Generation from Natural Language Text
+	Towards the Study of Morphological Processing of the Tangkhul Language
+10.5121/ijnlc.2021.10201	An Automated Multiple-Choice Question Generation Using Natural Language Processing Techniques
+10.1109/taslp.2024.3436618	SpeechPrompt: Prompting Speech Language Models for Speech Processing Tasks
+10.1016/j.nlp.2025.100194	Bridging Gaps in Natural Language Processing for Yorùbá: A Systematic Review of a Decade of Progress and Prospects
+	FASTUS: A Cascaded Finite-State Transducer for Extracting Information from Natural-Language Text
+	Time, Tense and Aspect in Natural Language Database Interfaces
+10.26615/978-954-452-092-2_111	Exploring the Landscape of Natural Language Processing Research
+	Modular Mechanistic Networks: On Bridging Mechanistic and Phenomenological Models with Deep Neural Networks in Natural Language Processing
+	Exploring the use of a Large Language Model for data extraction in systematic reviews: a rapid feasibility study
+	Challenges Encountered in Turkish Natural Language Processing Studies
+10.18653/v1/2023.nlposs-1.4	PyThaiNLP: Thai Natural Language Processing in Python
+10.1017/nlp.2024.52	Clinical information extraction for Low-resource languages with Few-shot learning using Pre-trained language models and Prompting
+	Situated Data, Situated Systems: A Methodology to Engage with Power Relations in Natural Language Processing Research
+	Natural Language Processing for Requirements Traceability
+10.5121/csit.2020.100402	Comparative Analysis of Word Embeddings for Capturing Word Similarities
+10.18653/v1/2023.emnlp-main.869	This Reads Like That: Deep Learning for Interpretable Natural Language Processing
+	Generative AI and Creativity: A Systematic Literature Review and Meta-Analysis
+10.1093/bmb/ldaf017	AI chatbots versus human healthcare professionals: a systematic review and meta-analysis of empathy in patient care

@@ -1,0 +1,20 @@
+	Transforming Evidence Synthesis: A Systematic Review of the Evolution of Automated Meta-Analysis in the Age of AI
+10.12688/f1000research.74223.2	ALL-IN meta-analysis: breathing life into living systematic reviews and prospective meta-analyses
+10.1093/bmb/ldaf017	AI chatbots versus human healthcare professionals: a systematic review and meta-analysis of empathy in patient care
+	A Systematic Literature Review of Automated Techniques for Functional GUI Testing of Mobile Applications
+	Generative AI and Creativity: A Systematic Literature Review and Meta-Analysis
+10.1017/s0269888923000097	Reformulation Techniques for Automated Planning: A Systematic Review
+10.1080/09669760.2022.2107491	A Systematic Review of Computational Thinking in Early Ages
+10.1038/s41746-024-01106-8	Artificial intelligence in digital pathology: a systematic review and meta-analysis of diagnostic test accuracy
+	Non-invasive Techniques for Flow Rate Measurement in Water Pipes: Protocol for a Systematic Review
+	Challenges in systematic reviews and meta-analyses of mediation analyses
+	P-value evaluation, variability index and biomarker categorization for adaptively weighted Fisher's meta-analysis method in omics applications
+	OpenExtract: Automated Data Extraction for Systematic Reviews in Health
+	Machine Learning Applications to Diffuse Reflectance Spectroscopy in Optical Diagnosis; A Systematic Review
+	Computational analysis of the language of pain: a systematic review
+	Computational-Assisted Systematic Review and Meta-Analysis (CASMA): Effect of a Subclass of GnRH-a on Endometriosis Recurrence
+	Drivers' attention detection: a systematic literature review
+	Diagnosing Structural Failures in LLM-Based Evidence Extraction for Meta-Analysis
+10.3390/electronics14081557	Trust and Trustworthiness from Human-Centered Perspective in HRI -- A Systematic Literature Review
+10.1145/3132847.3133141	Extracting Entities of Interest from Comparative Product Reviews
+	Prompt-Driven Code Summarization: A Systematic Literature Review

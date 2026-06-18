@@ -1,0 +1,20 @@
+10.2139/ssrn.6223818	Artificial Intelligence Beyond Stochastic Parrots: A Systematic Review and Bayesian Meta-Analysis of Consciousness in Large Language Models (Manuscript)
+10.1101/2024.06.03.24308405	Evaluating the Efficacy of Large Language Models for Systematic Review and Meta-Analysis Screening
+10.1370/afm.22.s1.6188	Reducing The Effort for Performing Systematic Reviews Using Natural Language Processing And Large Language Models
+10.64898/2026.03.17.26348656	Performance of Large Language Models in Automated Medical Literature Screening: A Systematic Review and Meta-analysis
+10.1016/j.autcon.2025.106209	Systematic analysis of large language models for automating document-to-smart contract transformation
+10.21203/rs.3.rs-8671859/v1	Performance of Large Language Models in Nursing Licensure Examinations: A Systematic Review and Meta-Analysis
+10.1007/s00701-024-06372-9	Large language models in neurosurgery: a systematic review and meta-analysis
+10.1038/s41746-026-02431-w	Large language models in systematic review and meta-analysis of surgical treatments for vaginal vault prolapse
+10.1186/s12873-026-01639-z	Diagnostic accuracy of large language models for emergency department triage: a systematic review and meta-analysis
+10.20944/preprints202512.0359.v1	Retrieval Augmented Generation (RAG) and Large Language Models (LLMs) for Enterprise Knowledge Management and Document Automation: A Systematic Literature Review
+10.53962/krmv-p5c5	Around meta-analysis (15): emerging Large Language Models (LLM) tools
+10.55529/jaimlnn.51.63.75	Reasoning capabilities of large language models: a systematic review and meta-analysis of benchmarks, methods, and emergent behaviours (2018–2025)
+10.1101/2025.06.10.25329350	Large Language Models for Sentiment Analysis in Healthcare: A Systematic Review Protocol
+10.36227/techrxiv.174673261.12570174/v1	Enhancing Electronic Design Automation with Large Language Models: A Taxonomy, Analysis, and Opportunities
+10.21203/rs.3.rs-10011746/v1	A systematic review and meta-analysis of the Diagnostic Performance of Large Language Models in Rare Diseases
+10.21275/sr251207022056	A Systematic Review of Vulnerability Scanning Tools for Large Language Models (LLMs)
+10.21203/rs.3.rs-9377879/v1	Large Language Models for Material Science: A Systematic Review
+10.1002/cesm.70060/v1/review1	Review for "Using Large Language Models to Address Contextual Questions in Systematic Reviews"
+10.1002/cesm.70060/v1/review3	Review for "Using Large Language Models to Address Contextual Questions in Systematic Reviews"
+10.1002/cesm.70060/v1/review2	Review for "Using Large Language Models to Address Contextual Questions in Systematic Reviews"
