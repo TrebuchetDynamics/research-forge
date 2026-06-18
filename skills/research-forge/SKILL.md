@@ -1,16 +1,24 @@
 ---
 name: research-forge
-description: Research any academic topic using rforge. Installs rforge automatically if not available. Covers literature search, OSS study, systematic review, evidence extraction, meta-analysis, and reproducible review packages.
+description: Research academic or OSS topics using rforge with provenance, source coverage, human gates, and reproducible outputs. Use for literature search, OSS study, systematic review, evidence extraction, meta-analysis, or review packages.
 ---
 
 # rforge — Academic Research Skill
 
 Use this skill to conduct academic research with the `rforge` CLI. Works in any project — rforge is a standalone tool, not a dependency of your codebase.
 
+Core principle: **retrieval-first, provenance-first, statistics-first, LLM-assisted**. Retrieve source metadata first, preserve exact query/source provenance, use auditable statistics where applicable, and never self-approve human review gates.
+
+Before running searches, choose an output location and depth:
+- If inside a repo with `artifacts/`, use `artifacts/research/<topic-slug>/`.
+- If inside a repo without `artifacts/`, use `research/<topic-slug>/`.
+- If no clear project home exists, use `~/research/<topic-slug>/`.
+- Quick: 3 query variants × 2–3 sources. Standard: 5–8 query variants × scholarly-fast/all sources plus citation expansion. Comprehensive: 10+ query variants × all relevant sources, citation expansion, evidence grid, and explicit gaps.
+
 ## Step 0 — Check and install rforge
 
 ```sh
-rforge --version
+rforge version
 ```
 
 If the command is not found, install it:
@@ -75,6 +83,8 @@ When `rforge` is not available or not initialized, write outputs directly to the
 
 ### Academic literature search
 
+Start by expanding the question into query variants: canonical term, abbreviations, mechanism/material/method variants, application variants, broader/narrower forms, and recent-year filters when useful. Prefer `search batch` for multi-source sweeps so failures, dedupe, manifests, and stats are saved together.
+
 ```sh
 rforge search --source openalex|arxiv|crossref|semantic-scholar|europepmc|pubmed \
   --query "<query>" \
@@ -85,6 +95,23 @@ rforge search --source openalex|arxiv|crossref|semantic-scholar|europepmc|pubmed
 rforge search import --source openalex --query "<query>" --pages N \
   [--project <path>]
 
+# Multi-query/multi-source sweep with dedupe, raw outputs, failures, manifest, and stats.
+rforge search batch --queries queries.txt --sources all --out <dir> \
+  --dedupe doi,title --continue-on-error --stats
+
+# Source presets: all, scholarly-fast, biomedical, preprints, datasets, open.
+rforge search batch --queries queries.txt --sources scholarly-fast --out <dir> --stats
+```
+
+If using individual `rforge search` commands instead of `search batch`, save every source/query result to a file and run coverage stats before reporting:
+
+```sh
+rforge search stats --dir <dir>
+```
+
+Pick 3–5 high-signal seed papers from the sweep for citation expansion: surveys, high-citation papers, Nature/Science/ACM/IEEE venues, or method-defining preprints.
+
+```sh
 rforge citations expand --source semantic-scholar --paper <id> \
   --direction references|citations|both --depth N --out <graph.json>
 
@@ -99,14 +126,38 @@ rforge protocol plan-sources --type pico --question "<text>"
 rforge protocol capabilities
 ```
 
-### OSS study
+### OSS study and open-source project discovery
+
+First generate a provider-coverage search plan. This is safe: it does not clone repos, add dependencies, or approve integration.
 
 ```sh
-rforge oss add <owner/repo>
-rforge oss scan --topic "<topic>"
-rforge oss report --area <area>
-rforge oss inventory-check <manifest.json>
+rforge oss search-plan --query "<project/functionality to find>" \
+  [--ecosystem all|go|python|js|rust|data]
+
+rforge --json oss search-plan --query "<project/functionality to find>" --ecosystem all
 ```
+
+Use the plan to search multiple open-source ecosystems rather than GitHub alone:
+
+- Code forges: GitHub, GitLab, Codeberg/Forgejo, SourceHut.
+- Archives: Software Heritage.
+- Package registries: pkg.go.dev, PyPI, npm, crates.io, plus ecosystem-specific registries when relevant.
+- Security/supply-chain signals: OpenSSF Scorecard, release cadence, CI, security policy, dependency metadata.
+- Human gates: clone approval for large repos, license review, dependency/import approval, and integration disposition.
+
+Then record selected repositories in a ResearchForge project:
+
+```sh
+rforge --project <path> oss add <owner/repo> [--area <area>]
+rforge --project <path> oss scan <owner/repo> --topic "<topic>"
+rforge --project <path> oss report --area <area>
+rforge oss inventory-check <manifest.json>
+rforge oss inventory-refresh <manifest.json> --source github
+rforge oss inventory-policy <manifest.json> [--stale-after 18mo]
+rforge oss inventory-roadmap <manifest.json> --todo TODO.md
+```
+
+Do not treat stars/downloads as quality proof. Use them only as one signal alongside maintenance, license, activity, security posture, package metadata, and domain fit.
 
 ### Fallback when rforge is not available
 
@@ -243,20 +294,37 @@ Or write directly without `rforge`:
 
 ## Provenance rules (always required)
 
-Every run must write or append `provenance.json` before finishing:
+Every run must write or append `provenance.json` before finishing. Capture depth, exact queries, sources, coverage stats, citation expansion attempts, outputs, and failures/rate limits. If `search batch --stats` was used, include `search-stats.txt` or equivalent stats output.
 
 ```json
 {
   "question": "<research question or task description>",
+  "depth": "quick|standard|comprehensive",
   "sources": ["openalex", "arxiv"],
   "queries": ["<exact query string used>"],
   "timestamp": "<ISO 8601>",
-  "rforge_version": "<from rforge --version, or 'not available'>",
-  "outputs": ["<relative paths to all saved files>"]
+  "rforge_version": "<from rforge version, or 'not available'>",
+  "search_stats": {"openalex": 0, "arxiv": 0, "total_unique_dois": 0},
+  "citation_expand_attempted": ["<paper id or DOI>"],
+  "citation_expand_succeeded": ["<paper id or DOI>"],
+  "outputs": ["<relative paths to all saved files>"],
+  "errors": ["<rate limit, API failure, missing source, or empty output notes>"]
 }
 ```
 
 If `rforge` is not available, write this file manually. A run without `provenance.json` is incomplete.
+
+---
+
+## Verification gate
+
+Before declaring research complete, verify:
+- `rforge version` was run or marked unavailable in provenance.
+- Every planned source/query has a saved result file, batch manifest, or explicit error note.
+- Source coverage stats were run and recorded.
+- `report.md` or the requested output exists and cites exact papers, repositories, or artifacts.
+- `provenance.json` exists, is valid JSON, and lists all outputs.
+- Human-gated actions were surfaced rather than self-approved.
 
 ---
 

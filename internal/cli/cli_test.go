@@ -2894,6 +2894,24 @@ func TestExecutePDFFetchByDOIWithMockHTTP(t *testing.T) {
 	}
 }
 
+func TestExecuteOSSSearchPlanReturnsProviderCoverage(t *testing.T) {
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+	code := Execute([]string{"--json", "oss", "search-plan", "--query", "meta analysis", "--ecosystem", "rust"}, stdout, stderr)
+	if code != 0 {
+		t.Fatalf("oss search-plan exit code = %d stderr=%s stdout=%s", code, stderr.String(), stdout.String())
+	}
+	out := stdout.String()
+	for _, want := range []string{"GitHub", "GitLab", "Codeberg", "Software Heritage", "OpenSSF Scorecard", "crates.io", "pattern-reference before dependency/integration"} {
+		if !strings.Contains(out, want) {
+			t.Fatalf("search plan missing %q:\n%s", want, out)
+		}
+	}
+	if strings.Contains(out, "\"provider\":\"npm\"") {
+		t.Fatalf("rust search plan should not include npm registry:\n%s", out)
+	}
+}
+
 func TestExecuteOSSRefreshStoresMetadata(t *testing.T) {
 	dir := filepath.Join(t.TempDir(), "demo")
 	if code := Execute([]string{"project", "create", dir, "--title", "Demo Review"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {

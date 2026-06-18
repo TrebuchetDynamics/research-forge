@@ -16,6 +16,24 @@ func executeOSS(args []string, stdout, stderr io.Writer, opts globalOptions) int
 	if len(args) == 0 {
 		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge oss <inventory-check|add|list|license-check>")
 	}
+	if args[0] == "search-plan" {
+		query, ecosystem, ok := parseOSSSearchPlan(args[1:])
+		if !ok {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge oss search-plan --query <text> [--ecosystem all|go|python|js|rust|data]")
+		}
+		plan, err := oss.BuildSearchPlan(query, ecosystem)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 2, "oss_search_plan_invalid", err.Error())
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"searchPlan": plan})
+		}
+		fmt.Fprintf(stdout, "# OSS search plan: %s\n\n", plan.Query)
+		for _, provider := range plan.Providers {
+			fmt.Fprintf(stdout, "- %s (%s): %s\n  Signals: %s\n  Gate: %s\n", provider.Provider, provider.Kind, provider.URL, strings.Join(provider.Signals, ", "), provider.HumanGate)
+		}
+		return 0
+	}
 	if args[0] == "inventory-check" {
 		if len(args) != 2 {
 			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge oss inventory-check <manifest.json>")
@@ -317,6 +335,30 @@ func parseOSSInventoryRoadmap(args []string) (string, string, bool) {
 		return "", "", false
 	}
 	return args[0], args[2], strings.TrimSpace(args[0]) != "" && strings.TrimSpace(args[2]) != ""
+}
+
+func parseOSSSearchPlan(args []string) (string, string, bool) {
+	query := ""
+	ecosystem := "all"
+	for i := 0; i < len(args); i++ {
+		switch args[i] {
+		case "--query":
+			if i+1 >= len(args) {
+				return "", "", false
+			}
+			query = args[i+1]
+			i++
+		case "--ecosystem":
+			if i+1 >= len(args) {
+				return "", "", false
+			}
+			ecosystem = args[i+1]
+			i++
+		default:
+			return "", "", false
+		}
+	}
+	return query, ecosystem, strings.TrimSpace(query) != ""
 }
 
 func parseOSSInventoryReport(args []string) (string, string, bool) {

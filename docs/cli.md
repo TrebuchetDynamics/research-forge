@@ -35,6 +35,7 @@ Core commands:
 - `rforge --project <path> library pmcid-pmid-links` reports normalized PMID/PMCID/DOI links for biomedical records
 - `rforge --project <path> library identity-conflicts` records and reports identity-cluster conflict records; `rforge --project <path> library identity-decision record --action merge|split ...` appends reversible merge/split decisions to `data/identity-decisions.jsonl`; `library identity-decision apply --id <decision-id>` applies the recorded after-state to the local library
 - `rforge duplicate report [--source <source>]|merge|split` (use `--source semantic-scholar` for graph-import dedupe review)
+- `rforge oss search-plan --query <text> [--ecosystem all|go|python|js|rust|data]` prints a multi-provider open-source project discovery plan across GitHub, GitLab, Codeberg, SourceHut, Software Heritage, OpenSSF Scorecard, package registries, and research archives with ranking signals and human review gates
 - `rforge oss inventory-check <manifest.json>`
 - `rforge oss inventory-refresh <manifest.json> --source github [--base-url <url>]`
 - `rforge oss inventory-policy <manifest.json> [--stale-after 18mo]`
