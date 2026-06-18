@@ -203,6 +203,23 @@ Three connectors covering PMC biomedical full-text via NCBI E-utilities, Hugging
 - **SHARE** — connection failed
 - **EarthArXiv** — OSF-hosted; connection timed out on OSF search paths
 
+### Wave 10 — NBER Working Papers, Open Library, and eLife Sciences (shipped 2026-06-18)
+
+Three connectors covering NBER economics working papers, the Internet Archive's Open Library book catalog, and eLife open-access life-sciences journal.
+
+| Source | `--source` flag | Notes |
+|---|---|---|
+| NBER Working Papers | `nber` | National Bureau of Economic Research working papers; DOI constructed as `10.3386/w<number>` from URL path; author HTML stripped with `htmlTagRe`; year from `displaydate` via regex; API minimum page size of 50 (requested limit applied client-side) |
+| Open Library | `openlibrary` | Internet Archive book catalog; CrossrefID `openlibrary:<work_id>`; OpenAccess when `ebook_access=public`; first publisher used; first ISBN in metadata; no DOI for most titles |
+| eLife Sciences | `elife` | Fully open-access life-sciences journal; DOI normalized to lowercase; title HTML (`<sub>`, `<em>`) stripped; year from ISO `published` field; `authorLine` stored as metadata (truncated compact format); `OpenAccess: true` for all articles |
+
+**Deferred during Wave 10 probing:**
+- **CERN Open Data** — high-energy physics datasets; very domain-specific; low query relevance for general academic searches
+- **REPEC** — no JSON API (search returns non-JSON)
+- **engrXiv / SocArXiv / AfricArXiv** — OSF provider search returned empty responses during probing
+- **ESSOAr** — Cloudflare WAF
+- **NIST CSRC** — no JSON search endpoint
+
 ### Intentionally out of scope
 
 | Source | Reason |

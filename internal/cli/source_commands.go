@@ -1312,6 +1312,24 @@ func searchConnector(source string) (sourceConnector, bool) {
 			baseURL = "https://library.oapen.org"
 		}
 		return sources.NewOAPenConnector(defaultSourceHTTPClient(baseURL)), true
+	case "nber":
+		baseURL := os.Getenv("RFORGE_NBER_URL")
+		if baseURL == "" {
+			baseURL = "https://www.nber.org"
+		}
+		return sources.NewNBERConnector(defaultSourceHTTPClient(baseURL)), true
+	case "openlibrary":
+		baseURL := os.Getenv("RFORGE_OPENLIBRARY_URL")
+		if baseURL == "" {
+			baseURL = "https://openlibrary.org"
+		}
+		return sources.NewOpenLibraryConnector(defaultSourceHTTPClient(baseURL)), true
+	case "elife":
+		baseURL := os.Getenv("RFORGE_ELIFE_URL")
+		if baseURL == "" {
+			baseURL = "https://api.elifesciences.org"
+		}
+		return sources.NewELifeConnector(defaultSourceHTTPClient(baseURL)), true
 	default:
 		return nil, false
 	}
@@ -1320,7 +1338,7 @@ func searchConnector(source string) (sourceConnector, bool) {
 func searchBatchSourcePreset(name string) []string {
 	switch strings.TrimSpace(strings.ToLower(name)) {
 	case "all":
-		return []string{"openalex", "crossref", "semantic-scholar", "arxiv", "pubmed", "europepmc", "biorxiv", "chemrxiv", "researchsquare", "zenodo", "datacite", "figshare", "dryad", "osf", "opencitations", "base", "openaire", "doaj", "core", "lens", "nasa-ads", "ntrs", "osti", "inspire-hep", "dblp", "zbmath", "eric", "hal", "dimensions", "pubchem", "doab", "cinii", "biostudies", "plos", "clinicaltrials", "gbif", "dataverse", "nasa-cmr", "pmc", "huggingface", "oapen"}
+		return []string{"openalex", "crossref", "semantic-scholar", "arxiv", "pubmed", "europepmc", "biorxiv", "chemrxiv", "researchsquare", "zenodo", "datacite", "figshare", "dryad", "osf", "opencitations", "base", "openaire", "doaj", "core", "lens", "nasa-ads", "ntrs", "osti", "inspire-hep", "dblp", "zbmath", "eric", "hal", "dimensions", "pubchem", "doab", "cinii", "biostudies", "plos", "clinicaltrials", "gbif", "dataverse", "nasa-cmr", "pmc", "huggingface", "oapen", "nber", "openlibrary", "elife"}
 	case "scholarly-fast":
 		return []string{"openalex", "crossref", "semantic-scholar", "arxiv"}
 	case "biomedical":
