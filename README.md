@@ -48,18 +48,18 @@ See [ROADMAP.md](./ROADMAP.md) for milestone sequencing.
 ## Installation
 
 ```sh
-bash <(curl -fsSL https://raw.githubusercontent.com/TrebuchetDynamics/research-forge/main/install.sh)
+go install github.com/TrebuchetDynamics/research-forge/cmd/rforge@latest
 ```
 
-Or manually:
+Requires Go 1.22+. Run `rforge --version` to verify.
+
+To build from source:
 
 ```sh
 git clone https://github.com/TrebuchetDynamics/research-forge
 cd research-forge
 go build -o bin/rforge ./cmd/rforge
 ```
-
-Requires Go 1.22+.
 
 ## Quickstart
 
