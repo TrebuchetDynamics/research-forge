@@ -33,10 +33,10 @@ func (c ERICConnector) Search(ctx context.Context, query SourceQuery) (SourceRes
 		limit = 25
 	}
 	params := map[string]string{
-		"search":  query.Terms,
-		"rows":    strconv.Itoa(limit),
-		"format":  "json",
-		"fields":  "id,title,author,description,subject,publicationdateyear,url,peerreviewed,publicationtype",
+		"search": query.Terms,
+		"rows":   strconv.Itoa(limit),
+		"format": "json",
+		"fields": "id,title,author,description,subject,publicationdateyear,url,peerreviewed,publicationtype",
 	}
 	body, err := c.http.Get(ctx, "/", params)
 	if err != nil {

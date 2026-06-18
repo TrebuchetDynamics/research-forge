@@ -91,15 +91,15 @@ type halSearchResponse struct {
 }
 
 type halDoc struct {
-	DocID        string   `json:"docid"`
-	HalID        string   `json:"halId_s"`
-	TitleS       []string `json:"title_s"`
-	AuthFullName []string `json:"authFullName_s"`
-	ProducedDateY int     `json:"producedDateY_i"`
-	AbstractS    []string `json:"abstract_s"`
-	DOI          string   `json:"doiId_s"`
-	JournalTitle string   `json:"journalTitle_s"`
-	Publisher    string   `json:"publisher_s"`
-	OpenAccess   bool     `json:"openAccess_bool"`
-	URI          string   `json:"uri_s"`
+	DocID         string   `json:"docid"`
+	HalID         string   `json:"halId_s"`
+	TitleS        []string `json:"title_s"`
+	AuthFullName  []string `json:"authFullName_s"`
+	ProducedDateY int      `json:"producedDateY_i"`
+	AbstractS     []string `json:"abstract_s"`
+	DOI           string   `json:"doiId_s"`
+	JournalTitle  string   `json:"journalTitle_s"`
+	Publisher     string   `json:"publisher_s"`
+	OpenAccess    bool     `json:"openAccess_bool"`
+	URI           string   `json:"uri_s"`
 }

@@ -83,11 +83,11 @@ type dimensionsResponse struct {
 }
 
 type dimensionsPublication struct {
-	ID         string  `json:"id"`
-	DOI        string  `json:"doi"`
-	Title      string  `json:"title"`
-	Year       int     `json:"year"`
-	Journal    *struct {
+	ID      string `json:"id"`
+	DOI     string `json:"doi"`
+	Title   string `json:"title"`
+	Year    int    `json:"year"`
+	Journal *struct {
 		Title string `json:"title"`
 	} `json:"journal"`
 	Abstract   string `json:"abstract"`
