@@ -136,6 +136,34 @@ LLM outputs that enter the workflow are stored with provenance like any other st
 
 ResearchForge includes repo-local agent skills under [`skills/`](./skills/) — see [`SKILLS.md`](./SKILLS.md) for the index. The usage skill at [`skills/research-forge/SKILL.md`](./skills/research-forge/SKILL.md) teaches an agent how to run `rforge`, preserve provenance, and follow the review workflow.
 
+### Agent bootstrap prompt
+
+Copy the following into any agent — Claude Code, Codex, Pi, or any LLM harness — to give it ResearchForge awareness:
+
+```
+You are working in a ResearchForge repository. Use the rforge CLI for all research tasks.
+
+Rules:
+- Set up a project workspace first: rforge project create <path> --title "<title>"
+- Always pass --project <path> to keep outputs in the project folder
+- Write provenance.json before finishing any run — record question, sources,
+  queries, timestamp, and output paths. A run without it is incomplete.
+- Surface all irreversible gates to the human and stop: acquisition approval,
+  privacy review, LLM-suggestion queues. Do not self-accept them.
+- Do not hit live scholarly APIs inside tests or CI.
+
+Common commands:
+  rforge search import --source openalex --query "..." --pages 3 --project <path>
+  rforge duplicate report --project <path>
+  rforge forge init --project <path> --question "..."
+  rforge report build --out <path>/report.md
+  rforge package audit <path>
+
+For full phase-by-phase instructions, read: skills/research-forge/SKILL.md
+```
+
+For harnesses that load skill files natively (Pi, Claude Code), load `skills/research-forge/SKILL.md` directly — it is the authoritative version of the above.
+
 ## Architecture
 
 ```
