@@ -12,9 +12,9 @@ The command-line tool is `rforge`.
 
 ## What it does
 
-- Search nine scholarly sources: OpenAlex, arXiv, Crossref, Semantic Scholar, PubMed, Europe PMC, NASA ADS, DOAJ, CORE
+- Search fifteen scholarly sources: OpenAlex, arXiv, Crossref, Semantic Scholar, PubMed, Europe PMC, NASA ADS, DOAJ, CORE, bioRxiv/medRxiv, Zenodo, INSPIRE HEP, dblp, ClinicalTrials.gov, OSF
 - Import and deduplicate papers into a local project store
-- Track provenance end to end — every reference knows where it came from
+- Track provenance end to end; every reference knows where it came from
 - Screen studies with recorded inclusion and exclusion decisions
 - Extract evidence linked to exact source passages
 - Run meta-analysis and statistical reporting
@@ -183,7 +183,7 @@ Research question / domain query
 | Database | SQLite (PostgreSQL adapter seam planned) |
 | Search | SQLite FTS; OpenSearch and Qdrant as optional adapters |
 | PDF parsing | GROBID (optional); S2ORC, PaperMage, Anystyle adapter seams |
-| Metadata sources | OpenAlex, Crossref, arXiv, Semantic Scholar, PubMed, Europe PMC, NASA ADS, Unpaywall, DOAJ, CORE |
+| Metadata sources | OpenAlex, Crossref, arXiv, Semantic Scholar, PubMed, Europe PMC, NASA ADS, Unpaywall, DOAJ, CORE, bioRxiv/medRxiv, Zenodo, INSPIRE HEP, dblp, ClinicalTrials.gov, OSF |
 | Meta-analysis | R `metafor`; PyMARE adapter seam |
 
 ## Development
@@ -192,4 +192,8 @@ See [SKILLS.md](./SKILLS.md) before starting implementation work — each develo
 
 ## License
 
-MIT License (SPDX: `MIT`), Copyright (c) 2026 Trebuchet Dynamics. See [LICENSE](LICENSE).
+MIT License (SPDX: `MIT`), Copyright (c) 2026 Trebuchet Dynamics. See [LICENSE](LICENSE). The license was selected by the repository owner on 2026-06-13; the decision record is tracked in issue #1 and [docs/owner-decisions.md](docs/owner-decisions.md).
+
+## Decision-gated scope
+
+Local web GUI delivery targets Go + HTMX; the implementation tracker is recorded in issue #2 and ADR 0006. Run `make todo-audit` to verify that remaining unchecked `TODO.md` items are covered by owner decisions, `make todo-completion-audit` for the closeout prompt-to-artifact checklist, or `make decisions-markdown` for a review-friendly blocker table.

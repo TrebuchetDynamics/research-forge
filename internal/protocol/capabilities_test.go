@@ -4,7 +4,7 @@ import "testing"
 
 func TestConnectorCapabilityRegistryCoversMetaAnalysisSpineSources(t *testing.T) {
 	registry := DefaultConnectorCapabilityRegistry()
-	want := []string{"openalex", "semantic-scholar", "crossref", "arxiv", "pubmed", "europepmc", "nasa-ads", "doaj", "core", "unpaywall", "zotero", "jabref", "local"}
+	want := []string{"openalex", "semantic-scholar", "crossref", "arxiv", "pubmed", "europepmc", "nasa-ads", "doaj", "core", "biorxiv", "zenodo", "inspire-hep", "dblp", "clinicaltrials", "osf", "unpaywall", "zotero", "jabref", "local"}
 	if len(registry.Connectors) != len(want) {
 		t.Fatalf("connector count = %d, want %d", len(registry.Connectors), len(want))
 	}

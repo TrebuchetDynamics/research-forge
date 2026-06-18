@@ -736,7 +736,7 @@ func searchFileSource(filename string) string {
 	// search-semantic-scholar-some-query.txt → semantic-scholar
 	name := strings.TrimPrefix(filename, "search-")
 	name = strings.TrimSuffix(name, ".txt")
-	knownSources := []string{"semantic-scholar", "openalex", "crossref", "arxiv", "pubmed", "europepmc", "core", "doaj", "nasa-ads"}
+	knownSources := []string{"semantic-scholar", "inspire-hep", "openalex", "crossref", "clinicaltrials", "arxiv", "pubmed", "europepmc", "biorxiv", "core", "doaj", "nasa-ads", "zenodo", "dblp", "osf"}
 	for _, src := range knownSources {
 		if strings.HasPrefix(name, src) {
 			return src
@@ -964,6 +964,42 @@ func searchConnector(source string) (sourceConnector, bool) {
 			Tool:   os.Getenv("RFORGE_PUBMED_TOOL"),
 			Email:  os.Getenv("RFORGE_PUBMED_EMAIL"),
 		}), true
+	case "zenodo":
+		baseURL := os.Getenv("RFORGE_ZENODO_URL")
+		if baseURL == "" {
+			baseURL = "https://zenodo.org"
+		}
+		return sources.NewZenodoConnector(defaultSourceHTTPClient(baseURL)), true
+	case "inspire-hep":
+		baseURL := os.Getenv("RFORGE_INSPIRE_HEP_URL")
+		if baseURL == "" {
+			baseURL = "https://inspirehep.net"
+		}
+		return sources.NewInspireHEPConnector(defaultSourceHTTPClient(baseURL)), true
+	case "dblp":
+		baseURL := os.Getenv("RFORGE_DBLP_URL")
+		if baseURL == "" {
+			baseURL = "https://dblp.org"
+		}
+		return sources.NewDBLPConnector(defaultSourceHTTPClient(baseURL)), true
+	case "clinicaltrials":
+		baseURL := os.Getenv("RFORGE_CLINICALTRIALS_URL")
+		if baseURL == "" {
+			baseURL = "https://clinicaltrials.gov"
+		}
+		return sources.NewClinicalTrialsConnector(defaultSourceHTTPClient(baseURL)), true
+	case "osf":
+		baseURL := os.Getenv("RFORGE_OSF_URL")
+		if baseURL == "" {
+			baseURL = "https://api.osf.io"
+		}
+		return sources.NewOSFConnector(defaultSourceHTTPClient(baseURL)), true
+	case "biorxiv":
+		baseURL := os.Getenv("RFORGE_BIORXIV_URL")
+		if baseURL == "" {
+			baseURL = "https://api.biorxiv.org"
+		}
+		return sources.NewBioRxivConnector(defaultSourceHTTPClient(baseURL)), true
 	default:
 		return nil, false
 	}
