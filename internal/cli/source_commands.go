@@ -870,7 +870,7 @@ func searchFileSource(filename string) string {
 	// search-semantic-scholar-some-query.txt → semantic-scholar
 	name := strings.TrimPrefix(filename, "search-")
 	name = strings.TrimSuffix(name, ".txt")
-	knownSources := []string{"semantic-scholar", "inspire-hep", "openalex", "crossref", "clinicaltrials", "arxiv", "pubmed", "europepmc", "biorxiv", "core", "doaj", "nasa-ads", "zenodo", "dblp", "osf", "opencitations", "base", "zbmath", "figshare", "datacite", "lens"}
+	knownSources := []string{"semantic-scholar", "inspire-hep", "openalex", "crossref", "clinicaltrials", "arxiv", "pubmed", "europepmc", "biorxiv", "core", "doaj", "nasa-ads", "zenodo", "dblp", "osf", "opencitations", "base", "zbmath", "figshare", "datacite", "lens", "eric", "hal", "dimensions", "pubchem"}
 	for _, src := range knownSources {
 		if strings.HasPrefix(name, src) {
 			return src
@@ -1181,6 +1181,41 @@ func searchConnector(source string) (sourceConnector, bool) {
 			MaxRetries: 2,
 			Headers:    headers,
 		})), true
+	case "eric":
+		baseURL := os.Getenv("RFORGE_ERIC_URL")
+		if baseURL == "" {
+			baseURL = "https://api.ies.ed.gov/eric"
+		}
+		return sources.NewERICConnector(defaultSourceHTTPClient(baseURL)), true
+	case "hal":
+		baseURL := os.Getenv("RFORGE_HAL_URL")
+		if baseURL == "" {
+			baseURL = "https://api.archives-ouvertes.fr"
+		}
+		return sources.NewHALConnector(defaultSourceHTTPClient(baseURL)), true
+	case "dimensions":
+		baseURL := os.Getenv("RFORGE_DIMENSIONS_URL")
+		if baseURL == "" {
+			baseURL = "https://app.dimensions.ai"
+		}
+		token := os.Getenv("RFORGE_DIMENSIONS_TOKEN")
+		headers := map[string]string{}
+		if token != "" {
+			headers["Authorization"] = "JWT " + token
+		}
+		return sources.NewDimensionsConnector(sources.NewHTTPClient(sources.HTTPClientOptions{
+			BaseURL:    baseURL,
+			UserAgent:  "ResearchForge/dev",
+			Timeout:    15 * time.Second,
+			MaxRetries: 2,
+			Headers:    headers,
+		})), true
+	case "pubchem":
+		baseURL := os.Getenv("RFORGE_PUBCHEM_URL")
+		if baseURL == "" {
+			baseURL = "https://pubchem.ncbi.nlm.nih.gov"
+		}
+		return sources.NewPubChemConnector(defaultSourceHTTPClient(baseURL)), true
 	default:
 		return nil, false
 	}

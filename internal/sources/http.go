@@ -159,6 +159,15 @@ func retryDelay(response *http.Response) time.Duration {
 
 // Post sends a JSON POST request to a relative source path and returns the response body.
 func (c HTTPClient) Post(ctx context.Context, path string, body []byte) ([]byte, error) {
+	return c.postWithContentType(ctx, path, body, "application/json")
+}
+
+// PostText sends a plain-text POST request (e.g. DSL queries) to a relative source path.
+func (c HTTPClient) PostText(ctx context.Context, path string, body []byte) ([]byte, error) {
+	return c.postWithContentType(ctx, path, body, "text/plain")
+}
+
+func (c HTTPClient) postWithContentType(ctx context.Context, path string, body []byte, contentType string) ([]byte, error) {
 	if path == "" || strings.Contains(path, "://") || strings.HasPrefix(path, "//") {
 		return nil, fmt.Errorf("source request path must be relative")
 	}
@@ -176,7 +185,7 @@ func (c HTTPClient) Post(ctx context.Context, path string, body []byte) ([]byte,
 		if err != nil {
 			return nil, err
 		}
-		request.Header.Set("Content-Type", "application/json")
+		request.Header.Set("Content-Type", contentType)
 		if c.userAgent != "" {
 			request.Header.Set("User-Agent", c.userAgent)
 		}

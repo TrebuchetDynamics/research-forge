@@ -91,16 +91,20 @@ Sourced from two literature reviews: "New trends in bibliometric APIs" (doi:10.1
 | DataCite | `datacite` | `descriptions[].descriptionType=="Abstract"` for abstract selection |
 | Lens.org | `lens` | POST-based; requires `RFORGE_LENS_TOKEN`; covers patents + scholarly |
 
-### Wave 3 — Domain-critical, free, narrower scope
+### Wave 3 — Implemented (shipped 2026-06-18)
 
-| Source | Domain | API endpoint | Priority rationale |
-|---|---|---|---|
-| ERIC | Education | api.ies.ed.gov/eric | US Dept of Education; 2M+ records; only source for K-12/higher-ed policy research |
-| HAL | Multidisciplinary | api.archives-ouvertes.fr | French national open archive; strong humanities; REST + OAI-PMH |
-| REPEC / EconPapers | Economics | econpapers.repec.org OAI-PMH | Largest free economics bibliography; ~4M records; critical for economic policy research |
-| Dimensions (free tier) | All fields | api.dimensions.ai (token) | Commercial DB with free academic API; coverage confirmed comparable to Scopus |
-| AGRIS | Agriculture | agris.fao.org OAI-PMH | FAO database; 12M+ records; unique food/agriculture/food security coverage |
-| PubChem | Chemistry | pubchem.ncbi.nlm.nih.gov/rest | NCBI chemistry database; 100M+ compounds; required for drug discovery synthesis |
+Four domain-critical connectors shipped; two deferred due to API access restrictions.
+
+| Source | `--source` flag | Notes |
+|---|---|---|
+| ERIC | `eric` | US Dept of Education; 2M+ records; CrossrefID stores EJ/ED number |
+| HAL | `hal` | French national OA archive; SOLR-based; strong humanities coverage |
+| Dimensions | `dimensions` | POST DSL API; requires `RFORGE_DIMENSIONS_TOKEN` from app.dimensions.ai |
+| PubChem | `pubchem` | NCBI compound database; two-step name→CID→properties query; CC0 data |
+
+**Deferred:**
+- **REPEC / EconPapers** — No keyword search API. The IDEAS API explicitly states: "there is no search function through the API." Requires IP-based OAI-PMH harvest (not keyword search). Will implement when IDEAS adds a search endpoint or via a keyword-indexed OAI harvest pipeline.
+- **AGRIS** — agris.fao.org is behind Cloudflare WAF and blocks programmatic access. Will implement when FAO restores direct API access or provides an IP whitelist / API key program.
 
 ### Wave 4 — Specialist preprint servers
 

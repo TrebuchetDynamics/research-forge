@@ -12,7 +12,7 @@ The command-line tool is `rforge`.
 
 ## What it does
 
-- Search twenty-one scholarly sources: OpenAlex, arXiv, Crossref, Semantic Scholar, PubMed, Europe PMC, NASA ADS, DOAJ, CORE, bioRxiv/medRxiv, Zenodo, INSPIRE HEP, dblp, ClinicalTrials.gov, OSF, OpenCitations, BASE, zbMATH Open, figshare, DataCite, Lens.org
+- Search twenty-five scholarly sources: OpenAlex, arXiv, Crossref, Semantic Scholar, PubMed, Europe PMC, NASA ADS, DOAJ, CORE, bioRxiv/medRxiv, Zenodo, INSPIRE HEP, dblp, ClinicalTrials.gov, OSF, OpenCitations, BASE, zbMATH Open, figshare, DataCite, Lens.org, ERIC, HAL, Dimensions, PubChem
 - Import and deduplicate papers into a local project store
 - Track provenance end to end; every reference knows where it came from
 - Screen studies with recorded inclusion and exclusion decisions
