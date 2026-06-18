@@ -106,7 +106,7 @@ type zbmathHit struct {
 	} `json:"title"`
 	Year       json.RawMessage `json:"year"` // API returns year as string e.g. "1992"
 	Identifier string          `json:"identifier"`
-	ZbMATHURL  string `json:"zbmath_url"`
+	ZbMATHURL  string          `json:"zbmath_url"`
 	Links      []struct {
 		Identifier string `json:"identifier"`
 		Type       string `json:"type"`

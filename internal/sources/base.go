@@ -119,12 +119,12 @@ func (c BASEConnector) Search(ctx context.Context, query SourceQuery) (SourceRes
 				DOI:        doi,
 				CrossrefID: crossrefID,
 			},
-			Year:      year,
-			Abstract:  abstract,
-			Venue:     venue,
-			Publisher: publisher,
-			URLs:      nonEmptyStrings(doc.DCLink),
-			License:   license,
+			Year:       year,
+			Abstract:   abstract,
+			Venue:      venue,
+			Publisher:  publisher,
+			URLs:       nonEmptyStrings(doc.DCLink),
+			License:    license,
 			OpenAccess: openAccess,
 			Metadata: map[string]string{
 				"type":         dcType,
@@ -140,9 +140,9 @@ func (c BASEConnector) Search(ctx context.Context, query SourceQuery) (SourceRes
 
 type baseSearchResponse struct {
 	Response struct {
-		NumFound int           `json:"numFound"`
-		Start    int           `json:"start"`
-		Docs     []baseDoc     `json:"docs"`
+		NumFound int       `json:"numFound"`
+		Start    int       `json:"start"`
+		Docs     []baseDoc `json:"docs"`
 	} `json:"response"`
 }
 

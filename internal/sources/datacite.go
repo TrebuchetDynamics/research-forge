@@ -116,8 +116,8 @@ type dataciteItem struct {
 }
 
 type dataciteAttributes struct {
-	DOI             string `json:"doi"`
-	Titles          []struct {
+	DOI    string `json:"doi"`
+	Titles []struct {
 		Title string `json:"title"`
 	} `json:"titles"`
 	Descriptions []struct {

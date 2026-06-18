@@ -115,19 +115,19 @@ func (c OpenCitationsConnector) Search(ctx context.Context, query SourceQuery) (
 			publisher = strings.TrimSpace(publisher[:idx])
 		}
 		records = append(records, SourceRecord{
-			Source:    "opencitations",
-			SourceID:  itemDOI,
-			Title:     strings.TrimSpace(item.Title),
+			Source:      "opencitations",
+			SourceID:    itemDOI,
+			Title:       strings.TrimSpace(item.Title),
 			Identifiers: Identifiers{DOI: itemDOI},
-			Year:      year,
-			Venue:     venue,
-			Publisher: publisher,
-			URLs:      nonEmptyStrings(doiURL(itemDOI)),
+			Year:        year,
+			Venue:       venue,
+			Publisher:   publisher,
+			URLs:        nonEmptyStrings(doiURL(itemDOI)),
 			Metadata: map[string]string{
-				"type":      strings.TrimSpace(item.Type),
-				"author":    strings.TrimSpace(item.Author),
-				"creation":  creationByDOI[itemDOI],
-				"timespan":  timespanByDOI[itemDOI],
+				"type":     strings.TrimSpace(item.Type),
+				"author":   strings.TrimSpace(item.Author),
+				"creation": creationByDOI[itemDOI],
+				"timespan": timespanByDOI[itemDOI],
 			},
 		})
 	}

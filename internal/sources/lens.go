@@ -98,12 +98,12 @@ func (c LensConnector) Search(ctx context.Context, query SourceQuery) (SourceRes
 				ArXivID:    arxivID,
 				CrossrefID: crossrefID,
 			},
-			Year:      item.YearPublished,
-			Abstract:  strings.TrimSpace(item.Abstract),
-			Venue:     strings.TrimSpace(item.Source.Title),
-			Publisher: strings.TrimSpace(item.Source.Publisher),
+			Year:       item.YearPublished,
+			Abstract:   strings.TrimSpace(item.Abstract),
+			Venue:      strings.TrimSpace(item.Source.Title),
+			Publisher:  strings.TrimSpace(item.Source.Publisher),
 			OpenAccess: item.OpenAccess.IsOA,
-			URLs:      []string{},
+			URLs:       []string{},
 			Metadata: map[string]string{
 				"lens_id":   lensID,
 				"citations": strconv.Itoa(item.ScholarlycitationsCount),
@@ -117,10 +117,10 @@ func (c LensConnector) Search(ctx context.Context, query SourceQuery) (SourceRes
 }
 
 type lensSearchRequest struct {
-	Query   lensQuery            `json:"query"`
-	Size    int                  `json:"size"`
-	Include []string             `json:"include"`
-	Sort    []map[string]string  `json:"sort"`
+	Query   lensQuery           `json:"query"`
+	Size    int                 `json:"size"`
+	Include []string            `json:"include"`
+	Sort    []map[string]string `json:"sort"`
 }
 
 type lensQuery struct {
@@ -150,9 +150,9 @@ type lensRecord struct {
 }
 
 type lensAuthor struct {
-	FirstName string       `json:"first_name"`
-	LastName  string       `json:"last_name"`
-	IDs       []lensID     `json:"ids"`
+	FirstName string   `json:"first_name"`
+	LastName  string   `json:"last_name"`
+	IDs       []lensID `json:"ids"`
 }
 
 type lensID struct {
