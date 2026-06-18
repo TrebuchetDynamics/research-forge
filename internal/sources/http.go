@@ -124,6 +124,9 @@ func (c HTTPClient) Get(ctx context.Context, path string, query map[string]strin
 		}
 		break
 	}
+	if lastStatus == http.StatusTooManyRequests {
+		return nil, fmt.Errorf("source HTTP status 429: rate limited; reduce request frequency or configure an API key (check connector env vars)")
+	}
 	return nil, fmt.Errorf("source HTTP status %d", lastStatus)
 }
 
@@ -216,6 +219,9 @@ func (c HTTPClient) postWithContentType(ctx context.Context, path string, body [
 			continue
 		}
 		break
+	}
+	if lastStatus == http.StatusTooManyRequests {
+		return nil, fmt.Errorf("source HTTP status 429: rate limited; reduce request frequency or configure an API key (check connector env vars)")
 	}
 	return nil, fmt.Errorf("source HTTP status %d", lastStatus)
 }

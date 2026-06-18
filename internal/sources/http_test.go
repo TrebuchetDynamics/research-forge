@@ -150,6 +150,26 @@ func TestHTTPClientBacksOffExponentiallyWithoutRetryAfterOnRateLimit(t *testing.
 	}
 }
 
+func TestHTTPClientRateLimitExhaustedReturnsActionableError(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.Error(w, "rate limited", http.StatusTooManyRequests)
+	}))
+	defer server.Close()
+
+	client := NewHTTPClient(HTTPClientOptions{
+		BaseURL:    server.URL,
+		MaxRetries: 1,
+		Sleep:      func(d time.Duration) {},
+	})
+	_, err := client.Get(context.Background(), "/works", nil)
+	if err == nil {
+		t.Fatal("expected error, got nil")
+	}
+	if !strings.Contains(err.Error(), "rate limited") {
+		t.Fatalf("error %q should mention rate limited for 429 so users can act on it", err.Error())
+	}
+}
+
 func TestHTTPClientDoesNotBackOffOnServerErrorWithoutRetryAfter(t *testing.T) {
 	requests := 0
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

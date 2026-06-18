@@ -87,6 +87,11 @@ func (c CrossrefConnector) Search(ctx context.Context, query SourceQuery) (Sourc
 	}
 	records := make([]SourceRecord, 0, len(payload.Message.Items))
 	for _, work := range payload.Message.Items {
+		// Skip works without a DOI — they carry no usable identifier and
+		// would fail PaperRecord normalization downstream.
+		if normalizeSourceDOI(work.DOI) == "" {
+			continue
+		}
 		records = append(records, sourceRecordFromCrossrefWork(work))
 	}
 	return SourceResponse{Records: records, RawRef: rawCrossrefRef(params)}, nil
@@ -324,7 +329,5 @@ func dateYear(s string) string {
 }
 
 func stripSimpleJATS(value string) string {
-	value = strings.ReplaceAll(value, "<jats:p>", "")
-	value = strings.ReplaceAll(value, "</jats:p>", "")
-	return compactSpace(value)
+	return compactSpace(htmlTagRe.ReplaceAllString(value, " "))
 }

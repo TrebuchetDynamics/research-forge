@@ -214,3 +214,63 @@ func TestCrossrefConnectorSearchesAndNormalizesWorks(t *testing.T) {
 		t.Fatalf("paper venue/publisher = %#v", papers[0])
 	}
 }
+
+func TestCrossrefSearchSkipsWorksWithNoDOI(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		_, _ = w.Write([]byte(`{"message":{"items":[
+			{"DOI":"","title":["No DOI Article"],"publisher":"X"},
+			{"DOI":"10.5555/valid","title":["Valid Article"],"publisher":"Y","reference-count":0}
+		]}}`))
+	}))
+	defer server.Close()
+
+	response, err := NewCrossrefConnector(NewHTTPClient(HTTPClientOptions{BaseURL: server.URL})).Search(context.Background(), SourceQuery{Terms: "test"})
+	if err != nil {
+		t.Fatalf("Search returned error: %v", err)
+	}
+	// The work without a DOI must be silently skipped to avoid PaperRecord
+	// normalization failures downstream ("at least one paper identifier is required").
+	if len(response.Records) != 1 {
+		t.Fatalf("records = %d, want 1 (no-DOI work skipped)", len(response.Records))
+	}
+	if response.Records[0].Identifiers.DOI != "10.5555/valid" {
+		t.Fatalf("DOI = %q, want 10.5555/valid", response.Records[0].Identifiers.DOI)
+	}
+	papers, err := PaperRecords(response)
+	if err != nil {
+		t.Fatalf("PaperRecords returned error: %v", err)
+	}
+	if len(papers) != 1 {
+		t.Fatalf("papers = %d, want 1", len(papers))
+	}
+}
+
+func TestCrossrefStripSimpleJATSRemovesAllTags(t *testing.T) {
+	cases := []struct {
+		input string
+		want  string
+	}{
+		{
+			input: "<jats:p>Simple paragraph.</jats:p>",
+			want:  "Simple paragraph.",
+		},
+		{
+			input: "<jats:title>Background</jats:title><jats:p>Photosynthesis is <jats:italic>important</jats:italic> for life.</jats:p>",
+			want:  "Background Photosynthesis is important for life.",
+		},
+		{
+			input: "<jats:sec><jats:title>Methods</jats:title><jats:p>We used <jats:bold>GC-MS</jats:bold> and <jats:sup>14</jats:sup>C labelling.</jats:p></jats:sec>",
+			want:  "Methods We used GC-MS and 14 C labelling.",
+		},
+		{
+			input: "  no tags here  ",
+			want:  "no tags here",
+		},
+	}
+	for _, c := range cases {
+		got := stripSimpleJATS(c.input)
+		if got != c.want {
+			t.Fatalf("stripSimpleJATS(%q) = %q, want %q", c.input, got, c.want)
+		}
+	}
+}
