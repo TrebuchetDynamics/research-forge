@@ -1,0 +1,20 @@
+10.1101/074708	Rabix: an open-source workflow executor supporting recomputability and interoperability of workflow descriptions
+10.1179/2047480614z.000000000190	Zotero: A free and open-source reference manager
+10.1080/1941126x.2024.2417123	Zotero: A Highly Functional, Open-Source Reference Management Software
+10.1142/9789813207813_0016	RABIX: AN OPEN-SOURCE WORKFLOW EXECUTOR SUPPORTING RECOMPUTABILITY AND INTEROPERABILITY OF WORKFLOW DESCRIPTIONS
+10.24321/2395.2288.201807	Zotero: Bibliographic Reference Management Software
+10.63788/1j6gqs79	Gestión de referencias bibliográficas con Zotero
+10.1007/978-3-642-58908-9_17	Recent Trends in Workflow Management Products, Standards and Research
+10.1007/978-3-642-58908-9_7	The Workflow Management System Panta Rhei
+10.1007/978-3-642-58908-9_20	Workflow Reuse and Semantic Interoperation Issues
+10.1007/978-3-642-58908-9_8	The WASA Approach to Workflow Management for Scientific Applications
+10.29173/elucidate636	Reference Management
+10.5530/rjps.2014.1.2	Zotero: Open-Source Bibliography Management Software
+10.2139/ssrn.6238498	G2C Tool: An Open-Source Deterministic Workflow for Reproducible Genetic Data Conversion and Error Mitigation in Academic Pipelines
+10.1007/978-3-642-58908-9_1	Workflow Management: State of the Art Versus State of the Products
+10.1007/978-3-642-58908-9_19	Workflow Technologies Meet the Internet
+10.1145/2316936.2316938	Open source workflow management systems for the internal audit process
+10.61700/mcj268qhg2vsf1486	Using Zotero for Academic Writing (Free Seminar)
+10.5121/csit.2020.101121	A Case Study on Maintainability of Open Source Software System Jabref
+10.1007/978-1-4302-0994-2_3	Preparing an Open Source Workflow
+10.1080/0270319x.2011.626324	Cloudy with a Chance of Open Source: Open Source Integrated Library Systems and Cloud Computing in Academic Law Libraries

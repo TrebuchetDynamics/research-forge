@@ -74,7 +74,7 @@ The physical archive format may be `.tar`, `.zip`, or a directory during early d
 - `auditCommand`
 - `warnings`
 
-Current package creation writes `packageRole: meta-analysis-spine-first-done-artifact`, `replay.sh`, a placeholder `audit-report.json`, `redaction-report.json`, and `checksums.sha256` covering every included file.
+Current package creation writes `packageRole: meta-analysis-spine-first-done-artifact`, `replay.sh`, a placeholder `audit-report.json`, `redaction-report.json`, and `checksums.sha256` covering every included file. `rforge package fixture --out <dir>` creates an offline artificial-photosynthesis fixture package that exercises source plans, fake source payload refs, import receipts, source records, Zotero/JabRef-style reference-manager fidelity reports and approved privacy review, legal acquisition approval, export-safe Document asset metadata, harmless open-access fixture text, parser manifests, screening audit, accepted evidence with source support, analysis artifacts, report output, package audit, and package replay without live network calls or copyrighted full text.
 
 ## Required contents
 
@@ -82,9 +82,10 @@ Current package creation writes `packageRole: meta-analysis-spine-first-done-art
 | --- | --- |
 | Project config | `rforge.project.toml`, workflow lockfile, package manifest |
 | Source plans | query text, filters, connector capability snapshot, cursor/resume state, API/privacy warnings |
-| Source records | normalized records plus raw source refs, not necessarily raw restricted payloads |
+| Source records | normalized records plus raw source refs and import receipts, not necessarily raw restricted payloads; when source plans are packaged, audit expects imported source records and import receipts |
+| Reference-manager context | citation keys, collections/groups, tags, notes, annotations, cleanup diffs, redacted attachment basenames, privacy-review approval, and fidelity/interchange reports when Zotero/JabRef-style records are included |
 | Identity/dedupe | duplicate reports, reversible merge/split decisions, conflict status |
-| Legal acquisition | OA/license metadata, source URLs, approval decisions, excluded/restricted asset list |
+| Legal acquisition | OA/license metadata, source URLs, approval decisions, Document asset metadata, excluded/restricted asset list, and package audit checks that included assets are export-safe |
 | Parser outputs | parser manifests, versions, command/config, input/output checksums, selected parsed documents |
 | Parser arbitration | field/passages/reference conflict decisions and reviewer corrections |
 | Screening | decisions by stage, reviewer attribution, conflict/adjudication log, uncertain queue status, PRISMA counts |

@@ -1,0 +1,20 @@
+10.18653/v1/2020.sdp-1.18	Structure-Tags Improve Text Classification for Scholarly Document Quality Prediction
+10.18653/v1/2020.sdp-1.17	SChuBERT: Scholarly Document Chunks with BERT-encoding boost Citation Count Prediction
+10.21105/joss.06914	EphemerisSources.jl: Idiomatic Ephemeris Sourcing and Parsing in Julia
+	Integrating SPARQL and LLMs for Question Answering over Scholarly Data Sources
+	A Multi-Relational Network to Support the Scholarly Communication Process
+	Leveraging Newswire Treebanks for Parsing Conversational Data with Argument Scrambling
+	Synthetic vs. Real Reference Strings for Citation Parsing, and the Importance of Re-training and Out-Of-Sample Data for Meaningful Evaluations: Experiments with GROBID, GIANT and Cora
+	A Deep Architecture for Semantic Parsing
+	Linear Parsing Expression Grammars
+	Benchmarking Large Language Models on Reference Extraction and Parsing in the Social Sciences and Humanities
+	AutoTail-BSFGM: Class-Balance-Aware Fine-Tuning for Chinese Scholarly Text Classification
+	Large Language Models Penetration in Scholarly Writing and Peer Review
+	Ethics of Open Data
+	UnScientify: Detecting Scientific Uncertainty in Scholarly Full Text
+	Clicking Matters:Towards Interactive Human Parsing
+10.21105/joss.05407	CoReCon: an open, community-powered collection of Reionization constraints
+	Research on Diamond Open Access in the Long Shadow of Science Policy
+10.1145/3385412.3385992	LL(1) Parsing with Derivatives and Zippers
+	Comparison of full-text versus metadata searching in an institutional repository: Case study of the UNT Scholarly Works
+	Detecting Generated Scientific Papers using an Ensemble of Transformer Models

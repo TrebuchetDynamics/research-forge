@@ -14,9 +14,11 @@ ResearchForge helps researchers discover papers, map citation graphs, screen lit
 
 ## Status
 
-**v0.1.0 — pre-alpha.** The `rforge` CLI is functional with 607 passing tests across 29 packages. Core workflows — project workspaces, scholarly source connectors, document parsing, citation graph expansion, screening, evidence extraction, analysis, reporting, and local web GUI — are implemented and test-covered. The project format, CLI surface, and APIs may change before 1.0.
+**Pre-alpha.** The `rforge` CLI is functional with 626 passing tests across 29 packages. Core workflows — project workspaces, scholarly source connectors, source/import provenance, reference-manager interop, legal acquisition gates, document parsing, citation graph expansion, screening, evidence extraction, analysis, reporting, reproducible review packages, and local web GUI — are implemented and test-covered. The project format, CLI surface, and APIs may change before 1.0.
 
-See [RESEARCH-FORGE-PRD.md](./RESEARCH-FORGE-PRD.md) for full product requirements, [DEVELOPMENT_PLAN.md](./DEVELOPMENT_PLAN.md) for the implementation plan, [ROADMAP.md](./ROADMAP.md) for milestone sequencing, and [SKILLS.md](./SKILLS.md) for development and agent-usage skills.
+Current product direction: `rforge forge` is the guided Meta-analysis spine. The first "done" artifact is a Reproducible review package that can be audited and replayed offline.
+
+See [RESEARCH-FORGE-PRD.md](./RESEARCH-FORGE-PRD.md) for full product requirements, [ROADMAP.md](./ROADMAP.md) for milestone sequencing, [docs/reproducible-review-package.md](./docs/reproducible-review-package.md) for the package contract, and [SKILLS.md](./SKILLS.md) for development and agent-usage skills.
 
 ## Installation
 
@@ -36,24 +38,33 @@ Requires Go 1.22+. Optional services (GROBID, OpenSearch, Qdrant, R/metafor) are
 
 ## Quickstart
 
+Guided offline spine smoke test:
+
 ```sh
-# Create a research project
+rforge forge init --project ./my-review \
+  --question "Do artificial photosynthesis catalysts improve solar fuel generation outcomes?"
+rforge forge approve --project ./my-review --gate "question approval" --note accepted
+rforge forge approve --project ./my-review --gate "protocol approval" --note accepted
+rforge forge approve --project ./my-review --gate "network/API approval" --note accepted
+rforge forge source-fixture --project ./my-review
+rforge forge reference-fixture --project ./my-review
+rforge forge approve --project ./my-review --gate "identity approval" --note accepted
+rforge forge acquisition-fixture --project ./my-review
+# Continue parser/screening/evidence/analysis/report approvals, then:
+rforge forge package-fixture --project ./my-review --out ./review.rforgepkg
+rforge package audit ./review.rforgepkg
+rforge package replay ./review.rforgepkg
+```
+
+Direct search/import workflow:
+
+```sh
 rforge project create ./my-review --title "High entropy superconductors"
-
-# Search for papers
 rforge search --source openalex --query "high entropy superconductors" --from-year 2020
-
-# Import search results into the project library
 rforge search import --source openalex --query "high entropy superconductors" \
   --pages 3 --project ./my-review
-
-# Check for duplicates
 rforge duplicate report --project ./my-review
-
-# Build a report
 rforge report build --out ./my-review/report.md
-
-# Launch the local research cockpit
 rforge --project ./my-review ui
 ```
 
@@ -125,9 +136,15 @@ ResearchForge is a scientific workflow engine, not an opaque AI answer machine. 
 - What statistical model was run, with which settings?
 - Can another researcher reproduce the result from the package?
 
-## Agent usage
+## Skills
 
-An [agent skill](./skills/research-forge/SKILL.md) is included for LLM agents running `rforge` to conduct research and save outputs to a project folder or arbitrary path.
+ResearchForge includes repo-local Pi skills under [`skills/`](./skills/) and an index in [`SKILLS.md`](./SKILLS.md).
+
+- [`skills/research-forge/SKILL.md`](./skills/research-forge/SKILL.md) is the agent usage skill for running `rforge` to conduct provenance-first research.
+- The `research-forge-*-tdd` skills are development skills for specific slices: workflow orchestration, architecture, fixtures, scholarly ingestion, OSS intelligence, document pipeline, screening, evidence extraction, meta-analysis, reporting, web UI, governance, security, performance, release packaging, and developer docs.
+- All development skills require red-green-refactor TDD unless the change is documentation-only or explicitly marked as emergency scaffolding.
+
+Use `SKILLS.md` before starting implementation work so the right specialist skill owns the slice.
 
 ## License
 

@@ -1,0 +1,20 @@
+10.1109/hicss.2016.620	Open-Source Development Tools for Domain-Specific Modeling: Results from a Systematic Literature Review
+10.55041/ijsmt.v2i4.497	Open-Source Software in Academic and Rural Libraries: A Systematic Literature Review
+10.2139/ssrn.5133841	Determinants of Open Source Hardware Adoption Across Industries: A Systematic Literature Review
+10.23919/fruct.2017.8250205	Software security in open source development: A systematic literature review
+10.5220/0009313200310042	Impact of Developers Sentiments on Practices and Artifacts in Open Source Software Projects: A Systematic Literature Review
+10.1007/978-3-642-55128-4_16	Crafting a Systematic Literature Review on Open-Source Platforms
+10.34193/ei-a-11352	The open access movement, systematic fraud in academic literature, misconceptions about open peer review, and more! (Good reads, February 2019)
+10.59628/jast.v4i5.2201	Factors Influencing the Acceptance and Adoption of Open-Source Software: A Concept-Centric Systematic Literature Review
+10.53469/jgebf.2023.05(10).05	Open Source Value Co-Creation: A Systematic Literature Review
+10.70729/ijser18333	Business Intelligence Open Source Tools: Review
+10.4018/ijossp.2016010101	Open Source Software Evolution
+10.4018/ijossp.2016010102	Open Source Software Evolution
+10.4018/978-1-7998-9158-1.ch003	Open Source Software Development Challenges
+10.11610/isij.4605	Organizational Learning in the Academic Literature – Systematic Literature Review
+10.2139/ssrn.5149687	Identification and Classification of Free, Open Source Software Licenses: A Systematic Literature Review
+10.1162/qss.a.459/v1/review2	Review for "Mapping Inequalities in the Academic Research Ecosystem: A Systematic Literature Review"
+10.4018/978-1-4666-7230-7.ch011	The Promise of Open Source Systems/Software in Developing Requisite E-Government Solutions for the Developing Countries
+10.1007/s11042-023-17559-0	Watermarking approach for source authentication of web content in online social media: a systematic literature review
+10.5958/2277-7946.2025.00002.4	A systematic literature review on academic writing tools
+10.4304/jsw.8.11.2815-2829	Evolution of Open Source Software Projects: A Systematic Literature Review

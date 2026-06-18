@@ -1,0 +1,20 @@
+	Integrated Digital Management System for Railway Workshops: A Modular Multi-Workflow Architecture for Machine, Permit, Contract, and Incident Management
+10.1145/3731599.3767582	LLM Agents for Interactive Workflow Provenance: Reference Architecture and Evaluation Methodology
+	A Cross-Chain Query Language for Application-Level Interoperability Between Open and Permissionless Blockchains
+	Can Microsoft Academic help to assess the citation impact of academic books?
+10.1016/j.commatsci.2018.01.035	Simple Data and Workflow Management with the signac Framework
+10.1093/llc/fqad018	A Workflow Model for Holistic Data Management and Semantic Interoperability in Quantitative Archival Research
+	BotHawk: An Approach for Bots Detection in Open Source Software Projects
+	A Framework for Interoperability
+	MolSSI and BioExcel Workflow Workshop 2018 Report
+10.1109/ojsp.2021.3120938	Similarity-and-Independence-Aware Beamformer with Iterative Casting and Boost Start for Target Source Extraction Using Reference
+10.21105/joss.05407	CoReCon: an open, community-powered collection of Reionization constraints
+	Flow-Bench: A Dataset for Computational Workflow Anomaly Detection
+	KubeAdaptor: A Docking Framework for Workflow Containerization on Kubernetes
+10.1109/temsconlatam65810.2025.11238529	IoT-Driven Smart Management in Broiler Farming: Simulation of Remote Sensing and Control Systems
+	HAPI-FHIR Server Implementation to Enhancing Interoperability among Primary Care Health Information Systems in Sri Lanka: Review of the Technical Use Case
+10.5334/joh.46	OpenPodcar: an Open Source Vehicle for Self-Driving Car Research
+	'Intelligence Studies Network': A human-curated database for indexing resources with open-source tools
+	Blockchain for Academic Integrity: Developing the Blockchain Academic Credential Interoperability Protocol (BACIP)
+10.5121/ijcnc.2013.5508	Distributed firewalls and IDS interoperability checking based on a formal approach
+	Efficient Prior Publication Identification for Open Source Code

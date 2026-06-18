@@ -1,0 +1,20 @@
+10.2139/ssrn.5136987	ASReview LAB v2: Open-Source Text Screening with Multiple Agents and Oracles
+10.56367/oag-038-10777	Revolutionizing systematic reviews: the ASReview project's call for trust and transparency in AI-aided screening tools
+10.1177/25152459261442150/v1/review1	Review for "Fast-Track Your Abstract Screening: Mastering ASReview for Accelerating Abstract Screening and Evaluating Decisions From Automatic Screening Methods"
+10.1177/25152459261442150/v2/review2	Review for "Fast-Track Your Abstract Screening: Mastering ASReview for Accelerating Abstract Screening and Evaluating Decisions From Automatic Screening Methods"
+10.1177/25152459261442150/v1/review2	Review for "Fast-Track Your Abstract Screening: Mastering ASReview for Accelerating Abstract Screening and Evaluating Decisions From Automatic Screening Methods"
+10.1177/25152459261442150/v2/review1	Review for "Fast-Track Your Abstract Screening: Mastering ASReview for Accelerating Abstract Screening and Evaluating Decisions From Automatic Screening Methods"
+10.3102/2101812	Evaluating a Machine Learning-Aided Software for Systematic Reviews: ASReview LAB
+10.2139/ssrn.5125681	Machine-Learning Assisted Screening for Evidence Synthesis: A Case Study of Using the ASReview Tool
+10.21203/rs.3.rs-8888566/v1	Psycho-physiological assessments of urban wilder nature: A systematic review and qualitative analysis with active learning screening
+10.31219/osf.io/w6qbg	Active learning for screening prioritization in systematic reviews - A simulation study
+10.21203/rs.3.rs-2856011/v1	The SAFE Procedure: A Practical Stopping Heuristic for Active Learning-Based Screening in Systematic Reviews and Meta-Analyses
+10.1177/25152459261442150/v2/decision1	Decision letter for "Fast-Track Your Abstract Screening: Mastering ASReview for Accelerating Abstract Screening and Evaluating Decisions From Automatic Screening Methods"
+10.1177/25152459261442150/v4/decision1	Decision letter for "Fast-Track Your Abstract Screening: Mastering ASReview for Accelerating Abstract Screening and Evaluating Decisions From Automatic Screening Methods"
+10.1177/25152459261442150/v3/decision1	Decision letter for "Fast-Track Your Abstract Screening: Mastering ASReview for Accelerating Abstract Screening and Evaluating Decisions From Automatic Screening Methods"
+10.31234/osf.io/r3m2d_v1	Updated Approach to Error Rates in Systematic Review Screening: Integrating Active Learning, Large Language Models, and Full-Text Screening Data
+10.21105/jose.00117	An Open-Source Active Learning Curriculum for Data Science in Engineering
+10.26434/chemrxiv.14345849.v1	Machine Learning Boosted Docking (HASTEN): An Open-Source Tool To Accelerate Structurebased Virtual Screening Campaigns
+10.31222/osf.io/3vhmt_v1	ReviewAid: An Open-Source Tool for Efficient PICO-Based Screening and Data Extraction in Systematic Reviews
+10.1177/25152459261442150/v1/decision1	Decision letter for "Fast-Track Your Abstract Screening: Mastering ASReview for Accelerating Abstract Screening and Evaluating Decisions From Automatic Screening Methods"
+10.26434/chemrxiv.14345849.v2	Machine Learning Boosted Docking (HASTEN): An Open-Source Tool To Accelerate Structure-based Virtual Screening Campaigns

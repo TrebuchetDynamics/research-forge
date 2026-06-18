@@ -110,9 +110,13 @@ rforge forge next --project <path>
 rforge forge approve --project <path> --gate <gate> [--note <text>]
 rforge forge reopen --project <path> --state <state> --reason <text>
 rforge forge replay --project <path-or-package>
+rforge forge source-fixture --project <path>
+rforge forge reference-fixture --project <path>
+rforge forge acquisition-fixture --project <path>
+rforge forge package-fixture --project <path> --out <review.rforgepkg>
 ```
 
-Lower-level commands remain authoritative and can advance state when they emit the same artifacts/provenance as `rforge forge`.
+`rforge forge source-fixture` is the offline source-plan/import validation path: from `import_plan`, it writes deterministic artificial-photosynthesis source plans, fake source payload refs, import receipts, and library records, then advances to `dedupe_review`. `rforge forge reference-fixture` runs at `dedupe_review` and adds Zotero/JabRef-style citation keys, collections/groups, tags, notes, annotations, redacted attachment basenames, privacy-review approval, and reference-manager fidelity reports. `rforge forge acquisition-fixture` runs at `full_text_acquisition`, writes approved OA/license acquisition queue metadata plus export-safe Document asset metadata and harmless fixture text, then advances to `parser_arbitration`. `rforge forge package-fixture` is the offline package validation path: from `package_export`, it writes deterministic fixture spine artifacts, creates a Reproducible review package, runs package audit and replay, records validation receipts, and moves the forge state to `done` only when audit/replay pass. Lower-level commands remain authoritative and can advance state when they emit the same artifacts/provenance as `rforge forge`.
 
 ## HTMX cockpit mapping
 

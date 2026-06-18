@@ -10,6 +10,7 @@ import (
 
 	"github.com/TrebuchetDynamics/research-forge/internal/project"
 	"github.com/TrebuchetDynamics/research-forge/internal/provenance"
+	"github.com/TrebuchetDynamics/research-forge/internal/reviewpkg"
 )
 
 const schemaVersion = "1"
@@ -73,6 +74,14 @@ type InitOptions struct {
 	ToolChoices   []string
 }
 type ApprovalInput struct{ Gate, Note, Actor string }
+
+type PackageCompletion struct {
+	State        State                 `json:"state"`
+	Package      reviewpkg.Package     `json:"package"`
+	AuditReport  reviewpkg.AuditReport `json:"auditReport"`
+	ReplayReport reviewpkg.AuditReport `json:"replayReport"`
+	PackagePath  string                `json:"packagePath"`
+}
 
 type GateSpec struct {
 	Gate             string `json:"gate"`
@@ -158,6 +167,109 @@ func Approve(projectPath string, input ApprovalInput) (State, error) {
 	}
 	state.Approvals = append(state.Approvals, Approval{Gate: required, Note: input.Note, Actor: actor(input.Actor), Timestamp: time.Now().UTC().Format(time.RFC3339)})
 	return advance(projectPath, state, actor(input.Actor), map[string]any{"gate": required, "note": input.Note})
+}
+
+func CompleteFixtureSourceImport(projectPath, actorName string) (State, error) {
+	state, err := Status(projectPath)
+	if err != nil {
+		return State{}, err
+	}
+	if state.CurrentState != StateImportPlan {
+		return State{}, fmt.Errorf("fixture source import requires state %s; current state is %s", StateImportPlan, state.CurrentState)
+	}
+	if err := reviewpkg.WriteArtificialPhotosynthesisFixtureSourceImport(projectPath); err != nil {
+		return State{}, err
+	}
+	state.ValidationReceipts = append(state.ValidationReceipts, "offline artificial photosynthesis source plan and imports prepared")
+	return advance(projectPath, state, actor(actorName), map[string]any{"sourcePlan": "data/source-plans/artificial-photosynthesis.json", "library": "data/library.json", "importReceipts": "data/import-receipts/fake-sources.json"})
+}
+
+func CompleteFixtureReferenceManager(projectPath, actorName string) (State, error) {
+	state, err := Status(projectPath)
+	if err != nil {
+		return State{}, err
+	}
+	if state.CurrentState != StateDedupeReview {
+		return State{}, fmt.Errorf("fixture reference-manager import requires state %s; current state is %s", StateDedupeReview, state.CurrentState)
+	}
+	if err := reviewpkg.WriteArtificialPhotosynthesisReferenceManagerFixture(projectPath); err != nil {
+		return State{}, err
+	}
+	state.ValidationReceipts = append(state.ValidationReceipts, "offline Zotero/JabRef reference-manager fidelity artifacts prepared")
+	state.refresh()
+	if err := save(projectPath, state); err != nil {
+		return State{}, err
+	}
+	if err := appendTransition(projectPath, state.CurrentState, state.CurrentState, actor(actorName), map[string]any{"library": "data/library.json", "referenceManagerReports": "data/reference-manager/"}, state); err != nil {
+		return State{}, err
+	}
+	return state, nil
+}
+
+func CompleteFixtureAcquisition(projectPath, actorName string) (State, error) {
+	state, err := Status(projectPath)
+	if err != nil {
+		return State{}, err
+	}
+	if state.CurrentState != StateFullTextAcquisition {
+		return State{}, fmt.Errorf("fixture acquisition requires state %s; current state is %s", StateFullTextAcquisition, state.CurrentState)
+	}
+	if err := reviewpkg.WriteArtificialPhotosynthesisAcquisitionFixture(projectPath); err != nil {
+		return State{}, err
+	}
+	state.ValidationReceipts = append(state.ValidationReceipts, "offline legal acquisition and document asset artifacts prepared")
+	return advance(projectPath, state, actor(actorName), map[string]any{"legalAcquisition": "data/legal-acquisition-queue.json", "documentAssets": "data/document-assets.json"})
+}
+
+func CompleteFixturePackage(projectPath, packagePath, actorName string) (PackageCompletion, error) {
+	state, err := Status(projectPath)
+	if err != nil {
+		return PackageCompletion{}, err
+	}
+	if state.CurrentState != StatePackageExport {
+		return PackageCompletion{}, fmt.Errorf("fixture package completion requires state %s; current state is %s", StatePackageExport, state.CurrentState)
+	}
+	if strings.TrimSpace(packagePath) == "" {
+		return PackageCompletion{}, fmt.Errorf("package path is required")
+	}
+	if err := reviewpkg.WriteArtificialPhotosynthesisFixtureProject(projectPath); err != nil {
+		return PackageCompletion{}, err
+	}
+	state.ValidationReceipts = append(state.ValidationReceipts, "offline artificial photosynthesis fixture artifacts prepared")
+	state.refresh()
+	if err := save(projectPath, state); err != nil {
+		return PackageCompletion{}, err
+	}
+	pkg, err := reviewpkg.Create(projectPath, packagePath, reviewpkg.Options{CreatedBy: actor(actorName), Question: state.Question})
+	if err != nil {
+		return PackageCompletion{}, err
+	}
+	audit, err := reviewpkg.Audit(packagePath)
+	if err != nil {
+		return PackageCompletion{}, err
+	}
+	if !audit.OK {
+		return PackageCompletion{}, fmt.Errorf("package audit failed")
+	}
+	replay, err := reviewpkg.Replay(packagePath)
+	if err != nil {
+		return PackageCompletion{}, err
+	}
+	if !replay.OK {
+		return PackageCompletion{}, fmt.Errorf("package replay failed")
+	}
+	prev := state.CurrentState
+	state.CurrentState = StateDone
+	state.Approvals = append(state.Approvals, Approval{Gate: "package approval", Note: "fixture package audit and replay passed", Actor: actor(actorName), Timestamp: time.Now().UTC().Format(time.RFC3339)})
+	state.ValidationReceipts = append(state.ValidationReceipts, "package audit passed: "+packagePath, "package replay passed: "+packagePath)
+	state.refresh()
+	if err := save(projectPath, state); err != nil {
+		return PackageCompletion{}, err
+	}
+	if err := appendTransition(projectPath, prev, StateDone, actor(actorName), map[string]any{"package": packagePath, "auditOK": audit.OK, "replayOK": replay.OK}, state); err != nil {
+		return PackageCompletion{}, err
+	}
+	return PackageCompletion{State: state, Package: pkg, AuditReport: audit, ReplayReport: replay, PackagePath: packagePath}, nil
 }
 
 func Reopen(projectPath string, target StateID, reason, actorName string) (State, error) {

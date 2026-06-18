@@ -14,6 +14,8 @@ func TestPackageArchiveRestoreMoveAuditReplayWithoutPrivateLocalState(t *testing
 	write(t, filepath.Join(project, "rforge.lock.json"), `{"version":"1"}`)
 	write(t, filepath.Join(project, "data", "provenance.jsonl"), `{"action":"fixture"}`)
 	write(t, filepath.Join(project, "data", "source-plans", "plan.json"), `{"query":"fixture"}`)
+	write(t, filepath.Join(project, "data", "import-receipts", "receipt.json"), `{"imported":1}`)
+	write(t, filepath.Join(project, "data", "library.json"), `[{"Title":"Portable source record","Identifiers":{"DOI":"10.0000/portable"},"SourceRefs":[{"Source":"fixture"}]}]`)
 	write(t, filepath.Join(project, "data", "evidence.items.json"), `[]`)
 	write(t, filepath.Join(project, "analysis", "run.json"), `{"InputRows":[]}`)
 	write(t, filepath.Join(project, "reports", "report.md"), `# Report`)

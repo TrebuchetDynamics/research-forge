@@ -1,0 +1,20 @@
+10.1201/b19467-16	Qualitative Synthesis
+10.1201/b19467-9	Using Systematic Reviews in Software Engineering
+10.1002/jrsm.1087	Potential uses of Bayesian networks as tools for synthesis of systematic reviews of complex interventions
+10.59350/ppk8d-qaz68	Postdoctoral Scholar – Sustainable Software and Reproducible Research
+10.59350/2dj1x-2jp64	Postdoctoral Scholar – Sustainable Software and Reproducible Research
+10.1201/b19467-8	Evidence-Based Software Engineering (EBSE)
+10.1201/b19467-19	Tool Support for Systematic Reviews
+10.14573/altex.1902131	Software tools for literature screening in systematic reviews in biomedical research
+10.1201/b19467-18	Reporting a Systematic Review
+10.1201/b19467-7	The Evidence-Based Paradigm
+10.20944/preprints202508.1362.v2	Modern Meta-Analysis Software in Practice: A Field Guide to Robust, Transparent, and Reproducible Evidence Synthesis
+10.1201/b19467-10	Planning a Systematic Review
+10.1201/b19467-25	Surveys
+10.11124/jbies-23-00139	Guidance to best tools and practices for systematic reviews
+10.1186/s13643-022-02122-z	The Systematic Review Toolbox: keeping up to date with tools to support evidence synthesis
+10.1201/b19467-31	Systematic Review and Mapping Study Procedures
+10.1201/b19467-12	Study Selection
+10.1201/b19467-26	Case Studies
+10.1201/b19467-27	Qualitative Studies
+10.1201/b19467-17	Meta-Analysis

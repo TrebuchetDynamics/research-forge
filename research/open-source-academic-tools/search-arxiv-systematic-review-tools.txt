@@ -1,0 +1,20 @@
+10.1007/s10462-025-11186-x	Context in object detection: a systematic literature review
+	Drivers' attention detection: a systematic literature review
+10.3390/electronics14081557	Trust and Trustworthiness from Human-Centered Perspective in HRI -- A Systematic Literature Review
+	Prompt-Driven Code Summarization: A Systematic Literature Review
+	A Systematic Literature Review of Automated Techniques for Functional GUI Testing of Mobile Applications
+10.1007/978-3-642-55128-4_16	Crafting a Systematic Literature Review on Open-Source Platforms
+	AI Literature Review Suite
+10.1016/j.future.2023.12.013	Ontologies in Digital Twins: A Systematic Literature Review
+10.4018/ijossp.2020100101	Open Source Software Development Challenges: A Systematic Literature Review on GitHub
+	Infusion of Blockchain to Establish Trustworthiness in AI Supported Software Evolution: A Systematic Literature Review
+10.1145/3563044	Blockchain for Genomics: A Systematic Literature Review
+10.1017/s0269888923000097	Reformulation Techniques for Automated Planning: A Systematic Review
+	Relating Edge Computing and Microservices by means of Architecture Approaches and Features, Orchestration, Choreography, and Offloading: A Systematic Literature Review
+10.1080/09669760.2022.2107491	A Systematic Review of Computational Thinking in Early Ages
+	Metrics, KPIs, and Taxonomy for Data Valuation and Monetisation -- A Systematic Literature Review
+10.1007/978-3-031-72437-4_2	SWARM-SLR -- Streamlined Workflow Automation for Machine-actionable Systematic Literature Reviews
+	Machine Vision in the Context of Robotics: A Systematic Literature Review
+	Automated Literature Review Using NLP Techniques and LLM-Based Retrieval-Augmented Generation
+	Optimizing Peer Grading: A Systematic Literature Review of Reviewer Assignment Strategies and Quantity of Reviewers
+	Automating Code Review: A Systematic Literature Review

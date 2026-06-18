@@ -1,0 +1,20 @@
+10.1088/1742-6596/125/1/012070	New Science on the Open Science Grid
+	Research on Diamond Open Access in the Long Shadow of Science Policy
+10.18653/v1/2020.sdp-1.17	SChuBERT: Scholarly Document Chunks with BERT-encoding boost Citation Count Prediction
+10.5334/joh.46	OpenPodcar: an Open Source Vehicle for Self-Driving Car Research
+10.21105/joss.05407	CoReCon: an open, community-powered collection of Reionization constraints
+	Ethics of Open Data
+	The Science Data Lake: A Unified Open Infrastructure Integrating 293 Million Papers Across Eight Scholarly Sources with Embedding-Based Ontology Alignment
+10.1142/s1230161223500154	On the unraveling of open quantum dynamics
+10.1145/2491055.2491073	The Empirical Commit Frequency Distribution of Open Source Projects
+	HPLT 3.0: Very Large-Scale Multilingual Resources for LLMs and MT. Mono- and Bi-lingual Data, Multilingual Evaluation, and Pre-Trained Models
+10.14293/a2199-1006.01.sor-compsci.lzq19.v1	Green open access in computer science - an exploratory study on author-based self-archiving awareness, practice, and inhibitors
+10.5334/joh.48	SnapperGPS: Open Hardware for Energy-Efficient, Low-Cost Wildlife Location Tracking with Snapshot GNSS
+	Description of quantum dynamics of open systems based on collision-like models
+	Open-Ended Learning Leads to Generally Capable Agents
+10.52825/ocp.v8i.3161	Unmediated AI-Assisted Scholarly Citations
+	BotHawk: An Approach for Bots Detection in Open Source Software Projects
+10.1109/lsens.2023.3307121	Open Gimbal: A 3 Degrees of Freedom Open Source Sensing and Testing Platform for Nano and Micro UAVs
+	Adoption of free and open source software using alternative educational framework in college of applied sciences
+10.1142/s1230161222500196	Non-perturbative treatment of open-system multi-time expectation values in Gaussian bosonic environments
+10.1002/asi.20965	Author-choice open access publishing in the biological and medical literature: a citation analysis

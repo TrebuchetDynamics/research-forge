@@ -204,12 +204,60 @@ func parseKnowledgeQuery(args []string) (string, string, bool) {
 
 func executeForge(args []string, stdout, stderr io.Writer, opts globalOptions) int {
 	if len(args) == 0 {
-		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge forge init|status|next|approve|reopen|replay|run-dag --project <path>")
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge forge init|status|next|approve|reopen|replay|run-dag|source-fixture|reference-fixture|acquisition-fixture|package-fixture --project <path>")
 	}
 	sub := args[0]
 	projectPath, values, ok := parseForgeOptions(args[1:])
 	if !ok || projectPath == "" {
 		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge forge "+sub+" --project <path>")
+	}
+	if sub == "source-fixture" {
+		state, err := forge.CompleteFixtureSourceImport(projectPath, values["--actor"])
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "forge_source_failed", err.Error())
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"state": state})
+		}
+		fmt.Fprintf(stdout, "state: %s\nsource import fixture prepared\n", state.CurrentState)
+		return 0
+	}
+	if sub == "reference-fixture" {
+		state, err := forge.CompleteFixtureReferenceManager(projectPath, values["--actor"])
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "forge_reference_failed", err.Error())
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"state": state})
+		}
+		fmt.Fprintf(stdout, "state: %s\nreference-manager fixture prepared\n", state.CurrentState)
+		return 0
+	}
+	if sub == "acquisition-fixture" {
+		state, err := forge.CompleteFixtureAcquisition(projectPath, values["--actor"])
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "forge_acquisition_failed", err.Error())
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"state": state})
+		}
+		fmt.Fprintf(stdout, "state: %s\nlegal acquisition fixture prepared\n", state.CurrentState)
+		return 0
+	}
+	if sub == "package-fixture" {
+		outPath := values["--out"]
+		if outPath == "" {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge forge package-fixture --project <path> --out <dir>")
+		}
+		result, err := forge.CompleteFixturePackage(projectPath, outPath, values["--actor"])
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "forge_package_failed", err.Error())
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"packageCompletion": result, "state": result.State})
+		}
+		fmt.Fprintf(stdout, "state: %s\npackage: %s\naudit ok: %t\nreplay ok: %t\n", result.State.CurrentState, result.PackagePath, result.AuditReport.OK, result.ReplayReport.OK)
+		return 0
 	}
 	if sub == "run-dag" {
 		maxSteps := 0
@@ -271,7 +319,7 @@ func parseForgeOptions(args []string) (string, map[string]string, bool) {
 	values := map[string]string{}
 	for i := 0; i < len(args); i++ {
 		switch args[i] {
-		case "--project", "--question", "--sources", "--tools", "--gate", "--note", "--state", "--reason", "--actor", "--max-steps":
+		case "--project", "--question", "--sources", "--tools", "--gate", "--note", "--state", "--reason", "--actor", "--max-steps", "--out":
 			if i+1 >= len(args) {
 				return "", nil, false
 			}
@@ -1158,7 +1206,7 @@ func parseReportBuild(args []string) (string, []string, bool) {
 
 func executePackage(args []string, stdout, stderr io.Writer, opts globalOptions) int {
 	if len(args) == 0 {
-		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge package <create|audit|replay|archive|restore>")
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge package <create|fixture|audit|replay|archive|restore>")
 	}
 	switch args[0] {
 	case "archive":
@@ -1216,6 +1264,20 @@ func executePackage(args []string, stdout, stderr io.Writer, opts globalOptions)
 		if !report.OK {
 			return 1
 		}
+		return 0
+	case "fixture":
+		outPath, createdBy, question, ok := parsePackageCreate(args[1:])
+		if !ok {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge package fixture --out <dir> [--created-by <name> --question <text>]")
+		}
+		pkg, err := reviewpkg.CreateArtificialPhotosynthesisFixturePackage(outPath, reviewpkg.Options{CreatedBy: createdBy, Question: question})
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "package_fixture_failed", err.Error())
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"package": pkg, "path": outPath})
+		}
+		fmt.Fprintf(stdout, "created artificial photosynthesis fixture review package at %s\n", outPath)
 		return 0
 	case "create":
 		if opts.Project == "" {

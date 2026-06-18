@@ -1,0 +1,6 @@
+10.1186/s12874-022-01805-4	Machine learning computational tools to assist the performance of systematic reviews: A mapping review
+10.1027/2151-2604/a000509	Reducing Literature Screening Workload With Machine Learning
+10.1186/s13643-024-02592-3	Automation of systematic reviews of biomedical literature: a scoping review of studies indexed in PubMed
+10.32481/djph.2023.11.008	Machine Learning Methods for Systematic Reviews:: A Rapid Scoping Review.
+10.21203/rs.3.rs-3425312/v1	Automation of systematic reviews of biomedical literature: a systematic review of studies indexed in PubMed
+	Méthodologie des revues de la littérature : état de l’art, place dans les politiques de santé et perspectives à l’ère des nouvelles technologies

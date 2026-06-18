@@ -1,0 +1,4 @@
+10.1038/s42256-020-00287-7	An open source machine learning framework for efficient and transparent systematic reviews
+10.5195/jmla.2026.2286	Comparing the performance of narrow vs. broad search strategies when using machine learning-based software for title/abstract screening
+10.48550/arxiv.2604.08602	TiAb Review Plugin: A Browser-Based Tool for AI-Assisted Title and Abstract Screening
+10.1101/2024.06.10.24308540	Methods and computational techniques for predicting adherence to treatment: a scoping review

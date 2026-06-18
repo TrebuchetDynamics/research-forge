@@ -1,0 +1,20 @@
+10.1136/bmj.n71	The PRISMA 2020 statement: an updated guideline for reporting systematic reviews
+10.1186/s13643-016-0384-4	Rayyan—a web and mobile app for systematic reviews
+10.1186/s12874-018-0611-x	Systematic review or scoping review? Guidance for authors when choosing between a systematic or scoping review approach
+10.1186/s13643-021-01626-4	The PRISMA 2020 statement: an updated guideline for reporting systematic reviews
+10.1016/j.ijsu.2021.105906	The PRISMA 2020 statement: An updated guideline for reporting systematic reviews
+10.1136/bmj.n160	PRISMA 2020 explanation and elaboration: updated guidance and exemplars for reporting systematic reviews
+10.1136/bmj.g7647	Preferred reporting items for systematic review and meta-analysis protocols (PRISMA-P) 2015: elaboration and explanation
+10.31222/osf.io/v7gm2	The PRISMA 2020 statement: an updated guideline for reporting systematic reviews
+10.1186/1471-2288-12-181	Enhancing transparency in reporting the synthesis of qualitative research: ENTREQ
+10.1186/1471-2288-9-59	Methods for the synthesis of qualitative research: a critical review
+10.1371/journal.pmed.1003583	The PRISMA 2020 statement: An updated guideline for reporting systematic reviews
+10.1016/j.jclinepi.2021.03.001	The PRISMA 2020 statement: An updated guideline for reporting systematic reviews
+10.1186/s13750-018-0115-5	Online tools supporting the conduct and reporting of systematic reviews and systematic maps: a case study on CADIMA and review of existing tools
+10.1186/s13643-020-01542-z	PRISMA-S: an extension to the PRISMA Statement for Reporting Literature Searches in Systematic Reviews
+10.1002/cl2.1230	<i>PRISMA2020</i> : An R package and Shiny app for producing PRISMA 2020‐compliant flow diagrams, with interactivity for optimised digital transparency and Open Synthesis
+10.1002/jrsm.1378	Which academic search systems are suitable for systematic reviews or meta‐analyses? Evaluating retrieval qualities of Google Scholar, PubMed, and 26 other resources
+10.1016/j.jclinepi.2021.02.003	Updating guidance for reporting systematic reviews: development of the PRISMA 2020 statement
+10.1007/s11365-020-00635-4	The art of crafting a systematic literature review in entrepreneurship research
+10.1038/nrn.2016.167	Scanning the horizon: towards transparent and reproducible neuroimaging research
+10.1002/jrsm.1411	Risk‐of‐bias VISualization (robvis): An R package and Shiny web app for visualizing risk‐of‐bias assessments

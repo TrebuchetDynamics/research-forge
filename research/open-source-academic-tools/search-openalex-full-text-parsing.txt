@@ -1,0 +1,4 @@
+10.18653/v1/2023.emnlp-demo.45	PaperMage: A Unified Toolkit for Processing, Representing, and Manipulating Visually-Rich Scientific Documents
+10.26907/1562-5419-2025-28-3-654-681	Procedure for Comparing Text Recognition Software Solutions For Scientific Publications by the Quality of Metadata Extraction
+10.1002/cl2.70073	SciDaSynth: Interactive Structured Data Extraction From Scientific Literature With Large Language Model
+10.48550/arxiv.2404.13765	SciDaSynth: Interactive Structured Data Extraction from Scientific Literature with Large Language Model

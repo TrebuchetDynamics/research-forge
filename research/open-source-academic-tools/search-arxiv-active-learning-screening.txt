@@ -1,0 +1,20 @@
+10.1038/s42256-020-00287-7	Open Source Software for Efficient and Transparent Reviews
+	Open-Ended Learning Leads to Generally Capable Agents
+10.1007/978-3-642-55128-4_16	Crafting a Systematic Literature Review on Open-Source Platforms
+10.2174/9781608057450113010005	Fragment Descriptors in Virtual Screening
+10.1007/s10994-023-06454-2	Active learning for data streams: a survey
+10.4018/ijossp.2020100101	Open Source Software Development Challenges: A Systematic Literature Review on GitHub
+	Algorithms for screening of Cervical Cancer: A chronological review
+	Efficient Active Learning of Halfspaces: an Aggressive Approach
+	Machine Learning Applications to Diffuse Reflectance Spectroscopy in Optical Diagnosis; A Systematic Review
+	TiAb Review Plugin: A Browser-Based Tool for AI-Assisted Title and Abstract Screening
+10.1007/978-3-031-43412-9_3	Knowledge-driven Active Learning
+10.1080/09669760.2022.2107491	A Systematic Review of Computational Thinking in Early Ages
+	Improving Active Learning in Systematic Reviews
+	Towards Comparable Active Learning
+	ALEVS: Active Learning by Statistical Leverage Sampling
+	Active Learning in Incomplete Label Multiple Instance Multiple Label Learning
+	DeepAL: Deep Active Learning in Python
+	An open-source integrated framework for the automation of citation collection and screening in systematic reviews
+10.1145/3800686	FPGA-Enabled Machine Learning Applications in Earth Observation: A Systematic Review
+10.3390/app14177873	Innovative Speech-Based Deep Learning Approaches for Parkinson's Disease Classification: A Systematic Review

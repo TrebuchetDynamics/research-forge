@@ -1,0 +1,20 @@
+10.1108/14684520610706442	Open access to scholarly full‐text documents
+10.3115/1614025.1614031	Open text semantic parsing using FrameNet and WordNet
+10.7763/ijiet.2016.v6.749	Study on Dissemination of Scholarly Papers with Open Source Options about Regional in-Service Courses
+10.59350/wq1hf-ja035	How to use GROBID to extract text from PDF files
+10.59350/hz1er-vrh59	How to use GROBID to extract text from PDF files
+10.21105/joss.00091	Mordecai: Full Text Geoparsing and Event Geocoding
+10.4324/9781315841366-17	The use of syntactic annotation tools: partial and full parsing
+10.32614/cran.package.roadoi	roadoi: Find Free Versions of Scholarly Publications via Unpaywall
+10.1016/0306-4573(90)90013-r	Topic parsing: Accounting for text macro structures in full-text analysis
+10.59350/ms8j4-p8196	fulltext v1: text-mining scholarly works
+10.59350/9jme1-cma73	fulltext v1: text-mining scholarly works
+10.1145/1186796.1186801	The open-source movement and the graphics community: how can open-source, third party, and proprietary software models coexist?
+10.59350/hz1er-vrh	How to use GROBID to extract text from PDF files
+10.7554/elife.27725.015	Figure 4—source data 1. Readability data used in full text analysis.
+10.63485/zz9yc-6d91	New tool for finding full-text papers
+10.53731/rbqhe51-97aq74v-ag89n	Open Scholarly Metrics for the Journal of Open Source Software
+10.53731/mrjmc-vry61	Open Scholarly Metrics for the Journal of Open Source Software
+10.18653/v1/2020.sdp-1.10	DeepPaperComposer: A Simple Solution for Training Data Preparation for Parsing Research Papers
+10.7557/5.4283	Open text editing tools for open scholarly communications
+10.1109/secon.2009.5174075	BlackBerry IPD parsing for open source forensics

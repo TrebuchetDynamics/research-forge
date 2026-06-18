@@ -1,0 +1,20 @@
+10.1007/s11192-020-03690-4	Google Scholar, Microsoft Academic, Scopus, Dimensions, Web of Science, and OpenCitations’ COCI: a multidisciplinary comparison of coverage via citations
+10.18653/v1/2020.acl-main.447	S2ORC: The Semantic Scholar Open Research Corpus
+10.1162/qss_a_00021	Microsoft Academic Graph: When experts are not enough
+10.1371/journal.pbio.1002541	Relative Citation Ratio (RCR): A New Metric That Uses Citation Rates to Measure Influence at the Article Level
+10.7176/rhss	Research on Humanities and Social Sciences
+10.56059/11599/36	A Basic Guide to Open Educational Resources (OER)
+10.7717/peerj-cs.86	Software citation principles
+10.1016/j.ijinfomgt.2017.12.002	Social media analytics – Challenges in topic discovery, data collection, and data preparation
+10.3389/fbloc.2019.00016	A Review on Blockchain Technology and Blockchain Projects Fostering Open Science
+10.1007/s11192-023-04894-0	Open access research outputs receive more diverse citations
+10.1371/journal.pcbi.1007128	Open collaborative writing with Manubot
+10.1007/s40747-022-00806-6	Scholarly knowledge graphs through structuring scholarly communication: a review
+10.1007/s11192-019-03217-6	Software review: COCI, the OpenCitations Index of Crossref open DOI-to-DOI citations
+10.1073/pnas.1921320117	Open science, communal culture, and women’s participation in the movement to improve science
+10.3390/publications7020038	OpenBiodiv: A Knowledge Graph for Literature-Extracted Linked Open Data in Biodiversity Science
+10.1016/j.erss.2018.07.007	Promoting novelty, rigor, and style in energy social science: Towards codes of practice for appropriate methods and research design
+10.11647/obp.0095	Digital Scholarly Editing
+10.1609/aimag.v39i3.2816	On Reproducible AI: Towards Reproducible Research, Open Science, and Digital Scholarship in AI Publications
+10.18225/978-85-7013-111-9	Open Science, open issues
+10.14742/ajet.4252	An analysis of peer reviewed publications on openness in education in half a century: Trends and patterns in the open hemisphere

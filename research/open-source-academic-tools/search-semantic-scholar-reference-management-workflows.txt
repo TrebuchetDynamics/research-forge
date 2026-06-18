@@ -1,0 +1,8 @@
+10.70619/vol5iss9pp46-55	Enhancing Academic Research Efficiency: A Comparative Analysis of Manual and AI-Driven Workflows with Optimized LLM-Zotero Integration
+10.21428/cb6ab371.277e2e79	'Intelligence Studies Network': A human-curated database for indexing resources with open-source tools
+	Introducing Open Source Reference Management Software to a Rural South African Campus: Evaluating the Effectiveness of Workshops at the University of the Free State’s Qwaqwa Campus
+10.1002/mp.14322	FAIR‐compliant clinical, radiomics and DICOM metadata of RIDER, interobserver, Lung1 and head‐Neck1 TCIA collections
+10.5771/9783956504211-729	VIAF AND OPENCITATIONS: COOPERATIVE WORK AS A STRATEGY FOR INFORMATION ORGANIZATION IN THE LINKED DATA ERA
+	Embedding Metadata and Other Semantics 93 The International Journal of Digital Curation
+	Digital libraries : international collaboration and cross-fertilization : 7th International Conference on Asian Digital Libraries, ICADL 2004, Shanghai, China, December 13-17, 2004 : proceedings
+	An application suite based on the IFB Container as a Service platform

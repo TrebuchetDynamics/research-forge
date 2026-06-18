@@ -9,6 +9,9 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/TrebuchetDynamics/research-forge/internal/documents"
+	"github.com/TrebuchetDynamics/research-forge/internal/evidence"
 )
 
 type AuditReport struct {
@@ -46,10 +49,81 @@ func Audit(packagePath string) (AuditReport, error) {
 	add("analysis_inputs", len(manifest.AnalysisArtifactRefs) > 0, "analysis artifacts referenced")
 	add("report_outputs", len(manifest.ReportRefs) > 0, "report outputs referenced")
 	add("provenance_links", manifest.ProvenanceRef != "" || len(manifest.SourcePlanRefs) > 0, "provenance or source plans referenced")
+	if len(manifest.SourcePlanRefs) > 0 {
+		add("source_records", len(manifest.SourceRecordRefs) > 0 && len(manifest.ImportReceiptRefs) > 0, "source plans include imported source records and import receipts")
+	}
+	if manifest.LegalAcquisitionRef != "" {
+		ok, msg := auditLegalAcquisition(filepath.Join(packagePath, filepath.FromSlash(manifest.LegalAcquisitionRef)))
+		add("legal_acquisition", ok, msg)
+	}
+	if len(manifest.DocumentAssetRefs) > 0 {
+		ok, msg := auditDocumentAssets(filepath.Join(packagePath, "project", "data", "document-assets.json"))
+		add("document_assets", ok, msg)
+	}
+	if manifest.AcceptedEvidenceRef != "" {
+		ok, msg := auditAcceptedEvidenceSupport(filepath.Join(packagePath, filepath.FromSlash(manifest.AcceptedEvidenceRef)))
+		add("accepted_evidence_support", ok, msg)
+	}
 	return report, nil
 }
 
 func Replay(packagePath string) (AuditReport, error) { return Audit(packagePath) }
+
+func auditLegalAcquisition(path string) (bool, string) {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return false, err.Error()
+	}
+	var queue documents.LegalAcquisitionQueue
+	if err := json.Unmarshal(data, &queue); err != nil {
+		return false, err.Error()
+	}
+	if len(queue.Items) == 0 {
+		return false, "legal acquisition queue has no items"
+	}
+	for _, item := range queue.Items {
+		if err := documents.GuardAcquisition(item, documents.AcquisitionUseArchive); err != nil {
+			return false, fmt.Sprintf("%s: %v", item.ID, err)
+		}
+	}
+	return true, "legal acquisition queue approved for archive/shareability"
+}
+
+func auditDocumentAssets(path string) (bool, string) {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return false, err.Error()
+	}
+	var assets []documents.DocumentAsset
+	if err := json.Unmarshal(data, &assets); err != nil {
+		return false, err.Error()
+	}
+	if len(assets) == 0 {
+		return false, "document asset list is empty"
+	}
+	for _, asset := range assets {
+		if err := documents.GuardExport(asset); err != nil {
+			return false, fmt.Sprintf("%s: %v", asset.PaperID, err)
+		}
+	}
+	return true, "document assets are export-safe"
+}
+
+func auditAcceptedEvidenceSupport(path string) (bool, string) {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return false, err.Error()
+	}
+	var items []evidence.EvidenceItem
+	if err := json.Unmarshal(data, &items); err != nil {
+		return false, err.Error()
+	}
+	issues := evidence.Audit(items)
+	if len(issues) > 0 {
+		return false, fmt.Sprintf("%d accepted evidence items lack source support", len(issues))
+	}
+	return true, "accepted evidence has source support"
+}
 
 func readManifest(packagePath string) (Manifest, error) {
 	data, err := os.ReadFile(filepath.Join(packagePath, "manifest.json"))
@@ -66,6 +140,13 @@ func readManifest(packagePath string) (Manifest, error) {
 func requiredRefs(manifest Manifest) []string {
 	refs := []string{manifest.ProjectManifestRef, manifest.LockfileRef, manifest.RedactionReportRef, manifest.ChecksumManifestRef}
 	refs = append(refs, manifest.SourcePlanRefs...)
+	refs = append(refs, manifest.SourceRecordRefs...)
+	refs = append(refs, manifest.ImportReceiptRefs...)
+	refs = append(refs, manifest.ReferenceManagerReportRefs...)
+	if manifest.LegalAcquisitionRef != "" {
+		refs = append(refs, manifest.LegalAcquisitionRef)
+	}
+	refs = append(refs, manifest.DocumentAssetRefs...)
 	refs = append(refs, manifest.ParserManifestRefs...)
 	refs = append(refs, manifest.AnalysisArtifactRefs...)
 	refs = append(refs, manifest.ReportRefs...)

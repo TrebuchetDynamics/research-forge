@@ -1,0 +1,20 @@
+10.70950/sllm9969	Thoth Open Metadata and the Principles of Open Scholarly Infrastructure (POSI)
+10.31219/osf.io/zfbgj_v1	Practices and Metrics of Citation in Scholarly Publishing
+10.61686/mrdow97307	Open Scholarly Communication Infrastructure in the Netherlands
+10.59350/n09bh-vbj58	Principles of Open Scholarly Infrastructure evaluation (2022)
+10.59350/vwzys-5b645	Principles of Open Scholarly Infrastructure evaluation (2022)
+10.5530/jcitation.2.3.34	Mapping of Scholarly Output and its Impact Using Open-Source Software
+10.59349/yw1ag-w9n42	JOSS's Commitment to the Principles of Open Scholarly Infrastructure
+10.59349/m5h23-pjs71	JOSS's Commitment to the Principles of Open Scholarly Infrastructure
+10.31219/osf.io/xnesr	Automated Learning of Fine-Grained Citation Patterns in Open Source Large Language Models
+10.59350/n7tx1-qch95	What's the right model for shared scholarly communications infrastructure?
+10.59350/gf16y-fj187	What's the right model for shared scholarly communications infrastructure?
+10.5040/9798216423393.ch-0005	Open Source Discovery
+10.63485/rd5kr-84y78	More on open-source drug discovery
+10.53731/mrjmc-vry61	Open Scholarly Metrics for the Journal of Open Source Software
+10.5210/fm.v12i6.1913	Seeking open infrastructure: Contrasting open standards, open source and open innovation
+10.53731/rbqhe51-97aq74v-ag89n	Open Scholarly Metrics for the Journal of Open Source Software
+10.7710/2162-3309.1052	Tenure-Track Science Faculty and the ‘Open Access Citation Effect’
+10.52825/cordi.v1i.272	Organizing Scholarly Knowledge in the Open Research Knowledge Graph
+10.14293/s2199-ssp-am24-01017	On the citation advantage of Open Science practices
+10.6087/kcse.91	Open Access and the Future of Scholarly Communication: Policy and Infrastructure Open Access and the Future of Scholarly Communication: Implementation

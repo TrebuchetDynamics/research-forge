@@ -1,0 +1,20 @@
+10.1016/j.cirpj.2020.02.002	Characterising the Digital Twin: A systematic literature review
+10.1111/joms.12639	A Systematic Review of the Literature on Digital Transformation: Insights and Implications for Strategy and Organizational Change
+10.1016/j.rser.2018.10.014	Blockchain technology in the energy sector: A systematic review of challenges and opportunities
+10.1038/s42256-020-00287-7	An open source machine learning framework for efficient and transparent systematic reviews
+10.4236/jcc.2015.35021	Internet of Things (IoT): A Literature Review
+10.1109/access.2020.2988510	Artificial Intelligence in Education: A Review
+10.3390/healthcare11060887	ChatGPT Utility in Healthcare Education, Research, and Practice: Systematic Review on the Promising Perspectives and Valid Concerns
+10.1186/2046-4053-3-74	Systematic review automation technologies
+10.1186/s13643-019-1074-9	Toward systematic review automation: a practical guide to using machine learning tools in research synthesis
+10.1016/j.jbusres.2020.09.009	Artificial intelligence in supply chain management: A systematic literature review
+10.1111/1468-0009.12210	The Mass Production of Redundant, Misleading, and Conflicted Systematic Reviews and Meta‐analyses
+10.1016/j.dcan.2019.01.005	A systematic literature review of blockchain cyber security
+10.3390/su10103821	Industry 4.0 in Management Studies: A Systematic Literature Review
+10.1186/s12874-018-0545-3	Defining the process to literature searching in systematic reviews: a literature review of guidance and supporting studies
+10.1145/3293881.3295779	Introductory programming: a systematic literature review
+10.1007/s10796-021-10186-w	Artificial Intelligence and Business Value: a Literature Review
+10.1109/access.2018.2890507	Blockchain for AI: Review and Open Research Challenges
+10.1186/s40854-019-0147-z	A systematic review of blockchain
+10.3390/s20113291	Digital Transformation in Higher Education Institutions: A Systematic Literature Review
+10.1016/j.procs.2021.01.104	Robotic Process Automation and Artificial Intelligence in Industry 4.0 – A Literature review
