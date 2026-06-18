@@ -3352,4 +3352,35 @@ func TestExecuteSearchStatsJSON(t *testing.T) {
 	if sources["openalex"].(float64) != 1 || sources["semantic-scholar"].(float64) != 2 {
 		t.Fatalf("sources = %v", sources)
 	}
+	fileCounts, ok := result["sourceFiles"].(map[string]any)
+	if !ok {
+		t.Fatalf("sourceFiles not a map: %T\noutput: %s", result["sourceFiles"], stdout.String())
+	}
+	if fileCounts["openalex"].(float64) != 1 || fileCounts["semantic-scholar"].(float64) != 1 {
+		t.Fatalf("sourceFiles = %v", fileCounts)
+	}
+}
+
+func TestExecuteSearchStatsSortedOutput(t *testing.T) {
+	dir := t.TempDir()
+	for _, name := range []string{"search-zebra-q.txt", "search-alpha-q.txt", "search-middle-q.txt"} {
+		if err := os.WriteFile(dir+"/"+name, []byte("10.1000/x\tPaper\n"), 0o644); err != nil {
+			t.Fatal(err)
+		}
+	}
+	var stdout, stderr strings.Builder
+	code := Execute([]string{"search", "stats", "--dir", dir}, &stdout, &stderr)
+	if code != 0 {
+		t.Fatalf("exit code = %d, stderr = %s", code, stderr.String())
+	}
+	out := stdout.String()
+	alphaIdx := strings.Index(out, "alpha")
+	middleIdx := strings.Index(out, "middle")
+	zebraIdx := strings.Index(out, "zebra")
+	if alphaIdx < 0 || middleIdx < 0 || zebraIdx < 0 {
+		t.Fatalf("missing source in output: %s", out)
+	}
+	if !(alphaIdx < middleIdx && middleIdx < zebraIdx) {
+		t.Fatalf("output not sorted: alpha=%d middle=%d zebra=%d\n%s", alphaIdx, middleIdx, zebraIdx, out)
+	}
 }

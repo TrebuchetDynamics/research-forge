@@ -681,6 +681,7 @@ func executeSearchStats(args []string, stdout, stderr io.Writer, opts globalOpti
 		return writeError(stdout, stderr, opts, 1, "stats_read_failed", fmt.Sprintf("read dir: %v", err))
 	}
 	sourceCounts := map[string]int{}
+	sourceFiles := map[string]int{}
 	uniqueDOIs := map[string]struct{}{}
 	for _, entry := range entries {
 		name := entry.Name()
@@ -692,6 +693,7 @@ func executeSearchStats(args []string, stdout, stderr io.Writer, opts globalOpti
 		if readErr != nil {
 			continue
 		}
+		sourceFiles[source]++
 		count := 0
 		for _, line := range strings.Split(string(data), "\n") {
 			line = strings.TrimSpace(line)
@@ -710,12 +712,20 @@ func executeSearchStats(args []string, stdout, stderr io.Writer, opts globalOpti
 	if opts.JSON {
 		return writeJSON(stdout, 0, map[string]any{
 			"sources":         sourceCounts,
+			"sourceFiles":     sourceFiles,
 			"totalUniqueDOIs": len(uniqueDOIs),
 		})
 	}
+	// collect and sort source names for deterministic output
+	names := make([]string, 0, len(sourceCounts))
+	for src := range sourceCounts {
+		names = append(names, src)
+	}
+	sort.Strings(names)
 	fmt.Fprintf(stdout, "Source coverage for %s\n", dir)
-	for source, count := range sourceCounts {
-		fmt.Fprintf(stdout, "  %-24s %d\n", source, count)
+	for _, src := range names {
+		files := sourceFiles[src]
+		fmt.Fprintf(stdout, "  %-24s %d records (%d files)\n", src, sourceCounts[src], files)
 	}
 	fmt.Fprintf(stdout, "\nTotal unique DOIs: %d\n", len(uniqueDOIs))
 	return 0
