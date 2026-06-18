@@ -870,7 +870,7 @@ func searchFileSource(filename string) string {
 	// search-semantic-scholar-some-query.txt → semantic-scholar
 	name := strings.TrimPrefix(filename, "search-")
 	name = strings.TrimSuffix(name, ".txt")
-	knownSources := []string{"semantic-scholar", "inspire-hep", "openalex", "crossref", "clinicaltrials", "arxiv", "pubmed", "europepmc", "biorxiv", "core", "doaj", "nasa-ads", "zenodo", "dblp", "osf", "opencitations", "base", "zbmath", "figshare", "datacite", "lens", "eric", "hal", "dimensions", "pubchem"}
+	knownSources := []string{"semantic-scholar", "inspire-hep", "openalex", "crossref", "clinicaltrials", "arxiv", "pubmed", "europepmc", "biorxiv", "core", "doaj", "nasa-ads", "zenodo", "dblp", "osf", "opencitations", "base", "zbmath", "figshare", "datacite", "lens", "eric", "hal", "dimensions", "pubchem", "chemrxiv"}
 	for _, src := range knownSources {
 		if strings.HasPrefix(name, src) {
 			return src
@@ -1216,6 +1216,12 @@ func searchConnector(source string) (sourceConnector, bool) {
 			baseURL = "https://pubchem.ncbi.nlm.nih.gov"
 		}
 		return sources.NewPubChemConnector(defaultSourceHTTPClient(baseURL)), true
+	case "chemrxiv":
+		baseURL := os.Getenv("RFORGE_CHEMRXIV_URL")
+		if baseURL == "" {
+			baseURL = "https://chemrxiv.org"
+		}
+		return sources.NewChemRxivConnector(defaultSourceHTTPClient(baseURL)), true
 	default:
 		return nil, false
 	}

@@ -106,16 +106,18 @@ Four domain-critical connectors shipped; two deferred due to API access restrict
 - **REPEC / EconPapers** — No keyword search API. The IDEAS API explicitly states: "there is no search function through the API." Requires IP-based OAI-PMH harvest (not keyword search). Will implement when IDEAS adds a search endpoint or via a keyword-indexed OAI harvest pipeline.
 - **AGRIS** — agris.fao.org is behind Cloudflare WAF and blocks programmatic access. Will implement when FAO restores direct API access or provides an IP whitelist / API key program.
 
-### Wave 4 — Specialist preprint servers
+### Wave 4 — Specialist preprint servers (partially shipped 2026-06-18)
 
 Each is a single-domain preprint server. Prefer the OSF aggregation API (`--source osf`) where the server is hosted on OSF. Direct adapters add value only when the OSF title filter is too narrow.
 
-| Source | Domain | Notes |
+| Source | `--source` flag | Notes |
 |---|---|---|
-| ChemRxiv | Chemistry | ACS-hosted; REST API available |
-| TechRxiv | Engineering / IEEE | IEEE-hosted; engineering and technology |
-| SSRN | Economics, law, social sciences | Elsevier-owned; unofficial RSS only |
-| PhilArchive | Philosophy | Companion to PhilPapers; OAI-PMH |
+| ChemRxiv | `chemrxiv` | ACS-hosted Cambridge Open Engage REST API; chemistry and chemical biology preprints |
+
+**Deferred:**
+- **TechRxiv** — IEEE-hosted; API endpoint migration status unclear (may have moved from Figshare to Atypon). Defer until API can be verified from a non-Cloudflare-gated environment.
+- **SSRN** — Elsevier-owned; no official API; Cloudflare WAF blocks all programmatic access. Defer indefinitely or until an official API is announced.
+- **PhilArchive** — Companion to PhilPapers; OAI-PMH endpoint is Cloudflare-blocked and OAI-PMH protocol does not support keyword search. Defer until PhilArchive provides a keyword-search REST API.
 
 ### Intentionally out of scope
 

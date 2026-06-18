@@ -12,7 +12,7 @@ The command-line tool is `rforge`.
 
 ## What it does
 
-- Search twenty-five scholarly sources: OpenAlex, arXiv, Crossref, Semantic Scholar, PubMed, Europe PMC, NASA ADS, DOAJ, CORE, bioRxiv/medRxiv, Zenodo, INSPIRE HEP, dblp, ClinicalTrials.gov, OSF, OpenCitations, BASE, zbMATH Open, figshare, DataCite, Lens.org, ERIC, HAL, Dimensions, PubChem
+- Search twenty-six scholarly sources: OpenAlex, arXiv, Crossref, Semantic Scholar, PubMed, Europe PMC, NASA ADS, DOAJ, CORE, bioRxiv/medRxiv, Zenodo, INSPIRE HEP, dblp, ClinicalTrials.gov, OSF, OpenCitations, BASE, zbMATH Open, figshare, DataCite, Lens.org, ERIC, HAL, Dimensions, PubChem, ChemRxiv
 - Import and deduplicate papers into a local project store
 - Track provenance end to end; every reference knows where it came from
 - Screen studies with recorded inclusion and exclusion decisions
@@ -23,7 +23,7 @@ The command-line tool is `rforge`.
 
 ## Status
 
-**Pre-alpha.** The `rforge` CLI has 626 passing tests across 29 packages. The project format, CLI surface, and APIs may change before 1.0.
+**Pre-alpha.** The `rforge` CLI has 679 passing tests across 29 packages. The project format, CLI surface, and APIs may change before 1.0.
 
 **Works today:**
 - Project workspaces
@@ -183,7 +183,7 @@ Research question / domain query
 | Database | SQLite (PostgreSQL adapter seam planned) |
 | Search | SQLite FTS; OpenSearch and Qdrant as optional adapters |
 | PDF parsing | GROBID (optional); S2ORC, PaperMage, Anystyle adapter seams |
-| Metadata sources | OpenAlex, Crossref, arXiv, Semantic Scholar, PubMed, Europe PMC, NASA ADS, Unpaywall, DOAJ, CORE, bioRxiv/medRxiv, Zenodo, INSPIRE HEP, dblp, ClinicalTrials.gov, OSF, OpenCitations, BASE, zbMATH Open, figshare, DataCite, Lens.org |
+| Metadata sources | OpenAlex, Crossref, arXiv, Semantic Scholar, PubMed, Europe PMC, NASA ADS, Unpaywall, DOAJ, CORE, bioRxiv/medRxiv, Zenodo, INSPIRE HEP, dblp, ClinicalTrials.gov, OSF, OpenCitations, BASE, zbMATH Open, figshare, DataCite, Lens.org, ERIC, HAL, Dimensions, PubChem, ChemRxiv |
 | Meta-analysis | R `metafor`; PyMARE adapter seam |
 
 ## Development
