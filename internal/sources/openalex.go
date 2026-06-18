@@ -258,8 +258,8 @@ type OpenAlexGraphQuery struct {
 
 // ExpandCitationGraph fetches OpenAlex references, citations, or both for one work.
 func (c OpenAlexConnector) ExpandCitationGraph(ctx context.Context, query OpenAlexGraphQuery) (CitationGraphExpansion, error) {
-	workID := normalizeOpenAlexID(query.WorkID)
-	if workID == "" {
+	inputID := normalizeOpenAlexID(query.WorkID)
+	if inputID == "" {
 		return CitationGraphExpansion{}, fmt.Errorf("openalex work id is required")
 	}
 	limit := query.Limit
@@ -270,11 +270,33 @@ func (c OpenAlexConnector) ExpandCitationGraph(ctx context.Context, query OpenAl
 	if direction == "" {
 		direction = SemanticScholarDirectionBoth
 	}
-	expansion := CitationGraphExpansion{SeedID: workID, Records: map[string]SourceRecord{}, RawRef: rawOpenAlexGraphRef(workID, direction, limit)}
-	if direction == SemanticScholarDirectionReferences || direction == SemanticScholarDirectionBoth {
-		work, err := c.fetchWork(ctx, workID)
+
+	// When given a DOI, resolve it to an OpenAlex Work ID via filter lookup so
+	// the cites: filter and SeedID use a proper W… identifier.
+	workID := inputID
+	var cachedWork *openAlexWork
+	if looksLikeDOI(inputID) {
+		work, err := c.fetchWork(ctx, inputID)
 		if err != nil {
 			return CitationGraphExpansion{}, err
+		}
+		if resolved := normalizeOpenAlexID(work.ID); resolved != "" {
+			workID = resolved
+		}
+		cachedWork = &work
+	}
+
+	expansion := CitationGraphExpansion{SeedID: workID, Records: map[string]SourceRecord{}, RawRef: rawOpenAlexGraphRef(workID, direction, limit)}
+	if direction == SemanticScholarDirectionReferences || direction == SemanticScholarDirectionBoth {
+		var work openAlexWork
+		var err error
+		if cachedWork != nil {
+			work = *cachedWork
+		} else {
+			work, err = c.fetchWork(ctx, workID)
+			if err != nil {
+				return CitationGraphExpansion{}, err
+			}
 		}
 		for _, ref := range normalizeOpenAlexIDs(work.ReferencedWorks) {
 			expansion.Edges = append(expansion.Edges, CitationEdge{SourceID: workID, TargetID: ref})
@@ -301,6 +323,9 @@ func (c OpenAlexConnector) ExpandCitationGraph(ctx context.Context, query OpenAl
 }
 
 func (c OpenAlexConnector) fetchWork(ctx context.Context, workID string) (openAlexWork, error) {
+	if looksLikeDOI(workID) {
+		return c.fetchWorkByDOI(ctx, workID)
+	}
 	body, err := c.http.Get(ctx, "/works/"+url.PathEscape(workID), map[string]string{})
 	if err != nil {
 		return openAlexWork{}, err
@@ -310,6 +335,27 @@ func (c OpenAlexConnector) fetchWork(ctx context.Context, workID string) (openAl
 		return openAlexWork{}, err
 	}
 	return work, nil
+}
+
+// fetchWorkByDOI looks up a work by DOI using a filter query, avoiding path-encoding issues.
+func (c OpenAlexConnector) fetchWorkByDOI(ctx context.Context, doi string) (openAlexWork, error) {
+	body, err := c.http.Get(ctx, "/works", map[string]string{"filter": "doi:" + doi, "per_page": "1"})
+	if err != nil {
+		return openAlexWork{}, err
+	}
+	var payload openAlexWorksResponse
+	if err := json.Unmarshal(body, &payload); err != nil {
+		return openAlexWork{}, err
+	}
+	if len(payload.Results) == 0 {
+		return openAlexWork{}, fmt.Errorf("openalex: no work found for doi %s", doi)
+	}
+	return payload.Results[0], nil
+}
+
+// looksLikeDOI returns true for bare DOIs (starts with 10. and contains /).
+func looksLikeDOI(value string) bool {
+	return strings.HasPrefix(value, "10.") && strings.Contains(value, "/")
 }
 
 func rawOpenAlexGraphRef(workID string, direction SemanticScholarGraphDirection, limit int) string {

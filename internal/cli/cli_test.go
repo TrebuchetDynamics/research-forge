@@ -3284,3 +3284,72 @@ func TestExecuteProjectListJSON(t *testing.T) {
 		t.Fatalf("first title = %#v, want Alpha", first["title"])
 	}
 }
+
+func TestExecuteSearchStatsReadsDirectoryAndReportsCoverage(t *testing.T) {
+	dir := t.TempDir()
+	// Three search files: openalex with 2 papers, crossref with 2 papers (1 overlap), arxiv empty
+	if err := os.WriteFile(dir+"/search-openalex-fefet.txt", []byte("10.1000/a\tFeFET paper A\n10.1000/b\tFeFET paper B\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(dir+"/search-crossref-fefet.txt", []byte("10.1000/b\tFeFET paper B\n10.1000/c\tFeFET paper C\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(dir+"/search-arxiv-fefet.txt", []byte(""), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	var stdout, stderr strings.Builder
+	code := Execute([]string{"search", "stats", "--dir", dir}, &stdout, &stderr)
+	if code != 0 {
+		t.Fatalf("stats exit code = %d, stderr = %s", code, stderr.String())
+	}
+	out := stdout.String()
+	// must report per-source counts
+	if !strings.Contains(out, "openalex") || !strings.Contains(out, "2") {
+		t.Errorf("output missing openalex count 2: %s", out)
+	}
+	if !strings.Contains(out, "crossref") {
+		t.Errorf("output missing crossref: %s", out)
+	}
+	if !strings.Contains(out, "arxiv") {
+		t.Errorf("output missing arxiv: %s", out)
+	}
+	// must report total unique DOIs (a, b, c = 3 unique)
+	if !strings.Contains(out, "3") {
+		t.Errorf("output missing unique DOI count 3: %s", out)
+	}
+}
+
+func TestExecuteSearchStatsJSON(t *testing.T) {
+	dir := t.TempDir()
+	if err := os.WriteFile(dir+"/search-openalex-q1.txt", []byte("10.1000/x\tPaper X\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(dir+"/search-semantic-scholar-q1.txt", []byte("10.1000/x\tPaper X\n10.1000/y\tPaper Y\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	var stdout, stderr strings.Builder
+	code := Execute([]string{"--json", "search", "stats", "--dir", dir}, &stdout, &stderr)
+	if code != 0 {
+		t.Fatalf("exit code = %d, stderr = %s", code, stderr.String())
+	}
+	var envelope map[string]any
+	if err := json.Unmarshal([]byte(stdout.String()), &envelope); err != nil {
+		t.Fatalf("json parse error: %v\noutput: %s", err, stdout.String())
+	}
+	result, ok := envelope["data"].(map[string]any)
+	if !ok {
+		t.Fatalf("data not a map: %T\noutput: %s", envelope["data"], stdout.String())
+	}
+	if result["totalUniqueDOIs"].(float64) != 2 {
+		t.Fatalf("totalUniqueDOIs = %v, want 2", result["totalUniqueDOIs"])
+	}
+	sources, ok := result["sources"].(map[string]any)
+	if !ok {
+		t.Fatalf("sources not a map: %T", result["sources"])
+	}
+	if sources["openalex"].(float64) != 1 || sources["semantic-scholar"].(float64) != 2 {
+		t.Fatalf("sources = %v", sources)
+	}
+}

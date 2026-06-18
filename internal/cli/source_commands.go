@@ -603,6 +603,9 @@ func executeSearch(args []string, stdout, stderr io.Writer, opts globalOptions) 
 	if len(args) > 0 && args[0] == "related" {
 		return executeSearchRelated(args[1:], stdout, stderr, opts)
 	}
+	if len(args) > 0 && args[0] == "stats" {
+		return executeSearchStats(args[1:], stdout, stderr, opts)
+	}
 	source, query, limit, filters, ok := parseSearch(args)
 	if !ok {
 		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge search --source openalex --query <query> [--limit N] [--category arxiv-category] [--filter source-filter] [--entity authors|institutions]")
@@ -661,6 +664,79 @@ func executeOpenAlexEntitySearch(query string, limit int, entity string, stdout,
 		fmt.Fprintf(stdout, "%s\t%s\t%d\n", entity.SourceID, entity.DisplayName, entity.WorksCount)
 	}
 	return 0
+}
+
+func executeSearchStats(args []string, stdout, stderr io.Writer, opts globalOptions) int {
+	dir := ""
+	for i := 0; i < len(args)-1; i++ {
+		if args[i] == "--dir" {
+			dir = args[i+1]
+		}
+	}
+	if dir == "" {
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge search stats --dir <dir>")
+	}
+	entries, err := os.ReadDir(dir)
+	if err != nil {
+		return writeError(stdout, stderr, opts, 1, "stats_read_failed", fmt.Sprintf("read dir: %v", err))
+	}
+	sourceCounts := map[string]int{}
+	uniqueDOIs := map[string]struct{}{}
+	for _, entry := range entries {
+		name := entry.Name()
+		if !strings.HasPrefix(name, "search-") || !strings.HasSuffix(name, ".txt") {
+			continue
+		}
+		source := searchFileSource(name)
+		data, readErr := os.ReadFile(filepath.Join(dir, name))
+		if readErr != nil {
+			continue
+		}
+		count := 0
+		for _, line := range strings.Split(string(data), "\n") {
+			line = strings.TrimSpace(line)
+			if line == "" {
+				continue
+			}
+			parts := strings.SplitN(line, "\t", 2)
+			doi := strings.TrimSpace(parts[0])
+			if doi != "" {
+				count++
+				uniqueDOIs[doi] = struct{}{}
+			}
+		}
+		sourceCounts[source] += count
+	}
+	if opts.JSON {
+		return writeJSON(stdout, 0, map[string]any{
+			"sources":       sourceCounts,
+			"totalUniqueDOIs": len(uniqueDOIs),
+		})
+	}
+	fmt.Fprintf(stdout, "Source coverage for %s\n", dir)
+	for source, count := range sourceCounts {
+		fmt.Fprintf(stdout, "  %-24s %d\n", source, count)
+	}
+	fmt.Fprintf(stdout, "\nTotal unique DOIs: %d\n", len(uniqueDOIs))
+	return 0
+}
+
+func searchFileSource(filename string) string {
+	// search-openalex-some-query.txt → openalex
+	// search-semantic-scholar-some-query.txt → semantic-scholar
+	name := strings.TrimPrefix(filename, "search-")
+	name = strings.TrimSuffix(name, ".txt")
+	knownSources := []string{"semantic-scholar", "openalex", "crossref", "arxiv", "pubmed", "europepmc", "core", "doaj", "nasa-ads"}
+	for _, src := range knownSources {
+		if strings.HasPrefix(name, src) {
+			return src
+		}
+	}
+	// fallback: first hyphen-separated segment
+	if idx := strings.Index(name, "-"); idx > 0 {
+		return name[:idx]
+	}
+	return name
 }
 
 func executeSearchRelated(args []string, stdout, stderr io.Writer, opts globalOptions) int {
@@ -833,7 +909,9 @@ func searchConnector(source string) (sourceConnector, bool) {
 		if baseURL == "" {
 			baseURL = "https://export.arxiv.org"
 		}
-		return sources.NewArXivConnector(defaultSourceHTTPClient(baseURL)), true
+		// arXiv holds connections ~10s before returning 429; use 30s timeout so the
+		// exponential backoff can handle rate limiting properly.
+		return sources.NewArXivConnector(defaultArXivHTTPClient(baseURL)), true
 	case "crossref":
 		baseURL := os.Getenv("RFORGE_CROSSREF_URL")
 		if baseURL == "" {
@@ -886,6 +964,15 @@ func defaultSourceHTTPClient(baseURL string) sources.HTTPClient {
 		BaseURL:    baseURL,
 		UserAgent:  "ResearchForge/dev",
 		Timeout:    10 * time.Second,
+		MaxRetries: 2,
+	})
+}
+
+func defaultArXivHTTPClient(baseURL string) sources.HTTPClient {
+	return sources.NewHTTPClient(sources.HTTPClientOptions{
+		BaseURL:    baseURL,
+		UserAgent:  "ResearchForge/dev",
+		Timeout:    30 * time.Second,
 		MaxRetries: 2,
 	})
 }

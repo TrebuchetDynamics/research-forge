@@ -191,3 +191,47 @@ func TestOpenAlexConnectorSearchesAndNormalizesWorks(t *testing.T) {
 		t.Fatalf("paper source ref metadata = %#v", papers[0].SourceRefs[0].Metadata)
 	}
 }
+
+func TestOpenAlexConnectorExpandsCitationGraphFromDOI(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/works" {
+			t.Fatalf("unexpected path: %s (want /works for all DOI-based lookups)", r.URL.Path)
+		}
+		filter := r.URL.Query().Get("filter")
+		switch filter {
+		case "doi:10.1038/s41467-023-42110-y":
+			// DOI resolution — returns the resolved work with referenced_works
+			_, _ = w.Write([]byte(`{"results":[{"id":"https://openalex.org/W9999","doi":"https://doi.org/10.1038/s41467-023-42110-y","title":"Multi-level FeFET crossbar","publication_year":2023,"referenced_works":["https://openalex.org/WREF1"]}]}`))
+		case "cites:W9999":
+			_, _ = w.Write([]byte(`{"results":[{"id":"https://openalex.org/WCITE1","doi":"https://doi.org/10.1000/cite1","title":"Citing FeFET work","publication_year":2024}]}`))
+		default:
+			t.Fatalf("unexpected filter: %q", filter)
+		}
+	}))
+	defer server.Close()
+
+	connector := NewOpenAlexConnector(NewHTTPClient(HTTPClientOptions{BaseURL: server.URL, Timeout: time.Second}))
+	expansion, err := connector.ExpandCitationGraph(context.Background(), OpenAlexGraphQuery{
+		WorkID:    "10.1038/s41467-023-42110-y",
+		Limit:     10,
+		Direction: SemanticScholarDirectionBoth,
+	})
+	if err != nil {
+		t.Fatalf("ExpandCitationGraph returned error: %v", err)
+	}
+	want := []CitationEdge{
+		{SourceID: "W9999", TargetID: "WREF1"},
+		{SourceID: "WCITE1", TargetID: "W9999"},
+	}
+	if len(expansion.Edges) != len(want) {
+		t.Fatalf("edges = %#v, want %#v", expansion.Edges, want)
+	}
+	for i := range want {
+		if expansion.Edges[i] != want[i] {
+			t.Fatalf("edge[%d] = %#v, want %#v", i, expansion.Edges[i], want[i])
+		}
+	}
+	if expansion.SeedID != "W9999" {
+		t.Fatalf("SeedID = %q, want W9999", expansion.SeedID)
+	}
+}
