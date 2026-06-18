@@ -9,7 +9,13 @@ import (
 	"strings"
 )
 
+const zbmathLicenseMsg = "zbMATH Open Web Interface contents unavailable due to conflicting licenses."
+
 // ZbMATHConnector searches the zbMATH Open mathematics database.
+//
+// Some records have title/abstract redacted due to publisher license conflicts;
+// those records are skipped. The search path is /v1/document/_search with
+// search_string parameter (not /v1/document/ with q=).
 type ZbMATHConnector struct {
 	http HTTPClient
 }
@@ -29,10 +35,10 @@ func (c ZbMATHConnector) Search(ctx context.Context, query SourceQuery) (SourceR
 		limit = 25
 	}
 	params := map[string]string{
-		"q":        query.Terms,
-		"per_page": strconv.Itoa(limit),
+		"search_string": query.Terms,
+		"per_page":      strconv.Itoa(limit),
 	}
-	body, err := c.http.Get(ctx, "/v1/document/", params)
+	body, err := c.http.Get(ctx, "/v1/document/_search", params)
 	if err != nil {
 		return SourceResponse{}, err
 	}
@@ -40,37 +46,46 @@ func (c ZbMATHConnector) Search(ctx context.Context, query SourceQuery) (SourceR
 	if err := json.Unmarshal(body, &payload); err != nil {
 		return SourceResponse{}, err
 	}
-	records := make([]SourceRecord, 0, len(payload.Result.Hits))
-	for _, hit := range payload.Result.Hits {
-		doi := normalizeSourceDOI(hit.DOI)
-		zblID := strings.TrimSpace(hit.ZblID)
-
-		// Collect MSC codes.
-		mscParts := make([]string, 0, len(hit.MSCCodes))
-		for _, m := range hit.MSCCodes {
-			if code := strings.TrimSpace(m.MSCCode); code != "" {
+	records := make([]SourceRecord, 0, len(payload.Result))
+	for _, hit := range payload.Result {
+		title := strings.TrimSpace(hit.Title.Title)
+		if title == "" || title == zbmathLicenseMsg {
+			continue
+		}
+		doi := ""
+		for _, link := range hit.Links {
+			if link.Type == "doi" {
+				doi = normalizeSourceDOI(link.Identifier)
+				break
+			}
+		}
+		zblID := strings.TrimSpace(hit.Identifier)
+		venue := ""
+		if len(hit.Source.Series) > 0 {
+			venue = strings.TrimSpace(hit.Source.Series[0].Title)
+		}
+		mscParts := make([]string, 0, len(hit.MSC))
+		for _, m := range hit.MSC {
+			if code := strings.TrimSpace(m.Code); code != "" {
 				mscParts = append(mscParts, code)
 			}
 		}
-
-		ids := Identifiers{
-			DOI: doi,
+		year := 0
+		if raw := strings.Trim(string(hit.Year), `"`); raw != "" && raw != "null" {
+			year, _ = strconv.Atoi(raw)
 		}
-		// Fall back to zbmath: prefixed ZblID when no DOI is available so that
-		// library validation does not reject the record.
+		ids := Identifiers{DOI: doi}
 		if doi == "" && zblID != "" {
 			ids.CrossrefID = "zbmath:" + zblID
 		}
-
 		records = append(records, SourceRecord{
 			Source:      "zbmath",
-			SourceID:    strconv.Itoa(hit.DocumentID),
-			Title:       strings.TrimSpace(hit.Title),
+			SourceID:    strconv.Itoa(hit.ID),
+			Title:       title,
 			Identifiers: ids,
-			Year:        hit.Year,
-			Abstract:    strings.TrimSpace(hit.Abstract),
-			Venue:       strings.TrimSpace(hit.Journal.Name),
-			URLs:        nonEmptyStrings(zbmathRecordURL(zblID)),
+			Year:        year,
+			Venue:       venue,
+			URLs:        nonEmptyStrings(hit.ZbMATHURL),
 			Metadata: map[string]string{
 				"zbl_id":    zblID,
 				"msc_codes": strings.Join(mscParts, "; "),
@@ -81,37 +96,32 @@ func (c ZbMATHConnector) Search(ctx context.Context, query SourceQuery) (SourceR
 }
 
 type zbmathSearchResponse struct {
-	Result struct {
-		Hits  []zbmathHit `json:"hits"`
-		Count int         `json:"count"`
-	} `json:"result"`
+	Result []zbmathHit `json:"result"`
 }
 
 type zbmathHit struct {
-	DocumentID int    `json:"document_id"`
-	Title      string `json:"title"`
-	Abstract   string `json:"abstract"`
-	Year       int    `json:"year"`
-	Authors    []struct {
-		Name string `json:"name"`
-	} `json:"authors"`
-	Journal struct {
-		Name string `json:"name"`
-	} `json:"journal"`
-	DOI      string `json:"doi"`
-	ZblID    string `json:"zbl_id"`
-	MSCCodes []struct {
-		MSCCode string `json:"msc_code"`
-	} `json:"msc_codes"`
+	ID    int `json:"id"`
+	Title struct {
+		Title string `json:"title"`
+	} `json:"title"`
+	Year       json.RawMessage `json:"year"` // API returns year as string e.g. "1992"
+	Identifier string          `json:"identifier"`
+	ZbMATHURL  string `json:"zbmath_url"`
+	Links      []struct {
+		Identifier string `json:"identifier"`
+		Type       string `json:"type"`
+		URL        string `json:"url"`
+	} `json:"links"`
+	Source struct {
+		Series []struct {
+			Title string `json:"title"`
+		} `json:"series"`
+	} `json:"source"`
+	MSC []struct {
+		Code string `json:"code"`
+	} `json:"msc"`
 }
 
 func rawZbMATHRef(terms string, limit int) string {
-	return fmt.Sprintf("zbmath:/v1/document/?q=%s&per_page=%d", url.QueryEscape(terms), limit)
-}
-
-func zbmathRecordURL(zblID string) string {
-	if zblID == "" {
-		return ""
-	}
-	return "https://zbmath.org/?q=an:" + zblID
+	return fmt.Sprintf("zbmath:/v1/document/_search?search_string=%s&per_page=%d", url.QueryEscape(terms), limit)
 }

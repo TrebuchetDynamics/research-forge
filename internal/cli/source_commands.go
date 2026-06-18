@@ -600,6 +600,9 @@ func executeSearch(args []string, stdout, stderr io.Writer, opts globalOptions) 
 	if len(args) > 0 && args[0] == "import" {
 		return executeSearchImport(args[1:], stdout, stderr, opts)
 	}
+	if len(args) > 0 && args[0] == "batch" {
+		return executeSearchBatch(args[1:], stdout, stderr, opts)
+	}
 	if len(args) > 0 && args[0] == "related" {
 		return executeSearchRelated(args[1:], stdout, stderr, opts)
 	}
@@ -631,6 +634,137 @@ func executeSearch(args []string, stdout, stderr io.Writer, opts globalOptions) 
 	for _, paper := range papers {
 		fmt.Fprintf(stdout, "%s\t%s\n", paper.Identifiers.DOI, paper.Title)
 	}
+	return 0
+}
+
+type searchBatchOptions struct {
+	Queries         []string
+	QueriesFile     string
+	Sources         []string
+	Limit           int
+	OutDir          string
+	ContinueOnError bool
+	WriteStats      bool
+}
+
+type searchBatchFailure struct {
+	Source string `json:"source"`
+	Query  string `json:"query"`
+	Error  string `json:"error"`
+}
+
+type searchBatchManifest struct {
+	SchemaVersion string   `json:"schemaVersion"`
+	CreatedAt     string   `json:"createdAt"`
+	Queries       []string `json:"queries"`
+	Sources       []string `json:"sources"`
+	Limit         int      `json:"limit"`
+	Results       int      `json:"results"`
+	Deduped       int      `json:"deduped"`
+	Failures      int      `json:"failures"`
+}
+
+func executeSearchBatch(args []string, stdout, stderr io.Writer, opts globalOptions) int {
+	batch, ok := parseSearchBatch(args)
+	if !ok {
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge search batch --queries <file> --sources openalex,crossref --out <dir> [--query <query>] [--limit N] [--continue-on-error] [--stats]")
+	}
+	queries := append([]string{}, batch.Queries...)
+	if batch.QueriesFile != "" {
+		fileQueries, err := readSearchBatchQueries(batch.QueriesFile)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "search_batch_queries_failed", err.Error())
+		}
+		queries = append(queries, fileQueries...)
+	}
+	queries = uniqueNonEmptyStrings(queries)
+	if len(queries) == 0 || len(batch.Sources) == 0 || strings.TrimSpace(batch.OutDir) == "" {
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge search batch --queries <file> --sources openalex,crossref --out <dir> [--query <query>] [--limit N] [--continue-on-error] [--stats]")
+	}
+	if err := os.MkdirAll(filepath.Join(batch.OutDir, "raw"), 0o755); err != nil {
+		return writeError(stdout, stderr, opts, 1, "search_batch_out_failed", err.Error())
+	}
+	resultsPath := filepath.Join(batch.OutDir, "results.jsonl")
+	dedupedPath := filepath.Join(batch.OutDir, "results-deduped.jsonl")
+	failuresPath := filepath.Join(batch.OutDir, "failures.jsonl")
+	resultsFile, err := os.Create(resultsPath)
+	if err != nil {
+		return writeError(stdout, stderr, opts, 1, "search_batch_write_failed", err.Error())
+	}
+	defer resultsFile.Close()
+	failuresFile, err := os.Create(failuresPath)
+	if err != nil {
+		return writeError(stdout, stderr, opts, 1, "search_batch_write_failed", err.Error())
+	}
+	defer failuresFile.Close()
+
+	allPapers := []library.PaperRecord{}
+	failures := []searchBatchFailure{}
+	for qi, query := range queries {
+		for _, source := range batch.Sources {
+			connector, ok := searchConnector(source)
+			if !ok {
+				failure := searchBatchFailure{Source: source, Query: query, Error: "unknown source"}
+				failures = append(failures, failure)
+				_ = writeJSONLine(failuresFile, failure)
+				if !batch.ContinueOnError {
+					return writeError(stdout, stderr, opts, 2, "unknown_source", fmt.Sprintf("unknown source %q", source))
+				}
+				continue
+			}
+			response, err := connector.Search(context.Background(), sources.SourceQuery{Terms: query, Limit: batch.Limit, Filters: map[string]string{}})
+			if err != nil {
+				failure := searchBatchFailure{Source: source, Query: query, Error: err.Error()}
+				failures = append(failures, failure)
+				_ = writeJSONLine(failuresFile, failure)
+				if !batch.ContinueOnError {
+					return writeError(stdout, stderr, opts, 1, "search_batch_failed", fmt.Sprintf("%s %q: %v", source, query, err))
+				}
+				continue
+			}
+			papers, err := sources.PaperRecords(response)
+			if err != nil {
+				failure := searchBatchFailure{Source: source, Query: query, Error: err.Error()}
+				failures = append(failures, failure)
+				_ = writeJSONLine(failuresFile, failure)
+				if !batch.ContinueOnError {
+					return writeError(stdout, stderr, opts, 1, "search_batch_normalize_failed", fmt.Sprintf("%s %q: %v", source, query, err))
+				}
+				continue
+			}
+			rawName := fmt.Sprintf("search-%s-%03d-%s.txt", source, qi+1, slugifySearchBatch(query))
+			if err := writeSearchBatchRaw(filepath.Join(batch.OutDir, "raw", rawName), papers); err != nil {
+				return writeError(stdout, stderr, opts, 1, "search_batch_write_failed", err.Error())
+			}
+			for _, paper := range papers {
+				allPapers = append(allPapers, paper)
+				if err := writeJSONLine(resultsFile, paper); err != nil {
+					return writeError(stdout, stderr, opts, 1, "search_batch_write_failed", err.Error())
+				}
+			}
+		}
+	}
+	deduped := dedupeSearchBatchPapers(allPapers)
+	if err := writeSearchBatchJSONL(dedupedPath, deduped); err != nil {
+		return writeError(stdout, stderr, opts, 1, "search_batch_write_failed", err.Error())
+	}
+	if err := writeSearchBatchMarkdown(filepath.Join(batch.OutDir, "results.md"), deduped, failures); err != nil {
+		return writeError(stdout, stderr, opts, 1, "search_batch_write_failed", err.Error())
+	}
+	manifest := searchBatchManifest{SchemaVersion: "1", CreatedAt: time.Now().UTC().Format(time.RFC3339), Queries: queries, Sources: batch.Sources, Limit: batch.Limit, Results: len(allPapers), Deduped: len(deduped), Failures: len(failures)}
+	if err := writeJSONFile(filepath.Join(batch.OutDir, "manifest.json"), manifest); err != nil {
+		return writeError(stdout, stderr, opts, 1, "search_batch_write_failed", err.Error())
+	}
+	if batch.WriteStats {
+		if err := writeSearchBatchStats(filepath.Join(batch.OutDir, "search-stats.txt"), batch.Sources, len(queries), len(allPapers), len(deduped), failures); err != nil {
+			return writeError(stdout, stderr, opts, 1, "search_batch_write_failed", err.Error())
+		}
+	}
+	if opts.JSON {
+		return writeJSON(stdout, 0, map[string]any{"out": batch.OutDir, "results": len(allPapers), "deduped": len(deduped), "failures": len(failures), "manifest": filepath.Join(batch.OutDir, "manifest.json")})
+	}
+	fmt.Fprintf(stdout, "searched %d querie(s) across %d source(s): %d records, %d deduped, %d failure(s)\n", len(queries), len(batch.Sources), len(allPapers), len(deduped), len(failures))
+	fmt.Fprintf(stdout, "wrote %s\n", batch.OutDir)
 	return 0
 }
 
@@ -1003,7 +1137,7 @@ func searchConnector(source string) (sourceConnector, bool) {
 	case "opencitations":
 		baseURL := os.Getenv("RFORGE_OPENCITATIONS_URL")
 		if baseURL == "" {
-			baseURL = "https://opencitations.net"
+			baseURL = "https://api.opencitations.net"
 		}
 		return sources.NewOpenCitationsConnector(defaultSourceHTTPClient(baseURL)), true
 	case "base":
@@ -1382,6 +1516,217 @@ func parseSearchImport(args []string) (string, string, int, int, map[string]stri
 		}
 	}
 	return source, query, pages, limit, filters, resumeState, source != "" && strings.TrimSpace(query) != ""
+}
+
+func parseSearchBatch(args []string) (searchBatchOptions, bool) {
+	batch := searchBatchOptions{Limit: 25}
+	for i := 0; i < len(args); i++ {
+		switch args[i] {
+		case "--queries", "--queries-file":
+			if i+1 >= len(args) {
+				return searchBatchOptions{}, false
+			}
+			batch.QueriesFile = args[i+1]
+			i++
+		case "--query":
+			if i+1 >= len(args) {
+				return searchBatchOptions{}, false
+			}
+			batch.Queries = append(batch.Queries, args[i+1])
+			i++
+		case "--sources":
+			if i+1 >= len(args) {
+				return searchBatchOptions{}, false
+			}
+			batch.Sources = splitSearchBatchList(args[i+1])
+			i++
+		case "--limit":
+			if i+1 >= len(args) {
+				return searchBatchOptions{}, false
+			}
+			parsed, err := strconv.Atoi(args[i+1])
+			if err != nil || parsed <= 0 {
+				return searchBatchOptions{}, false
+			}
+			batch.Limit = parsed
+			i++
+		case "--out":
+			if i+1 >= len(args) {
+				return searchBatchOptions{}, false
+			}
+			batch.OutDir = args[i+1]
+			i++
+		case "--continue-on-error":
+			batch.ContinueOnError = true
+		case "--stats":
+			batch.WriteStats = true
+		case "--dedupe":
+			if i+1 >= len(args) {
+				return searchBatchOptions{}, false
+			}
+			// DOI/title dedupe is always enabled for batch output; accept the flag for CLI readability.
+			i++
+		default:
+			return searchBatchOptions{}, false
+		}
+	}
+	return batch, true
+}
+
+func readSearchBatchQueries(path string) ([]string, error) {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return nil, err
+	}
+	queries := []string{}
+	for _, line := range strings.Split(string(data), "\n") {
+		line = strings.TrimSpace(line)
+		if line == "" || strings.HasPrefix(line, "#") {
+			continue
+		}
+		queries = append(queries, line)
+	}
+	return queries, nil
+}
+
+func splitSearchBatchList(value string) []string {
+	parts := strings.Split(value, ",")
+	out := make([]string, 0, len(parts))
+	for _, part := range parts {
+		part = strings.TrimSpace(part)
+		if part != "" {
+			out = append(out, part)
+		}
+	}
+	return out
+}
+
+func uniqueNonEmptyStrings(values []string) []string {
+	seen := map[string]struct{}{}
+	out := []string{}
+	for _, value := range values {
+		value = strings.TrimSpace(value)
+		if value == "" {
+			continue
+		}
+		key := strings.ToLower(value)
+		if _, ok := seen[key]; ok {
+			continue
+		}
+		seen[key] = struct{}{}
+		out = append(out, value)
+	}
+	return out
+}
+
+func slugifySearchBatch(value string) string {
+	fields := strings.FieldsFunc(strings.ToLower(strings.TrimSpace(value)), func(r rune) bool {
+		return !(r >= 'a' && r <= 'z') && !(r >= '0' && r <= '9')
+	})
+	if len(fields) == 0 {
+		return "query"
+	}
+	slug := strings.Join(fields, "-")
+	if len(slug) > 80 {
+		slug = strings.Trim(slug[:80], "-")
+	}
+	return slug
+}
+
+func writeJSONLine(w io.Writer, value any) error {
+	data, err := json.Marshal(value)
+	if err != nil {
+		return err
+	}
+	_, err = fmt.Fprintf(w, "%s\n", data)
+	return err
+}
+
+func writeSearchBatchRaw(path string, papers []library.PaperRecord) error {
+	var b strings.Builder
+	for _, paper := range papers {
+		fmt.Fprintf(&b, "%s\t%s\n", paper.Identifiers.DOI, paper.Title)
+	}
+	return os.WriteFile(path, []byte(b.String()), 0o644)
+}
+
+func writeSearchBatchJSONL(path string, papers []library.PaperRecord) error {
+	file, err := os.Create(path)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+	for _, paper := range papers {
+		if err := writeJSONLine(file, paper); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func dedupeSearchBatchPapers(papers []library.PaperRecord) []library.PaperRecord {
+	seen := map[string]struct{}{}
+	out := []library.PaperRecord{}
+	for _, paper := range papers {
+		key := strings.ToLower(strings.TrimSpace(paper.Identifiers.DOI))
+		if key == "" {
+			key = strings.ToLower(strings.Join(strings.Fields(paper.Title), " "))
+		}
+		if key == "" {
+			key = fmt.Sprintf("record-%d", len(out))
+		}
+		if _, ok := seen[key]; ok {
+			continue
+		}
+		seen[key] = struct{}{}
+		out = append(out, paper)
+	}
+	return out
+}
+
+func writeSearchBatchMarkdown(path string, papers []library.PaperRecord, failures []searchBatchFailure) error {
+	var b strings.Builder
+	b.WriteString("# Search batch results\n\n")
+	fmt.Fprintf(&b, "Deduped records: %d\n\n", len(papers))
+	for _, paper := range papers {
+		fmt.Fprintf(&b, "- %s", paper.Title)
+		if doi := strings.TrimSpace(paper.Identifiers.DOI); doi != "" {
+			fmt.Fprintf(&b, " — DOI: `%s`", doi)
+		}
+		b.WriteString("\n")
+	}
+	if len(failures) > 0 {
+		b.WriteString("\n## Failures\n\n")
+		for _, failure := range failures {
+			fmt.Fprintf(&b, "- %s / %q: %s\n", failure.Source, failure.Query, failure.Error)
+		}
+	}
+	return os.WriteFile(path, []byte(b.String()), 0o644)
+}
+
+func writeSearchBatchStats(path string, sources []string, queryCount, total, deduped int, failures []searchBatchFailure) error {
+	bySourceFailures := map[string]int{}
+	for _, failure := range failures {
+		bySourceFailures[failure.Source]++
+	}
+	var b strings.Builder
+	b.WriteString("Search batch stats\n")
+	fmt.Fprintf(&b, "Queries: %d\n", queryCount)
+	fmt.Fprintf(&b, "Sources: %s\n", strings.Join(sources, ","))
+	fmt.Fprintf(&b, "Records: %d\n", total)
+	fmt.Fprintf(&b, "Deduped records: %d\n", deduped)
+	fmt.Fprintf(&b, "Failures: %d\n", len(failures))
+	if len(bySourceFailures) > 0 {
+		names := make([]string, 0, len(bySourceFailures))
+		for name := range bySourceFailures {
+			names = append(names, name)
+		}
+		sort.Strings(names)
+		for _, name := range names {
+			fmt.Fprintf(&b, "  %s failures: %d\n", name, bySourceFailures[name])
+		}
+	}
+	return os.WriteFile(path, []byte(b.String()), 0o644)
 }
 
 func parseSearch(args []string) (string, string, int, map[string]string, bool) {

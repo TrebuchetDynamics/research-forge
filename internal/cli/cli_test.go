@@ -702,6 +702,53 @@ func TestExecuteSearchOpenAlexAdvancedFilters(t *testing.T) {
 	}
 }
 
+func TestExecuteSearchBatchWritesDedupedSweepArtifacts(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/works" {
+			t.Fatalf("path = %q", r.URL.Path)
+		}
+		query := r.URL.Query().Get("search")
+		if query == "" {
+			t.Fatal("missing search query")
+		}
+		_, _ = w.Write([]byte(`{"results":[{"id":"https://openalex.org/W123","doi":"https://doi.org/10.1000/duplicate","title":"Shared AMD GPU ML result","publication_year":2026}]}`))
+	}))
+	defer server.Close()
+	t.Setenv("RFORGE_OPENALEX_URL", server.URL)
+	dir := t.TempDir()
+	queries := filepath.Join(dir, "queries.txt")
+	if err := os.WriteFile(queries, []byte("AMD GPU gradient boosting\nRust AMD GPU ML\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	out := filepath.Join(dir, "out")
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+
+	code := Execute([]string{"search", "batch", "--queries", queries, "--sources", "openalex", "--limit", "2", "--out", out, "--dedupe", "doi,title", "--stats"}, stdout, stderr)
+	if code != 0 {
+		t.Fatalf("exit code = %d stderr=%s stdout=%s", code, stderr.String(), stdout.String())
+	}
+	for _, rel := range []string{"results.jsonl", "results-deduped.jsonl", "results.md", "manifest.json", "search-stats.txt", filepath.Join("raw", "search-openalex-001-amd-gpu-gradient-boosting.txt")} {
+		if _, err := os.Stat(filepath.Join(out, rel)); err != nil {
+			t.Fatalf("missing %s: %v", rel, err)
+		}
+	}
+	deduped, err := os.ReadFile(filepath.Join(out, "results-deduped.jsonl"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if lines := strings.Count(strings.TrimSpace(string(deduped)), "\n") + 1; lines != 1 {
+		t.Fatalf("deduped JSONL lines = %d, want 1:\n%s", lines, string(deduped))
+	}
+	stats, err := os.ReadFile(filepath.Join(out, "search-stats.txt"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(string(stats), "Queries: 2") || !strings.Contains(string(stats), "Deduped records: 1") {
+		t.Fatalf("stats missing counts:\n%s", string(stats))
+	}
+}
+
 func TestExecuteSearchOpenAlexJSONWithMockHTTP(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != "/works" {
