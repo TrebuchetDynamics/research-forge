@@ -57,9 +57,9 @@ func (c DBLPConnector) Search(ctx context.Context, query SourceQuery) (SourceRes
 			Identifiers: Identifiers{
 				DOI: doi,
 			},
-			Year:     year,
-			Venue:    strings.TrimSpace(info.Venue),
-			URLs:     urls,
+			Year:  year,
+			Venue: strings.TrimSpace(info.Venue),
+			URLs:  urls,
 			Metadata: map[string]string{
 				"authors": dblpAuthorNames(info.Authors),
 				"ee":      ee,
@@ -94,13 +94,13 @@ type dblpHit struct {
 }
 
 type dblpInfo struct {
-	Title   string     `json:"title"`
+	Title   string      `json:"title"`
 	Authors dblpAuthors `json:"authors"`
-	Year    string     `json:"year"`
-	Venue   string     `json:"venue"`
-	DOI     string     `json:"doi"`
-	URL     string     `json:"url"`
-	EE      string     `json:"ee"`
+	Year    string      `json:"year"`
+	Venue   string      `json:"venue"`
+	DOI     string      `json:"doi"`
+	URL     string      `json:"url"`
+	EE      string      `json:"ee"`
 }
 
 // dblpAuthors handles both array and single-object author fields from the DBLP API.

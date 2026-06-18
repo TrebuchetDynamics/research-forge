@@ -89,8 +89,8 @@ type clinicalTrialsStudy struct {
 
 type clinicalTrialsProtocol struct {
 	Identification struct {
-		NctID        string `json:"nctId"`
-		BriefTitle   string `json:"briefTitle"`
+		NctID         string `json:"nctId"`
+		BriefTitle    string `json:"briefTitle"`
 		OfficialTitle string `json:"officialTitle"`
 	} `json:"identificationModule"`
 	Description struct {

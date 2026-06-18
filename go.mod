@@ -2,6 +2,8 @@ module github.com/TrebuchetDynamics/research-forge
 
 go 1.26
 
+toolchain go1.26.4
+
 require (
 	github.com/playwright-community/playwright-go v0.5700.1
 	modernc.org/sqlite v1.52.0

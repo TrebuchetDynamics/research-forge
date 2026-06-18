@@ -96,7 +96,7 @@ func inspireDocType(types []string) string {
 
 type inspireHEPSearchResponse struct {
 	Hits struct {
-		Total int `json:"total"`
+		Total int             `json:"total"`
 		Hits  []inspireHEPHit `json:"hits"`
 	} `json:"hits"`
 }
@@ -104,10 +104,18 @@ type inspireHEPSearchResponse struct {
 type inspireHEPHit struct {
 	ID       string `json:"id"`
 	Metadata struct {
-		Titles       []struct{ Title string `json:"title"` }         `json:"titles"`
-		Abstracts    []struct{ Value string `json:"value"` }         `json:"abstracts"`
-		DOIs         []struct{ Value string `json:"value"` }         `json:"dois"`
-		ArXivEprints []struct{ Value string `json:"value"` }         `json:"arxiv_eprints"`
+		Titles []struct {
+			Title string `json:"title"`
+		} `json:"titles"`
+		Abstracts []struct {
+			Value string `json:"value"`
+		} `json:"abstracts"`
+		DOIs []struct {
+			Value string `json:"value"`
+		} `json:"dois"`
+		ArXivEprints []struct {
+			Value string `json:"value"`
+		} `json:"arxiv_eprints"`
 		PublicationInfo []struct {
 			JournalTitle string `json:"journal_title"`
 			Year         int    `json:"year"`
