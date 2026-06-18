@@ -81,6 +81,9 @@ func TestPapersRoutesServeListAndDetail(t *testing.T) {
 	if !strings.Contains(listBody, "/papers/10-1000-ap") {
 		t.Fatalf("/papers missing detail link: %s", listBody)
 	}
+	if !strings.Contains(listBody, `hx-trigger="refresh-papers from:body"`) {
+		t.Fatalf("/papers missing project-switch refresh trigger: %s", listBody)
+	}
 
 	detailBody, detailStatus, _ := getURL(t, ts.URL+"/papers/10-1000-ap")
 	if detailStatus != http.StatusOK {

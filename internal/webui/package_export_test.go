@@ -8,6 +8,29 @@ import (
 	"testing"
 )
 
+func TestPackageExportCenterEmptyProjectDoesNotReadWorkingDirectory(t *testing.T) {
+	cwd, err := os.Getwd()
+	if err != nil {
+		t.Fatal(err)
+	}
+	dir := t.TempDir()
+	if err := os.Chdir(dir); err != nil {
+		t.Fatal(err)
+	}
+	defer func() {
+		if err := os.Chdir(cwd); err != nil {
+			t.Fatalf("restore cwd: %v", err)
+		}
+	}()
+	mustWrite(t, filepath.Join(dir, "rforge.lock.json"), "{}\n")
+	mustWrite(t, filepath.Join(dir, "data", "identity-decisions.jsonl"), "{}\n")
+
+	state := BuildPackageExportCenterState("")
+	if len(state.PackageContents) != 0 || len(state.Lockfiles) != 0 || len(state.ReviewerDecisionLogs) != 0 {
+		t.Fatalf("empty project scanned cwd artifacts: %#v", state)
+	}
+}
+
 func TestPackageExportCenterPreviewsReviewPackageContentsBeforeCreation(t *testing.T) {
 	project := t.TempDir()
 	mustWrite(t, filepath.Join(project, "rforge.project.toml"), "title = \"demo\"\n")

@@ -218,7 +218,7 @@ func newSwitchProjectHandler(state *dashboardState) http.Handler {
 		}
 		state.set(path)
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		w.Header().Set("HX-Trigger", "refresh-library, refresh-artifacts")
+		w.Header().Set("HX-Trigger", "refresh-library, refresh-artifacts, refresh-papers")
 		_, _ = w.Write([]byte(`<p id="active-project-path">` + template.HTMLEscapeString(path) + `</p>`))
 	})
 }

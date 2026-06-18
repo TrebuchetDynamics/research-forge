@@ -43,6 +43,9 @@ func TestProjectSwitcherChangesActiveFolder(t *testing.T) {
 	if resp.StatusCode != http.StatusOK {
 		t.Fatalf("switch status = %d", resp.StatusCode)
 	}
+	if got := resp.Header.Get("HX-Trigger"); !strings.Contains(got, "refresh-library") || !strings.Contains(got, "refresh-artifacts") || !strings.Contains(got, "refresh-papers") {
+		t.Fatalf("switch HX-Trigger = %q, want library/artifacts/papers refreshes", got)
+	}
 	resp.Body.Close()
 
 	body2, _, _ := getURL(t, ts.URL+"/library")

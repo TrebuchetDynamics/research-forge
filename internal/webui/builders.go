@@ -113,6 +113,9 @@ type PackageExportCenterState struct {
 
 func BuildPackageExportCenterState(projectPath string) PackageExportCenterState {
 	state := PackageExportCenterState{ProjectPath: projectPath, RedactionResults: []string{"documents/ excluded until shareability approval", "cache/ excluded as private local state"}, Checksums: []string{"checksums.sha256 preview for copied package files"}, ExternalToolVersions: []string{"rforge.lock.json and data/*.lock.json capture external-tool versions"}}
+	if strings.TrimSpace(projectPath) == "" {
+		return state
+	}
 	for _, rel := range []string{"rforge.project.toml", "rforge.lock.json", "data/provenance.jsonl", "data/forge-state.json", "data/connector-capabilities.json", "data/evidence.schemas.json", "data/evidence.items.json", "data/claim-trace.json"} {
 		if fileExists(filepath.Join(projectPath, filepath.FromSlash(rel))) {
 			state.PackageContents = append(state.PackageContents, rel)
@@ -258,6 +261,9 @@ func BuildAcquisitionQueueState(projectPath string) AcquisitionQueueState {
 // library view model. A project without a library yields an empty view model
 // and is not treated as an error.
 func BuildLibraryViewModel(projectPath string) (ui.LibraryViewModel, error) {
+	if strings.TrimSpace(projectPath) == "" {
+		return ui.NewLibraryViewModel(nil), nil
+	}
 	libPath := filepath.Join(projectPath, "data", "library.json")
 	if _, err := os.Stat(libPath); os.IsNotExist(err) {
 		return ui.NewLibraryViewModel(nil), nil
@@ -425,6 +431,9 @@ func BuildArtifactDashboardState(projectPath string) (ArtifactDashboardState, er
 // cockpit citation-graph view model. A project without a graph yields an empty,
 // non-error model.
 func buildCitationGraph(projectPath string) (ui.CitationGraphViewModel, error) {
+	if strings.TrimSpace(projectPath) == "" {
+		return ui.CitationGraphViewModel{}, nil
+	}
 	data, err := os.ReadFile(filepath.Join(projectPath, "data", "citation-graph.json"))
 	if os.IsNotExist(err) {
 		return ui.CitationGraphViewModel{}, nil
@@ -460,6 +469,9 @@ func buildCitationGraph(projectPath string) (ui.CitationGraphViewModel, error) {
 // metrics, plot availability, and any runner warnings. A project without a
 // stored result yields a not-ready detail.
 func buildAnalysisDetail(projectPath string) AnalysisDetail {
+	if strings.TrimSpace(projectPath) == "" {
+		return AnalysisDetail{}
+	}
 	dir := filepath.Join(projectPath, "analysis")
 	entries, err := os.ReadDir(dir)
 	if err != nil {
@@ -496,6 +508,9 @@ func buildAnalysisDetail(projectPath string) AnalysisDetail {
 // record count.
 func buildPRISMAFlowState(projectPath string, libraryCount int) (PRISMAFlowState, error) {
 	state := PRISMAFlowState{Records: libraryCount}
+	if strings.TrimSpace(projectPath) == "" {
+		return state, nil
+	}
 	workflowData, err := os.ReadFile(filepath.Join(projectPath, "data", "screening.workflow.json"))
 	if os.IsNotExist(err) {
 		return state, nil
@@ -525,6 +540,9 @@ func buildPRISMAFlowState(projectPath string, libraryCount int) (PRISMAFlowState
 // buildAnalysisViewModel reports whether the project has a stored meta-analysis
 // result (analysis/<run>-result.json), naming the first run it finds.
 func buildAnalysisViewModel(projectPath string) ui.AnalysisViewModel {
+	if strings.TrimSpace(projectPath) == "" {
+		return ui.NewAnalysisViewModel("", false)
+	}
 	entries, err := os.ReadDir(filepath.Join(projectPath, "analysis"))
 	if err != nil {
 		return ui.NewAnalysisViewModel("", false)

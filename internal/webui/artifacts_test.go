@@ -2,6 +2,8 @@ package webui
 
 import (
 	"net/http/httptest"
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -52,6 +54,31 @@ func TestArtifactsHandlerRendersCLIGeneratedOutputs(t *testing.T) {
 		if !strings.Contains(body, want) {
 			t.Fatalf("artifacts screen missing %q:\n%s", want, body)
 		}
+	}
+}
+
+func TestBuildArtifactDashboardStateEmptyProjectDoesNotReadWorkingDirectory(t *testing.T) {
+	cwd, err := os.Getwd()
+	if err != nil {
+		t.Fatal(err)
+	}
+	dir := t.TempDir()
+	if err := os.Chdir(dir); err != nil {
+		t.Fatal(err)
+	}
+	defer func() {
+		if err := os.Chdir(cwd); err != nil {
+			t.Fatalf("restore cwd: %v", err)
+		}
+	}()
+	mustWrite(t, filepath.Join(dir, "data", "citation-graph.json"), `{"nodes":[{"id":"cwd-paper"}],"edges":[]}`)
+
+	state, err := BuildArtifactDashboardState("")
+	if err != nil {
+		t.Fatalf("BuildArtifactDashboardState: %v", err)
+	}
+	if len(state.CitationGraph.Nodes) != 0 || state.Analysis.Ready || state.PRISMA.Records != 0 {
+		t.Fatalf("empty project scanned cwd artifacts: %#v", state)
 	}
 }
 

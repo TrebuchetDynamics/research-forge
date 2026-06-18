@@ -2,9 +2,12 @@ package webui
 
 import (
 	"net/http/httptest"
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
+	"github.com/TrebuchetDynamics/research-forge/internal/library"
 	"github.com/TrebuchetDynamics/research-forge/internal/ui"
 )
 
@@ -46,5 +49,37 @@ func TestLibraryHandlerRendersEmptyState(t *testing.T) {
 	body := rec.Body.String()
 	if !strings.Contains(body, "No papers yet") || !strings.Contains(body, "Import or search for papers") {
 		t.Fatalf("empty library state missing:\n%s", body)
+	}
+}
+
+func TestBuildLibraryViewModelEmptyProjectDoesNotReadWorkingDirectory(t *testing.T) {
+	cwd, err := os.Getwd()
+	if err != nil {
+		t.Fatal(err)
+	}
+	dir := t.TempDir()
+	if err := os.Chdir(dir); err != nil {
+		t.Fatal(err)
+	}
+	defer func() {
+		if err := os.Chdir(cwd); err != nil {
+			t.Fatalf("restore cwd: %v", err)
+		}
+	}()
+
+	store, err := library.OpenStore(filepath.Join(dir, "data", "library.json"))
+	if err != nil {
+		t.Fatalf("OpenStore: %v", err)
+	}
+	if err := store.Create(library.PaperRecord{Title: "cwd leak", Identifiers: library.Identifiers{DOI: "10.1000/cwd-leak"}}); err != nil {
+		t.Fatalf("Create: %v", err)
+	}
+
+	vm, err := BuildLibraryViewModel("")
+	if err != nil {
+		t.Fatalf("BuildLibraryViewModel: %v", err)
+	}
+	if !vm.Empty || len(vm.Rows) != 0 {
+		t.Fatalf("empty project read cwd library: %#v", vm)
 	}
 }

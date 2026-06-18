@@ -184,7 +184,7 @@ func BuildPaperView(projectPath, id string) (PaperView, bool, error) {
 	}, true, nil
 }
 
-var paperListTemplate = template.Must(template.New("papers").Parse(`<section aria-labelledby="papers-title" class="rf-card">
+var paperListTemplate = template.Must(template.New("papers").Parse(`<section aria-labelledby="papers-title" class="rf-card" hx-get="/papers" hx-trigger="refresh-papers from:body">
   <h2 id="papers-title">Papers</h2>
   {{if .Empty}}
   <div role="status" class="empty-state">
