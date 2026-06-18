@@ -870,7 +870,7 @@ func searchFileSource(filename string) string {
 	// search-semantic-scholar-some-query.txt → semantic-scholar
 	name := strings.TrimPrefix(filename, "search-")
 	name = strings.TrimSuffix(name, ".txt")
-	knownSources := []string{"semantic-scholar", "inspire-hep", "openalex", "crossref", "clinicaltrials", "arxiv", "pubmed", "europepmc", "biorxiv", "core", "doaj", "nasa-ads", "zenodo", "dblp", "osf", "opencitations", "base", "zbmath", "figshare", "datacite", "lens", "eric", "hal", "dimensions", "pubchem", "chemrxiv"}
+	knownSources := []string{"semantic-scholar", "inspire-hep", "openalex", "crossref", "clinicaltrials", "arxiv", "pubmed", "europepmc", "biorxiv", "core", "doaj", "nasa-ads", "zenodo", "dblp", "osf", "opencitations", "base", "zbmath", "figshare", "datacite", "lens", "eric", "hal", "dimensions", "pubchem", "chemrxiv", "ntrs", "doab", "openaire"}
 	for _, src := range knownSources {
 		if strings.HasPrefix(name, src) {
 			return src
@@ -1222,6 +1222,24 @@ func searchConnector(source string) (sourceConnector, bool) {
 			baseURL = "https://chemrxiv.org"
 		}
 		return sources.NewChemRxivConnector(defaultSourceHTTPClient(baseURL)), true
+	case "ntrs":
+		baseURL := os.Getenv("RFORGE_NTRS_URL")
+		if baseURL == "" {
+			baseURL = "https://ntrs.nasa.gov"
+		}
+		return sources.NewNTRSConnector(defaultSourceHTTPClient(baseURL)), true
+	case "doab":
+		baseURL := os.Getenv("RFORGE_DOAB_URL")
+		if baseURL == "" {
+			baseURL = "https://directory.doabooks.org"
+		}
+		return sources.NewDOABConnector(defaultSourceHTTPClient(baseURL)), true
+	case "openaire":
+		baseURL := os.Getenv("RFORGE_OPENAIRE_URL")
+		if baseURL == "" {
+			baseURL = "https://api.openaire.eu"
+		}
+		return sources.NewOpenAIREConnector(defaultSourceHTTPClient(baseURL)), true
 	default:
 		return nil, false
 	}

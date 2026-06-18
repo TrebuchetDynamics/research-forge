@@ -119,6 +119,16 @@ Each is a single-domain preprint server. Prefer the OSF aggregation API (`--sour
 - **SSRN** — Elsevier-owned; no official API; Cloudflare WAF blocks all programmatic access. Defer indefinitely or until an official API is announced.
 - **PhilArchive** — Companion to PhilPapers; OAI-PMH endpoint is Cloudflare-blocked and OAI-PMH protocol does not support keyword search. Defer until PhilArchive provides a keyword-search REST API.
 
+### Wave 5 — Grey literature and open book repositories (shipped 2026-06-18)
+
+Three connectors covering NASA technical reports, open access books, and the European Open Science infrastructure.
+
+| Source | `--source` flag | Notes |
+|---|---|---|
+| NTRS (NASA Technical Reports Server) | `ntrs` | US government public domain reports; CrossrefID stores NTRS numeric ID |
+| DOAB (Directory of Open Access Books) | `doab` | DSpace REST API; flat key-value metadata; DOI from `oapen.identifier.doi` |
+| OpenAIRE Research Graph | `openaire` | EU Open Science infrastructure; polymorphic JSON (single/array) for title and pid fields |
+
 ### Intentionally out of scope
 
 | Source | Reason |
