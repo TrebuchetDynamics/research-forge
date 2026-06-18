@@ -870,7 +870,7 @@ func searchFileSource(filename string) string {
 	// search-semantic-scholar-some-query.txt → semantic-scholar
 	name := strings.TrimPrefix(filename, "search-")
 	name = strings.TrimSuffix(name, ".txt")
-	knownSources := []string{"semantic-scholar", "inspire-hep", "openalex", "crossref", "clinicaltrials", "arxiv", "pubmed", "europepmc", "biorxiv", "core", "doaj", "nasa-ads", "zenodo", "dblp", "osf", "opencitations", "base", "zbmath", "figshare", "datacite", "lens", "eric", "hal", "dimensions", "pubchem", "chemrxiv", "ntrs", "doab", "openaire", "plos", "osti", "dryad"}
+	knownSources := []string{"semantic-scholar", "inspire-hep", "openalex", "crossref", "clinicaltrials", "arxiv", "pubmed", "europepmc", "biorxiv", "core", "doaj", "nasa-ads", "zenodo", "dblp", "osf", "opencitations", "base", "zbmath", "figshare", "datacite", "lens", "eric", "hal", "dimensions", "pubchem", "chemrxiv", "ntrs", "doab", "openaire", "plos", "osti", "dryad", "researchsquare", "cinii", "biostudies"}
 	for _, src := range knownSources {
 		if strings.HasPrefix(name, src) {
 			return src
@@ -1258,6 +1258,24 @@ func searchConnector(source string) (sourceConnector, bool) {
 			baseURL = "https://datadryad.org"
 		}
 		return sources.NewDryadConnector(defaultSourceHTTPClient(baseURL)), true
+	case "researchsquare":
+		baseURL := os.Getenv("RFORGE_RESEARCHSQUARE_URL")
+		if baseURL == "" {
+			baseURL = "https://www.researchsquare.com"
+		}
+		return sources.NewResearchSquareConnector(defaultSourceHTTPClient(baseURL)), true
+	case "cinii":
+		baseURL := os.Getenv("RFORGE_CINII_URL")
+		if baseURL == "" {
+			baseURL = "https://cir.nii.ac.jp"
+		}
+		return sources.NewCiNiiConnector(defaultSourceHTTPClient(baseURL)), true
+	case "biostudies":
+		baseURL := os.Getenv("RFORGE_BIOSTUDIES_URL")
+		if baseURL == "" {
+			baseURL = "https://www.ebi.ac.uk"
+		}
+		return sources.NewBioStudiesConnector(defaultSourceHTTPClient(baseURL)), true
 	default:
 		return nil, false
 	}

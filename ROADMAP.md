@@ -139,6 +139,24 @@ Three connectors covering the PLOS OA publisher, US DOE technical literature, an
 | OSTI.gov (US DOE Office of Scientific and Technical Information) | `osti` | Response is a bare JSON array; CrossrefID fallback `osti:<id>` when no DOI |
 | Dryad Research Data Repository | `dryad` | HAL-style JSON under `_embedded.stash:datasets`; HTML abstract stripped; all CC0 |
 
+### Wave 7 — Preprint server, Japanese academic database, and EBI studies (shipped 2026-06-18)
+
+Three connectors covering Research Square preprints, the NII Japan CiNii Research aggregator, and the EMBL-EBI BioStudies database.
+
+| Source | `--source` flag | Notes |
+|---|---|---|
+| Research Square | `researchsquare` | DOI constructed as `10.21203/rs.3.<article_identity>/v<doi_version>`; all OA; authors stored as raw string |
+| CiNii Research (NII Japan) | `cinii` | JSON-LD OpenSearch API; DOI from `cir:DOI` identifier; NAID fallback `cinii-naid:<naid>`; single-string creator handled via RawMessage |
+| EMBL-EBI BioStudies | `biostudies` | EBI biological studies aggregator; no DOI; CrossrefID `biostudies:<accession>`; `isPublic` drives OA flag |
+
+**Deferred during Wave 7 probing:**
+- **J-STAGE** — XML API only; ERR_001/ERR_012 errors on keyword search
+- **Copernicus Publications** — 404 on all tested endpoints
+- **ESSOAr** — Cloudflare WAF blocks programmatic access
+- **MDPI/SciELO** — Cloudflare WAF
+- **PANGAEA** — returns HTML for API paths; no accessible JSON search endpoint
+- **Fatcat Wiki** — connection timeout (Internet Archive infrastructure issues)
+
 ### Intentionally out of scope
 
 | Source | Reason |
