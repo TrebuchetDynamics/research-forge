@@ -180,6 +180,29 @@ Three connectors covering GBIF biodiversity literature, Harvard Dataverse resear
 - **BHL (Biodiversity Heritage Library)** — requires API key
 - **OpenEdition** — "Service not found" on tested endpoints
 
+### Wave 9 — PubMed Central full-text, HuggingFace Papers, and OAPEN open-access books (shipped 2026-06-18)
+
+Three connectors covering PMC biomedical full-text via NCBI E-utilities, HuggingFace's curated ML/AI paper feed, and the OAPEN open-access academic book repository.
+
+| Source | `--source` flag | Notes |
+|---|---|---|
+| PubMed Central (PMC) | `pmc` | NCBI full-text biomedical archive; two-step: esearch retrieves IDs, esummary fetches metadata; DOI from `articleids[idtype=="doi"]`; CrossrefID `pmc:<PMCID>`; `authtype=="Author"` filter; `pmc_id`, `volume`, `issue`, `pages` in metadata; added to `biomedical` preset |
+| HuggingFace Papers | `huggingface` | Community-curated ML/AI preprint feed; arXiv DOI constructed as `10.48550/arXiv.<id>` then normalized; CrossrefID `huggingface:<arxivID>`; `upvotes` and `github_repo` in metadata; arXiv URL in URLs field |
+| OAPEN Library | `oapen` | Open-access academic books and chapters; DSpace REST API with `expand=metadata`; DOI from `oapen.identifier.doi` (supports full URL or bare form); CrossrefID `oapen:<handle>`; multiple-valued `dc.contributor.author` collected; `language` in metadata |
+
+**Deferred during Wave 9 probing:**
+- **AGRIS** — Cloudflare WAF blocks programmatic access
+- **SSRN** — Cloudflare WAF
+- **Paperity** — Cloudflare WAF
+- **Internet Archive Scholar** — returns HTML for API paths
+- **ACL Anthology** — no JSON search endpoint
+- **JOSS** — `papers/published.json?query=...` does not filter; returns most-recent N regardless of query
+- **PubAg** — USDA search API returned empty results during probing
+- **WHO IRIS** — connection failed during probing
+- **LIVIVO** — connection failed
+- **SHARE** — connection failed
+- **EarthArXiv** — OSF-hosted; connection timed out on OSF search paths
+
 ### Intentionally out of scope
 
 | Source | Reason |

@@ -1294,6 +1294,24 @@ func searchConnector(source string) (sourceConnector, bool) {
 			baseURL = "https://cmr.earthdata.nasa.gov"
 		}
 		return sources.NewNASACMRConnector(defaultSourceHTTPClient(baseURL)), true
+	case "pmc":
+		baseURL := os.Getenv("RFORGE_PMC_URL")
+		if baseURL == "" {
+			baseURL = "https://eutils.ncbi.nlm.nih.gov"
+		}
+		return sources.NewPMCConnector(defaultSourceHTTPClient(baseURL)), true
+	case "huggingface":
+		baseURL := os.Getenv("RFORGE_HUGGINGFACE_URL")
+		if baseURL == "" {
+			baseURL = "https://huggingface.co"
+		}
+		return sources.NewHuggingFaceConnector(defaultSourceHTTPClient(baseURL)), true
+	case "oapen":
+		baseURL := os.Getenv("RFORGE_OAPEN_URL")
+		if baseURL == "" {
+			baseURL = "https://library.oapen.org"
+		}
+		return sources.NewOAPenConnector(defaultSourceHTTPClient(baseURL)), true
 	default:
 		return nil, false
 	}
@@ -1302,11 +1320,11 @@ func searchConnector(source string) (sourceConnector, bool) {
 func searchBatchSourcePreset(name string) []string {
 	switch strings.TrimSpace(strings.ToLower(name)) {
 	case "all":
-		return []string{"openalex", "crossref", "semantic-scholar", "arxiv", "pubmed", "europepmc", "biorxiv", "chemrxiv", "researchsquare", "zenodo", "datacite", "figshare", "dryad", "osf", "opencitations", "base", "openaire", "doaj", "core", "lens", "nasa-ads", "ntrs", "osti", "inspire-hep", "dblp", "zbmath", "eric", "hal", "dimensions", "pubchem", "doab", "cinii", "biostudies", "plos", "clinicaltrials", "gbif", "dataverse", "nasa-cmr"}
+		return []string{"openalex", "crossref", "semantic-scholar", "arxiv", "pubmed", "europepmc", "biorxiv", "chemrxiv", "researchsquare", "zenodo", "datacite", "figshare", "dryad", "osf", "opencitations", "base", "openaire", "doaj", "core", "lens", "nasa-ads", "ntrs", "osti", "inspire-hep", "dblp", "zbmath", "eric", "hal", "dimensions", "pubchem", "doab", "cinii", "biostudies", "plos", "clinicaltrials", "gbif", "dataverse", "nasa-cmr", "pmc", "huggingface", "oapen"}
 	case "scholarly-fast":
 		return []string{"openalex", "crossref", "semantic-scholar", "arxiv"}
 	case "biomedical":
-		return []string{"openalex", "crossref", "semantic-scholar", "pubmed", "europepmc", "biorxiv", "clinicaltrials", "biostudies"}
+		return []string{"openalex", "crossref", "semantic-scholar", "pubmed", "europepmc", "biorxiv", "clinicaltrials", "biostudies", "pmc"}
 	case "preprints":
 		return []string{"arxiv", "biorxiv", "chemrxiv", "researchsquare", "osf"}
 	case "datasets":
