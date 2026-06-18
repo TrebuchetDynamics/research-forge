@@ -1276,6 +1276,24 @@ func searchConnector(source string) (sourceConnector, bool) {
 			baseURL = "https://www.ebi.ac.uk"
 		}
 		return sources.NewBioStudiesConnector(defaultSourceHTTPClient(baseURL)), true
+	case "gbif":
+		baseURL := os.Getenv("RFORGE_GBIF_URL")
+		if baseURL == "" {
+			baseURL = "https://api.gbif.org"
+		}
+		return sources.NewGBIFConnector(defaultSourceHTTPClient(baseURL)), true
+	case "dataverse":
+		baseURL := os.Getenv("RFORGE_DATAVERSE_URL")
+		if baseURL == "" {
+			baseURL = "https://dataverse.harvard.edu"
+		}
+		return sources.NewDataverseConnector(defaultSourceHTTPClient(baseURL)), true
+	case "nasa-cmr":
+		baseURL := os.Getenv("RFORGE_NASA_CMR_URL")
+		if baseURL == "" {
+			baseURL = "https://cmr.earthdata.nasa.gov"
+		}
+		return sources.NewNASACMRConnector(defaultSourceHTTPClient(baseURL)), true
 	default:
 		return nil, false
 	}
@@ -1284,7 +1302,7 @@ func searchConnector(source string) (sourceConnector, bool) {
 func searchBatchSourcePreset(name string) []string {
 	switch strings.TrimSpace(strings.ToLower(name)) {
 	case "all":
-		return []string{"openalex", "crossref", "semantic-scholar", "arxiv", "pubmed", "europepmc", "biorxiv", "chemrxiv", "researchsquare", "zenodo", "datacite", "figshare", "dryad", "osf", "opencitations", "base", "openaire", "doaj", "core", "lens", "ads", "ntrs", "osti", "inspire-hep", "dblp", "zbmath", "eric", "hal", "dimensions", "pubchem", "doab", "cinii", "biostudies", "plos", "clinicaltrials"}
+		return []string{"openalex", "crossref", "semantic-scholar", "arxiv", "pubmed", "europepmc", "biorxiv", "chemrxiv", "researchsquare", "zenodo", "datacite", "figshare", "dryad", "osf", "opencitations", "base", "openaire", "doaj", "core", "lens", "ads", "ntrs", "osti", "inspire-hep", "dblp", "zbmath", "eric", "hal", "dimensions", "pubchem", "doab", "cinii", "biostudies", "plos", "clinicaltrials", "gbif", "dataverse", "nasa-cmr"}
 	case "scholarly-fast":
 		return []string{"openalex", "crossref", "semantic-scholar", "arxiv"}
 	case "biomedical":
@@ -1292,7 +1310,7 @@ func searchBatchSourcePreset(name string) []string {
 	case "preprints":
 		return []string{"arxiv", "biorxiv", "chemrxiv", "researchsquare", "osf"}
 	case "datasets":
-		return []string{"zenodo", "datacite", "figshare", "dryad", "biostudies", "osf"}
+		return []string{"zenodo", "datacite", "figshare", "dryad", "biostudies", "osf", "dataverse", "nasa-cmr"}
 	case "open":
 		return []string{"openalex", "crossref", "arxiv", "pubmed", "europepmc", "biorxiv", "chemrxiv", "zenodo", "datacite", "figshare", "dryad", "osf", "opencitations", "base", "openaire", "doaj", "core", "eric", "hal", "pubchem", "doab", "cinii", "biostudies", "plos"}
 	default:

@@ -157,6 +157,29 @@ Three connectors covering Research Square preprints, the NII Japan CiNii Researc
 - **PANGAEA** — returns HTML for API paths; no accessible JSON search endpoint
 - **Fatcat Wiki** — connection timeout (Internet Archive infrastructure issues)
 
+### Wave 8 — Biodiversity literature, research data repositories, and NASA datasets (shipped 2026-06-18)
+
+Three connectors covering GBIF biodiversity literature, Harvard Dataverse research datasets, and the NASA Common Metadata Repository (CMR) earth/space science collections.
+
+| Source | `--source` flag | Notes |
+|---|---|---|
+| GBIF Literature | `gbif` | Biodiversity-related literature citing GBIF data; DOI from `identifiers.doi`; CrossrefID fallback `gbif:<uuid>`; authors as `LastName, FirstName`; `literatureType` and `peerReview` in metadata |
+| Harvard Dataverse | `dataverse` | Open research data across all disciplines; DOI from `global_id` (strip `doi:` prefix); year from `published_at`; publisher always "Harvard Dataverse"; specific dataverse name in metadata |
+| NASA CMR | `nasa-cmr` | NASA Earth observation and space science collections; DOI from links where `rel` ends with `/metadata#` and href contains `doi.org`; CrossrefID `nasa-cmr:<concept_id>`; `archive_center` and `organizations` in metadata |
+
+**Deferred during Wave 8 probing:**
+- **World Bank OKR** — Angular SPA (DSpace 7); no JSON search API
+- **PhilPapers** — Cloudflare WAF blocks programmatic access
+- **ISIDORE** — connection failed during probing
+- **EThOS** — XML-only API; no JSON endpoint
+- **Mendeley Data** — returns HTML for API paths
+- **USGS Publications Warehouse** — 404 on all tested paths
+- **ICPSR** — Cloudflare WAF
+- **Persée** — returns HTML
+- **Redalyc** — redirect loop / connection failed
+- **BHL (Biodiversity Heritage Library)** — requires API key
+- **OpenEdition** — "Service not found" on tested endpoints
+
 ### Intentionally out of scope
 
 | Source | Reason |
