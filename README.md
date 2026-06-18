@@ -134,27 +134,29 @@ ResearchForge does not replace scientific judgment with AI answers. It gives res
 
 LLM outputs that enter the workflow are stored with provenance like any other step. The system is model-agnostic and works without any LLM connection.
 
-ResearchForge includes repo-local agent skills under [`skills/`](./skills/) — see [`SKILLS.md`](./SKILLS.md) for the index. The usage skill at [`skills/rforge/SKILL.md`](./skills/rforge/SKILL.md) teaches an agent how to run `rforge`, preserve provenance, and follow the review workflow.
+ResearchForge ships a standalone agent skill — [`skills/research-forge/SKILL.md`](./skills/research-forge/SKILL.md) — that works in any project, not just this repo. The skill auto-installs `rforge` if it is not on the system, then handles literature search, provenance, and review packaging for any academic topic.
 
-### Agent skill
+### Install the skill
 
-ResearchForge ships a standalone agent skill you can install into any project. The skill auto-installs `rforge` if it is not on the system, then handles literature search, provenance, and review packaging for any academic topic.
-
-**Claude Code / Pi — install globally:**
+**Claude Code / Pi — install globally (one command):**
 
 ```sh
-mkdir -p ~/.claude/skills/rforge
-curl -fsSL https://raw.githubusercontent.com/TrebuchetDynamics/research-forge/main/skills/rforge/SKILL.md \
-  > ~/.claude/skills/rforge/SKILL.md
+mkdir -p ~/.claude/skills/research-forge && \
+  curl -fsSL https://raw.githubusercontent.com/TrebuchetDynamics/research-forge/main/skills/research-forge/SKILL.md \
+  > ~/.claude/skills/research-forge/SKILL.md
 ```
 
-Then invoke from any project:
+**Any other harness** — paste the contents of [`skills/research-forge/SKILL.md`](./skills/research-forge/SKILL.md) as your system prompt or opening message.
+
+### Use the skill
+
+Once installed, invoke it from any project:
 
 ```
-Use the rforge skill to research: <your topic>
+Use the research-forge skill to research: <your topic>
 ```
 
-**Any other harness** — paste the contents of [`skills/rforge/SKILL.md`](./skills/rforge/SKILL.md) as your system prompt or opening message. The skill is self-contained and does not require the ResearchForge repository to be present.
+The skill will check for `rforge`, install it if missing, create a project workspace, search the relevant sources, and write `provenance.json` before finishing.
 
 ## Architecture
 

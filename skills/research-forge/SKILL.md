@@ -1,5 +1,5 @@
 ---
-name: rforge
+name: research-forge
 description: Research any academic topic using rforge. Installs rforge automatically if not available. Covers literature search, OSS study, systematic review, evidence extraction, meta-analysis, and reproducible review packages.
 ---
 
