@@ -18,6 +18,36 @@ import (
 	"github.com/TrebuchetDynamics/research-forge/internal/screening"
 )
 
+func TestAutomationPolicyExposesHybridAgentAndHumanGates(t *testing.T) {
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+	code := Execute([]string{"--json", "automation", "policy"}, stdout, stderr)
+	if code != 0 {
+		t.Fatalf("automation policy code=%d stderr=%s", code, stderr.String())
+	}
+	out := stdout.String()
+	for _, want := range []string{"batch-retrieval-dedupe", "agent_allowed", "extraction-acceptance", "human_required", "final-claim-approval"} {
+		if !strings.Contains(out, want) {
+			t.Fatalf("automation policy missing %q:\n%s", want, out)
+		}
+	}
+}
+
+func TestAutomationPolicyActionFailsClosedForUnknownActions(t *testing.T) {
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+	code := Execute([]string{"--json", "automation", "policy", "--action", "invent-new-conclusion"}, stdout, stderr)
+	if code != 0 {
+		t.Fatalf("automation policy action code=%d stderr=%s", code, stderr.String())
+	}
+	out := stdout.String()
+	for _, want := range []string{"invent-new-conclusion", "human_required", "owner approval", "\"llmAgentMayDecide\":false"} {
+		if !strings.Contains(out, want) {
+			t.Fatalf("automation policy unknown action missing %q:\n%s", want, out)
+		}
+	}
+}
+
 func TestExecuteHelpMentionsDecisionCompletionAudit(t *testing.T) {
 	stdout := new(bytes.Buffer)
 	stderr := new(bytes.Buffer)
@@ -26,7 +56,7 @@ func TestExecuteHelpMentionsDecisionCompletionAudit(t *testing.T) {
 	if code != 0 {
 		t.Fatalf("exit code = %d, stderr = %s", code, stderr.String())
 	}
-	for _, want := range []string{"rforge decisions --check TODO.md", "rforge decisions --completion-audit TODO.md docs/todo-completion-audit.md"} {
+	for _, want := range []string{"rforge automation policy [--action <action>]", "rforge decisions --check TODO.md", "rforge decisions --completion-audit TODO.md docs/todo-completion-audit.md"} {
 		if !strings.Contains(stdout.String(), want) {
 			t.Fatalf("help missing %q:\n%s", want, stdout.String())
 		}
@@ -747,6 +777,34 @@ func TestExecuteSearchBatchWritesDedupedSweepArtifacts(t *testing.T) {
 	if !strings.Contains(string(stats), "Queries: 2") || !strings.Contains(string(stats), "Deduped records: 1") {
 		t.Fatalf("stats missing counts:\n%s", string(stats))
 	}
+}
+
+func TestSearchBatchSourcePresetsExpandAllAndNamedGroups(t *testing.T) {
+	all := splitSearchBatchList("all")
+	for _, want := range []string{"openalex", "crossref", "semantic-scholar", "arxiv", "pubmed", "chemrxiv", "datacite", "biostudies", "clinicaltrials"} {
+		if !containsString(all, want) {
+			t.Fatalf("all preset missing %q: %#v", want, all)
+		}
+	}
+	fast := splitSearchBatchList("scholarly-fast,openalex")
+	if strings.Join(fast, ",") != "openalex,crossref,semantic-scholar,arxiv" {
+		t.Fatalf("scholarly-fast expansion/dedupe = %#v", fast)
+	}
+	biomedical := splitSearchBatchList("biomedical")
+	for _, want := range []string{"pubmed", "europepmc", "biorxiv", "clinicaltrials"} {
+		if !containsString(biomedical, want) {
+			t.Fatalf("biomedical preset missing %q: %#v", want, biomedical)
+		}
+	}
+}
+
+func containsString(values []string, want string) bool {
+	for _, value := range values {
+		if value == want {
+			return true
+		}
+	}
+	return false
 }
 
 func TestExecuteSearchOpenAlexJSONWithMockHTTP(t *testing.T) {

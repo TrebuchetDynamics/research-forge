@@ -26,6 +26,7 @@ tmp/
 
 # Logs, generated maps, and local state
 *.log
+.claude/worktrees/
 .DS_Store
 Thumbs.db
 

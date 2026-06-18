@@ -667,7 +667,7 @@ type searchBatchManifest struct {
 func executeSearchBatch(args []string, stdout, stderr io.Writer, opts globalOptions) int {
 	batch, ok := parseSearchBatch(args)
 	if !ok {
-		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge search batch --queries <file> --sources openalex,crossref --out <dir> [--query <query>] [--limit N] [--continue-on-error] [--stats]")
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge search batch --queries <file> --sources all|scholarly-fast|biomedical|preprints|datasets|open|openalex,crossref --out <dir> [--query <query>] [--limit N] [--continue-on-error] [--stats]")
 	}
 	queries := append([]string{}, batch.Queries...)
 	if batch.QueriesFile != "" {
@@ -679,7 +679,7 @@ func executeSearchBatch(args []string, stdout, stderr io.Writer, opts globalOpti
 	}
 	queries = uniqueNonEmptyStrings(queries)
 	if len(queries) == 0 || len(batch.Sources) == 0 || strings.TrimSpace(batch.OutDir) == "" {
-		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge search batch --queries <file> --sources openalex,crossref --out <dir> [--query <query>] [--limit N] [--continue-on-error] [--stats]")
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge search batch --queries <file> --sources all|scholarly-fast|biomedical|preprints|datasets|open|openalex,crossref --out <dir> [--query <query>] [--limit N] [--continue-on-error] [--stats]")
 	}
 	if err := os.MkdirAll(filepath.Join(batch.OutDir, "raw"), 0o755); err != nil {
 		return writeError(stdout, stderr, opts, 1, "search_batch_out_failed", err.Error())
@@ -870,7 +870,7 @@ func searchFileSource(filename string) string {
 	// search-semantic-scholar-some-query.txt → semantic-scholar
 	name := strings.TrimPrefix(filename, "search-")
 	name = strings.TrimSuffix(name, ".txt")
-	knownSources := []string{"semantic-scholar", "inspire-hep", "openalex", "crossref", "clinicaltrials", "arxiv", "pubmed", "europepmc", "biorxiv", "core", "doaj", "nasa-ads", "zenodo", "dblp", "osf", "opencitations", "base", "zbmath", "figshare", "datacite", "lens", "eric", "hal", "dimensions", "pubchem", "chemrxiv", "ntrs", "doab", "openaire", "plos", "osti", "dryad", "researchsquare", "cinii", "biostudies"}
+	knownSources := append([]string{"semantic-scholar", "inspire-hep", "nasa-ads"}, searchBatchSourcePreset("all")...)
 	for _, src := range knownSources {
 		if strings.HasPrefix(name, src) {
 			return src
@@ -1278,6 +1278,25 @@ func searchConnector(source string) (sourceConnector, bool) {
 		return sources.NewBioStudiesConnector(defaultSourceHTTPClient(baseURL)), true
 	default:
 		return nil, false
+	}
+}
+
+func searchBatchSourcePreset(name string) []string {
+	switch strings.TrimSpace(strings.ToLower(name)) {
+	case "all":
+		return []string{"openalex", "crossref", "semantic-scholar", "arxiv", "pubmed", "europepmc", "biorxiv", "chemrxiv", "researchsquare", "zenodo", "datacite", "figshare", "dryad", "osf", "opencitations", "base", "openaire", "doaj", "core", "lens", "ads", "ntrs", "osti", "inspire-hep", "dblp", "zbmath", "eric", "hal", "dimensions", "pubchem", "doab", "cinii", "biostudies", "plos", "clinicaltrials"}
+	case "scholarly-fast":
+		return []string{"openalex", "crossref", "semantic-scholar", "arxiv"}
+	case "biomedical":
+		return []string{"openalex", "crossref", "semantic-scholar", "pubmed", "europepmc", "biorxiv", "clinicaltrials", "biostudies"}
+	case "preprints":
+		return []string{"arxiv", "biorxiv", "chemrxiv", "researchsquare", "osf"}
+	case "datasets":
+		return []string{"zenodo", "datacite", "figshare", "dryad", "biostudies", "osf"}
+	case "open":
+		return []string{"openalex", "crossref", "arxiv", "pubmed", "europepmc", "biorxiv", "chemrxiv", "zenodo", "datacite", "figshare", "dryad", "osf", "opencitations", "base", "openaire", "doaj", "core", "eric", "hal", "pubchem", "doab", "cinii", "biostudies", "plos"}
+	default:
+		return nil
 	}
 }
 
@@ -1689,11 +1708,16 @@ func splitSearchBatchList(value string) []string {
 	out := make([]string, 0, len(parts))
 	for _, part := range parts {
 		part = strings.TrimSpace(part)
-		if part != "" {
-			out = append(out, part)
+		if part == "" {
+			continue
 		}
+		if preset := searchBatchSourcePreset(part); len(preset) > 0 {
+			out = append(out, preset...)
+			continue
+		}
+		out = append(out, part)
 	}
-	return out
+	return uniqueNonEmptyStrings(out)
 }
 
 func uniqueNonEmptyStrings(values []string) []string {

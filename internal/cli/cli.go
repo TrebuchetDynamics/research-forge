@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/TrebuchetDynamics/research-forge/internal/analysis"
+	"github.com/TrebuchetDynamics/research-forge/internal/automation"
 	"github.com/TrebuchetDynamics/research-forge/internal/benchmarks"
 	"github.com/TrebuchetDynamics/research-forge/internal/evidence"
 	"github.com/TrebuchetDynamics/research-forge/internal/forge"
@@ -63,6 +64,8 @@ func Execute(args []string, stdout, stderr io.Writer) int {
 		return executeDecisions(remaining[1:], stdout, stderr, opts)
 	case "benchmark":
 		return executeBenchmark(remaining[1:], stdout, stderr, opts)
+	case "automation":
+		return executeAutomation(remaining[1:], stdout, stderr, opts)
 	case "completion":
 		return executeCompletion(remaining[1:], stdout, stderr, opts)
 	case "forge":
@@ -132,6 +135,47 @@ func Execute(args []string, stdout, stderr io.Writer) int {
 	default:
 		return writeError(stdout, stderr, opts, 2, "unknown_command", fmt.Sprintf("unknown command %q", remaining[0]))
 	}
+}
+
+func executeAutomation(args []string, stdout, stderr io.Writer, opts globalOptions) int {
+	if len(args) == 0 || args[0] != "policy" {
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge automation policy [--action <action>]")
+	}
+	action := ""
+	for i := 1; i < len(args); i++ {
+		switch args[i] {
+		case "--action":
+			if i+1 >= len(args) {
+				return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge automation policy [--action <action>]")
+			}
+			action = args[i+1]
+			i++
+		default:
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge automation policy [--action <action>]")
+		}
+	}
+	if action != "" {
+		decision := automation.Evaluate(action)
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"decision": decision})
+		}
+		fmt.Fprintf(stdout, "%s\t%s\tactor=%s\thuman=%t\tgate=%s\taudit=%s\n", decision.Action, decision.Class, decision.AllowedActor, decision.RequiresHuman, decision.Gate, decision.AuditArtifact)
+		fmt.Fprintln(stdout, decision.Reason)
+		return 0
+	}
+	policy := automation.DefaultPolicy()
+	if opts.JSON {
+		return writeJSON(stdout, 0, map[string]any{"policy": policy})
+	}
+	fmt.Fprintln(stdout, "ResearchForge hybrid automation policy")
+	for _, decision := range policy {
+		fmt.Fprintf(stdout, "%s\t%s\tactor=%s\thuman=%t", decision.Action, decision.Class, decision.AllowedActor, decision.RequiresHuman)
+		if decision.Gate != "" {
+			fmt.Fprintf(stdout, "\tgate=%s", decision.Gate)
+		}
+		fmt.Fprintf(stdout, "\taudit=%s\n", decision.AuditArtifact)
+	}
+	return 0
 }
 
 func executeBenchmark(args []string, stdout, stderr io.Writer, opts globalOptions) int {
@@ -3358,6 +3402,7 @@ func printHelp(w io.Writer) {
 	fmt.Fprintln(w, "Usage:")
 	fmt.Fprintln(w, "  rforge version")
 	fmt.Fprintln(w, "  rforge doctor")
+	fmt.Fprintln(w, "  rforge automation policy [--action <action>]")
 	fmt.Fprintln(w, "  rforge search --source openalex|arxiv|crossref|semantic-scholar|europepmc|pubmed --query <query> [--category arxiv-category] [--filter source-filter] [--from-year YYYY] [--to-year YYYY] [--type article] [--open-access true|false] [--concept C41008148]")
 	fmt.Fprintln(w, "  rforge search import --source openalex --query <query> --pages N [--resume-state state.json]")
 	fmt.Fprintln(w, "  rforge citations expand --source semantic-scholar|openalex|crossref --paper <id> --direction references|citations|both --depth N [--max-records N] --out <file> [--import-library]")
