@@ -1,0 +1,22 @@
+{
+  "question": "What additional scholarly sources could be added to ResearchForge beyond the current 15?",
+  "sources": ["openalex", "semantic-scholar", "crossref", "europepmc", "arxiv"],
+  "queries": [
+    "scholarly web API bibliographic database open access",
+    "academic search engine API literature database coverage",
+    "Scopus Dimensions Lens.org Web of Science bibliometric analysis API",
+    "scholarly database API literature retrieval preprint server",
+    "preprint server repository API scholarly communication",
+    "figshare Dryad DataCite research data repository API metadata",
+    "SSRN EconPapers REPEC economics preprint repository API",
+    "HAL institutional repository open access France API"
+  ],
+  "key_references": [
+    {"doi": "10.1002/jrsm.1378", "title": "Which academic search systems are suitable for systematic reviews? Evaluating 28 resources"},
+    {"doi": "10.1162/qss_a_00112", "title": "Large-scale comparison: Scopus, WoS, Dimensions, Crossref, Microsoft Academic"},
+    {"doi": "10.1016/j.ipm.2023.103385", "title": "New trends in bibliometric APIs: A comparative analysis"}
+  ],
+  "timestamp": "2026-06-18T00:00:00Z",
+  "rforge_version": "rforge dev (unknown, unknown)",
+  "outputs": ["ROADMAP.md"]
+}

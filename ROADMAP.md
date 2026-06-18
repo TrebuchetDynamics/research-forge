@@ -65,56 +65,72 @@ Decision-gated roadmap items are tracked through `rforge decisions`, `docs/owner
 
 The source connector interface established in Milestone 1 is the seam for adding new sources. Connectors below are sequenced by breadth of coverage, API quality, and domain-criticality. Each can ship independently once the interface is stable.
 
-### Tier 1 — High value, free API, broad coverage
+### Wave 1 — Implemented (shipped 2026-06-18)
 
-| Source | Domain | API endpoint | Priority |
+All six high-priority connectors from the original plan are live.
+
+| Source | `--source` flag | Notes |
+|---|---|---|
+| bioRxiv / medRxiv | `biorxiv` | Date-range listing + local filter; `--filter server=medrxiv` for medRxiv |
+| Zenodo | `zenodo` | Bestmatch sort; covers datasets, software, grey literature |
+| INSPIRE HEP | `inspire-hep` | Open access inferred from arXiv eprint presence |
+| dblp | `dblp` | Custom unmarshaler handles single-object vs array author edge case |
+| ClinicalTrials.gov | `clinicaltrials` | v2 API; NCT ID stored via CrossrefID for library compatibility |
+| OSF Preprints | `osf` | `filter[title]` search; covers PsyArXiv, SocArXiv, EarthArXiv, and others |
+
+### Wave 2 — High value, free API (next priority)
+
+Sourced from two literature reviews: "New trends in bibliometric APIs" (doi:10.1016/j.ipm.2023.103385) and "Which academic search systems are suitable for systematic reviews?" (doi:10.1002/jrsm.1378), which evaluated 28 systems.
+
+| Source | Domain | API endpoint | Priority rationale |
 |---|---|---|---|
-| bioRxiv / medRxiv | Biology, medicine | biorxiv.org/api | High — largest life sciences preprint server; not covered by PubMed (preprints only) |
-| Zenodo | Multidisciplinary | zenodo.org/api | High — CERN open archive; covers data, software, grey literature |
-| Lens.org | All fields + patents | lens.org/api | High — only source combining scholarly and patent literature |
-| BASE | Aggregator | base-search.net OAI-PMH + REST | High — 300M+ documents from 10k+ repositories; strong European coverage |
-| INSPIRE HEP | High-energy physics | inspirehep.net/api | High — authoritative for HEP; OpenAlex coverage is inadequate for this domain |
-| dblp | Computer science | dblp.org REST + XML | Medium — authoritative CS bibliography; clean structured data |
-| zbMATH Open | Mathematics | zbmath.org/api | Medium — opened 2021; authoritative for mathematics literature |
+| Lens.org | All fields + patents | api.lens.org (JWT) | Only source combining 225M scholarly works with patent literature; fills citation gaps confirmed by doi:10.1162/qss_a_00112 |
+| BASE | Aggregator | base-search.net OAI-PMH + REST | 300M+ docs from 10k+ repos; highest recall across European institutional archives |
+| OpenCitations (COCI) | Citation graph | opencitations.net/index/api | Free citation network; critical for reference/citation chaining in systematic reviews; no auth required |
+| figshare | Research data + preprints | api.figshare.com | Sister to Zenodo; covers data, software, presentations; free API; significant overlap with Zenodo but unique coverage |
+| DataCite | Research data DOIs | api.datacite.org | DOI registration for 50M+ research data objects; free REST API; complements Zenodo for data citation |
+| zbMATH Open | Mathematics | api.zbmath.org | Opened API in 2021; authoritative for mathematics; not covered by any current source |
 
-### Tier 2 — Domain-critical, free, narrower scope
+### Wave 3 — Domain-critical, free, narrower scope
 
-| Source | Domain | API endpoint | Priority |
+| Source | Domain | API endpoint | Priority rationale |
 |---|---|---|---|
-| ClinicalTrials.gov | Clinical research | clinicaltrials.gov/api | High — trial registrations; required for clinical evidence synthesis |
-| ERIC | Education | api.ies.ed.gov/eric | Medium — US Dept of Education; 2M+ education research records |
-| HAL | Multidisciplinary | api.archives-ouvertes.fr | Medium — French national open archive; strong humanities and European science |
-| OSF Preprints | Multidisciplinary | api.osf.io | Medium — single API covers PsyArXiv, SocArXiv, EarthArXiv, and others |
-| AGRIS | Agriculture | agris.fao.org OAI-PMH | Low — FAO database; 12M+ records; unique food/agriculture coverage |
+| ERIC | Education | api.ies.ed.gov/eric | US Dept of Education; 2M+ records; only source for K-12/higher-ed policy research |
+| HAL | Multidisciplinary | api.archives-ouvertes.fr | French national open archive; strong humanities; REST + OAI-PMH |
+| REPEC / EconPapers | Economics | econpapers.repec.org OAI-PMH | Largest free economics bibliography; ~4M records; critical for economic policy research |
+| Dimensions (free tier) | All fields | api.dimensions.ai (token) | Commercial DB with free academic API; coverage confirmed comparable to Scopus |
+| AGRIS | Agriculture | agris.fao.org OAI-PMH | FAO database; 12M+ records; unique food/agriculture/food security coverage |
+| PubChem | Chemistry | pubchem.ncbi.nlm.nih.gov/rest | NCBI chemistry database; 100M+ compounds; required for drug discovery synthesis |
 
-### Tier 3 — Specialist preprint servers
+### Wave 4 — Specialist preprint servers
 
-Each is a single-domain preprint server. Prefer implementing these via the OSF aggregation API where possible (`--source osf`) rather than one adapter per server.
+Each is a single-domain preprint server. Prefer the OSF aggregation API (`--source osf`) where the server is hosted on OSF. Direct adapters add value only when the OSF title filter is too narrow.
 
-| Source | Domain |
-|---|---|
-| ChemRxiv | Chemistry |
-| TechRxiv | Engineering / IEEE |
-| SSRN | Economics, law, social sciences |
-| PhilArchive | Philosophy |
+| Source | Domain | Notes |
+|---|---|---|
+| ChemRxiv | Chemistry | ACS-hosted; REST API available |
+| TechRxiv | Engineering / IEEE | IEEE-hosted; engineering and technology |
+| SSRN | Economics, law, social sciences | Elsevier-owned; unofficial RSS only |
+| PhilArchive | Philosophy | Companion to PhilPapers; OAI-PMH |
 
 ### Intentionally out of scope
 
 | Source | Reason |
 |---|---|
 | Google Scholar | No official API; scraping violates ToS |
-| Scopus / Web of Science | Subscription only |
+| Scopus / Web of Science | Subscription only; no free tier |
 | IEEE Xplore / ACM DL | API requires institutional key |
-| ResearchGate / Academia.edu | No API |
+| ResearchGate / Academia.edu | No public API |
+| Microsoft Academic | Discontinued May 2022 |
 
-### Recommended implementation order
+### Recommended next implementation order (Wave 2)
 
-1. bioRxiv / medRxiv — closes the largest single gap for life sciences users
-2. Zenodo — fills data, software, and grey literature
-3. INSPIRE HEP — physics researchers will notice the gap immediately
-4. dblp — CS/engineering; clean data, easy to parse
-5. ClinicalTrials.gov — required for any clinical evidence synthesis
-6. OSF — one adapter covers five preprint communities
+1. OpenCitations — no auth, simple REST, pure citation graph; critical for reference chaining
+2. Lens.org — JWT auth but free; single adapter covers scholarly + patent literature
+3. BASE — OAI-PMH; highest recall for systematic reviews across European archives
+4. zbMATH Open — fills the mathematics gap; stable open API since 2021
+5. figshare — data/preprint gap adjacent to Zenodo; free REST API
+6. DataCite — research data DOI lookup; complements zenodo + figshare
 
 ---
 
