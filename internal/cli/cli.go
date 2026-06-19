@@ -1369,9 +1369,9 @@ func executeAnalysis(args []string, stdout, stderr io.Writer, opts globalOptions
 	runPath := filepath.Join(opts.Project, "analysis", safeFileStem(args[1])+".json")
 	switch args[0] {
 	case "prepare":
-		calc, varianceFloor, ok := parseAnalysisEffect(args[2:])
+		calc, varianceFloor, moderatorFields, ok := parseAnalysisEffect(args[2:])
 		if !ok {
-			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge analysis prepare <run-id> [--effect smd|log-odds-ratio|risk-ratio|mean-difference|risk-difference|fisher-z-correlation|raw-continuous] [--variance-floor 0.0025]")
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge analysis prepare <run-id> [--effect smd|log-odds-ratio|risk-ratio|mean-difference|risk-difference|fisher-z-correlation|raw-continuous] [--variance-floor 0.0025] [--moderator <field>]")
 		}
 		var items []evidence.EvidenceItem
 		if err := readJSONFile(evidenceItemsPath(opts.Project), &items); err != nil {
@@ -1380,7 +1380,7 @@ func executeAnalysis(args []string, stdout, stderr io.Writer, opts globalOptions
 		var run analysis.AnalysisRun
 		var err error
 		if _, isRaw := calc.(analysis.RawContinuousOutcome); isRaw {
-			run, err = analysis.PrepareRawContinuous(args[1], items, varianceFloor, nil)
+			run, err = analysis.PrepareRawContinuous(args[1], items, varianceFloor, moderatorFields)
 		} else {
 			run, err = analysis.PrepareWithCalculator(args[1], items, calc)
 		}
@@ -1901,50 +1901,63 @@ func parseMetaRegressionArgs(args []string) (string, map[string]float64, string,
 	return moderator, values, evidenceField, strings.TrimSpace(moderator) != "" && (len(values) > 0 || strings.TrimSpace(evidenceField) != "")
 }
 
-func parseAnalysisEffect(args []string) (analysis.EffectSizeCalculator, float64, bool) {
+func parseAnalysisEffect(args []string) (analysis.EffectSizeCalculator, float64, []string, bool) {
 	if len(args) == 0 {
-		return analysis.StandardizedMeanDifference{}, 0, true
+		return analysis.StandardizedMeanDifference{}, 0, nil, true
 	}
 	if len(args) < 2 || args[0] != "--effect" {
-		return nil, 0, false
+		return nil, 0, nil, false
 	}
 	effectName := args[1]
 	remaining := args[2:]
 
-	// Parse optional --variance-floor (only meaningful for raw-continuous).
+	// Parse optional --variance-floor and --moderator flags (only meaningful for raw-continuous).
 	varianceFloor := 0.0025
-	for i := 0; i+1 < len(remaining); i++ {
-		if remaining[i] == "--variance-floor" {
+	var moderatorFields []string
+	var unrecognized []string
+	for i := 0; i < len(remaining); i++ {
+		switch remaining[i] {
+		case "--variance-floor":
+			if i+1 >= len(remaining) {
+				return nil, 0, nil, false
+			}
 			f, err := strconv.ParseFloat(remaining[i+1], 64)
 			if err != nil || f <= 0 {
-				return nil, 0, false
+				return nil, 0, nil, false
 			}
 			varianceFloor = f
-			remaining = append(append([]string{}, remaining[:i]...), remaining[i+2:]...)
-			break
+			i++
+		case "--moderator":
+			if i+1 >= len(remaining) || remaining[i+1] == "" {
+				return nil, 0, nil, false
+			}
+			moderatorFields = append(moderatorFields, remaining[i+1])
+			i++
+		default:
+			unrecognized = append(unrecognized, remaining[i])
 		}
 	}
 	// For arm-pair calculators, no extra flags are allowed.
-	if len(remaining) != 0 && effectName != "raw-continuous" {
-		return nil, 0, false
+	if (len(unrecognized) != 0 || len(moderatorFields) != 0) && effectName != "raw-continuous" {
+		return nil, 0, nil, false
 	}
 	switch effectName {
 	case "smd", "standardized-mean-difference":
-		return analysis.StandardizedMeanDifference{}, 0, true
+		return analysis.StandardizedMeanDifference{}, 0, nil, true
 	case "log-odds-ratio":
-		return analysis.LogOddsRatio{}, 0, true
+		return analysis.LogOddsRatio{}, 0, nil, true
 	case "risk-ratio", "rr":
-		return analysis.RiskRatio{}, 0, true
+		return analysis.RiskRatio{}, 0, nil, true
 	case "mean-difference", "md":
-		return analysis.MeanDifference{}, 0, true
+		return analysis.MeanDifference{}, 0, nil, true
 	case "risk-difference", "rd":
-		return analysis.RiskDifference{}, 0, true
+		return analysis.RiskDifference{}, 0, nil, true
 	case "fisher-z-correlation", "fisher-z", "correlation":
-		return analysis.FisherZCorrelation{}, 0, true
+		return analysis.FisherZCorrelation{}, 0, nil, true
 	case "raw-continuous":
-		return analysis.RawContinuousOutcome{VarianceFloor: varianceFloor}, varianceFloor, true
+		return analysis.RawContinuousOutcome{VarianceFloor: varianceFloor}, varianceFloor, moderatorFields, true
 	default:
-		return nil, 0, false
+		return nil, 0, nil, false
 	}
 }
 

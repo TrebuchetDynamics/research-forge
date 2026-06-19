@@ -23,7 +23,7 @@ The command-line tool is `rforge`.
 
 ## Status
 
-**Pre-alpha.** The `rforge` CLI has 793 passing tests across 30 packages. The project format, CLI surface, and APIs may change before 1.0.
+**Pre-alpha.** The `rforge` CLI has 796 passing tests across 30 packages. The project format, CLI surface, and APIs may change before 1.0.
 
 **Works today:**
 - Project workspaces
@@ -103,7 +103,8 @@ Pool a single continuous metric (e.g. solar-to-hydrogen efficiency %) across dev
 rforge search batch --sources chemistry --project ./my-review --stats
 
 # Prepare a benchmarking run — variance floor per ADR-0007, moderator fields auto-wired
-rforge analysis prepare my-run --effect raw-continuous --variance-floor 0.0025
+rforge analysis prepare my-run --effect raw-continuous --variance-floor 0.0025 \
+  --moderator device_type --moderator auxiliary_bias --moderator measurement_standard
 
 # Check all accepted evidence items carry the required schema fields
 rforge analysis ready my-run --required device_type,auxiliary_bias,measurement_standard
