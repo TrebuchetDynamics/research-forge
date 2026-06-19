@@ -441,9 +441,11 @@ func executeOA(args []string, stdout, stderr io.Writer, opts globalOptions) int 
 		for _, gate := range plan.HumanGates {
 			fmt.Fprintf(stdout, "- %s\n", gate)
 		}
-		fmt.Fprintln(stdout, "\nUnsupported sources")
-		for _, source := range plan.UnsupportedSources {
-			fmt.Fprintf(stdout, "- %s: %s\n", source.ID, source.Reason)
+		if len(plan.UnsupportedSources) > 0 {
+			fmt.Fprintln(stdout, "\nUnsupported sources")
+			for _, source := range plan.UnsupportedSources {
+				fmt.Fprintf(stdout, "- %s: %s\n", source.ID, source.Reason)
+			}
 		}
 		return 0
 	}

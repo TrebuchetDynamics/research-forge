@@ -23,7 +23,7 @@ Core commands:
 - `rforge protocol suggest-expansions --question <text> --source-text <quoted passage> [--source-ref <id> --paper-id <id>]` drafts KeyBERT/SciSpaCy/LLM-style query-expansion suggestion records with source text links; suggestions cannot change a source plan until reviewer-approved
 - `rforge oa lookup <doi>` resolves Unpaywall metadata for one DOI
 - `rforge oa resolve-plan <doi>` prints a legal OA source plan across Unpaywall, OpenAlex OA locations, Europe PMC/PMC, preprint servers, DOAJ, CORE, Semantic Scholar/Crossref hints, Internet Archive/Open Library, and Software Heritage
-- `rforge oa sources` lists supported legal OA resolver sources and intentionally unsupported sources such as Sci-Hub
+- `rforge oa sources` lists supported legal OA resolver sources
 - `rforge --project <path> oa candidates` compares legal full-text candidates from Unpaywall, DOAJ, CORE, PubMed/Europe PMC/PMC, arXiv, and local files; every candidate requires reviewer approval before acquisition
 - `rforge --project <path> oa acquisition-queue` writes `data/legal-acquisition-queue.json` with OA/license status, source URL, expected local path, restricted/shareable flags, and reviewer approval gates; `rforge --project <path> oa acquisition-approve <id> --reviewer <name> --reason <text>` records explicit approval before download/archive inclusion
 - `rforge --project <path> oa privacy-review [--report <file>]` writes `data/privacy-licensing-review.json` with gates for imported attachments, notes, annotations, local paths, copyrighted/missing-license PDFs, and shareable-report leaks; `rforge --project <path> oa privacy-approve --reviewer <name> --reason <text>` records explicit approval

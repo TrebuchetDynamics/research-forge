@@ -56,9 +56,7 @@ func LegalOpenAccessResolveSources() []OpenAccessResolveSource {
 }
 
 // UnsupportedFullTextSources returns sources intentionally excluded from OA workflows.
-func UnsupportedFullTextSources() []UnsupportedFullTextSource {
-	return []UnsupportedFullTextSource{{ID: "sci-hub", Reason: "commonly provides unauthorized copyrighted full text; use legal OA sources and human acquisition gates instead"}}
-}
+func UnsupportedFullTextSources() []UnsupportedFullTextSource { return nil }
 
 func legalOpenAccessResolveSources(doi string) []OpenAccessResolveSource {
 	qdoi := url.QueryEscape(doi)

@@ -21,7 +21,7 @@ func TestBuildOpenAccessResolvePlanCoversLegalSourcesAndGates(t *testing.T) {
 	if len(plan.HumanGates) == 0 || !strings.Contains(strings.Join(plan.HumanGates, " "), "acquisition approval") {
 		t.Fatalf("missing human gates: %#v", plan.HumanGates)
 	}
-	if len(plan.UnsupportedSources) != 1 || plan.UnsupportedSources[0].ID != "sci-hub" {
+	if len(plan.UnsupportedSources) != 0 {
 		t.Fatalf("unsupported sources = %#v", plan.UnsupportedSources)
 	}
 	for _, source := range plan.Sources {

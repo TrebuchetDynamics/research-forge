@@ -1486,7 +1486,7 @@ func TestExecuteSearchCrossrefJSONWithMockHTTP(t *testing.T) {
 	}
 }
 
-func TestExecuteOAResolvePlanJSONCoversLegalSourcesAndSciHubGuardrail(t *testing.T) {
+func TestExecuteOAResolvePlanJSONCoversLegalSourcesAndGates(t *testing.T) {
 	stdout := new(bytes.Buffer)
 	stderr := new(bytes.Buffer)
 	code := Execute([]string{"--json", "oa", "resolve-plan", "10.1000/example"}, stdout, stderr)
@@ -1494,7 +1494,7 @@ func TestExecuteOAResolvePlanJSONCoversLegalSourcesAndSciHubGuardrail(t *testing
 		t.Fatalf("oa resolve-plan exit code = %d stderr=%s stdout=%s", code, stderr.String(), stdout.String())
 	}
 	out := stdout.String()
-	for _, want := range []string{"unpaywall", "openalex", "europepmc", "pmc", "arxiv", "biorxiv-medrxiv", "chemrxiv", "doaj", "core", "semantic-scholar", "crossref", "openlibrary", "software-heritage", "sci-hub", "acquisition approval"} {
+	for _, want := range []string{"unpaywall", "openalex", "europepmc", "pmc", "arxiv", "biorxiv-medrxiv", "chemrxiv", "doaj", "core", "semantic-scholar", "crossref", "openlibrary", "software-heritage", "acquisition approval"} {
 		if !strings.Contains(out, want) {
 			t.Fatalf("resolve plan missing %q:\n%s", want, out)
 		}
@@ -1508,7 +1508,7 @@ func TestExecuteOASourcesListsLegalSources(t *testing.T) {
 	if code != 0 {
 		t.Fatalf("oa sources exit code = %d stderr=%s stdout=%s", code, stderr.String(), stdout.String())
 	}
-	for _, want := range []string{"Legal open-access resolver sources", "unpaywall", "Software Heritage", "Unsupported sources", "sci-hub"} {
+	for _, want := range []string{"Legal open-access resolver sources", "unpaywall", "Software Heritage"} {
 		if !strings.Contains(stdout.String(), want) {
 			t.Fatalf("oa sources missing %q:\n%s", want, stdout.String())
 		}
