@@ -187,6 +187,16 @@ rforge --project <path> oa candidates
 rforge --project <path> oa acquisition-queue
 ```
 
+After approval, prefer full text over abstract-only evidence when a legal OA PDF URL is available:
+
+```sh
+rforge --project <path> research acquire-pdftotext \
+  --doi <doi> --pdf-url <url> --license <license> --oa-status <status> \
+  --out <path>/parsed/<paper-id>.json
+```
+
+This stores the PDF locally, parses it with `pdftotext`, and leaves the parsed JSON as the shareable evidence artifact. Keep PDFs local-only.
+
 Legal OA source coverage includes Unpaywall, OpenAlex OA locations, Europe PMC/PMC, arXiv, bioRxiv/medRxiv, ChemRxiv, DOAJ, CORE, Semantic Scholar/Crossref hints, Internet Archive/Open Library, and Software Heritage for software archival. Sci-Hub-like sources are intentionally unsupported.
 
 Stop and surface this to the human invoker before proceeding:

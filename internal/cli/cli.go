@@ -3505,6 +3505,7 @@ func printHelp(w io.Writer) {
 	fmt.Fprintln(w, "  rforge oss inventory-report <manifest.json> [--area <area>]")
 	fmt.Fprintln(w, "  rforge oss add|list|license-check")
 	fmt.Fprintln(w, "  rforge parse --paper <id> --parser grobid|tex|s2orc|papermage --pdf|--tex|--s2orc|--papermage <file>")
+	fmt.Fprintln(w, "  rforge research acquire-pdftotext --doi <doi> --pdf-url <url> --license <license> --oa-status <status> --out <parsed.json>")
 	fmt.Fprintln(w, "  rforge research parse-pdftotext --paper <id> --pdf <file> --out <parsed.json> [--title <title>]")
 	fmt.Fprintln(w, "  rforge research screen-queue --out <queue.csv> [--markdown <queue.md>] [--library <library.json>] [--search-results <dir>]")
 	fmt.Fprintln(w, "  rforge research leakage-audit --parsed <parsed-dir> --out <audit.json> [--markdown <audit.md>]")

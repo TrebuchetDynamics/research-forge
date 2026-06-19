@@ -2909,6 +2909,42 @@ func TestExecuteParseGROBIDRecordsParsedDocumentAndProvenance(t *testing.T) {
 	}
 }
 
+func TestExecuteResearchAcquirePDFTextDownloadsAndParses(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		_, _ = w.Write([]byte("%PDF-1.4 full text fixture"))
+	}))
+	defer server.Close()
+	dir := filepath.Join(t.TempDir(), "demo")
+	if code := Execute([]string{"project", "create", dir, "--title", "Demo Review"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("project create exit code = %d", code)
+	}
+	fake := filepath.Join(t.TempDir(), "pdftotext")
+	if err := os.WriteFile(fake, []byte("#!/bin/sh\nprintf 'Full text from legal OA PDF with enough words to become a parsed passage.\\n'\n"), 0o755); err != nil {
+		t.Fatalf("write fake pdftotext: %v", err)
+	}
+	t.Setenv("RFORGE_PDFTOTEXT_CMD", fake)
+	out := filepath.Join(dir, "parsed", "paper.json")
+	if err := os.MkdirAll(filepath.Dir(out), 0o755); err != nil {
+		t.Fatalf("mkdir parsed: %v", err)
+	}
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+	code := Execute([]string{"--json", "--project", dir, "research", "acquire-pdftotext", "--doi", "10.1000/example", "--pdf-url", server.URL + "/paper.pdf", "--license", "cc-by", "--oa-status", "gold", "--out", out}, stdout, stderr)
+	if code != 0 {
+		t.Fatalf("acquire pdftotext exit code = %d, stderr = %s", code, stderr.String())
+	}
+	if _, err := os.Stat(filepath.Join(dir, "documents", "open-access", "10-1000-example.pdf")); err != nil {
+		t.Fatalf("missing fetched PDF: %v", err)
+	}
+	data, err := os.ReadFile(out)
+	if err != nil {
+		t.Fatalf("read parsed output: %v", err)
+	}
+	if !strings.Contains(string(data), "Full text from legal OA PDF") || !strings.Contains(stdout.String(), "10-1000-example.pdf") {
+		t.Fatalf("stdout=%s\nparsed=%s", stdout.String(), data)
+	}
+}
+
 func TestExecutePDFFetchByDOIWithMockHTTP(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		_, _ = w.Write([]byte("%PDF-1.4 cli fetched fixture"))

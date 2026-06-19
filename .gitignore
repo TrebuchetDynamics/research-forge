@@ -12,6 +12,7 @@ coverage.out
 
 # Local ResearchForge projects and temp data
 .researchforge
+/research/**/*.pdf
 /tmp/
 tmp/
 *.sqlite

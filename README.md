@@ -23,8 +23,6 @@ The command-line tool is `rforge`.
 
 ## Status
 
-**Pre-alpha.** The `rforge` CLI has 796 passing tests across 30 packages. The project format, CLI surface, and APIs may change before 1.0.
-
 **Works today:**
 - Project workspaces
 - Multi-source search and import
