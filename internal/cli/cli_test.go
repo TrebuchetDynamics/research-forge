@@ -796,6 +796,12 @@ func TestSearchBatchSourcePresetsExpandAllAndNamedGroups(t *testing.T) {
 			t.Fatalf("biomedical preset missing %q: %#v", want, biomedical)
 		}
 	}
+	oa := splitSearchBatchList("oa")
+	for _, want := range []string{"openalex", "crossref", "semantic-scholar", "europepmc", "pmc", "doaj", "core", "openlibrary"} {
+		if !containsString(oa, want) {
+			t.Fatalf("oa preset missing %q: %#v", want, oa)
+		}
+	}
 }
 
 func containsString(values []string, want string) bool {
@@ -1477,6 +1483,35 @@ func TestExecuteSearchCrossrefJSONWithMockHTTP(t *testing.T) {
 	paper := papers[0].(map[string]any)
 	if paper["Title"] != "Artificial photosynthesis Crossref fixture" {
 		t.Fatalf("paper title = %#v", paper["Title"])
+	}
+}
+
+func TestExecuteOAResolvePlanJSONCoversLegalSourcesAndSciHubGuardrail(t *testing.T) {
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+	code := Execute([]string{"--json", "oa", "resolve-plan", "10.1000/example"}, stdout, stderr)
+	if code != 0 {
+		t.Fatalf("oa resolve-plan exit code = %d stderr=%s stdout=%s", code, stderr.String(), stdout.String())
+	}
+	out := stdout.String()
+	for _, want := range []string{"unpaywall", "openalex", "europepmc", "pmc", "arxiv", "biorxiv-medrxiv", "chemrxiv", "doaj", "core", "semantic-scholar", "crossref", "openlibrary", "software-heritage", "sci-hub", "acquisition approval"} {
+		if !strings.Contains(out, want) {
+			t.Fatalf("resolve plan missing %q:\n%s", want, out)
+		}
+	}
+}
+
+func TestExecuteOASourcesListsLegalSources(t *testing.T) {
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+	code := Execute([]string{"oa", "sources"}, stdout, stderr)
+	if code != 0 {
+		t.Fatalf("oa sources exit code = %d stderr=%s stdout=%s", code, stderr.String(), stdout.String())
+	}
+	for _, want := range []string{"Legal open-access resolver sources", "unpaywall", "Software Heritage", "Unsupported sources", "sci-hub"} {
+		if !strings.Contains(stdout.String(), want) {
+			t.Fatalf("oa sources missing %q:\n%s", want, stdout.String())
+		}
 	}
 }
 

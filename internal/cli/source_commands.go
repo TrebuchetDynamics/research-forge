@@ -407,6 +407,46 @@ func sortedStringSet(values map[string]bool) []string {
 }
 
 func executeOA(args []string, stdout, stderr io.Writer, opts globalOptions) int {
+	if len(args) == 1 && args[0] == "sources" {
+		legal := sources.LegalOpenAccessResolveSources()
+		unsupported := sources.UnsupportedFullTextSources()
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"sources": legal, "unsupportedSources": unsupported})
+		}
+		fmt.Fprintln(stdout, "Legal open-access resolver sources")
+		for _, source := range legal {
+			fmt.Fprintf(stdout, "- %s (%s): %s\n  Signals: %s\n  Policy: %s\n", source.ID, source.Kind, source.Label, strings.Join(source.Signals, ", "), source.LicensePolicy)
+		}
+		if len(unsupported) > 0 {
+			fmt.Fprintln(stdout, "\nUnsupported sources")
+			for _, source := range unsupported {
+				fmt.Fprintf(stdout, "- %s: %s\n", source.ID, source.Reason)
+			}
+		}
+		return 0
+	}
+	if len(args) == 2 && args[0] == "resolve-plan" {
+		plan, err := sources.BuildOpenAccessResolvePlan(args[1])
+		if err != nil {
+			return writeError(stdout, stderr, opts, 2, "oa_resolve_plan_invalid", err.Error())
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"resolvePlan": plan})
+		}
+		fmt.Fprintf(stdout, "# Legal OA resolve plan for %s\n\n", plan.DOI)
+		for _, source := range plan.Sources {
+			fmt.Fprintf(stdout, "- %s (%s): %s\n  Lookup: %s\n  Signals: %s\n  Acquisition: %s\n", source.ID, source.Kind, source.Label, source.Lookup, strings.Join(source.Signals, ", "), source.AcquisitionPolicy)
+		}
+		fmt.Fprintln(stdout, "\nHuman gates")
+		for _, gate := range plan.HumanGates {
+			fmt.Fprintf(stdout, "- %s\n", gate)
+		}
+		fmt.Fprintln(stdout, "\nUnsupported sources")
+		for _, source := range plan.UnsupportedSources {
+			fmt.Fprintf(stdout, "- %s: %s\n", source.ID, source.Reason)
+		}
+		return 0
+	}
 	if len(args) == 1 && args[0] == "acquisition-queue" {
 		if opts.Project == "" {
 			return writeError(stdout, stderr, opts, 2, "missing_project", "--project is required for oa acquisition-queue")
@@ -461,7 +501,7 @@ func executeOA(args []string, stdout, stderr io.Writer, opts globalOptions) int 
 		return 0
 	}
 	if len(args) != 2 || args[0] != "lookup" {
-		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge oa lookup <doi>|candidates|acquisition-queue|acquisition-approve <id>|privacy-review|privacy-approve")
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge oa lookup <doi>|resolve-plan <doi>|sources|candidates|acquisition-queue|acquisition-approve <id>|privacy-review|privacy-approve")
 	}
 	email := os.Getenv("RFORGE_UNPAYWALL_EMAIL")
 	baseURL := os.Getenv("RFORGE_UNPAYWALL_URL")
@@ -667,7 +707,7 @@ type searchBatchManifest struct {
 func executeSearchBatch(args []string, stdout, stderr io.Writer, opts globalOptions) int {
 	batch, ok := parseSearchBatch(args)
 	if !ok {
-		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge search batch --queries <file> --sources all|scholarly-fast|biomedical|preprints|datasets|open|openalex,crossref --out <dir> [--query <query>] [--limit N] [--continue-on-error] [--stats]")
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge search batch --queries <file> --sources all|scholarly-fast|biomedical|preprints|datasets|open|oa|openalex,crossref --out <dir> [--query <query>] [--limit N] [--continue-on-error] [--stats]")
 	}
 	queries := append([]string{}, batch.Queries...)
 	if batch.QueriesFile != "" {
@@ -679,7 +719,7 @@ func executeSearchBatch(args []string, stdout, stderr io.Writer, opts globalOpti
 	}
 	queries = uniqueNonEmptyStrings(queries)
 	if len(queries) == 0 || len(batch.Sources) == 0 || strings.TrimSpace(batch.OutDir) == "" {
-		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge search batch --queries <file> --sources all|scholarly-fast|biomedical|preprints|datasets|open|openalex,crossref --out <dir> [--query <query>] [--limit N] [--continue-on-error] [--stats]")
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge search batch --queries <file> --sources all|scholarly-fast|biomedical|preprints|datasets|open|oa|openalex,crossref --out <dir> [--query <query>] [--limit N] [--continue-on-error] [--stats]")
 	}
 	if err := os.MkdirAll(filepath.Join(batch.OutDir, "raw"), 0o755); err != nil {
 		return writeError(stdout, stderr, opts, 1, "search_batch_out_failed", err.Error())
@@ -1348,7 +1388,9 @@ func searchBatchSourcePreset(name string) []string {
 	case "datasets":
 		return []string{"zenodo", "datacite", "figshare", "dryad", "biostudies", "osf", "dataverse", "nasa-cmr"}
 	case "open":
-		return []string{"openalex", "crossref", "arxiv", "pubmed", "europepmc", "biorxiv", "chemrxiv", "zenodo", "datacite", "figshare", "dryad", "osf", "opencitations", "base", "openaire", "doaj", "core", "eric", "hal", "pubchem", "doab", "cinii", "biostudies", "plos"}
+		return []string{"openalex", "crossref", "arxiv", "pubmed", "europepmc", "biorxiv", "chemrxiv", "zenodo", "datacite", "figshare", "dryad", "osf", "opencitations", "base", "openaire", "doaj", "core", "eric", "hal", "pubchem", "doab", "cinii", "biostudies", "plos", "pmc", "openlibrary", "elife", "oapen"}
+	case "oa":
+		return []string{"openalex", "crossref", "semantic-scholar", "arxiv", "pubmed", "europepmc", "pmc", "biorxiv", "chemrxiv", "researchsquare", "osf", "doaj", "core", "base", "openaire", "plos", "elife", "doab", "oapen", "openlibrary"}
 	default:
 		return nil
 	}

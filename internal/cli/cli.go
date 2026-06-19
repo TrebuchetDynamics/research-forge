@@ -3408,6 +3408,8 @@ func printHelp(w io.Writer) {
 	fmt.Fprintln(w, "  rforge citations expand --source semantic-scholar|openalex|crossref --paper <id> --direction references|citations|both --depth N [--max-records N] --out <file> [--import-library]")
 	fmt.Fprintln(w, "  rforge citations report --graph <graph.json> --out <report.md>")
 	fmt.Fprintln(w, "  rforge oa lookup <doi>")
+	fmt.Fprintln(w, "  rforge oa resolve-plan <doi>")
+	fmt.Fprintln(w, "  rforge oa sources")
 	fmt.Fprintln(w, "  rforge service check <name>")
 	fmt.Fprintln(w, "  rforge library list|refresh-doi|refresh-crossref")
 	fmt.Fprintln(w, "  rforge duplicate report")

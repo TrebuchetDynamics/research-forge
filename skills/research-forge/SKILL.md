@@ -180,9 +180,14 @@ rforge duplicate merge | split
 Review candidates first; do not download without explicit human approval:
 
 ```sh
+rforge oa sources
+rforge oa resolve-plan <doi>
+rforge oa lookup <doi>
 rforge --project <path> oa candidates
 rforge --project <path> oa acquisition-queue
 ```
+
+Legal OA source coverage includes Unpaywall, OpenAlex OA locations, Europe PMC/PMC, arXiv, bioRxiv/medRxiv, ChemRxiv, DOAJ, CORE, Semantic Scholar/Crossref hints, Internet Archive/Open Library, and Software Heritage for software archival. Sci-Hub-like sources are intentionally unsupported.
 
 Stop and surface this to the human invoker before proceeding:
 
