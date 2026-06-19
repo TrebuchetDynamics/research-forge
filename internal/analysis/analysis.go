@@ -7,6 +7,7 @@ import (
 	"math"
 	"os"
 	"path/filepath"
+	"sort"
 	"strconv"
 	"strings"
 
@@ -22,6 +23,8 @@ type InputRow struct {
 	PaperID    string
 	EffectSize float64
 	Variance   float64
+	ViSource   string            // "ci", "se", "floor", or "" for arm-pair calculators
+	Moderators map[string]string // benchmarking moderator fields keyed by field name
 }
 type EffectSizeCalculator interface {
 	Calculate(map[string]string) (float64, float64, error)
@@ -142,7 +145,137 @@ func PrepareWithCalculator(id string, items []evidence.EvidenceItem, calc Effect
 	}
 	return run, nil
 }
+
+// RawContinuousResult holds the output of a single raw-continuous effect calculation.
+type RawContinuousResult struct {
+	Yi       float64
+	Vi       float64
+	ViSource string // "ci", "se", or "floor"
+}
+
+// RawContinuousOutcome pools a single continuous metric per study (e.g., STH efficiency %).
+// It implements EffectSizeCalculator for use with PrepareWithCalculator and also exposes
+// CalculateRaw for PrepareRawContinuous, which also records ViSource and Moderators.
+type RawContinuousOutcome struct {
+	VarianceFloor float64 // floor vi when no CI or SE is reported; defaults to 0.0025
+}
+
+func (r RawContinuousOutcome) floor() float64 {
+	if r.VarianceFloor > 0 {
+		return r.VarianceFloor
+	}
+	return 0.0025
+}
+
+// CalculateRaw returns the full result including ViSource provenance tag.
+func (r RawContinuousOutcome) CalculateRaw(values map[string]string) (RawContinuousResult, error) {
+	yiStr := strings.TrimSpace(values["value_pct"])
+	if yiStr == "" {
+		return RawContinuousResult{}, fmt.Errorf("value_pct is required for raw-continuous effect measure")
+	}
+	yi, err := strconv.ParseFloat(yiStr, 64)
+	if err != nil {
+		return RawContinuousResult{}, fmt.Errorf("value_pct is not numeric: %s", yiStr)
+	}
+	ciLow, errLow := strconv.ParseFloat(strings.TrimSpace(values["ci_lower"]), 64)
+	ciHigh, errHigh := strconv.ParseFloat(strings.TrimSpace(values["ci_upper"]), 64)
+	if errLow == nil && errHigh == nil && ciHigh > ciLow {
+		se := (ciHigh - ciLow) / (2 * 1.96)
+		return RawContinuousResult{Yi: yi, Vi: se * se, ViSource: "ci"}, nil
+	}
+	se, errSE := strconv.ParseFloat(strings.TrimSpace(values["se"]), 64)
+	if errSE == nil && se > 0 {
+		return RawContinuousResult{Yi: yi, Vi: se * se, ViSource: "se"}, nil
+	}
+	return RawContinuousResult{Yi: yi, Vi: r.floor(), ViSource: "floor"}, nil
+}
+
+// Calculate implements EffectSizeCalculator.
+func (r RawContinuousOutcome) Calculate(values map[string]string) (float64, float64, error) {
+	res, err := r.CalculateRaw(values)
+	return res.Yi, res.Vi, err
+}
+
+// PrepareRawContinuous builds an AnalysisRun for scientific benchmarking meta-analysis.
+// It records ViSource provenance per row and copies moderatorFields from evidence values.
+func PrepareRawContinuous(id string, items []evidence.EvidenceItem, varianceFloor float64, moderatorFields []string) (AnalysisRun, error) {
+	calc := RawContinuousOutcome{VarianceFloor: varianceFloor}
+	run := AnalysisRun{SchemaVersion: "1", ID: id}
+	for _, item := range items {
+		if item.Status != evidence.StatusAccepted {
+			continue
+		}
+		res, err := calc.CalculateRaw(item.Values)
+		if err != nil {
+			return AnalysisRun{}, err
+		}
+		row := InputRow{PaperID: item.PaperID, EffectSize: res.Yi, Variance: res.Vi, ViSource: res.ViSource}
+		if len(moderatorFields) > 0 {
+			row.Moderators = make(map[string]string, len(moderatorFields))
+			for _, f := range moderatorFields {
+				row.Moderators[f] = item.Values[f]
+			}
+		}
+		run.InputRows = append(run.InputRows, row)
+	}
+	return run, nil
+}
+
+// ExcludeByViSource returns a copy of run omitting rows whose ViSource equals the given tag.
+func ExcludeByViSource(run AnalysisRun, viSource string) AnalysisRun {
+	out := AnalysisRun{SchemaVersion: run.SchemaVersion, ID: run.ID + "-excl-" + viSource}
+	for _, row := range run.InputRows {
+		if row.ViSource != viSource {
+			out.InputRows = append(out.InputRows, row)
+		}
+	}
+	return out
+}
+
+// ReadinessIssue records a missing required field for one accepted evidence item.
+type ReadinessIssue struct {
+	PaperID      string `json:"paperId"`
+	MissingField string `json:"missingField"`
+}
+
+// ReadinessReport summarises whether all accepted evidence items carry the required fields.
+type ReadinessReport struct {
+	RunID      string           `json:"runId"`
+	Ready      bool             `json:"ready"`
+	TotalItems int              `json:"totalItems"`
+	ReadyItems int              `json:"readyItems"`
+	Issues     []ReadinessIssue `json:"issues"`
+}
+
+// BenchmarkingReadiness checks that every accepted evidence item has all requiredFields populated.
+// Pass nil requiredFields to use the default STH% set.
+func BenchmarkingReadiness(runID string, items []evidence.EvidenceItem, requiredFields []string) ReadinessReport {
+	if len(requiredFields) == 0 {
+		requiredFields = []string{"value_pct", "device_type", "auxiliary_bias", "measurement_standard"}
+	}
+	report := ReadinessReport{RunID: runID}
+	for _, item := range items {
+		if item.Status != evidence.StatusAccepted {
+			continue
+		}
+		report.TotalItems++
+		ready := true
+		for _, field := range requiredFields {
+			if strings.TrimSpace(item.Values[field]) == "" {
+				report.Issues = append(report.Issues, ReadinessIssue{PaperID: item.PaperID, MissingField: field})
+				ready = false
+			}
+		}
+		if ready {
+			report.ReadyItems++
+		}
+	}
+	report.Ready = len(report.Issues) == 0 && report.TotalItems > 0
+	return report
+}
+
 func GenerateMetaforScript(run AnalysisRun) string {
+	modKeys := collectModeratorKeys(run)
 	var b strings.Builder
 	b.WriteString("library(metafor)\n")
 	b.WriteString("data <- data.frame(yi=c(")
@@ -159,7 +292,64 @@ func GenerateMetaforScript(run AnalysisRun) string {
 		}
 		fmt.Fprintf(&b, "%g", row.Variance)
 	}
-	b.WriteString("))\nmodel <- rma(yi = yi, vi = vi, data=data)\nprint(model)\n")
+	b.WriteString(")")
+	for _, key := range modKeys {
+		safe := rSafeColumnName(key)
+		fmt.Fprintf(&b, ", %s=c(", safe)
+		for i, row := range run.InputRows {
+			if i > 0 {
+				b.WriteString(",")
+			}
+			val := ""
+			if row.Moderators != nil {
+				val = row.Moderators[key]
+			}
+			if val == "" {
+				b.WriteString("NA")
+			} else {
+				fmt.Fprintf(&b, "%q", val)
+			}
+		}
+		b.WriteString(")")
+	}
+	b.WriteString(")\n")
+	if len(modKeys) > 0 {
+		safeKeys := make([]string, len(modKeys))
+		for i, k := range modKeys {
+			safeKeys[i] = rSafeColumnName(k)
+		}
+		fmt.Fprintf(&b, "model <- rma(yi = yi, vi = vi, mods = ~%s, data=data)\n", strings.Join(safeKeys, "+"))
+	} else {
+		b.WriteString("model <- rma(yi = yi, vi = vi, data=data)\n")
+	}
+	b.WriteString("print(model)\n")
+	return b.String()
+}
+
+func collectModeratorKeys(run AnalysisRun) []string {
+	seen := map[string]bool{}
+	var keys []string
+	for _, row := range run.InputRows {
+		for k := range row.Moderators {
+			if !seen[k] {
+				seen[k] = true
+				keys = append(keys, k)
+			}
+		}
+	}
+	sort.Strings(keys)
+	return keys
+}
+
+func rSafeColumnName(name string) string {
+	var b strings.Builder
+	for _, r := range name {
+		if (r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z') || (r >= '0' && r <= '9') || r == '_' {
+			b.WriteRune(r)
+		} else {
+			b.WriteRune('_')
+		}
+	}
 	return b.String()
 }
 

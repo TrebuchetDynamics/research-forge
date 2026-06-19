@@ -1391,6 +1391,8 @@ func searchBatchSourcePreset(name string) []string {
 		return []string{"openalex", "crossref", "arxiv", "pubmed", "europepmc", "biorxiv", "chemrxiv", "zenodo", "datacite", "figshare", "dryad", "osf", "opencitations", "base", "openaire", "doaj", "core", "eric", "hal", "pubchem", "doab", "cinii", "biostudies", "plos", "pmc", "openlibrary", "elife", "oapen"}
 	case "oa":
 		return []string{"openalex", "crossref", "semantic-scholar", "arxiv", "pubmed", "europepmc", "pmc", "biorxiv", "chemrxiv", "researchsquare", "osf", "doaj", "core", "base", "openaire", "plos", "elife", "doab", "oapen", "openlibrary"}
+	case "chemistry":
+		return []string{"openalex", "crossref", "europepmc", "semantic-scholar", "chemrxiv", "doaj", "core"}
 	default:
 		return nil
 	}

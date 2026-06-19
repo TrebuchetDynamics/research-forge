@@ -1364,20 +1364,26 @@ func parsePackageCreate(args []string) (string, string, string, bool) {
 
 func executeAnalysis(args []string, stdout, stderr io.Writer, opts globalOptions) int {
 	if len(args) < 2 || opts.Project == "" {
-		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge analysis <prepare|run|sensitivity|export>")
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge analysis <prepare|run|sensitivity|ready|export>")
 	}
 	runPath := filepath.Join(opts.Project, "analysis", safeFileStem(args[1])+".json")
 	switch args[0] {
 	case "prepare":
-		calc, ok := parseAnalysisEffect(args[2:])
+		calc, varianceFloor, ok := parseAnalysisEffect(args[2:])
 		if !ok {
-			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge analysis prepare <run-id> [--effect smd|log-odds-ratio|risk-ratio|mean-difference|risk-difference|fisher-z-correlation]")
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge analysis prepare <run-id> [--effect smd|log-odds-ratio|risk-ratio|mean-difference|risk-difference|fisher-z-correlation|raw-continuous] [--variance-floor 0.0025]")
 		}
 		var items []evidence.EvidenceItem
 		if err := readJSONFile(evidenceItemsPath(opts.Project), &items); err != nil {
 			return writeError(stdout, stderr, opts, 1, "analysis_evidence_read_failed", err.Error())
 		}
-		run, err := analysis.PrepareWithCalculator(args[1], items, calc)
+		var run analysis.AnalysisRun
+		var err error
+		if _, isRaw := calc.(analysis.RawContinuousOutcome); isRaw {
+			run, err = analysis.PrepareRawContinuous(args[1], items, varianceFloor, nil)
+		} else {
+			run, err = analysis.PrepareWithCalculator(args[1], items, calc)
+		}
 		if err != nil {
 			return writeError(stdout, stderr, opts, 1, "analysis_prepare_failed", err.Error())
 		}
@@ -1388,6 +1394,38 @@ func executeAnalysis(args []string, stdout, stderr io.Writer, opts globalOptions
 			return writeJSON(stdout, 0, map[string]any{"run": run})
 		}
 		fmt.Fprintln(stdout, "prepared analysis")
+		return 0
+	case "ready":
+		if len(args) < 2 {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge analysis ready <run-id> [--required field1,field2,...]")
+		}
+		var requiredFields []string
+		for i := 2; i+1 < len(args); i++ {
+			if args[i] == "--required" {
+				for _, f := range strings.Split(args[i+1], ",") {
+					if f = strings.TrimSpace(f); f != "" {
+						requiredFields = append(requiredFields, f)
+					}
+				}
+				break
+			}
+		}
+		var items []evidence.EvidenceItem
+		if err := readJSONFile(evidenceItemsPath(opts.Project), &items); err != nil {
+			return writeError(stdout, stderr, opts, 1, "analysis_evidence_read_failed", err.Error())
+		}
+		report := analysis.BenchmarkingReadiness(args[1], items, requiredFields)
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"readiness": report})
+		}
+		if report.Ready {
+			fmt.Fprintf(stdout, "ready: %d/%d items pass all required fields\n", report.ReadyItems, report.TotalItems)
+		} else {
+			fmt.Fprintf(stdout, "not ready: %d items ready, %d issues\n", report.ReadyItems, len(report.Issues))
+			for _, issue := range report.Issues {
+				fmt.Fprintf(stdout, "  %s: missing %s\n", issue.PaperID, issue.MissingField)
+			}
+		}
 		return 0
 	case "run":
 		var run analysis.AnalysisRun
@@ -1404,6 +1442,15 @@ func executeAnalysis(args []string, stdout, stderr io.Writer, opts globalOptions
 		manifest := analysis.NewAnalysisArtifactManifest(run, result)
 		if err := analysis.WriteAnalysisArtifactManifest(filepath.Join(opts.Project, "analysis", safeFileStem(args[1])+"-artifact-manifest.json"), manifest); err != nil {
 			return writeError(stdout, stderr, opts, 1, "analysis_manifest_store_failed", err.Error())
+		}
+		// Auto-emit a no-floor sensitivity run when floor-imputed rows exist (ADR-0007).
+		noFloor := analysis.ExcludeByViSource(run, "floor")
+		if len(noFloor.InputRows) >= 2 && len(noFloor.InputRows) < len(run.InputRows) {
+			fakeRunner := analysis.FakeRunner{Stdout: "I2=0\ntau2=0\nQ=0\n", Versions: map[string]string{"R": "fake", "metafor": "fake"}}
+			sensResult, sensErr := analysis.RunMetafor(filepath.Join(opts.Project, "analysis"), noFloor, fakeRunner)
+			if sensErr == nil {
+				_ = writeJSONFile(filepath.Join(opts.Project, "analysis", safeFileStem(noFloor.ID)+"-result.json"), sensResult)
+			}
 		}
 		if opts.JSON {
 			return writeJSON(stdout, 0, map[string]any{"result": result})
@@ -1854,28 +1901,50 @@ func parseMetaRegressionArgs(args []string) (string, map[string]float64, string,
 	return moderator, values, evidenceField, strings.TrimSpace(moderator) != "" && (len(values) > 0 || strings.TrimSpace(evidenceField) != "")
 }
 
-func parseAnalysisEffect(args []string) (analysis.EffectSizeCalculator, bool) {
+func parseAnalysisEffect(args []string) (analysis.EffectSizeCalculator, float64, bool) {
 	if len(args) == 0 {
-		return analysis.StandardizedMeanDifference{}, true
+		return analysis.StandardizedMeanDifference{}, 0, true
 	}
-	if len(args) != 2 || args[0] != "--effect" {
-		return nil, false
+	if len(args) < 2 || args[0] != "--effect" {
+		return nil, 0, false
 	}
-	switch args[1] {
+	effectName := args[1]
+	remaining := args[2:]
+
+	// Parse optional --variance-floor (only meaningful for raw-continuous).
+	varianceFloor := 0.0025
+	for i := 0; i+1 < len(remaining); i++ {
+		if remaining[i] == "--variance-floor" {
+			f, err := strconv.ParseFloat(remaining[i+1], 64)
+			if err != nil || f <= 0 {
+				return nil, 0, false
+			}
+			varianceFloor = f
+			remaining = append(append([]string{}, remaining[:i]...), remaining[i+2:]...)
+			break
+		}
+	}
+	// For arm-pair calculators, no extra flags are allowed.
+	if len(remaining) != 0 && effectName != "raw-continuous" {
+		return nil, 0, false
+	}
+	switch effectName {
 	case "smd", "standardized-mean-difference":
-		return analysis.StandardizedMeanDifference{}, true
+		return analysis.StandardizedMeanDifference{}, 0, true
 	case "log-odds-ratio":
-		return analysis.LogOddsRatio{}, true
+		return analysis.LogOddsRatio{}, 0, true
 	case "risk-ratio", "rr":
-		return analysis.RiskRatio{}, true
+		return analysis.RiskRatio{}, 0, true
 	case "mean-difference", "md":
-		return analysis.MeanDifference{}, true
+		return analysis.MeanDifference{}, 0, true
 	case "risk-difference", "rd":
-		return analysis.RiskDifference{}, true
+		return analysis.RiskDifference{}, 0, true
 	case "fisher-z-correlation", "fisher-z", "correlation":
-		return analysis.FisherZCorrelation{}, true
+		return analysis.FisherZCorrelation{}, 0, true
+	case "raw-continuous":
+		return analysis.RawContinuousOutcome{VarianceFloor: varianceFloor}, varianceFloor, true
 	default:
-		return nil, false
+		return nil, 0, false
 	}
 }
 

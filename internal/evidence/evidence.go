@@ -138,7 +138,60 @@ func (c LLMConfig) Redacted() LLMConfig {
 	return c
 }
 
-type SuggestRequest struct{ PaperID string }
+// ExtractionTarget describes a single numeric field to extract from abstract text.
+type ExtractionTarget struct {
+	Name       string // e.g. "value_pct"
+	Unit       string // e.g. "%"
+	PromptHint string // short natural-language cue for the LLM
+}
+
+// ExtractionField is one field definition in an ExtractionSchema.
+type ExtractionField struct {
+	Name        string
+	Description string
+	Required    bool
+}
+
+// ExtractionSchema describes the full set of fields an abstract extraction LLM call should populate.
+type ExtractionSchema struct {
+	Name     string
+	Required []ExtractionField
+	Optional []ExtractionField
+}
+
+// STHExtractionSchemaPreset returns the built-in extraction schema for solar-to-hydrogen
+// efficiency benchmarking (ADR-0007). Required fields block analysis readiness if absent.
+func STHExtractionSchemaPreset() ExtractionSchema {
+	return ExtractionSchema{
+		Name: "sth-efficiency",
+		Required: []ExtractionField{
+			{Name: "value_pct", Description: "Solar-to-hydrogen efficiency in %", Required: true},
+			{Name: "device_type", Description: "pec | pv-electrolysis | particle-suspension | biohybrid", Required: true},
+			{Name: "auxiliary_bias", Description: "unassisted | assisted | unknown", Required: true},
+			{Name: "measurement_standard", Description: "am1.5g-100 | non-standard | unknown", Required: true},
+			{Name: "verbatim_quote", Description: "Exact sentence from the abstract that reports the efficiency value", Required: true},
+			{Name: "confidence", Description: "Extraction confidence 0–1", Required: true},
+		},
+		Optional: []ExtractionField{
+			{Name: "ci_lower", Description: "Lower bound of reported confidence interval (same unit as value_pct)"},
+			{Name: "ci_upper", Description: "Upper bound of reported confidence interval (same unit as value_pct)"},
+			{Name: "se", Description: "Reported standard error (same unit as value_pct)"},
+			{Name: "target_reaction", Description: "e.g. water-splitting, CO2-reduction"},
+			{Name: "electrode_material", Description: "Primary light-absorbing electrode material"},
+			{Name: "electrolyte", Description: "Electrolyte composition"},
+			{Name: "illumination_intensity_mwcm2", Description: "Illumination intensity in mW/cm²"},
+			{Name: "active_area_cm2", Description: "Active device area in cm²"},
+		},
+	}
+}
+
+// SuggestRequest carries the context for an LLM-backed evidence suggestion.
+type SuggestRequest struct {
+	PaperID      string
+	AbstractText string          // populated for abstract extraction path
+	TargetField  ExtractionTarget // populated for abstract extraction path
+}
+
 type SuggestionAdapter interface {
 	Suggest(SuggestRequest) (EvidenceItem, error)
 	Name() string

@@ -104,6 +104,42 @@ A `.researchforge` configuration file or directory created in the repository whe
 
 The default Research project folder for repo-embedded use: `<repo>/research-forge/`. ResearchForge should assume a repository may already contain academic files, PDFs, notes, or other research assets and should discover or import them only through explicit, provenance-recorded workflow steps.
 
+### Scientific benchmarking meta-analysis
+
+A meta-analysis mode that pools a single continuous performance metric (e.g., solar-to-hydrogen efficiency, AUROC, F1) reported per study, without requiring a treatment/control arm pair. Study-level moderators (protocol, dataset, measurement condition, year, lab) replace the arm-level covariates used in clinical meta-analysis. The statistical model is a random-effects pooling of the raw outcome value, with variance estimated from reported confidence intervals, SEs, or study-level replication data. Distinct from **clinical meta-analysis**, which requires paired arm data to compute effect sizes (SMD, OR, RR). Each benchmarking analysis run is scoped to one outcome type with compatible units.
+
+The first end-to-end target domain is **artificial photosynthesis**, primary outcome **solar-to-hydrogen (STH) efficiency %**. STH% is the canonical summary metric in photoelectrochemical device papers, normally reported in the abstract, with a natural 0–100 % scale and well-established moderator variables (electrode material, light source, electrolyte, measurement standard).
+
+_Avoid:_ "benchmarking review", "performance meta-analysis" (too broad), "aggregate analysis"
+
+### STH% extraction schema
+
+The built-in [[abstract extraction]] schema for solar-to-hydrogen efficiency benchmarking. Required fields (analysis readiness check blocks if absent): `value_pct`, `device_type`, `auxiliary_bias`, `measurement_standard`, `verbatim_quote`, `confidence`. Optional fields (extracted if present, flagged if absent, not blocking): `ci_lower`, `ci_upper`, `se`, `target_reaction`, `electrode_material`, `electrolyte`, `illumination_intensity_mwcm2`, `active_area_cm2`. `device_type` values: `pec` / `pv-electrolysis` / `particle-suspension` / `biohybrid`. `auxiliary_bias` values: `unassisted` / `assisted` / `unknown`. `measurement_standard` values: `am1.5g-100` / `non-standard` / `unknown`.
+
+### Benchmarking outcome
+
+The single continuous metric being pooled in a [[scientific benchmarking meta-analysis]] run. Must have compatible units across all included studies. Examples: solar-to-hydrogen (STH) efficiency % for photoelectrochemical device papers; AUROC for ML classifier evaluations. Each analysis run is scoped to one benchmarking outcome type. A study contributes one `yi` value (the reported measurement) and one `vi` value (reported variance or floor-imputed variance per ADR-0007).
+
+### Variance floor
+
+The minimum variance assigned to a study in a [[scientific benchmarking meta-analysis]] when the paper does not report a standard error or confidence interval. Set via `--variance-floor` at `rforge analysis prepare` time. Default `0.0025` (±5% relative uncertainty). Stored in the analysis manifest as a provenance parameter. Studies using the floor are tagged `vi_source: floor`. See ADR-0007.
+
+_Avoid:_ "default variance", "imputed SE"
+
+### Abstract extraction
+
+The primary extraction path for [[scientific benchmarking meta-analysis]]: a structured LLM call that receives a paper's abstract text, a target field definition (name, unit, prompt hint), and returns a measurement value, verbatim quote, unit confirmation, and confidence score. Populates `EvidenceItem.Values` without requiring full-text acquisition or GROBID parsing. Manual `rforge extract add` is the fallback for abstracts where extraction fails or returns no value. Requires extending `SuggestRequest` to carry `AbstractText` and `TargetField`.
+
+_Avoid:_ "LLM extraction" (too broad — does not imply abstract-only scope)
+
+### Benchmarking moderator
+
+A study-level covariate included in a [[scientific benchmarking meta-analysis]] in place of arm-level covariates used in [[clinical meta-analysis]]. Examples for artificial photosynthesis: electrode material, light source spectrum, electrolyte, measurement standard (NREL-calibrated or not), publication year.
+
+### Clinical meta-analysis
+
+A meta-analysis mode that requires paired arm data (experimental vs. control) to compute a standardized effect size (SMD, odds ratio, risk ratio, mean difference). The existing `rforge analysis prepare --effect smd|log-odds-ratio|...` pipeline is built for this mode. Distinct from **scientific benchmarking meta-analysis**.
+
 ### Retrieval-first, provenance-first, statistics-first, LLM-assisted
 
 The core ResearchForge principle: retrieve and cite source material first, preserve provenance, use auditable statistical methods, and allow LLMs only as assistants for tasks such as query expansion or extraction suggestions.
