@@ -17,13 +17,13 @@ The command-line tool is `rforge`.
 - Track provenance end to end; every reference knows where it came from
 - Screen studies with recorded inclusion and exclusion decisions
 - Extract evidence linked to exact source passages
-- Run meta-analysis and statistical reporting
+- Run meta-analysis: arm-pair effect sizes (SMD, odds ratio, risk ratio, mean difference, correlation) **and** scientific benchmarking mode for pooling a single continuous metric per study (e.g. solar-to-hydrogen efficiency %, AUROC) — with variance floor imputation and automatic sensitivity runs
 - Build auditable reports
 - Export replayable review packages that another researcher can audit offline
 
 ## Status
 
-**Pre-alpha.** The `rforge` CLI has 751 passing tests across 30 packages. The project format, CLI surface, and APIs may change before 1.0.
+**Pre-alpha.** The `rforge` CLI has 793 passing tests across 30 packages. The project format, CLI surface, and APIs may change before 1.0.
 
 **Works today:**
 - Project workspaces
@@ -37,11 +37,11 @@ The command-line tool is `rforge`.
 **Experimental:**
 - Document parsing
 - Screening engine
-- Evidence extraction
-- Meta-analysis and statistical reporting
+- Evidence extraction (including abstract extraction interface for LLM-backed numeric extraction)
+- Meta-analysis: arm-pair effect sizes and scientific benchmarking mode (`--effect raw-continuous`, `rforge analysis ready`, automatic floor-sensitivity runs per ADR-0007)
 - Web GUI beyond the skeleton
 
-**Adapter seams planned:** GROBID (PDF parsing), OpenSearch, Qdrant (search), R/metafor, PyMARE (meta-analysis), PostgreSQL
+**Adapter seams planned:** GROBID (PDF parsing), OpenSearch, Qdrant (search), R/metafor, PyMARE (meta-analysis), PostgreSQL, LLM abstract extraction (Claude / OpenAI)
 
 See [ROADMAP.md](./ROADMAP.md) for milestone sequencing.
 
@@ -92,6 +92,24 @@ rforge forge acquisition-fixture --project ./my-review
 rforge forge package-fixture --project ./my-review --out ./review.rforgepkg
 rforge package audit ./review.rforgepkg
 rforge package replay ./review.rforgepkg
+```
+
+### Scientific benchmarking meta-analysis
+
+Pool a single continuous metric (e.g. solar-to-hydrogen efficiency %) across device papers without requiring treatment/control arms:
+
+```sh
+# Search with the chemistry preset (OpenAlex + Crossref + Europe PMC + ChemRxiv + more)
+rforge search batch --sources chemistry --project ./my-review --stats
+
+# Prepare a benchmarking run — variance floor per ADR-0007, moderator fields auto-wired
+rforge analysis prepare my-run --effect raw-continuous --variance-floor 0.0025
+
+# Check all accepted evidence items carry the required schema fields
+rforge analysis ready my-run --required device_type,auxiliary_bias,measurement_standard
+
+# Run — emits main result + automatic no-floor sensitivity artifact
+rforge analysis run my-run
 ```
 
 ### OSS repository study
@@ -183,7 +201,7 @@ Research question / domain query
 | Database | SQLite (PostgreSQL adapter seam planned) |
 | Search | SQLite FTS; OpenSearch and Qdrant as optional adapters |
 | PDF parsing | GROBID (optional); S2ORC, PaperMage, Anystyle adapter seams |
-| Metadata sources | OpenAlex, Crossref, arXiv, Semantic Scholar, PubMed, Europe PMC, NASA ADS, Unpaywall, DOAJ, CORE, bioRxiv/medRxiv, Zenodo, INSPIRE HEP, dblp, ClinicalTrials.gov, OSF, OpenCitations, BASE, zbMATH Open, figshare, DataCite, Lens.org, ERIC, HAL, Dimensions, PubChem, ChemRxiv, NTRS, DOAB, OpenAIRE, PLOS, OSTI, Dryad, Research Square, CiNii, BioStudies, GBIF Literature, Harvard Dataverse, NASA CMR, PubMed Central (PMC), HuggingFace Papers, OAPEN |
+| Metadata sources | OpenAlex, Crossref, arXiv, Semantic Scholar, PubMed, Europe PMC, NASA ADS, Unpaywall, DOAJ, CORE, bioRxiv/medRxiv, Zenodo, INSPIRE HEP, dblp, ClinicalTrials.gov, OSF, OpenCitations, BASE, zbMATH Open, figshare, DataCite, Lens.org, ERIC, HAL, Dimensions, PubChem, ChemRxiv, NTRS, DOAB, OpenAIRE, PLOS, OSTI, Dryad, Research Square, CiNii, BioStudies, GBIF Literature, Harvard Dataverse, NASA CMR, PubMed Central (PMC), HuggingFace Papers, OAPEN, NBER Working Papers, Open Library, eLife Sciences |
 | Meta-analysis | R `metafor`; PyMARE adapter seam |
 
 ## Development
