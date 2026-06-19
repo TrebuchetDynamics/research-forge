@@ -1,4 +1,4 @@
-.PHONY: fmt fmt-check test vet vuln ci check inventory-check decisions decisions-markdown decision-issues todo-audit todo-completion-audit license-decision-live-audit license-decision-approval-gate build-release checksums sbom install install-smoke web-gui-smoke source-live-smoke biomedical-live-smoke semantic-scholar-live-smoke external-e2e-artificial-photosynthesis
+.PHONY: fmt fmt-check test vet vuln ci check install-script-smoke inventory-check decisions decisions-markdown decision-issues todo-audit todo-completion-audit license-decision-live-audit license-decision-approval-gate build-release checksums sbom install install-smoke web-gui-smoke source-live-smoke biomedical-live-smoke semantic-scholar-live-smoke external-e2e-artificial-photosynthesis
 
 VERSION ?= $(shell git describe --tags --always --dirty 2>/dev/null || echo dev)
 COMMIT  ?= $(shell git rev-parse --short HEAD 2>/dev/null || echo unknown)
@@ -20,10 +20,14 @@ vet:
 vuln:
 	go run golang.org/x/vuln/cmd/govulncheck@latest ./...
 
-ci: fmt-check test vet todo-completion-audit vuln
+ci: fmt-check test vet todo-completion-audit vuln install-script-smoke
 	go list -m all >/dev/null
 	go list -m -json all >/dev/null
 	git diff --check
+
+install-script-smoke:
+	./install.sh --dry-run >/dev/null
+	./install.sh --from-source --dry-run >/dev/null
 
 check: test vet todo-completion-audit inventory-check
 	git diff --check
@@ -59,7 +63,9 @@ install:
 build-release:
 	mkdir -p dist
 	GOOS=linux   GOARCH=amd64 go build -ldflags "$(LDFLAGS)" -o dist/rforge-linux-amd64       ./cmd/rforge
+	GOOS=linux   GOARCH=arm64 go build -ldflags "$(LDFLAGS)" -o dist/rforge-linux-arm64       ./cmd/rforge
 	GOOS=darwin  GOARCH=amd64 go build -ldflags "$(LDFLAGS)" -o dist/rforge-darwin-amd64      ./cmd/rforge
+	GOOS=darwin  GOARCH=arm64 go build -ldflags "$(LDFLAGS)" -o dist/rforge-darwin-arm64      ./cmd/rforge
 	GOOS=windows GOARCH=amd64 go build -ldflags "$(LDFLAGS)" -o dist/rforge-windows-amd64.exe ./cmd/rforge
 
 checksums:

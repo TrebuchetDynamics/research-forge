@@ -53,8 +53,18 @@ git push origin vX.Y.Z
 
 ## Step 5 — GitHub release
 
+Build release binaries and checksums before creating the release:
+
+```sh
+rm -rf dist
+make build-release checksums
+```
+
+Then attach every release binary plus checksums:
+
 ```sh
 gh release create vX.Y.Z \
+  dist/rforge-* dist/checksums.txt \
   --repo TrebuchetDynamics/research-forge \
   --title "vX.Y.Z — <one-line summary of changes>" \
   --notes "<bullet list of commits since prior tag>"
