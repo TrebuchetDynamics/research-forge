@@ -188,7 +188,7 @@ func STHExtractionSchemaPreset() ExtractionSchema {
 // SuggestRequest carries the context for an LLM-backed evidence suggestion.
 type SuggestRequest struct {
 	PaperID      string
-	AbstractText string          // populated for abstract extraction path
+	AbstractText string           // populated for abstract extraction path
 	TargetField  ExtractionTarget // populated for abstract extraction path
 }
 

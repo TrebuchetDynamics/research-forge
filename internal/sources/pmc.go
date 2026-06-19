@@ -160,14 +160,14 @@ type pmcSearchResult struct {
 }
 
 type pmcSummary struct {
-	Title      string          `json:"title"`
-	PubDate    string          `json:"pubdate"`
-	Source     string          `json:"source"`
-	Authors    []pmcAuthor     `json:"authors"`
-	Volume     string          `json:"volume"`
-	Issue      string          `json:"issue"`
-	Pages      string          `json:"pages"`
-	ArticleIDs []pmcArticleID  `json:"articleids"`
+	Title      string         `json:"title"`
+	PubDate    string         `json:"pubdate"`
+	Source     string         `json:"source"`
+	Authors    []pmcAuthor    `json:"authors"`
+	Volume     string         `json:"volume"`
+	Issue      string         `json:"issue"`
+	Pages      string         `json:"pages"`
+	ArticleIDs []pmcArticleID `json:"articleids"`
 }
 
 type pmcAuthor struct {

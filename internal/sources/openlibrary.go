@@ -105,9 +105,9 @@ func (c OpenLibraryConnector) Search(ctx context.Context, query SourceQuery) (So
 }
 
 type olSearchResponse struct {
-	NumFound int      `json:"numFound"`
-	Start    int      `json:"start"`
-	Docs     []olDoc  `json:"docs"`
+	NumFound int     `json:"numFound"`
+	Start    int     `json:"start"`
+	Docs     []olDoc `json:"docs"`
 }
 
 type olDoc struct {

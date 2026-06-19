@@ -1,4 +1,4 @@
-.PHONY: fmt test vet vuln check inventory-check decisions decisions-markdown decision-issues todo-audit todo-completion-audit license-decision-live-audit license-decision-approval-gate build-release checksums sbom install install-smoke web-gui-smoke source-live-smoke biomedical-live-smoke semantic-scholar-live-smoke external-e2e-artificial-photosynthesis
+.PHONY: fmt fmt-check test vet vuln ci check inventory-check decisions decisions-markdown decision-issues todo-audit todo-completion-audit license-decision-live-audit license-decision-approval-gate build-release checksums sbom install install-smoke web-gui-smoke source-live-smoke biomedical-live-smoke semantic-scholar-live-smoke external-e2e-artificial-photosynthesis
 
 VERSION ?= $(shell git describe --tags --always --dirty 2>/dev/null || echo dev)
 COMMIT  ?= $(shell git rev-parse --short HEAD 2>/dev/null || echo unknown)
@@ -8,6 +8,9 @@ LDFLAGS  = -X main.version=$(VERSION) -X main.commit=$(COMMIT) -X main.date=$(DA
 fmt:
 	gofmt -w cmd internal
 
+fmt-check:
+	test -z "$(shell gofmt -l cmd internal)"
+
 test:
 	go test ./...
 
@@ -15,7 +18,12 @@ vet:
 	go vet ./...
 
 vuln:
-	govulncheck ./...
+	go run golang.org/x/vuln/cmd/govulncheck@latest ./...
+
+ci: fmt-check test vet todo-completion-audit vuln
+	go list -m all >/dev/null
+	go list -m -json all >/dev/null
+	git diff --check
 
 check: test vet todo-completion-audit inventory-check
 	git diff --check

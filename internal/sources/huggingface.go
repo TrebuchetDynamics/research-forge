@@ -108,13 +108,13 @@ func (c HuggingFaceConnector) Search(ctx context.Context, query SourceQuery) (So
 }
 
 type hfPaper struct {
-	ID          string      `json:"id"`
-	Title       string      `json:"title"`
-	PublishedAt string      `json:"publishedAt"`
-	Authors     []hfAuthor  `json:"authors"`
-	Summary     string      `json:"summary"`
-	Upvotes     int         `json:"upvotes"`
-	GitHubRepo  string      `json:"githubRepo"`
+	ID          string     `json:"id"`
+	Title       string     `json:"title"`
+	PublishedAt string     `json:"publishedAt"`
+	Authors     []hfAuthor `json:"authors"`
+	Summary     string     `json:"summary"`
+	Upvotes     int        `json:"upvotes"`
+	GitHubRepo  string     `json:"githubRepo"`
 }
 
 type hfAuthor struct {

@@ -92,8 +92,8 @@ func (c ELifeConnector) Search(ctx context.Context, query SourceQuery) (SourceRe
 }
 
 type elifeSearchResponse struct {
-	Total int           `json:"total"`
-	Items []elifeItem   `json:"items"`
+	Total int         `json:"total"`
+	Items []elifeItem `json:"items"`
 }
 
 type elifeItem struct {
