@@ -165,9 +165,14 @@ release_install() {
 
   bin="$tmp/$name"
   if command_exists curl; then
-    curl -fsSL "$url" -o "$bin"
+    curl -fsSL "$url" -o "$bin" || download_failed=1
   else
-    wget -q -O "$bin" "$url"
+    wget -q -O "$bin" "$url" || download_failed=1
+  fi
+  if [ "${download_failed:-0}" = 1 ]; then
+    warn "release binary unavailable; falling back to go install"
+    source_install
+    return
   fi
 
   chmod +x "$bin"
