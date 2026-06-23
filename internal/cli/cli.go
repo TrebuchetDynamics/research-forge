@@ -1,11 +1,13 @@
 package cli
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/url"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"runtime"
 	"strconv"
@@ -15,6 +17,7 @@ import (
 	"github.com/TrebuchetDynamics/research-forge/internal/analysis"
 	"github.com/TrebuchetDynamics/research-forge/internal/automation"
 	"github.com/TrebuchetDynamics/research-forge/internal/benchmarks"
+	"github.com/TrebuchetDynamics/research-forge/internal/documents"
 	"github.com/TrebuchetDynamics/research-forge/internal/evidence"
 	"github.com/TrebuchetDynamics/research-forge/internal/forge"
 	"github.com/TrebuchetDynamics/research-forge/internal/knowledge"
@@ -25,6 +28,7 @@ import (
 	"github.com/TrebuchetDynamics/research-forge/internal/report"
 	"github.com/TrebuchetDynamics/research-forge/internal/reviewpkg"
 	"github.com/TrebuchetDynamics/research-forge/internal/screening"
+	"github.com/TrebuchetDynamics/research-forge/internal/sources"
 	rwatch "github.com/TrebuchetDynamics/research-forge/internal/watch"
 )
 
@@ -1030,14 +1034,166 @@ func executeInbox(args []string, stdout, stderr io.Writer, opts globalOptions) i
 	return 0
 }
 func executeFetch(args []string, stdout, stderr io.Writer, opts globalOptions) int {
-	if len(args) != 2 || args[0] != "pdfs" || args[1] != "--open-access-only" {
-		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge fetch pdfs --open-access-only")
+	if !(len(args) == 1 && args[0] == "pdfs" || len(args) == 2 && args[0] == "pdfs" && args[1] == "--open-access-only") {
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge fetch pdfs [--open-access-only]")
 	}
+	if opts.Project == "" {
+		return writeError(stdout, stderr, opts, 2, "missing_project", "--project is required for fetch pdfs")
+	}
+	store, err := library.OpenStore(filepath.Join(opts.Project, "data", "library.json"))
+	if err != nil {
+		return writeError(stdout, stderr, opts, 1, "library_open_failed", err.Error())
+	}
+	records, err := store.List()
+	if err != nil {
+		return writeError(stdout, stderr, opts, 1, "library_read_failed", err.Error())
+	}
+	result := fetchProjectPDFs(context.Background(), opts.Project, records)
 	if opts.JSON {
-		return writeJSON(stdout, 0, map[string]any{"requiresApproval": true, "fetched": 0})
+		return writeJSON(stdout, 0, map[string]any{"assets": result.assets, "failed": len(result.failures), "failures": result.failures, "fetched": len(result.assets), "skipped": result.skipped})
 	}
-	fmt.Fprintln(stdout, "PDF fetch requires approval; fetched 0")
+	fmt.Fprintf(stdout, "fetched %d PDFs; skipped %d; failed %d\n", len(result.assets), result.skipped, len(result.failures))
 	return 0
+}
+
+type fetchPDFsResult struct {
+	assets   []documents.DocumentAsset
+	skipped  int
+	failures []string
+}
+
+type pdfCandidate struct {
+	paperID string
+	url     string
+	license string
+	status  string
+	arxiv   bool
+}
+
+func fetchProjectPDFs(ctx context.Context, projectPath string, records []library.PaperRecord) fetchPDFsResult {
+	result := fetchPDFsResult{}
+	for _, record := range records {
+		candidates := paperPDFCandidates(record)
+		if len(candidates) == 0 {
+			result.skipped++
+			continue
+		}
+		failures := []string{}
+		for _, candidate := range candidates {
+			asset, err := fetchPDFCandidate(ctx, projectPath, candidate)
+			if err == nil {
+				if err := writePDFDerivatives(ctx, projectPath, asset); err != nil {
+					failures = append(failures, err.Error())
+					continue
+				}
+				result.assets = append(result.assets, asset)
+				failures = nil
+				break
+			}
+			failures = append(failures, err.Error())
+		}
+		if len(failures) > 0 {
+			result.failures = append(result.failures, paperRecordID(record)+": "+strings.Join(failures, "; "))
+		}
+	}
+	return result
+}
+
+func fetchPDFCandidate(ctx context.Context, projectPath string, candidate pdfCandidate) (documents.DocumentAsset, error) {
+	if candidate.arxiv {
+		return documents.FetchArXivAsset(ctx, projectPath, candidate.paperID, candidate.url, "pdf")
+	}
+	return documents.FetchPDF(ctx, projectPath, candidate.paperID, documents.OpenAccessMetadata{OpenAccess: true, OAStatus: candidate.status, License: candidate.license, PDFURL: candidate.url})
+}
+
+func paperPDFCandidates(record library.PaperRecord) []pdfCandidate {
+	out := []pdfCandidate{}
+	seen := map[string]bool{}
+	add := func(candidate pdfCandidate) {
+		if candidate.paperID == "" || candidate.url == "" || seen[candidate.paperID+"\x00"+candidate.url] {
+			return
+		}
+		if !candidate.arxiv && (strings.TrimSpace(candidate.license) == "" || !explicitPDFURL(candidate.url)) {
+			return
+		}
+		seen[candidate.paperID+"\x00"+candidate.url] = true
+		out = append(out, candidate)
+	}
+	for _, candidate := range sources.CompareOpenAccessCandidates([]library.PaperRecord{record}).Candidates {
+		if candidate.Source == "local" {
+			continue
+		}
+		if candidate.Source == "arxiv" {
+			add(pdfCandidate{paperID: record.Identifiers.ArXivID, url: candidate.URL, arxiv: true})
+			continue
+		}
+		add(pdfCandidate{paperID: paperRecordID(record), url: candidate.URL, license: candidate.License, status: candidate.OAStatus})
+	}
+	if record.OpenAccess && strings.TrimSpace(record.License) != "" {
+		for _, rawURL := range record.URLs {
+			add(pdfCandidate{paperID: paperRecordID(record), url: rawURL, license: record.License, status: "open"})
+		}
+	}
+	return out
+}
+
+func writePDFDerivatives(ctx context.Context, projectPath string, asset documents.DocumentAsset) error {
+	name := safeFetchName(asset.PaperID)
+	textDir := filepath.Join(projectPath, "documents", "text")
+	if err := os.MkdirAll(textDir, 0o755); err != nil {
+		return err
+	}
+	text, err := exec.CommandContext(ctx, pdftotextCommand(), "-layout", asset.LocalPath, "-").Output()
+	if err != nil {
+		return fmt.Errorf("pdftotext %s: %w", asset.PaperID, err)
+	}
+	if err := os.WriteFile(filepath.Join(textDir, name+".txt"), text, 0o644); err != nil {
+		return err
+	}
+	imageDir := filepath.Join(projectPath, "documents", "images", name)
+	if err := os.MkdirAll(imageDir, 0o755); err != nil {
+		return err
+	}
+	prefix := filepath.Join(imageDir, "image")
+	if err := exec.CommandContext(ctx, pdfimagesCommand(), "-all", asset.LocalPath, prefix).Run(); err != nil {
+		return fmt.Errorf("pdfimages %s: %w", asset.PaperID, err)
+	}
+	return nil
+}
+
+func pdfimagesCommand() string {
+	if cmd := os.Getenv("RFORGE_PDFIMAGES_CMD"); cmd != "" {
+		return cmd
+	}
+	return "pdfimages"
+}
+
+func safeFetchName(value string) string {
+	parts := strings.FieldsFunc(strings.ToLower(strings.TrimSpace(value)), func(r rune) bool {
+		return !(r >= 'a' && r <= 'z') && !(r >= '0' && r <= '9')
+	})
+	if len(parts) == 0 {
+		return "paper"
+	}
+	return strings.Join(parts, "-")
+}
+
+func explicitPDFURL(rawURL string) bool {
+	parsed, err := url.Parse(strings.TrimSpace(rawURL))
+	if err != nil || (parsed.Scheme != "http" && parsed.Scheme != "https") {
+		return false
+	}
+	path := strings.ToLower(parsed.Path)
+	return strings.HasSuffix(path, ".pdf") || strings.Contains(path, "/pdf/")
+}
+
+func paperRecordID(record library.PaperRecord) string {
+	for _, value := range []string{record.Identifiers.DOI, record.Identifiers.ArXivID, record.Identifiers.PMID, record.Identifiers.PMCID, record.Identifiers.SemanticScholarID, record.Identifiers.OpenAlexID, record.Identifiers.CrossrefID, record.Title} {
+		if strings.TrimSpace(value) != "" {
+			return strings.TrimSpace(value)
+		}
+	}
+	return "paper"
 }
 
 func executeArchive(args []string, stdout, stderr io.Writer, opts globalOptions) int {

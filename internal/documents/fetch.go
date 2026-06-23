@@ -51,6 +51,9 @@ func FetchArXivAsset(ctx context.Context, projectPath, arxivID, assetURL, kind s
 	if err != nil {
 		return DocumentAsset{}, err
 	}
+	if err := ensureDocumentsGitignored(projectPath); err != nil {
+		return DocumentAsset{}, err
+	}
 	dir := filepath.Join(projectPath, "documents", "arxiv")
 	if err := os.MkdirAll(dir, 0o755); err != nil {
 		return DocumentAsset{}, err
@@ -64,6 +67,15 @@ func FetchArXivAsset(ctx context.Context, projectPath, arxivID, assetURL, kind s
 
 // FetchPDFByDOI downloads a legal open-access PDF into project storage.
 func FetchPDFByDOI(ctx context.Context, projectPath, doi string, metadata OpenAccessMetadata) (DocumentAsset, error) {
+	return FetchPDF(ctx, projectPath, doi, metadata)
+}
+
+// FetchPDF downloads a legal open-access PDF into project storage.
+func FetchPDF(ctx context.Context, projectPath, paperID string, metadata OpenAccessMetadata) (DocumentAsset, error) {
+	paperID = strings.TrimSpace(paperID)
+	if paperID == "" {
+		return DocumentAsset{}, fmt.Errorf("paper id is required")
+	}
 	pdfURL, err := SelectLegalPDFURL(metadata)
 	if err != nil {
 		return DocumentAsset{}, err
@@ -87,16 +99,19 @@ func FetchPDFByDOI(ctx context.Context, projectPath, doi string, metadata OpenAc
 	if err != nil {
 		return DocumentAsset{}, err
 	}
+	if err := ensureDocumentsGitignored(projectPath); err != nil {
+		return DocumentAsset{}, err
+	}
 	dir := filepath.Join(projectPath, "documents", "open-access")
 	if err := os.MkdirAll(dir, 0o755); err != nil {
 		return DocumentAsset{}, err
 	}
-	path := filepath.Join(dir, safeDocumentName(doi)+".pdf")
+	path := filepath.Join(dir, safeDocumentName(paperID)+".pdf")
 	if err := os.WriteFile(path, data, 0o644); err != nil {
 		return DocumentAsset{}, err
 	}
 	return NewDocumentAsset(DocumentAssetInput{
-		PaperID:           doi,
+		PaperID:           paperID,
 		AcquisitionSource: "open-access-pdf",
 		License:           metadata.License,
 		OAStatus:          metadata.OAStatus,
@@ -128,6 +143,28 @@ func readPDFResponse(response *http.Response) ([]byte, error) {
 		return nil, fmt.Errorf("pdf response too large: exceeds %d", maxPDFDownloadBytes)
 	}
 	return data, nil
+}
+
+func ensureDocumentsGitignored(projectPath string) error {
+	path := filepath.Join(projectPath, ".gitignore")
+	data, err := os.ReadFile(path)
+	if os.IsNotExist(err) {
+		return os.WriteFile(path, []byte("documents/\n"), 0o644)
+	}
+	if err != nil {
+		return err
+	}
+	for _, line := range strings.Split(string(data), "\n") {
+		switch strings.TrimSpace(line) {
+		case "documents/", "/documents/", "documents/**":
+			return nil
+		}
+	}
+	if len(data) > 0 && data[len(data)-1] != '\n' {
+		data = append(data, '\n')
+	}
+	data = append(data, []byte("documents/\n")...)
+	return os.WriteFile(path, data, 0o644)
 }
 
 func safeDocumentName(value string) string {

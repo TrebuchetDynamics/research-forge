@@ -1402,19 +1402,23 @@ func searchBatchSourcePreset(name string) []string {
 
 func defaultSourceHTTPClient(baseURL string) sources.HTTPClient {
 	return sources.NewHTTPClient(sources.HTTPClientOptions{
-		BaseURL:    baseURL,
-		UserAgent:  "ResearchForge/dev",
-		Timeout:    10 * time.Second,
-		MaxRetries: 2,
+		BaseURL:       baseURL,
+		UserAgent:     "ResearchForge/dev",
+		Timeout:       10 * time.Second,
+		MaxRetries:    2,
+		RequestDelay:  envDuration("RFORGE_SOURCE_REQUEST_DELAY", 0),
+		MaxRetryAfter: envDuration("RFORGE_SOURCE_MAX_RETRY_AFTER", 30*time.Second),
 	})
 }
 
 func defaultArXivHTTPClient(baseURL string) sources.HTTPClient {
 	return sources.NewHTTPClient(sources.HTTPClientOptions{
-		BaseURL:    baseURL,
-		UserAgent:  "ResearchForge/dev",
-		Timeout:    30 * time.Second,
-		MaxRetries: 2,
+		BaseURL:       baseURL,
+		UserAgent:     "ResearchForge/dev",
+		Timeout:       30 * time.Second,
+		MaxRetries:    2,
+		RequestDelay:  envDuration("RFORGE_SOURCE_REQUEST_DELAY", 0),
+		MaxRetryAfter: envDuration("RFORGE_SOURCE_MAX_RETRY_AFTER", 30*time.Second),
 	})
 }
 
@@ -1424,10 +1428,12 @@ func defaultSemanticScholarHTTPClient() sources.HTTPClient {
 		baseURL = "https://api.semanticscholar.org"
 	}
 	options := sources.HTTPClientOptions{
-		BaseURL:    baseURL,
-		UserAgent:  "ResearchForge/dev",
-		Timeout:    10 * time.Second,
-		MaxRetries: envInt("RFORGE_SEMANTIC_SCHOLAR_MAX_RETRIES", 3),
+		BaseURL:       baseURL,
+		UserAgent:     "ResearchForge/dev",
+		Timeout:       10 * time.Second,
+		MaxRetries:    envInt("RFORGE_SEMANTIC_SCHOLAR_MAX_RETRIES", 3),
+		RequestDelay:  envDuration("RFORGE_SEMANTIC_SCHOLAR_REQUEST_DELAY", envDuration("RFORGE_SOURCE_REQUEST_DELAY", 250*time.Millisecond)),
+		MaxRetryAfter: envDuration("RFORGE_SOURCE_MAX_RETRY_AFTER", 30*time.Second),
 	}
 	if apiKey := strings.TrimSpace(os.Getenv("RFORGE_SEMANTIC_SCHOLAR_API_KEY")); apiKey != "" {
 		options.Headers = map[string]string{"x-api-key": apiKey}
@@ -1441,6 +1447,21 @@ func envInt(name string, fallback int) int {
 		return fallback
 	}
 	return value
+}
+
+func envDuration(name string, fallback time.Duration) time.Duration {
+	value := strings.TrimSpace(os.Getenv(name))
+	if value == "" {
+		return fallback
+	}
+	if duration, err := time.ParseDuration(value); err == nil && duration >= 0 {
+		return duration
+	}
+	seconds, err := strconv.Atoi(value)
+	if err != nil || seconds < 0 {
+		return fallback
+	}
+	return time.Duration(seconds) * time.Second
 }
 
 func parseCitationsAccessibleView(args []string) (string, string, string, string, string, bool) {

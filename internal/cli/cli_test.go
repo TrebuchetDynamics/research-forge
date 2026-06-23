@@ -2965,6 +2965,70 @@ func TestExecutePDFFetchByDOIWithMockHTTP(t *testing.T) {
 	}
 }
 
+func TestExecuteFetchPDFsDownloadsOpenAccessPapersAndGitignores(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		_, _ = w.Write([]byte("%PDF-1.4 batch fetched fixture"))
+	}))
+	defer server.Close()
+	bin := t.TempDir()
+	pdftotext := filepath.Join(bin, "pdftotext")
+	if err := os.WriteFile(pdftotext, []byte("#!/bin/sh\nprintf 'paper text from PDF\n'\n"), 0o755); err != nil {
+		t.Fatalf("write fake pdftotext: %v", err)
+	}
+	pdfimages := filepath.Join(bin, "pdfimages")
+	if err := os.WriteFile(pdfimages, []byte("#!/bin/sh\ntouch \"$3-000.png\"\n"), 0o755); err != nil {
+		t.Fatalf("write fake pdfimages: %v", err)
+	}
+	t.Setenv("RFORGE_PDFTOTEXT_CMD", pdftotext)
+	t.Setenv("RFORGE_PDFIMAGES_CMD", pdfimages)
+	dir := filepath.Join(t.TempDir(), "demo")
+	if code := Execute([]string{"project", "create", dir, "--title", "Demo Review"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("project create exit code = %d", code)
+	}
+	store, err := library.OpenStore(filepath.Join(dir, "data", "library.json"))
+	if err != nil {
+		t.Fatalf("OpenStore: %v", err)
+	}
+	unpaywall, _ := library.NewPaperRecord(library.PaperRecordInput{Title: "Unpaywall OA paper", Identifiers: library.Identifiers{DOI: "10.1000/one"}, License: "cc-by", OpenAccess: true, SourceRefs: []library.SourceRef{{Source: "unpaywall", Metadata: map[string]string{"pdf_url": server.URL + "/one.pdf", "license": "cc-by", "oa_status": "gold"}}}})
+	generic, _ := library.NewPaperRecord(library.PaperRecordInput{Title: "Generic OA paper", Identifiers: library.Identifiers{DOI: "10.1000/two"}, URLs: []string{server.URL + "/two.pdf"}, License: "cc-by", OpenAccess: true})
+	closed, _ := library.NewPaperRecord(library.PaperRecordInput{Title: "Closed paper", Identifiers: library.Identifiers{DOI: "10.1000/closed"}, URLs: []string{server.URL + "/closed.pdf"}})
+	for _, record := range []library.PaperRecord{unpaywall, generic, closed} {
+		if err := store.Create(record); err != nil {
+			t.Fatalf("Create: %v", err)
+		}
+	}
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+	code := Execute([]string{"--json", "--project", dir, "fetch", "pdfs"}, stdout, stderr)
+	if code != 0 {
+		t.Fatalf("fetch pdfs exit code = %d, stderr = %s", code, stderr.String())
+	}
+	for _, name := range []string{"10-1000-one.pdf", "10-1000-two.pdf"} {
+		if _, err := os.Stat(filepath.Join(dir, "documents", "open-access", name)); err != nil {
+			t.Fatalf("missing fetched PDF %s: %v", name, err)
+		}
+		stem := strings.TrimSuffix(name, ".pdf")
+		if _, err := os.Stat(filepath.Join(dir, "documents", "text", stem+".txt")); err != nil {
+			t.Fatalf("missing text %s: %v", stem, err)
+		}
+		if _, err := os.Stat(filepath.Join(dir, "documents", "images", stem, "image-000.png")); err != nil {
+			t.Fatalf("missing image %s: %v", stem, err)
+		}
+	}
+	gitignore, err := os.ReadFile(filepath.Join(dir, ".gitignore"))
+	if err != nil || !strings.Contains(string(gitignore), "documents/") {
+		t.Fatalf(".gitignore = %q, err=%v", gitignore, err)
+	}
+	var envelope map[string]any
+	if err := json.Unmarshal(stdout.Bytes(), &envelope); err != nil {
+		t.Fatalf("stdout is not JSON: %v\n%s", err, stdout.String())
+	}
+	data := envelope["data"].(map[string]any)
+	if data["fetched"].(float64) != 2 || data["skipped"].(float64) != 1 {
+		t.Fatalf("fetch result = %#v", data)
+	}
+}
+
 func TestExecuteOSSSearchPlanReturnsProviderCoverage(t *testing.T) {
 	stdout := new(bytes.Buffer)
 	stderr := new(bytes.Buffer)

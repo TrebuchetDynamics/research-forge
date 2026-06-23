@@ -20,6 +20,8 @@ type HTTPClientOptions struct {
 	MaxRetries       int
 	MaxResponseBytes int64
 	Headers          map[string]string
+	RequestDelay     time.Duration
+	MaxRetryAfter    time.Duration
 	Sleep            func(time.Duration)
 }
 
@@ -33,6 +35,8 @@ type HTTPClient struct {
 	maxRetries       int
 	maxResponseBytes int64
 	headers          map[string]string
+	requestDelay     time.Duration
+	maxRetryAfter    time.Duration
 	sleep            func(time.Duration)
 }
 
@@ -65,6 +69,8 @@ func NewHTTPClient(options HTTPClientOptions) HTTPClient {
 		maxRetries:       options.MaxRetries,
 		maxResponseBytes: maxBytes,
 		headers:          headers,
+		requestDelay:     options.RequestDelay,
+		maxRetryAfter:    options.MaxRetryAfter,
 		sleep:            sleep,
 	}
 }
@@ -88,7 +94,9 @@ func (c HTTPClient) Get(ctx context.Context, path string, query map[string]strin
 	endpoint.RawQuery = values.Encode()
 
 	var lastStatus int
+	var retryLater time.Duration
 	for attempt := 0; attempt <= c.maxRetries; attempt++ {
+		c.wait(c.requestDelay)
 		request, err := http.NewRequestWithContext(ctx, http.MethodGet, endpoint.String(), nil)
 		if err != nil {
 			return nil, err
@@ -117,15 +125,17 @@ func (c HTTPClient) Get(ctx context.Context, path string, query map[string]strin
 			if delay == 0 && lastStatus == http.StatusTooManyRequests {
 				delay = time.Duration(1<<uint(attempt)) * time.Second
 			}
-			if delay > 0 {
-				c.sleep(delay)
+			if c.maxRetryAfter > 0 && delay > c.maxRetryAfter {
+				retryLater = delay
+				break
 			}
+			c.wait(delay)
 			continue
 		}
 		break
 	}
 	if lastStatus == http.StatusTooManyRequests {
-		return nil, fmt.Errorf("source HTTP status 429: rate limited; reduce request frequency or configure an API key (check connector env vars)")
+		return nil, rateLimitError(retryLater)
 	}
 	return nil, fmt.Errorf("source HTTP status %d", lastStatus)
 }
@@ -154,10 +164,30 @@ func retryDelay(response *http.Response) time.Duration {
 		return 0
 	}
 	seconds, err := strconv.Atoi(value)
-	if err != nil || seconds <= 0 {
+	if err == nil && seconds > 0 {
+		return time.Duration(seconds) * time.Second
+	}
+	when, err := http.ParseTime(value)
+	if err != nil {
 		return 0
 	}
-	return time.Duration(seconds) * time.Second
+	if delay := time.Until(when); delay > 0 {
+		return delay
+	}
+	return 0
+}
+
+func rateLimitError(retryAfter time.Duration) error {
+	if retryAfter > 0 {
+		return fmt.Errorf("source HTTP status 429: rate limited; retry after %s; try again later or configure an API key (check connector env vars)", retryAfter.Round(time.Second))
+	}
+	return fmt.Errorf("source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)")
+}
+
+func (c HTTPClient) wait(delay time.Duration) {
+	if delay > 0 {
+		c.sleep(delay)
+	}
 }
 
 // Post sends a JSON POST request to a relative source path and returns the response body.
@@ -183,7 +213,9 @@ func (c HTTPClient) postWithContentType(ctx context.Context, path string, body [
 	}
 
 	var lastStatus int
+	var retryLater time.Duration
 	for attempt := 0; attempt <= c.maxRetries; attempt++ {
+		c.wait(c.requestDelay)
 		request, err := http.NewRequestWithContext(ctx, http.MethodPost, endpoint.String(), bytes.NewReader(body))
 		if err != nil {
 			return nil, err
@@ -213,15 +245,17 @@ func (c HTTPClient) postWithContentType(ctx context.Context, path string, body [
 			if delay == 0 && lastStatus == http.StatusTooManyRequests {
 				delay = time.Duration(1<<uint(attempt)) * time.Second
 			}
-			if delay > 0 {
-				c.sleep(delay)
+			if c.maxRetryAfter > 0 && delay > c.maxRetryAfter {
+				retryLater = delay
+				break
 			}
+			c.wait(delay)
 			continue
 		}
 		break
 	}
 	if lastStatus == http.StatusTooManyRequests {
-		return nil, fmt.Errorf("source HTTP status 429: rate limited; reduce request frequency or configure an API key (check connector env vars)")
+		return nil, rateLimitError(retryLater)
 	}
 	return nil, fmt.Errorf("source HTTP status %d", lastStatus)
 }

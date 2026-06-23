@@ -170,6 +170,55 @@ func TestHTTPClientRateLimitExhaustedReturnsActionableError(t *testing.T) {
 	}
 }
 
+func TestHTTPClientWaitsBeforeRequestWhenConfigured(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		_, _ = w.Write([]byte(`{"ok":true}`))
+	}))
+	defer server.Close()
+
+	var slept []time.Duration
+	client := NewHTTPClient(HTTPClientOptions{
+		BaseURL:      server.URL,
+		RequestDelay: 250 * time.Millisecond,
+		Sleep:        func(d time.Duration) { slept = append(slept, d) },
+	})
+	_, err := client.Get(context.Background(), "/works", nil)
+	if err != nil {
+		t.Fatalf("Get returned error: %v", err)
+	}
+	if len(slept) != 1 || slept[0] != 250*time.Millisecond {
+		t.Fatalf("slept = %v, want [250ms]", slept)
+	}
+}
+
+func TestHTTPClientReturnsLaterWhenRetryAfterExceedsCap(t *testing.T) {
+	requests := 0
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		requests++
+		w.Header().Set("Retry-After", "3600")
+		http.Error(w, "rate limited", http.StatusTooManyRequests)
+	}))
+	defer server.Close()
+
+	var slept []time.Duration
+	client := NewHTTPClient(HTTPClientOptions{
+		BaseURL:       server.URL,
+		MaxRetries:    1,
+		MaxRetryAfter: 30 * time.Second,
+		Sleep:         func(d time.Duration) { slept = append(slept, d) },
+	})
+	_, err := client.Get(context.Background(), "/works", nil)
+	if err == nil {
+		t.Fatal("expected error, got nil")
+	}
+	if requests != 1 || len(slept) != 0 {
+		t.Fatalf("requests=%d slept=%v, want one request and no sleep", requests, slept)
+	}
+	if !strings.Contains(err.Error(), "retry after 1h0m0s") || !strings.Contains(err.Error(), "try again later") {
+		t.Fatalf("error = %q", err.Error())
+	}
+}
+
 func TestHTTPClientDoesNotBackOffOnServerErrorWithoutRetryAfter(t *testing.T) {
 	requests := 0
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
