@@ -52,6 +52,28 @@ func TestBuildScreeningQueueRanksRelevantCryptoPapers(t *testing.T) {
 	}
 }
 
+func TestBuildLeakageAuditFromTextDirExtractsEvidence(t *testing.T) {
+	dir := t.TempDir()
+	textDir := filepath.Join(dir, "extracted-text")
+	if err := os.Mkdir(textDir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	text := "Bitcoin order flow prediction\n\nWe forecast Bitcoin minute returns with order book imbalance and spread features. Training and testing are chronological, but normalization and random forest baselines are discussed."
+	if err := os.WriteFile(filepath.Join(textDir, "paper-1.txt"), []byte(text), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	rows, err := BuildLeakageAuditFromTextDir(textDir, 80)
+	if err != nil {
+		t.Fatalf("BuildLeakageAuditFromTextDir() error = %v", err)
+	}
+	if len(rows) != 1 || rows[0].PaperID != "paper-1" || rows[0].Title != "Bitcoin order flow prediction" {
+		t.Fatalf("unexpected rows: %#v", rows)
+	}
+	if len(rows[0].FeatureEvidence) == 0 || !rows[0].LeakageFlags["global_preprocessing_possible"] {
+		t.Fatalf("missing text evidence: %#v", rows[0])
+	}
+}
+
 func TestBuildLeakageAuditExtractsEvidence(t *testing.T) {
 	dir := t.TempDir()
 	parsedDir := filepath.Join(dir, "parsed")

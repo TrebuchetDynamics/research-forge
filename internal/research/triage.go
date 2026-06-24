@@ -353,7 +353,7 @@ func BuildLeakageAudit(parsedDir string) ([]LeakageAuditRow, error) {
 	if err != nil {
 		return nil, err
 	}
-	rows := []LeakageAuditRow{}
+	docs := []parsing.ParsedDocument{}
 	for _, entry := range entries {
 		if entry.IsDir() || filepath.Ext(entry.Name()) != ".json" {
 			continue
@@ -366,6 +366,37 @@ func BuildLeakageAudit(parsedDir string) ([]LeakageAuditRow, error) {
 		if err := json.Unmarshal(data, &doc); err != nil {
 			return nil, err
 		}
+		docs = append(docs, doc)
+	}
+	return buildLeakageAuditRows(docs), nil
+}
+
+// BuildLeakageAuditFromTextDir extracts conservative keyword evidence from plain text files.
+func BuildLeakageAuditFromTextDir(textDir string, chunkSize int) ([]LeakageAuditRow, error) {
+	entries, err := os.ReadDir(textDir)
+	if err != nil {
+		return nil, err
+	}
+	docs := []parsing.ParsedDocument{}
+	for _, entry := range entries {
+		if entry.IsDir() || filepath.Ext(entry.Name()) != ".txt" {
+			continue
+		}
+		path := filepath.Join(textDir, entry.Name())
+		data, err := os.ReadFile(path)
+		if err != nil {
+			return nil, err
+		}
+		text := string(data)
+		paperID := strings.TrimSuffix(entry.Name(), filepath.Ext(entry.Name()))
+		docs = append(docs, ParsedTextDocument(paperID, titleFromText(text, paperID), text, chunkSize))
+	}
+	return buildLeakageAuditRows(docs), nil
+}
+
+func buildLeakageAuditRows(docs []parsing.ParsedDocument) []LeakageAuditRow {
+	rows := []LeakageAuditRow{}
+	for _, doc := range docs {
 		text, passages := documentText(doc)
 		flags := map[string]bool{}
 		for name, patterns := range leakageFlagPatterns {
@@ -386,7 +417,18 @@ func BuildLeakageAudit(parsedDir string) ([]LeakageAuditRow, error) {
 		})
 	}
 	sort.Slice(rows, func(i, j int) bool { return rows[i].PaperID < rows[j].PaperID })
-	return rows, nil
+	return rows
+}
+
+func titleFromText(text, fallback string) string {
+	for _, line := range strings.Split(normalizeNewlines(text), "\n") {
+		line = strings.TrimSpace(line)
+		if line == "" {
+			continue
+		}
+		return shorten(line, 160)
+	}
+	return fallback
 }
 
 func documentText(doc parsing.ParsedDocument) (string, int) {

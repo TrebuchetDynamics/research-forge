@@ -133,11 +133,25 @@ func writeScreeningCSV(path string, queue []research.ScreeningRecord) error {
 }
 
 func executeResearchLeakageAudit(args []string, stdout, stderr io.Writer, opts globalOptions) int {
-	values, ok := parseFlagValues(args, map[string]bool{"--parsed": true, "--out": true, "--markdown": true})
-	if !ok || values["--parsed"] == "" || values["--out"] == "" {
-		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> research leakage-audit --parsed <parsed-dir> --out <audit.json> [--markdown <audit.md>]")
+	values, ok := parseFlagValues(args, map[string]bool{"--parsed": true, "--text": true, "--out": true, "--markdown": true, "--chunk-size": true})
+	if !ok || values["--out"] == "" || (values["--parsed"] == "" && values["--text"] == "") || (values["--parsed"] != "" && values["--text"] != "") {
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> research leakage-audit (--parsed <parsed-dir> | --text <text-dir>) --out <audit.json> [--markdown <audit.md>] [--chunk-size N]")
 	}
-	rows, err := research.BuildLeakageAudit(values["--parsed"])
+	var rows []research.LeakageAuditRow
+	var err error
+	if values["--text"] != "" {
+		chunkSize := 1400
+		if values["--chunk-size"] != "" {
+			parsed, parseErr := strconv.Atoi(values["--chunk-size"])
+			if parseErr != nil || parsed <= 0 {
+				return writeError(stdout, stderr, opts, 2, "invalid_chunk_size", "--chunk-size must be a positive integer")
+			}
+			chunkSize = parsed
+		}
+		rows, err = research.BuildLeakageAuditFromTextDir(values["--text"], chunkSize)
+	} else {
+		rows, err = research.BuildLeakageAudit(values["--parsed"])
+	}
 	if err != nil {
 		return writeError(stdout, stderr, opts, 1, "leakage_audit_failed", err.Error())
 	}

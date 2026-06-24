@@ -37,6 +37,28 @@ func TestResearchScreenQueueCommandWritesCSVAndMarkdown(t *testing.T) {
 	}
 }
 
+func TestResearchLeakageAuditCommandAcceptsTextDir(t *testing.T) {
+	dir := t.TempDir()
+	textDir := filepath.Join(dir, "extracted-text")
+	if err := os.Mkdir(textDir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	text := "Bitcoin order-flow validation\n\nWe forecast Bitcoin minute returns with order flow imbalance features. Training and testing use out-of-sample validation. Normalization is discussed."
+	if err := os.WriteFile(filepath.Join(textDir, "paper-1.txt"), []byte(text), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	jsonPath := filepath.Join(dir, "audit.json")
+	mdPath := filepath.Join(dir, "audit.md")
+	var stdout, stderr bytes.Buffer
+	code := Execute([]string{"--json", "--project", dir, "research", "leakage-audit", "--text", textDir, "--out", jsonPath, "--markdown", mdPath}, &stdout, &stderr)
+	if code != 0 {
+		t.Fatalf("exit code = %d, stderr = %s", code, stderr.String())
+	}
+	if !strings.Contains(readFileForCLITest(t, jsonPath), "paper-1") || !strings.Contains(readFileForCLITest(t, mdPath), "Bitcoin order-flow validation") {
+		t.Fatalf("text audit output missing paper evidence")
+	}
+}
+
 func TestResearchLeakageAuditCommandWritesJSONAndMarkdown(t *testing.T) {
 	dir := t.TempDir()
 	parsedDir := filepath.Join(dir, "parsed")

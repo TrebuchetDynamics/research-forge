@@ -2467,6 +2467,7 @@ func TestExecuteParseNormalizeRefsWritesSourceMatches(t *testing.T) {
 }
 
 func TestExecutePDFFetchArXivAsset(t *testing.T) {
+	setFakePDFTools(t)
 	dir := filepath.Join(t.TempDir(), "demo")
 	if code := Execute([]string{"project", "create", dir, "--title", "arXiv Fetch"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
 		t.Fatalf("project create exit code = %d", code)
@@ -2485,6 +2486,12 @@ func TestExecutePDFFetchArXivAsset(t *testing.T) {
 	}
 	if !strings.Contains(stdout.String(), `"AcquisitionSource":"arxiv-pdf"`) || !strings.Contains(stdout.String(), `"MIMEType":"application/pdf"`) {
 		t.Fatalf("stdout = %s", stdout.String())
+	}
+	if _, err := os.Stat(filepath.Join(dir, "documents", "text", "2401-00001.txt")); err != nil {
+		t.Fatalf("missing arxiv text: %v", err)
+	}
+	if _, err := os.Stat(filepath.Join(dir, "documents", "images", "2401-00001", "image-000.png")); err != nil {
+		t.Fatalf("missing arxiv image: %v", err)
 	}
 }
 
@@ -2946,6 +2953,7 @@ func TestExecuteResearchAcquirePDFTextDownloadsAndParses(t *testing.T) {
 }
 
 func TestExecutePDFFetchByDOIWithMockHTTP(t *testing.T) {
+	setFakePDFTools(t)
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		_, _ = w.Write([]byte("%PDF-1.4 cli fetched fixture"))
 	}))
@@ -2963,6 +2971,12 @@ func TestExecutePDFFetchByDOIWithMockHTTP(t *testing.T) {
 	if _, err := os.Stat(filepath.Join(dir, "documents", "open-access", "10-1000-example.pdf")); err != nil {
 		t.Fatalf("missing fetched PDF: %v", err)
 	}
+	if _, err := os.Stat(filepath.Join(dir, "documents", "text", "10-1000-example.txt")); err != nil {
+		t.Fatalf("missing fetched text: %v", err)
+	}
+	if _, err := os.Stat(filepath.Join(dir, "documents", "images", "10-1000-example", "image-000.png")); err != nil {
+		t.Fatalf("missing fetched image: %v", err)
+	}
 }
 
 func TestExecuteFetchPDFsDownloadsOpenAccessPapersAndGitignores(t *testing.T) {
@@ -2970,17 +2984,7 @@ func TestExecuteFetchPDFsDownloadsOpenAccessPapersAndGitignores(t *testing.T) {
 		_, _ = w.Write([]byte("%PDF-1.4 batch fetched fixture"))
 	}))
 	defer server.Close()
-	bin := t.TempDir()
-	pdftotext := filepath.Join(bin, "pdftotext")
-	if err := os.WriteFile(pdftotext, []byte("#!/bin/sh\nprintf 'paper text from PDF\n'\n"), 0o755); err != nil {
-		t.Fatalf("write fake pdftotext: %v", err)
-	}
-	pdfimages := filepath.Join(bin, "pdfimages")
-	if err := os.WriteFile(pdfimages, []byte("#!/bin/sh\ntouch \"$3-000.png\"\n"), 0o755); err != nil {
-		t.Fatalf("write fake pdfimages: %v", err)
-	}
-	t.Setenv("RFORGE_PDFTOTEXT_CMD", pdftotext)
-	t.Setenv("RFORGE_PDFIMAGES_CMD", pdfimages)
+	setFakePDFTools(t)
 	dir := filepath.Join(t.TempDir(), "demo")
 	if code := Execute([]string{"project", "create", dir, "--title", "Demo Review"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
 		t.Fatalf("project create exit code = %d", code)
@@ -3594,6 +3598,21 @@ func TestExecuteProjectListJSON(t *testing.T) {
 	if first["title"] != "Alpha" {
 		t.Fatalf("first title = %#v, want Alpha", first["title"])
 	}
+}
+
+func setFakePDFTools(t *testing.T) {
+	t.Helper()
+	bin := t.TempDir()
+	pdftotext := filepath.Join(bin, "pdftotext")
+	if err := os.WriteFile(pdftotext, []byte("#!/bin/sh\nprintf 'paper text from PDF\n'\n"), 0o755); err != nil {
+		t.Fatalf("write fake pdftotext: %v", err)
+	}
+	pdfimages := filepath.Join(bin, "pdfimages")
+	if err := os.WriteFile(pdfimages, []byte("#!/bin/sh\ntouch \"$3-000.png\"\n"), 0o755); err != nil {
+		t.Fatalf("write fake pdfimages: %v", err)
+	}
+	t.Setenv("RFORGE_PDFTOTEXT_CMD", pdftotext)
+	t.Setenv("RFORGE_PDFIMAGES_CMD", pdfimages)
 }
 
 func TestExecuteSearchStatsReadsDirectoryAndReportsCoverage(t *testing.T) {

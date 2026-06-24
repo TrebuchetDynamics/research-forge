@@ -1106,6 +1106,11 @@ func executePDF(args []string, stdout, stderr io.Writer, opts globalOptions) int
 		if err != nil {
 			return writeError(stdout, stderr, opts, 1, "arxiv_fetch_failed", fmt.Sprintf("fetch arXiv asset: %v", err))
 		}
+		if kind == "pdf" {
+			if err := writePDFDerivatives(context.Background(), opts.Project, asset); err != nil {
+				return writeError(stdout, stderr, opts, 1, "pdf_derivatives_failed", err.Error())
+			}
+		}
 		if opts.JSON {
 			return writeJSON(stdout, 0, map[string]any{"asset": asset})
 		}
@@ -1119,6 +1124,9 @@ func executePDF(args []string, stdout, stderr io.Writer, opts globalOptions) int
 	asset, err := documents.FetchPDFByDOI(context.Background(), opts.Project, doi, documents.OpenAccessMetadata{OpenAccess: true, OAStatus: oaStatus, License: license, PDFURL: pdfURL})
 	if err != nil {
 		return writeError(stdout, stderr, opts, 1, "pdf_fetch_failed", fmt.Sprintf("fetch PDF: %v", err))
+	}
+	if err := writePDFDerivatives(context.Background(), opts.Project, asset); err != nil {
+		return writeError(stdout, stderr, opts, 1, "pdf_derivatives_failed", err.Error())
 	}
 	if opts.JSON {
 		return writeJSON(stdout, 0, map[string]any{"asset": asset})
