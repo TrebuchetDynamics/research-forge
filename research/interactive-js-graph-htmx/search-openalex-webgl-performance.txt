@@ -1,0 +1,20 @@
+10.1016/j.heliyon.2023.e15306	TissUUmaps 3: Improvements in interactive visualization, exploration, and quality assessment of large-scale spatial omics data
+10.1093/nar/gky510	OmicsNet: a web-based tool for creation and visual analysis of biological networks in 3D space
+10.1145/3491102.3501823	Neo: Generalizing Confusion Matrix Visualization to Hierarchical and Multi-Output Labels
+10.1038/s41592-024-02436-x	Vitessce: integrative visualization of multimodal and spatially resolved single-cell data
+10.1007/s00607-012-0275-z	Efficient visualization of 3D models by web browser
+10.5194/isprsarchives-xl-3-163-2014	WebGL Visualisation of 3D Environmental Models Based on Finnish Open Geospatial Data Sets
+10.1186/s12911-016-0275-6	Health figures: an open source JavaScript library for health data visualization
+10.1101/2022.01.28.478131	TissUUmaps 3: Improvements in interactive visualization, exploration, and quality assessment of large-scale spatial omics data
+10.1109/access.2023.3304640	Cyberattack Graph Modeling for Visual Analytics
+10.3390/ijgi9100563	Evaluating the Performance of Three Popular Web Mapping Libraries: A Case Study Using Argentina’s Life Quality Index
+10.1177/14738716221126992	Visualization Resources: A Survey
+10.1109/access.2023.3327008	Dash Sylvereye: A Python Library for Dashboard-Driven Visualization of Large Street Networks
+10.1186/s42492-025-00193-y	Graph visualization efficiency of popular web-based libraries
+10.1177/1473871613488572	BANKSAFE: Visual analytics for big data in large-scale computer networks
+10.1002/pmic.201400377	Open source libraries and frameworks for biological data visualisation: A guide for developers
+10.1101/229484	Open Source Brain: a collaborative resource for visualizing, analyzing, simulating and developing standardized models of neurons and circuits
+10.3389/fninf.2014.00036	Integrating neuroinformatics tools in TheVirtualBrain
+10.1145/2807442.2807446	<i>Webstrates</i>
+10.5194/isprsarchives-xxxviii-5-w16-475-2011	X3DOM AS CARRIER OF THE VIRTUAL HERITAGE
+10.2478/jamsi-2024-0009	Measuring the performance of techniques for dynamic 2D animation in web browsers

@@ -38,6 +38,8 @@ var (
 	Date    = "unknown"
 )
 
+var topLevelCommands = []string{"version", "decisions", "benchmark", "automation", "completion", "forge", "project", "doctor", "service", "library", "search", "citations", "oa", "duplicate", "import", "export", "oss", "pdf", "parse", "index", "knowledge", "graph", "retrieve", "research", "protocol", "screen", "prisma", "extraction", "extract", "evidence", "analysis", "report", "package", "archive", "ui", "watch", "inbox", "fetch"}
+
 type globalOptions struct {
 	JSON     bool
 	Project  string
@@ -104,6 +106,8 @@ func Execute(args []string, stdout, stderr io.Writer) int {
 		return executeIndex(remaining[1:], stdout, stderr, opts)
 	case "knowledge":
 		return executeKnowledge(remaining[1:], stdout, stderr, opts)
+	case "graph":
+		return executeGraph(remaining[1:], stdout, stderr, opts)
 	case "retrieve":
 		return executeRetrieve(remaining[1:], stdout, stderr, opts)
 	case "research":
@@ -209,28 +213,51 @@ func parseBenchmarkCrossTool(args []string) (string, bool) {
 }
 
 func executeKnowledge(args []string, stdout, stderr io.Writer, opts globalOptions) int {
-	if len(args) == 0 || args[0] != "query" {
-		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge knowledge query --project <path> [--term <text>]")
+	if len(args) == 0 {
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge knowledge query|path --project <path>")
 	}
-	projectPath, term, ok := parseKnowledgeQuery(args[1:])
-	if !ok || projectPath == "" {
-		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge knowledge query --project <path> [--term <text>]")
+	switch args[0] {
+	case "query":
+		projectPath, term, ok := parseKnowledgeQuery(args[1:])
+		if !ok || projectPath == "" {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge knowledge query --project <path> [--term <text>]")
+		}
+		graph, err := knowledge.LoadProjectKnowledgeGraphFromProject(projectPath)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "knowledge_graph_failed", err.Error())
+		}
+		if term != "" {
+			graph = knowledge.QueryProjectKnowledgeGraph(graph, term)
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"graph": graph})
+		}
+		fmt.Fprintf(stdout, "nodes: %d\nedges: %d\n", len(graph.Nodes), len(graph.Edges))
+		for _, node := range graph.Nodes {
+			fmt.Fprintf(stdout, "%s\t%s\t%s\n", node.Kind, node.ID, node.Label)
+		}
+		return 0
+	case "path":
+		projectPath, fromID, toID, ok := parseKnowledgePath(args[1:])
+		if !ok || projectPath == "" || fromID == "" || toID == "" {
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge knowledge path --project <path> --from <node-id> --to <node-id>")
+		}
+		graph, err := knowledge.LoadProjectKnowledgeGraphFromProject(projectPath)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "knowledge_graph_failed", err.Error())
+		}
+		path, found := knowledge.ShortestPathIDs(graph, fromID, toID)
+		if !found {
+			return writeError(stdout, stderr, opts, 1, "knowledge_path_not_found", "no path found")
+		}
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"path": path})
+		}
+		fmt.Fprintln(stdout, strings.Join(path, " -> "))
+		return 0
+	default:
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge knowledge query|path --project <path>")
 	}
-	graph, err := knowledge.BuildProjectKnowledgeGraphFromProject(projectPath)
-	if err != nil {
-		return writeError(stdout, stderr, opts, 1, "knowledge_graph_failed", err.Error())
-	}
-	if term != "" {
-		graph = knowledge.QueryProjectKnowledgeGraph(graph, term)
-	}
-	if opts.JSON {
-		return writeJSON(stdout, 0, map[string]any{"graph": graph})
-	}
-	fmt.Fprintf(stdout, "nodes: %d\nedges: %d\n", len(graph.Nodes), len(graph.Edges))
-	for _, node := range graph.Nodes {
-		fmt.Fprintf(stdout, "%s\t%s\t%s\n", node.Kind, node.ID, node.Label)
-	}
-	return 0
 }
 
 func parseKnowledgeQuery(args []string) (string, string, bool) {
@@ -248,6 +275,23 @@ func parseKnowledgeQuery(args []string) (string, string, bool) {
 		}
 	}
 	return values["--project"], values["--term"], true
+}
+
+func parseKnowledgePath(args []string) (string, string, string, bool) {
+	values := map[string]string{}
+	for i := 0; i < len(args); i++ {
+		switch args[i] {
+		case "--project", "--from", "--to":
+			if i+1 >= len(args) {
+				return "", "", "", false
+			}
+			values[args[i]] = args[i+1]
+			i++
+		default:
+			return "", "", "", false
+		}
+	}
+	return values["--project"], values["--from"], values["--to"], true
 }
 
 func executeForge(args []string, stdout, stderr io.Writer, opts globalOptions) int {
@@ -810,13 +854,13 @@ func executeCompletion(args []string, stdout, stderr io.Writer, opts globalOptio
 	if len(args) != 1 || args[0] != "bash" {
 		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge completion bash")
 	}
-	fmt.Fprint(stdout, `_rforge_completion() {
+	fmt.Fprintf(stdout, `_rforge_completion() {
   local cur="${COMP_WORDS[COMP_CWORD]}"
-  local commands="project doctor service library search oa duplicate import export oss pdf parse index retrieve screen prisma extraction extract evidence analysis report archive ui watch inbox fetch version completion"
+  local commands="%s"
   COMPREPLY=( $(compgen -W "$commands" -- "$cur") )
 }
 complete -F _rforge_completion rforge
-`)
+`, strings.Join(topLevelCommands, " "))
 	return 0
 }
 
@@ -3662,10 +3706,13 @@ func printHelp(w io.Writer) {
 	fmt.Fprintln(w, "  rforge oss inventory-report <manifest.json> [--area <area>]")
 	fmt.Fprintln(w, "  rforge oss add|list|license-check")
 	fmt.Fprintln(w, "  rforge parse --paper <id> --parser grobid|tex|s2orc|papermage --pdf|--tex|--s2orc|--papermage <file>")
+	fmt.Fprintln(w, "  rforge knowledge query --project <path> [--term <text>]")
+	fmt.Fprintln(w, "  rforge knowledge path --project <path> --from <node-id> --to <node-id>")
 	fmt.Fprintln(w, "  rforge research acquire-pdftotext --doi <doi> --pdf-url <url> --license <license> --oa-status <status> --out <parsed.json>")
 	fmt.Fprintln(w, "  rforge research parse-pdftotext --paper <id> --pdf <file> --out <parsed.json> [--title <title>]")
 	fmt.Fprintln(w, "  rforge research screen-queue --out <queue.csv> [--markdown <queue.md>] [--library <library.json>] [--search-results <dir>]")
 	fmt.Fprintln(w, "  rforge research leakage-audit (--parsed <parsed-dir> | --text <text-dir>) --out <audit.json> [--markdown <audit.md>]")
+	fmt.Fprintln(w, "  rforge graph papers")
 	fmt.Fprintln(w, "  rforge project create [path] --title <title>")
 	fmt.Fprintln(w, "  rforge project discover-assets")
 	fmt.Fprintln(w, "  rforge project inspect <path>")

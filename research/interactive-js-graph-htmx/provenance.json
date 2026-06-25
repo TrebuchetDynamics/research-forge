@@ -1,0 +1,69 @@
+{
+  "question": "How should ResearchForge implement a fancy interactive JavaScript graph in the HTMX dashboard? Should it use Three.js?",
+  "rforge_version": "rforge v0.1.9 (b37e7d2, 2026-06-24T15:28:54Z)",
+  "timestamp": "2026-06-24T16:53:46.557083+00:00",
+  "depth": "standard",
+  "queries": [
+    "interactive graph visualization web force directed graph D3",
+    "large graph visualization WebGL canvas SVG performance",
+    "three.js network graph visualization webgl force directed",
+    "accessible graph visualization web dashboard SVG canvas",
+    "HTMX dashboard interactive visualization progressive enhancement"
+  ],
+  "sources": [
+    "openalex",
+    "crossref",
+    "semantic-scholar",
+    "arxiv",
+    "modern-web-guidance"
+  ],
+  "search_stats": {
+    "arxiv": 100,
+    "crossref": 61,
+    "openalex": 80,
+    "semantic-scholar": 24,
+    "total_unique_dois": 210
+  },
+  "citation_expand_attempted": [],
+  "citation_expand_succeeded": [],
+  "outputs": [
+    "modern-web-guidance-retrieved.err",
+    "modern-web-guidance-retrieved.md",
+    "modern-web-guidance-search.err",
+    "modern-web-guidance-search.json",
+    "report.md",
+    "rforge-version.txt",
+    "search-arxiv-accessibility.txt",
+    "search-arxiv-d3-force.txt",
+    "search-arxiv-progressive-htmx.txt",
+    "search-arxiv-threejs-network.txt",
+    "search-arxiv-webgl-performance.txt",
+    "search-crossref-accessibility.txt",
+    "search-crossref-d3-force.txt",
+    "search-crossref-progressive-htmx.txt",
+    "search-crossref-threejs-network.txt",
+    "search-crossref-webgl-performance.txt",
+    "search-openalex-accessibility.txt",
+    "search-openalex-d3-force.txt",
+    "search-openalex-progressive-htmx.txt",
+    "search-openalex-threejs-network.txt",
+    "search-openalex-webgl-performance.txt",
+    "search-semantic-scholar-accessibility.txt",
+    "search-semantic-scholar-d3-force.txt",
+    "search-semantic-scholar-progressive-htmx.txt",
+    "search-semantic-scholar-threejs-network.txt",
+    "search-semantic-scholar-webgl-performance.txt",
+    "search-stats.txt"
+  ],
+  "errors": [
+    "search-semantic-scholar-accessibility.txt: search: source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)",
+    "search-semantic-scholar-d3-force.txt: search: source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)",
+    "search-semantic-scholar-progressive-htmx.txt: search: source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)",
+    "search-semantic-scholar-threejs-network.txt: search: source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)"
+  ],
+  "web_guidance": [
+    "accessibility",
+    "expose-canvas-content-to-browser-features"
+  ],
+  "search_stats_raw": "Source coverage for .\n  arxiv                    100 records (5 files)\n  crossref                 61 records (5 files)\n  openalex                 80 records (5 files)\n  semantic-scholar         24 records (5 files)\n\nTotal unique DOIs: 210\n"
+}

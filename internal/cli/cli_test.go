@@ -56,7 +56,7 @@ func TestExecuteHelpMentionsDecisionCompletionAudit(t *testing.T) {
 	if code != 0 {
 		t.Fatalf("exit code = %d, stderr = %s", code, stderr.String())
 	}
-	for _, want := range []string{"rforge automation policy [--action <action>]", "rforge decisions --check TODO.md", "rforge decisions --completion-audit TODO.md docs/todo-completion-audit.md"} {
+	for _, want := range []string{"rforge automation policy [--action <action>]", "rforge decisions --check TODO.md", "rforge decisions --completion-audit TODO.md docs/todo-completion-audit.md", "rforge knowledge path --project <path> --from <node-id> --to <node-id>", "rforge graph papers"} {
 		if !strings.Contains(stdout.String(), want) {
 			t.Fatalf("help missing %q:\n%s", want, stdout.String())
 		}
@@ -340,8 +340,14 @@ func TestExecuteCompletionBash(t *testing.T) {
 	if code != 0 {
 		t.Fatalf("exit code = %d, stderr = %s", code, stderr.String())
 	}
-	if !strings.Contains(stdout.String(), "_rforge_completion") || !strings.Contains(stdout.String(), "project doctor service") {
-		t.Fatalf("completion script = %s", stdout.String())
+	out := stdout.String()
+	if !strings.Contains(out, "_rforge_completion") {
+		t.Fatalf("completion script = %s", out)
+	}
+	for _, command := range topLevelCommands {
+		if !strings.Contains(out, command) {
+			t.Fatalf("completion script missing %q: %s", command, out)
+		}
 	}
 }
 

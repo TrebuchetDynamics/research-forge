@@ -1,0 +1,19 @@
+10.1201/9781003542735-6	Interactive dashboard and 3D visualization using t-SNE dimensionality reduction technique
+10.2139/ssrn.6282578	HTMX-Powered Progressive Enhancement for Accessibility-First Web Applications: An Empirical Study on Hypermedia Impact on WCAG Compliance and User Experience in Resource-Constrained Environments
+10.1201/9781003542735-9	Interactive visualization techniques for thermal imaging analysis in ophthalmology
+10.1007/978-1-4302-4945-0_14	An Interactive Gantt Chart Dashboard, Data Visualization
+10.4135/9781529773217.n1	John Hart Introduces the Visualization Dashboard
+10.5937/batutphco24063m	Interactive visualization of national health statistics: Development of an interactive dashboard
+10.3390/info15030137	A Novel NLP-Driven Dashboard for Interactive CyberAttacks Tweet Classification and Visualization
+10.1109/tvcg.2024.3456347/mm2	D-Tour: Semi-Automatic Generation of Interactive Guided Tours for Visualization Dashboard Onboarding_supp1-3456347.mp4
+10.31219/osf.io/t5m3u	D-Tour: Semi-Automatic Generation of Interactive Guided Tours for Visualization Dashboard Onboarding
+10.1201/9781003542735-11	Interactive and dynamic stock market dashboard
+10.1109/tvcg.2024.3456347/mm1	D-Tour: Semi-Automatic Generation of Interactive Guided Tours for Visualization Dashboard Onboarding_supp2-3456347.pdf
+10.29119/1641-3466.2020.143.27	Project indicators visualization using an interactive dashboard
+10.1109/vissoft52517.2021.00019	An Interactive Dashboard for Visualizing the Provenance of Software Development Processes
+10.4135/9781529773217	The Visualization Dashboard: Introduction
+10.55041/isjem07777	Interactive Data Visualization Dashboard for IPL 2023 Season Using Tableau
+10.1109/afros62115.2024.11036879	Implementation of Interactive Dashboard Visualization for Startup's Inventory Management: Beauty Startup Case Study
+10.32614/cran.package.htmxr	htmxr: Build Modern Web Applications with 'htmx' and 'plumber2'
+10.1201/9781003542735-4	AI-based online interview bot with an interactive dashboard
+10.55041/isjem07935	Interactive Data Visualization Dashboard for Indian Car Market Analysis Using Tableau

@@ -1,0 +1,20 @@
+10.1186/1471-2105-14-128	Enrichr: interactive and collaborative HTML5 gene list enrichment analysis tool
+10.1109/tvcg.2014.2346248	UpSet: Visualization of Intersecting Sets
+10.1146/annurev-genom-120219-080406	Pangenome Graphs
+10.1093/bioinformatics/btv372	Forna (force-directed RNA): Simple and effective online RNA secondary structure diagrams
+10.1101/gr.232397.117	GrapeTree: visualization of core genomic relationships among 100,000 bacterial pathogens
+10.3389/fgene.2019.00421	DiVenn: An Interactive and Integrated Web-Based Visualization Tool for Comparing Gene Lists
+10.1371/journal.pcbi.1004321	Escher: A Web Application for Building, Sharing, and Embedding Data-Rich Visualizations of Biological Pathways
+10.3389/fbioe.2020.00034	A Guide to Conquer the Biological Network Era Using Graph Theory
+10.1186/s12911-019-0857-1	ALOHA: developing an interactive graph-based visualization for dietary supplement knowledge graph through user-centered design
+10.1093/nar/gkw359	PHYLOViZ Online: web-based tool for visualization, phylogenetic inference, analysis and sharing of minimum spanning trees
+10.1093/bioinformatics/btx588	MetExploreViz: web component for interactive metabolic network visualization
+10.1186/s12859-015-0615-z	Integrated web visualizations for protein-protein interaction databases
+10.1007/s10994-011-5273-4	Visualizing non-metric similarities in multiple maps
+10.1186/s42492-021-00088-8	Dynamic graph exploration by interactively linked node-link diagrams and matrix visualizations
+10.4018/ijdet.2016010101	Interactive Visualization Tools to Improve Learning and Teaching in Online Learning Environments
+10.12688/f1000research.4510.2	Cytoscape tools for the web age: D3.js and Cytoscape.js exporters
+10.1111/cgf.14198	Visualizing and Interacting with Geospatial Networks: A Survey and Design Space
+10.1146/annurev-soc-071312-145551	Data Visualization in Sociology
+10.1109/jbhi.2020.2990797	Knowledge Graph-Enabled Cancer Data Analytics
+10.1145/3491102.3517431	VoxLens: Making Online Data Visualizations Accessible with an Interactive JavaScript Plug-In

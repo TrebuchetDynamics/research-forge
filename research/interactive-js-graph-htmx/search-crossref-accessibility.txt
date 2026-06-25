@@ -1,0 +1,20 @@
+10.1109/accessviz64636.2024.00006	Accessible SVG Charts with AChart
+10.1007/978-1-4302-4603-9_4	Using Canvas, SVG, and Web Fonts
+10.1021/acs.jproteome.4c00026.s001	MassDash: A Web-Based Dashboard for Data-Independent Acquisition Mass Spectrometry Visualization
+10.4135/9781529773217.n1	John Hart Introduces the Visualization Dashboard
+10.1145/3589335.3651999	Toward Making Opaque Web Content More Accessible: Accessibility From Adobe Flash to Canvas-Rendered Apps
+10.1007/978-1-4302-3046-5_7	Bitmap and Vector Graphics and Downloadable Fonts with Canvas and SVG
+10.1016/j.procs.2015.08.036	Visualization with Charting Library Based on SVG for Amrita Dynamic Dashboard
+10.1007/1-84628-290-x_7	SVG and X3D: New XML Technologies for 2D and 3D Visualization
+10.1109/pacificvis.2014.19	A New Type of Web Graph for Personalized Visualization
+10.46430/phen0124	Creating a Dashboard for Interactive Data Visualization with Dash in Python
+10.1016/b978-0-240-81328-8.00004-5	Creating SVG Logos and CANVAS Charts
+10.1101/2024.01.15.575772	MassDash: A Web-based Dashboard for Data-Independent Acquisition Mass Spectrometry Visualization
+10.4135/9781529773217	The Visualization Dashboard: Introduction
+10.1145/1148493.1148532	Semantic web data visualization with graph style sheets
+10.1007/978-1-4471-3737-5_6	SVG and X3D: New XML Technologies for 2D and 3D Visualization
+10.1007/1-84628-290-x_9	Adapting Graph Visualization Techniques for the Visualization of RDF Data
+10.1145/2899475.2899516	Accessible map visualization prototype
+10.1109/pacificvis.2010.5429593	Graph visualization techniques for conceptual Web site traffic analysis
+10.3233/sw-2012-0072	Exploring user and system requirements of linked data visualization through a visual dashboard approach
+10.1145/965350.965351	Making accessible Web graphics

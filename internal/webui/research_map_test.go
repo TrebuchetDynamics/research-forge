@@ -54,6 +54,19 @@ func TestResearchMapCockpitShowsLiveFeaturesAndSnapshot(t *testing.T) {
 	}
 }
 
+func TestResearchMapPrefersGeneratedKnowledgeGraphArtifact(t *testing.T) {
+	project := t.TempDir()
+	writeJSON(t, filepath.Join(project, "data", "library.json"), []library.PaperRecord{{Title: "Ignored rebuild concept", Identifiers: library.Identifiers{DOI: "10.1000/raw"}, SourceRefs: []library.SourceRef{{Source: "zotero", Metadata: map[string]string{"concepts": "raw-concept"}}}}})
+	writeJSON(t, filepath.Join(project, "data", "knowledge-graph.json"), map[string]any{"schemaVersion": "1", "nodes": []map[string]any{{"id": "paper:p1", "kind": "paper", "label": "Generated graph paper"}, {"id": "concept:generated-concept", "kind": "concept", "label": "generated-concept"}}, "edges": []map[string]string{{"id": "paper:p1 -has_concept-> concept:generated-concept", "source": "paper:p1", "target": "concept:generated-concept", "kind": "has_concept"}}})
+	state, err := BuildResearchMapCockpitState(project)
+	if err != nil {
+		t.Fatalf("BuildResearchMapCockpitState: %v", err)
+	}
+	if len(state.ConceptMap) != 1 || state.ConceptMap[0].Label != "generated-concept" {
+		t.Fatalf("did not prefer generated graph artifact: %#v", state.ConceptMap)
+	}
+}
+
 func TestRouterServesResearchMapAndSnapshot(t *testing.T) {
 	project := t.TempDir()
 	writeJSON(t, filepath.Join(project, "data", "library.json"), []library.PaperRecord{{Title: "Catalyst review", Identifiers: library.Identifiers{DOI: "10.1000/cat"}, SourceRefs: []library.SourceRef{{Source: "zotero", Metadata: map[string]string{"concepts": "photocatalysis"}}}}})

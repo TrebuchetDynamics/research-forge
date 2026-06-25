@@ -1,0 +1,20 @@
+10.1145/3173574.3174168	Beagle
+10.1016/j.softx.2024.101729	Snap4City dashboard manager: A tool for creating and distributing complex and interactive dashboards with no or low coding
+10.3145/epi.2022.sep.02	SCImago Graphica: a new tool for exploring and visually communicating data
+10.1145/3379337.3415851	B2
+10.1109/access.2023.3327008	Dash Sylvereye: A Python Library for Dashboard-Driven Visualization of Large Street Networks
+10.1186/s40965-019-0067-x	OpenStreetMap history for intrinsic quality assessment: Is OSM up-to-date?
+10.11591/ijeecs.v14.i3.pp1405-1411	Data visualisation of vehicle crash using interactive map and data dashboard
+10.14714/cp96.1645	Florence: a Web-based Grammar of Graphics for Making Maps and Learning Cartography
+10.1155/2015/904541	Trends in IT Innovation to Build a Next Generation Bioinformatics Solution to Manage and Analyse Biological Big Data Produced by NGS Technologies
+10.31219/osf.io/48esj	StoryFacets: A design study on storytelling with visualizations for collaborative data analysis
+	Geovisualization Using HTML5 : a case study to improve animations of historical geographic data
+10.12785/ijcds/150178	Open Research Issues and Tools for Visualization and Big DataAnalytics
+10.48550/arxiv.2306.08304	Chart2Vec: A Universal Embedding of Context-Aware Visualizations
+10.1145/3613904.3642442	Erie: A Declarative Grammar for Data Sonification
+10.1145/3313831.3376253	How Domain Experts Create Conceptual Diagrams and Implications for Tool Design
+10.33407/lib.naes.id/746527	Modern Technologies for Visualizing Collections of Digital Educational Resources : Practical Guide
+	Mashups: A New Concept in Web Application Programming
+10.3386/w33198	Generative AI for Economic Research: LLMs Learn to Collaborate and Reason
+10.1109/access.2023.3287198	Integrated Development of Embedded Systems With Remote Graphical User Interfaces
+	Line charts through Canvas and SVG using water-related data : Drawing graphics on a web page

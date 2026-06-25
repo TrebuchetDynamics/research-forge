@@ -10,6 +10,7 @@ import (
 	"github.com/TrebuchetDynamics/research-forge/internal/analysis"
 	"github.com/TrebuchetDynamics/research-forge/internal/documents"
 	"github.com/TrebuchetDynamics/research-forge/internal/evidence"
+	"github.com/TrebuchetDynamics/research-forge/internal/knowledge"
 	"github.com/TrebuchetDynamics/research-forge/internal/library"
 	"github.com/TrebuchetDynamics/research-forge/internal/project"
 	"github.com/TrebuchetDynamics/research-forge/internal/provenance"
@@ -434,6 +435,11 @@ func buildCitationGraph(projectPath string) (ui.CitationGraphViewModel, error) {
 	if strings.TrimSpace(projectPath) == "" {
 		return ui.CitationGraphViewModel{}, nil
 	}
+	if graph, err := knowledge.ReadProjectKnowledgeGraphArtifact(projectPath); err == nil {
+		return citationGraphFromKnowledgeGraph(graph), nil
+	} else if !os.IsNotExist(err) {
+		return ui.CitationGraphViewModel{}, err
+	}
 	data, err := os.ReadFile(filepath.Join(projectPath, "data", "citation-graph.json"))
 	if os.IsNotExist(err) {
 		return ui.CitationGraphViewModel{}, nil
@@ -462,6 +468,38 @@ func buildCitationGraph(projectPath string) (ui.CitationGraphViewModel, error) {
 		edges = append(edges, ui.GraphEdge{Source: e.Source, Target: e.Target})
 	}
 	return ui.NewCitationGraphViewModel(nodes, edges), nil
+}
+
+func citationGraphFromKnowledgeGraph(graph knowledge.ProjectKnowledgeGraph) ui.CitationGraphViewModel {
+	nodeIDs := map[string]bool{}
+	for _, node := range graph.Nodes {
+		if node.Kind == "paper" {
+			nodeIDs[strings.TrimPrefix(node.ID, "paper:")] = true
+		}
+	}
+	edges := []ui.GraphEdge{}
+	for _, edge := range graph.Edges {
+		if edge.Kind != "cites" {
+			continue
+		}
+		source := strings.TrimPrefix(edge.Source, "paper:")
+		target := strings.TrimPrefix(edge.Target, "paper:")
+		nodeIDs[source] = true
+		nodeIDs[target] = true
+		edges = append(edges, ui.GraphEdge{Source: source, Target: target})
+	}
+	nodes := make([]ui.GraphNode, 0, len(nodeIDs))
+	for id := range nodeIDs {
+		nodes = append(nodes, ui.GraphNode{ID: id})
+	}
+	sort.Slice(nodes, func(i, j int) bool { return nodes[i].ID < nodes[j].ID })
+	sort.Slice(edges, func(i, j int) bool {
+		if edges[i].Source == edges[j].Source {
+			return edges[i].Target < edges[j].Target
+		}
+		return edges[i].Source < edges[j].Source
+	})
+	return ui.NewCitationGraphViewModel(nodes, edges)
 }
 
 // buildAnalysisDetail loads the project's stored meta-analysis result

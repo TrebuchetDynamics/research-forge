@@ -52,7 +52,7 @@ func BuildResearchMapCockpitState(projectPath string) (ResearchMapCockpitState, 
 }
 
 func BuildResearchMapCockpitStateWithOptions(projectPath string, opts ResearchMapOptions) (ResearchMapCockpitState, error) {
-	graph, err := knowledge.BuildProjectKnowledgeGraphFromProject(projectPath)
+	graph, err := knowledge.LoadProjectKnowledgeGraphFromProject(projectPath)
 	if err != nil {
 		return ResearchMapCockpitState{}, err
 	}

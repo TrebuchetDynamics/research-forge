@@ -64,6 +64,19 @@ func TestBuildProjectKnowledgeGraphFromProjectReadsLocalArtifacts(t *testing.T) 
 	}
 }
 
+func TestLoadProjectKnowledgeGraphFromProjectPrefersGeneratedArtifact(t *testing.T) {
+	project := t.TempDir()
+	writeJSON(t, filepath.Join(project, "data", "library.json"), []library.PaperRecord{{Title: "Raw", Identifiers: library.Identifiers{DOI: "10.1000/raw"}}})
+	writeJSON(t, filepath.Join(project, "data", "knowledge-graph.json"), ProjectKnowledgeGraph{SchemaVersion: "1", Nodes: []KnowledgeNode{{ID: "paper:generated", Kind: "paper", Label: "Generated"}}})
+	graph, err := LoadProjectKnowledgeGraphFromProject(project)
+	if err != nil {
+		t.Fatalf("LoadProjectKnowledgeGraphFromProject: %v", err)
+	}
+	if !graph.HasNode("paper:generated") || graph.HasNode("paper:10.1000/raw") {
+		t.Fatalf("did not prefer generated artifact: %#v", graph.Nodes)
+	}
+}
+
 func writeJSON(t *testing.T, path string, value any) {
 	t.Helper()
 	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {

@@ -1,0 +1,20 @@
+10.1201/b18564-25	Data Visualization Techniques with WebGL
+10.1201/b18564-12	Data Visualization with WebGL : From Python to JavaScript
+10.1201/b18564-27	The BrainBrowser Surface Viewer : WebGL-Based Neurological Data Visualization
+10.2514/6.2014-1743	High performance WebGL for Visualization of Conjunction Analysis
+10.59350/pvm5h-5aw58	Embedding molecules in blogs: ChemDoodle, WebGL and SVG
+10.59350/xqvc0-f0q08	Embedding molecules in blogs: ChemDoodle, WebGL and SVG
+10.1109/icvrv.2018.00011	A Large-Scale Scene Display System Based on WebGL
+10.3724/sp.j.1001.2008.01933	Large Graph Visualization by Hierarchical Clustering
+10.14711/thesis-991012553967403412	On the scalability of large graph visualization
+10.32614/cran.package.leafgl	leafgl: High-Performance 'WebGl' Rendering for Package 'leaflet'
+10.2514/6.2025-1576	Visualization of Large Datasets of Simulations - An Infinite Canvas Approach
+10.5220/0005168301640168	Visualization of a Virtual Caenorhabditis elegans in WebGL
+10.12783/dtcse/cmsms2018/25240	WebGL-based Visualization Method for Large-scale 3D Scene
+10.1177/14738716221138090	Large scale medical image online three-dimensional reconstruction based on WebGL using four tier client server architecture
+10.1109/icce.2018.8326257	Direct canvas: Optimized WebGL rendering model
+10.5220/0005603600910096	Neuronal Activity Visualization using Biologically Accurately Placed Neurons in WebGL
+10.1109/inocon57975.2023.10101070	Imposter detection with canvas and WebGL using Machine learning.
+10.1016/b978-0-240-81328-8.00004-5	Creating SVG Logos and CANVAS Charts
+10.1057/palgrave.ivs.9500170	DataMeadow: A Visual Canvas for Analysis of Large-Scale Multivariate Data
+10.1007/978-1-4302-4603-9_4	Using Canvas, SVG, and Web Fonts

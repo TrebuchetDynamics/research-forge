@@ -116,11 +116,27 @@ func QueryProjectKnowledgeGraph(graph ProjectKnowledgeGraph, term string) Projec
 	return out
 }
 
+func ReadProjectKnowledgeGraphArtifact(projectPath string) (ProjectKnowledgeGraph, error) {
+	var graph ProjectKnowledgeGraph
+	err := readJSON(filepath.Join(projectPath, "data", "knowledge-graph.json"), &graph)
+	return graph, err
+}
+
+func LoadProjectKnowledgeGraphFromProject(projectPath string) (ProjectKnowledgeGraph, error) {
+	graph, err := ReadProjectKnowledgeGraphArtifact(projectPath)
+	if err == nil {
+		return graph, nil
+	} else if !os.IsNotExist(err) {
+		return ProjectKnowledgeGraph{}, err
+	}
+	return BuildProjectKnowledgeGraphFromProject(projectPath)
+}
+
 func BuildProjectKnowledgeGraphFromProject(projectPath string) (ProjectKnowledgeGraph, error) {
 	input := ProjectGraphInput{}
 	_ = readJSON(filepath.Join(projectPath, "data", "library.json"), &input.LibraryRecords)
 	input.CitationEdges = readCitationEdges(filepath.Join(projectPath, "data", "citation-graph.json"))
-	input.ParsedDocuments = readParsedDocuments(filepath.Join(projectPath, "parsed"))
+	input.ParsedDocuments = append(readParsedDocuments(filepath.Join(projectPath, "parsed")), readTextDocuments(filepath.Join(projectPath, "documents", "text"))...)
 	if err := readJSON(filepath.Join(projectPath, "data", "evidence.items.json"), &input.EvidenceItems); err != nil {
 		_ = readJSON(filepath.Join(projectPath, "data", "evidence.json"), &input.EvidenceItems)
 	}
@@ -218,7 +234,12 @@ func (b *builder) addParsedDocument(doc parsing.ParsedDocument) {
 		return
 	}
 	p := "paper:" + doc.PaperID
-	b.addNode(p, "paper", doc.PaperID, nil)
+	label := firstNonEmpty(doc.Title, doc.PaperID)
+	b.addNode(p, "paper", label, map[string]string{"snippet": firstPassageSnippet(doc)})
+	for _, concept := range documentConcepts(doc, 12) {
+		b.addNode("concept:"+concept, "concept", concept, nil)
+		b.addEdge(p, "concept:"+concept, "has_concept")
+	}
 	for i, ref := range doc.References {
 		id := fmt.Sprintf("reference:%s:%d", doc.PaperID, i)
 		label := ref.Title
@@ -331,6 +352,78 @@ func joinMap(m map[string]string) string {
 	}
 	return strings.Join(parts, ";")
 }
+func firstNonEmpty(values ...string) string {
+	for _, value := range values {
+		if strings.TrimSpace(value) != "" {
+			return strings.TrimSpace(value)
+		}
+	}
+	return ""
+}
+
+func firstPassageSnippet(doc parsing.ParsedDocument) string {
+	for _, section := range doc.Sections {
+		for _, passage := range section.Passages {
+			return shortenText(passage.Text, 240)
+		}
+	}
+	return ""
+}
+
+func documentConcepts(doc parsing.ParsedDocument, limit int) []string {
+	counts := map[string]int{}
+	for _, section := range doc.Sections {
+		for _, passage := range section.Passages {
+			for _, word := range conceptWords(passage.Text) {
+				counts[word]++
+			}
+		}
+	}
+	words := make([]string, 0, len(counts))
+	for word := range counts {
+		words = append(words, word)
+	}
+	sort.Slice(words, func(i, j int) bool {
+		if counts[words[i]] == counts[words[j]] {
+			return words[i] < words[j]
+		}
+		return counts[words[i]] > counts[words[j]]
+	})
+	if len(words) > limit {
+		words = words[:limit]
+	}
+	return words
+}
+
+func conceptWords(text string) []string {
+	stop := map[string]bool{"about": true, "after": true, "also": true, "architecture": true, "because": true, "between": true, "could": true, "data": true, "from": true, "have": true, "into": true, "jepa": true, "learning": true, "model": true, "paper": true, "representation": true, "self": true, "that": true, "their": true, "there": true, "these": true, "this": true, "with": true}
+	out := []string{}
+	for _, raw := range strings.FieldsFunc(strings.ToLower(text), func(r rune) bool { return !(r >= 'a' && r <= 'z') && !(r >= '0' && r <= '9') }) {
+		if len(raw) >= 4 && !stop[raw] {
+			out = append(out, raw)
+		}
+	}
+	return out
+}
+
+func textTitle(text, fallback string) string {
+	for _, line := range strings.Split(text, "\n") {
+		line = strings.TrimSpace(line)
+		if len(line) >= 8 {
+			return shortenText(line, 160)
+		}
+	}
+	return fallback
+}
+
+func shortenText(value string, limit int) string {
+	value = strings.Join(strings.Fields(value), " ")
+	if len(value) <= limit {
+		return value
+	}
+	return value[:limit-1] + "…"
+}
+
 func propertiesContain(m map[string]string, term string) bool {
 	for k, v := range m {
 		if strings.Contains(strings.ToLower(k), term) || strings.Contains(strings.ToLower(v), term) {
@@ -368,6 +461,27 @@ func readParsedDocuments(dir string) []parsing.ParsedDocument {
 		if readJSON(filepath.Join(dir, entry.Name()), &doc) == nil {
 			docs = append(docs, doc)
 		}
+	}
+	return docs
+}
+
+func readTextDocuments(dir string) []parsing.ParsedDocument {
+	docs := []parsing.ParsedDocument{}
+	entries, err := os.ReadDir(dir)
+	if err != nil {
+		return docs
+	}
+	for _, entry := range entries {
+		if entry.IsDir() || !strings.HasSuffix(entry.Name(), ".txt") {
+			continue
+		}
+		data, err := os.ReadFile(filepath.Join(dir, entry.Name()))
+		if err != nil {
+			continue
+		}
+		paperID := strings.TrimSuffix(entry.Name(), filepath.Ext(entry.Name()))
+		text := string(data)
+		docs = append(docs, parsing.ParsedDocument{PaperID: paperID, Title: textTitle(text, paperID), Sections: []parsing.Section{{ID: "full-text", Title: "Full text", Passages: []parsing.Passage{{ID: "p1", PaperID: paperID, SectionID: "full-text", Text: text}}}}})
 	}
 	return docs
 }

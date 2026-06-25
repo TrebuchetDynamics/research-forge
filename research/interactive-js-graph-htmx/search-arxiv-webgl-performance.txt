@@ -1,0 +1,20 @@
+10.1109/tvcg.2017.2743858	What Would a Graph Look Like in This Layout? A Machine Learning Approach to Large Graph Visualization
+	DataWink: Reusing and Adapting SVG-based Visualization Examples with Large Multimodal Models
+	SVG-T2I: Scaling Up Text-to-Image Latent Diffusion Model Without Variational Autoencoder
+	Canvas-to-Image: Compositional Image Generation with Multimodal Controls
+10.1109/tvcg.2023.3326576	Reclaiming the Horizon: Novel Visualization Designs for Time-Series Data with Large Value Ranges
+	CANVAS: Commonsense-Aware Navigation System for Intuitive Human-Robot Interaction
+	GraphTrials: Visual Proofs of Graph Properties
+10.1177/14738716241229437	An Empirical Study of Counterfactual Visualization to Support Visual Causal Inference
+10.1145/3588930	Effective and Efficient PageRank-based Positioning for Graph Visualization
+	A Quality Metric for Visualization of Clusters in Graphs
+	Beyond English: Centering Multilingualism in Data Visualization
+10.1109/pacificvis56936.2023.00016	NFTVis: Visual Analysis of NFT Performance
+	Exploring the Capability of LLMs in Performing Low-Level Visual Analytic Tasks on SVG Data Visualizations
+10.1109/vis49827.2021.9623305	Towards a Survey on Static and Dynamic Hypergraph Visualizations
+	GiViP: A Visual Profiler for Distributed Graph Processing Systems
+10.1007/978-3-031-43185-2_16	Performance of Genetic Algorithms in the Context of Software Model Refactoring
+	GMine: A System for Scalable, Interactive Graph Visualization and Mining
+	SVG Decomposition for Enhancing Large Multimodal Models Visualization Comprehension: A Study with Floor Plans
+10.1109/tvcg.2025.3633909	Reframing Pattern: A Comprehensive Approach to a Composite Visual Variable
+	Evaluation of two interaction techniques for visualization of dynamic graphs

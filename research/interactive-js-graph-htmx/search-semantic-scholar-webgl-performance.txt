@@ -1,0 +1,20 @@
+10.1109/bigdata59044.2023.10386295	Accelerating Web-based Graph Visualization with Pixel-Based Edge Bundling
+10.1109/access.2023.3327008	Dash Sylvereye: A Python Library for Dashboard-Driven Visualization of Large Street Networks
+	Browsing Large Graphs with Tile Pyramids and Sleeve Routing in the Browser
+	Workflow graph editing and visualization in HTML5 and Javascript
+	Comparing Rendering Performance of Common Web Technologies for Large Graphs
+10.3390/jimaging12010045	A Cross-Device and Cross-OS Benchmark of Modern Web Animation Systems
+	Using WebGL as an Interactive Visualization Medium: Our Experience Developing SplatterJs
+10.3390/info16121088	Interactive Visualisation of Complex Street Network Graphs from OSM in New Zealand
+10.1088/1742-6596/898/7/072030	A browser-based event display for the CMS Experiment at the LHC using WebGL
+10.1109/tvcg.2021.3059294	Scalable Scalable Vector Graphics: Automatic Translation of Interactive SVGs to a Multithread VDOM for Fast Rendering
+	Comparing Interactive Web-Based Visualization Rendering Techniques
+10.58459/icce.2014.816	Detailed User Relation Visualization on Moodle
+10.30977/bul.2219-5548.2024.104.1.15	Optimizing the productivity of solutions built with the help of ReactJS and D3 libraries
+10.31219/osf.io/ypxz2	Scalable Scalable Vector Graphics: Automatic Translation of Interactive SVGs to a Multithread VDOM for Fast Rendering
+10.1145/2338714.2338719	Xflow: declarative data processing for the web
+10.1016/j.physa.2020.125506	Visualizing complex networks by leveraging community structures
+10.3138/cart.54.4.2018-0014	Hardware-Accelerating 2D Web Maps: A Case Study
+	Tit le: Towards Adaptive Decision Support: A Perspective from Intelligent and Annotated Visual Analytics for Exploring Big Urban Mobility Data
+10.5194/isprsannals-ii-2-w1-139-2013	3D visualisation of underground pipelines : Best strategy for 3D scene creation
+	Visualizing the Scale of World Economies

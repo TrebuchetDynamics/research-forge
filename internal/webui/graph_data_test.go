@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"path/filepath"
 	"strings"
 	"testing"
 )
@@ -30,6 +31,19 @@ func TestBuildCitationGraphJSONAddsStemAndHref(t *testing.T) {
 	}
 	if graph.Edges[0].Source != "10.1000/ap" || graph.Edges[0].Target != "10.1000/cat" {
 		t.Fatalf("edge = %+v", graph.Edges[0])
+	}
+}
+
+func TestBuildCitationGraphJSONPrefersKnowledgeGraphArtifact(t *testing.T) {
+	dir := t.TempDir()
+	writeJSON(t, filepath.Join(dir, "data", "knowledge-graph.json"), map[string]any{"schemaVersion": "1", "nodes": []map[string]string{{"id": "paper:10.1000/kg", "kind": "paper", "label": "KG paper"}, {"id": "concept:ignored", "kind": "concept", "label": "ignored"}}, "edges": []map[string]string{{"source": "paper:10.1000/kg", "target": "paper:10.1000/ref", "kind": "cites"}}})
+	writeCitationGraph(t, dir, sampleCitationGraph)
+	graph, err := BuildCitationGraphJSON(dir)
+	if err != nil {
+		t.Fatalf("BuildCitationGraphJSON: %v", err)
+	}
+	if len(graph.Nodes) != 2 || graph.Nodes[0].ID != "10.1000/kg" || graph.Edges[0].Target != "10.1000/ref" {
+		t.Fatalf("did not prefer knowledge graph artifact: %+v", graph)
 	}
 }
 

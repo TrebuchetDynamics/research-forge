@@ -1,0 +1,20 @@
+	GraphTrials: Visual Proofs of Graph Properties
+	Performance of Single and Double-Integrator Networks over Directed Graphs
+10.7155/jgaa.00349	The Galois Complexity of Graph Drawing: Why Numerical Solutions are Ubiquitous for Force-Directed, Spectral, and Circle Packing Drawings
+10.1109/tvcg.2017.2743858	What Would a Graph Look Like in This Layout? A Machine Learning Approach to Large Graph Visualization
+	Visual Similarity Perception of Directed Acyclic Graphs: A Study on Influencing Factors
+	A Quality Metric for Visualization of Clusters in Graphs
+10.1177/14738716241229437	An Empirical Study of Counterfactual Visualization to Support Visual Causal Inference
+10.1145/3588930	Effective and Efficient PageRank-based Positioning for Graph Visualization
+	Anisotropic Radial Layout for Visualizing Centrality and Structure in Graphs
+	Algorithms for Visualizing Phylogenetic Networks
+	Beyond English: Centering Multilingualism in Data Visualization
+	GiViP: A Visual Profiler for Distributed Graph Processing Systems
+	Evaluation of two interaction techniques for visualization of dynamic graphs
+10.1109/vis49827.2021.9623305	Towards a Survey on Static and Dynamic Hypergraph Visualizations
+10.1109/tvcg.2022.3209361	NAS-Navigator: Visual Steering for Explainable One-Shot Deep Neural Network Synthesis
+10.1109/tvcg.2023.3326576	Reclaiming the Horizon: Novel Visualization Designs for Time-Series Data with Large Value Ranges
+	Embedding Graphs under Centrality Constraints for Network Visualization
+	Midterm Status Report of the ILC Technology Network Activities
+10.1109/tvcg.2025.3633909	Reframing Pattern: A Comprehensive Approach to a Composite Visual Variable
+	Algorithms and Bounds for Drawing Directed Graphs

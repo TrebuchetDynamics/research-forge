@@ -1,0 +1,20 @@
+10.7155/jgaa.00349	The Galois Complexity of Graph Drawing: Why Numerical Solutions are Ubiquitous for Force-Directed, Spectral, and Circle Packing Drawings
+	Counting cliques without generalized theta graphs
+10.7155/jgaa.00358	Planar Induced Subgraphs of Sparse Graphs
+10.1002/jgt.22062	Partitioning Perfect Graphs into Stars
+10.1002/jgt.20312	Every longest circuit of a 3-connected, $K_{3,3}$-minor free graph has a chord
+	Template-Based Graph Clustering
+	GMine: A System for Scalable, Interactive Graph Visualization and Mining
+10.1145/3588930	Effective and Efficient PageRank-based Positioning for Graph Visualization
+10.7155/jgaa.00479	Crossing Minimization for 1-page and 2-page Drawings of Graphs with Bounded Treewidth
+	Visual Similarity Perception of Directed Acyclic Graphs: A Study on Influencing Factors
+	GraphTrials: Visual Proofs of Graph Properties
+10.7155/jgaa.00420	Hamiltonian chromatic number of block graphs
+10.1002/jgt.22673	A limit theorem for small cliques in inhomogeneous random graphs
+	A Quality Metric for Visualization of Clusters in Graphs
+	Evaluation of two interaction techniques for visualization of dynamic graphs
+	Performance of Single and Double-Integrator Networks over Directed Graphs
+10.1007/978-3-030-78946-6_4	Graph Rewriting and Relabeling with PBPO+
+10.7155/jgaa.00545	Minimal Representations of Order Types by Geometric Graphs
+	GiViP: A Visual Profiler for Distributed Graph Processing Systems
+10.7155/jgaa.00473	Drawing Planar Graphs with Few Geometric Primitives

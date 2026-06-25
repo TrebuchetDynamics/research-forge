@@ -1,0 +1,20 @@
+10.1016/j.cag.2015.07.001	3DHOP: 3D Heritage Online Presenter
+10.3389/fninf.2014.00025	A web-portal for interactive data exploration, visualization, and hypothesis testing
+10.2196/17964	Visualization Environment for Federated Knowledge Graphs: Development of an Interactive Biomedical Query Language and Web Application Interface
+10.1162/netn_a_00044	NeuroCave: A web-based immersive visualization platform for exploring connectome datasets
+10.1111/cgf.14738	State of the Art of Molecular Visualization in Immersive Virtual Environments
+10.1007/s11042-025-20746-w	A WebGL-based 3D furniture modeling system via light-field descriptor and interactive force-directed visualization
+10.3390/cimb46020084	A Concise Review of Biomolecule Visualization
+10.3390/app112211062	ATON: An Open-Source Framework for Creating Immersive, Collaborative and Liquid Web-Apps for Cultural Heritage
+10.1186/s42492-025-00193-y	Graph visualization efficiency of popular web-based libraries
+10.1007/978-3-031-74738-0_4	Leveraging Internet of Things Network Metadata for Cost-Effective Automatic Smart Building Visualization
+10.1101/229484	Open Source Brain: a collaborative resource for visualizing, analyzing, simulating and developing standardized models of neurons and circuits
+10.32614/cran.package.threejs	threejs: Interactive 3D Scatter Plots, Networks and Globes
+10.3390/informatics4030028	Web Apps Come of Age for Molecular Sciences
+10.48550/arxiv.1811.10309	HEP Software Foundation Community White Paper Working Group --- Visualization
+10.1117/1.jbo.27.8.083008	MCX Cloud—a modern, scalable, high-performance and in-browser Monte Carlo simulation platform with cloud computing
+10.1186/s12859-018-2393-x	3D Network exploration and visualisation for lifespan data
+10.25772/6mdd-2b85	Big Data Visualization Platform for Mixed Reality
+10.15607/rss.2023.xix.015	AnyTeleop: A General Vision-Based Dexterous Robot Arm-Hand Teleoperation System
+10.4995/var.2022.15426	Dissemination, assessment and management of historic buildings by thematic virtual tours and 3D models
+10.1109/ldav64567.2024.00009	Web-based Visualization and Analytics of Petascale data: Equity as a Tide that Lifts All Boats
