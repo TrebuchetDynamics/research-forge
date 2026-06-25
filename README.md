@@ -30,7 +30,7 @@ The command-line tool is `rforge`.
 - Deduplication reporting
 - Offline forge fixture workflow (`rforge forge`)
 - Package audit and replay
-- Local UI skeleton (`rforge ui`)
+- Local Go + HTMX research cockpit (`rforge ui`)
 
 **Experimental:**
 - Document parsing
@@ -51,7 +51,7 @@ curl -fsSL https://raw.githubusercontent.com/TrebuchetDynamics/research-forge/ma
 
 The installer downloads the latest release binary and does not require Go. Run `rforge version` to verify.
 
-To build from source with Go 1.22+:
+To build from source with Go 1.26+:
 
 ```sh
 go install github.com/TrebuchetDynamics/research-forge/cmd/rforge@latest
@@ -149,7 +149,7 @@ review.rforgepkg
 rforge --project ./my-review ui
 ```
 
-Opens a local Go + HTMX web interface for browsing references, provenance, screening decisions, and evidence.
+Opens a local Go + HTMX web interface for browsing papers, graph/artifact views, provenance, screening decisions, and evidence.
 
 ## LLM and agent usage
 
