@@ -38,6 +38,50 @@ func TestCreateReviewPackageFormatIncludesManifestRedactionAndChecksums(t *testi
 	}
 }
 
+func TestCreateSkipsSymlinkedProjectFiles(t *testing.T) {
+	project := t.TempDir()
+	write(t, filepath.Join(project, "rforge.project.toml"), "title='Review'\n")
+	secret := filepath.Join(t.TempDir(), "secret.json")
+	write(t, secret, `{"token":"secret"}`)
+	link := filepath.Join(project, "data", "source-plans", "leak.json")
+	if err := os.MkdirAll(filepath.Dir(link), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Symlink(secret, link); err != nil {
+		t.Skipf("symlink unsupported: %v", err)
+	}
+	out := filepath.Join(t.TempDir(), "review.rforgepkg")
+	pkg, err := Create(project, out, Options{})
+	if err != nil {
+		t.Fatalf("Create: %v", err)
+	}
+	if _, err := os.Stat(filepath.Join(out, "project", "data", "source-plans", "leak.json")); !os.IsNotExist(err) {
+		t.Fatalf("symlink target copied into package: err=%v", err)
+	}
+	for _, ref := range pkg.Manifest.SourcePlanRefs {
+		if strings.Contains(ref, "leak.json") {
+			t.Fatalf("symlinked source plan recorded in manifest: %#v", pkg.Manifest.SourcePlanRefs)
+		}
+	}
+}
+
+func TestCreateRejectsDangerousPackageOutputTargets(t *testing.T) {
+	project := t.TempDir()
+	write(t, filepath.Join(project, "rforge.project.toml"), "title='Review'\n")
+	for _, out := range []string{project, filepath.Dir(project)} {
+		if _, err := Create(project, out, Options{}); err == nil {
+			t.Fatalf("Create accepted dangerous output target %s", out)
+		}
+	}
+	cwd, err := os.Getwd()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := Create(project, cwd, Options{}); err == nil {
+		t.Fatalf("Create accepted cwd output target %s", cwd)
+	}
+}
+
 func write(t *testing.T, path, text string) {
 	t.Helper()
 	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {

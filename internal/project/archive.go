@@ -9,6 +9,9 @@ import (
 )
 
 func Archive(projectPath, archivePath string) error {
+	if err := guardArchiveOutputPath(projectPath, archivePath); err != nil {
+		return err
+	}
 	out, err := os.Create(archivePath)
 	if err != nil {
 		return err
@@ -21,6 +24,9 @@ func Archive(projectPath, archivePath string) error {
 			return err
 		}
 		if info.IsDir() {
+			return nil
+		}
+		if !info.Mode().IsRegular() {
 			return nil
 		}
 		rel, err := filepath.Rel(projectPath, path)
@@ -39,10 +45,34 @@ func Archive(projectPath, archivePath string) error {
 		if err != nil {
 			return err
 		}
-		defer in.Close()
-		_, err = io.Copy(tw, in)
-		return err
+		_, copyErr := io.Copy(tw, in)
+		closeErr := in.Close()
+		if copyErr != nil {
+			return copyErr
+		}
+		return closeErr
 	})
+}
+
+func guardArchiveOutputPath(projectPath, archivePath string) error {
+	projectAbs, err := filepath.Abs(projectPath)
+	if err != nil {
+		return err
+	}
+	archiveAbs, err := filepath.Abs(archivePath)
+	if err != nil {
+		return err
+	}
+	if info, err := os.Lstat(archiveAbs); err == nil && info.Mode()&os.ModeSymlink != 0 {
+		return os.ErrPermission
+	} else if err != nil && !os.IsNotExist(err) {
+		return err
+	}
+	rel, err := filepath.Rel(projectAbs, archiveAbs)
+	if err == nil && rel != ".." && !strings.HasPrefix(rel, ".."+string(filepath.Separator)) {
+		return os.ErrPermission
+	}
+	return nil
 }
 
 func Restore(archivePath, destination string) error {
@@ -65,6 +95,9 @@ func Restore(archivePath, destination string) error {
 			return os.ErrPermission
 		}
 		target := filepath.Join(destination, clean)
+		if err := guardRestoreTarget(destination, target); err != nil {
+			return err
+		}
 		switch hdr.Typeflag {
 		case tar.TypeDir:
 			if err := os.MkdirAll(target, hdr.FileInfo().Mode()); err != nil {
@@ -88,6 +121,42 @@ func Restore(archivePath, destination string) error {
 		}
 		if err := out.Close(); err != nil {
 			return err
+		}
+	}
+	return nil
+}
+
+func guardRestoreTarget(destination, target string) error {
+	destinationAbs, err := filepath.Abs(destination)
+	if err != nil {
+		return err
+	}
+	if info, err := os.Lstat(destinationAbs); err == nil && info.Mode()&os.ModeSymlink != 0 {
+		return os.ErrPermission
+	}
+	targetAbs, err := filepath.Abs(target)
+	if err != nil {
+		return err
+	}
+	rel, err := filepath.Rel(destinationAbs, targetAbs)
+	if err != nil || rel == ".." || strings.HasPrefix(rel, ".."+string(filepath.Separator)) {
+		return os.ErrPermission
+	}
+	current := destinationAbs
+	for _, part := range strings.Split(filepath.Clean(rel), string(filepath.Separator)) {
+		if part == "." || part == "" {
+			continue
+		}
+		current = filepath.Join(current, part)
+		info, err := os.Lstat(current)
+		if os.IsNotExist(err) {
+			return nil
+		}
+		if err != nil {
+			return err
+		}
+		if info.Mode()&os.ModeSymlink != 0 {
+			return os.ErrPermission
 		}
 	}
 	return nil

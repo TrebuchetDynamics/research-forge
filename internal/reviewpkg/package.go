@@ -4,6 +4,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -73,9 +74,14 @@ type RedactionItem struct {
 	Reason string `json:"reason"`
 }
 
+var errSkipCopy = errors.New("skip non-regular package input")
+
 func Create(projectPath, packagePath string, opts Options) (Package, error) {
 	if strings.TrimSpace(projectPath) == "" || strings.TrimSpace(packagePath) == "" {
 		return Package{}, fmt.Errorf("project and package paths are required")
+	}
+	if err := guardPackageOutputPath(projectPath, packagePath); err != nil {
+		return Package{}, err
 	}
 	if err := guardReferenceManagerPrivacyGate(projectPath); err != nil {
 		return Package{}, err
@@ -161,6 +167,35 @@ func Create(projectPath, packagePath string, opts Options) (Package, error) {
 	return pkg, nil
 }
 
+func guardPackageOutputPath(projectPath, packagePath string) error {
+	projectAbs, err := filepath.Abs(projectPath)
+	if err != nil {
+		return err
+	}
+	packageAbs, err := filepath.Abs(packagePath)
+	if err != nil {
+		return err
+	}
+	cwd, err := os.Getwd()
+	if err != nil {
+		return err
+	}
+	cwdAbs, err := filepath.Abs(cwd)
+	if err != nil {
+		return err
+	}
+	volumeRoot := filepath.VolumeName(packageAbs) + string(os.PathSeparator)
+	if packageAbs == volumeRoot || packageAbs == cwdAbs || packageAbs == projectAbs || isAncestor(packageAbs, projectAbs) {
+		return fmt.Errorf("refusing to overwrite unsafe package output path %s", packagePath)
+	}
+	return nil
+}
+
+func isAncestor(parent, child string) bool {
+	rel, err := filepath.Rel(parent, child)
+	return err == nil && rel != "." && rel != ".." && !strings.HasPrefix(rel, ".."+string(os.PathSeparator))
+}
+
 func guardReferenceManagerPrivacyGate(projectPath string) error {
 	libraryPath := filepath.Join(projectPath, "data", "library.json")
 	if !exists(libraryPath) {
@@ -197,8 +232,8 @@ func copyGlob(projectPath, packagePath, pattern string, onCopy func(string)) {
 	matches, _ := filepath.Glob(filepath.Join(projectPath, filepath.FromSlash(pattern)))
 	sort.Strings(matches)
 	for _, match := range matches {
-		info, err := os.Stat(match)
-		if err != nil || info.IsDir() {
+		info, err := os.Lstat(match)
+		if err != nil || !info.Mode().IsRegular() {
 			continue
 		}
 		rel, _ := filepath.Rel(projectPath, match)
@@ -217,15 +252,29 @@ func copyDirFiles(projectPath, packagePath, dir string) error {
 		if err != nil || d.IsDir() {
 			return err
 		}
+		if d.Type()&os.ModeSymlink != 0 {
+			return nil
+		}
 		rel, _ := filepath.Rel(projectPath, path)
-		return copyIfExists(projectPath, packagePath, filepath.ToSlash(rel))
+		if err := copyIfExists(projectPath, packagePath, filepath.ToSlash(rel)); errors.Is(err, errSkipCopy) {
+			return nil
+		} else {
+			return err
+		}
 	})
 }
 
 func copyIfExists(projectPath, packagePath, rel string) error {
 	src := filepath.Join(projectPath, filepath.FromSlash(rel))
-	if !exists(src) {
+	info, err := os.Lstat(src)
+	if os.IsNotExist(err) {
 		return nil
+	}
+	if err != nil {
+		return err
+	}
+	if !info.Mode().IsRegular() {
+		return errSkipCopy
 	}
 	dst := filepath.Join(packagePath, "project", filepath.FromSlash(rel))
 	if err := os.MkdirAll(filepath.Dir(dst), 0o755); err != nil {
