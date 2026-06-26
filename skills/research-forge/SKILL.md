@@ -100,7 +100,7 @@ rforge search batch --queries queries.txt --sources all --out <dir> \
   --dedupe doi,title --continue-on-error --stats
 
 # Source presets: all, scholarly-fast, biomedical, preprints, datasets, open.
-rforge search batch --queries queries.txt --sources scholarly-fast --out <dir> --stats
+rforge --project <path> search batch --queries queries.txt --sources scholarly-fast --out <dir> --stats --fetch-pdfs
 ```
 
 If using individual `rforge search` commands instead of `search batch`, save every source/query result to a file and run coverage stats before reporting:

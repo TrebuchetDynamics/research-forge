@@ -785,6 +785,63 @@ func TestExecuteSearchBatchWritesDedupedSweepArtifacts(t *testing.T) {
 	}
 }
 
+func TestExecuteSearchBatchProjectFetchesLegalPDFsAsText(t *testing.T) {
+	var server *httptest.Server
+	server = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch {
+		case strings.HasPrefix(r.URL.EscapedPath(), "/api/search/articles/"):
+			_, _ = w.Write([]byte(fmt.Sprintf(`{"results":[{"id":"doaj-1","bibjson":{"title":"Legal OA article","year":"2026","journal":{"title":"OA Journal"},"identifier":[{"type":"doi","id":"10.1000/legal"}],"link":[{"type":"fulltext","url":"%s/paper.pdf"}],"license":[{"type":"CC-BY"}]}}]}`, server.URL)))
+		case r.URL.Path == "/paper.pdf":
+			_, _ = w.Write([]byte("%PDF-1.4 legal fixture"))
+		default:
+			t.Fatalf("unexpected path: %s", r.URL.Path)
+		}
+	}))
+	defer server.Close()
+	t.Setenv("RFORGE_DOAJ_URL", server.URL)
+	setFakePDFTools(t)
+	dir := t.TempDir()
+	project := filepath.Join(dir, "project")
+	if code := Execute([]string{"project", "create", project, "--title", "Legal OA"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("project create exit code = %d", code)
+	}
+	out := filepath.Join(dir, "out")
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+
+	code := Execute([]string{"--json", "--project", project, "search", "batch", "--query", "legal oa", "--sources", "doaj", "--limit", "1", "--out", out, "--fetch-pdfs"}, stdout, stderr)
+	if code != 0 {
+		t.Fatalf("exit code = %d stderr=%s stdout=%s", code, stderr.String(), stdout.String())
+	}
+	if _, err := os.Stat(filepath.Join(project, "documents", "open-access", "10-1000-legal.pdf")); err != nil {
+		t.Fatalf("missing fetched PDF: %v", err)
+	}
+	text, err := os.ReadFile(filepath.Join(project, "documents", "text", "10-1000-legal.txt"))
+	if err != nil || !strings.Contains(string(text), "paper text from PDF") {
+		t.Fatalf("text = %q, err=%v", text, err)
+	}
+	store, err := library.OpenStore(filepath.Join(project, "data", "library.json"))
+	if err != nil {
+		t.Fatalf("OpenStore: %v", err)
+	}
+	records, err := store.List()
+	if err != nil || len(records) != 1 {
+		t.Fatalf("records = %#v, err=%v", records, err)
+	}
+	var envelope struct {
+		Data struct {
+			Imported int `json:"imported"`
+			Fetched  int `json:"fetched"`
+		} `json:"data"`
+	}
+	if err := json.Unmarshal(stdout.Bytes(), &envelope); err != nil {
+		t.Fatalf("stdout is not JSON: %v\n%s", err, stdout.String())
+	}
+	if envelope.Data.Imported != 1 || envelope.Data.Fetched != 1 {
+		t.Fatalf("envelope = %#v", envelope)
+	}
+}
+
 func TestSearchBatchSourcePresetsExpandAllAndNamedGroups(t *testing.T) {
 	all := splitSearchBatchList("all")
 	for _, want := range []string{"openalex", "crossref", "semantic-scholar", "arxiv", "pubmed", "chemrxiv", "datacite", "biostudies", "clinicaltrials", "nasa-ads"} {

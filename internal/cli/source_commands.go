@@ -687,6 +687,7 @@ type searchBatchOptions struct {
 	OutDir          string
 	ContinueOnError bool
 	WriteStats      bool
+	FetchPDFs       bool
 }
 
 type searchBatchFailure struct {
@@ -709,7 +710,7 @@ type searchBatchManifest struct {
 func executeSearchBatch(args []string, stdout, stderr io.Writer, opts globalOptions) int {
 	batch, ok := parseSearchBatch(args)
 	if !ok {
-		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge search batch --queries <file> --sources all|scholarly-fast|biomedical|preprints|datasets|open|oa|openalex,crossref --out <dir> [--query <query>] [--limit N] [--continue-on-error] [--stats]")
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge search batch --queries <file> --sources all|scholarly-fast|biomedical|preprints|datasets|open|oa|openalex,crossref --out <dir> [--query <query>] [--limit N] [--continue-on-error] [--stats] [--fetch-pdfs]")
 	}
 	queries := append([]string{}, batch.Queries...)
 	if batch.QueriesFile != "" {
@@ -721,7 +722,10 @@ func executeSearchBatch(args []string, stdout, stderr io.Writer, opts globalOpti
 	}
 	queries = uniqueNonEmptyStrings(queries)
 	if len(queries) == 0 || len(batch.Sources) == 0 || strings.TrimSpace(batch.OutDir) == "" {
-		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge search batch --queries <file> --sources all|scholarly-fast|biomedical|preprints|datasets|open|oa|openalex,crossref --out <dir> [--query <query>] [--limit N] [--continue-on-error] [--stats]")
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge search batch --queries <file> --sources all|scholarly-fast|biomedical|preprints|datasets|open|oa|openalex,crossref --out <dir> [--query <query>] [--limit N] [--continue-on-error] [--stats] [--fetch-pdfs]")
+	}
+	if batch.FetchPDFs && opts.Project == "" {
+		return writeError(stdout, stderr, opts, 2, "missing_project", "--project is required for search batch --fetch-pdfs")
 	}
 	if err := os.MkdirAll(filepath.Join(batch.OutDir, "raw"), 0o755); err != nil {
 		return writeError(stdout, stderr, opts, 1, "search_batch_out_failed", err.Error())
@@ -802,10 +806,32 @@ func executeSearchBatch(args []string, stdout, stderr io.Writer, opts globalOpti
 			return writeError(stdout, stderr, opts, 1, "search_batch_write_failed", err.Error())
 		}
 	}
+	imported, skippedDuplicate, skippedNoIdentifier := 0, 0, 0
+	if opts.Project != "" {
+		store, err := library.OpenStore(filepath.Join(opts.Project, "data", "library.json"))
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "library_open_failed", err.Error())
+		}
+		summary, err := store.ImportRecords(deduped)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "search_batch_import_failed", err.Error())
+		}
+		imported, skippedDuplicate, skippedNoIdentifier = summary.Imported, len(summary.SkippedDuplicate), summary.SkippedNoIdentifier
+	}
+	fetchResult := fetchPDFsResult{}
+	if batch.FetchPDFs {
+		fetchResult = fetchProjectPDFs(context.Background(), opts.Project, deduped)
+	}
 	if opts.JSON {
-		return writeJSON(stdout, 0, map[string]any{"out": batch.OutDir, "results": len(allPapers), "deduped": len(deduped), "failures": len(failures), "manifest": filepath.Join(batch.OutDir, "manifest.json")})
+		return writeJSON(stdout, 0, map[string]any{"out": batch.OutDir, "results": len(allPapers), "deduped": len(deduped), "failures": len(failures), "manifest": filepath.Join(batch.OutDir, "manifest.json"), "imported": imported, "skippedDuplicate": skippedDuplicate, "skippedNoIdentifier": skippedNoIdentifier, "fetched": len(fetchResult.assets), "fetchFailed": len(fetchResult.failures), "fetchSkipped": fetchResult.skipped})
 	}
 	fmt.Fprintf(stdout, "searched %d querie(s) across %d source(s): %d records, %d deduped, %d failure(s)\n", len(queries), len(batch.Sources), len(allPapers), len(deduped), len(failures))
+	if opts.Project != "" {
+		fmt.Fprintf(stdout, "imported %d records to library; skipped %d duplicates, %d without identifiers\n", imported, skippedDuplicate, skippedNoIdentifier)
+	}
+	if batch.FetchPDFs {
+		fmt.Fprintf(stdout, "fetched %d legal PDFs; skipped %d; failed %d\n", len(fetchResult.assets), fetchResult.skipped, len(fetchResult.failures))
+	}
 	fmt.Fprintf(stdout, "wrote %s\n", batch.OutDir)
 	return 0
 }
@@ -1795,6 +1821,8 @@ func parseSearchBatch(args []string) (searchBatchOptions, bool) {
 			batch.ContinueOnError = true
 		case "--stats":
 			batch.WriteStats = true
+		case "--fetch-pdfs":
+			batch.FetchPDFs = true
 		case "--dedupe":
 			if i+1 >= len(args) {
 				return searchBatchOptions{}, false
@@ -1905,7 +1933,7 @@ func writeSearchBatchJSONL(path string, papers []library.PaperRecord) error {
 }
 
 func dedupeSearchBatchPapers(papers []library.PaperRecord) []library.PaperRecord {
-	seen := map[string]struct{}{}
+	seen := map[string]int{}
 	out := []library.PaperRecord{}
 	for _, paper := range papers {
 		key := strings.ToLower(strings.TrimSpace(paper.Identifiers.DOI))
@@ -1915,10 +1943,11 @@ func dedupeSearchBatchPapers(papers []library.PaperRecord) []library.PaperRecord
 		if key == "" {
 			key = fmt.Sprintf("record-%d", len(out))
 		}
-		if _, ok := seen[key]; ok {
+		if existing, ok := seen[key]; ok {
+			out[existing] = library.MergeDuplicate(out[existing], paper)
 			continue
 		}
-		seen[key] = struct{}{}
+		seen[key] = len(out)
 		out = append(out, paper)
 	}
 	return out

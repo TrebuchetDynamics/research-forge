@@ -3687,6 +3687,7 @@ func printHelp(w io.Writer) {
 	fmt.Fprintln(w, "  rforge automation policy [--action <action>]")
 	fmt.Fprintln(w, "  rforge search --source openalex|arxiv|crossref|semantic-scholar|europepmc|pubmed --query <query> [--category arxiv-category] [--filter source-filter] [--from-year YYYY] [--to-year YYYY] [--type article] [--open-access true|false] [--concept C41008148]")
 	fmt.Fprintln(w, "  rforge search import --source openalex --query <query> --pages N [--resume-state state.json]")
+	fmt.Fprintln(w, "  rforge --project <path> search batch --queries <file> --sources <preset|list> --out <dir> [--fetch-pdfs]")
 	fmt.Fprintln(w, "  rforge citations expand --source semantic-scholar|openalex|crossref --paper <id> --direction references|citations|both --depth N [--max-records N] --out <file> [--import-library]")
 	fmt.Fprintln(w, "  rforge citations report --graph <graph.json> --out <report.md>")
 	fmt.Fprintln(w, "  rforge oa lookup <doi>")

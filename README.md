@@ -103,8 +103,9 @@ rforge package replay ./review.rforgepkg
 Pool a single continuous metric (e.g. solar-to-hydrogen efficiency %) across device papers without requiring treatment/control arms:
 
 ```sh
-# Search with the chemistry preset (OpenAlex + Crossref + Europe PMC + ChemRxiv + more)
-rforge search batch --sources chemistry --project ./my-review --stats
+# Search with the chemistry preset, import records, and fetch legal OA PDFs as text
+rforge --project ./my-review search batch --queries queries.txt --sources chemistry \
+  --out ./my-review/searches --stats --fetch-pdfs
 
 # Prepare a benchmarking run — variance floor per ADR-0007, moderator fields auto-wired
 rforge analysis prepare my-run --effect raw-continuous --variance-floor 0.0025 \
