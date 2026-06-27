@@ -1,0 +1,43 @@
+---
+title: Getting started
+description: Install rforge and create your first review workspace.
+---
+
+## Before you install
+
+Use `rforge` when you are building a literature review that must be checked later: what you searched, which papers were kept or excluded, which passages support the claims, and how the final package can be replayed.
+
+## Install
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/TrebuchetDynamics/research-forge/main/install.sh | bash
+rforge version
+```
+
+Build from source when you already have Go 1.26+:
+
+```sh
+go install github.com/TrebuchetDynamics/research-forge/cmd/rforge@latest
+```
+
+## Create a project
+
+```sh
+rforge project create ./my-review --title "High entropy superconductors"
+```
+
+## Search and import papers
+
+```sh
+rforge search import --source openalex --query "high entropy superconductors" \
+  --pages 3 --project ./my-review
+rforge duplicate report --project ./my-review
+```
+
+## Open the local UI
+
+```sh
+rforge --project ./my-review ui
+```
+
+The UI is local and helps browse papers, provenance, graph views, screening decisions, and evidence.

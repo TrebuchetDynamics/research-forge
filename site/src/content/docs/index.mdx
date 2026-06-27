@@ -1,0 +1,76 @@
+---
+title: ResearchForge
+description: A command-line toolkit for auditable systematic literature reviews.
+template: splash
+hero:
+  tagline: Turn a research question into a review package with logged searches, screened studies, evidence passages, analysis outputs, and replayable provenance.
+  actions:
+    - text: Start a review
+      link: /getting-started/
+      icon: right-arrow
+      variant: primary
+    - text: View on GitHub
+      link: https://github.com/TrebuchetDynamics/research-forge
+      icon: external
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+## What is rforge for?
+
+`rforge` is for researchers, reviewers, and research agents who need more than a paper summary. It helps build an auditable systematic review: search scholarly sources, import papers, deduplicate records, screen studies, extract source-backed evidence, run analysis, and export a package another reviewer can audit offline.
+
+Use it when you need to answer: **“Where did this claim come from, what was excluded, and can someone replay the work?”**
+
+<CardGrid>
+  <Card title="Start from a question" icon="seti:markdown">
+    Create a local review workspace with a protocol, approvals, source plans, and provenance logs.
+  </Card>
+  <Card title="Search many scholarly sources" icon="seti:search">
+    Query OpenAlex, Crossref, PubMed, arXiv, Semantic Scholar, DOAJ, CORE, NASA ADS, and more.
+  </Card>
+  <Card title="Keep the audit trail" icon="seti:log">
+    Record source refs, dedupe decisions, screening outcomes, exact evidence passages, and analysis settings.
+  </Card>
+  <Card title="Ship a replayable package" icon="seti:archive">
+    Export a review package with checksums, redaction notes, reports, and replay/audit commands.
+  </Card>
+</CardGrid>
+
+## A typical run
+
+```sh
+rforge project create ./my-review --title "Artificial photosynthesis review"
+rforge --project ./my-review search batch --queries queries.txt --sources scholarly-fast --out ./my-review/searches --stats
+rforge duplicate report --project ./my-review
+rforge --project ./my-review ui
+```
+
+## Let your agent do the legwork
+
+Ask Claude, Pi, Codex, OpenCode, or another coding agent to install the ResearchForge skill pack from GitHub and run the search workflow for you.
+
+```text
+Read https://github.com/TrebuchetDynamics/research-forge/blob/main/SKILLS.md,
+install the ResearchForge skills, then use rforge to research: <your topic>
+```
+
+The pack includes the main research skill plus specialist skills for source ingestion, legal PDF/document handling, screening, evidence extraction, meta-analysis, reporting, and review-package release checks. `rforge` gives the agent tools, logs, source refs, and replayable outputs instead of an untraceable summary.
+
+## What you get
+
+- a local project store for papers, decisions, evidence, and provenance;
+- repeatable source searches and imports;
+- an agent-friendly workflow for Claude, Pi, Codex, OpenCode, and similar tools;
+- deduplication and screening records;
+- analysis and report artifacts;
+- a `.rforgepkg` review package that can be audited and replayed.
+
+<div class="cta-panel">
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/TrebuchetDynamics/research-forge/main/install.sh | bash
+rforge version
+```
+
+</div>

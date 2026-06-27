@@ -25,12 +25,8 @@ func TestExternalE2EArtificialPhotosynthesisWorkspace(t *testing.T) {
 	}
 	t.Cleanup(func() { _ = os.Chdir(oldwd) })
 
-	configBytes, err := os.ReadFile(filepath.Join(target, ".researchforge"))
-	if err != nil {
+	if _, err := os.ReadFile(filepath.Join(target, ".researchforge")); err != nil {
 		t.Fatalf("external target missing .researchforge: %v", err)
-	}
-	if !strings.Contains(string(configBytes), `e2e_topic = "artificial photosynthesis"`) {
-		t.Fatalf("external target .researchforge missing artificial photosynthesis topic:\n%s", string(configBytes))
 	}
 
 	stdout := new(bytes.Buffer)
@@ -367,13 +363,11 @@ func TestE2EProjectCreateInsideRepoUsesArtificialPhotosynthesisDefaults(t *testi
 		t.Fatalf("repo config not created: %v", err)
 	}
 	config := string(configBytes)
-	for _, want := range []string{
-		`default_project_path = "research-forge"`,
-		`e2e_topic = "artificial photosynthesis"`,
-	} {
-		if !strings.Contains(config, want) {
-			t.Fatalf(".researchforge missing %q:\n%s", want, config)
-		}
+	if want := `default_project_path = "research-forge"`; !strings.Contains(config, want) {
+		t.Fatalf(".researchforge missing %q:\n%s", want, config)
+	}
+	if strings.Contains(config, "e2e_topic") {
+		t.Fatalf(".researchforge should not contain e2e-only metadata:\n%s", config)
 	}
 
 	projectDir := filepath.Join(repo, "research-forge")

@@ -2,9 +2,15 @@
 /bin/
 /dist/
 /build/
+/site/dist/
 *.exe
 *.test
 *.out
+
+# Node/Astro docs site
+/site/node_modules/
+/site/.astro/
+/site/.wrangler/
 
 # Go workspace/cache artifacts
 /vendor/

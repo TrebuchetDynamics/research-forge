@@ -1,0 +1,40 @@
+---
+title: Source connectors
+description: Scholarly sources and credential rules.
+---
+
+ResearchForge connectors are local-first and explicit about outbound data, credentials, and API terms.
+
+## Common sources
+
+- OpenAlex
+- Crossref
+- Semantic Scholar
+- PubMed and Europe PMC
+- arXiv
+- NASA ADS
+- DOAJ and CORE
+- bioRxiv / medRxiv
+- DataCite, Zenodo, OSF, Dryad, figshare, and other dataset sources
+
+## Batch search
+
+```sh
+rforge --project ./my-review search batch --queries queries.txt \
+  --sources all --out ./my-review/searches --stats
+```
+
+Useful presets include `scholarly-fast`, `biomedical`, `preprints`, `datasets`, `open`, `oa`, and `chemistry`.
+
+## Credentials
+
+Secrets stay outside project manifests and are redacted from provenance/output. Examples:
+
+| Source | Config |
+| --- | --- |
+| PubMed | `RFORGE_PUBMED_API_KEY`, `RFORGE_PUBMED_TOOL`, `RFORGE_PUBMED_EMAIL` |
+| Semantic Scholar | API key when endpoint tier requires it |
+| NASA ADS | `RFORGE_ADS_TOKEN` |
+| CORE | API key when required |
+
+Normal tests use fixtures or mocked HTTP servers, not live APIs.

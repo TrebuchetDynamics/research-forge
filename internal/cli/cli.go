@@ -3654,7 +3654,7 @@ func writeRepoConfigForProject(proj project.Project) error {
 	if err != nil {
 		return nil
 	}
-	content := fmt.Sprintf("default_project_path = %q\ne2e_topic = %q\n", filepath.Base(proj.Path), "artificial photosynthesis")
+	content := fmt.Sprintf("default_project_path = %q\n", filepath.Base(proj.Path))
 	return os.WriteFile(filepath.Join(repoRoot, ".researchforge"), []byte(content), 0o644)
 }
 

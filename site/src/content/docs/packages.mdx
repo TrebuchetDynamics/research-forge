@@ -1,0 +1,42 @@
+---
+title: Review packages
+description: Audit and replay outputs from a ResearchForge project.
+---
+
+A review package is the portable artifact behind a systematic review. It should let another reviewer answer:
+
+- What question and protocol drove the review?
+- Which sources were searched?
+- Which records were imported, merged, screened, excluded, or included?
+- Which full-text assets were legally acquired?
+- Which passages support accepted evidence?
+- Which analysis inputs, settings, warnings, and outputs produced the result?
+- Can the workflow be replayed without private local state?
+
+## Shape
+
+```text
+review.rforgepkg/
+  manifest.json
+  checksums.sha256
+  redaction-report.json
+  replay.sh
+  audit-report.json
+  project/
+    rforge.project.toml
+    rforge.lock.json
+    data/
+    documents/
+    parsed/
+    analysis/
+    reports/
+```
+
+## Verify
+
+```sh
+rforge package audit ./review.rforgepkg
+rforge package replay ./review.rforgepkg
+```
+
+Packages exclude secrets, private paths, restricted PDFs, private reviewer notes, temporary clones, and unsafe caches unless explicitly approved and shareable.

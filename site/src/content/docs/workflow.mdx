@@ -1,0 +1,50 @@
+---
+title: Core workflow
+description: The shortest path from question to auditable report.
+---
+
+## 1. Define the review
+
+```sh
+rforge forge init --project ./my-review \
+  --question "Do artificial photosynthesis catalysts improve solar fuel outcomes?"
+```
+
+## 2. Approve gates
+
+```sh
+rforge forge approve --project ./my-review --gate "question approval" --note accepted
+rforge forge approve --project ./my-review --gate "protocol approval" --note accepted
+rforge forge approve --project ./my-review --gate "network/API approval" --note accepted
+```
+
+## 3. Search, import, and dedupe
+
+```sh
+rforge --project ./my-review search batch --queries queries.txt \
+  --sources scholarly-fast --out ./my-review/searches --stats --fetch-pdfs
+rforge duplicate report --project ./my-review
+```
+
+`--fetch-pdfs` only fetches legal open-access PDF candidates and stores text derivatives for review.
+
+## 4. Screen and extract evidence
+
+Use screening commands and evidence extraction to record inclusion decisions and source-backed claims. Human approval gates remain part of the workflow; rforge stores the evidence, not unstated judgment.
+
+## 5. Analyze and report
+
+```sh
+rforge analysis prepare my-run --effect raw-continuous --variance-floor 0.0025
+rforge analysis ready my-run
+rforge analysis run my-run
+rforge report build --project ./my-review --out ./my-review/report.md
+```
+
+## 6. Package and replay
+
+```sh
+rforge forge package-fixture --project ./my-review --out ./review.rforgepkg
+rforge package audit ./review.rforgepkg
+rforge package replay ./review.rforgepkg
+```

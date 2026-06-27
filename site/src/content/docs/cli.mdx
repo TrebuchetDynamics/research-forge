@@ -1,0 +1,42 @@
+---
+title: CLI cheatsheet
+description: Common rforge commands.
+---
+
+## Projects
+
+```sh
+rforge project create ./my-review --title "My systematic review"
+rforge project inspect ./my-review
+rforge --project ./my-review ui
+```
+
+## Search
+
+```sh
+rforge search --source openalex --query "artificial photosynthesis"
+rforge search import --source openalex --query "artificial photosynthesis" --project ./my-review
+rforge --project ./my-review search batch --queries queries.txt --sources scholarly-fast --out ./my-review/searches --stats
+```
+
+## Library and dedupe
+
+```sh
+rforge duplicate report --project ./my-review
+rforge report build --project ./my-review --out ./my-review/report.md
+```
+
+## Citations and graphs
+
+```sh
+rforge citations expand --source semantic-scholar --paper <id> --direction both --depth 1 --out graph.json
+rforge citations report --graph graph.json --out report.md
+rforge --project ./my-review graph papers
+```
+
+## Packages
+
+```sh
+rforge package audit ./review.rforgepkg
+rforge package replay ./review.rforgepkg
+```

@@ -1,0 +1,17 @@
+{
+  "name": "research-forge-site",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "deploy": "wrangler pages deploy dist --project-name research-forge"
+  },
+  "dependencies": {
+    "@astrojs/starlight": "^0.41.1",
+    "astro": "^7.0.3",
+    "wrangler": "^4.105.0"
+  },
+  "devDependencies": {}
+}

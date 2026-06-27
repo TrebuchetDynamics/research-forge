@@ -1,0 +1,55 @@
+---
+title: Agent skill
+description: Use ResearchForge from Claude Code, Pi, Codex, OpenCode, or another agent harness.
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+ResearchForge ships an agent skill pack. Agents can install it from GitHub, use `rforge`, run literature searches, record provenance, expand citations, screen/extract evidence, and build auditable review artifacts.
+
+## Ask your agent
+
+```text
+Read https://github.com/TrebuchetDynamics/research-forge/blob/main/SKILLS.md,
+install the ResearchForge skills, then use rforge to research: <your topic>
+```
+
+This works as a generic instruction for Claude, Pi, Codex, OpenCode, and similar coding agents. If the harness supports local skills, use the install command below.
+
+## Install the skill pack for Claude Code or Pi
+
+```sh
+tmp=$(mktemp -d) && \
+  git clone --depth 1 https://github.com/TrebuchetDynamics/research-forge "$tmp" && \
+  mkdir -p ~/.claude/skills && \
+  cp -R "$tmp"/skills/* ~/.claude/skills/ && \
+  cp "$tmp"/SKILLS.md ~/.claude/skills/research-forge/SKILLS.md && \
+  rm -rf "$tmp"
+```
+
+The copied `SKILLS.md` is the map. Each `skills/*/SKILL.md` file is an installable agent skill.
+
+## What the pack includes
+
+<CardGrid>
+  <Card title="Research workflow" icon="seti:markdown">
+    Main `research-forge` skill for topic research, provenance capture, citation expansion, and review packaging.
+  </Card>
+  <Card title="Source ingestion" icon="seti:search">
+    Scholarly source search, imports, dedupe, source refs, and connector-aware workflows.
+  </Card>
+  <Card title="Documents and screening" icon="seti:folder">
+    Legal PDF acquisition, parsing, passage extraction, include/exclude screening, and PRISMA-ready records.
+  </Card>
+  <Card title="Evidence and analysis" icon="seti:graph">
+    Extraction schemas, source-backed evidence tables, meta-analysis runs, reporting, and package replay checks.
+  </Card>
+</CardGrid>
+
+## Use it
+
+```text
+Use the research-forge skill to research: <your topic>
+```
+
+Good agent runs still require source terms review, owner approvals for scientific claims, and explicit redaction before sharing packages.
