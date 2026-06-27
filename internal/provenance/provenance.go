@@ -3,10 +3,12 @@ package provenance
 import (
 	"bufio"
 	"encoding/json"
+	"fmt"
 	"os"
 	"path/filepath"
 	"reflect"
 	"strings"
+	"time"
 )
 
 const eventsRelativePath = "provenance/events.jsonl"
@@ -22,6 +24,29 @@ type Event struct {
 	Inputs        map[string]any `json:"inputs"`
 	Outputs       map[string]any `json:"outputs"`
 	Warnings      []string       `json:"warnings"`
+}
+
+// Note appends a researcher annotation event to the project provenance log.
+// It is the CLI-safe path for recording human observations without a full search run.
+func Note(projectPath, message, actorName string) error {
+	message = strings.TrimSpace(message)
+	if message == "" {
+		return fmt.Errorf("note message must not be empty")
+	}
+	if strings.TrimSpace(actorName) == "" {
+		actorName = "rforge"
+	}
+	now := time.Now().UTC()
+	return Append(projectPath, Event{
+		SchemaVersion: "1",
+		ID:            "evt_" + now.Format("20060102T150405Z") + "_note",
+		Timestamp:     now.Format(time.RFC3339),
+		Actor:         actorName,
+		Action:        "provenance.researcher.note",
+		Inputs:        map[string]any{"message": message},
+		Outputs:       map[string]any{},
+		Warnings:      []string{},
+	})
 }
 
 // Append records one Provenance event in the project JSONL ledger.

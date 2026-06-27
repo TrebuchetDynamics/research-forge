@@ -651,6 +651,9 @@ func executeSearch(args []string, stdout, stderr io.Writer, opts globalOptions) 
 	if len(args) > 0 && args[0] == "stats" {
 		return executeSearchStats(args[1:], stdout, stderr, opts)
 	}
+	if len(args) > 0 && args[0] == "resume" {
+		return executeSearchResume(args[1:], stdout, stderr, opts)
+	}
 	source, query, limit, filters, ok := parseSearch(args)
 	if !ok {
 		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge search --source openalex --query <query> [--limit N] [--category arxiv-category] [--filter source-filter] [--entity authors|institutions]")
@@ -911,11 +914,13 @@ func executeSearchStats(args []string, stdout, stderr io.Writer, opts globalOpti
 		}
 		sourceCounts[source] += count
 	}
+	failures := readSearchBatchFailures(filepath.Join(dir, "failures.jsonl"))
 	if opts.JSON {
 		return writeJSON(stdout, 0, map[string]any{
 			"sources":         sourceCounts,
 			"sourceFiles":     sourceFiles,
 			"totalUniqueDOIs": len(uniqueDOIs),
+			"failures":        failures,
 		})
 	}
 	// collect and sort source names for deterministic output
@@ -930,6 +935,106 @@ func executeSearchStats(args []string, stdout, stderr io.Writer, opts globalOpti
 		fmt.Fprintf(stdout, "  %-24s %d records (%d files)\n", src, sourceCounts[src], files)
 	}
 	fmt.Fprintf(stdout, "\nTotal unique DOIs: %d\n", len(uniqueDOIs))
+	if len(failures) > 0 {
+		fmt.Fprintf(stdout, "\nFailed queries (%d):\n", len(failures))
+		for _, f := range failures {
+			fmt.Fprintf(stdout, "  [%s] %q — %s\n", f.Source, f.Query, f.Error)
+		}
+	}
+	return 0
+}
+
+func readSearchBatchFailures(path string) []searchBatchFailure {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return []searchBatchFailure{}
+	}
+	var failures []searchBatchFailure
+	for _, line := range strings.Split(string(data), "\n") {
+		line = strings.TrimSpace(line)
+		if line == "" {
+			continue
+		}
+		var f searchBatchFailure
+		if json.Unmarshal([]byte(line), &f) == nil {
+			failures = append(failures, f)
+		}
+	}
+	return failures
+}
+
+func executeSearchResume(args []string, stdout, stderr io.Writer, opts globalOptions) int {
+	failuresFile := ""
+	outDir := ""
+	for i := 0; i < len(args)-1; i++ {
+		switch args[i] {
+		case "--failures":
+			failuresFile = args[i+1]
+			i++
+		case "--out":
+			outDir = args[i+1]
+			i++
+		}
+	}
+	if failuresFile == "" || outDir == "" {
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge search resume --failures <failures.jsonl> --out <dir>")
+	}
+	pending := readSearchBatchFailures(failuresFile)
+	if len(pending) == 0 {
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"resumed": 0, "results": 0, "newFailures": 0})
+		}
+		fmt.Fprintln(stdout, "no failures to resume")
+		return 0
+	}
+	if err := os.MkdirAll(filepath.Join(outDir, "raw"), 0o755); err != nil {
+		return writeError(stdout, stderr, opts, 1, "search_resume_out_failed", err.Error())
+	}
+	resultsPath := filepath.Join(outDir, "results.jsonl")
+	newFailuresPath := filepath.Join(outDir, "failures.jsonl")
+	resultsFile, err := os.Create(resultsPath)
+	if err != nil {
+		return writeError(stdout, stderr, opts, 1, "search_resume_write_failed", err.Error())
+	}
+	defer resultsFile.Close()
+	newFailuresFile, err := os.Create(newFailuresPath)
+	if err != nil {
+		return writeError(stdout, stderr, opts, 1, "search_resume_write_failed", err.Error())
+	}
+	defer newFailuresFile.Close()
+
+	results := 0
+	newFailures := 0
+	for qi, f := range pending {
+		connector, ok := searchConnector(f.Source)
+		if !ok {
+			newFailures++
+			_ = writeJSONLine(newFailuresFile, searchBatchFailure{Source: f.Source, Query: f.Query, Error: "unknown source"})
+			continue
+		}
+		response, searchErr := connector.Search(context.Background(), sources.SourceQuery{Terms: f.Query, Limit: 25, Filters: map[string]string{}})
+		if searchErr != nil {
+			newFailures++
+			_ = writeJSONLine(newFailuresFile, searchBatchFailure{Source: f.Source, Query: f.Query, Error: searchErr.Error()})
+			continue
+		}
+		papers, normErr := sources.PaperRecords(response)
+		if normErr != nil {
+			newFailures++
+			_ = writeJSONLine(newFailuresFile, searchBatchFailure{Source: f.Source, Query: f.Query, Error: normErr.Error()})
+			continue
+		}
+		rawName := fmt.Sprintf("search-%s-%03d-%s.txt", f.Source, qi+1, slugifySearchBatch(f.Query))
+		_ = writeSearchBatchRaw(filepath.Join(outDir, "raw", rawName), papers)
+		for _, paper := range papers {
+			results++
+			_ = writeJSONLine(resultsFile, paper)
+		}
+	}
+	if opts.JSON {
+		return writeJSON(stdout, 0, map[string]any{"resumed": len(pending), "results": results, "newFailures": newFailures})
+	}
+	fmt.Fprintf(stdout, "resumed %d failed quer(ies): %d records, %d still failed\n", len(pending), results, newFailures)
 	return 0
 }
 
@@ -1459,7 +1564,7 @@ func defaultSemanticScholarHTTPClient() sources.HTTPClient {
 		Timeout:       10 * time.Second,
 		MaxRetries:    envInt("RFORGE_SEMANTIC_SCHOLAR_MAX_RETRIES", 3),
 		RequestDelay:  envDuration("RFORGE_SEMANTIC_SCHOLAR_REQUEST_DELAY", envDuration("RFORGE_SOURCE_REQUEST_DELAY", 250*time.Millisecond)),
-		MaxRetryAfter: envDuration("RFORGE_SOURCE_MAX_RETRY_AFTER", 30*time.Second),
+		MaxRetryAfter: envDuration("RFORGE_SEMANTIC_SCHOLAR_MAX_RETRY_AFTER", envDuration("RFORGE_SOURCE_MAX_RETRY_AFTER", 120*time.Second)),
 	}
 	if apiKey := strings.TrimSpace(os.Getenv("RFORGE_SEMANTIC_SCHOLAR_API_KEY")); apiKey != "" {
 		options.Headers = map[string]string{"x-api-key": apiKey}
