@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"net/http"
 	"os"
 	"path/filepath"
 	"sort"
@@ -502,8 +503,11 @@ func executeOA(args []string, stdout, stderr io.Writer, opts globalOptions) int 
 		}
 		return 0
 	}
+	if len(args) > 0 && args[0] == "fetch" {
+		return executeOAFetch(args[1:], stdout, stderr, opts)
+	}
 	if len(args) != 2 || args[0] != "lookup" {
-		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge oa lookup <doi>|resolve-plan <doi>|sources|candidates|acquisition-queue|acquisition-approve <id>|privacy-review|privacy-approve")
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge oa lookup <doi>|resolve-plan <doi>|sources|candidates|acquisition-queue|acquisition-approve <id>|privacy-review|privacy-approve|fetch")
 	}
 	email := os.Getenv("RFORGE_UNPAYWALL_EMAIL")
 	baseURL := os.Getenv("RFORGE_UNPAYWALL_URL")
@@ -520,6 +524,168 @@ func executeOA(args []string, stdout, stderr io.Writer, opts globalOptions) int 
 	}
 	fmt.Fprintf(stdout, "%s\t%t\t%s\t%s\n", record.DOI, record.OpenAccess, record.OAStatus, record.PDFURL)
 	return 0
+}
+
+func executeOAFetch(args []string, stdout, stderr io.Writer, opts globalOptions) int {
+	dir := ""
+	outDir := ""
+	for i := 0; i < len(args)-1; i++ {
+		switch args[i] {
+		case "--dir":
+			dir = args[i+1]
+			i++
+		case "--out":
+			outDir = args[i+1]
+			i++
+		}
+	}
+	if dir == "" {
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge oa fetch --dir <batch-dir> [--out <dir>]")
+	}
+	if outDir == "" {
+		outDir = dir
+	}
+	if err := os.MkdirAll(filepath.Join(outDir, "pdfs"), 0o755); err != nil {
+		return writeError(stdout, stderr, opts, 1, "oa_fetch_mkdir_failed", err.Error())
+	}
+
+	records, err := readResultsJSONL(filepath.Join(dir, "results.jsonl"))
+	if err != nil {
+		return writeError(stdout, stderr, opts, 1, "oa_fetch_read_failed", fmt.Sprintf("read results.jsonl: %v", err))
+	}
+
+	arxivPDFBase := os.Getenv("RFORGE_ARXIV_PDF_URL")
+	if arxivPDFBase == "" {
+		arxivPDFBase = "https://arxiv.org"
+	}
+	httpClient := defaultSourceHTTPClient(arxivPDFBase)
+
+	fetched := 0
+	skipped := 0
+	failures := []map[string]any{}
+
+	for _, record := range records {
+		pdfURL := oaFetchPDFURL(record, arxivPDFBase)
+		if pdfURL == "" {
+			skipped++
+			continue
+		}
+		slug := oaFetchSlug(record)
+		destPath := filepath.Join(outDir, "pdfs", slug+".pdf")
+		if err := downloadPDF(httpClient, pdfURL, destPath); err != nil {
+			failures = append(failures, map[string]any{
+				"doi":   record.Identifiers.DOI,
+				"url":   pdfURL,
+				"error": err.Error(),
+			})
+			continue
+		}
+		fetched++
+	}
+
+	report := fmt.Sprintf("fetched: %d  skipped: %d  failed: %d\n", fetched, skipped, len(failures))
+	_ = os.WriteFile(filepath.Join(outDir, "fetch-report.txt"), []byte(report), 0o644)
+
+	if len(failures) > 0 {
+		failLines := []byte{}
+		for _, f := range failures {
+			if line, err := json.Marshal(f); err == nil {
+				failLines = append(failLines, line...)
+				failLines = append(failLines, '\n')
+			}
+		}
+		_ = os.WriteFile(filepath.Join(outDir, "fetch-failures.jsonl"), failLines, 0o644)
+	}
+
+	if opts.JSON {
+		return writeJSON(stdout, 0, map[string]any{
+			"fetched":  fetched,
+			"skipped":  skipped,
+			"failures": len(failures),
+		})
+	}
+	fmt.Fprint(stdout, report)
+	return 0
+}
+
+// oaFetchPDFURL returns the best open-access PDF URL for a record, or "" if none.
+// Priority: arXiv ID (always free) → explicit .pdf URL in record URLs → nothing.
+func oaFetchPDFURL(record library.PaperRecord, arxivBase string) string {
+	if id := strings.TrimSpace(record.Identifiers.ArXivID); id != "" {
+		return strings.TrimRight(arxivBase, "/") + "/pdf/" + id
+	}
+	if !record.OpenAccess {
+		return ""
+	}
+	for _, u := range record.URLs {
+		u = strings.TrimSpace(u)
+		if strings.HasSuffix(strings.ToLower(u), ".pdf") {
+			return u
+		}
+	}
+	return ""
+}
+
+func oaFetchSlug(record library.PaperRecord) string {
+	if doi := record.Identifiers.DOI; doi != "" {
+		slug := strings.NewReplacer("/", "_", ":", "_", ".", "_").Replace(doi)
+		if len(slug) > 80 {
+			slug = slug[:80]
+		}
+		return slug
+	}
+	if id := record.Identifiers.ArXivID; id != "" {
+		return "arxiv_" + strings.ReplaceAll(id, "/", "_")
+	}
+	return "paper_" + record.Title[:min(20, len(record.Title))]
+}
+
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
+}
+
+func downloadPDF(client sources.HTTPClient, pdfURL, destPath string) error {
+	// Extract path from URL for the HTTP client's Get method.
+	// The client already has the base URL baked in for arXiv,
+	// but for arbitrary OA URLs we use a plain HTTP GET.
+	resp, err := http.Get(pdfURL) //nolint:gosec // URL comes from published OA metadata, not user input
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("HTTP %d for %s", resp.StatusCode, pdfURL)
+	}
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+	return os.WriteFile(destPath, body, 0o644)
+}
+
+func readResultsJSONL(path string) ([]library.PaperRecord, error) {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return nil, nil
+		}
+		return nil, err
+	}
+	var records []library.PaperRecord
+	for _, line := range strings.Split(string(data), "\n") {
+		line = strings.TrimSpace(line)
+		if line == "" {
+			continue
+		}
+		var r library.PaperRecord
+		if json.Unmarshal([]byte(line), &r) == nil && (r.Title != "" || r.Identifiers.DOI != "") {
+			records = append(records, r)
+		}
+	}
+	return records, nil
 }
 
 func executePrivacyReview(args []string, stdout, stderr io.Writer, opts globalOptions) int {
@@ -1546,7 +1712,7 @@ func defaultArXivHTTPClient(baseURL string) sources.HTTPClient {
 	return sources.NewHTTPClient(sources.HTTPClientOptions{
 		BaseURL:       baseURL,
 		UserAgent:     "ResearchForge/dev",
-		Timeout:       30 * time.Second,
+		Timeout:       envDuration("RFORGE_ARXIV_TIMEOUT", 60*time.Second),
 		MaxRetries:    2,
 		RequestDelay:  envDuration("RFORGE_SOURCE_REQUEST_DELAY", 0),
 		MaxRetryAfter: envDuration("RFORGE_SOURCE_MAX_RETRY_AFTER", 30*time.Second),
