@@ -2712,6 +2712,21 @@ func evidenceItemsPath(project string) string {
 }
 
 func executeScreen(args []string, stdout, stderr io.Writer, opts globalOptions) int {
+	// Dir-based CSV workflow — works without a project.
+	if len(args) >= 1 {
+		switch args[0] {
+		case "queue":
+			if screenDirHasFlag(args[1:], "--dir") {
+				return executeScreenDirQueue(args[1:], stdout, stderr, opts)
+			}
+		case "import":
+			return executeScreenDirImport(args[1:], stdout, stderr, opts)
+		case "progress":
+			if screenDirHasFlag(args[1:], "--dir") {
+				return executeScreenDirProgress(args[1:], stdout, stderr, opts)
+			}
+		}
+	}
 	if len(args) == 0 || opts.Project == "" {
 		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge --project <path> screen <configure|decide|adjudicate|queue|prioritize|model-prioritize|uncertainty|progress|recall|stopping>")
 	}

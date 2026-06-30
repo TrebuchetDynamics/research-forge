@@ -48,9 +48,33 @@ A structured representation of a document asset, including sections, references,
 
 A stable, citable unit of parsed document text that can support retrieval results, evidence extraction, and report audit links.
 
-### Screening decision
+### Title/abstract screening decision
 
-An include, exclude, or uncertain judgment made during systematic-review screening, with stage, reviewer, reason where applicable, timestamp, and provenance.
+An include, exclude, or uncertain judgment made on a paper's **title and abstract metadata alone**, before any full-text PDF is acquired. The first and primary screening stage. Records that survive this stage proceed to full-text acquisition; excluded records are never downloaded.
+
+_Avoid:_ "screening decision" alone (ambiguous about stage), "pre-screening"
+
+### Full-text eligibility decision
+
+An include, exclude, or uncertain judgment made after reading the full-text PDF of a paper that passed [[title/abstract screening decision]]. The second screening stage — applied only to the subset of records whose PDFs were acquired.
+
+_Avoid:_ "screening decision" alone (ambiguous about stage), "secondary screening"
+
+### Screening queue CSV
+
+The self-contained CSV file emitted by `rforge screen queue --out queue.csv` for offline title/abstract review. Columns filled by rforge: `doi`, `arxiv_id`, `title`, `authors`, `year`, `abstract`, `source`. Columns filled by the reviewer: `decision` (`include`/`exclude`/`uncertain`) and `reason` (optional free text). Includes abstract text so reviewers can screen without any external tool. Imported back with `rforge screen import --csv queue.csv`, which writes entries to the [[Screening decision store]].
+
+_Avoid:_ "label file" (ASReview terminology), "screening export"
+
+### Screening decision store
+
+The append-only JSONL file (`screening.jsonl`) in a topic dir that records every [[title/abstract screening decision]] and [[full-text eligibility decision]]. Each line carries: identifier (DOI or ArXivID), decision (`include`/`exclude`/`uncertain`), stage (`title-abstract` or `full-text`), reviewer, optional reason, and timestamp. The CSV export/import path is the primary Milestone 4 interface: `rforge screen queue --out queue.csv` emits pending records; the reviewer fills in the `decision` and `reason` columns; `rforge screen import --csv queue.csv` writes entries back to `screening.jsonl`.
+
+_Avoid:_ "decisions file", "labels file" (ASReview terminology), "screening database"
+
+### Two-stage screening pipeline
+
+The ResearchForge screening workflow: [[title/abstract screening decision]] first (on metadata already in results.jsonl), then `rforge oa fetch` for included records only, then [[full-text eligibility decision]] on acquired PDFs. This order means full-text acquisition is a post-screening step, not a prerequisite. Milestone 4 (screening) does not depend on Milestone 3 (GROBID) completing first.
 
 ### Evidence item
 
