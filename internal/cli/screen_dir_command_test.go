@@ -206,15 +206,26 @@ func TestScreenDirImportWritesScreeningJSONL(t *testing.T) {
 	if len(lines) != 2 {
 		t.Fatalf("expected 2 lines in screening.jsonl, got %d\n%s", len(lines), string(data))
 	}
-	var entry map[string]any
-	if err := json.Unmarshal([]byte(lines[0]), &entry); err != nil {
-		t.Fatalf("line 0 not JSON: %v", err)
+	// Map iteration is non-deterministic; find alpha's entry by DOI rather than by line index.
+	byDOI := map[string]map[string]any{}
+	for _, line := range lines {
+		var e map[string]any
+		if err := json.Unmarshal([]byte(line), &e); err != nil {
+			t.Fatalf("line not JSON: %v\n%s", err, line)
+		}
+		if doi, ok := e["doi"].(string); ok && doi != "" {
+			byDOI[doi] = e
+		}
 	}
-	if entry["decision"] != "include" {
-		t.Errorf("line 0 decision = %v, want include", entry["decision"])
+	alpha := byDOI["10.1/alpha"]
+	if alpha == nil {
+		t.Fatalf("no entry for 10.1/alpha in screening.jsonl")
 	}
-	if entry["reviewer"] != "Tester" {
-		t.Errorf("line 0 reviewer = %v, want Tester", entry["reviewer"])
+	if alpha["decision"] != "include" {
+		t.Errorf("alpha decision = %v, want include", alpha["decision"])
+	}
+	if alpha["reviewer"] != "Tester" {
+		t.Errorf("alpha reviewer = %v, want Tester", alpha["reviewer"])
 	}
 }
 

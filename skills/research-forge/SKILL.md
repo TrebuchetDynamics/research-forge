@@ -9,6 +9,27 @@ Use this skill to conduct academic research with the `rforge` CLI. Works in any 
 
 Core principle: **retrieval-first, provenance-first, statistics-first, LLM-assisted**. Retrieve source metadata first, preserve exact query/source provenance, use auditable statistics where applicable, and never self-approve human review gates.
 
+## 3-command quickstart (no project setup needed)
+
+```sh
+# 1. Search — writes results.jsonl, raw/, manifest.json to <dir>
+rforge search batch --out research/my-topic --query "<topic>" --sources openalex,arxiv
+
+# 2. Fetch open-access PDFs for included papers (run AFTER screening)
+rforge oa fetch --dir research/my-topic
+
+# 3. Generate numbered bibliography from all topic subdirs
+rforge citations build --research-dir research
+```
+
+**Source presets:** `openalex,arxiv` (fast default) | `scholarly-fast` | `biomedical` | `preprints` | `all` (44 sources)
+
+Cross-topic analysis: `rforge meta overlap --research-dir research [--min-topics 2]`
+
+For machine-readable command catalog: `rforge help --json`
+
+---
+
 Before running searches, choose an output location and depth:
 - If inside a repo with `artifacts/`, use `artifacts/research/<topic-slug>/`.
 - If inside a repo without `artifacts/`, use `research/<topic-slug>/`.
@@ -35,9 +56,10 @@ If Go is not installed, tell the user:
 
 ## Quick-start routing
 
-| Goal | Entry phase |
+| Goal | Entry point |
 |---|---|
-| Find papers on a topic | Phase 2 — Discover |
+| Find papers on a topic | 3-command quickstart above, then Phase 2 — Discover for more depth |
+| Screen papers before downloading PDFs | Phase 4 — Analyze (screening before oa fetch) |
 | Study an open-source project | Phase 2 — Discover (OSS) |
 | Full systematic review | Phase 1 → 2 → 3 → 4 → 5 |
 | Save research notes or artifacts to a folder | Phase 5 — Save |
@@ -86,24 +108,25 @@ When `rforge` is not available or not initialized, write outputs directly to the
 Start by expanding the question into query variants: canonical term, abbreviations, mechanism/material/method variants, application variants, broader/narrower forms, and recent-year filters when useful. Prefer `search batch` for multi-source sweeps so failures, dedupe, manifests, and stats are saved together.
 
 ```sh
+# Standalone batch search — no project required
+rforge search batch --out <dir> --query "<query>" --sources openalex,arxiv \
+  [--queries <file>] [--limit N] [--continue-on-error] [--stats]
+
+# With a queries file (one query per line)
+rforge search batch --out <dir> --queries queries.txt --sources scholarly-fast --stats
+
+# Retry failed queries
+rforge search resume --dir <dir>
+
+# Show hit counts and library record count for a search dir
+rforge search stats --dir <dir>
+
+# Single-source search (prints results, does not save)
 rforge search --source openalex|arxiv|crossref|semantic-scholar|europepmc|pubmed \
-  --query "<query>" \
-  [--from-year YYYY] [--to-year YYYY] \
-  [--preset systematic-review|open-access-review|recent-domain-map] \
-  [--open-access true|false]
-
-rforge search import --source openalex --query "<query>" --pages N \
-  [--project <path>]
-
-# Multi-query/multi-source sweep with dedupe, raw outputs, failures, manifest, and stats.
-rforge search batch --queries queries.txt --sources all --out <dir> \
-  --dedupe doi,title --continue-on-error --stats
-
-# Source presets: all, scholarly-fast, biomedical, preprints, datasets, open.
-rforge --project <path> search batch --queries queries.txt --sources scholarly-fast --out <dir> --stats --fetch-pdfs
+  --query "<query>" [--from-year YYYY] [--to-year YYYY] [--open-access true|false]
 ```
 
-If using individual `rforge search` commands instead of `search batch`, save every source/query result to a file and run coverage stats before reporting:
+If using individual `rforge search` commands instead of `search batch`, always run coverage stats before reporting:
 
 ```sh
 rforge search stats --dir <dir>
@@ -175,29 +198,29 @@ rforge duplicate report [--source <source>]
 rforge duplicate merge | split
 ```
 
-### Full-text acquisition — irreversible gate: surface to human
+### Open-access PDF acquisition
 
-Review candidates first; do not download without explicit human approval:
+**Recommended order (ADR 0008): screen on title/abstract first (Phase 4), then fetch PDFs for included papers only. This reduces fetch volume by the exclusion rate (~60–80%).**
 
 ```sh
+# Standalone: download open-access PDFs for all papers in <dir>/results.jsonl
+# Run this AFTER screening; PDFs go to <dir>/pdfs/
+rforge oa fetch --dir <dir>
+
+# Inspect availability without downloading
 rforge oa sources
 rforge oa resolve-plan <doi>
 rforge oa lookup <doi>
+```
+
+Legal OA source coverage includes Unpaywall, OpenAlex OA locations, Europe PMC/PMC, arXiv, bioRxiv/medRxiv, ChemRxiv, DOAJ, CORE, Semantic Scholar/Crossref hints, Internet Archive/Open Library, and Software Heritage for software archival. Sci-Hub-like sources are intentionally unsupported.
+
+For project-based workflows, acquisition requires human approval gates:
+
+```sh
 rforge --project <path> oa candidates
 rforge --project <path> oa acquisition-queue
 ```
-
-After approval, prefer full text over abstract-only evidence when a legal OA PDF URL is available:
-
-```sh
-rforge --project <path> research acquire-pdftotext \
-  --doi <doi> --pdf-url <url> --license <license> --oa-status <status> \
-  --out <path>/parsed/<paper-id>.json
-```
-
-This stores the PDF locally, parses it with `pdftotext`, and leaves the parsed JSON as the shareable evidence artifact. Keep PDFs local-only.
-
-Legal OA source coverage includes Unpaywall, OpenAlex OA locations, Europe PMC/PMC, arXiv, bioRxiv/medRxiv, ChemRxiv, DOAJ, CORE, Semantic Scholar/Crossref hints, Internet Archive/Open Library, and Software Heritage for software archival. Sci-Hub-like sources are intentionally unsupported.
 
 Stop and surface this to the human invoker before proceeding:
 
@@ -208,25 +231,49 @@ Acquisition requires human approval. Please run:
 Waiting — do not download any files until approval is confirmed.
 ```
 
-Same pattern for privacy review:
+After approval, to parse PDFs:
 
 ```sh
-rforge --project <path> oa privacy-review
-# Stop and surface before running:
-# rforge --project <path> oa privacy-approve --reviewer <name> --reason "<text>"
+rforge --project <path> research acquire-pdftotext \
+  --doi <doi> --pdf-url <url> --license <license> --oa-status <status> \
+  --out <path>/parsed/<paper-id>.json
 ```
 
 ---
 
 ## Phase 4 — Analyze
 
-### Screening
+### Screening (run BEFORE oa fetch to reduce download volume)
+
+The two-stage screening pipeline follows PRISMA 2020: title/abstract screen first (on metadata already in `results.jsonl`), then `oa fetch` for included papers only, then full-text eligibility on PDFs.
+
+**Standalone dir-based workflow (no project required):**
 
 ```sh
-rforge screen configure
-rforge screen queue --out <queue.csv>
-rforge screen decide
-rforge screen progress
+# 1. Export pending papers to a self-contained CSV for reviewer decisions
+#    Columns filled by rforge: doi, arxiv_id, title, authors, year, abstract, source
+#    Columns filled by reviewer: decision (include|exclude|uncertain) and reason
+rforge screen queue --dir <topic-dir> --out queue.csv
+
+# 2. Reviewer fills in 'decision' and 'reason' columns in queue.csv, then:
+rforge screen import --dir <topic-dir> --csv queue.csv [--reviewer <name>]
+#    Writes decisions to <topic-dir>/screening.jsonl (last-write-wins on re-import)
+
+# 3. Check progress
+rforge screen progress --dir <topic-dir>
+rforge screen progress --dir <topic-dir> --json   # machine-readable counts
+```
+
+**After screening, fetch PDFs for included papers only:**
+```sh
+rforge oa fetch --dir <topic-dir>
+```
+
+**Project-based screening (requires --project):**
+```sh
+rforge --project <path> screen configure
+rforge --project <path> screen decide --paper <id> --stage title_abstract --decision include|exclude|uncertain --reviewer <name>
+rforge --project <path> screen progress
 rforge prisma counts
 ```
 
@@ -278,6 +325,16 @@ rforge report audit
 ---
 
 ## Phase 5 — Save
+
+### Bibliography and cross-topic analysis
+
+```sh
+# Generate numbered CITATIONS.md from all topic subdirs under <research-dir>
+rforge citations build --research-dir <research-dir> [--out <file>]
+
+# Find papers appearing in multiple topic subdirs
+rforge meta overlap --research-dir <research-dir> [--min-topics 2]
+```
 
 ### ResearchForge project package
 

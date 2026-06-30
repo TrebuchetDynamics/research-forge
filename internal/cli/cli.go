@@ -54,6 +54,9 @@ func Execute(args []string, stdout, stderr io.Writer) int {
 		return writeError(stdout, stderr, opts, 2, "invalid_global_flag", "invalid global flag usage")
 	}
 	if len(remaining) == 0 || remaining[0] == "--help" || remaining[0] == "-h" || remaining[0] == "help" {
+		if opts.JSON {
+			return writeJSON(stdout, 0, buildHelpJSON())
+		}
 		printHelp(stdout)
 		return 0
 	}
@@ -3701,46 +3704,264 @@ func findRepoRoot(start string) (string, error) {
 	}
 }
 
+// helpCommand describes a single rforge command for both human and JSON output.
+type helpCommand struct {
+	Usage       string `json:"usage"`
+	Description string `json:"description"`
+}
+
+// helpSection groups related commands under a heading.
+type helpSection struct {
+	Name        string        `json:"name"`
+	Description string        `json:"description"`
+	Commands    []helpCommand `json:"commands"`
+}
+
+func helpSections() []helpSection {
+	return []helpSection{
+		{
+			Name:        "quickstart",
+			Description: "Core workflow — no project setup needed. Run these three commands to search, fetch, and cite.",
+			Commands: []helpCommand{
+				{
+					Usage:       "rforge search batch --out <dir> --query <q> --sources openalex,arxiv [--queries <file>] [--limit N] [--continue-on-error]",
+					Description: "Search papers across sources and write results.jsonl + manifest to <dir>. Use --queries for multi-query batch. Sources preset: openalex,arxiv (fast), scholarly-fast, all (44 sources), biomedical, preprints, open.",
+				},
+				{
+					Usage:       "rforge oa fetch --dir <dir>",
+					Description: "Download open-access PDFs for all papers in <dir>/results.jsonl. Writes PDFs to <dir>/pdfs/.",
+				},
+				{
+					Usage:       "rforge citations build --research-dir <dir> [--out <file>]",
+					Description: "Generate CITATIONS.md numbered bibliography from all downloaded PDFs across topic subdirs. Fetches metadata from Crossref and arXiv.",
+				},
+			},
+		},
+		{
+			Name:        "search",
+			Description: "Search academic sources and manage results.",
+			Commands: []helpCommand{
+				{
+					Usage:       "rforge search batch --out <dir> --query <q> --sources <preset|list> [--queries <file>] [--limit N] [--continue-on-error] [--stats]",
+					Description: "Batch search: one or more queries across one or more sources. Writes results.jsonl, raw/, manifest.json, and optionally search-stats.txt.",
+				},
+				{
+					Usage:       "rforge search stats --dir <dir>",
+					Description: "Show hit counts per source and library record count for a search output dir.",
+				},
+				{
+					Usage:       "rforge search resume --dir <dir>",
+					Description: "Retry any failed queries recorded in <dir>/failures.jsonl.",
+				},
+				{
+					Usage:       "rforge search --source <source> --query <q> [--from-year YYYY] [--to-year YYYY] [--open-access true|false]",
+					Description: "Single-source search (openalex, arxiv, crossref, semantic-scholar, europepmc, pubmed, and 38 more).",
+				},
+			},
+		},
+		{
+			Name:        "open-access",
+			Description: "Open-access PDF acquisition and status.",
+			Commands: []helpCommand{
+				{
+					Usage:       "rforge oa fetch --dir <dir>",
+					Description: "Download open-access PDFs for papers in <dir>/results.jsonl. Skips already-downloaded files.",
+				},
+				{
+					Usage:       "rforge oa lookup <doi>",
+					Description: "Check open-access availability of a single DOI (Unpaywall).",
+				},
+				{
+					Usage:       "rforge oa resolve-plan <doi>",
+					Description: "Show the full open-access resolution plan for a DOI without downloading.",
+				},
+				{
+					Usage:       "rforge oa sources",
+					Description: "List all configured open-access resolver sources.",
+				},
+			},
+		},
+		{
+			Name:        "citations",
+			Description: "Bibliography generation and citation graph expansion.",
+			Commands: []helpCommand{
+				{
+					Usage:       "rforge citations build --research-dir <dir> [--out <file>]",
+					Description: "Build CITATIONS.md from all downloaded PDFs across topic subdirs. Default output: <dir>/CITATIONS.md.",
+				},
+				{
+					Usage:       "rforge citations expand --source semantic-scholar|openalex|crossref --paper <id> --direction references|citations|both --depth N --out <file>",
+					Description: "Build a citation network graph around a seed paper.",
+				},
+				{
+					Usage:       "rforge citations report --graph <graph.json> --out <report.md>",
+					Description: "Summarize a citation graph as a markdown report.",
+				},
+			},
+		},
+		{
+			Name:        "meta",
+			Description: "Cross-topic analysis and research synthesis.",
+			Commands: []helpCommand{
+				{
+					Usage:       "rforge meta overlap --research-dir <dir> [--min-topics N]",
+					Description: "Find papers appearing in multiple topic subdirs. Use --min-topics 2 to see cross-topic core cluster.",
+				},
+			},
+		},
+		{
+			Name:        "screening",
+			Description: "Title/abstract screening workflow (CSV-based, no project required). Screen before oa fetch to reduce download volume.",
+			Commands: []helpCommand{
+				{
+					Usage:       "rforge screen queue --dir <dir> --out <queue.csv>",
+					Description: "Emit pending papers as a self-contained CSV with title, abstract, doi, authors, year for offline reviewer decisions.",
+				},
+				{
+					Usage:       "rforge screen import --dir <dir> --csv <queue.csv> [--reviewer <name>]",
+					Description: "Import reviewer decisions from a filled-in queue CSV into <dir>/screening.jsonl. Blank decision rows are skipped. Last-write-wins on re-import.",
+				},
+				{
+					Usage:       "rforge screen progress --dir <dir>",
+					Description: "Show include/exclude/uncertain/pending counts from <dir>/screening.jsonl.",
+				},
+			},
+		},
+		{
+			Name:        "project",
+			Description: "Full auditable systematic review project (optional; required for forge/screening/evidence workflows).",
+			Commands: []helpCommand{
+				{
+					Usage:       "rforge project create <path> --title <title>",
+					Description: "Create a ResearchForge project with manifest, lockfile, database, and provenance log.",
+				},
+				{
+					Usage:       "rforge project inspect <path>",
+					Description: "Show project health and workflow state.",
+				},
+				{
+					Usage:       "rforge project list <root>",
+					Description: "List all ResearchForge projects under <root>.",
+				},
+				{
+					Usage:       "rforge --project <path> search batch --queries <file> --sources <preset|list> --out <dir>",
+					Description: "Search batch within a project (imports records into project library).",
+				},
+				{
+					Usage:       "rforge --project <path> screen configure --reason <reason>",
+					Description: "Configure screening workflow with allowed exclusion reasons.",
+				},
+				{
+					Usage:       "rforge --project <path> screen decide --paper <id> --stage title_abstract|full_text --decision include|exclude|uncertain --reviewer <name>",
+					Description: "Record a single screening decision (project workflow).",
+				},
+			},
+		},
+		{
+			Name:        "library",
+			Description: "Import, export, and manage the paper library.",
+			Commands: []helpCommand{
+				{
+					Usage:       "rforge import bibtex|ris|csl-json|csv|json <file>",
+					Description: "Import papers into the project library from external formats.",
+				},
+				{
+					Usage:       "rforge export bibtex|ris|csl-json|csv|json <file>",
+					Description: "Export the project library to a format.",
+				},
+				{
+					Usage:       "rforge library list",
+					Description: "List all papers in the project library.",
+				},
+				{
+					Usage:       "rforge duplicate report",
+					Description: "Report duplicate papers in the library.",
+				},
+			},
+		},
+		{
+			Name:        "knowledge",
+			Description: "Knowledge graph query over parsed project content.",
+			Commands: []helpCommand{
+				{
+					Usage:       "rforge knowledge query --project <path> [--term <text>]",
+					Description: "Query the project knowledge graph.",
+				},
+				{
+					Usage:       "rforge knowledge path --project <path> --from <node-id> --to <node-id>",
+					Description: "Find a path between two nodes in the knowledge graph.",
+				},
+				{
+					Usage:       "rforge graph papers",
+					Description: "Show the paper relationship graph for the current project.",
+				},
+			},
+		},
+		{
+			Name:        "utilities",
+			Description: "Diagnostics, governance, version, and environment checks.",
+			Commands: []helpCommand{
+				{
+					Usage:       "rforge version",
+					Description: "Print rforge version, commit, and build date.",
+				},
+				{
+					Usage:       "rforge doctor",
+					Description: "Check local environment (pdftotext, network, services).",
+				},
+				{
+					Usage:       "rforge automation policy [--action <action>]",
+					Description: "Show or set the automation policy for irreversible actions.",
+				},
+				{
+					Usage:       "rforge decisions --check TODO.md",
+					Description: "Verify all unchecked TODO items are covered by owner decisions.",
+				},
+				{
+					Usage:       "rforge decisions --completion-audit TODO.md docs/todo-completion-audit.md",
+					Description: "Run the completion audit against the todo and audit files.",
+				},
+				{
+					Usage:       "rforge help [--json]",
+					Description: "Show this help. Use --json for machine-readable command catalog.",
+				},
+			},
+		},
+	}
+}
+
+func buildHelpJSON() map[string]any {
+	sections := helpSections()
+	return map[string]any{
+		"tool":        "rforge",
+		"description": "ResearchForge — search academic literature, download open-access PDFs, screen papers, and generate citations",
+		"principle":   "retrieval-first, provenance-first, statistics-first, LLM-assisted",
+		"quickstart": []string{
+			"rforge search batch --out ./research/my-topic --query \"<topic>\" --sources openalex,arxiv",
+			"rforge oa fetch --dir ./research/my-topic",
+			"rforge citations build --research-dir ./research",
+		},
+		"sections": sections,
+	}
+}
+
 func printHelp(w io.Writer) {
-	fmt.Fprintln(w, "rforge - ResearchForge command-line tool")
+	fmt.Fprintln(w, "rforge — ResearchForge command-line tool")
+	fmt.Fprintln(w, "Search academic literature, download open-access PDFs, screen papers, and generate citations.")
+	fmt.Fprintln(w, "Principle: retrieval-first, provenance-first, statistics-first, LLM-assisted.")
 	fmt.Fprintln(w)
-	fmt.Fprintln(w, "Usage:")
-	fmt.Fprintln(w, "  rforge version")
-	fmt.Fprintln(w, "  rforge doctor")
-	fmt.Fprintln(w, "  rforge automation policy [--action <action>]")
-	fmt.Fprintln(w, "  rforge search --source openalex|arxiv|crossref|semantic-scholar|europepmc|pubmed --query <query> [--category arxiv-category] [--filter source-filter] [--from-year YYYY] [--to-year YYYY] [--type article] [--open-access true|false] [--concept C41008148]")
-	fmt.Fprintln(w, "  rforge search import --source openalex --query <query> --pages N [--resume-state state.json]")
-	fmt.Fprintln(w, "  rforge --project <path> search batch --queries <file> --sources <preset|list> --out <dir> [--fetch-pdfs]")
-	fmt.Fprintln(w, "  rforge citations expand --source semantic-scholar|openalex|crossref --paper <id> --direction references|citations|both --depth N [--max-records N] --out <file> [--import-library]")
-	fmt.Fprintln(w, "  rforge citations report --graph <graph.json> --out <report.md>")
-	fmt.Fprintln(w, "  rforge oa lookup <doi>")
-	fmt.Fprintln(w, "  rforge oa resolve-plan <doi>")
-	fmt.Fprintln(w, "  rforge oa sources")
-	fmt.Fprintln(w, "  rforge service check <name>")
-	fmt.Fprintln(w, "  rforge library list|refresh-doi|refresh-crossref")
-	fmt.Fprintln(w, "  rforge fetch pdfs")
-	fmt.Fprintln(w, "  rforge duplicate report")
-	fmt.Fprintln(w, "  rforge import json|csv|bibtex|ris|csl-json|zotero-rdf <file>")
-	fmt.Fprintln(w, "  rforge export json|csv|bibtex|ris|csl-json|zotero-rdf <file>")
-	fmt.Fprintln(w, "  rforge oss inventory-check <manifest.json>")
-	fmt.Fprintln(w, "  rforge oss inventory-refresh <manifest.json> --source github [--base-url <url>]")
-	fmt.Fprintln(w, "  rforge oss inventory-policy <manifest.json> [--stale-after 18mo]")
-	fmt.Fprintln(w, "  rforge oss inventory-drift <manifest.json>")
-	fmt.Fprintln(w, "  rforge oss inventory-roadmap <manifest.json> --todo TODO.md")
-	fmt.Fprintln(w, "  rforge oss inventory-report <manifest.json> [--area <area>]")
-	fmt.Fprintln(w, "  rforge oss add|list|license-check")
-	fmt.Fprintln(w, "  rforge parse --paper <id> --parser grobid|tex|s2orc|papermage --pdf|--tex|--s2orc|--papermage <file>")
-	fmt.Fprintln(w, "  rforge knowledge query --project <path> [--term <text>]")
-	fmt.Fprintln(w, "  rforge knowledge path --project <path> --from <node-id> --to <node-id>")
-	fmt.Fprintln(w, "  rforge research acquire-pdftotext --doi <doi> --pdf-url <url> --license <license> --oa-status <status> --out <parsed.json>")
-	fmt.Fprintln(w, "  rforge research parse-pdftotext --paper <id> --pdf <file> --out <parsed.json> [--title <title>]")
-	fmt.Fprintln(w, "  rforge research screen-queue --out <queue.csv> [--markdown <queue.md>] [--library <library.json>] [--search-results <dir>]")
-	fmt.Fprintln(w, "  rforge research leakage-audit (--parsed <parsed-dir> | --text <text-dir>) --out <audit.json> [--markdown <audit.md>]")
-	fmt.Fprintln(w, "  rforge graph papers")
-	fmt.Fprintln(w, "  rforge project create [path] --title <title>")
-	fmt.Fprintln(w, "  rforge project discover-assets")
-	fmt.Fprintln(w, "  rforge project inspect <path>")
-	fmt.Fprintln(w, "  rforge project list <root>")
-	fmt.Fprintln(w, "  rforge decisions --check TODO.md")
-	fmt.Fprintln(w, "  rforge decisions --completion-audit TODO.md docs/todo-completion-audit.md")
+	fmt.Fprintln(w, "Quickstart (3 commands):")
+	fmt.Fprintln(w, `  rforge search batch --out ./research/my-topic --query "<topic>" --sources openalex,arxiv`)
+	fmt.Fprintln(w, "  rforge oa fetch --dir ./research/my-topic")
+	fmt.Fprintln(w, "  rforge citations build --research-dir ./research")
+	fmt.Fprintln(w)
+	for _, section := range helpSections() {
+		fmt.Fprintf(w, "%s — %s\n", strings.ToUpper(section.Name), section.Description)
+		for _, cmd := range section.Commands {
+			fmt.Fprintf(w, "  %-90s  %s\n", cmd.Usage, cmd.Description)
+		}
+		fmt.Fprintln(w)
+	}
+	fmt.Fprintln(w, "All commands accept --json for machine-readable output.")
+	fmt.Fprintln(w, "Use 'rforge help --json' for the full machine-readable command catalog.")
 }
