@@ -962,6 +962,12 @@ func executeSearchBatch(args []string, stdout, stderr io.Writer, opts globalOpti
 			}
 		}
 	}
+	if err := resultsFile.Close(); err != nil {
+		return writeError(stdout, stderr, opts, 1, "search_batch_write_failed", err.Error())
+	}
+	if err := failuresFile.Close(); err != nil {
+		return writeError(stdout, stderr, opts, 1, "search_batch_write_failed", err.Error())
+	}
 	deduped := dedupeSearchBatchPapers(allPapers)
 	if err := writeSearchBatchJSONL(dedupedPath, deduped); err != nil {
 		return writeError(stdout, stderr, opts, 1, "search_batch_write_failed", err.Error())
@@ -1225,6 +1231,12 @@ func executeSearchResume(args []string, stdout, stderr io.Writer, opts globalOpt
 			results++
 			_ = writeJSONLine(resultsFile, paper)
 		}
+	}
+	if err := resultsFile.Close(); err != nil {
+		return writeError(stdout, stderr, opts, 1, "search_resume_write_failed", err.Error())
+	}
+	if err := newFailuresFile.Close(); err != nil {
+		return writeError(stdout, stderr, opts, 1, "search_resume_write_failed", err.Error())
 	}
 	if opts.JSON {
 		return writeJSON(stdout, 0, map[string]any{"resumed": len(pending), "results": results, "newFailures": newFailures})
