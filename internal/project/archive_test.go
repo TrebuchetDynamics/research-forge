@@ -2,11 +2,31 @@ package project
 
 import (
 	"archive/tar"
+	"bytes"
+	"errors"
 	"io"
 	"os"
 	"path/filepath"
 	"testing"
 )
+
+// capWriter accepts only the first limit bytes, then fails. Used to force a
+// write error during tar.Writer.Close's trailer flush, which only issues
+// writes inside Close and is otherwise untestable via WriteHeader/Write.
+type capWriter struct {
+	buf     bytes.Buffer
+	limit   int
+	written int
+}
+
+func (c *capWriter) Write(p []byte) (int, error) {
+	if c.written+len(p) > c.limit {
+		return 0, errors.New("simulated write failure")
+	}
+	n, err := c.buf.Write(p)
+	c.written += n
+	return n, err
+}
 
 func TestRestoreRejectsSymlinkEntries(t *testing.T) {
 	archivePath := filepath.Join(t.TempDir(), "malicious.tar")
@@ -131,6 +151,23 @@ func TestArchiveRejectsOutputInsideProject(t *testing.T) {
 	}
 	if err := Archive(projectPath, filepath.Join(projectPath, "demo.rforge.tar")); err == nil {
 		t.Fatalf("Archive accepted output inside project")
+	}
+}
+
+func TestArchiveToPropagatesTrailerWriteError(t *testing.T) {
+	projectPath := filepath.Join(t.TempDir(), "demo")
+	if _, err := Create(projectPath, CreateOptions{Title: "Demo"}); err != nil {
+		t.Fatalf("Create: %v", err)
+	}
+
+	var full bytes.Buffer
+	if err := archiveTo(&full, projectPath); err != nil {
+		t.Fatalf("archiveTo (uncapped): %v", err)
+	}
+
+	capped := &capWriter{limit: full.Len() - 1}
+	if err := archiveTo(capped, projectPath); err == nil {
+		t.Fatalf("archiveTo returned nil error despite a failing write during the tar trailer flush")
 	}
 }
 

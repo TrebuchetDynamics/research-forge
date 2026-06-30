@@ -16,10 +16,20 @@ func Archive(projectPath, archivePath string) error {
 	if err != nil {
 		return err
 	}
-	defer out.Close()
-	tw := tar.NewWriter(out)
-	defer tw.Close()
-	return filepath.Walk(projectPath, func(path string, info os.FileInfo, err error) error {
+	archiveErr := archiveTo(out, projectPath)
+	closeErr := out.Close()
+	if archiveErr != nil {
+		return archiveErr
+	}
+	return closeErr
+}
+
+// archiveTo writes a tar archive of projectPath to w, returning any write or
+// close error. Close is where the tar trailer is flushed, so a write failure
+// there must not be swallowed or the resulting archive is silently corrupt.
+func archiveTo(w io.Writer, projectPath string) error {
+	tw := tar.NewWriter(w)
+	walkErr := filepath.Walk(projectPath, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
@@ -52,6 +62,11 @@ func Archive(projectPath, archivePath string) error {
 		}
 		return closeErr
 	})
+	closeErr := tw.Close()
+	if walkErr != nil {
+		return walkErr
+	}
+	return closeErr
 }
 
 func guardArchiveOutputPath(projectPath, archivePath string) error {
