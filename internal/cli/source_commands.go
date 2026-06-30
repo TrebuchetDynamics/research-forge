@@ -1050,45 +1050,54 @@ func executeSearchStats(args []string, stdout, stderr io.Writer, opts globalOpti
 	if dir == "" {
 		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge search stats --dir <dir>")
 	}
-	entries, err := os.ReadDir(dir)
-	if err != nil {
-		return writeError(stdout, stderr, opts, 1, "stats_read_failed", fmt.Sprintf("read dir: %v", err))
-	}
+
 	sourceCounts := map[string]int{}
 	sourceFiles := map[string]int{}
 	uniqueDOIs := map[string]struct{}{}
-	for _, entry := range entries {
-		name := entry.Name()
-		if !strings.HasPrefix(name, "search-") || !strings.HasSuffix(name, ".txt") {
-			continue
-		}
-		source := searchFileSource(name)
-		data, readErr := os.ReadFile(filepath.Join(dir, name))
-		if readErr != nil {
-			continue
-		}
-		sourceFiles[source]++
-		count := 0
-		for _, line := range strings.Split(string(data), "\n") {
-			line = strings.TrimSpace(line)
-			if line == "" {
+
+	// Raw per-source files live in <dir>/raw/ (written by search batch).
+	// We scan that subdir exclusively to avoid false matches against
+	// search-stats.txt in the root dir.
+	rawDir := filepath.Join(dir, "raw")
+	if rawEntries, err := os.ReadDir(rawDir); err == nil {
+		for _, entry := range rawEntries {
+			name := entry.Name()
+			if !strings.HasPrefix(name, "search-") || !strings.HasSuffix(name, ".txt") {
 				continue
 			}
-			parts := strings.SplitN(line, "\t", 2)
-			doi := strings.TrimSpace(parts[0])
-			if doi != "" {
-				count++
-				uniqueDOIs[doi] = struct{}{}
+			source := searchFileSource(name)
+			data, readErr := os.ReadFile(filepath.Join(rawDir, name))
+			if readErr != nil {
+				continue
 			}
+			sourceFiles[source]++
+			count := 0
+			for _, line := range strings.Split(string(data), "\n") {
+				line = strings.TrimSpace(line)
+				if line == "" {
+					continue
+				}
+				parts := strings.SplitN(line, "\t", 2)
+				doi := strings.TrimSpace(parts[0])
+				if doi != "" {
+					count++
+					uniqueDOIs[doi] = struct{}{}
+				}
+			}
+			sourceCounts[source] += count
 		}
-		sourceCounts[source] += count
 	}
+
+	// Count library records from results.jsonl — the ground-truth accumulated store.
+	libraryRecords := countJSONLLines(filepath.Join(dir, "results.jsonl"))
+
 	failures := readSearchBatchFailures(filepath.Join(dir, "failures.jsonl"))
 	if opts.JSON {
 		return writeJSON(stdout, 0, map[string]any{
 			"sources":         sourceCounts,
 			"sourceFiles":     sourceFiles,
 			"totalUniqueDOIs": len(uniqueDOIs),
+			"libraryRecords":  libraryRecords,
 			"failures":        failures,
 		})
 	}
@@ -1104,6 +1113,7 @@ func executeSearchStats(args []string, stdout, stderr io.Writer, opts globalOpti
 		fmt.Fprintf(stdout, "  %-24s %d records (%d files)\n", src, sourceCounts[src], files)
 	}
 	fmt.Fprintf(stdout, "\nTotal unique DOIs: %d\n", len(uniqueDOIs))
+	fmt.Fprintf(stdout, "Library (results.jsonl): %d records\n", libraryRecords)
 	if len(failures) > 0 {
 		fmt.Fprintf(stdout, "\nFailed queries (%d):\n", len(failures))
 		for _, f := range failures {
@@ -1111,6 +1121,22 @@ func executeSearchStats(args []string, stdout, stderr io.Writer, opts globalOpti
 		}
 	}
 	return 0
+}
+
+// countJSONLLines returns the number of non-empty lines in a JSONL file.
+// Returns 0 if the file does not exist or cannot be read.
+func countJSONLLines(path string) int {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return 0
+	}
+	count := 0
+	for _, line := range strings.Split(string(data), "\n") {
+		if strings.TrimSpace(line) != "" {
+			count++
+		}
+	}
+	return count
 }
 
 func readSearchBatchFailures(path string) []searchBatchFailure {

@@ -3680,14 +3680,18 @@ func setFakePDFTools(t *testing.T) {
 
 func TestExecuteSearchStatsReadsDirectoryAndReportsCoverage(t *testing.T) {
 	dir := t.TempDir()
+	rawDir := filepath.Join(dir, "raw")
+	if err := os.MkdirAll(rawDir, 0o755); err != nil {
+		t.Fatal(err)
+	}
 	// Three search files: openalex with 2 papers, crossref with 2 papers (1 overlap), arxiv empty
-	if err := os.WriteFile(dir+"/search-openalex-fefet.txt", []byte("10.1000/a\tFeFET paper A\n10.1000/b\tFeFET paper B\n"), 0o644); err != nil {
+	if err := os.WriteFile(rawDir+"/search-openalex-fefet.txt", []byte("10.1000/a\tFeFET paper A\n10.1000/b\tFeFET paper B\n"), 0o644); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.WriteFile(dir+"/search-crossref-fefet.txt", []byte("10.1000/b\tFeFET paper B\n10.1000/c\tFeFET paper C\n"), 0o644); err != nil {
+	if err := os.WriteFile(rawDir+"/search-crossref-fefet.txt", []byte("10.1000/b\tFeFET paper B\n10.1000/c\tFeFET paper C\n"), 0o644); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.WriteFile(dir+"/search-arxiv-fefet.txt", []byte(""), 0o644); err != nil {
+	if err := os.WriteFile(rawDir+"/search-arxiv-fefet.txt", []byte(""), 0o644); err != nil {
 		t.Fatal(err)
 	}
 
@@ -3715,10 +3719,14 @@ func TestExecuteSearchStatsReadsDirectoryAndReportsCoverage(t *testing.T) {
 
 func TestExecuteSearchStatsJSON(t *testing.T) {
 	dir := t.TempDir()
-	if err := os.WriteFile(dir+"/search-openalex-q1.txt", []byte("10.1000/x\tPaper X\n"), 0o644); err != nil {
+	rawDir := filepath.Join(dir, "raw")
+	if err := os.MkdirAll(rawDir, 0o755); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.WriteFile(dir+"/search-semantic-scholar-q1.txt", []byte("10.1000/x\tPaper X\n10.1000/y\tPaper Y\n"), 0o644); err != nil {
+	if err := os.WriteFile(rawDir+"/search-openalex-q1.txt", []byte("10.1000/x\tPaper X\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(rawDir+"/search-semantic-scholar-q1.txt", []byte("10.1000/x\tPaper X\n10.1000/y\tPaper Y\n"), 0o644); err != nil {
 		t.Fatal(err)
 	}
 
@@ -3756,8 +3764,12 @@ func TestExecuteSearchStatsJSON(t *testing.T) {
 
 func TestExecuteSearchStatsSortedOutput(t *testing.T) {
 	dir := t.TempDir()
+	rawDir := filepath.Join(dir, "raw")
+	if err := os.MkdirAll(rawDir, 0o755); err != nil {
+		t.Fatal(err)
+	}
 	for _, name := range []string{"search-zebra-q.txt", "search-alpha-q.txt", "search-middle-q.txt"} {
-		if err := os.WriteFile(dir+"/"+name, []byte("10.1000/x\tPaper\n"), 0o644); err != nil {
+		if err := os.WriteFile(rawDir+"/"+name, []byte("10.1000/x\tPaper\n"), 0o644); err != nil {
 			t.Fatal(err)
 		}
 	}
