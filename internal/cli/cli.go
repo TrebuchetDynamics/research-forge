@@ -775,20 +775,6 @@ func verifyLicenseResolution(todoPath string, stdout, stderr io.Writer, opts glo
 	return true, 0
 }
 
-func hasNonPlaceholderDecisionValue(text, prefix string) bool {
-	for _, line := range strings.Split(text, "\n") {
-		line = strings.TrimSpace(line)
-		if !strings.HasPrefix(line, prefix) {
-			continue
-		}
-		value := strings.TrimSpace(strings.TrimPrefix(line, prefix))
-		if value != "" && !strings.HasPrefix(value, "<") {
-			return true
-		}
-	}
-	return false
-}
-
 func writeDecisionIssueBody(id string, decisions []map[string]any, stdout, stderr io.Writer, opts globalOptions) int {
 	for _, decision := range decisions {
 		if decision["id"] != id {

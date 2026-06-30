@@ -85,11 +85,3 @@ document.getElementById('filter').addEventListener('input',ev=>{const q=ev.targe
 	b.WriteString("</ul></div>")
 	return b.String()
 }
-
-func shortLabel(value string) string {
-	value = strings.Join(strings.Fields(value), " ")
-	if len(value) > 28 {
-		return value[:27] + "…"
-	}
-	return value
-}

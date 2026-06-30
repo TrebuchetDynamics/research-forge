@@ -30,12 +30,3 @@ func (s WorkbenchIndexState) Has(label string) bool {
 	}
 	return false
 }
-
-func (s WorkbenchIndexState) CardByRoute(route string) (WorkbenchCard, bool) {
-	for _, card := range s.Workbenches {
-		if card.Route == route {
-			return card, true
-		}
-	}
-	return WorkbenchCard{}, false
-}

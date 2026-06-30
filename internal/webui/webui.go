@@ -169,14 +169,6 @@ var workbenchIndexTemplate = template.Must(template.New("workbench-index").Parse
   {{range .Workbenches}}<article><h3><a href="{{.Route}}">{{.Label}}</a></h3><p>{{.Purpose}}</p><p>CLI equivalent: <code>{{.CLI}}</code></p><p>No-JS fallback: {{.Fallback}}</p></article>{{end}}
 </section>`))
 
-var genericWorkbenchTemplate = template.Must(template.New("generic-workbench").Parse(`<section aria-labelledby="workbench-title" class="rf-card">
-  <h2 id="workbench-title">{{.Label}} Workbench</h2>
-  <p>{{.Purpose}}</p>
-  <p>CLI equivalent: <code>{{.CLI}}</code></p>
-  <p>No-JS fallback: {{.Fallback}}</p>
-  <p><a href="/workbenches">Back to HTMX workbenches</a></p>
-</section>`))
-
 var packageExportCenterTemplate = template.Must(template.New("package-export-center").Parse(`<section aria-labelledby="package-title" class="rf-card">
   <h2 id="package-title">reproducibility/export Workbench</h2>
   <p>Preview Reproducible review package contents, redaction results, checksums, lockfiles, external-tool versions, parser manifests, analysis artifacts, report outputs, and reviewer decision logs before package creation.</p>
@@ -728,19 +720,6 @@ func newAcquisitionQueueHandler(projectPath func() string) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		_ = acquisitionQueueTemplate.Execute(w, BuildAcquisitionQueueState(projectPath()))
-	})
-}
-
-func newGenericWorkbenchHandler(route string) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		state := BuildWorkbenchIndexState()
-		card, ok := state.CardByRoute(route)
-		if !ok {
-			http.NotFound(w, r)
-			return
-		}
-		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		_ = genericWorkbenchTemplate.Execute(w, card)
 	})
 }
 

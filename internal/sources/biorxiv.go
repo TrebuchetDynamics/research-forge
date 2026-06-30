@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"net/url"
 	"strings"
 	"time"
 )
@@ -147,11 +146,4 @@ type bioRxivPreprint struct {
 	Category string `json:"category"`
 	Abstract string `json:"abstract"`
 	Server   string `json:"server"`
-}
-
-func rawBioRxivRef(server, interval string) string {
-	values := url.Values{}
-	values.Set("server", server)
-	values.Set("interval", interval)
-	return fmt.Sprintf("biorxiv:/details/%s/%s/0/json?%s", server, interval, values.Encode())
 }
