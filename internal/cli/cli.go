@@ -151,6 +151,8 @@ func Execute(args []string, stdout, stderr io.Writer) int {
 		return executeGoal(remaining[1:], stdout, stderr, opts)
 	case "meta":
 		return executeMeta(remaining[1:], stdout, stderr, opts)
+	case "vault":
+		return executeVault(remaining[1:], stdout, stderr, opts)
 	default:
 		return writeError(stdout, stderr, opts, 2, "unknown_command", fmt.Sprintf("unknown command %q", remaining[0]))
 	}
@@ -3806,6 +3808,16 @@ func helpSections() []helpSection {
 				{
 					Usage:       "rforge meta overlap --research-dir <dir> [--min-topics N]",
 					Description: "Find papers appearing in multiple topic subdirs. Use --min-topics 2 to see cross-topic core cluster.",
+				},
+			},
+		},
+		{
+			Name:        "vault",
+			Description: "Obsidian vault export — turn research dirs into an interconnected knowledge base.",
+			Commands: []helpCommand{
+				{
+					Usage:       "rforge vault build --research-dir <dir> --out <vault-dir>",
+					Description: "Write one Obsidian-compatible .md note per paper (YAML frontmatter + [[wikilinks]]), per-topic index notes, and index.md with cross-topic paper highlights.",
 				},
 			},
 		},

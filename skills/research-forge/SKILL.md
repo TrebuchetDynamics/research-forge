@@ -334,7 +334,16 @@ rforge citations build --research-dir <research-dir> [--out <file>]
 
 # Find papers appearing in multiple topic subdirs
 rforge meta overlap --research-dir <research-dir> [--min-topics 2]
+
+# Export as an Obsidian vault — one .md note per paper with wikilinks,
+# per-topic index notes, and index.md with cross-topic highlights
+rforge vault build --research-dir <research-dir> --out <vault-dir>
 ```
+
+The Obsidian vault output:
+- `papers/<slug>.md` — per-paper notes with YAML frontmatter (title, authors, year, doi, topics) and `[[wikilinks]]` to every topic the paper appears in
+- `<topic>.md` — topic index notes listing all papers with `[[papers/slug|Title]]` links
+- `index.md` — main dashboard with all topics, paper counts, and cross-topic papers highlighted
 
 ### ResearchForge project package
 
