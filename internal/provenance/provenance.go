@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -63,9 +64,20 @@ func Append(projectPath string, event Event) error {
 	if err != nil {
 		return err
 	}
-	defer file.Close()
-	_, err = file.Write(eventBytes)
-	return err
+	return writeAndClose(file, eventBytes)
+}
+
+// writeAndClose writes data to f and closes it, returning the write error if
+// any, otherwise the close error. A bare deferred Close would silently
+// discard a flush failure (e.g. disk full) and report a provenance event as
+// recorded when it never reached the audit trail.
+func writeAndClose(f io.WriteCloser, data []byte) error {
+	_, writeErr := f.Write(data)
+	closeErr := f.Close()
+	if writeErr != nil {
+		return writeErr
+	}
+	return closeErr
 }
 
 // Read returns all Provenance events from the project JSONL ledger.

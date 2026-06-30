@@ -1,9 +1,22 @@
 package provenance
 
 import (
+	"errors"
 	"path/filepath"
 	"testing"
 )
+
+type closeErrWriter struct{ closeErr error }
+
+func (w *closeErrWriter) Write(p []byte) (int, error) { return len(p), nil }
+func (w *closeErrWriter) Close() error                { return w.closeErr }
+
+func TestWriteAndCloseReturnsCloseError(t *testing.T) {
+	w := &closeErrWriter{closeErr: errors.New("simulated flush failure")}
+	if err := writeAndClose(w, []byte("event\n")); err == nil {
+		t.Fatalf("writeAndClose returned nil error despite a failing provenance log Close")
+	}
+}
 
 func TestAppendAndReadEvents(t *testing.T) {
 	projectPath := t.TempDir()
