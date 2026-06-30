@@ -38,7 +38,7 @@ var (
 	Date    = "unknown"
 )
 
-var topLevelCommands = []string{"version", "decisions", "benchmark", "automation", "completion", "forge", "project", "doctor", "service", "library", "search", "citations", "oa", "duplicate", "import", "export", "oss", "pdf", "parse", "index", "knowledge", "graph", "retrieve", "research", "protocol", "screen", "prisma", "extraction", "extract", "evidence", "analysis", "report", "package", "archive", "ui", "watch", "inbox", "fetch", "provenance", "journal", "goal"}
+var topLevelCommands = []string{"version", "decisions", "benchmark", "automation", "completion", "forge", "project", "doctor", "service", "library", "search", "citations", "oa", "duplicate", "import", "export", "oss", "pdf", "parse", "index", "knowledge", "graph", "retrieve", "research", "protocol", "screen", "prisma", "extraction", "extract", "evidence", "analysis", "report", "package", "archive", "ui", "watch", "inbox", "fetch", "provenance", "journal", "goal", "meta"}
 
 type globalOptions struct {
 	JSON     bool
@@ -146,6 +146,8 @@ func Execute(args []string, stdout, stderr io.Writer) int {
 		return executeJournal(remaining[1:], stdout, stderr, opts)
 	case "goal":
 		return executeGoal(remaining[1:], stdout, stderr, opts)
+	case "meta":
+		return executeMeta(remaining[1:], stdout, stderr, opts)
 	default:
 		return writeError(stdout, stderr, opts, 2, "unknown_command", fmt.Sprintf("unknown command %q", remaining[0]))
 	}
