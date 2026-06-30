@@ -4,44 +4,125 @@
 [![Playwright e2e](https://github.com/TrebuchetDynamics/research-forge/actions/workflows/playwright-e2e.yml/badge.svg)](https://github.com/TrebuchetDynamics/research-forge/actions/workflows/playwright-e2e.yml)
 [![Go Reference](https://pkg.go.dev/badge/github.com/TrebuchetDynamics/research-forge.svg)](https://pkg.go.dev/github.com/TrebuchetDynamics/research-forge)
 
-LLMs can summarize a hundred papers in seconds. What they cannot give you is an auditable systematic review: logged searches, traceable sources, recorded inclusion decisions, evidence tied to exact passages, and a replayable workflow another researcher can verify.
-
-**ResearchForge** builds the package behind that review. Searches are logged. Sources are tracked. Inclusion decisions are stored. Evidence links to exact passages. The finished package replays offline.
+Search academic literature, download open-access PDFs, and generate a citable bibliography — in three commands. For teams that need a traceable, replayable systematic review, ResearchForge also builds a full auditable package.
 
 The command-line tool is `rforge`.
 
-## What it does
+## Quickstart
 
-- Search forty-four scholarly sources: OpenAlex, arXiv, Crossref, Semantic Scholar, PubMed, Europe PMC, NASA ADS, DOAJ, CORE, bioRxiv/medRxiv, Zenodo, INSPIRE HEP, dblp, ClinicalTrials.gov, OSF, OpenCitations, BASE, zbMATH Open, figshare, DataCite, Lens.org, ERIC, HAL, Dimensions, PubChem, ChemRxiv, NTRS, DOAB, OpenAIRE, PLOS, OSTI, Dryad, Research Square, CiNii, BioStudies, GBIF Literature, Harvard Dataverse, NASA CMR, PubMed Central (PMC), HuggingFace Papers, OAPEN, NBER Working Papers, Open Library, eLife Sciences
-- Import and deduplicate papers into a local project store
-- Track provenance end to end; every reference knows where it came from
-- Screen studies with recorded inclusion and exclusion decisions
-- Extract evidence linked to exact source passages
-- Run meta-analysis: arm-pair effect sizes (SMD, odds ratio, risk ratio, mean difference, correlation) **and** scientific benchmarking mode for pooling a single continuous metric per study (e.g. solar-to-hydrogen efficiency %, AUROC) — with variance floor imputation and automatic sensitivity runs
-- Build auditable reports
-- Export replayable review packages that another researcher can audit offline
+```sh
+# 1. Search papers on a topic (saves results.jsonl + provenance)
+rforge search batch --out ./research/my-topic \
+  --query "prediction markets information aggregation" \
+  --sources openalex,arxiv
 
-## Status
+# 2. Download open-access PDFs
+rforge oa fetch --dir ./research/my-topic
 
-**Works today:**
-- Project workspaces
-- Multi-source search and import
-- Source and reference provenance logs
-- Deduplication reporting
-- Offline forge fixture workflow (`rforge forge`)
-- Package audit and replay
-- Local Go + HTMX research cockpit (`rforge ui`)
+# 3. Generate CITATIONS.md for every downloaded paper
+rforge citations build --research-dir ./research
+```
 
-**Experimental:**
-- Document parsing
-- Screening engine
-- Evidence extraction (including abstract extraction interface for LLM-backed numeric extraction)
-- Meta-analysis: arm-pair effect sizes and scientific benchmarking mode (`--effect raw-continuous`, `rforge analysis ready`, automatic floor-sensitivity runs per ADR-0007)
-- Web GUI beyond the skeleton
+That's it. `./research/my-topic/pdfs/` holds the PDFs; `./research/CITATIONS.md` holds numbered references [1]–[N] sorted by first author.
 
-**Adapter seams planned:** GROBID (PDF parsing), OpenSearch, Qdrant (search), R/metafor, PyMARE (meta-analysis), PostgreSQL, LLM abstract extraction (Claude / OpenAI)
+### Multiple queries, one topic
 
-See [ROADMAP.md](./ROADMAP.md) for milestone sequencing.
+Put queries one per line in a file:
+
+```sh
+# queries.txt
+prediction markets information aggregation
+LMSR logarithmic market scoring rule
+binary prediction market trading strategy
+```
+
+```sh
+rforge search batch --out ./research/my-topic \
+  --queries queries.txt --sources openalex,semantic-scholar,arxiv
+rforge oa fetch --dir ./research/my-topic
+rforge citations build --research-dir ./research
+```
+
+### Multiple topics, cross-topic analysis
+
+```sh
+rforge search batch --out ./research/topic-a --query "topic A" --sources openalex,arxiv
+rforge search batch --out ./research/topic-b --query "topic B" --sources openalex,arxiv
+rforge oa fetch --dir ./research/topic-a
+rforge oa fetch --dir ./research/topic-b
+
+# Which papers appear in both topics?
+rforge meta overlap --research-dir ./research --min-topics 2
+
+# Citations for everything downloaded across all topics
+rforge citations build --research-dir ./research
+```
+
+## Sources
+
+`--sources` accepts a preset or a comma-separated list:
+
+| Preset | Covers |
+|---|---|
+| `openalex,arxiv` | Fast, broad coverage (good default) |
+| `openalex,arxiv,semantic-scholar` | Adds citation graph + AI/CS depth |
+| `scholarly-fast` | OpenAlex + arXiv + Crossref |
+| `all` | All 44 sources (slow) |
+| `biomedical` | PubMed, Europe PMC, bioRxiv |
+| `preprints` | arXiv, bioRxiv, medRxiv, ChemRxiv |
+| `open` | Open-access sources only |
+
+Single sources: `openalex`, `arxiv`, `crossref`, `semantic-scholar`, `europepmc`, `pubmed`, and 38 more.
+
+## Commands
+
+### Core research workflow
+
+| Command | What it does |
+|---|---|
+| `rforge search batch --out <dir> --query <q> --sources <s>` | Search papers, write `results.jsonl` |
+| `rforge search batch ... --queries <file>` | Batch search from a query file |
+| `rforge search resume --dir <dir>` | Retry any failed queries |
+| `rforge oa fetch --dir <dir>` | Download open-access PDFs to `<dir>/pdfs/` |
+| `rforge citations build --research-dir <dir>` | Write `CITATIONS.md` with numbered references |
+| `rforge meta overlap --research-dir <dir>` | Find papers appearing across multiple topics |
+
+### Citation graph
+
+| Command | What it does |
+|---|---|
+| `rforge citations expand --source semantic-scholar --paper <id> --direction both --depth 2 --out graph.json` | Build a citation network around a paper |
+| `rforge citations report --graph graph.json --out report.md` | Summarize the citation graph |
+
+### Utilities
+
+| Command | What it does |
+|---|---|
+| `rforge search stats --dir <dir>` | Show hit counts and failure summary |
+| `rforge oa lookup <doi>` | Check open-access status of a DOI |
+| `rforge doctor` | Verify environment (pdftotext, network) |
+| `rforge version` | Print version |
+
+## Full reproducible review
+
+For auditable systematic reviews with logged decisions and replayable packages:
+
+```sh
+rforge project create ./my-review --title "High entropy superconductors"
+rforge forge init --project ./my-review \
+  --question "Do artificial photosynthesis catalysts improve solar fuel generation?"
+rforge forge status --project ./my-review
+rforge forge next  --project ./my-review  # guided step-by-step workflow
+```
+
+The `forge` workflow walks you through approval gates, screening, evidence extraction, meta-analysis, and package export. The result is a `*.rforgepkg` any researcher can audit offline:
+
+```sh
+rforge package audit  ./review.rforgepkg
+rforge package replay ./review.rforgepkg
+```
+
+See [docs/reproducible-review-package.md](./docs/reproducible-review-package.md) for the full workflow.
 
 ## Installation
 
@@ -49,120 +130,15 @@ See [ROADMAP.md](./ROADMAP.md) for milestone sequencing.
 curl -fsSL https://raw.githubusercontent.com/TrebuchetDynamics/research-forge/main/install.sh | bash
 ```
 
-The installer downloads the latest release binary and does not require Go. Run `rforge version` to verify.
-
-To build from source with Go 1.26+:
+No Go required. Run `rforge version` to verify. To build from source (Go 1.26+):
 
 ```sh
 go install github.com/TrebuchetDynamics/research-forge/cmd/rforge@latest
 ```
 
-Or clone and build:
+## LLM / agent usage
 
-```sh
-git clone https://github.com/TrebuchetDynamics/research-forge
-cd research-forge
-go build -o bin/rforge ./cmd/rforge
-```
-
-## Quickstart
-
-### Search, import, and report
-
-```sh
-rforge project create ./my-review --title "High entropy superconductors"
-rforge search import --source openalex --query "high entropy superconductors" \
-  --pages 3 --project ./my-review
-rforge duplicate report --project ./my-review
-rforge report build --out ./my-review/report.md
-rforge --project ./my-review ui
-```
-
-### Reproducible review package workflow
-
-`rforge forge` is the guided workflow for building an auditable review package — a self-contained artifact that can be verified and replayed offline.
-
-```sh
-rforge forge init --project ./my-review \
-  --question "Do artificial photosynthesis catalysts improve solar fuel generation outcomes?"
-rforge forge approve --project ./my-review --gate "question approval" --note accepted
-rforge forge approve --project ./my-review --gate "protocol approval" --note accepted
-rforge forge approve --project ./my-review --gate "network/API approval" --note accepted
-rforge forge source-fixture --project ./my-review
-rforge forge reference-fixture --project ./my-review
-rforge forge approve --project ./my-review --gate "identity approval" --note accepted
-rforge forge acquisition-fixture --project ./my-review
-# Continue parser/screening/evidence/analysis/report approvals, then:
-rforge forge package-fixture --project ./my-review --out ./review.rforgepkg
-rforge package audit ./review.rforgepkg
-rforge package replay ./review.rforgepkg
-```
-
-### Scientific benchmarking meta-analysis
-
-Pool a single continuous metric (e.g. solar-to-hydrogen efficiency %) across device papers without requiring treatment/control arms:
-
-```sh
-# Search with the chemistry preset, import records, and fetch legal OA PDFs as text
-rforge --project ./my-review search batch --queries queries.txt --sources chemistry \
-  --out ./my-review/searches --stats --fetch-pdfs
-
-# Prepare a benchmarking run — variance floor per ADR-0007, moderator fields auto-wired
-rforge analysis prepare my-run --effect raw-continuous --variance-floor 0.0025 \
-  --moderator device_type --moderator auxiliary_bias --moderator measurement_standard
-
-# Check all accepted evidence items carry the required schema fields
-rforge analysis ready my-run --required device_type,auxiliary_bias,measurement_standard
-
-# Run — emits main result + automatic no-floor sensitivity artifact
-rforge analysis run my-run
-```
-
-### OSS repository study
-
-```sh
-rforge oss add kermitt2/grobid
-rforge oss scan --topic "meta-analysis"
-rforge oss report --area parsers
-```
-
-## Example package
-
-A review package is a directory:
-
-```
-review.rforgepkg
-├── protocol.yaml
-├── searches/
-├── sources/
-├── screening/
-├── evidence/
-├── analysis/
-├── report.md
-└── provenance.jsonl
-```
-
-`rforge package audit` verifies the package is complete. `rforge package replay` re-runs the workflow from the provenance log.
-
-## Local UI
-
-```sh
-rforge --project ./my-review ui
-```
-
-Opens a local Go + HTMX web interface for browsing papers, graph/artifact views, provenance, screening decisions, and evidence.
-
-## LLM and agent usage
-
-ResearchForge does not replace scientific judgment with AI answers. It gives researchers and agents structured tools for searching, screening, extracting, and reporting, while keeping citations, source passages, and replayable logs as the record of truth.
-
-LLM outputs that enter the workflow are stored with provenance like any other step. The system is model-agnostic and works without any LLM connection.
-
-ResearchForge ships a standalone agent skill — [`skills/research-forge/SKILL.md`](./skills/research-forge/SKILL.md) — that works in any project, not just this repo. The skill auto-installs `rforge` if it is not on the system, then handles literature search, provenance, and review packaging for any academic topic.
-
-### Install the skill
-
-**Claude Code / Pi — install globally (one command):**
+ResearchForge ships an agent skill — [`skills/research-forge/SKILL.md`](./skills/research-forge/SKILL.md) — that works in any project. Install it once:
 
 ```sh
 mkdir -p ~/.claude/skills/research-forge && \
@@ -170,33 +146,23 @@ mkdir -p ~/.claude/skills/research-forge && \
   > ~/.claude/skills/research-forge/SKILL.md
 ```
 
-**Any other harness** — paste the contents of [`skills/research-forge/SKILL.md`](./skills/research-forge/SKILL.md) as your system prompt or opening message.
-
-### Use the skill
-
-Once installed, invoke it from any project:
+Then invoke from any Claude Code session:
 
 ```
 Use the research-forge skill to research: <your topic>
 ```
 
-The skill will check for `rforge`, install it if missing, create a project workspace, search the relevant sources, and write `provenance.json` before finishing.
+The skill installs `rforge` if missing, runs the batch search, fetches PDFs, and writes `provenance.json` before finishing.
 
 ## Architecture
 
 ```
-Research question / domain query
-  -> Query planner + protocol compiler
-  -> rforge CLI
-  -> Scholarly source connectors (OpenAlex, arXiv, Crossref, ...)
-  -> Local SQLite project store + provenance log
-  -> Document acquisition + parser adapters (GROBID, S2ORC, ...)
-  -> Retrieval index (SQLite FTS / OpenSearch / Qdrant)
-  -> Screening engine + active-learning scaffold
-  -> Evidence extraction + risk-of-bias
-  -> Meta-analysis / statistical engine (R/metafor, PyMARE)
-  -> Report generator + reproducible package exporter
-  -> Local Go + HTMX research cockpit (rforge ui)
+Research question
+  -> rforge search batch      (44 scholarly sources)
+  -> rforge oa fetch          (open-access PDF download)
+  -> rforge citations build   (CITATIONS.md, numbered bibliography)
+  -> rforge meta overlap      (cross-topic synthesis)
+  -> rforge forge             (full auditable review package)
 ```
 
 | Layer | Choice |
@@ -204,20 +170,21 @@ Research question / domain query
 | Language | Go |
 | CLI | `rforge` |
 | Local web GUI | Go + HTMX (`rforge ui`) |
-| Database | SQLite (PostgreSQL adapter seam planned) |
-| Search | SQLite FTS; OpenSearch and Qdrant as optional adapters |
-| PDF parsing | GROBID (optional); S2ORC, PaperMage, Anystyle adapter seams |
-| Metadata sources | OpenAlex, Crossref, arXiv, Semantic Scholar, PubMed, Europe PMC, NASA ADS, Unpaywall, DOAJ, CORE, bioRxiv/medRxiv, Zenodo, INSPIRE HEP, dblp, ClinicalTrials.gov, OSF, OpenCitations, BASE, zbMATH Open, figshare, DataCite, Lens.org, ERIC, HAL, Dimensions, PubChem, ChemRxiv, NTRS, DOAB, OpenAIRE, PLOS, OSTI, Dryad, Research Square, CiNii, BioStudies, GBIF Literature, Harvard Dataverse, NASA CMR, PubMed Central (PMC), HuggingFace Papers, OAPEN, NBER Working Papers, Open Library, eLife Sciences |
-| Meta-analysis | R `metafor`; PyMARE adapter seam |
+| Database | SQLite |
+| PDF parsing | `pdftotext`; GROBID adapter seam |
+| Metadata sources | OpenAlex, arXiv, Crossref, Semantic Scholar, PubMed, Europe PMC, and 38 more |
+| Meta-analysis | arm-pair effect sizes and scientific benchmarking (`--effect raw-continuous`) |
 
 ## Development
 
-See [SKILLS.md](./SKILLS.md) before starting implementation work — each development skill owns a specific slice and enforces red-green-refactor TDD. See [RESEARCH-FORGE-PRD.md](./RESEARCH-FORGE-PRD.md) for full product requirements and [docs/reproducible-review-package.md](./docs/reproducible-review-package.md) for the package contract.
-
-## License
-
-MIT License (SPDX: `MIT`), Copyright (c) 2026 Trebuchet Dynamics. See [LICENSE](LICENSE). The license was selected by the repository owner on 2026-06-13; the decision record is tracked in issue #1 and [docs/owner-decisions.md](docs/owner-decisions.md).
+See [SKILLS.md](./SKILLS.md) and [RESEARCH-FORGE-PRD.md](./RESEARCH-FORGE-PRD.md). All new features require TDD (red-green-refactor).
 
 ## Decision-gated scope
 
-Local web GUI delivery targets Go + HTMX; the implementation tracker is recorded in issue #2 and ADR 0006. Run `make todo-audit` to verify that remaining unchecked `TODO.md` items are covered by owner decisions, `make todo-completion-audit` for the closeout prompt-to-artifact checklist, or `make decisions-markdown` for a review-friendly blocker table.
+Local web GUI delivery targets Go + HTMX (ADR 0006; tracked in issue #2 and [docs/web-gui-plan.md](docs/web-gui-plan.md)). License was selected by the repository owner on 2026-06-13 (tracked in issue #1 and [docs/owner-decisions.md](docs/owner-decisions.md)).
+
+Run `make todo-audit` to verify unchecked `TODO.md` items are covered by owner decisions, `make todo-completion-audit` for the closeout checklist, or `make decisions-markdown` for a blocker table.
+
+## License
+
+MIT License (SPDX: `MIT`), Copyright (c) 2026 Trebuchet Dynamics. See [LICENSE](LICENSE).
