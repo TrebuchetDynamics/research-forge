@@ -26,6 +26,9 @@ func executeCitations(args []string, stdout, stderr io.Writer, opts globalOption
 	if len(args) == 0 {
 		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge citations <expand|report|import-bibliography|domain-map>")
 	}
+	if args[0] == "build" {
+		return executeCitationsBuild(args[1:], stdout, stderr, opts)
+	}
 	if args[0] == "accessible-view" {
 		graphPath, domainPath, outPath, filter, format, ok := parseCitationsAccessibleView(args[1:])
 		if !ok {
