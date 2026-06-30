@@ -1,11 +1,24 @@
 package reviewpkg
 
 import (
+	"errors"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
 )
+
+type closeErrWriter struct{ closeErr error }
+
+func (w *closeErrWriter) Write(p []byte) (int, error) { return len(p), nil }
+func (w *closeErrWriter) Close() error                { return w.closeErr }
+
+func TestCopyAndCloseReturnsCloseError(t *testing.T) {
+	w := &closeErrWriter{closeErr: errors.New("simulated flush failure")}
+	if err := copyAndClose(w, strings.NewReader("data")); err == nil {
+		t.Fatalf("copyAndClose returned nil error despite a failing package file Close")
+	}
+}
 
 func TestCreateReviewPackageFormatIncludesManifestRedactionAndChecksums(t *testing.T) {
 	project := t.TempDir()

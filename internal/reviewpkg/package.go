@@ -289,9 +289,20 @@ func copyIfExists(projectPath, packagePath, rel string) error {
 	if err != nil {
 		return err
 	}
-	defer out.Close()
-	_, err = io.Copy(out, in)
-	return err
+	return copyAndClose(out, in)
+}
+
+// copyAndClose copies src into dst and closes dst, returning the copy error
+// if any, otherwise the close error. A bare deferred Close would silently
+// discard a flush failure (e.g. disk full) and report a package file as
+// copied when it was actually truncated.
+func copyAndClose(dst io.WriteCloser, src io.Reader) error {
+	_, copyErr := io.Copy(dst, src)
+	closeErr := dst.Close()
+	if copyErr != nil {
+		return copyErr
+	}
+	return closeErr
 }
 
 func writePackageHelperFiles(packagePath string) error {
