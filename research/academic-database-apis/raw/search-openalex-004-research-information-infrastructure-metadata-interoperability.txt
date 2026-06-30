@@ -1,0 +1,25 @@
+10.1038/s41586-020-2649-2	Array programming with NumPy
+	Array programming with NumPy
+10.1038/sdata.2016.18	The FAIR Guiding Principles for scientific data management and stewardship
+10.1093/nar/gkad347	g:Profiler—interoperable web service for functional enrichment analysis and gene identifier mapping (2023 update)
+10.3847/1538-3881/aabc4f	The Astropy Project: Building an Open-science Project and Status of the v2.0 Core Package<sup>*</sup>
+10.1007/s11036-018-1089-9	Interoperability in Internet of Things: Taxonomies and Open Challenges
+10.1186/gb-2004-5-10-r80	Bioconductor: open software development for computational biology and bioinformatics
+10.1093/nar/gkab1038	The PRIDE database resources in 2022: a hub for mass spectrometry-based proteomics evidences
+10.1201/9781003338604-2	Internet of Things Strategic Research Roadmap
+10.1287/isre.2018.0794	Introduction—Platforms and Infrastructures in the Digital Age
+10.1016/j.future.2013.01.010	Internet of Things (IoT): A vision, architectural elements, and future directions
+10.1093/nar/gky1131	STRING v11: protein–protein association networks with increased coverage, supporting functional discovery in genome-wide experimental datasets
+10.2196/35724	Fast Healthcare Interoperability Resources (FHIR) for Interoperability in Health Research: Systematic Review
+10.1155/2017/9731806	Semantic Interoperability in Heterogeneous IoT Infrastructure for Healthcare
+10.1016/j.jbi.2007.03.009	caCORE version 3: Implementation of a model driven, service-oriented architecture for semantic interoperability
+10.1038/nbt1360	The minimum information about a genome sequence (MIGS) specification
+10.1371/journal.pcbi.1003118	Software for Computing and Annotating Genomic Ranges
+10.1007/s00778-007-0044-3	Service oriented architectures: approaches, technologies and research issues
+10.1093/nar/gkac1010	The NHGRI-EBI GWAS Catalog: knowledgebase and deposition resource
+10.1186/s12859-017-1934-z	ImageJ2: ImageJ for the next generation of scientific image data
+	Interoperability in Personalized Adaptive Learning
+10.1038/s41597-023-02269-x	PANGAEA - Data Publisher for Earth &amp; Environmental Science
+10.1093/jamia/ocaa196	The National COVID Cohort Collaborative (N3C): Rationale, design, infrastructure, and deployment
+10.1093/nar/gkaa1100	UniProt: the universal protein knowledgebase in 2021
+10.1016/j.future.2017.09.020	Next generation cloud computing: New trends and research directions

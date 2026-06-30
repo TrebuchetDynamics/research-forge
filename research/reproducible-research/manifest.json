@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "1",
+  "createdAt": "2026-06-30T03:48:08Z",
+  "queries": [
+    "reproducible research computational workflow provenance",
+    "open science research data management FAIR",
+    "research software engineering scientific pipeline",
+    "preregistration registered report research transparency"
+  ],
+  "sources": [
+    "openalex",
+    "semantic-scholar",
+    "arxiv"
+  ],
+  "limit": 25,
+  "results": 150,
+  "deduped": 143,
+  "failures": 6
+}

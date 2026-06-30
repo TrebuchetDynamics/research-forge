@@ -1,0 +1,25 @@
+10.1021/acs.jmedchem.5b00104	pkCSM: Predicting Small-Molecule Pharmacokinetic and Toxicity Properties Using Graph-Based Signatures
+10.1007/s10915-022-01939-z	Scientific Machine Learning Through Physics–Informed Neural Networks: Where we are and What’s Next
+10.1186/s13643-016-0384-4	Rayyan—a web and mobile app for systematic reviews
+10.1186/s40649-019-0069-y	Graph convolutional networks: a comprehensive review
+10.1145/3292500.3330961	Heterogeneous Graph Neural Network
+10.48550/arxiv.1611.07308	Variational Graph Auto-Encoders
+10.1145/3394486.3403049	Graph Structure Learning for Robust Graph Neural Networks
+10.1145/3447772	Knowledge Graphs
+10.1186/s13174-018-0087-2	A comprehensive survey on machine learning for networking: evolution, applications and research opportunities
+10.1016/j.biotechadv.2021.107739	Using machine learning approaches for multi-omics data analysis: A review
+10.1109/tkde.2021.3079836	Informed Machine Learning - A Taxonomy and Survey of Integrating Prior Knowledge into Learning Systems
+10.1038/nature06830	Hierarchical structure and the prediction of missing links in networks
+10.1186/s40537-019-0191-6	Customer churn prediction in telecom using machine learning in big data platform
+10.1038/s41467-020-19594-z	Machine learning with physicochemical relationships: solubility prediction in organic solvents and water
+10.3390/healthcare10030541	Machine-Learning-Based Disease Diagnosis: A Comprehensive Review
+10.1186/s13638-019-1561-7	Link prediction in paper citation network to construct paper correlation graph
+10.1038/s43246-022-00315-6	Graph neural networks for materials science and chemistry
+10.1021/acs.chemrev.3c00189	Machine Learning Methods for Small Data Challenges in Molecular Science
+10.2196/15708	Machine Learning and Natural Language Processing in Mental Health: Systematic Review
+10.1109/tccn.2018.2881442	A Very Brief Introduction to Machine Learning With Applications to Communication Systems
+10.1613/jair.1.11192	SMOTE for Learning from Imbalanced Data: Progress and Challenges, Marking the 15-year Anniversary
+10.1016/j.rser.2020.109899	Artificial intelligence and machine learning approaches to energy demand-side response: A systematic review
+10.1093/bib/bby061	Recent applications of deep learning and machine intelligence on in silico drug discovery: methods, tools and databases
+10.1186/s13321-020-00479-8	Could graph neural networks learn better molecular representation for drug discovery? A comparison study of descriptor-based and graph-based models
+10.1080/00207543.2021.1956697	A machine learning approach for predicting hidden links in supply chain with graph neural networks

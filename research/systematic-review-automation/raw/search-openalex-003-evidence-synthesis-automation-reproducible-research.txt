@@ -1,0 +1,25 @@
+10.1186/s13643-016-0384-4	Rayyan—a web and mobile app for systematic reviews
+10.1136/bmj.n71	The PRISMA 2020 statement: an updated guideline for reporting systematic reviews
+10.1002/cl2.1230	<i>PRISMA2020</i> : An R package and Shiny app for producing PRISMA 2020‐compliant flow diagrams, with interactivity for optimised digital transparency and Open Synthesis
+10.1007/s11301-020-00185-7	Digital transformation: a review, synthesis and opportunities for future research
+10.1186/gb-2002-3-7-research0034	Accurate normalization of real-time quantitative RT-PCR data by geometric averaging of multiple internal control genes
+10.1016/j.jclinepi.2020.01.008	A full systematic review was completed in 2 weeks using automation tools: a case study
+10.1136/bmj.n160	PRISMA 2020 explanation and elaboration: updated guidance and exemplars for reporting systematic reviews
+10.1039/c5cs00878f	Covalent organic frameworks based on Schiff-base chemistry: synthesis, properties and potential applications
+10.1111/2041-210x.13268	An automated approach to identifying search terms for systematic reviews using keyword co‐occurrence networks
+10.3389/fbioe.2020.571777	Automation in the Life Science Research Laboratory
+10.1016/j.techfore.2023.122448	Automation technologies and their impact on employment: A review, synthesis and future research agenda
+10.1016/j.eist.2019.01.004	An agenda for sustainability transitions research: State of the art and future directions
+10.1038/s41586-023-06792-0	Autonomous chemical research with large language models
+10.1016/j.cej.2021.130011	Applications of artificial intelligence in water treatment for optimization and automation of adsorption processes: Recent advances and prospects
+10.1186/s12951-016-0225-6	Pure and multi metal oxide nanoparticles: synthesis, antibacterial and cytotoxic properties
+10.1186/s13643-021-01626-4	The PRISMA 2020 statement: an updated guideline for reporting systematic reviews
+10.1172/jci108843	Evidence for Cardiomyopathy in Familial Diabetes Mellitus
+10.3389/fpsyg.2021.604977	Measurement of Trust in Automation: A Narrative Review and Reference Guide
+10.1007/s10796-021-10146-4	Responsible AI for Digital Health: a Synthesis and a Research Agenda
+10.1016/j.ijsu.2021.105906	The PRISMA 2020 statement: An updated guideline for reporting systematic reviews
+10.1186/s13750-019-0167-1	EviAtlas: a tool for visualising evidence synthesis databases
+10.1186/s13643-019-1062-0	A question of trust: can we build an evidence base to gain trust in systematic review automation technologies?
+10.1111/jpim.12544	Smart Products: Conceptual Review, Synthesis, and Research Directions*
+10.1021/acsnano.8b06511	Carbon Nanotubes and Related Nanomaterials: Critical Advances and Challenges for Synthesis toward Mainstream Commercial Applications
+10.1021/acsnano.3c01117	Microfluidic Devices: A Tool for Nanoparticle Synthesis and Performance Evaluation

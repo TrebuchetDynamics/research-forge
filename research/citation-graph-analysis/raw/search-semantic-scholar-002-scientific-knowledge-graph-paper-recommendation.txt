@@ -1,0 +1,25 @@
+10.1109/cscwd64889.2025.11033524	Hyperboloid-Aware Cross-Community Knowledge Graph Contrastive Learning for Paper Recommendation
+10.1002/cpe.6227	Content‐based and knowledge graph‐based paper recommendation: Exploring user preferences with the knowledge graphs for scientific paper recommendation
+10.1038/s41598-025-03531-5	R-CKGAT: a recommendation algorithm based on scientific fitness knowledge graph
+10.1038/s41598-025-14150-5	Knowledge graph convolutional networks with user preferences for course recommendation
+10.7868/s3034584725060021	RECOMMENDATION SYSTEM BASED ON JOINT APPLICATION OF TEXT BIDIRECTIONAL ENCODER AND KNOWLEDGE GRAPH
+10.48550/arxiv.2210.03295	Scientific and Technological News Recommendation Based on Knowledge Graph with User Perception
+10.1038/s41598-023-28766-y	Interpretable patent recommendation with knowledge graph and deep learning
+10.1038/s41598-023-33984-5	Iterative heterogeneous graph learning for knowledge graph-based recommendation
+10.1038/s41597-024-03039-z	MatKG: An autonomously generated knowledge graph in Material Science
+10.1145/3106426.3106479	A graph based approach to scientific paper recommendation
+10.1038/s41598-026-56490-w	RHCR: a reinforced heterogeneous knowledge graph for course recommendation.
+10.1109/itaic58329.2023.10409033	An Artificial Intelligence Model Recommendation Method for Power Dispatching Scenario Based on Knowledge Graph and Scene Label Matching
+10.1145/3728199.3728220	An Improved and Combined Model for Data Pricing Based on Automated Machine Learning and Knowledge Graph
+10.1016/j.eswa.2020.113764	A survey of research hotspots and frontier trends of recommendation systems from the perspective of knowledge graph
+10.1038/s41598-024-60618-1	Modification and completion of geological structure knowledge graph based on pattern matching
+10.1145/3572549.3572619	Knowledge Graph Based Recommendation Algorithm for Educational Resource
+10.1109/access.2018.2890388	Scientific Paper Recommendation: A Survey
+10.2478/amns-2024-2832	Research on Recommendation Methods for Scientific and Technological Information and Their Application in College Education - Based on Knowledge Graphs
+10.1038/s41598-025-99949-y	A novel recommender system using light graph convolutional network and personalized knowledge-aware attention sub-network
+10.48550/arxiv.2512.16661	Microsoft Academic Graph Information Retrieval for Research Recommendation and Assistance
+10.1007/978-3-030-18576-3_42	A Knowledge Graph Enhanced Topic Modeling Approach for Herb Recommendation
+10.1038/s41598-025-31109-8	Enhancing knowledge graph recommendations through deep reinforcement learning
+10.1038/s41598-025-17640-8	Noise-augmented contrastive learning with attention for knowledge-aware collaborative recommendation
+10.48550/arxiv.2310.20475	Linked Papers With Code: The Latest in Machine Learning as an RDF Knowledge Graph
+10.1038/s41598-025-95395-y	A fine-grained course session recommendation method based on knowledge point pruning

@@ -1,0 +1,132 @@
+# Search batch results
+
+Deduped records: 118
+
+- The bibliometric analysis of scholarly production: How great is the impact? — DOI: `10.1007/s11192-015-1645-z`
+- Financial literacy: A systematic review and bibliometric analysis — DOI: `10.1111/ijcs.12605`
+- Scopus as a curated, high-quality bibliometric data source for academic research in quantitative science studies — DOI: `10.1162/qss_a_00019`
+- Bibliometrics: Methods for studying academic publishing — DOI: `10.1007/s40037-021-00695-4`
+- Bibliometrics of social media research: A co-citation and co-word analysis — DOI: `10.1016/j.ijhm.2017.06.012`
+- Bibliometrics and Citation Analysis: From the Science Citation Index to Cybermetrics
+- Software tools for conducting bibliometric analysis in science: An up-to-date review — DOI: `10.3145/epi.2020.ene.03`
+- A NETWORK ANALYSIS OF TOURISM RESEARCH — DOI: `10.1016/j.annals.2013.04.005`
+- Exploring Topics in Bibliometric Research Through Citation Networks and Semantic Analysis — DOI: `10.3389/frma.2021.742311`
+- A Bibliometric Analysis and Visualization of Medical Big Data Research — DOI: `10.3390/su10010166`
+- A bibliometric analysis of operations research and management science — DOI: `10.1016/j.omega.2016.12.004`
+- RETRACTED ARTICLE: Blockchain in supply chain management: a review, bibliometric, and network analysis — DOI: `10.1007/s11356-021-13094-3`
+- Bibliometric analysis of safety culture research — DOI: `10.1016/j.ssci.2017.08.011`
+- A Bibliometric Analysis of 30 Years of Research and Theory on Corporate Social Responsibility and Corporate Social Performance — DOI: `10.1177/0007650305278086`
+- Investigating the emerging COVID-19 research trends in the field of business and management: A bibliometric analysis approach — DOI: `10.1016/j.jbusres.2020.06.057`
+- Self‐citation and self‐reference: Credibility and promotion in academic publication — DOI: `10.1002/asi.10204`
+- A bibliometric analysis using VOSviewer of publications on COVID-19 — DOI: `10.21037/atm-20-4235`
+- Technology-enhanced learning in higher education: A bibliometric analysis with latent semantic approach — DOI: `10.1016/j.chb.2019.106177`
+- What do citation counts measure? A review of studies on citing behavior — DOI: `10.1108/00220410810844150`
+- Tourism Research on Sustainability: A Bibliometric Analysis — DOI: `10.3390/su11051377`
+- Full‐text citation analysis: A new method to enhance scholarly networks — DOI: `10.1002/asi.22883`
+- Big data and artificial intelligence in the maritime industry: a bibliometric review and future research directions — DOI: `10.1080/03088839.2020.1788731`
+- Digital Health Literacy: Bibliometric Analysis — DOI: `10.2196/35816`
+- Systematic literature review and bibliometric analysis on virtual reality and education — DOI: `10.1007/s10639-022-11167-5`
+- Is Metaverse in education a blessing or a curse: a combined content and bibliometric analysis — DOI: `10.1186/s40561-022-00205-x`
+- A Survey on Knowledge Graphs: Representation, Acquisition, and Applications — DOI: `10.1109/tnnls.2021.3070843`
+- Knowledge Graphs — DOI: `10.1145/3447772`
+- Dynamic Graph CNN for Learning on Point Clouds — DOI: `10.1145/3326362`
+- Content‐based and knowledge graph‐based paper recommendation: Exploring user preferences with the knowledge graphs for scientific paper recommendation — DOI: `10.1002/cpe.6227`
+- Scientific Paper Recommendation: A Survey — DOI: `10.1109/access.2018.2890388`
+- A Survey on Application of Knowledge Graph — DOI: `10.1088/1742-6596/1487/1/012016`
+- SRplot: A free online platform for data visualization and graphing — DOI: `10.1371/journal.pone.0294236`
+- Knowledge Graphs: Opportunities and Challenges — DOI: `10.1007/s10462-023-10465-9`
+- Use of directed acyclic graphs (DAGs) to identify confounders in applied health research: review and recommendations — DOI: `10.1093/ije/dyaa213`
+- Lateral Collinearity and Misleading Results in Variance-Based SEM: An Illustration and Recommendations — DOI: `10.17705/1jais.00302`
+- Large language models encode clinical knowledge — DOI: `10.1038/s41586-023-06291-2`
+- Variable selection – A review and recommendations for the practicing statistician — DOI: `10.1002/bimj.201700067`
+- A survey of research hotspots and frontier trends of recommendation systems from the perspective of knowledge graph — DOI: `10.1016/j.eswa.2020.113764`
+- Heart Rate Variability and Cardiac Vagal Tone in Psychophysiological Research – Recommendations for Experiment Planning, Data Analysis, and Data Reporting — DOI: `10.3389/fpsyg.2017.00213`
+- Recommendations for the quantitative analysis of landslide risk — DOI: `10.1007/s10064-013-0538-8`
+- A context-aware citation recommendation model with BERT and graph convolutional networks — DOI: `10.1007/s11192-020-03561-y`
+- Knowledge Graph Completion: A Review — DOI: `10.1109/access.2020.3030076`
+- Recommendations for Good Scientific Practice and the Consumers of VR-Technology — DOI: `10.3389/frobt.2016.00003`
+- Opinion Paper: “So what if ChatGPT wrote it?” Multidisciplinary perspectives on opportunities, challenges and implications of generative conversational AI for research, practice and policy — DOI: `10.1016/j.ijinfomgt.2023.102642`
+- Guidelines for Reporting Articles on Psychiatry and Heart rate variability (GRAPH): recommendations to advance research communication — DOI: `10.1038/tp.2016.73`
+- The Report of the Ecological Society of America Committee on the Scientific Basis for Ecosystem Management — DOI: `10.2307/2269460`
+- Exploratory graph analysis: A new approach for estimating the number of dimensions in psychological research — DOI: `10.1371/journal.pone.0174035`
+- DNA methylation aging clocks: challenges and recommendations — DOI: `10.1186/s13059-019-1824-y`
+- Microsoft Academic Graph: When experts are not enough — DOI: `10.1162/qss_a_00021`
+- The Use of Cronbach’s Alpha When Developing and Reporting Research Instruments in Science Education — DOI: `10.1007/s11165-016-9602-2`
+- Hyperboloid-Aware Cross-Community Knowledge Graph Contrastive Learning for Paper Recommendation — DOI: `10.1109/cscwd64889.2025.11033524`
+- R-CKGAT: a recommendation algorithm based on scientific fitness knowledge graph — DOI: `10.1038/s41598-025-03531-5`
+- Knowledge graph convolutional networks with user preferences for course recommendation — DOI: `10.1038/s41598-025-14150-5`
+- RECOMMENDATION SYSTEM BASED ON JOINT APPLICATION OF TEXT BIDIRECTIONAL ENCODER AND KNOWLEDGE GRAPH — DOI: `10.7868/s3034584725060021`
+- Scientific and Technological News Recommendation Based on Knowledge Graph with User Perception — DOI: `10.48550/arxiv.2210.03295`
+- Interpretable patent recommendation with knowledge graph and deep learning — DOI: `10.1038/s41598-023-28766-y`
+- Iterative heterogeneous graph learning for knowledge graph-based recommendation — DOI: `10.1038/s41598-023-33984-5`
+- MatKG: An autonomously generated knowledge graph in Material Science — DOI: `10.1038/s41597-024-03039-z`
+- A graph based approach to scientific paper recommendation — DOI: `10.1145/3106426.3106479`
+- RHCR: a reinforced heterogeneous knowledge graph for course recommendation. — DOI: `10.1038/s41598-026-56490-w`
+- An Artificial Intelligence Model Recommendation Method for Power Dispatching Scenario Based on Knowledge Graph and Scene Label Matching — DOI: `10.1109/itaic58329.2023.10409033`
+- An Improved and Combined Model for Data Pricing Based on Automated Machine Learning and Knowledge Graph — DOI: `10.1145/3728199.3728220`
+- Modification and completion of geological structure knowledge graph based on pattern matching — DOI: `10.1038/s41598-024-60618-1`
+- Knowledge Graph Based Recommendation Algorithm for Educational Resource — DOI: `10.1145/3572549.3572619`
+- Research on Recommendation Methods for Scientific and Technological Information and Their Application in College Education - Based on Knowledge Graphs — DOI: `10.2478/amns-2024-2832`
+- A novel recommender system using light graph convolutional network and personalized knowledge-aware attention sub-network — DOI: `10.1038/s41598-025-99949-y`
+- Microsoft Academic Graph Information Retrieval for Research Recommendation and Assistance — DOI: `10.48550/arxiv.2512.16661`
+- A Knowledge Graph Enhanced Topic Modeling Approach for Herb Recommendation — DOI: `10.1007/978-3-030-18576-3_42`
+- Enhancing knowledge graph recommendations through deep reinforcement learning — DOI: `10.1038/s41598-025-31109-8`
+- Noise-augmented contrastive learning with attention for knowledge-aware collaborative recommendation — DOI: `10.1038/s41598-025-17640-8`
+- Linked Papers With Code: The Latest in Machine Learning as an RDF Knowledge Graph — DOI: `10.48550/arxiv.2310.20475`
+- A fine-grained course session recommendation method based on knowledge point pruning — DOI: `10.1038/s41598-025-95395-y`
+- pkCSM: Predicting Small-Molecule Pharmacokinetic and Toxicity Properties Using Graph-Based Signatures — DOI: `10.1021/acs.jmedchem.5b00104`
+- Scientific Machine Learning Through Physics–Informed Neural Networks: Where we are and What’s Next — DOI: `10.1007/s10915-022-01939-z`
+- Rayyan—a web and mobile app for systematic reviews — DOI: `10.1186/s13643-016-0384-4`
+- Graph convolutional networks: a comprehensive review — DOI: `10.1186/s40649-019-0069-y`
+- Heterogeneous Graph Neural Network — DOI: `10.1145/3292500.3330961`
+- Variational Graph Auto-Encoders — DOI: `10.48550/arxiv.1611.07308`
+- Graph Structure Learning for Robust Graph Neural Networks — DOI: `10.1145/3394486.3403049`
+- A comprehensive survey on machine learning for networking: evolution, applications and research opportunities — DOI: `10.1186/s13174-018-0087-2`
+- Using machine learning approaches for multi-omics data analysis: A review — DOI: `10.1016/j.biotechadv.2021.107739`
+- Informed Machine Learning - A Taxonomy and Survey of Integrating Prior Knowledge into Learning Systems — DOI: `10.1109/tkde.2021.3079836`
+- Hierarchical structure and the prediction of missing links in networks — DOI: `10.1038/nature06830`
+- Customer churn prediction in telecom using machine learning in big data platform — DOI: `10.1186/s40537-019-0191-6`
+- Machine learning with physicochemical relationships: solubility prediction in organic solvents and water — DOI: `10.1038/s41467-020-19594-z`
+- Machine-Learning-Based Disease Diagnosis: A Comprehensive Review — DOI: `10.3390/healthcare10030541`
+- Link prediction in paper citation network to construct paper correlation graph — DOI: `10.1186/s13638-019-1561-7`
+- Graph neural networks for materials science and chemistry — DOI: `10.1038/s43246-022-00315-6`
+- Machine Learning Methods for Small Data Challenges in Molecular Science — DOI: `10.1021/acs.chemrev.3c00189`
+- Machine Learning and Natural Language Processing in Mental Health: Systematic Review — DOI: `10.2196/15708`
+- A Very Brief Introduction to Machine Learning With Applications to Communication Systems — DOI: `10.1109/tccn.2018.2881442`
+- SMOTE for Learning from Imbalanced Data: Progress and Challenges, Marking the 15-year Anniversary — DOI: `10.1613/jair.1.11192`
+- Artificial intelligence and machine learning approaches to energy demand-side response: A systematic review — DOI: `10.1016/j.rser.2020.109899`
+- Recent applications of deep learning and machine intelligence on in silico drug discovery: methods, tools and databases — DOI: `10.1093/bib/bby061`
+- Could graph neural networks learn better molecular representation for drug discovery? A comparison study of descriptor-based and graph-based models — DOI: `10.1186/s13321-020-00479-8`
+- A machine learning approach for predicting hidden links in supply chain with graph neural networks — DOI: `10.1080/00207543.2021.1956697`
+- S2ORC: The Semantic Scholar Open Research Corpus — DOI: `10.18653/v1/2020.acl-main.447`
+- Embedding Entities and Relations for Learning and Inference in Knowledge Bases — DOI: `10.4230/tgdk.1.1.7`
+- Construction of the Literature Graph in Semantic Scholar — DOI: `10.18653/v1/n18-3011`
+- Advances in Social Media Research: Past, Present and Future — DOI: `10.1007/s10796-017-9810-y`
+- The Semantic Scholar Open Data Platform — DOI: `10.48550/arxiv.2301.10140`
+- A Review on Large Language Models: Architectures, Applications, Taxonomies, Open Issues and Challenges — DOI: `10.1109/access.2024.3365742`
+- Semantic technologies for historical research: A survey — DOI: `10.3233/sw-140158`
+- ChatGPT and Open-AI Models: A Preliminary Review — DOI: `10.3390/fi15060192`
+- Graph Neural Networks for Intelligent Transportation Systems: A Survey — DOI: `10.1109/tits.2023.3257759`
+- Building a PubMed knowledge graph — DOI: `10.1038/s41597-020-0543-2`
+- Topic Modeling in Management Research: Rendering New Theory from Textual Data — DOI: `10.5465/annals.2017.0099`
+- Evolution of artificial intelligence research in Technological Forecasting and Social Change: Research topics, trends, and future directions — DOI: `10.1016/j.techfore.2023.122579`
+- A Review of Text Corpus-Based Tourism Big Data Mining — DOI: `10.3390/app9163300`
+- Deep learning in remote sensing applications: A meta-analysis and review — DOI: `10.1016/j.isprsjprs.2019.04.015`
+- Creating Embeddings of Heterogeneous Relational Datasets for Data Integration Tasks — DOI: `10.1145/3318464.3389742`
+- OpenCitations, an infrastructure organization for open scholarship — DOI: `10.1162/qss_a_00023`
+- Healthcare knowledge graph construction: A systematic review of the state-of-the-art, open issues, and opportunities — DOI: `10.1186/s40537-023-00774-9`
+- What Disease Does This Patient Have? A Large-Scale Open Domain Question Answering Dataset from Medical Exams — DOI: `10.3390/app11146421`
+- PMC-LLaMA: toward building open-source language models for medicine — DOI: `10.1093/jamia/ocae045`
+- A Deep Fusion Matching Network Semantic Reasoning Model — DOI: `10.3390/app12073416`
+- Recommender Systems Based on Graph Embedding Techniques: A Review — DOI: `10.1109/access.2022.3174197`
+- KBot: A Knowledge Graph Based ChatBot for Natural Language Understanding Over Linked Data — DOI: `10.1109/access.2020.3016142`
+
+## Failures
+
+- semantic-scholar / "citation network analysis bibliometrics academic": source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)
+- arxiv / "citation network analysis bibliometrics academic": source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)
+- arxiv / "scientific knowledge graph paper recommendation": source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)
+- semantic-scholar / "citation graph machine learning link prediction": source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)
+- arxiv / "citation graph machine learning link prediction": source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)
+- semantic-scholar / "semantic scholar open research corpus graph embedding": source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)
+- arxiv / "semantic scholar open research corpus graph embedding": source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)

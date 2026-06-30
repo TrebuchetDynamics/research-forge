@@ -1,0 +1,25 @@
+10.1038/sdata.2016.18	The FAIR Guiding Principles for scientific data management and stewardship
+10.3758/bf03193146	G*Power 3: A flexible statistical power analysis program for the social, behavioral, and biomedical sciences
+10.1088/0953-8984/21/39/395502	QUANTUM ESPRESSO: a modular and open-source software project for quantum simulations of materials
+10.1186/1748-5908-4-50	Fostering implementation of health services research findings into practice: a consolidated framework for advancing implementation science
+10.1186/1471-2105-12-77	pROC: an open-source package for R and S+ to analyze and compare ROC curves
+10.1093/eurheartj/eht151	2013 ESH/ESC Guidelines for the management of arterial hypertension
+10.5860/choice.27-1232	Designing qualitative research
+10.1561/2200000083	Advances and Open Problems in Federated Learning
+10.1371/journal.pmed.1001779	UK Biobank: An Open Access Resource for Identifying the Causes of a Wide Range of Complex Diseases of Middle and Old Age
+10.2147/clep.s91125	The Danish National Patient Registry: a review of content, data quality, and research potential
+10.1016/j.tourman.2008.01.005	Progress in information technology and tourism management: 20 years on and 10 years after the Internet—The state of eTourism research
+10.1161/cir.0000000000000041	2014 AHA/ACC/HRS Guideline for the Management of Patients With Atrial Fibrillation
+10.3233/isu-170824	Cloudy, increasingly FAIR; revisiting the FAIR Data guiding principles for the European Open Science Cloud
+10.26192/q7w89	Social Science Research: Principles, Methods and Practices
+10.48550/arxiv.2302.13971	LLaMA: Open and Efficient Foundation Language Models
+10.1145/3287560.3287598	Fairness and Abstraction in Sociotechnical Systems
+10.1186/s40537-019-0217-0	Big data in healthcare: management, analysis and future prospects
+10.1371/journal.pbio.3000410	The ARRIVE guidelines 2.0: Updated guidelines for reporting animal research
+10.1161/str.0b013e3182587839	Guidelines for the Management of Aneurysmal Subarachnoid Hemorrhage
+10.1186/1748-5908-7-37	Validation of the theoretical domains framework for use in behaviour change and implementation research
+10.1080/09537320802292651	Strategic niche management and sustainable innovation journeys: theory, findings, research agenda, and policy
+10.1016/j.joca.2014.01.003	OARSI guidelines for the non-surgical management of knee osteoarthritis
+10.1186/s41239-019-0171-0	Systematic review of research on artificial intelligence applications in higher education – where are the educators?
+10.1145/2939672.2939785	XGBoost
+10.1109/access.2018.2890507	Blockchain for AI: Review and Open Research Challenges

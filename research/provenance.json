@@ -1,0 +1,68 @@
+{
+  "question": "How can rforge improve systematic review automation, citation graph analysis, reproducible research workflows, and academic database API usage?",
+  "sources": ["openalex", "arxiv", "semantic-scholar"],
+  "queries": [
+    "systematic review automation tools machine learning",
+    "citation graph analysis bibliometric networks",
+    "reproducible research workflows provenance",
+    "academic database APIs OpenAlex metadata quality",
+    "automated meta-analysis techniques evidence synthesis",
+    "open source project search academic tools"
+  ],
+  "timestamp": "2026-06-29T00:00:00Z",
+  "rforge_version": "v0.1.11",
+  "topics": {
+    "systematic-review-automation": {
+      "papers": 119,
+      "pdfs": 7,
+      "noise_dropped": 6
+    },
+    "automated-meta-analysis-techniques": {
+      "papers": 370,
+      "pdfs": 107,
+      "noise_dropped": 10
+    },
+    "citation-graph-analysis": {
+      "papers": 119,
+      "pdfs": 8,
+      "noise_dropped": 6
+    },
+    "reproducible-research": {
+      "papers": 147,
+      "pdfs": 12,
+      "noise_dropped": 3
+    },
+    "academic-database-apis": {
+      "papers": 97,
+      "pdfs": 0,
+      "noise_dropped": 3,
+      "note": "All 97 papers skipped by oa fetch — no open-access versions available (library/information science journals)"
+    },
+    "open-source-project-search": {
+      "papers": 0,
+      "pdfs": 0,
+      "note": "Entire topic dropped — off-topic (bioinformatics, MLOps, computational chemistry noise)"
+    }
+  },
+  "cross_topic_overlap": {
+    "unique_papers": 671,
+    "papers_in_multiple_topics": 28,
+    "core_cluster": [
+      "Rayyan — web and mobile app for systematic reviews (3 topics)",
+      "ASReview — open source ML framework for systematic reviews (2 topics)",
+      "PRISMA 2020 explanation and elaboration (2 topics)",
+      "Systematic review automation technologies (2 topics)",
+      "Toward systematic review automation: a practical guide (2 topics)",
+      "S2ORC: The Semantic Scholar Open Research Corpus (2 topics)",
+      "The FAIR Guiding Principles for scientific data management (2 topics)"
+    ]
+  },
+  "outputs": [
+    "research/systematic-review-automation/results.jsonl",
+    "research/automated-meta-analysis-techniques/results.jsonl",
+    "research/citation-graph-analysis/results.jsonl",
+    "research/reproducible-research/results.jsonl",
+    "research/academic-database-apis/results.jsonl",
+    "research/CITATIONS.md"
+  ]
+}

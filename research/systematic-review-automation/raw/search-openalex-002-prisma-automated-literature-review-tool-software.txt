@@ -1,0 +1,25 @@
+10.1136/bmj.n160	PRISMA 2020 explanation and elaboration: updated guidance and exemplars for reporting systematic reviews
+10.1186/s13643-016-0384-4	Rayyan—a web and mobile app for systematic reviews
+10.1016/j.jclinepi.2021.02.003	Updating guidance for reporting systematic reviews: development of the PRISMA 2020 statement
+10.5195/jmla.2018.345	The impact of patient, intervention, comparison, outcome (PICO) as a search strategy tool on literature search quality: a systematic review
+10.1186/s41239-019-0171-0	Systematic review of research on artificial intelligence applications in higher education – where are the educators?
+10.1007/s11042-020-10139-6	A review on genetic algorithm: past, present, and future
+10.1186/s12911-021-01488-9	The role of artificial intelligence in healthcare: a structured literature review
+10.1186/s13643-017-0663-8	Evaluations of the uptake and impact of the Preferred Reporting Items for Systematic reviews and Meta-Analyses (PRISMA) Statement and extensions: a scoping review
+10.1007/s10796-021-10186-w	Artificial Intelligence and Business Value: a Literature Review
+10.1007/s11846-022-00588-8	Literature reviews as independent studies: guidelines for academic practice
+10.1136/bmj.m1328	Prediction models for diagnosis and prognosis of covid-19: systematic review and critical appraisal
+10.1111/brv.12721	Preferred reporting items for systematic reviews and meta‐analyses in ecology and evolutionary biology: a <scp>PRISMA</scp> extension
+10.1111/2041-210x.12472	Facilitating systematic reviews, data extraction and meta‐analysis with the <scp>metagear</scp> package for <scp>r</scp>
+10.1016/j.edurev.2017.06.001	Four key challenges to the design of blended learning: A systematic literature review
+10.1016/s2589-7500(20)30184-9	Automated and partly automated contact tracing: a systematic review to inform the control of COVID-19
+10.2196/mhealth.8873	The Impact of mHealth Interventions: Systematic Review of Systematic Reviews
+10.1186/s13750-018-0115-5	Online tools supporting the conduct and reporting of systematic reviews and systematic maps: a case study on CADIMA and review of existing tools
+10.1007/s12652-021-03612-z	RETRACTED ARTICLE: Artificial intelligence in disease diagnosis: a systematic literature review, synthesizing framework and future research agenda
+10.2196/10235	Factors Determining the Success and Failure of eHealth Interventions: Systematic Review of the Literature
+10.3389/frai.2021.654924	Are We There Yet? - A Systematic Literature Review on Chatbots in Education
+10.1016/j.jclinepi.2020.01.008	A full systematic review was completed in 2 weeks using automation tools: a case study
+10.1145/3636515	Automated Grading and Feedback Tools for Programming Education: A Systematic Review
+10.1038/s42256-020-00287-7	An open source machine learning framework for efficient and transparent systematic reviews
+10.1007/s00607-023-01181-x	Artificial intelligence to automate the systematic review of scientific literature
+10.1186/s13643-015-0125-0	Applying systematic review search methods to the grey literature: a case study examining guidelines for school-based breakfast programs in Canada

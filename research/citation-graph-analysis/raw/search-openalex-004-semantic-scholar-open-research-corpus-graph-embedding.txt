@@ -1,0 +1,25 @@
+10.18653/v1/2020.acl-main.447	S2ORC: The Semantic Scholar Open Research Corpus
+10.1109/tnnls.2021.3070843	A Survey on Knowledge Graphs: Representation, Acquisition, and Applications
+10.4230/tgdk.1.1.7	Embedding Entities and Relations for Learning and Inference in Knowledge Bases
+10.18653/v1/n18-3011	Construction of the Literature Graph in Semantic Scholar
+10.1162/qss_a_00021	Microsoft Academic Graph: When experts are not enough
+10.1007/s10796-017-9810-y	Advances in Social Media Research: Past, Present and Future
+10.48550/arxiv.2301.10140	The Semantic Scholar Open Data Platform
+10.1109/access.2024.3365742	A Review on Large Language Models: Architectures, Applications, Taxonomies, Open Issues and Challenges
+10.3233/sw-140158	Semantic technologies for historical research: A survey
+10.3390/fi15060192	ChatGPT and Open-AI Models: A Preliminary Review
+10.1109/tits.2023.3257759	Graph Neural Networks for Intelligent Transportation Systems: A Survey
+10.1038/s41597-020-0543-2	Building a PubMed knowledge graph
+10.5465/annals.2017.0099	Topic Modeling in Management Research: Rendering New Theory from Textual Data
+10.1016/j.techfore.2023.122579	Evolution of artificial intelligence research in Technological Forecasting and Social Change: Research topics, trends, and future directions
+10.3390/app9163300	A Review of Text Corpus-Based Tourism Big Data Mining
+10.1016/j.isprsjprs.2019.04.015	Deep learning in remote sensing applications: A meta-analysis and review
+10.1145/3318464.3389742	Creating Embeddings of Heterogeneous Relational Datasets for Data Integration Tasks
+10.1162/qss_a_00023	OpenCitations, an infrastructure organization for open scholarship
+10.1186/s40537-023-00774-9	Healthcare knowledge graph construction: A systematic review of the state-of-the-art, open issues, and opportunities
+10.1038/s41586-023-06291-2	Large language models encode clinical knowledge
+10.3390/app11146421	What Disease Does This Patient Have? A Large-Scale Open Domain Question Answering Dataset from Medical Exams
+10.1093/jamia/ocae045	PMC-LLaMA: toward building open-source language models for medicine
+10.3390/app12073416	A Deep Fusion Matching Network Semantic Reasoning Model
+10.1109/access.2022.3174197	Recommender Systems Based on Graph Embedding Techniques: A Review
+10.1109/access.2020.3016142	KBot: A Knowledge Graph Based ChatBot for Natural Language Understanding Over Linked Data

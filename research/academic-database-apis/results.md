@@ -1,0 +1,114 @@
+# Search batch results
+
+Deduped records: 99
+
+- Evaluating the linguistic coverage of <scp>OpenAlex</scp>: An assessment of metadata accuracy and completeness — DOI: `10.1002/asi.24979`
+- Completeness degree of publication metadata in eight free-access scholarly databases — DOI: `10.1162/qss_a_00286`
+- New trends in bibliometric APIs: A comparative analysis — DOI: `10.1016/j.ipm.2023.103385`
+- Analysis of the publication and document types in OpenAlex, Web of Science, Scopus, PubMed and Semantic Scholar — DOI: `10.1162/qss.a.406`
+- OpenAlex: A fully-open index of scholarly works, authors, venues, institutions, and concepts — DOI: `10.5281/zenodo.6936227`
+- SciSciNet: A large-scale open data lake for the science of science research — DOI: `10.1038/s41597-023-02198-9`
+- Evaluating the Linguistic Coverage of OpenAlex: An Assessment of Metadata Accuracy and Completeness — DOI: `10.48550/arxiv.2409.10633`
+- Coverage and metadata completeness and accuracy of African research publications in OpenAlex: A comparative analysis — DOI: `10.48550/arxiv.2409.01120`
+- Assessing the coverage of PubMed, Embase, OpenAlex, and Semantic Scholar for automated single-database searches in living guideline evidence surveillance: a case study of the international polycystic ovary syndrome guidelines 2023 — DOI: `10.1016/j.jclinepi.2025.111789`
+- Why are these publications missing? Uncovering the reasons behind the exclusion of documents in free‐access scholarly databases — DOI: `10.1002/asi.24839`
+- Analyzing the Utility of Openalex to Identify Studies for Systematic Reviews: Methods and a Case Study — DOI: `10.1002/cesm.70038`
+- Is <scp>OpenAlex</scp> suitable for research quality evaluation and which citation indicator is best? — DOI: `10.1002/asi.70020`
+- Open Science Alternatives to Scopus and the Web of Science: A Case Study in Regional Resilience — DOI: `10.3390/publications12040043`
+- Investigating Document Type Discrepancies between OpenAlex and the Web of Science — DOI: `10.29173/cais1943`
+- Understanding discrepancies in the coverage of <scp>OpenAlex</scp> : The case of China — DOI: `10.1002/asi.70013`
+- Presenting a classifier to improve the identification of research journal publications in OpenAlex — DOI: `10.1007/s11192-025-05524-7`
+- Coverage and metadata completeness and accuracy of African research publications in OpenAlex: A comparative analysis — DOI: `10.1162/qss.a.396`
+- Comparing bibliographic descriptions in seven free-access databases — DOI: `10.55835/6436c590b3340c364be5b2c7`
+- An Evaluation of OpenAlex Level 0 - Art — DOI: `10.29173/cais1979`
+- Enriching the scholarly metadata commons with citation metadata and spatio-temporal metadata to support responsible research assessment and research discovery — DOI: `10.48550/arxiv.2301.01502`
+- Finding citations for PubMed: a large-scale comparison between five freely available bibliographic data sources — DOI: `10.1007/s11192-021-04191-8`
+- The OpenCitations Index: description of a database providing open citation data — DOI: `10.1007/s11192-024-05160-7`
+- OAG-Bench: A Human-Curated Benchmark for Academic Graph Mining — DOI: `10.1145/3637528.3672354`
+- Challenges in building scholarly knowledge graphs for research assessment in open science — DOI: `10.1162/qss_a_00322`
+- Studying fake news spreading, polarisation dynamics, and manipulation by bots: A tale of networks and language — DOI: `10.1016/j.cosrev.2022.100531`
+- A Guide to Conducting a Standalone Systematic Literature Review — DOI: `10.17705/1cais.03743`
+- Standing on the Shoulders of Giants: Challenges and Recommendations of Literature Search in Information Systems Research — DOI: `10.17705/1cais.03709`
+- A Systems Approach to Conduct an Effective Literature Review in Support of Information Systems Research — DOI: `10.28945/479`
+- The STM Report: An overview of scientific and scholarly journal publishing
+- A comprehensive analysis of Vehicle to Grid (V2G) systems and scholarly literature on the application of such systems — DOI: `10.1016/j.ref.2020.10.001`
+- Research-paper recommender systems: a literature survey — DOI: `10.1007/s00799-015-0156-0`
+- Fifteen Years of Research on Business Model Innovation — DOI: `10.1177/0149206316675927`
+- The social impacts of dams: A new framework for scholarly analysis — DOI: `10.1016/j.eiar.2016.02.005`
+- Who's right, Marshall or Jacobs? The localization versus urbanization debate — DOI: `10.1016/j.respol.2008.11.010`
+- Database resources of the National Center for Biotechnology Information — DOI: `10.1093/nar/gkad1044`
+- Time to challenge the spurious hierarchy of systematic over narrative reviews? — DOI: `10.1111/eci.12931`
+- Scholarly recommendation systems: a literature survey — DOI: `10.1007/s10115-023-01901-x`
+- Search where you will find most: Comparing the disciplinary coverage of 56 bibliographic databases — DOI: `10.1007/s11192-022-04289-7`
+- VIKOR Technique: A Systematic Review of the State of the Art Literature on Methodologies and Applications — DOI: `10.3390/su8010037`
+- The Role of AI, Machine Learning, and Big Data in Digital Twinning: A Systematic Literature Review, Challenges, and Opportunities — DOI: `10.1109/access.2021.3060863`
+- Decoupling the scholarly journal — DOI: `10.3389/fncom.2012.00019`
+- Importance of Actors and Agency in Sustainability Transitions: A Systematic Exploration of the Literature — DOI: `10.3390/su8050476`
+- STM report : an overview of scientific and scholarly journal publishing — DOI: `10.58079/v4as`
+- Analysing supply chain resilience: integrating the constructs in a concept mapping framework via a systematic literature review — DOI: `10.1108/scm-06-2016-0197`
+- Economic Implications of Alternative Scholarly Publishing Models Exploring the costs and benefits
+- Detecting Cybersecurity Attacks in Internet of Things Using Artificial Intelligence Methods: A Systematic Literature Review — DOI: `10.3390/electronics11020198`
+- Knowledge Management in the Fourth Industrial Revolution: Mapping the Literature and Scoping Future Avenues — DOI: `10.1109/tem.2019.2963489`
+- Comparing test searches in PubMed and Google Scholar — DOI: `10.3163/1536-5050.95.4.442`
+- Beyond size and search: Building contextual mass in digital aggregations for scholarly use — DOI: `10.1002/meet.14504701213`
+- Scholarly knowledge graphs through structuring scholarly communication: a review — DOI: `10.1007/s40747-022-00806-6`
+- S2ORC: The Semantic Scholar Open Research Corpus — DOI: `10.18653/v1/2020.acl-main.447`
+- Should open access lead to closed research? The trends towards paying to perform research — DOI: `10.1007/s11192-022-04407-5`
+- ‘Is the library open?’: Correlating unaffiliated access to academic libraries with open access support — DOI: `10.18352/lq.10298`
+- CORE: A Global Aggregation Service for Open Access Papers — DOI: `10.1038/s41597-023-02208-w`
+- Toward transparency of hybrid open access through publisher‐provided metadata: An article‐level study of Elsevier — DOI: `10.1002/asi.24549`
+- Assessing the Effectiveness of Open Access Finding Tools — DOI: `10.6017/ital.v38i3.11009`
+- Scholarly Infrastructures for Research Software: Report from the EOSC Executive Board Working Group (WG) Architecture Task Force (TF) SIRS — DOI: `10.2777/28598`
+- Should open access lead to closed research? The trends towards paying to perform research — DOI: `10.31235/osf.io/z97re`
+- THE STATE OF OA: A LARGE-SCALE ANALYSIS OF THE PREVALENCE AND IMPACT OF OPEN ACCESS ARTICLES — DOI: `10.24108/2658-3143-2019-2-4-228-247`
+- An intersectional approach to analyse gender productivity and open access: a bibliometric analysis of the Italian National Research Council — DOI: `10.1007/s11192-020-03802-0`
+- Reference coverage analysis of OpenAlex compared to Web of Science and Scopus — DOI: `10.1007/s11192-025-05293-3`
+- Access to academic libraries: an indicator of openness? — DOI: `10.5281/zenodo.3357343`
+- A Study of Open Access Publishing by NHMRC Grant Recipients
+- How open are hybrid journals included in transformative agreements? — DOI: `10.1162/qss_a_00348`
+- Availability of Open Access journals by scientific fields, specialization and Open Access regulations in the YERUN universities — DOI: `10.1590/2318-0889202234e210064`
+- Moving Open Repositories out of the Blind Spot of Initiatives to Correct the Scholarly Record — DOI: `10.1002/leap.1655`
+- Monitoring the open access policy of Horizon 2020 — DOI: `10.2777/268348`
+- Open Access Infrastructure in Greece: Current Status, Challenges and Perspectives — DOI: `10.4000/proceedings.elpub.2018.26`
+- The relationship between bioRxiv preprints, citations and altmetrics — DOI: `10.1162/qss_a_00043`
+- Open access and international coauthorship: A longitudinal study of the United Arab Emirates research output — DOI: `10.1162/qss_a_00256`
+- Enhancing Institutional Publication Data Using Emergent Open Science Services — DOI: `10.3390/publications6020023`
+- An Overview of the NFAIS 2018 Annual Conference: <i>Information Transformation: Open, Global, Collaborative</i> — DOI: `10.3233/isu-180013`
+- Comparing conventional and alternative mechanisms of discovering and accessing the scientific literature — DOI: `10.1073/pnas.2503051122`
+- Defining discovery: Is Google Scholar a discovery platform? An essay on the need for a new approach to scholarly discovery — DOI: `10.12688/openreseurope.14318.1`
+- Array programming with NumPy — DOI: `10.1038/s41586-020-2649-2`
+- Array programming with NumPy
+- The FAIR Guiding Principles for scientific data management and stewardship — DOI: `10.1038/sdata.2016.18`
+- g:Profiler—interoperable web service for functional enrichment analysis and gene identifier mapping (2023 update) — DOI: `10.1093/nar/gkad347`
+- The Astropy Project: Building an Open-science Project and Status of the v2.0 Core Package<sup>*</sup> — DOI: `10.3847/1538-3881/aabc4f`
+- Interoperability in Internet of Things: Taxonomies and Open Challenges — DOI: `10.1007/s11036-018-1089-9`
+- Bioconductor: open software development for computational biology and bioinformatics — DOI: `10.1186/gb-2004-5-10-r80`
+- The PRIDE database resources in 2022: a hub for mass spectrometry-based proteomics evidences — DOI: `10.1093/nar/gkab1038`
+- Internet of Things Strategic Research Roadmap — DOI: `10.1201/9781003338604-2`
+- Introduction—Platforms and Infrastructures in the Digital Age — DOI: `10.1287/isre.2018.0794`
+- Internet of Things (IoT): A vision, architectural elements, and future directions — DOI: `10.1016/j.future.2013.01.010`
+- STRING v11: protein–protein association networks with increased coverage, supporting functional discovery in genome-wide experimental datasets — DOI: `10.1093/nar/gky1131`
+- Fast Healthcare Interoperability Resources (FHIR) for Interoperability in Health Research: Systematic Review — DOI: `10.2196/35724`
+- Semantic Interoperability in Heterogeneous IoT Infrastructure for Healthcare — DOI: `10.1155/2017/9731806`
+- caCORE version 3: Implementation of a model driven, service-oriented architecture for semantic interoperability — DOI: `10.1016/j.jbi.2007.03.009`
+- The minimum information about a genome sequence (MIGS) specification — DOI: `10.1038/nbt1360`
+- Software for Computing and Annotating Genomic Ranges — DOI: `10.1371/journal.pcbi.1003118`
+- Service oriented architectures: approaches, technologies and research issues — DOI: `10.1007/s00778-007-0044-3`
+- The NHGRI-EBI GWAS Catalog: knowledgebase and deposition resource — DOI: `10.1093/nar/gkac1010`
+- ImageJ2: ImageJ for the next generation of scientific image data — DOI: `10.1186/s12859-017-1934-z`
+- Interoperability in Personalized Adaptive Learning
+- PANGAEA - Data Publisher for Earth &amp; Environmental Science — DOI: `10.1038/s41597-023-02269-x`
+- The National COVID Cohort Collaborative (N3C): Rationale, design, infrastructure, and deployment — DOI: `10.1093/jamia/ocaa196`
+- UniProt: the universal protein knowledgebase in 2021 — DOI: `10.1093/nar/gkaa1100`
+- Next generation cloud computing: New trends and research directions — DOI: `10.1016/j.future.2017.09.020`
+
+## Failures
+
+- semantic-scholar / "OpenAlex Semantic Scholar academic metadata API open access": source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)
+- arxiv / "OpenAlex Semantic Scholar academic metadata API open access": source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)
+- semantic-scholar / "scholarly literature database search aggregation": source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)
+- arxiv / "scholarly literature database search aggregation": source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)
+- semantic-scholar / "open access PDF retrieval unpaywall scholarly publishing": source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)
+- arxiv / "open access PDF retrieval unpaywall scholarly publishing": source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)
+- semantic-scholar / "research information infrastructure metadata interoperability": source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)
+- arxiv / "research information infrastructure metadata interoperability": source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)

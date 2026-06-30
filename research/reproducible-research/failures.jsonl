@@ -1,0 +1,6 @@
+{"source":"arxiv","query":"reproducible research computational workflow provenance","error":"source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)"}
+{"source":"arxiv","query":"open science research data management FAIR","error":"source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)"}
+{"source":"semantic-scholar","query":"research software engineering scientific pipeline","error":"source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)"}
+{"source":"arxiv","query":"research software engineering scientific pipeline","error":"source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)"}
+{"source":"semantic-scholar","query":"preregistration registered report research transparency","error":"source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)"}
+{"source":"arxiv","query":"preregistration registered report research transparency","error":"source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)"}

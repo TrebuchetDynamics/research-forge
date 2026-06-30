@@ -1,0 +1,25 @@
+10.1109/tnnls.2021.3070843	A Survey on Knowledge Graphs: Representation, Acquisition, and Applications
+10.1145/3447772	Knowledge Graphs
+10.1145/3326362	Dynamic Graph CNN for Learning on Point Clouds
+10.1002/cpe.6227	Content‐based and knowledge graph‐based paper recommendation: Exploring user preferences with the knowledge graphs for scientific paper recommendation
+10.1109/access.2018.2890388	Scientific Paper Recommendation: A Survey
+10.1088/1742-6596/1487/1/012016	A Survey on Application of Knowledge Graph
+10.1371/journal.pone.0294236	SRplot: A free online platform for data visualization and graphing
+10.1007/s10462-023-10465-9	Knowledge Graphs: Opportunities and Challenges
+10.1093/ije/dyaa213	Use of directed acyclic graphs (DAGs) to identify confounders in applied health research: review and recommendations
+10.17705/1jais.00302	Lateral Collinearity and Misleading Results in Variance-Based SEM: An Illustration and Recommendations
+10.1038/s41586-023-06291-2	Large language models encode clinical knowledge
+10.1002/bimj.201700067	Variable selection – A review and recommendations for the practicing statistician
+10.1016/j.eswa.2020.113764	A survey of research hotspots and frontier trends of recommendation systems from the perspective of knowledge graph
+10.3389/fpsyg.2017.00213	Heart Rate Variability and Cardiac Vagal Tone in Psychophysiological Research – Recommendations for Experiment Planning, Data Analysis, and Data Reporting
+10.1007/s10064-013-0538-8	Recommendations for the quantitative analysis of landslide risk
+10.1007/s11192-020-03561-y	A context-aware citation recommendation model with BERT and graph convolutional networks
+10.1109/access.2020.3030076	Knowledge Graph Completion: A Review
+10.3389/frobt.2016.00003	Recommendations for Good Scientific Practice and the Consumers of VR-Technology
+10.1016/j.ijinfomgt.2023.102642	Opinion Paper: “So what if ChatGPT wrote it?” Multidisciplinary perspectives on opportunities, challenges and implications of generative conversational AI for research, practice and policy
+10.1038/tp.2016.73	Guidelines for Reporting Articles on Psychiatry and Heart rate variability (GRAPH): recommendations to advance research communication
+10.2307/2269460	The Report of the Ecological Society of America Committee on the Scientific Basis for Ecosystem Management
+10.1371/journal.pone.0174035	Exploratory graph analysis: A new approach for estimating the number of dimensions in psychological research
+10.1186/s13059-019-1824-y	DNA methylation aging clocks: challenges and recommendations
+10.1162/qss_a_00021	Microsoft Academic Graph: When experts are not enough
+10.1007/s11165-016-9602-2	The Use of Cronbach’s Alpha When Developing and Reporting Research Instruments in Science Education

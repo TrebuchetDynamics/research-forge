@@ -1,0 +1,25 @@
+10.1038/s42256-020-00287-7	An open source machine learning framework for efficient and transparent systematic reviews
+10.1186/s13643-019-1074-9	Toward systematic review automation: a practical guide to using machine learning tools in research synthesis
+10.1186/2046-4053-3-74	Systematic review automation technologies
+10.1007/s10462-022-10246-w	Human-in-the-loop machine learning: a state of the art
+10.1186/2046-4053-4-5	Using text mining for study identification in systematic reviews: a systematic review of current approaches
+10.1016/j.autcon.2022.104440	Artificial intelligence and smart vision for building and construction 4.0: Machine and deep learning methods and applications
+10.1016/j.cpc.2019.106949	DScribe: Library of descriptors for machine learning in materials science
+10.1016/j.cmi.2019.09.009	Machine learning for clinical decision support in infectious diseases: a narrative review of current applications
+10.1016/j.ymben.2020.10.005	Machine learning for metabolic engineering: A review
+10.1016/j.jocn.2021.04.043	Machine learning applications to neuroimaging for glioma detection and classification: An artificial intelligence augmented systematic review
+10.1021/jacs.0c09105	The Role of Machine Learning in the Understanding and Design of Materials
+10.3390/nu16071073	Applications of Artificial Intelligence, Machine Learning, and Deep Learning in Nutrition: A Systematic Review
+10.1038/s41578-020-00255-y	Emerging materials intelligence ecosystems propelled by machine learning
+10.1038/s41746-023-00811-0	Self-supervised learning for medical image classification: a systematic review and implementation guidelines
+10.3389/fmicb.2021.634511	Applications of Machine Learning in Human Microbiome Studies: A Review on Feature Selection, Biomarker Identification, Disease Prediction and Treatment
+10.1021/acs.chemrev.3c00189	Machine Learning Methods for Small Data Challenges in Molecular Science
+10.1111/bjet.13370	Practical and ethical challenges of large language models in education: A systematic scoping review
+10.1038/s41551-022-00898-y	Shifting machine learning for healthcare from development to deployment and from models to data
+10.1109/access.2020.3042874	Industrial Artificial Intelligence in Industry 4.0 - Systematic Review, Challenges and Outlook
+10.1007/s13202-021-01302-2	A systematic review of data science and machine learning applications to the oil and gas industry
+10.2196/20346	The Effectiveness of Artificial Intelligence Conversational Agents in Health Care: Systematic Review
+10.1186/s13643-015-0066-7	Automating data extraction in systematic reviews: a systematic review
+10.1002/widm.1520	Deepfake detection using deep learning methods: A systematic and comprehensive review
+10.1016/j.jenvman.2023.119230	A systematic review of industrial wastewater management: Evaluating challenges and enablers
+10.1021/acs.chemmater.7b03500	Materials Synthesis Insights from Scientific Literature via Text Extraction and Machine Learning

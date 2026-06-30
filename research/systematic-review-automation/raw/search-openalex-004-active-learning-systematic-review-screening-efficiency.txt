@@ -1,0 +1,25 @@
+10.1186/s13643-016-0384-4	Rayyan—a web and mobile app for systematic reviews
+10.1136/bmj.n160	PRISMA 2020 explanation and elaboration: updated guidance and exemplars for reporting systematic reviews
+10.1186/s41239-019-0171-0	Systematic review of research on artificial intelligence applications in higher education – where are the educators?
+10.1038/s42256-020-00287-7	An open source machine learning framework for efficient and transparent systematic reviews
+10.1371/journal.pone.0163477	Where Is Current Research on Blockchain Technology?—A Systematic Review
+10.1038/s41586-018-0337-2	Machine learning for molecular and materials science
+10.1080/14719037.2014.930505	A Systematic Review of Co-Creation and Co-Production: Embarking on the social innovation journey
+10.1038/s41746-021-00438-z	Diagnostic accuracy of deep learning in medical imaging: a systematic review and meta-analysis
+10.1038/s41587-023-01767-y	Dictionary learning for integrative, multimodal and scalable single-cell analysis
+10.1186/s13012-018-0784-z	Engaging patients to improve quality of care: a systematic review
+10.1016/j.envsoft.2016.02.008	Sensitivity analysis of environmental models: A systematic review with practical workflow
+10.1016/j.jbi.2014.06.005	Reducing systematic review workload through certainty-based screening
+10.1088/0953-8984/21/39/395502	QUANTUM ESPRESSO: a modular and open-source software project for quantum simulations of materials
+10.1016/j.invent.2016.10.002	Gamification for health and wellbeing: A systematic review of the literature
+10.1186/2046-4053-4-5	Using text mining for study identification in systematic reviews: a systematic review of current approaches
+10.1186/s13643-019-1074-9	Toward systematic review automation: a practical guide to using machine learning tools in research synthesis
+10.1038/s41524-019-0221-0	Recent advances and applications of machine learning in solid-state materials science
+10.1016/s0140-6736(12)61729-2	Years lived with disability (YLDs) for 1160 sequelae of 289 diseases and injuries 1990–2010: a systematic analysis for the Global Burden of Disease Study 2010
+10.3390/educsci13121216	Adaptive Learning Using Artificial Intelligence in e-Learning: A Literature Review
+10.1007/s11042-020-10139-6	A review on genetic algorithm: past, present, and future
+10.1007/s11423-020-09788-z	Utilising learning analytics to support study success in higher education: a systematic review
+10.3390/s21113758	Machine Learning in Agriculture: A Comprehensive Updated Review
+10.1186/s13643-024-02502-7	The SAFE procedure: a practical stopping heuristic for active learning-based screening in systematic reviews and meta-analyses
+10.3389/fcvm.2020.00025	Deep Learning for Cardiac Image Segmentation: A Review
+10.1109/access.2020.2972859	Deep Learning Algorithms for Bearing Fault Diagnostics—A Comprehensive Review

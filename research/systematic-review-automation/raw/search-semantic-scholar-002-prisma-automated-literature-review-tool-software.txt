@@ -1,0 +1,25 @@
+10.18310/2446-4813.2025v11nsup5.4710	Determinantes sociais de saúde no diagnóstico, tratamento e assistência aos pacientes com câncer colorretal: revisão integrativa da literatura
+10.9734/ajess/2025/v51i102579	Artificial Intelligence in Adolescent Learning: Implications for Academic Integrity and Critical Thinking
+10.2147/copd.s378642	Effects of High-Frequency Chest Wall Oscillation on Acute Exacerbation of Chronic Obstructive Pulmonary Disease: A Systematic Review and Meta-Analysis of Randomized Controlled Trials
+	Airway Clearance Devices (for New Mexico Only)
+	Airway Clearance Devices (for Tennessee Only)
+10.1145/3643664.3648202	Emerging Results on Automated Support for Searching and Selecting Evidence for Systematic Literature Review Updates
+10.1007/s10515-025-00551-3	Automatic Code Generation Techniques: A Systematic Literature Review
+10.1145/3799693	A Systematic Literature Review on Large Language Models for Automated Program Repair
+10.3389/frai.2024.1477044	Examining the integration of artificial intelligence in supply chain management from Industry 4.0 to 6.0: a systematic literature review
+10.1016/j.jss.2025.112758	A Systematic Literature Review of Software Engineering Research on Jupyter Notebook
+10.1109/scse65633.2025.11031063	Adoption of Agile Scaling Practices in Globally Distributed Software Development Teams: A Systematic Literature Review
+10.1080/00987913.2025.2529019	Adoption of Koha Integrated Library Software in University Libraries: A Systematic Literature Review
+10.60154/jaepp.2025.v26n2p177	Past, Present, and Future Ethical Implications and Considerations of AI in Accounting: A Systematic Literature Review
+10.1145/3708525	Efficient and Green Large Language Models for Software Engineering: Literature Review, Vision, and the Road Ahead
+10.1145/3691621.3694947	Barriers to Using Static Application Security Testing (SAST) Tools: A Literature Review
+10.1109/iisec69317.2026.11418476	Transformative Technologies in Neurosurgery: a Systematic Literature Review
+10.54480/slr-m.v4i1.50	Automated web testing over the last decade: A systematic literature review
+10.1108/ohi-02-2023-0031	Exploring walkability research trends based on systematic literature review (SLR) by applying PRISMA
+10.1109/tse.2025.3603897	A Systematic Literature Review of Machine Learning Approaches for Migrating Monolithic Systems to Microservices
+10.1145/3767739	Requirements-Driven Automated Software Testing: A Systematic Review
+10.5753/latinoware.2025.16271	Applications of Knowledge Graphs in the Portuguese Language: A Systematic Literature Review
+10.1109/scse65633.2025.11031030	Impact of Social Media Content and Exposure on Consumer Perceptions, Trust, and Banking Decisions in Sri Lanka: A Systematic Literature Review on the Moderating Roles of Demographics and Digital Literacy
+10.1109/cseet66350.2025.00027	Teaching Well-Structured Code: A Literature Review of Instructional Approaches
+10.1080/17474086.2025.2450223	Characterizing the ideal patient for treatment with inotuzumab ozogamicin for relapsed/refractory acute lymphoblastic leukemia: a systematic literature review
+10.1108/ara-07-2024-0241	Internal audit functions and environmental, social and governance (ESG): a systematic literature review

@@ -1,0 +1,25 @@
+10.1002/asi.24979	Evaluating the linguistic coverage of <scp>OpenAlex</scp>: An assessment of metadata accuracy and completeness
+10.1162/qss_a_00286	Completeness degree of publication metadata in eight free-access scholarly databases
+10.1016/j.ipm.2023.103385	New trends in bibliometric APIs: A comparative analysis
+10.1162/qss.a.406	Analysis of the publication and document types in OpenAlex, Web of Science, Scopus, PubMed and Semantic Scholar
+10.5281/zenodo.6936227	OpenAlex: A fully-open index of scholarly works, authors, venues, institutions, and concepts
+10.1038/s41597-023-02198-9	SciSciNet: A large-scale open data lake for the science of science research
+10.48550/arxiv.2409.10633	Evaluating the Linguistic Coverage of OpenAlex: An Assessment of Metadata Accuracy and Completeness
+10.48550/arxiv.2409.01120	Coverage and metadata completeness and accuracy of African research publications in OpenAlex: A comparative analysis
+10.1016/j.jclinepi.2025.111789	Assessing the coverage of PubMed, Embase, OpenAlex, and Semantic Scholar for automated single-database searches in living guideline evidence surveillance: a case study of the international polycystic ovary syndrome guidelines 2023
+10.1002/asi.24839	Why are these publications missing? Uncovering the reasons behind the exclusion of documents in free‐access scholarly databases
+10.1002/cesm.70038	Analyzing the Utility of Openalex to Identify Studies for Systematic Reviews: Methods and a Case Study
+10.1002/asi.70020	Is <scp>OpenAlex</scp> suitable for research quality evaluation and which citation indicator is best?
+10.3390/publications12040043	Open Science Alternatives to Scopus and the Web of Science: A Case Study in Regional Resilience
+10.29173/cais1943	Investigating Document Type Discrepancies between OpenAlex and the Web of Science
+10.1002/asi.70013	Understanding discrepancies in the coverage of <scp>OpenAlex</scp> : The case of China
+10.1007/s11192-025-05524-7	Presenting a classifier to improve the identification of research journal publications in OpenAlex
+10.1162/qss.a.396	Coverage and metadata completeness and accuracy of African research publications in OpenAlex: A comparative analysis
+10.55835/6436c590b3340c364be5b2c7	Comparing bibliographic descriptions in seven free-access databases
+10.29173/cais1979	An Evaluation of OpenAlex Level 0 - Art
+10.48550/arxiv.2301.01502	Enriching the scholarly metadata commons with citation metadata and spatio-temporal metadata to support responsible research assessment and research discovery
+10.1007/s11192-021-04191-8	Finding citations for PubMed: a large-scale comparison between five freely available bibliographic data sources
+10.1007/s11192-024-05160-7	The OpenCitations Index: description of a database providing open citation data
+10.1145/3637528.3672354	OAG-Bench: A Human-Curated Benchmark for Academic Graph Mining
+10.1162/qss_a_00322	Challenges in building scholarly knowledge graphs for research assessment in open science
+10.1016/j.cosrev.2022.100531	Studying fake news spreading, polarisation dynamics, and manipulation by bots: A tale of networks and language

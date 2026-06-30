@@ -1,0 +1,128 @@
+# Search batch results
+
+Deduped records: 114
+
+- An open source machine learning framework for efficient and transparent systematic reviews — DOI: `10.1038/s42256-020-00287-7`
+- Toward systematic review automation: a practical guide to using machine learning tools in research synthesis — DOI: `10.1186/s13643-019-1074-9`
+- Systematic review automation technologies — DOI: `10.1186/2046-4053-3-74`
+- Human-in-the-loop machine learning: a state of the art — DOI: `10.1007/s10462-022-10246-w`
+- Using text mining for study identification in systematic reviews: a systematic review of current approaches — DOI: `10.1186/2046-4053-4-5`
+- Artificial intelligence and smart vision for building and construction 4.0: Machine and deep learning methods and applications — DOI: `10.1016/j.autcon.2022.104440`
+- DScribe: Library of descriptors for machine learning in materials science — DOI: `10.1016/j.cpc.2019.106949`
+- Machine learning for clinical decision support in infectious diseases: a narrative review of current applications — DOI: `10.1016/j.cmi.2019.09.009`
+- Machine learning for metabolic engineering: A review — DOI: `10.1016/j.ymben.2020.10.005`
+- Machine learning applications to neuroimaging for glioma detection and classification: An artificial intelligence augmented systematic review — DOI: `10.1016/j.jocn.2021.04.043`
+- The Role of Machine Learning in the Understanding and Design of Materials — DOI: `10.1021/jacs.0c09105`
+- Applications of Artificial Intelligence, Machine Learning, and Deep Learning in Nutrition: A Systematic Review — DOI: `10.3390/nu16071073`
+- Emerging materials intelligence ecosystems propelled by machine learning — DOI: `10.1038/s41578-020-00255-y`
+- Self-supervised learning for medical image classification: a systematic review and implementation guidelines — DOI: `10.1038/s41746-023-00811-0`
+- Applications of Machine Learning in Human Microbiome Studies: A Review on Feature Selection, Biomarker Identification, Disease Prediction and Treatment — DOI: `10.3389/fmicb.2021.634511`
+- Machine Learning Methods for Small Data Challenges in Molecular Science — DOI: `10.1021/acs.chemrev.3c00189`
+- Practical and ethical challenges of large language models in education: A systematic scoping review — DOI: `10.1111/bjet.13370`
+- Shifting machine learning for healthcare from development to deployment and from models to data — DOI: `10.1038/s41551-022-00898-y`
+- Industrial Artificial Intelligence in Industry 4.0 - Systematic Review, Challenges and Outlook — DOI: `10.1109/access.2020.3042874`
+- A systematic review of data science and machine learning applications to the oil and gas industry — DOI: `10.1007/s13202-021-01302-2`
+- The Effectiveness of Artificial Intelligence Conversational Agents in Health Care: Systematic Review — DOI: `10.2196/20346`
+- Automating data extraction in systematic reviews: a systematic review — DOI: `10.1186/s13643-015-0066-7`
+- Deepfake detection using deep learning methods: A systematic and comprehensive review — DOI: `10.1002/widm.1520`
+- A systematic review of industrial wastewater management: Evaluating challenges and enablers — DOI: `10.1016/j.jenvman.2023.119230`
+- Materials Synthesis Insights from Scientific Literature via Text Extraction and Machine Learning — DOI: `10.1021/acs.chemmater.7b03500`
+- PRISMA 2020 explanation and elaboration: updated guidance and exemplars for reporting systematic reviews — DOI: `10.1136/bmj.n160`
+- Rayyan—a web and mobile app for systematic reviews — DOI: `10.1186/s13643-016-0384-4`
+- Updating guidance for reporting systematic reviews: development of the PRISMA 2020 statement — DOI: `10.1016/j.jclinepi.2021.02.003`
+- The impact of patient, intervention, comparison, outcome (PICO) as a search strategy tool on literature search quality: a systematic review — DOI: `10.5195/jmla.2018.345`
+- Systematic review of research on artificial intelligence applications in higher education – where are the educators? — DOI: `10.1186/s41239-019-0171-0`
+- A review on genetic algorithm: past, present, and future — DOI: `10.1007/s11042-020-10139-6`
+- The role of artificial intelligence in healthcare: a structured literature review — DOI: `10.1186/s12911-021-01488-9`
+- Evaluations of the uptake and impact of the Preferred Reporting Items for Systematic reviews and Meta-Analyses (PRISMA) Statement and extensions: a scoping review — DOI: `10.1186/s13643-017-0663-8`
+- Artificial Intelligence and Business Value: a Literature Review — DOI: `10.1007/s10796-021-10186-w`
+- Literature reviews as independent studies: guidelines for academic practice — DOI: `10.1007/s11846-022-00588-8`
+- Prediction models for diagnosis and prognosis of covid-19: systematic review and critical appraisal — DOI: `10.1136/bmj.m1328`
+- Preferred reporting items for systematic reviews and meta‐analyses in ecology and evolutionary biology: a <scp>PRISMA</scp> extension — DOI: `10.1111/brv.12721`
+- Facilitating systematic reviews, data extraction and meta‐analysis with the <scp>metagear</scp> package for <scp>r</scp> — DOI: `10.1111/2041-210x.12472`
+- Four key challenges to the design of blended learning: A systematic literature review — DOI: `10.1016/j.edurev.2017.06.001`
+- Automated and partly automated contact tracing: a systematic review to inform the control of COVID-19 — DOI: `10.1016/s2589-7500(20)30184-9`
+- The Impact of mHealth Interventions: Systematic Review of Systematic Reviews — DOI: `10.2196/mhealth.8873`
+- Online tools supporting the conduct and reporting of systematic reviews and systematic maps: a case study on CADIMA and review of existing tools — DOI: `10.1186/s13750-018-0115-5`
+- RETRACTED ARTICLE: Artificial intelligence in disease diagnosis: a systematic literature review, synthesizing framework and future research agenda — DOI: `10.1007/s12652-021-03612-z`
+- Factors Determining the Success and Failure of eHealth Interventions: Systematic Review of the Literature — DOI: `10.2196/10235`
+- Are We There Yet? - A Systematic Literature Review on Chatbots in Education — DOI: `10.3389/frai.2021.654924`
+- A full systematic review was completed in 2 weeks using automation tools: a case study — DOI: `10.1016/j.jclinepi.2020.01.008`
+- Automated Grading and Feedback Tools for Programming Education: A Systematic Review — DOI: `10.1145/3636515`
+- Artificial intelligence to automate the systematic review of scientific literature — DOI: `10.1007/s00607-023-01181-x`
+- Applying systematic review search methods to the grey literature: a case study examining guidelines for school-based breakfast programs in Canada — DOI: `10.1186/s13643-015-0125-0`
+- Determinantes sociais de saúde no diagnóstico, tratamento e assistência aos pacientes com câncer colorretal: revisão integrativa da literatura — DOI: `10.18310/2446-4813.2025v11nsup5.4710`
+- Artificial Intelligence in Adolescent Learning: Implications for Academic Integrity and Critical Thinking — DOI: `10.9734/ajess/2025/v51i102579`
+- Effects of High-Frequency Chest Wall Oscillation on Acute Exacerbation of Chronic Obstructive Pulmonary Disease: A Systematic Review and Meta-Analysis of Randomized Controlled Trials — DOI: `10.2147/copd.s378642`
+- Airway Clearance Devices (for New Mexico Only)
+- Airway Clearance Devices (for Tennessee Only)
+- Emerging Results on Automated Support for Searching and Selecting Evidence for Systematic Literature Review Updates — DOI: `10.1145/3643664.3648202`
+- Automatic Code Generation Techniques: A Systematic Literature Review — DOI: `10.1007/s10515-025-00551-3`
+- A Systematic Literature Review on Large Language Models for Automated Program Repair — DOI: `10.1145/3799693`
+- Examining the integration of artificial intelligence in supply chain management from Industry 4.0 to 6.0: a systematic literature review — DOI: `10.3389/frai.2024.1477044`
+- A Systematic Literature Review of Software Engineering Research on Jupyter Notebook — DOI: `10.1016/j.jss.2025.112758`
+- Adoption of Agile Scaling Practices in Globally Distributed Software Development Teams: A Systematic Literature Review — DOI: `10.1109/scse65633.2025.11031063`
+- Adoption of Koha Integrated Library Software in University Libraries: A Systematic Literature Review — DOI: `10.1080/00987913.2025.2529019`
+- Past, Present, and Future Ethical Implications and Considerations of AI in Accounting: A Systematic Literature Review — DOI: `10.60154/jaepp.2025.v26n2p177`
+- Efficient and Green Large Language Models for Software Engineering: Literature Review, Vision, and the Road Ahead — DOI: `10.1145/3708525`
+- Barriers to Using Static Application Security Testing (SAST) Tools: A Literature Review — DOI: `10.1145/3691621.3694947`
+- Transformative Technologies in Neurosurgery: a Systematic Literature Review — DOI: `10.1109/iisec69317.2026.11418476`
+- Automated web testing over the last decade: A systematic literature review — DOI: `10.54480/slr-m.v4i1.50`
+- Exploring walkability research trends based on systematic literature review (SLR) by applying PRISMA — DOI: `10.1108/ohi-02-2023-0031`
+- A Systematic Literature Review of Machine Learning Approaches for Migrating Monolithic Systems to Microservices — DOI: `10.1109/tse.2025.3603897`
+- Requirements-Driven Automated Software Testing: A Systematic Review — DOI: `10.1145/3767739`
+- Applications of Knowledge Graphs in the Portuguese Language: A Systematic Literature Review — DOI: `10.5753/latinoware.2025.16271`
+- Impact of Social Media Content and Exposure on Consumer Perceptions, Trust, and Banking Decisions in Sri Lanka: A Systematic Literature Review on the Moderating Roles of Demographics and Digital Literacy — DOI: `10.1109/scse65633.2025.11031030`
+- Teaching Well-Structured Code: A Literature Review of Instructional Approaches — DOI: `10.1109/cseet66350.2025.00027`
+- Characterizing the ideal patient for treatment with inotuzumab ozogamicin for relapsed/refractory acute lymphoblastic leukemia: a systematic literature review — DOI: `10.1080/17474086.2025.2450223`
+- Internal audit functions and environmental, social and governance (ESG): a systematic literature review — DOI: `10.1108/ara-07-2024-0241`
+- The PRISMA 2020 statement: an updated guideline for reporting systematic reviews — DOI: `10.1136/bmj.n71`
+- <i>PRISMA2020</i> : An R package and Shiny app for producing PRISMA 2020‐compliant flow diagrams, with interactivity for optimised digital transparency and Open Synthesis — DOI: `10.1002/cl2.1230`
+- Digital transformation: a review, synthesis and opportunities for future research — DOI: `10.1007/s11301-020-00185-7`
+- Accurate normalization of real-time quantitative RT-PCR data by geometric averaging of multiple internal control genes — DOI: `10.1186/gb-2002-3-7-research0034`
+- Covalent organic frameworks based on Schiff-base chemistry: synthesis, properties and potential applications — DOI: `10.1039/c5cs00878f`
+- An automated approach to identifying search terms for systematic reviews using keyword co‐occurrence networks — DOI: `10.1111/2041-210x.13268`
+- Automation in the Life Science Research Laboratory — DOI: `10.3389/fbioe.2020.571777`
+- Automation technologies and their impact on employment: A review, synthesis and future research agenda — DOI: `10.1016/j.techfore.2023.122448`
+- An agenda for sustainability transitions research: State of the art and future directions — DOI: `10.1016/j.eist.2019.01.004`
+- Autonomous chemical research with large language models — DOI: `10.1038/s41586-023-06792-0`
+- Applications of artificial intelligence in water treatment for optimization and automation of adsorption processes: Recent advances and prospects — DOI: `10.1016/j.cej.2021.130011`
+- Pure and multi metal oxide nanoparticles: synthesis, antibacterial and cytotoxic properties — DOI: `10.1186/s12951-016-0225-6`
+- The PRISMA 2020 statement: an updated guideline for reporting systematic reviews — DOI: `10.1186/s13643-021-01626-4`
+- Evidence for Cardiomyopathy in Familial Diabetes Mellitus — DOI: `10.1172/jci108843`
+- Measurement of Trust in Automation: A Narrative Review and Reference Guide — DOI: `10.3389/fpsyg.2021.604977`
+- Responsible AI for Digital Health: a Synthesis and a Research Agenda — DOI: `10.1007/s10796-021-10146-4`
+- The PRISMA 2020 statement: An updated guideline for reporting systematic reviews — DOI: `10.1016/j.ijsu.2021.105906`
+- EviAtlas: a tool for visualising evidence synthesis databases — DOI: `10.1186/s13750-019-0167-1`
+- A question of trust: can we build an evidence base to gain trust in systematic review automation technologies? — DOI: `10.1186/s13643-019-1062-0`
+- Smart Products: Conceptual Review, Synthesis, and Research Directions* — DOI: `10.1111/jpim.12544`
+- Carbon Nanotubes and Related Nanomaterials: Critical Advances and Challenges for Synthesis toward Mainstream Commercial Applications — DOI: `10.1021/acsnano.8b06511`
+- Microfluidic Devices: A Tool for Nanoparticle Synthesis and Performance Evaluation — DOI: `10.1021/acsnano.3c01117`
+- Where Is Current Research on Blockchain Technology?—A Systematic Review — DOI: `10.1371/journal.pone.0163477`
+- Machine learning for molecular and materials science — DOI: `10.1038/s41586-018-0337-2`
+- A Systematic Review of Co-Creation and Co-Production: Embarking on the social innovation journey — DOI: `10.1080/14719037.2014.930505`
+- Diagnostic accuracy of deep learning in medical imaging: a systematic review and meta-analysis — DOI: `10.1038/s41746-021-00438-z`
+- Dictionary learning for integrative, multimodal and scalable single-cell analysis — DOI: `10.1038/s41587-023-01767-y`
+- Engaging patients to improve quality of care: a systematic review — DOI: `10.1186/s13012-018-0784-z`
+- Sensitivity analysis of environmental models: A systematic review with practical workflow — DOI: `10.1016/j.envsoft.2016.02.008`
+- Reducing systematic review workload through certainty-based screening — DOI: `10.1016/j.jbi.2014.06.005`
+- QUANTUM ESPRESSO: a modular and open-source software project for quantum simulations of materials — DOI: `10.1088/0953-8984/21/39/395502`
+- Gamification for health and wellbeing: A systematic review of the literature — DOI: `10.1016/j.invent.2016.10.002`
+- Recent advances and applications of machine learning in solid-state materials science — DOI: `10.1038/s41524-019-0221-0`
+- Years lived with disability (YLDs) for 1160 sequelae of 289 diseases and injuries 1990–2010: a systematic analysis for the Global Burden of Disease Study 2010 — DOI: `10.1016/s0140-6736(12)61729-2`
+- Adaptive Learning Using Artificial Intelligence in e-Learning: A Literature Review — DOI: `10.3390/educsci13121216`
+- Utilising learning analytics to support study success in higher education: a systematic review — DOI: `10.1007/s11423-020-09788-z`
+- Machine Learning in Agriculture: A Comprehensive Updated Review — DOI: `10.3390/s21113758`
+- The SAFE procedure: a practical stopping heuristic for active learning-based screening in systematic reviews and meta-analyses — DOI: `10.1186/s13643-024-02502-7`
+- Deep Learning for Cardiac Image Segmentation: A Review — DOI: `10.3389/fcvm.2020.00025`
+- Deep Learning Algorithms for Bearing Fault Diagnostics—A Comprehensive Review — DOI: `10.1109/access.2020.2972859`
+
+## Failures
+
+- semantic-scholar / "systematic review automation machine learning NLP screening": source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)
+- arxiv / "systematic review automation machine learning NLP screening": source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)
+- arxiv / "PRISMA automated literature review tool software": source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)
+- semantic-scholar / "evidence synthesis automation reproducible research": source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)
+- arxiv / "evidence synthesis automation reproducible research": source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)
+- semantic-scholar / "active learning systematic review screening efficiency": source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)
+- arxiv / "active learning systematic review screening efficiency": source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)

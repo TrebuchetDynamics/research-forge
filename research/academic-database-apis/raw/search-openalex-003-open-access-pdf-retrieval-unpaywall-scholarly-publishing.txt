@@ -1,0 +1,25 @@
+10.18653/v1/2020.acl-main.447	S2ORC: The Semantic Scholar Open Research Corpus
+10.1007/s11192-022-04407-5	Should open access lead to closed research? The trends towards paying to perform research
+10.18352/lq.10298	‘Is the library open?’: Correlating unaffiliated access to academic libraries with open access support
+10.1038/s41597-023-02208-w	CORE: A Global Aggregation Service for Open Access Papers
+10.1002/asi.24549	Toward transparency of hybrid open access through publisher‐provided metadata: An article‐level study of Elsevier
+10.6017/ital.v38i3.11009	Assessing the Effectiveness of Open Access Finding Tools
+10.2777/28598	Scholarly Infrastructures for Research Software: Report from the EOSC Executive Board Working Group (WG) Architecture Task Force (TF) SIRS
+10.31235/osf.io/z97re	Should open access lead to closed research? The trends towards paying to perform research
+10.24108/2658-3143-2019-2-4-228-247	THE STATE OF OA: A LARGE-SCALE ANALYSIS OF THE PREVALENCE AND IMPACT OF OPEN ACCESS ARTICLES
+10.1007/s11192-020-03802-0	An intersectional approach to analyse gender productivity and open access: a bibliometric analysis of the Italian National Research Council
+10.1007/s11192-025-05293-3	Reference coverage analysis of OpenAlex compared to Web of Science and Scopus
+10.5281/zenodo.3357343	Access to academic libraries: an indicator of openness?
+	A Study of Open Access Publishing by NHMRC Grant Recipients
+10.1162/qss_a_00348	How open are hybrid journals included in transformative agreements?
+10.1590/2318-0889202234e210064	Availability of Open Access journals by scientific fields, specialization and Open Access regulations in the YERUN universities
+10.1007/s11192-022-04289-7	Search where you will find most: Comparing the disciplinary coverage of 56 bibliographic databases
+10.1002/leap.1655	Moving Open Repositories out of the Blind Spot of Initiatives to Correct the Scholarly Record
+10.2777/268348	Monitoring the open access policy of Horizon 2020
+10.4000/proceedings.elpub.2018.26	Open Access Infrastructure in Greece: Current Status, Challenges and Perspectives
+10.1162/qss_a_00043	The relationship between bioRxiv preprints, citations and altmetrics
+10.1162/qss_a_00256	Open access and international coauthorship: A longitudinal study of the United Arab Emirates research output
+10.3390/publications6020023	Enhancing Institutional Publication Data Using Emergent Open Science Services
+10.3233/isu-180013	An Overview of the NFAIS 2018 Annual Conference: <i>Information Transformation: Open, Global, Collaborative</i>
+10.1073/pnas.2503051122	Comparing conventional and alternative mechanisms of discovering and accessing the scientific literature
+10.12688/openreseurope.14318.1	Defining discovery: Is Google Scholar a discovery platform? An essay on the need for a new approach to scholarly discovery

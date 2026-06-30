@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "1",
+  "createdAt": "2026-06-30T03:48:13Z",
+  "queries": [
+    "OpenAlex Semantic Scholar academic metadata API open access",
+    "scholarly literature database search aggregation",
+    "open access PDF retrieval unpaywall scholarly publishing",
+    "research information infrastructure metadata interoperability"
+  ],
+  "sources": [
+    "openalex",
+    "semantic-scholar",
+    "arxiv"
+  ],
+  "limit": 25,
+  "results": 100,
+  "deduped": 99,
+  "failures": 8
+}

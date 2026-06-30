@@ -1,0 +1,25 @@
+10.1038/s41587-019-0209-9	Reproducible, interactive, scalable and extensible microbiome data science using QIIME 2
+10.3233/978-1-61499-649-1-87	Jupyter Notebooks &amp;ndash; a publishing format for reproducible computational workflows
+10.1186/gb-2010-11-8-r86	Galaxy: a comprehensive approach for supporting accessible, reproducible, and transparent computational research in the life sciences
+10.1093/nar/gkw343	The Galaxy platform for accessible, reproducible and collaborative biomedical analyses: 2016 update
+10.1093/nar/gky379	The Galaxy platform for accessible, reproducible and collaborative biomedical analyses: 2018 update
+10.1038/s41597-020-00638-4	AiiDA 1.0, a scalable computational infrastructure for automated reproducible workflows and data provenance
+10.1038/nrn.2016.167	Scanning the horizon: towards transparent and reproducible neuroimaging research
+10.1186/s13059-019-1758-4	Cytoscape Automation: empowering workflow-based network analysis
+10.1016/j.future.2010.07.005	The Open Provenance Model core specification (v1.1)
+10.1093/nar/gkl320	Taverna: a tool for building and running workflows of services
+10.1073/pnas.1708290115	An empirical analysis of journal policy effectiveness for computational reproducibility
+10.1093/nar/gkt328	The Taverna workflow suite: designing and executing workflows of Web Services on the desktop, web or in the cloud
+10.1371/journal.pcbi.1009581	RESCRIPt: Reproducible sequence taxonomy reference database management
+10.1162/dint_a_00033	FAIR Computational Workflows
+10.1002/cpe.3505	FireWorks: a dynamic workflow system designed for high‐throughput applications
+10.1093/gigascience/giz095	Sharing interoperable workflow provenance: A review of best practices and their practical application in CWLProv
+10.1016/j.future.2017.01.012	Scientific workflows for computational reproducibility in the life sciences: Status, challenges and opportunities
+10.1190/1.1822162	Electronic documents give reproducible research a new meaning
+10.12688/f1000research.8986.2	Bioconductor Workflow for Microbiome Data Analysis: from raw reads to community analyses
+10.1016/j.cels.2018.03.014	Practical Computational Reproducibility in the Life Sciences
+10.1038/s41565-017-0035-5	Two-dimensional materials from high-throughput computational exfoliation of experimentally known compounds
+10.1002/cpe.3035	Provenance and data differencing for workflow reproducibility analysis
+10.1093/nar/gkae410	The Galaxy platform for accessible, reproducible, and collaborative data analyses: 2024 update
+10.1038/sdata.2016.18	The FAIR Guiding Principles for scientific data management and stewardship
+10.3389/fninf.2011.00013	Nipype: A Flexible, Lightweight and Extensible Neuroimaging Data Processing Framework in Python

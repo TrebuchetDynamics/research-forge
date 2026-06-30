@@ -1,0 +1,25 @@
+10.1371/journal.pbio.3000410	The ARRIVE guidelines 2.0: Updated guidelines for reporting animal research
+10.1113/ep088870	The ARRIVE guidelines 2.0: Updated guidelines for reporting animal research
+10.1371/journal.pbio.3000411	Reporting animal research: Explanation and elaboration for the ARRIVE guidelines 2.0
+10.1027/1864-9335/a000192	Registered Reports
+10.1177/0271678x20943823	The ARRIVE guidelines 2.0: Updated guidelines for reporting animal research*
+10.1038/s41562-021-01193-7	The past, present and future of Registered Reports
+10.1101/703181	The ARRIVE guidelines 2019: updated guidelines for reporting animal research
+10.1111/bph.15193	The ARRIVE guidelines 2.0: Updated guidelines for reporting animal research
+10.1257/jel.20171350	Transparency, Reproducibility, and the Credibility of Economics Research
+10.1038/s41562-016-0021	A manifesto for reproducible science
+10.1038/s41562-022-01497-2	Reducing bias, increasing transparency and calibrating confidence with preregistration
+10.1111/cobi.13342	Making conservation science more reliable with preregistration and registered reports
+10.1016/j.tree.2016.07.002	Transparency in Ecology and Evolution: Real Problems, Real Solutions
+10.1080/00461520.2021.1900851	Preregistration and registered reports
+10.20982/tqmp.16.4.p376	Does preregistration improve the credibility of research findings?
+10.1113/jp280389	The ARRIVE guidelines 2.0: updated guidelines for reporting animal research
+10.3389/fpsyg.2016.01832	Degrees of Freedom in Planning, Running, Analyzing, and Reporting Psychological Studies: A Checklist to Avoid p-Hacking
+10.1080/2833373x.2024.2376046	The benefits of preregistration and Registered Reports
+10.1101/703355	Reporting animal research: Explanation and Elaboration for the ARRIVE guidelines 2019
+10.1186/s12917-020-02451-y	The ARRIVE guidelines 2.0: Updated guidelines for reporting animal research
+10.1371/journal.pone.0281086	Registered report: Survey on attitudes and experiences regarding preregistration in psychological research
+10.1016/j.jval.2020.04.002	Improving Transparency to Build Trust in Real-World Secondary Data Studies for Hypothesis Testing—Why, What, and How: Recommendations and a Road Map from the Real-World Evidence Transparency Initiative
+10.1371/journal.pbio.2006930	Reproducible research practices, transparency, and open access data in the biomedical literature, 2015–2017
+10.1080/08989621.2019.1580147	Preregistering qualitative research
+10.1007/s40279-019-01227-1	Moving Sport and Exercise Science Forward: A Call for the Adoption of More Transparent Research Practices

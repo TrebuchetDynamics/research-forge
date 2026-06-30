@@ -1,0 +1,157 @@
+# Search batch results
+
+Deduped records: 143
+
+- Reproducible, interactive, scalable and extensible microbiome data science using QIIME 2 — DOI: `10.1038/s41587-019-0209-9`
+- Jupyter Notebooks &amp;ndash; a publishing format for reproducible computational workflows — DOI: `10.3233/978-1-61499-649-1-87`
+- Galaxy: a comprehensive approach for supporting accessible, reproducible, and transparent computational research in the life sciences — DOI: `10.1186/gb-2010-11-8-r86`
+- The Galaxy platform for accessible, reproducible and collaborative biomedical analyses: 2016 update — DOI: `10.1093/nar/gkw343`
+- The Galaxy platform for accessible, reproducible and collaborative biomedical analyses: 2018 update — DOI: `10.1093/nar/gky379`
+- AiiDA 1.0, a scalable computational infrastructure for automated reproducible workflows and data provenance — DOI: `10.1038/s41597-020-00638-4`
+- Scanning the horizon: towards transparent and reproducible neuroimaging research — DOI: `10.1038/nrn.2016.167`
+- Cytoscape Automation: empowering workflow-based network analysis — DOI: `10.1186/s13059-019-1758-4`
+- The Open Provenance Model core specification (v1.1) — DOI: `10.1016/j.future.2010.07.005`
+- Taverna: a tool for building and running workflows of services — DOI: `10.1093/nar/gkl320`
+- An empirical analysis of journal policy effectiveness for computational reproducibility — DOI: `10.1073/pnas.1708290115`
+- The Taverna workflow suite: designing and executing workflows of Web Services on the desktop, web or in the cloud — DOI: `10.1093/nar/gkt328`
+- RESCRIPt: Reproducible sequence taxonomy reference database management — DOI: `10.1371/journal.pcbi.1009581`
+- FAIR Computational Workflows — DOI: `10.1162/dint_a_00033`
+- FireWorks: a dynamic workflow system designed for high‐throughput applications — DOI: `10.1002/cpe.3505`
+- Sharing interoperable workflow provenance: A review of best practices and their practical application in CWLProv — DOI: `10.1093/gigascience/giz095`
+- Scientific workflows for computational reproducibility in the life sciences: Status, challenges and opportunities — DOI: `10.1016/j.future.2017.01.012`
+- Electronic documents give reproducible research a new meaning — DOI: `10.1190/1.1822162`
+- Bioconductor Workflow for Microbiome Data Analysis: from raw reads to community analyses — DOI: `10.12688/f1000research.8986.2`
+- Practical Computational Reproducibility in the Life Sciences — DOI: `10.1016/j.cels.2018.03.014`
+- Two-dimensional materials from high-throughput computational exfoliation of experimentally known compounds — DOI: `10.1038/s41565-017-0035-5`
+- Provenance and data differencing for workflow reproducibility analysis — DOI: `10.1002/cpe.3035`
+- The Galaxy platform for accessible, reproducible, and collaborative data analyses: 2024 update — DOI: `10.1093/nar/gkae410`
+- The FAIR Guiding Principles for scientific data management and stewardship — DOI: `10.1038/sdata.2016.18`
+- Nipype: A Flexible, Lightweight and Extensible Neuroimaging Data Processing Framework in Python — DOI: `10.3389/fninf.2011.00013`
+- From Code to Figure: A FAIR-Aligned Data Provenance Chain for Reproducible Simulation Research in Numerical Physics
+- Research Workflows - Towards reproducible science via detailed provenance tracking in Open Science Chain — DOI: `10.1145/3311790.3399619`
+- Converting scripts into reproducible workflow research objects — DOI: `10.1109/escience.2016.7870887`
+- Provenance–aware workflow for data quality management and improvement for large continuous scientific data streams — DOI: `10.1109/bigdata47090.2019.9006358`
+- Capturing interoperable reproducible workflows with Common Workflow Language — DOI: `10.5281/zenodo.1312623`
+- An Artifact-based Agent Framework for Adaptive and Reproducible Medical Image Processing — DOI: `10.48550/arxiv.2604.21936`
+- Scientific Workflows and Provenance: Introduction and Research Opportunities — DOI: `10.1007/s13222-012-0100-z`
+- Provenance Support for Grid-Enabled Scientific Workflows — DOI: `10.1109/skg.2008.86`
+- Towards Automating Data Narratives — DOI: `10.1145/3025171.3025193`
+- Digital libraries for the preservation of research methods and associated artifacts — DOI: `10.1145/2499583.2499589`
+- Characterisation of different integration strategies in scientific workflows — DOI: `10.36334/modsim.2013.c8.bridgart`
+- Search for Computational Workflow Synergies in Reproducible Research Data Analyses in Particle Physics and Life Sciences — DOI: `10.1109/escience.2018.00123`
+- Towards harnessing computational workflow provenance for experiment reporting
+- Toward the future of scientific publishing through reproducible research artefacts enabled by Neurodesk — DOI: `10.52294/001c.143700`
+- AVOCADO: Visualization of Workflow–Derived Data Provenance for Reproducible Biomedical Research — DOI: `10.1111/cgf.12924`
+- Nextflow4MS-DIAL: A Reproducible Nextflow-Based Workflow for Liquid Chromatography−Mass Spectrometry Metabolomics Data Processing — DOI: `10.1021/jasms.4c00364`
+- GalaxyQ: A Platform for Reproducible and Provenance-Driven Hybrid Quantum-Classical Scientific Workflows — DOI: `10.1109/qce65121.2025.10331`
+- Toward a Provenance-Aware Observability Framework for Human Genomics Computational Workflows — DOI: `10.1145/3736229.3736267`
+- Automated Calculation of the Disruption Index: A Reproducible Computational Workflow for Large-Scale Bibliometric Analyses — DOI: `10.64898/2026.02.12.705484`
+- Reproducible Computational Workflow for Drug Discovery to Standardize Network Pharmacology and Molecular Docking Analyses. — DOI: `10.3791/70171`
+- Detailed Implementation of a Reproducible Machine Learning-Enabled Workflow — DOI: `10.5334/dsj-2024-023`
+- AiiDA-defects: an automated and fully reproducible workflow for the complete characterization of defect chemistry in functional materials — DOI: `10.1088/2516-1075/ace014`
+- A Computational Workflow for Membrane Protein–Ligand Interaction Studies: Focus on α5-Containing GABA (A) Receptors — DOI: `10.21769/bioprotoc.5515`
+- G*Power 3: A flexible statistical power analysis program for the social, behavioral, and biomedical sciences — DOI: `10.3758/bf03193146`
+- QUANTUM ESPRESSO: a modular and open-source software project for quantum simulations of materials — DOI: `10.1088/0953-8984/21/39/395502`
+- Fostering implementation of health services research findings into practice: a consolidated framework for advancing implementation science — DOI: `10.1186/1748-5908-4-50`
+- pROC: an open-source package for R and S+ to analyze and compare ROC curves — DOI: `10.1186/1471-2105-12-77`
+- 2013 ESH/ESC Guidelines for the management of arterial hypertension — DOI: `10.1093/eurheartj/eht151`
+- Designing qualitative research — DOI: `10.5860/choice.27-1232`
+- Advances and Open Problems in Federated Learning — DOI: `10.1561/2200000083`
+- UK Biobank: An Open Access Resource for Identifying the Causes of a Wide Range of Complex Diseases of Middle and Old Age — DOI: `10.1371/journal.pmed.1001779`
+- The Danish National Patient Registry: a review of content, data quality, and research potential — DOI: `10.2147/clep.s91125`
+- Progress in information technology and tourism management: 20 years on and 10 years after the Internet—The state of eTourism research — DOI: `10.1016/j.tourman.2008.01.005`
+- 2014 AHA/ACC/HRS Guideline for the Management of Patients With Atrial Fibrillation — DOI: `10.1161/cir.0000000000000041`
+- Cloudy, increasingly FAIR; revisiting the FAIR Data guiding principles for the European Open Science Cloud — DOI: `10.3233/isu-170824`
+- Social Science Research: Principles, Methods and Practices — DOI: `10.26192/q7w89`
+- LLaMA: Open and Efficient Foundation Language Models — DOI: `10.48550/arxiv.2302.13971`
+- Fairness and Abstraction in Sociotechnical Systems — DOI: `10.1145/3287560.3287598`
+- Big data in healthcare: management, analysis and future prospects — DOI: `10.1186/s40537-019-0217-0`
+- The ARRIVE guidelines 2.0: Updated guidelines for reporting animal research — DOI: `10.1371/journal.pbio.3000410`
+- Guidelines for the Management of Aneurysmal Subarachnoid Hemorrhage — DOI: `10.1161/str.0b013e3182587839`
+- Validation of the theoretical domains framework for use in behaviour change and implementation research — DOI: `10.1186/1748-5908-7-37`
+- Strategic niche management and sustainable innovation journeys: theory, findings, research agenda, and policy — DOI: `10.1080/09537320802292651`
+- OARSI guidelines for the non-surgical management of knee osteoarthritis — DOI: `10.1016/j.joca.2014.01.003`
+- Systematic review of research on artificial intelligence applications in higher education – where are the educators? — DOI: `10.1186/s41239-019-0171-0`
+- XGBoost — DOI: `10.1145/2939672.2939785`
+- Blockchain for AI: Review and Open Research Challenges — DOI: `10.1109/access.2018.2890507`
+- Open Science and Research Data Management: A FAIR European Postgraduate Programme — DOI: `10.1109/bigdata55660.2022.10020931`
+- Towards FAIR Data Management in Heritage Science Research: Updates and Progress on the INFRA-ART Spectral Library — DOI: `10.3390/heritage7050123`
+- Integrating Knowledge Graphs and Neuro-Symbolic AI: LDM Enables FAIR and Federated Research Data Management — DOI: `10.1145/3701551.3704125`
+- PASTA‐ELN
+ : Simplifying Research Data Management for Experimental Materials Science — DOI: `10.1002/adem.202503181`
+- Data management plans as linked open data: exploiting ARGOS FAIR and machine actionable outputs in the OpenAIRE research graph — DOI: `10.1186/s13326-023-00297-5`
+- Research Data Management in Environmental Studies: Scoping Review and Bibliometrics Analysis — DOI: `10.5334/dsj-2025-020`
+- Enhancing FAIR Data Practices in the Norwegian Research Data Archive Towards Research Objects and Improved Interoperability — DOI: `10.52825/ocp.v5i.1202`
+- Research Data Management as a Catalyst for Sustainable Learning Communities in Botswana's Higher Education: A Conceptual Exploration — DOI: `10.56059/pcf11.1510`
+- The role of FAIR principles in high-quality research data documentation: Looking at national election studies — DOI: `10.29173/iq1119`
+- A Scientometric Analysis of Global Trends in Research Data Management Practices — DOI: `10.51983/ijiss-2025.ijiss.15.2.33`
+- Research data management, a chance for Open Science. Methods and tutorials to create a Data Management Plan ( DMP)
+- SMARDY: the CORE of zero-trust FAIR marketplace for research data — DOI: `10.1080/09540091.2025.2523965`
+- A research data management (RDM) community for ELIXIR — DOI: `10.12688/f1000research.146301.1`
+- Open Science and Data Management in Rock Art Studies: The Case of Chufín Cave (Cantabria, Spain) — DOI: `10.1515/opar-2025-0072`
+- EOSC CZ: Towards the development of Czech national ecosystem for FAIR research data — DOI: `10.48550/arxiv.2402.13343`
+- The Reproducible Research Platform establishes a unified open science environment bridging data and software lifecycles across disciplines, from proposal to publication — DOI: `10.48550/arxiv.2512.06039`
+- Integrating Microdata, Paradata, Metadata and Administrative Data in Quantitative Social Science Research — DOI: `10.54963/resi.v1i1.1051`
+- FAIR Data Management Workflow for MRI Data — DOI: `10.4126/frl01-006444992`
+- Facilitating Effective Reuse of Soil Research Data: The BonaRes Repository — DOI: `10.1111/ejss.70103`
+- Data management plans as a tool for making data fair — DOI: `10.56367/oag-040-10749`
+- Building Research Data Management (RDM) Expertise and Training Resources in ELIXIR Nodes — DOI: `10.52825/cordi.v1i.382`
+- Open Science, Data, and Methodologies: Lessons learned from the NIHR-RESPIRE Network in Asia — DOI: `10.2218/eor.2025.10958`
+- Toward the Open Science model: publish your raw diffraction data. — DOI: `10.1063/4.0000368`
+- FAIR Research Objects for realising Open Science with the EOSC project RELIANCE — DOI: `10.3897/rio.9.e108765`
+- Data integration and FAIR data management in Solid Earth Science — DOI: `10.4401/ag-8742`
+- Array programming with NumPy — DOI: `10.1038/s41586-020-2649-2`
+- Array programming with NumPy
+- SciPy 1.0: fundamental algorithms for scientific computing in Python — DOI: `10.1038/s41592-019-0686-2`
+- SciPy 1.0: fundamental algorithms for scientific computing in Python — DOI: `10.17863/cam.64134`
+- ImageJ2: ImageJ for the next generation of scientific image data — DOI: `10.1186/s12859-017-1934-z`
+- FieldTrip: Open Source Software for Advanced Analysis of MEG, EEG, and Invasive Electrophysiological Data — DOI: `10.1155/2011/156869`
+- RASTtk: A modular and extensible implementation of the RAST algorithm for building custom annotation pipelines and annotating batches of genomes — DOI: `10.1038/srep08365`
+- Web of Science as a data source for research on scientific and scholarly activity — DOI: `10.1162/qss_a_00018`
+- FSL — DOI: `10.1016/j.neuroimage.2011.09.015`
+- MRtrix3: A fast, flexible and open software framework for medical image processing and visualisation — DOI: `10.1016/j.neuroimage.2019.116137`
+- Handbook of corrosion engineering — DOI: `10.5860/choice.37-5122`
+- Prospects for an engineering discipline of software — DOI: `10.1109/52.60586`
+- 3D Slicer as an image computing platform for the Quantitative Imaging Network — DOI: `10.1016/j.mri.2012.05.001`
+- OpenMEEG: opensource software for quasistatic bioelectromagnetics — DOI: `10.1186/1475-925x-9-45`
+- Scientific Machine Learning Through Physics–Informed Neural Networks: Where we are and What’s Next — DOI: `10.1007/s10915-022-01939-z`
+- Shifting the limits in wheat research and breeding using a fully annotated reference genome — DOI: `10.1126/science.aar7191`
+- Artificial Intelligence (AI): Multidisciplinary perspectives on emerging challenges, opportunities, and agenda for research, practice and policy — DOI: `10.1016/j.ijinfomgt.2019.08.002`
+- Common principles and best practices for engineering microbiomes — DOI: `10.1038/s41579-019-0255-9`
+- A manifesto for reproducible science — DOI: `10.1038/s41562-016-0021`
+- <i>Planck</i>2013 results. I. Overview of products and scientific results — DOI: `10.1051/0004-6361/201321529`
+- Unmanned Aerial Vehicles (UAVs): A Survey on Civil Applications and Key Research Challenges — DOI: `10.1109/access.2019.2909530`
+- The data processing pipeline for the MUSE instrument — DOI: `10.1051/0004-6361/202037855`
+- Lead-DBS v2: Towards a comprehensive pipeline for deep brain stimulation imaging — DOI: `10.1016/j.neuroimage.2018.08.068`
+- The ARRIVE guidelines 2.0: Updated guidelines for reporting animal research — DOI: `10.1113/ep088870`
+- Reporting animal research: Explanation and elaboration for the ARRIVE guidelines 2.0 — DOI: `10.1371/journal.pbio.3000411`
+- Registered Reports — DOI: `10.1027/1864-9335/a000192`
+- The ARRIVE guidelines 2.0: Updated guidelines for reporting animal research* — DOI: `10.1177/0271678x20943823`
+- The past, present and future of Registered Reports — DOI: `10.1038/s41562-021-01193-7`
+- The ARRIVE guidelines 2019: updated guidelines for reporting animal research — DOI: `10.1101/703181`
+- The ARRIVE guidelines 2.0: Updated guidelines for reporting animal research — DOI: `10.1111/bph.15193`
+- Transparency, Reproducibility, and the Credibility of Economics Research — DOI: `10.1257/jel.20171350`
+- Reducing bias, increasing transparency and calibrating confidence with preregistration — DOI: `10.1038/s41562-022-01497-2`
+- Making conservation science more reliable with preregistration and registered reports — DOI: `10.1111/cobi.13342`
+- Transparency in Ecology and Evolution: Real Problems, Real Solutions — DOI: `10.1016/j.tree.2016.07.002`
+- Preregistration and registered reports — DOI: `10.1080/00461520.2021.1900851`
+- Does preregistration improve the credibility of research findings? — DOI: `10.20982/tqmp.16.4.p376`
+- The ARRIVE guidelines 2.0: updated guidelines for reporting animal research — DOI: `10.1113/jp280389`
+- Degrees of Freedom in Planning, Running, Analyzing, and Reporting Psychological Studies: A Checklist to Avoid p-Hacking — DOI: `10.3389/fpsyg.2016.01832`
+- The benefits of preregistration and Registered Reports — DOI: `10.1080/2833373x.2024.2376046`
+- Reporting animal research: Explanation and Elaboration for the ARRIVE guidelines 2019 — DOI: `10.1101/703355`
+- The ARRIVE guidelines 2.0: Updated guidelines for reporting animal research — DOI: `10.1186/s12917-020-02451-y`
+- Registered report: Survey on attitudes and experiences regarding preregistration in psychological research — DOI: `10.1371/journal.pone.0281086`
+- Improving Transparency to Build Trust in Real-World Secondary Data Studies for Hypothesis Testing—Why, What, and How: Recommendations and a Road Map from the Real-World Evidence Transparency Initiative — DOI: `10.1016/j.jval.2020.04.002`
+- Reproducible research practices, transparency, and open access data in the biomedical literature, 2015–2017 — DOI: `10.1371/journal.pbio.2006930`
+- Preregistering qualitative research — DOI: `10.1080/08989621.2019.1580147`
+- Moving Sport and Exercise Science Forward: A Call for the Adoption of More Transparent Research Practices — DOI: `10.1007/s40279-019-01227-1`
+
+## Failures
+
+- arxiv / "reproducible research computational workflow provenance": source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)
+- arxiv / "open science research data management FAIR": source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)
+- semantic-scholar / "research software engineering scientific pipeline": source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)
+- arxiv / "research software engineering scientific pipeline": source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)
+- semantic-scholar / "preregistration registered report research transparency": source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)
+- arxiv / "preregistration registered report research transparency": source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)

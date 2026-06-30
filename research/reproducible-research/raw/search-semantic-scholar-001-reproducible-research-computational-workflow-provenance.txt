@@ -1,0 +1,25 @@
+	From Code to Figure: A FAIR-Aligned Data Provenance Chain for Reproducible Simulation Research in Numerical Physics
+10.1145/3311790.3399619	Research Workflows - Towards reproducible science via detailed provenance tracking in Open Science Chain
+10.1109/escience.2016.7870887	Converting scripts into reproducible workflow research objects
+10.1109/bigdata47090.2019.9006358	Provenance–aware workflow for data quality management and improvement for large continuous scientific data streams
+10.5281/zenodo.1312623	Capturing interoperable reproducible workflows with Common Workflow Language
+10.48550/arxiv.2604.21936	An Artifact-based Agent Framework for Adaptive and Reproducible Medical Image Processing
+10.1007/s13222-012-0100-z	Scientific Workflows and Provenance: Introduction and Research Opportunities
+10.1007/s13222-012-0100-z	Scientific Workflows and Provenance: Introduction and Research Opportunities
+10.1109/skg.2008.86	Provenance Support for Grid-Enabled Scientific Workflows
+10.1145/3025171.3025193	Towards Automating Data Narratives
+10.1145/2499583.2499589	Digital libraries for the preservation of research methods and associated artifacts
+10.36334/modsim.2013.c8.bridgart	Characterisation of different integration strategies in scientific workflows
+10.1109/escience.2018.00123	Search for Computational Workflow Synergies in Reproducible Research Data Analyses in Particle Physics and Life Sciences
+	Towards harnessing computational workflow provenance for experiment reporting
+10.52294/001c.143700	Toward the future of scientific publishing through reproducible research artefacts enabled by Neurodesk
+10.1111/cgf.12924	AVOCADO: Visualization of Workflow–Derived Data Provenance for Reproducible Biomedical Research
+10.1021/jasms.4c00364	Nextflow4MS-DIAL: A Reproducible Nextflow-Based Workflow for Liquid Chromatography−Mass Spectrometry Metabolomics Data Processing
+10.1109/qce65121.2025.10331	GalaxyQ: A Platform for Reproducible and Provenance-Driven Hybrid Quantum-Classical Scientific Workflows
+10.1038/s41597-020-00638-4	AiiDA 1.0, a scalable computational infrastructure for automated reproducible workflows and data provenance
+10.1145/3736229.3736267	Toward a Provenance-Aware Observability Framework for Human Genomics Computational Workflows
+10.64898/2026.02.12.705484	Automated Calculation of the Disruption Index: A Reproducible Computational Workflow for Large-Scale Bibliometric Analyses
+10.3791/70171	Reproducible Computational Workflow for Drug Discovery to Standardize Network Pharmacology and Molecular Docking Analyses.
+10.5334/dsj-2024-023	Detailed Implementation of a Reproducible Machine Learning-Enabled Workflow
+10.1088/2516-1075/ace014	AiiDA-defects: an automated and fully reproducible workflow for the complete characterization of defect chemistry in functional materials
+10.21769/bioprotoc.5515	A Computational Workflow for Membrane Protein–Ligand Interaction Studies: Focus on α5-Containing GABA (A) Receptors

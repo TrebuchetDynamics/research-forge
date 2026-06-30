@@ -1,0 +1,25 @@
+10.1038/s41586-020-2649-2	Array programming with NumPy
+	Array programming with NumPy
+10.1038/s41592-019-0686-2	SciPy 1.0: fundamental algorithms for scientific computing in Python
+10.17863/cam.64134	SciPy 1.0: fundamental algorithms for scientific computing in Python
+10.1186/s12859-017-1934-z	ImageJ2: ImageJ for the next generation of scientific image data
+10.1155/2011/156869	FieldTrip: Open Source Software for Advanced Analysis of MEG, EEG, and Invasive Electrophysiological Data
+10.1038/srep08365	RASTtk: A modular and extensible implementation of the RAST algorithm for building custom annotation pipelines and annotating batches of genomes
+10.1162/qss_a_00018	Web of Science as a data source for research on scientific and scholarly activity
+10.1016/j.neuroimage.2011.09.015	FSL
+10.1016/j.neuroimage.2019.116137	MRtrix3: A fast, flexible and open software framework for medical image processing and visualisation
+10.5860/choice.37-5122	Handbook of corrosion engineering
+10.1109/52.60586	Prospects for an engineering discipline of software
+10.1016/j.mri.2012.05.001	3D Slicer as an image computing platform for the Quantitative Imaging Network
+10.1186/gb-2010-11-8-r86	Galaxy: a comprehensive approach for supporting accessible, reproducible, and transparent computational research in the life sciences
+10.1186/1475-925x-9-45	OpenMEEG: opensource software for quasistatic bioelectromagnetics
+10.1007/s10915-022-01939-z	Scientific Machine Learning Through Physics–Informed Neural Networks: Where we are and What’s Next
+10.1126/science.aar7191	Shifting the limits in wheat research and breeding using a fully annotated reference genome
+10.1016/j.ijinfomgt.2019.08.002	Artificial Intelligence (AI): Multidisciplinary perspectives on emerging challenges, opportunities, and agenda for research, practice and policy
+10.1038/s41579-019-0255-9	Common principles and best practices for engineering microbiomes
+10.1145/2939672.2939785	XGBoost
+10.1038/s41562-016-0021	A manifesto for reproducible science
+10.1051/0004-6361/201321529	<i>Planck</i>2013 results. I. Overview of products and scientific results
+10.1109/access.2019.2909530	Unmanned Aerial Vehicles (UAVs): A Survey on Civil Applications and Key Research Challenges
+10.1051/0004-6361/202037855	The data processing pipeline for the MUSE instrument
+10.1016/j.neuroimage.2018.08.068	Lead-DBS v2: Towards a comprehensive pipeline for deep brain stimulation imaging

@@ -1,0 +1,25 @@
+10.17705/1cais.03743	A Guide to Conducting a Standalone Systematic Literature Review
+10.17705/1cais.03709	Standing on the Shoulders of Giants: Challenges and Recommendations of Literature Search in Information Systems Research
+10.28945/479	A Systems Approach to Conduct an Effective Literature Review in Support of Information Systems Research
+	The STM Report: An overview of scientific and scholarly journal publishing
+10.1016/j.ref.2020.10.001	A comprehensive analysis of Vehicle to Grid (V2G) systems and scholarly literature on the application of such systems
+10.1007/s00799-015-0156-0	Research-paper recommender systems: a literature survey
+10.1177/0149206316675927	Fifteen Years of Research on Business Model Innovation
+10.1016/j.eiar.2016.02.005	The social impacts of dams: A new framework for scholarly analysis
+10.1016/j.respol.2008.11.010	Who's right, Marshall or Jacobs? The localization versus urbanization debate
+10.1093/nar/gkad1044	Database resources of the National Center for Biotechnology Information
+10.1111/eci.12931	Time to challenge the spurious hierarchy of systematic over narrative reviews?
+10.1007/s10115-023-01901-x	Scholarly recommendation systems: a literature survey
+10.1007/s11192-022-04289-7	Search where you will find most: Comparing the disciplinary coverage of 56 bibliographic databases
+10.3390/su8010037	VIKOR Technique: A Systematic Review of the State of the Art Literature on Methodologies and Applications
+10.1109/access.2021.3060863	The Role of AI, Machine Learning, and Big Data in Digital Twinning: A Systematic Literature Review, Challenges, and Opportunities
+10.3389/fncom.2012.00019	Decoupling the scholarly journal
+10.3390/su8050476	Importance of Actors and Agency in Sustainability Transitions: A Systematic Exploration of the Literature
+10.58079/v4as	STM report : an overview of scientific and scholarly journal publishing
+10.1108/scm-06-2016-0197	Analysing supply chain resilience: integrating the constructs in a concept mapping framework via a systematic literature review
+	Economic Implications of Alternative Scholarly Publishing Models Exploring the costs and benefits
+10.3390/electronics11020198	Detecting Cybersecurity Attacks in Internet of Things Using Artificial Intelligence Methods: A Systematic Literature Review
+10.1109/tem.2019.2963489	Knowledge Management in the Fourth Industrial Revolution: Mapping the Literature and Scoping Future Avenues
+10.3163/1536-5050.95.4.442	Comparing test searches in PubMed and Google Scholar
+10.1002/meet.14504701213	Beyond size and search: Building contextual mass in digital aggregations for scholarly use
+10.1007/s40747-022-00806-6	Scholarly knowledge graphs through structuring scholarly communication: a review

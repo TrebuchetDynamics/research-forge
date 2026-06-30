@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "1",
+  "createdAt": "2026-06-30T03:48:08Z",
+  "queries": [
+    "citation network analysis bibliometrics academic",
+    "scientific knowledge graph paper recommendation",
+    "citation graph machine learning link prediction",
+    "semantic scholar open research corpus graph embedding"
+  ],
+  "sources": [
+    "openalex",
+    "semantic-scholar",
+    "arxiv"
+  ],
+  "limit": 25,
+  "results": 125,
+  "deduped": 118,
+  "failures": 7
+}

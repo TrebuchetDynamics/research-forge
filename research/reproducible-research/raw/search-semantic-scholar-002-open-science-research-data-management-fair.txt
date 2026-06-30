@@ -1,0 +1,26 @@
+10.1109/bigdata55660.2022.10020931	Open Science and Research Data Management: A FAIR European Postgraduate Programme
+10.3390/heritage7050123	Towards FAIR Data Management in Heritage Science Research: Updates and Progress on the INFRA-ART Spectral Library
+10.1145/3701551.3704125	Integrating Knowledge Graphs and Neuro-Symbolic AI: LDM Enables FAIR and Federated Research Data Management
+10.1002/adem.202503181	PASTA‐ELN
+ : Simplifying Research Data Management for Experimental Materials Science
+10.1186/s13326-023-00297-5	Data management plans as linked open data: exploiting ARGOS FAIR and machine actionable outputs in the OpenAIRE research graph
+10.5334/dsj-2025-020	Research Data Management in Environmental Studies: Scoping Review and Bibliometrics Analysis
+10.52825/ocp.v5i.1202	Enhancing FAIR Data Practices in the Norwegian Research Data Archive Towards Research Objects and Improved Interoperability
+10.56059/pcf11.1510	Research Data Management as a Catalyst for Sustainable Learning Communities in Botswana's Higher Education: A Conceptual Exploration
+10.29173/iq1119	The role of FAIR principles in high-quality research data documentation: Looking at national election studies
+10.51983/ijiss-2025.ijiss.15.2.33	A Scientometric Analysis of Global Trends in Research Data Management Practices
+	Research data management, a chance for Open Science. Methods and tutorials to create a Data Management Plan ( DMP)
+10.1080/09540091.2025.2523965	SMARDY: the CORE of zero-trust FAIR marketplace for research data
+10.12688/f1000research.146301.1	A research data management (RDM) community for ELIXIR
+10.1515/opar-2025-0072	Open Science and Data Management in Rock Art Studies: The Case of Chufín Cave (Cantabria, Spain)
+10.48550/arxiv.2402.13343	EOSC CZ: Towards the development of Czech national ecosystem for FAIR research data
+10.48550/arxiv.2512.06039	The Reproducible Research Platform establishes a unified open science environment bridging data and software lifecycles across disciplines, from proposal to publication
+10.54963/resi.v1i1.1051	Integrating Microdata, Paradata, Metadata and Administrative Data in Quantitative Social Science Research
+10.4126/frl01-006444992	FAIR Data Management Workflow for MRI Data
+10.1111/ejss.70103	Facilitating Effective Reuse of Soil Research Data: The BonaRes Repository
+10.56367/oag-040-10749	Data management plans as a tool for making data fair
+10.52825/cordi.v1i.382	Building Research Data Management (RDM) Expertise and Training Resources in ELIXIR Nodes
+10.2218/eor.2025.10958	Open Science, Data, and Methodologies: Lessons learned from the NIHR-RESPIRE Network in Asia
+10.1063/4.0000368	Toward the Open Science model: publish your raw diffraction data.
+10.3897/rio.9.e108765	FAIR Research Objects for realising Open Science with the EOSC project RELIANCE
+10.4401/ag-8742	Data integration and FAIR data management in Solid Earth Science

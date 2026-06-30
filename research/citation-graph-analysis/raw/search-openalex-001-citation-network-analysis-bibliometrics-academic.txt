@@ -1,0 +1,25 @@
+10.1007/s11192-015-1645-z	The bibliometric analysis of scholarly production: How great is the impact?
+10.1111/ijcs.12605	Financial literacy: A systematic review and bibliometric analysis
+10.1162/qss_a_00019	Scopus as a curated, high-quality bibliometric data source for academic research in quantitative science studies
+10.1007/s40037-021-00695-4	Bibliometrics: Methods for studying academic publishing
+10.1016/j.ijhm.2017.06.012	Bibliometrics of social media research: A co-citation and co-word analysis
+	Bibliometrics and Citation Analysis: From the Science Citation Index to Cybermetrics
+10.3145/epi.2020.ene.03	Software tools for conducting bibliometric analysis in science: An up-to-date review
+10.1016/j.annals.2013.04.005	A NETWORK ANALYSIS OF TOURISM RESEARCH
+10.3389/frma.2021.742311	Exploring Topics in Bibliometric Research Through Citation Networks and Semantic Analysis
+10.3390/su10010166	A Bibliometric Analysis and Visualization of Medical Big Data Research
+10.1016/j.omega.2016.12.004	A bibliometric analysis of operations research and management science
+10.1007/s11356-021-13094-3	RETRACTED ARTICLE: Blockchain in supply chain management: a review, bibliometric, and network analysis
+10.1016/j.ssci.2017.08.011	Bibliometric analysis of safety culture research
+10.1177/0007650305278086	A Bibliometric Analysis of 30 Years of Research and Theory on Corporate Social Responsibility and Corporate Social Performance
+10.1016/j.jbusres.2020.06.057	Investigating the emerging COVID-19 research trends in the field of business and management: A bibliometric analysis approach
+10.1002/asi.10204	Self‐citation and self‐reference: Credibility and promotion in academic publication
+10.21037/atm-20-4235	A bibliometric analysis using VOSviewer of publications on COVID-19
+10.1016/j.chb.2019.106177	Technology-enhanced learning in higher education: A bibliometric analysis with latent semantic approach
+10.1108/00220410810844150	What do citation counts measure? A review of studies on citing behavior
+10.3390/su11051377	Tourism Research on Sustainability: A Bibliometric Analysis
+10.1002/asi.22883	Full‐text citation analysis: A new method to enhance scholarly networks
+10.1080/03088839.2020.1788731	Big data and artificial intelligence in the maritime industry: a bibliometric review and future research directions
+10.2196/35816	Digital Health Literacy: Bibliometric Analysis
+10.1007/s10639-022-11167-5	Systematic literature review and bibliometric analysis on virtual reality and education
+10.1186/s40561-022-00205-x	Is Metaverse in education a blessing or a curse: a combined content and bibliometric analysis

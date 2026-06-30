@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "1",
+  "createdAt": "2026-06-30T03:47:56Z",
+  "queries": [
+    "systematic review automation machine learning NLP screening",
+    "PRISMA automated literature review tool software",
+    "evidence synthesis automation reproducible research",
+    "active learning systematic review screening efficiency"
+  ],
+  "sources": [
+    "openalex",
+    "semantic-scholar",
+    "arxiv"
+  ],
+  "limit": 25,
+  "results": 125,
+  "deduped": 114,
+  "failures": 7
+}
