@@ -59,6 +59,46 @@ func TestApplyIdentityDecisionMergeAndSplitAreReversible(t *testing.T) {
 	}
 }
 
+func TestApplyIdentityDecisionDoesNotDropUnrelatedLibraryRecords(t *testing.T) {
+	fullLibrary := []PaperRecord{
+		{Title: "Left", Identifiers: Identifiers{DOI: "10.1000/a"}},
+		{Title: "Right", Identifiers: Identifiers{CrossrefID: "10.1000/a"}},
+		{Title: "Unrelated Paper 1", Identifiers: Identifiers{DOI: "10.1000/z1"}},
+		{Title: "Unrelated Paper 2", Identifiers: Identifiers{DOI: "10.1000/z2"}},
+	}
+	merge := IdentityDecision{
+		ID: "merge-1", ClusterID: "cluster-1", Action: IdentityDecisionMerge,
+		Before: []PaperRecord{fullLibrary[0], fullLibrary[1]},
+		After:  []PaperRecord{{Title: "Merged", Identifiers: Identifiers{DOI: "10.1000/a", CrossrefID: "10.1000/a"}}},
+	}
+	applied, err := ApplyIdentityDecision(fullLibrary, merge)
+	if err != nil {
+		t.Fatalf("apply: %v", err)
+	}
+	if len(applied) != 3 {
+		t.Fatalf("applied = %#v, want merged record + 2 unrelated papers surviving", applied)
+	}
+	titles := map[string]bool{}
+	for _, record := range applied {
+		titles[record.Title] = true
+	}
+	if !titles["Merged"] || !titles["Unrelated Paper 1"] || !titles["Unrelated Paper 2"] {
+		t.Fatalf("applied lost unrelated records: %#v", applied)
+	}
+}
+
+func TestApplyIdentityDecisionErrorsWhenBeforeRecordMissing(t *testing.T) {
+	records := []PaperRecord{{Title: "Kept", Identifiers: Identifiers{DOI: "10.1000/keep"}}}
+	decision := IdentityDecision{
+		ID: "merge-1", ClusterID: "cluster-1", Action: IdentityDecisionMerge,
+		Before: []PaperRecord{{Title: "Not In Library", Identifiers: Identifiers{DOI: "10.1000/missing"}}},
+		After:  []PaperRecord{{Title: "Merged", Identifiers: Identifiers{DOI: "10.1000/missing"}}},
+	}
+	if _, err := ApplyIdentityDecision(records, decision); err == nil {
+		t.Fatalf("ApplyIdentityDecision returned nil error for a before record absent from the current library")
+	}
+}
+
 func TestDetectIdentityConflictsFlagsConflictingClusterMetadata(t *testing.T) {
 	records := []PaperRecord{
 		{Title: "Catalyst A", Identifiers: Identifiers{DOI: "10.1000/same"}, Year: 2020},

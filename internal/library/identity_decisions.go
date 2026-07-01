@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"reflect"
 	"strings"
 )
 
@@ -68,6 +69,10 @@ func AppendIdentityConflict(path string, conflict IdentityConflictRecord) error 
 	return appendIdentityLogEntry(path, identityLogEntry{Type: "conflict", Conflict: &conflict})
 }
 
+// ApplyIdentityDecision replaces decision.Before with decision.After within
+// records, leaving every unrelated record untouched. It previously ignored
+// records entirely and returned decision.After alone, which silently
+// dropped every library record outside the decision's own cluster.
 func ApplyIdentityDecision(records []PaperRecord, decision IdentityDecision) ([]PaperRecord, error) {
 	if decision.Action != IdentityDecisionMerge && decision.Action != IdentityDecisionSplit {
 		return nil, fmt.Errorf("identity decision action must be merge or split")
@@ -75,7 +80,21 @@ func ApplyIdentityDecision(records []PaperRecord, decision IdentityDecision) ([]
 	if len(decision.After) == 0 {
 		return nil, fmt.Errorf("identity decision after state is required")
 	}
-	out := append([]PaperRecord{}, decision.After...)
+	remaining := append([]PaperRecord{}, records...)
+	for _, before := range decision.Before {
+		index := -1
+		for i, record := range remaining {
+			if reflect.DeepEqual(record, before) {
+				index = i
+				break
+			}
+		}
+		if index == -1 {
+			return nil, fmt.Errorf("identity decision before record %q not found in current library", before.Title)
+		}
+		remaining = append(remaining[:index], remaining[index+1:]...)
+	}
+	out := append(remaining, decision.After...)
 	return out, nil
 }
 
