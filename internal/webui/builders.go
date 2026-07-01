@@ -362,7 +362,7 @@ func BuildScreeningCockpitState(projectPath string) (ScreeningCockpitState, erro
 	state.UncertaintyQueue = screening.PrioritizeUncertaintyRecords(records, events, state.Stage)
 	state.UncertainQueue = screening.UncertainQueue(events, state.Stage)
 	state.Progress = screening.Progress(events, state.Stage, len(records))
-	state.Stopping = screening.StoppingCriteria(events, state.Stage, 0.95)
+	state.Stopping = screening.StoppingCriteria(events, state.Stage, 0.95, len(records))
 	if _, err := os.Stat(filepath.Join(projectPath, state.AuditBundlePath)); err == nil {
 		state.HasAuditBundle = true
 	}

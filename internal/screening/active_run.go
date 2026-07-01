@@ -67,7 +67,7 @@ func BuildActiveLearningRun(input ActiveLearningRunInput) (ActiveLearningRun, er
 	if runID == "" {
 		runID = fmt.Sprintf("%s-%s", stage, method)
 	}
-	return ActiveLearningRun{SchemaVersion: "1", RunID: runID, Stage: stage, InputHash: hashJSON(input.Records), DecisionHash: hashJSON(input.Events), RankingMethod: method, SeedDecisions: seedDecisions(input.Events, stage), RankedOutput: ranked, ReviewerProgress: Progress(input.Events, stage, len(input.Records)), StoppingDiagnostics: StoppingCriteria(input.Events, stage, input.TargetRecall), AdjudicationState: buildAdjudicationState(input.Events, stage)}, nil
+	return ActiveLearningRun{SchemaVersion: "1", RunID: runID, Stage: stage, InputHash: hashJSON(input.Records), DecisionHash: hashJSON(input.Events), RankingMethod: method, SeedDecisions: seedDecisions(input.Events, stage), RankedOutput: ranked, ReviewerProgress: Progress(input.Events, stage, len(input.Records)), StoppingDiagnostics: StoppingCriteria(input.Events, stage, input.TargetRecall, len(input.Records)), AdjudicationState: buildAdjudicationState(input.Events, stage)}, nil
 }
 
 func seedDecisions(events []DecisionEvent, stage Stage) []DecisionEvent {

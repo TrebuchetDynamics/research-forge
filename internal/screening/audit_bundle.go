@@ -159,7 +159,7 @@ func BuildScreeningAuditBundle(input ScreeningAuditBundleInput) ScreeningAuditBu
 	ranking := append([]PrioritizedRecord{}, active.RankedOutput...)
 	stopping := active.StoppingDiagnostics
 	if stopping.Stage == "" {
-		stopping = StoppingCriteria(input.Events, stage, 0.95)
+		stopping = StoppingCriteria(input.Events, stage, 0.95, len(input.Records))
 	}
 	method := strings.TrimSpace(active.RankingMethod)
 	if method == "" {

@@ -3074,7 +3074,15 @@ func executeScreen(args []string, stdout, stderr io.Writer, opts globalOptions) 
 		if err != nil {
 			return writeError(stdout, stderr, opts, 1, "screen_load_failed", err.Error())
 		}
-		recommendation := screening.StoppingCriteria(events, stage, target)
+		store, err := library.OpenStore(filepath.Join(opts.Project, "data", "library.json"))
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "library_open_failed", err.Error())
+		}
+		papers, err := store.List()
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "library_list_failed", err.Error())
+		}
+		recommendation := screening.StoppingCriteria(events, stage, target, len(papers))
 		if opts.JSON {
 			return writeJSON(stdout, 0, map[string]any{"stopping": recommendation})
 		}
