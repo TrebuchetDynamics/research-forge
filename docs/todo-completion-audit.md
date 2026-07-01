@@ -21,13 +21,13 @@ This document records the current completion audit for the active `TODO.md` obje
 | Add Go + HTMX web GUI smoke-check target | `Makefile` target `web-gui-smoke` runs `go test ./internal/webui` | Complete |
 | Verify unchecked TODO coverage | `rforge decisions --check TODO.md` verifies TODO coverage, line refs, and issue refs | Passing when `make todo-audit` passes |
 | Verify closeout checklist coverage | `rforge decisions --completion-audit TODO.md docs/todo-completion-audit.md` verifies decision/tracker coverage plus this prompt-to-artifact checklist; JSON includes `completion_blocked` (false), `blocked_decisions` (0), `blocked_decision_ids` (empty), and `license_resolution_verified` (true) confirming the license is recorded as resolved rather than blocked | Passing when `make todo-completion-audit` passes |
-| Verify full local quality gate | `make check` runs `go test ./...`, `go vet ./...`, TODO completion audit, and `git diff --check` | Required before marking implementation complete |
+| Verify full local quality gate | `make check` runs `gofmt` check, `go mod tidy -diff`, `go test ./...`, `go vet ./...`, TODO completion audit, inventory check, and `git diff --check` | Required before marking implementation complete |
 
 ## Latest validation evidence
 
 As of 2026-06-13, local closeout checks were run against the current tree:
 
-- `make check` passed: `go test ./...`, `go vet ./...`, TODO completion audit, and `git diff --check`.
+- `make check` passed: `gofmt` check, `go mod tidy -diff`, `go test ./...`, `go vet ./...`, TODO completion audit, inventory check, and `git diff --check`.
 - `make todo-audit` passed and reported zero unchecked lines; no owner decision blocks the TODO checklist.
 - Root license-file scan found `LICENSE` (MIT, `Copyright (c) 2026 Trebuchet Dynamics`); the `README.md` license section names the MIT License and SPDX identifier.
 - GitHub issue #1 owner approval was recorded with the required response fields (`License SPDX identifier: MIT`, `Copyright holder: Trebuchet Dynamics`, `Approved by: XelHaku (repository owner)`, `Approval date: 2026-06-13`).

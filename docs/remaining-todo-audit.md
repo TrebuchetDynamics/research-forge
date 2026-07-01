@@ -21,8 +21,11 @@ make check
 `make check` currently runs:
 
 ```sh
+make fmt-check
+go mod tidy -diff
 go test ./...
 go vet ./...
 go run ./cmd/rforge decisions --completion-audit TODO.md docs/todo-completion-audit.md
+go run ./cmd/rforge oss inventory-check opensource/inventory/manifest.json
 git diff --check
 ```

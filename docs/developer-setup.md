@@ -4,7 +4,7 @@
 make check
 ```
 
-`make check` runs the default local gate: `go test ./...`, `go vet ./...`, the TODO owner-decision audit, and `git diff --check`.
+`make check` runs the default local gate: `gofmt` check, `go mod tidy -diff`, `go test ./...`, `go vet ./...`, TODO owner-decision audit, inventory check, and `git diff --check`.
 
 License decision closeout has a live issue gate:
 

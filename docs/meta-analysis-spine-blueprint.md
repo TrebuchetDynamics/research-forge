@@ -128,7 +128,7 @@ Required event families:
 
 | Gate | Required checks |
 | --- | --- |
-| Normal local gate | `go test ./...`, `go vet ./...`, `make todo-completion-audit`, inventory check, `git diff --check` |
+| Normal local gate | `make fmt-check`, `go mod tidy -diff`, `go test ./...`, `go vet ./...`, `make todo-completion-audit`, inventory check, `git diff --check` |
 | Source gate | mocked HTTP fixtures, no live network in normal tests, opt-in live smoke documented |
 | Legal acquisition gate | OA/license status present, local-path/privacy redaction checked, approval recorded before download/export |
 | Parser gate | parser manifest exists, raw output checksum recorded, arbitration/conflict state explicit |

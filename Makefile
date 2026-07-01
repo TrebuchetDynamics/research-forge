@@ -1,4 +1,4 @@
-.PHONY: fmt fmt-check test vet vuln ci check install-script-smoke inventory-check decisions decisions-markdown decision-issues todo-audit todo-completion-audit license-decision-live-audit license-decision-approval-gate build-release checksums sbom install install-smoke web-gui-smoke source-live-smoke biomedical-live-smoke semantic-scholar-live-smoke external-e2e-artificial-photosynthesis
+.PHONY: fmt fmt-check mod-tidy-check test vet vuln ci check install-script-smoke inventory-check decisions decisions-markdown decision-issues todo-audit todo-completion-audit license-decision-live-audit license-decision-approval-gate build-release checksums sbom install install-smoke web-gui-smoke source-live-smoke biomedical-live-smoke semantic-scholar-live-smoke external-e2e-artificial-photosynthesis
 
 VERSION ?= $(shell git describe --tags --always --dirty 2>/dev/null || echo dev)
 COMMIT  ?= $(shell git rev-parse --short HEAD 2>/dev/null || echo unknown)
@@ -11,6 +11,9 @@ fmt:
 fmt-check:
 	test -z "$(shell gofmt -l cmd internal)"
 
+mod-tidy-check:
+	go mod tidy -diff
+
 test:
 	go test ./...
 
@@ -20,7 +23,7 @@ vet:
 vuln:
 	go run golang.org/x/vuln/cmd/govulncheck@latest ./...
 
-ci: fmt-check test vet todo-completion-audit vuln install-script-smoke
+ci: fmt-check mod-tidy-check test vet todo-completion-audit vuln install-script-smoke
 	go list -m all >/dev/null
 	go list -m -json all >/dev/null
 	git diff --check
@@ -29,7 +32,7 @@ install-script-smoke:
 	./install.sh --dry-run >/dev/null
 	./install.sh --from-source --dry-run >/dev/null
 
-check: test vet todo-completion-audit inventory-check
+check: fmt-check mod-tidy-check test vet todo-completion-audit inventory-check
 	git diff --check
 
 inventory-check:

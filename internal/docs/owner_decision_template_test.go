@@ -236,7 +236,7 @@ func TestMakeCheckIncludesTodoDecisionAudit(t *testing.T) {
 		t.Fatalf("read Makefile: %v", err)
 	}
 	text := string(data)
-	if !strings.Contains(text, "check: test vet todo-completion-audit") || !strings.Contains(text, "decisions --check TODO.md") {
+	if !strings.Contains(text, "check: fmt-check mod-tidy-check test vet todo-completion-audit") || !strings.Contains(text, "decisions --check TODO.md") {
 		t.Fatalf("Makefile check target does not include TODO decision audit:\n%s", text)
 	}
 }
