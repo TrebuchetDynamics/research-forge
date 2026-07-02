@@ -10,7 +10,15 @@ import (
 
 // ── install ──────────────────────────────────────────────────────────────────
 
+func stubObsidianLatestVersion(t *testing.T) {
+	t.Helper()
+	old := obsidianLatestVersionFunc
+	obsidianLatestVersionFunc = func() string { return "1.8.10" }
+	t.Cleanup(func() { obsidianLatestVersionFunc = old })
+}
+
 func TestObsidianInstallShowsDownloadURL(t *testing.T) {
+	stubObsidianLatestVersion(t)
 	stdout, stderr := new(bytes.Buffer), new(bytes.Buffer)
 	// Run with --dry-run so no actual download happens in tests
 	code := Execute([]string{"obsidian", "install", "--dry-run"}, stdout, stderr)
@@ -24,6 +32,7 @@ func TestObsidianInstallShowsDownloadURL(t *testing.T) {
 }
 
 func TestObsidianInstallDryRunShowsDestination(t *testing.T) {
+	stubObsidianLatestVersion(t)
 	stdout, stderr := new(bytes.Buffer), new(bytes.Buffer)
 	code := Execute([]string{"obsidian", "install", "--dry-run"}, stdout, stderr)
 	if code != 0 {
@@ -37,6 +46,7 @@ func TestObsidianInstallDryRunShowsDestination(t *testing.T) {
 }
 
 func TestObsidianInstallDryRunJSONOutput(t *testing.T) {
+	stubObsidianLatestVersion(t)
 	stdout, stderr := new(bytes.Buffer), new(bytes.Buffer)
 	code := Execute([]string{"--json", "obsidian", "install", "--dry-run"}, stdout, stderr)
 	if code != 0 {
@@ -74,23 +84,24 @@ func TestObsidianOpenMissingVaultDirReturnsError(t *testing.T) {
 }
 
 func TestObsidianOpenExistingVaultNoObsidianInstalled(t *testing.T) {
-	// Create a real (empty) vault dir
 	vaultDir := t.TempDir()
-	// Write a minimal index.md so it looks like a vault
-	os.WriteFile(filepath.Join(vaultDir, "index.md"), []byte("# test vault\n"), 0o644)
+	if err := os.WriteFile(filepath.Join(vaultDir, "index.md"), []byte("# test vault\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	old := obsidianFindBinaryFunc
+	obsidianFindBinaryFunc = func() (string, error) { return "", os.ErrNotExist }
+	t.Cleanup(func() { obsidianFindBinaryFunc = old })
 
 	stdout, stderr := new(bytes.Buffer), new(bytes.Buffer)
-	// This will either succeed (if obsidian is installed) or return a helpful error
 	code := Execute([]string{"obsidian", "open", "--vault", vaultDir}, stdout, stderr)
 
-	combined := stdout.String() + stderr.String()
-	if code != 0 {
-		// Not installed — error should tell user how to install
-		if !strings.Contains(combined, "install") && !strings.Contains(combined, "not found") {
-			t.Errorf("error for missing Obsidian should suggest install, got:\n%s", combined)
-		}
+	if code == 0 {
+		t.Fatal("expected missing Obsidian to fail without launching anything")
 	}
-	// If code == 0, Obsidian was found and launched (or dry-run)
+	combined := stdout.String() + stderr.String()
+	if !strings.Contains(combined, "install") && !strings.Contains(combined, "not found") {
+		t.Errorf("error for missing Obsidian should suggest install, got:\n%s", combined)
+	}
 }
 
 func TestObsidianOpenDryRun(t *testing.T) {

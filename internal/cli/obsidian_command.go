@@ -61,8 +61,10 @@ func obsidianLatestVersion() string {
 	return v
 }
 
+var obsidianLatestVersionFunc = obsidianLatestVersion
+
 func obsidianReleaseInfo() obsidianRelease {
-	version := obsidianLatestVersion()
+	version := obsidianLatestVersionFunc()
 	goos := runtime.GOOS
 	goarch := runtime.GOARCH
 
@@ -205,14 +207,14 @@ func executeObsidianOpen(args []string, stdout, stderr io.Writer, opts globalOpt
 		return 0
 	}
 
-	binary, err := obsidianFindBinary()
+	binary, err := obsidianFindBinaryFunc()
 	if err != nil {
 		msg := fmt.Sprintf("Obsidian not found. Install it with:\n  rforge obsidian install\n\nOr download from https://obsidian.md/download")
 		return writeError(stdout, stderr, opts, 1, "obsidian_not_found", msg)
 	}
 
 	fmt.Fprintf(stdout, "opening vault: %s\n", absVault)
-	cmd := exec.Command(binary, absVault)
+	cmd := exec.Command(binary, "--no-sandbox", absVault)
 	cmd.Stdout = nil
 	cmd.Stderr = nil
 	if err := cmd.Start(); err != nil {
@@ -240,6 +242,8 @@ func downloadFile(url, dest string) error {
 	_, err = io.Copy(f, resp.Body)
 	return err
 }
+
+var obsidianFindBinaryFunc = obsidianFindBinary
 
 func obsidianFindBinary() (string, error) {
 	// Check PATH first
