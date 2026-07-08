@@ -5,7 +5,7 @@ go 1.26
 toolchain go1.26.4
 
 require (
-	github.com/playwright-community/playwright-go v0.6000.0
+	github.com/playwright-community/playwright-go v0.5200.1
 	modernc.org/sqlite v1.52.0
 )
 
