@@ -87,7 +87,7 @@ func PaperRecords(response SourceResponse) ([]library.PaperRecord, error) {
 			}},
 		})
 		if err != nil {
-			return nil, err
+			continue
 		}
 		papers = append(papers, paper)
 	}

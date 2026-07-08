@@ -49,3 +49,17 @@ func TestRunSearchRejectsEmptyQuery(t *testing.T) {
 		t.Fatalf("RunSearch returned nil error, want empty query validation error")
 	}
 }
+
+func TestPaperRecordsSkipsMalformedSourceRecords(t *testing.T) {
+	papers, err := PaperRecords(SourceResponse{Records: []SourceRecord{
+		{Source: "test", Title: "", Identifiers: Identifiers{DOI: "10.1/missing-title"}},
+		{Source: "test", Title: "Missing identifier"},
+		{Source: "test", Title: "Good paper", Identifiers: Identifiers{DOI: "10.1/good"}},
+	}})
+	if err != nil {
+		t.Fatalf("PaperRecords returned error: %v", err)
+	}
+	if len(papers) != 1 || papers[0].Title != "Good paper" {
+		t.Fatalf("PaperRecords = %#v, want only the valid record", papers)
+	}
+}
