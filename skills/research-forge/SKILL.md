@@ -13,7 +13,7 @@ Core principle: **retrieval-first, provenance-first, statistics-first, LLM-assis
 
 ```sh
 # 1. Search — writes results.jsonl, raw/, manifest.json to <dir>
-rforge search batch --out research/my-topic --query "<topic>" --sources all
+rforge search batch --out research/my-topic --query "<topic>" --sources scholarly-fast
 
 # 2. Fetch open-access PDFs for included papers (run AFTER screening)
 rforge oa fetch --dir research/my-topic
@@ -22,7 +22,7 @@ rforge oa fetch --dir research/my-topic
 rforge citations build --research-dir research
 ```
 
-**Source presets:** `all` (comprehensive default, 44 sources) | `scholarly-fast` | `biomedical` | `preprints` | `openalex,arxiv` (quick only)
+**Source presets:** `scholarly-fast` (comprehensive default) | `all` (slow scout; use on a small query subset) | `biomedical` | `preprints` | `openalex,arxiv` (quick only)
 
 Cross-topic analysis: `rforge meta overlap --research-dir research [--min-topics 2]`
 
@@ -34,7 +34,7 @@ Before running searches, choose an output location and use Comprehensive depth u
 - If inside a repo with `artifacts/`, use `artifacts/research/<topic-slug>/`.
 - If inside a repo without `artifacts/`, use `research/<topic-slug>/`.
 - If no clear project home exists, use `~/research/<topic-slug>/`.
-- Quick only when explicitly requested: 3 query variants × 2–3 sources. Standard only when explicitly requested: 5–8 query variants × scholarly-fast/all sources plus citation expansion. Comprehensive default: 20–30 query variants × all relevant sources, citation expansion, evidence grid, and explicit gaps.
+- Quick only when explicitly requested: 3 query variants × 2–3 sources. Standard only when explicitly requested: 5–8 query variants × scholarly-fast sources plus citation expansion. Comprehensive default: 20–30 query variants × scholarly-fast or domain-relevant sources, optional `all` scout on 3–5 queries, citation expansion, evidence grid, and explicit gaps.
 
 ## Step 0 — Check and install rforge
 
@@ -109,11 +109,11 @@ Start by expanding the question into query variants: canonical term, abbreviatio
 
 ```sh
 # Standalone batch search — no project required
-rforge search batch --out <dir> --query "<query>" --sources all \
+rforge search batch --out <dir> --query "<query>" --sources scholarly-fast \
   [--queries <file>] [--limit N] [--continue-on-error] [--stats]
 
 # With a queries file (one query per line)
-rforge search batch --out <dir> --queries queries.txt --sources all --stats
+rforge search batch --out <dir> --queries queries.txt --sources scholarly-fast --stats
 
 # Retry failed queries
 rforge search resume --dir <dir>
