@@ -1,6 +1,11 @@
 {
+  "schema_version": "1",
   "question": "How should rforge itself be improved, based on evidence from real rforge usage across all projects under /home/xel/git/*?",
-  "rforge_version": "rforge v0.1.17 (fe2f413, 2026-07-08T01:25:35Z)",
+  "rforge_version": {
+    "version": "v0.1.17",
+    "commit": "fe2f413",
+    "date": "2026-07-08T01:25:35Z"
+  },
   "timestamp": "2026-07-14T00:00:00Z",
   "depth": "comprehensive",
   "save_path": "/home/xel/git/research-forge/research/rforge-usage-improvement-study",

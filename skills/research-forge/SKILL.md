@@ -375,16 +375,17 @@ Or write directly without `rforge`:
 
 ## Provenance rules (always required)
 
-Every run must write or append `provenance.json` before finishing. Capture depth, exact queries, sources, coverage stats, citation expansion attempts, outputs, and failures/rate limits. If `search batch --stats` was used, include `search-stats.txt` or equivalent stats output.
+Every run must write or append `provenance.json` before finishing. Capture depth, exact queries, sources, coverage stats, citation expansion attempts, outputs, and failures/rate limits. If `search batch --stats` was used, include `search-stats.txt` or equivalent stats output. Depth must be exactly `quick`, `standard`, or `comprehensive`; the validator rejects free-form variants such as `standard-plus`. Run `rforge --json version` and copy its `data` object into `rforge_version` instead of pasting the human-readable version line.
 
 ```json
 {
+  "schema_version": "1",
   "question": "<research question or task description>",
   "depth": "quick|standard|comprehensive",
   "sources": ["openalex", "arxiv"],
   "queries": ["<exact query string used>"],
   "timestamp": "<ISO 8601>",
-  "rforge_version": "<from rforge version, or 'not available'>",
+  "rforge_version": {"version": "<version or not available>", "commit": "<commit or unknown>", "date": "<build date or unknown>"},
   "search_stats": {"openalex": 0, "arxiv": 0, "total_unique_dois": 0},
   "citation_expand_attempted": ["<paper id or DOI>"],
   "citation_expand_succeeded": ["<paper id or DOI>"],
@@ -405,6 +406,7 @@ Before declaring research complete, verify:
 - Source coverage stats were run and recorded.
 - `report.md` or the requested output exists and cites exact papers, repositories, or artifacts.
 - `provenance.json` exists, is valid JSON, and lists all outputs.
+- `rforge provenance validate <folder>/provenance.json` passes (enum depth, string-only errors, required fields present); fix any reported field before finishing.
 - Human-gated actions were surfaced rather than self-approved.
 
 ---
