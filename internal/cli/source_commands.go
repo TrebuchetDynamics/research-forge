@@ -1097,6 +1097,9 @@ func executeSearch(args []string, stdout, stderr io.Writer, opts globalOptions) 
 	if len(args) > 0 && args[0] == "resume" {
 		return executeSearchResume(args[1:], stdout, stderr, opts)
 	}
+	if len(args) > 0 && args[0] == "refresh" {
+		return executeSearchRefresh(args[1:], stdout, stderr, opts)
+	}
 	source, query, limit, filters, ok := parseSearch(args)
 	if !ok {
 		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge search --source openalex --query <query> [--limit N] [--category arxiv-category] [--filter source-filter] [--entity authors|institutions]")
@@ -1568,6 +1571,191 @@ func executeSearchResume(args []string, stdout, stderr io.Writer, opts globalOpt
 	}
 	fmt.Fprintf(stdout, "resumed %d failed quer(ies): %d records, %d still failed\n", len(pending), results, newFailures)
 	return 0
+}
+
+// executeSearchRefresh re-runs the queries stored in a topic dir's manifest.json
+// and reports the DOI delta (new / unchanged / gone) versus the prior run, so
+// users can re-run a topic instead of hand-copying it to a -v2 / -wave directory.
+func executeSearchRefresh(args []string, stdout, stderr io.Writer, opts globalOptions) int {
+	topicDir := ""
+	dryRun := false
+	for i := 0; i < len(args); i++ {
+		switch args[i] {
+		case "--dir":
+			if i+1 >= len(args) {
+				return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge search refresh --dir <topic-dir> [--dry-run]")
+			}
+			topicDir = args[i+1]
+			i++
+		case "--dry-run":
+			dryRun = true
+		}
+	}
+	if topicDir == "" {
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge search refresh --dir <topic-dir> [--dry-run]")
+	}
+	manifestPath := filepath.Join(topicDir, "manifest.json")
+	manifestData, err := os.ReadFile(manifestPath)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return writeError(stdout, stderr, opts, 1, "search_refresh_no_manifest", fmt.Sprintf("no manifest.json in %s; refresh requires an existing search batch output", topicDir))
+		}
+		return writeError(stdout, stderr, opts, 1, "search_refresh_read_manifest", err.Error())
+	}
+	var manifest searchBatchManifest
+	if err := json.Unmarshal(manifestData, &manifest); err != nil {
+		return writeError(stdout, stderr, opts, 1, "search_refresh_parse_manifest", err.Error())
+	}
+	priorDOIs := readTopicDOIs(filepath.Join(topicDir, "results-deduped.jsonl"))
+	if dryRun {
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"queries": manifest.Queries, "sources": manifest.Sources, "limit": manifest.Limit, "priorRecords": len(priorDOIs), "priorDOIs": priorDOIs})
+		}
+		fmt.Fprintf(stdout, "refresh (dry run, no network calls) topic %s\n", topicDir)
+		fmt.Fprintf(stdout, "  prior records: %d\n", len(priorDOIs))
+		fmt.Fprintf(stdout, "  queries (%d):\n", len(manifest.Queries))
+		for _, q := range manifest.Queries {
+			fmt.Fprintf(stdout, "    - %s\n", q)
+		}
+		fmt.Fprintf(stdout, "  sources: %s\n", strings.Join(manifest.Sources, ", "))
+		fmt.Fprintf(stdout, "  limit: %d\n", manifest.Limit)
+		return 0
+	}
+	output, err := beginSearchBatchOutputTransaction(topicDir, manifest.Queries, manifest.Sources, false)
+	if err != nil {
+		return writeError(stdout, stderr, opts, 1, "search_refresh_output_snapshot_failed", err.Error())
+	}
+	defer output.cleanup()
+	workOutDir := output.stagingDir
+	if err := os.MkdirAll(filepath.Join(workOutDir, "raw"), 0o755); err != nil {
+		return writeError(stdout, stderr, opts, 1, "search_refresh_out_failed", err.Error())
+	}
+	resultsPath := filepath.Join(workOutDir, "results.jsonl")
+	dedupedPath := filepath.Join(workOutDir, "results-deduped.jsonl")
+	failuresPath := filepath.Join(workOutDir, "failures.jsonl")
+	resultsFile, err := os.Create(resultsPath)
+	if err != nil {
+		return writeError(stdout, stderr, opts, 1, "search_refresh_write_failed", err.Error())
+	}
+	defer resultsFile.Close()
+	failuresFile, err := os.Create(failuresPath)
+	if err != nil {
+		return writeError(stdout, stderr, opts, 1, "search_refresh_write_failed", err.Error())
+	}
+	defer failuresFile.Close()
+	allPapers := []library.PaperRecord{}
+	failures := []searchBatchFailure{}
+	for qi, query := range manifest.Queries {
+		for _, source := range manifest.Sources {
+			connector, ok := searchConnector(source)
+			if !ok {
+				f := searchBatchFailure{Source: source, Query: query, Error: "unknown source"}
+				failures = append(failures, f)
+				_ = writeJSONLine(failuresFile, f)
+				continue
+			}
+			response, searchErr := connector.Search(context.Background(), sources.SourceQuery{Terms: query, Limit: manifest.Limit, Filters: map[string]string{}})
+			if searchErr != nil {
+				f := searchBatchFailure{Source: source, Query: query, Error: searchErr.Error()}
+				failures = append(failures, f)
+				_ = writeJSONLine(failuresFile, f)
+				continue
+			}
+			papers, normErr := sources.PaperRecords(response)
+			if normErr != nil {
+				f := searchBatchFailure{Source: source, Query: query, Error: normErr.Error()}
+				failures = append(failures, f)
+				_ = writeJSONLine(failuresFile, f)
+				continue
+			}
+			rawName := fmt.Sprintf("search-%s-%03d-%s.txt", source, qi+1, slugifySearchBatch(query))
+			if err := writeSearchBatchRaw(filepath.Join(workOutDir, "raw", rawName), papers); err != nil {
+				return writeError(stdout, stderr, opts, 1, "search_refresh_write_failed", err.Error())
+			}
+			for _, paper := range papers {
+				allPapers = append(allPapers, paper)
+				_ = writeJSONLine(resultsFile, paper)
+			}
+		}
+	}
+	if err := resultsFile.Close(); err != nil {
+		return writeError(stdout, stderr, opts, 1, "search_refresh_write_failed", err.Error())
+	}
+	if err := failuresFile.Close(); err != nil {
+		return writeError(stdout, stderr, opts, 1, "search_refresh_write_failed", err.Error())
+	}
+	deduped := dedupeSearchBatchPapers(allPapers)
+	if err := writeSearchBatchJSONL(dedupedPath, deduped); err != nil {
+		return writeError(stdout, stderr, opts, 1, "search_refresh_write_failed", err.Error())
+	}
+	newManifest := searchBatchManifest{SchemaVersion: manifest.SchemaVersion, CreatedAt: time.Now().UTC().Format(time.RFC3339), Queries: manifest.Queries, Sources: manifest.Sources, Limit: manifest.Limit, Results: len(allPapers), Deduped: len(deduped), Failures: len(failures)}
+	if err := writeJSONFile(filepath.Join(workOutDir, "manifest.json"), newManifest); err != nil {
+		return writeError(stdout, stderr, opts, 1, "search_refresh_write_failed", err.Error())
+	}
+	if err := writeSearchBatchMarkdown(filepath.Join(workOutDir, "results.md"), deduped, failures); err != nil {
+		return writeError(stdout, stderr, opts, 1, "search_refresh_write_failed", err.Error())
+	}
+	newDOIs := paperDOIs(deduped)
+	new, gone := doiDelta(priorDOIs, newDOIs)
+	if err := output.commit(); err != nil {
+		return writeError(stdout, stderr, opts, 1, "search_refresh_output_commit_failed", err.Error())
+	}
+	unchanged := len(newDOIs) - len(new)
+	if opts.JSON {
+		return writeJSON(stdout, 0, map[string]any{"new": new, "gone": gone, "unchanged": unchanged, "results": len(allPapers), "deduped": len(deduped), "failures": len(failures)})
+	}
+	fmt.Fprintf(stdout, "refreshed %s: %d new, %d unchanged, %d gone (%d records, %d deduped, %d failures)\n", topicDir, len(new), unchanged, len(gone), len(allPapers), len(deduped), len(failures))
+	return 0
+}
+
+// readTopicDOIs returns the set of DOIs recorded in a prior results-deduped.jsonl.
+func readTopicDOIs(path string) map[string]struct{} {
+	dois := map[string]struct{}{}
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return dois
+	}
+	for _, line := range strings.Split(string(data), "\n") {
+		line = strings.TrimSpace(line)
+		if line == "" {
+			continue
+		}
+		var record library.PaperRecord
+		if json.Unmarshal([]byte(line), &record) == nil {
+			if doi := strings.ToLower(strings.TrimSpace(record.Identifiers.DOI)); doi != "" {
+				dois[doi] = struct{}{}
+			}
+		}
+	}
+	return dois
+}
+
+func paperDOIs(papers []library.PaperRecord) map[string]struct{} {
+	dois := map[string]struct{}{}
+	for _, paper := range papers {
+		if doi := strings.ToLower(strings.TrimSpace(paper.Identifiers.DOI)); doi != "" {
+			dois[doi] = struct{}{}
+		}
+	}
+	return dois
+}
+
+// doiDelta returns the DOIs that are new (in newSet, not prior) and gone (in
+// prior, not in newSet).
+func doiDelta(prior, newSet map[string]struct{}) (new, gone []string) {
+	for doi := range newSet {
+		if _, ok := prior[doi]; !ok {
+			new = append(new, doi)
+		}
+	}
+	for doi := range prior {
+		if _, ok := newSet[doi]; !ok {
+			gone = append(gone, doi)
+		}
+	}
+	sort.Strings(new)
+	sort.Strings(gone)
+	return new, gone
 }
 
 func searchFileSource(filename string) string {
