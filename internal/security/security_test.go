@@ -1,15 +1,36 @@
 package security
 
-import "testing"
+import (
+	"os"
+	"path/filepath"
+	"testing"
+)
 
 func TestArchiveExtractionRejectsUnsafePaths(t *testing.T) {
-	for _, name := range []string{"../evil", "/tmp/evil", "safe/../../evil"} {
+	for _, name := range []string{"", "../evil", "/tmp/evil", "safe/../../evil"} {
 		if err := ValidateArchivePath(name); err == nil {
 			t.Fatalf("ValidateArchivePath(%q) returned nil", name)
 		}
 	}
 	if err := ValidateArchivePath("safe/file.txt"); err != nil {
 		t.Fatalf("safe path rejected: %v", err)
+	}
+}
+
+func TestValidatePathWithinRootRejectsSymlinkedParent(t *testing.T) {
+	root := t.TempDir()
+	outside := t.TempDir()
+	if err := os.Mkdir(filepath.Join(root, "data"), 0o755); err != nil {
+		t.Fatalf("create data directory: %v", err)
+	}
+	if err := os.Symlink(outside, filepath.Join(root, "data", "linked")); err != nil {
+		t.Skipf("symlinks unavailable: %v", err)
+	}
+	if err := ValidatePathWithinRoot(root, "data/linked/file.json"); err == nil {
+		t.Fatal("symlinked parent accepted")
+	}
+	if err := ValidatePathWithinRoot(root, "data/new/file.json"); err != nil {
+		t.Fatalf("safe missing path rejected: %v", err)
 	}
 }
 

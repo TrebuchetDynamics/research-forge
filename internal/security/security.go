@@ -2,17 +2,49 @@ package security
 
 import (
 	"fmt"
+	"os"
 	"path/filepath"
 	"strings"
 )
 
 func ValidateArchivePath(name string) error {
+	if name == "" {
+		return fmt.Errorf("archive path is required")
+	}
 	if filepath.IsAbs(name) {
 		return fmt.Errorf("absolute archive path")
 	}
 	clean := filepath.Clean(name)
 	if clean == ".." || strings.HasPrefix(clean, ".."+string(filepath.Separator)) || strings.Contains(clean, string(filepath.Separator)+".."+string(filepath.Separator)) {
 		return fmt.Errorf("archive path traversal")
+	}
+	return nil
+}
+
+func ValidatePathWithinRoot(root, name string) error {
+	if err := ValidateArchivePath(name); err != nil {
+		return err
+	}
+	rootAbs, err := filepath.Abs(root)
+	if err != nil {
+		return err
+	}
+	current := rootAbs
+	for _, part := range strings.Split(filepath.Clean(filepath.FromSlash(name)), string(filepath.Separator)) {
+		if part == "." || part == "" {
+			continue
+		}
+		current = filepath.Join(current, part)
+		info, err := os.Lstat(current)
+		if os.IsNotExist(err) {
+			return nil
+		}
+		if err != nil {
+			return err
+		}
+		if info.Mode()&os.ModeSymlink != 0 {
+			return fmt.Errorf("path traverses symlink")
+		}
 	}
 	return nil
 }
