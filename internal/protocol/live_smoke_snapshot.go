@@ -7,6 +7,8 @@ import (
 	"path/filepath"
 	"sort"
 	"time"
+
+	"github.com/TrebuchetDynamics/research-forge/internal/filetxn"
 )
 
 const (
@@ -113,7 +115,7 @@ func SaveLiveSmokeSnapshot(path string, snapshot ConnectorLiveSmokeSnapshot) err
 		return err
 	}
 	payload = append(payload, '\n')
-	return os.WriteFile(path, payload, 0o644)
+	return filetxn.Replace(path, payload, 0o644)
 }
 
 func LoadLiveSmokeSnapshot(path string) (ConnectorLiveSmokeSnapshot, error) {

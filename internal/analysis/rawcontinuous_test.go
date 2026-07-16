@@ -78,6 +78,28 @@ func TestRawContinuousOutcomeErrorsWithoutValuePct(t *testing.T) {
 	}
 }
 
+func TestRawContinuousOutcomeRejectsNonfiniteValue(t *testing.T) {
+	calc := RawContinuousOutcome{VarianceFloor: 0.0025}
+	if _, err := calc.CalculateRaw(map[string]string{"value_pct": "NaN"}); err == nil {
+		t.Fatal("CalculateRaw returned nil error for a non-finite value_pct")
+	}
+}
+
+func TestRawContinuousOutcomeRejectsMalformedCI(t *testing.T) {
+	calc := RawContinuousOutcome{VarianceFloor: 0.0025}
+	_, err := calc.CalculateRaw(map[string]string{"value_pct": "12.5", "ci_lower": "not-a-number", "ci_upper": "14.0"})
+	if err == nil {
+		t.Fatal("CalculateRaw returned nil error for a malformed confidence interval")
+	}
+}
+
+func TestRawContinuousOutcomeRejectsMalformedSE(t *testing.T) {
+	calc := RawContinuousOutcome{VarianceFloor: 0.0025}
+	if _, err := calc.CalculateRaw(map[string]string{"value_pct": "12.5", "se": "not-a-number"}); err == nil {
+		t.Fatal("CalculateRaw returned nil error for a malformed standard error")
+	}
+}
+
 func TestRawContinuousOutcomeImplementsEffectSizeCalculator(t *testing.T) {
 	calc := RawContinuousOutcome{VarianceFloor: 0.0025}
 	yi, vi, err := calc.Calculate(map[string]string{"value_pct": "10.0"})

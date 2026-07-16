@@ -1,12 +1,15 @@
 package project
 
 import (
+	"bytes"
 	"encoding/json"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/TrebuchetDynamics/research-forge/internal/storage"
 )
 
 func TestCreateWritesManifestLockfileAndProvenance(t *testing.T) {
@@ -146,6 +149,174 @@ func TestCreateUsesInjectedEventID(t *testing.T) {
 	if events[0].ID != "evt_test" {
 		t.Fatalf("event ID = %q, want evt_test", events[0].ID)
 	}
+}
+
+func TestCreateRollsBackWhenProvenanceAppendFails(t *testing.T) {
+	invalidEvent := CreateOptions{
+		Title:   "Demo Review",
+		EventID: func(time.Time) string { return "" },
+	}
+
+	t.Run("removes a newly created workspace", func(t *testing.T) {
+		dir := filepath.Join(t.TempDir(), "demo")
+		if _, err := Create(dir, invalidEvent); err == nil {
+			t.Fatal("Create returned nil error, want provenance validation failure")
+		}
+		if _, err := os.Stat(dir); !os.IsNotExist(err) {
+			t.Fatalf("failed creation left workspace %s: %v", dir, err)
+		}
+	})
+
+	t.Run("removes only generated paths from an existing folder", func(t *testing.T) {
+		dir := t.TempDir()
+		assetPath := filepath.Join(dir, "notes.md")
+		asset := []byte("existing research notes\n")
+		if err := os.WriteFile(assetPath, asset, 0o640); err != nil {
+			t.Fatalf("write existing asset: %v", err)
+		}
+		if _, err := Create(dir, invalidEvent); err == nil {
+			t.Fatal("Create returned nil error, want provenance validation failure")
+		}
+		got, err := os.ReadFile(assetPath)
+		if err != nil || !bytes.Equal(got, asset) {
+			t.Fatalf("existing asset changed: data=%q err=%v", got, err)
+		}
+		for _, path := range []string{filepath.Join(dir, "data"), filepath.Join(dir, "provenance")} {
+			if _, err := os.Stat(path); !os.IsNotExist(err) {
+				t.Errorf("failed creation left generated directory %s: %v", path, err)
+			}
+		}
+	})
+
+	t.Run("rejects a symlinked output before mutation", func(t *testing.T) {
+		dir := t.TempDir()
+		target := filepath.Join(t.TempDir(), "outside.toml")
+		original := []byte("outside content\n")
+		if err := os.WriteFile(target, original, 0o640); err != nil {
+			t.Fatalf("write symlink target: %v", err)
+		}
+		if err := os.Symlink(target, filepath.Join(dir, "rforge.project.toml")); err != nil {
+			t.Fatalf("create manifest symlink: %v", err)
+		}
+		if _, err := Create(dir, CreateOptions{Title: "Demo Review"}); err == nil {
+			t.Fatal("Create returned nil error for symlinked output")
+		}
+		got, err := os.ReadFile(target)
+		if err != nil || !bytes.Equal(got, original) {
+			t.Fatalf("symlink target changed: data=%q err=%v", got, err)
+		}
+		for _, path := range []string{filepath.Join(dir, "data"), filepath.Join(dir, "provenance")} {
+			if _, err := os.Stat(path); !os.IsNotExist(err) {
+				t.Errorf("symlink preflight created directory %s: %v", path, err)
+			}
+		}
+	})
+
+	t.Run("does not rewrite a hard-linked existing output", func(t *testing.T) {
+		dir := t.TempDir()
+		outsidePath := filepath.Join(t.TempDir(), "outside.toml")
+		original := []byte("outside manifest must not be rewritten\n")
+		if err := os.WriteFile(outsidePath, original, 0o600); err != nil {
+			t.Fatalf("write outside manifest: %v", err)
+		}
+		manifestPath := filepath.Join(dir, "rforge.project.toml")
+		if err := os.Link(outsidePath, manifestPath); err != nil {
+			t.Skipf("hard links are unavailable: %v", err)
+		}
+		fixedTime := time.Unix(1_600_000_000, 0)
+		if err := os.Chtimes(outsidePath, fixedTime, fixedTime); err != nil {
+			t.Fatalf("set outside manifest timestamps: %v", err)
+		}
+		before, err := os.Stat(outsidePath)
+		if err != nil {
+			t.Fatalf("stat outside manifest before Create: %v", err)
+		}
+
+		if _, err := Create(dir, invalidEvent); err == nil {
+			t.Fatal("Create returned nil error, want provenance validation failure")
+		}
+
+		got, err := os.ReadFile(outsidePath)
+		if err != nil {
+			t.Fatalf("read outside manifest after rollback: %v", err)
+		}
+		if !bytes.Equal(got, original) {
+			t.Fatalf("outside manifest changed: got %q, want %q", got, original)
+		}
+		after, err := os.Stat(outsidePath)
+		if err != nil {
+			t.Fatalf("stat outside manifest after rollback: %v", err)
+		}
+		if !after.ModTime().Equal(before.ModTime()) {
+			t.Fatalf("outside manifest mtime changed: got %s, want %s", after.ModTime(), before.ModTime())
+		}
+	})
+
+	t.Run("preserves an existing research folder", func(t *testing.T) {
+		dir := t.TempDir()
+		assetPath := filepath.Join(dir, "paper.pdf")
+		asset := []byte("%PDF-1.4 existing research asset")
+		if err := os.WriteFile(assetPath, asset, 0o640); err != nil {
+			t.Fatalf("write existing asset: %v", err)
+		}
+		storagePath := filepath.Join(dir, "data", "rforge.sqlite")
+		if err := os.MkdirAll(filepath.Dir(storagePath), 0o755); err != nil {
+			t.Fatalf("create existing data directory: %v", err)
+		}
+		store, err := storage.Initialize(storagePath)
+		if err != nil {
+			t.Fatalf("initialize existing storage: %v", err)
+		}
+		if err := store.Close(); err != nil {
+			t.Fatalf("close existing storage: %v", err)
+		}
+		storageBytes, err := os.ReadFile(storagePath)
+		if err != nil {
+			t.Fatalf("read existing storage: %v", err)
+		}
+		prior := map[string][]byte{
+			filepath.Join(dir, "rforge.project.toml"):        []byte("existing manifest\n"),
+			filepath.Join(dir, "rforge.archive.json"):        []byte("existing archive metadata\n"),
+			filepath.Join(dir, "provenance", "events.jsonl"): []byte("existing provenance\n"),
+			storagePath:                        storageBytes,
+			storagePath + ".pre-migration.bak": []byte("existing migration backup\n"),
+		}
+		for path, data := range prior {
+			if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+				t.Fatalf("create existing path parent: %v", err)
+			}
+			if err := os.WriteFile(path, data, 0o640); err != nil {
+				t.Fatalf("write existing project path %s: %v", path, err)
+			}
+		}
+
+		if _, err := Create(dir, invalidEvent); err == nil {
+			t.Fatal("Create returned nil error, want provenance validation failure")
+		}
+		for path, want := range prior {
+			got, err := os.ReadFile(path)
+			if err != nil {
+				t.Fatalf("read restored path %s: %v", path, err)
+			}
+			if !bytes.Equal(got, want) {
+				t.Errorf("restored %s = %q, want %q", path, got, want)
+			}
+		}
+		gotAsset, err := os.ReadFile(assetPath)
+		if err != nil || !bytes.Equal(gotAsset, asset) {
+			t.Errorf("existing asset changed: data=%q err=%v", gotAsset, err)
+		}
+		for _, path := range []string{
+			filepath.Join(dir, "rforge.lock.json"),
+			storagePath + "-journal",
+			storagePath + "-wal",
+			storagePath + "-shm",
+		} {
+			if _, err := os.Stat(path); !os.IsNotExist(err) {
+				t.Errorf("failed creation left generated path %s: %v", path, err)
+			}
+		}
+	})
 }
 
 func TestReadEventsReturnsProjectCreateEvent(t *testing.T) {

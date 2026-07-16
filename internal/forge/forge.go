@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/TrebuchetDynamics/research-forge/internal/filetxn"
 	"github.com/TrebuchetDynamics/research-forge/internal/project"
 	"github.com/TrebuchetDynamics/research-forge/internal/provenance"
 	"github.com/TrebuchetDynamics/research-forge/internal/reviewpkg"
@@ -120,10 +121,7 @@ func Init(projectPath string, opts InitOptions) (State, error) {
 	}
 	state := State{SchemaVersion: schemaVersion, ProjectPath: projectPath, Manifest: "rforge.project.toml", Question: question, SourceChoices: cleanList(opts.SourceChoices), ToolChoices: cleanList(opts.ToolChoices), PrivacyLegalPreview: privacyLegalPreview(opts.SourceChoices, opts.ToolChoices), CurrentState: StateQuestionDraft}
 	state.refresh()
-	if err := save(projectPath, state); err != nil {
-		return State{}, err
-	}
-	if err := appendTransition(projectPath, "", state.CurrentState, actor(opts.Actor), map[string]any{"question": question}, state); err != nil {
+	if err := saveTransition(projectPath, "", state.CurrentState, actor(opts.Actor), map[string]any{"question": question}, state); err != nil {
 		return State{}, err
 	}
 	return state, nil
@@ -177,11 +175,25 @@ func CompleteFixtureSourceImport(projectPath, actorName string) (State, error) {
 	if state.CurrentState != StateImportPlan {
 		return State{}, fmt.Errorf("fixture source import requires state %s; current state is %s", StateImportPlan, state.CurrentState)
 	}
-	if err := reviewpkg.WriteArtificialPhotosynthesisFixtureSourceImport(projectPath); err != nil {
+	artifacts, err := captureForgeArtifacts(projectPath, reviewpkg.ArtificialPhotosynthesisFixtureSourceImportPaths())
+	if err != nil {
 		return State{}, err
 	}
+	rollback := func(cause error) (State, error) {
+		if restoreErr := artifacts.restore(); restoreErr != nil {
+			return State{}, fmt.Errorf("%w; roll back fixture source import: %v", cause, restoreErr)
+		}
+		return State{}, cause
+	}
+	if err := reviewpkg.WriteArtificialPhotosynthesisFixtureSourceImport(projectPath); err != nil {
+		return rollback(err)
+	}
 	state.ValidationReceipts = append(state.ValidationReceipts, "offline artificial photosynthesis source plan and imports prepared")
-	return advance(projectPath, state, actor(actorName), map[string]any{"sourcePlan": "data/source-plans/artificial-photosynthesis.json", "library": "data/library.json", "importReceipts": "data/import-receipts/fake-sources.json"})
+	state, err = advance(projectPath, state, actor(actorName), map[string]any{"sourcePlan": "data/source-plans/artificial-photosynthesis.json", "library": "data/library.json", "importReceipts": "data/import-receipts/fake-sources.json"})
+	if err != nil {
+		return rollback(err)
+	}
+	return state, nil
 }
 
 func CompleteFixtureReferenceManager(projectPath, actorName string) (State, error) {
@@ -192,16 +204,23 @@ func CompleteFixtureReferenceManager(projectPath, actorName string) (State, erro
 	if state.CurrentState != StateDedupeReview {
 		return State{}, fmt.Errorf("fixture reference-manager import requires state %s; current state is %s", StateDedupeReview, state.CurrentState)
 	}
-	if err := reviewpkg.WriteArtificialPhotosynthesisReferenceManagerFixture(projectPath); err != nil {
+	artifacts, err := captureForgeArtifacts(projectPath, reviewpkg.ArtificialPhotosynthesisReferenceManagerFixturePaths())
+	if err != nil {
 		return State{}, err
+	}
+	rollback := func(cause error) (State, error) {
+		if restoreErr := artifacts.restore(); restoreErr != nil {
+			return State{}, fmt.Errorf("%w; roll back fixture reference-manager import: %v", cause, restoreErr)
+		}
+		return State{}, cause
+	}
+	if err := reviewpkg.WriteArtificialPhotosynthesisReferenceManagerFixture(projectPath); err != nil {
+		return rollback(err)
 	}
 	state.ValidationReceipts = append(state.ValidationReceipts, "offline Zotero/JabRef reference-manager fidelity artifacts prepared")
 	state.refresh()
-	if err := save(projectPath, state); err != nil {
-		return State{}, err
-	}
-	if err := appendTransition(projectPath, state.CurrentState, state.CurrentState, actor(actorName), map[string]any{"library": "data/library.json", "referenceManagerReports": "data/reference-manager/"}, state); err != nil {
-		return State{}, err
+	if err := saveTransition(projectPath, state.CurrentState, state.CurrentState, actor(actorName), map[string]any{"library": "data/library.json", "referenceManagerReports": "data/reference-manager/"}, state); err != nil {
+		return rollback(err)
 	}
 	return state, nil
 }
@@ -214,11 +233,25 @@ func CompleteFixtureAcquisition(projectPath, actorName string) (State, error) {
 	if state.CurrentState != StateFullTextAcquisition {
 		return State{}, fmt.Errorf("fixture acquisition requires state %s; current state is %s", StateFullTextAcquisition, state.CurrentState)
 	}
-	if err := reviewpkg.WriteArtificialPhotosynthesisAcquisitionFixture(projectPath); err != nil {
+	artifacts, err := captureForgeArtifacts(projectPath, reviewpkg.ArtificialPhotosynthesisAcquisitionFixturePaths())
+	if err != nil {
 		return State{}, err
 	}
+	rollback := func(cause error) (State, error) {
+		if restoreErr := artifacts.restore(); restoreErr != nil {
+			return State{}, fmt.Errorf("%w; roll back fixture acquisition: %v", cause, restoreErr)
+		}
+		return State{}, cause
+	}
+	if err := reviewpkg.WriteArtificialPhotosynthesisAcquisitionFixture(projectPath); err != nil {
+		return rollback(err)
+	}
 	state.ValidationReceipts = append(state.ValidationReceipts, "offline legal acquisition and document asset artifacts prepared")
-	return advance(projectPath, state, actor(actorName), map[string]any{"legalAcquisition": "data/legal-acquisition-queue.json", "documentAssets": "data/document-assets.json"})
+	state, err = advance(projectPath, state, actor(actorName), map[string]any{"legalAcquisition": "data/legal-acquisition-queue.json", "documentAssets": "data/document-assets.json"})
+	if err != nil {
+		return rollback(err)
+	}
+	return state, nil
 }
 
 func CompleteFixturePackage(projectPath, packagePath, actorName string) (PackageCompletion, error) {
@@ -232,42 +265,67 @@ func CompleteFixturePackage(projectPath, packagePath, actorName string) (Package
 	if strings.TrimSpace(packagePath) == "" {
 		return PackageCompletion{}, fmt.Errorf("package path is required")
 	}
-	if err := reviewpkg.WriteArtificialPhotosynthesisFixtureProject(projectPath); err != nil {
+	artifacts, err := captureForgeArtifacts(projectPath, reviewpkg.ArtificialPhotosynthesisFixtureProjectPaths())
+	if err != nil {
 		return PackageCompletion{}, err
+	}
+	packageOutput, err := captureForgePackageOutput(projectPath, packagePath)
+	if err != nil {
+		return PackageCompletion{}, err
+	}
+	defer packageOutput.discard()
+	rollback := func(cause error) (PackageCompletion, error) {
+		failures := make([]string, 0, 2)
+		if restoreErr := packageOutput.restore(); restoreErr != nil {
+			failures = append(failures, fmt.Sprintf("package output: %v", restoreErr))
+		}
+		if restoreErr := artifacts.restore(); restoreErr != nil {
+			failures = append(failures, fmt.Sprintf("project artifacts: %v", restoreErr))
+		}
+		if len(failures) > 0 {
+			return PackageCompletion{}, fmt.Errorf("%w; roll back fixture package: %s", cause, strings.Join(failures, "; "))
+		}
+		return PackageCompletion{}, cause
+	}
+	if err := reviewpkg.WriteArtificialPhotosynthesisFixtureProject(projectPath); err != nil {
+		return rollback(err)
 	}
 	state.ValidationReceipts = append(state.ValidationReceipts, "offline artificial photosynthesis fixture artifacts prepared")
 	state.refresh()
 	if err := save(projectPath, state); err != nil {
-		return PackageCompletion{}, err
+		return rollback(err)
 	}
 	pkg, err := reviewpkg.Create(projectPath, packagePath, reviewpkg.Options{CreatedBy: actor(actorName), Question: state.Question})
 	if err != nil {
-		return PackageCompletion{}, err
+		return rollback(err)
 	}
 	audit, err := reviewpkg.Audit(packagePath)
 	if err != nil {
-		return PackageCompletion{}, err
+		return rollback(err)
 	}
 	if !audit.OK {
-		return PackageCompletion{}, fmt.Errorf("package audit failed")
+		failedChecks := make([]string, 0)
+		for _, check := range audit.Checks {
+			if !check.OK {
+				failedChecks = append(failedChecks, check.Code+": "+check.Message)
+			}
+		}
+		return rollback(fmt.Errorf("package audit failed: %s", strings.Join(failedChecks, "; ")))
 	}
 	replay, err := reviewpkg.Replay(packagePath)
 	if err != nil {
-		return PackageCompletion{}, err
+		return rollback(err)
 	}
 	if !replay.OK {
-		return PackageCompletion{}, fmt.Errorf("package replay failed")
+		return rollback(fmt.Errorf("package replay failed"))
 	}
 	prev := state.CurrentState
 	state.CurrentState = StateDone
 	state.Approvals = append(state.Approvals, Approval{Gate: "package approval", Note: "fixture package audit and replay passed", Actor: actor(actorName), Timestamp: time.Now().UTC().Format(time.RFC3339)})
 	state.ValidationReceipts = append(state.ValidationReceipts, "package audit passed: "+packagePath, "package replay passed: "+packagePath)
 	state.refresh()
-	if err := save(projectPath, state); err != nil {
-		return PackageCompletion{}, err
-	}
-	if err := appendTransition(projectPath, prev, StateDone, actor(actorName), map[string]any{"package": packagePath, "auditOK": audit.OK, "replayOK": replay.OK}, state); err != nil {
-		return PackageCompletion{}, err
+	if err := saveTransition(projectPath, prev, StateDone, actor(actorName), map[string]any{"package": packagePath, "auditOK": audit.OK, "replayOK": replay.OK}, state); err != nil {
+		return rollback(err)
 	}
 	return PackageCompletion{State: state, Package: pkg, AuditReport: audit, ReplayReport: replay, PackagePath: packagePath}, nil
 }
@@ -287,10 +345,7 @@ func Reopen(projectPath string, target StateID, reason, actorName string) (State
 	state.CurrentState = target
 	state.ValidationReceipts = append(state.ValidationReceipts, "reopened: "+reason)
 	state.refresh()
-	if err := save(projectPath, state); err != nil {
-		return State{}, err
-	}
-	if err := appendTransition(projectPath, prev, target, actor(actorName), map[string]any{"reason": reason}, state); err != nil {
+	if err := saveTransition(projectPath, prev, target, actor(actorName), map[string]any{"reason": reason}, state); err != nil {
 		return State{}, err
 	}
 	return state, nil
@@ -308,10 +363,7 @@ func advance(projectPath string, state State, actorName string, inputs map[strin
 	}
 	state.CurrentState = next
 	state.refresh()
-	if err := save(projectPath, state); err != nil {
-		return State{}, err
-	}
-	if err := appendTransition(projectPath, prev, next, actorName, inputs, state); err != nil {
+	if err := saveTransition(projectPath, prev, next, actorName, inputs, state); err != nil {
 		return State{}, err
 	}
 	return state, nil
@@ -400,15 +452,277 @@ func actionsFor(state StateID) []NextAction {
 func statePath(projectPath string) string {
 	return filepath.Join(projectPath, "data", "forge-state.json")
 }
+
+type forgeArtifactFileSnapshot struct {
+	path    string
+	data    []byte
+	mode    os.FileMode
+	existed bool
+}
+
+type forgeArtifactSnapshot struct {
+	files   []forgeArtifactFileSnapshot
+	newDirs []string
+}
+
+type forgePackageOutputSnapshot struct {
+	path       string
+	backupPath string
+	newDirs    []string
+}
+
+func captureForgePackageOutput(projectPath, packagePath string) (forgePackageOutputSnapshot, error) {
+	if err := reviewpkg.ValidatePackageOutputPath(projectPath, packagePath); err != nil {
+		return forgePackageOutputSnapshot{}, err
+	}
+	path, err := filepath.Abs(packagePath)
+	if err != nil {
+		return forgePackageOutputSnapshot{}, err
+	}
+	snapshot := forgePackageOutputSnapshot{path: path}
+	for dir := filepath.Dir(path); ; dir = filepath.Dir(dir) {
+		info, err := os.Lstat(dir)
+		if err == nil {
+			if !info.IsDir() {
+				return forgePackageOutputSnapshot{}, fmt.Errorf("package output parent is not a directory: %s", dir)
+			}
+			break
+		}
+		if !os.IsNotExist(err) {
+			return forgePackageOutputSnapshot{}, err
+		}
+		snapshot.newDirs = append(snapshot.newDirs, dir)
+		if parent := filepath.Dir(dir); parent == dir {
+			return forgePackageOutputSnapshot{}, fmt.Errorf("package output has no existing parent directory: %s", path)
+		}
+	}
+	if _, err := os.Lstat(path); err != nil {
+		if os.IsNotExist(err) {
+			return snapshot, nil
+		}
+		return forgePackageOutputSnapshot{}, err
+	}
+	backupPath, err := os.MkdirTemp(filepath.Dir(path), "."+filepath.Base(path)+".rforge-rollback-*")
+	if err != nil {
+		return forgePackageOutputSnapshot{}, err
+	}
+	if err := os.Remove(backupPath); err != nil {
+		return forgePackageOutputSnapshot{}, err
+	}
+	if err := os.Rename(path, backupPath); err != nil {
+		return forgePackageOutputSnapshot{}, err
+	}
+	snapshot.backupPath = backupPath
+	return snapshot, nil
+}
+
+func (snapshot forgePackageOutputSnapshot) restore() error {
+	if err := os.RemoveAll(snapshot.path); err != nil {
+		return err
+	}
+	if snapshot.backupPath != "" {
+		if err := os.Rename(snapshot.backupPath, snapshot.path); err != nil {
+			return fmt.Errorf("restore %s from %s: %w", snapshot.path, snapshot.backupPath, err)
+		}
+	}
+	for _, dir := range snapshot.newDirs {
+		if err := os.Remove(dir); err != nil && !os.IsNotExist(err) {
+			return fmt.Errorf("remove created package directory %s: %w", dir, err)
+		}
+	}
+	return nil
+}
+
+func (snapshot forgePackageOutputSnapshot) discard() {
+	if snapshot.backupPath != "" {
+		_ = os.RemoveAll(snapshot.backupPath)
+	}
+}
+
+func captureForgeArtifacts(projectPath string, relativePaths []string) (forgeArtifactSnapshot, error) {
+	root := filepath.Clean(projectPath)
+	snapshot := forgeArtifactSnapshot{files: make([]forgeArtifactFileSnapshot, 0, len(relativePaths))}
+	paths := make([]string, 0, len(relativePaths))
+	dirs := make([]string, 0)
+	seenDirs := map[string]bool{}
+	for _, relativePath := range relativePaths {
+		relativePath = filepath.Clean(filepath.FromSlash(relativePath))
+		if relativePath == "." || filepath.IsAbs(relativePath) || relativePath == ".." || strings.HasPrefix(relativePath, ".."+string(filepath.Separator)) {
+			return forgeArtifactSnapshot{}, fmt.Errorf("unsafe fixture artifact path %q", relativePath)
+		}
+		path := filepath.Join(root, relativePath)
+		paths = append(paths, path)
+		chain := make([]string, 0)
+		for dir := filepath.Dir(path); dir != root; dir = filepath.Dir(dir) {
+			if dir == "." || dir == string(filepath.Separator) {
+				return forgeArtifactSnapshot{}, fmt.Errorf("fixture artifact escapes project: %s", path)
+			}
+			chain = append(chain, dir)
+		}
+		for i := len(chain) - 1; i >= 0; i-- {
+			if !seenDirs[chain[i]] {
+				seenDirs[chain[i]] = true
+				dirs = append(dirs, chain[i])
+			}
+		}
+	}
+	for _, dir := range dirs {
+		info, err := os.Lstat(dir)
+		if err != nil {
+			if os.IsNotExist(err) {
+				snapshot.newDirs = append(snapshot.newDirs, dir)
+				continue
+			}
+			return forgeArtifactSnapshot{}, err
+		}
+		if !info.IsDir() {
+			return forgeArtifactSnapshot{}, fmt.Errorf("fixture artifact parent is not a directory: %s", dir)
+		}
+	}
+	for _, path := range paths {
+		info, err := os.Lstat(path)
+		if err != nil {
+			if os.IsNotExist(err) {
+				snapshot.files = append(snapshot.files, forgeArtifactFileSnapshot{path: path})
+				continue
+			}
+			return forgeArtifactSnapshot{}, err
+		}
+		if !info.Mode().IsRegular() {
+			return forgeArtifactSnapshot{}, fmt.Errorf("fixture artifact path is not a regular file: %s", path)
+		}
+		data, err := os.ReadFile(path)
+		if err != nil {
+			return forgeArtifactSnapshot{}, err
+		}
+		snapshot.files = append(snapshot.files, forgeArtifactFileSnapshot{path: path, data: data, mode: info.Mode(), existed: true})
+	}
+	return snapshot, nil
+}
+
+func (snapshot forgeArtifactSnapshot) restore() error {
+	failures := make([]string, 0)
+	for i := len(snapshot.files) - 1; i >= 0; i-- {
+		file := snapshot.files[i]
+		var err error
+		if file.existed {
+			err = filetxn.Replace(file.path, file.data, file.mode)
+		} else {
+			err = os.Remove(file.path)
+			if os.IsNotExist(err) {
+				err = nil
+			}
+		}
+		if err != nil {
+			failures = append(failures, fmt.Sprintf("restore %s: %v", file.path, err))
+		}
+	}
+	for i := len(snapshot.newDirs) - 1; i >= 0; i-- {
+		if err := os.Remove(snapshot.newDirs[i]); err != nil && !os.IsNotExist(err) {
+			failures = append(failures, fmt.Sprintf("remove created directory %s: %v", snapshot.newDirs[i], err))
+		}
+	}
+	if len(failures) > 0 {
+		return fmt.Errorf("restore fixture artifacts: %s", strings.Join(failures, "; "))
+	}
+	return nil
+}
+
+type forgeStateSnapshot struct {
+	path           string
+	data           []byte
+	mode           os.FileMode
+	existed        bool
+	createdDataDir bool
+}
+
+func captureForgeState(projectPath string) (forgeStateSnapshot, error) {
+	path := statePath(projectPath)
+	snapshot := forgeStateSnapshot{path: path}
+	dataDir := filepath.Dir(path)
+	dirInfo, err := os.Lstat(dataDir)
+	if err != nil {
+		if !os.IsNotExist(err) {
+			return forgeStateSnapshot{}, err
+		}
+		snapshot.createdDataDir = true
+	} else if !dirInfo.IsDir() {
+		return forgeStateSnapshot{}, fmt.Errorf("forge data path is not a directory: %s", dataDir)
+	}
+	info, err := os.Lstat(path)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return snapshot, nil
+		}
+		return forgeStateSnapshot{}, err
+	}
+	if !info.Mode().IsRegular() {
+		return forgeStateSnapshot{}, fmt.Errorf("forge state path is not a regular file: %s", path)
+	}
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return forgeStateSnapshot{}, err
+	}
+	snapshot.data = data
+	snapshot.mode = info.Mode()
+	snapshot.existed = true
+	return snapshot, nil
+}
+
+func (snapshot forgeStateSnapshot) restore() error {
+	if snapshot.existed {
+		return filetxn.Replace(snapshot.path, snapshot.data, snapshot.mode)
+	}
+	if err := os.Remove(snapshot.path); err != nil && !os.IsNotExist(err) {
+		return err
+	}
+	if snapshot.createdDataDir {
+		if err := os.Remove(filepath.Dir(snapshot.path)); err != nil && !os.IsNotExist(err) {
+			return err
+		}
+	}
+	return nil
+}
+
+func saveTransition(projectPath string, prev, next StateID, actorName string, inputs map[string]any, state State) error {
+	snapshot, err := captureForgeState(projectPath)
+	if err != nil {
+		return err
+	}
+	rollback := func(cause error) error {
+		if restoreErr := snapshot.restore(); restoreErr != nil {
+			return fmt.Errorf("%w; roll back forge state: %v", cause, restoreErr)
+		}
+		return cause
+	}
+	if err := save(projectPath, state); err != nil {
+		return rollback(err)
+	}
+	if err := appendTransition(projectPath, prev, next, actorName, inputs, state); err != nil {
+		return rollback(err)
+	}
+	return nil
+}
+
 func save(projectPath string, state State) error {
-	if err := os.MkdirAll(filepath.Dir(statePath(projectPath)), 0o755); err != nil {
+	path := statePath(projectPath)
+	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+		return err
+	}
+	mode := os.FileMode(0o644)
+	if info, err := os.Lstat(path); err == nil {
+		if !info.Mode().IsRegular() {
+			return fmt.Errorf("forge state path is not a regular file: %s", path)
+		}
+		mode = info.Mode().Perm()
+	} else if !os.IsNotExist(err) {
 		return err
 	}
 	data, err := json.MarshalIndent(state, "", "  ")
 	if err != nil {
 		return err
 	}
-	return os.WriteFile(statePath(projectPath), append(data, '\n'), 0o644)
+	return filetxn.Replace(path, append(data, '\n'), mode)
 }
 func load(projectPath string) (State, error) {
 	var s State
@@ -416,8 +730,16 @@ func load(projectPath string) (State, error) {
 	if err != nil {
 		return s, err
 	}
-	err = json.Unmarshal(data, &s)
-	return s, err
+	if err := json.Unmarshal(data, &s); err != nil {
+		return State{}, err
+	}
+	if s.SchemaVersion != schemaVersion {
+		return State{}, fmt.Errorf("unsupported forge schema version %q", s.SchemaVersion)
+	}
+	if !validState(s.CurrentState) {
+		return State{}, fmt.Errorf("invalid forge state %q", s.CurrentState)
+	}
+	return s, nil
 }
 func cleanList(values []string) []string {
 	out := []string{}

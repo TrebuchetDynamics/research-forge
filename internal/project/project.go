@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/TrebuchetDynamics/research-forge/internal/filetxn"
 	"github.com/TrebuchetDynamics/research-forge/internal/provenance"
 	"github.com/TrebuchetDynamics/research-forge/internal/storage"
 )
@@ -45,6 +46,95 @@ type CreateOptions struct {
 	EventID func(time.Time) string
 }
 
+type creationFileSnapshot struct {
+	path    string
+	data    []byte
+	mode    os.FileMode
+	existed bool
+}
+
+type creationTransaction struct {
+	files   []creationFileSnapshot
+	newDirs []string
+}
+
+func beginCreationTransaction(dirs, files []string) (creationTransaction, error) {
+	tx := creationTransaction{files: make([]creationFileSnapshot, 0, len(files)), newDirs: make([]string, 0, len(dirs))}
+	for _, dir := range dirs {
+		info, err := os.Lstat(dir)
+		if err != nil {
+			if os.IsNotExist(err) {
+				tx.newDirs = append(tx.newDirs, dir)
+				continue
+			}
+			return creationTransaction{}, err
+		}
+		if !info.IsDir() {
+			return creationTransaction{}, fmt.Errorf("project directory path is not a directory: %s", dir)
+		}
+	}
+	for _, path := range files {
+		info, err := os.Lstat(path)
+		if err != nil {
+			if os.IsNotExist(err) {
+				tx.files = append(tx.files, creationFileSnapshot{path: path})
+				continue
+			}
+			return creationTransaction{}, err
+		}
+		if !info.Mode().IsRegular() {
+			return creationTransaction{}, fmt.Errorf("project output path is not a regular file: %s", path)
+		}
+		data, err := os.ReadFile(path)
+		if err != nil {
+			return creationTransaction{}, err
+		}
+		tx.files = append(tx.files, creationFileSnapshot{path: path, data: data, mode: info.Mode(), existed: true})
+	}
+	return tx, nil
+}
+
+func (tx creationTransaction) rollback() error {
+	failures := make([]string, 0)
+	for i := len(tx.files) - 1; i >= 0; i-- {
+		snapshot := tx.files[i]
+		var err error
+		if snapshot.existed {
+			err = filetxn.Replace(snapshot.path, snapshot.data, snapshot.mode)
+		} else {
+			err = os.Remove(snapshot.path)
+			if os.IsNotExist(err) {
+				err = nil
+			}
+		}
+		if err != nil {
+			failures = append(failures, fmt.Sprintf("restore %s: %v", snapshot.path, err))
+		}
+	}
+	for i := len(tx.newDirs) - 1; i >= 0; i-- {
+		if err := os.Remove(tx.newDirs[i]); err != nil && !os.IsNotExist(err) {
+			failures = append(failures, fmt.Sprintf("remove created directory %s: %v", tx.newDirs[i], err))
+		}
+	}
+	if len(failures) > 0 {
+		return fmt.Errorf("roll back project creation: %s", strings.Join(failures, "; "))
+	}
+	return nil
+}
+
+func replaceProjectFile(path string, data []byte, defaultMode os.FileMode) error {
+	info, err := os.Lstat(path)
+	if err == nil {
+		if !info.Mode().IsRegular() {
+			return fmt.Errorf("project file path is not a regular file: %s", path)
+		}
+		defaultMode = info.Mode()
+	} else if !os.IsNotExist(err) {
+		return err
+	}
+	return filetxn.Replace(path, data, defaultMode)
+}
+
 // Create initializes a ResearchForge project workspace.
 func Create(path string, opts CreateOptions) (Project, error) {
 	if err := ValidatePath(path); err != nil {
@@ -64,25 +154,48 @@ func Create(path string, opts CreateOptions) (Project, error) {
 	provenancePath := filepath.Join(path, "provenance", "events.jsonl")
 	storagePath := filepath.Join(path, "data", "rforge.sqlite")
 	archiveMetadataPath := filepath.Join(path, "rforge.archive.json")
-
-	if err := os.MkdirAll(filepath.Join(path, "provenance"), 0o755); err != nil {
+	tx, err := beginCreationTransaction(
+		[]string{path, filepath.Join(path, "provenance"), filepath.Join(path, "data")},
+		[]string{
+			storagePath,
+			storagePath + ".pre-migration.bak",
+			storagePath + "-journal",
+			storagePath + "-wal",
+			storagePath + "-shm",
+			manifestPath,
+			lockfilePath,
+			archiveMetadataPath,
+			provenancePath,
+		},
+	)
+	if err != nil {
 		return Project{}, err
 	}
+	fail := func(cause error) (Project, error) {
+		if rollbackErr := tx.rollback(); rollbackErr != nil {
+			return Project{}, fmt.Errorf("%v; %w", cause, rollbackErr)
+		}
+		return Project{}, cause
+	}
+
+	if err := os.MkdirAll(filepath.Join(path, "provenance"), 0o755); err != nil {
+		return fail(err)
+	}
 	if err := os.MkdirAll(filepath.Join(path, "data"), 0o755); err != nil {
-		return Project{}, err
+		return fail(err)
 	}
 
 	store, err := storage.Initialize(storagePath)
 	if err != nil {
-		return Project{}, err
+		return fail(err)
 	}
 	if err := store.Close(); err != nil {
-		return Project{}, err
+		return fail(err)
 	}
 
 	manifest := fmt.Sprintf("schema_version = %q\ntitle = %q\nstorage_mode = %q\n", schemaVersion, title, "sqlite")
-	if err := os.WriteFile(manifestPath, []byte(manifest), 0o644); err != nil {
-		return Project{}, err
+	if err := replaceProjectFile(manifestPath, []byte(manifest), 0o644); err != nil {
+		return fail(err)
 	}
 
 	lock := map[string]any{
@@ -92,11 +205,11 @@ func Create(path string, opts CreateOptions) (Project, error) {
 	}
 	lockBytes, err := json.MarshalIndent(lock, "", "  ")
 	if err != nil {
-		return Project{}, err
+		return fail(err)
 	}
 	lockBytes = append(lockBytes, '\n')
-	if err := os.WriteFile(lockfilePath, lockBytes, 0o644); err != nil {
-		return Project{}, err
+	if err := replaceProjectFile(lockfilePath, lockBytes, 0o644); err != nil {
+		return fail(err)
 	}
 
 	archiveMetadata := map[string]any{
@@ -110,11 +223,11 @@ func Create(path string, opts CreateOptions) (Project, error) {
 	}
 	archiveBytes, err := json.MarshalIndent(archiveMetadata, "", "  ")
 	if err != nil {
-		return Project{}, err
+		return fail(err)
 	}
 	archiveBytes = append(archiveBytes, '\n')
-	if err := os.WriteFile(archiveMetadataPath, archiveBytes, 0o644); err != nil {
-		return Project{}, err
+	if err := replaceProjectFile(archiveMetadataPath, archiveBytes, 0o644); err != nil {
+		return fail(err)
 	}
 
 	now := clock().UTC()
@@ -140,7 +253,7 @@ func Create(path string, opts CreateOptions) (Project, error) {
 		},
 		Warnings: []string{},
 	}); err != nil {
-		return Project{}, err
+		return fail(err)
 	}
 
 	return Project{

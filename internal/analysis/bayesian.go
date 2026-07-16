@@ -24,8 +24,11 @@ func BayesianNormalApproximation(run AnalysisRun, priorMean, priorVariance float
 	if len(run.InputRows) == 0 {
 		return BayesianReport{}, fmt.Errorf("bayesian analysis requires input rows")
 	}
-	if priorVariance <= 0 {
-		return BayesianReport{}, fmt.Errorf("prior variance must be positive")
+	if err := validateAnalysisRows(run.InputRows); err != nil {
+		return BayesianReport{}, err
+	}
+	if err := validateBayesianPrior(priorMean, priorVariance); err != nil {
+		return BayesianReport{}, err
 	}
 	precision := 1 / priorVariance
 	weighted := priorMean * precision
@@ -58,10 +61,26 @@ func RunBayesianEngine(run AnalysisRun, engine BayesianEngine, opts BayesianEngi
 	if engine == nil {
 		return BayesianReport{}, fmt.Errorf("bayesian engine is required")
 	}
+	if err := validateAnalysisRows(run.InputRows); err != nil {
+		return BayesianReport{}, err
+	}
 	if opts.PriorVariance <= 0 {
 		opts.PriorVariance = 100
 	}
+	if err := validateBayesianPrior(opts.PriorMean, opts.PriorVariance); err != nil {
+		return BayesianReport{}, err
+	}
 	return engine.Run(run, opts)
+}
+
+func validateBayesianPrior(priorMean, priorVariance float64) error {
+	if math.IsNaN(priorMean) || math.IsInf(priorMean, 0) {
+		return fmt.Errorf("prior mean must be finite")
+	}
+	if priorVariance <= 0 || math.IsNaN(priorVariance) || math.IsInf(priorVariance, 0) {
+		return fmt.Errorf("prior variance must be finite and positive")
+	}
+	return nil
 }
 
 func (g GridBayesianEngine) Run(run AnalysisRun, opts BayesianEngineOptions) (BayesianReport, error) {
@@ -79,17 +98,31 @@ func (g GridBayesianEngine) Run(run AnalysisRun, opts BayesianEngineOptions) (Ba
 	}
 	start := approx.PosteriorMean - width
 	step := 2 * width / float64(points-1)
-	weights := make([]float64, points)
-	total := 0.0
+	logWeights := make([]float64, points)
+	maxLogWeight := math.Inf(-1)
 	for i := 0; i < points; i++ {
 		theta := start + float64(i)*step
 		logp := -0.5 * ((theta - opts.PriorMean) * (theta - opts.PriorMean) / opts.PriorVariance)
 		for _, row := range run.InputRows {
 			logp += -0.5 * ((row.EffectSize - theta) * (row.EffectSize - theta) / row.Variance)
 		}
-		w := math.Exp(logp)
+		logWeights[i] = logp
+		if logp > maxLogWeight {
+			maxLogWeight = logp
+		}
+	}
+	if math.IsNaN(maxLogWeight) || math.IsInf(maxLogWeight, 0) {
+		return BayesianReport{}, fmt.Errorf("bayesian grid produced non-finite log weights")
+	}
+	weights := make([]float64, points)
+	total := 0.0
+	for i, logWeight := range logWeights {
+		w := math.Exp(logWeight - maxLogWeight)
 		weights[i] = w
 		total += w
+	}
+	if total <= 0 || math.IsNaN(total) || math.IsInf(total, 0) {
+		return BayesianReport{}, fmt.Errorf("bayesian grid produced invalid total weight")
 	}
 	mean := 0.0
 	for i, w := range weights {

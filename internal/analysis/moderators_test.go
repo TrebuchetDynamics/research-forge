@@ -31,3 +31,21 @@ func TestModeratorValuesFromEvidenceImproveSubgroupAndMetaRegressionUX(t *testin
 		t.Fatalf("preview = %#v", preview)
 	}
 }
+
+func TestMetaRegressionValuesFromEvidenceRejectsNonfiniteModerator(t *testing.T) {
+	items := []evidence.EvidenceItem{{PaperID: "p1", Status: evidence.StatusAccepted, Values: map[string]string{"dose": "NaN"}}}
+	if _, err := MetaRegressionValuesFromEvidence(items, "dose"); err == nil {
+		t.Fatal("MetaRegressionValuesFromEvidence returned nil error for a non-finite moderator")
+	}
+}
+
+func TestModeratorPreviewDoesNotClassifyNonfiniteValuesAsNumeric(t *testing.T) {
+	items := []evidence.EvidenceItem{{PaperID: "p1", Status: evidence.StatusAccepted, Values: map[string]string{"dose": "NaN"}}}
+	preview := ModeratorPreviewFromEvidence(items)
+	if len(preview.Fields) != 1 {
+		t.Fatalf("preview fields = %#v", preview.Fields)
+	}
+	if preview.Fields[0].Numeric {
+		t.Fatalf("non-finite moderator classified as numeric: %#v", preview.Fields[0])
+	}
+}

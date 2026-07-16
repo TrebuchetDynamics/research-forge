@@ -21,6 +21,9 @@ func EggerRegression(run AnalysisRun) (PublicationBiasReport, error) {
 	if len(run.InputRows) < 3 {
 		return PublicationBiasReport{}, fmt.Errorf("egger publication-bias test requires at least three input rows")
 	}
+	if err := validateAnalysisRows(run.InputRows); err != nil {
+		return PublicationBiasReport{}, err
+	}
 	xs := make([]float64, 0, len(run.InputRows))
 	ys := make([]float64, 0, len(run.InputRows))
 	for _, row := range run.InputRows {
@@ -42,6 +45,9 @@ func EggerRegression(run AnalysisRun) (PublicationBiasReport, error) {
 func BeggRankCorrelation(run AnalysisRun) (PublicationBiasReport, error) {
 	if len(run.InputRows) < 3 {
 		return PublicationBiasReport{}, fmt.Errorf("begg publication-bias test requires at least three input rows")
+	}
+	if err := validateAnalysisRows(run.InputRows); err != nil {
+		return PublicationBiasReport{}, err
 	}
 	effects := make([]float64, 0, len(run.InputRows))
 	variances := make([]float64, 0, len(run.InputRows))

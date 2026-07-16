@@ -7,6 +7,73 @@ import (
 	"github.com/TrebuchetDynamics/research-forge/internal/evidence"
 )
 
+func TestStandardizedMeanDifferenceRejectsNonnumericInput(t *testing.T) {
+	_, _, err := (StandardizedMeanDifference{}).Calculate(map[string]string{
+		"mean_treatment": "not-a-number",
+		"mean_control":   "8",
+		"sd_pooled":      "2",
+		"n_treatment":    "25",
+		"n_control":      "25",
+	})
+	if err == nil {
+		t.Fatal("Calculate returned nil error for a nonnumeric treatment mean")
+	}
+}
+
+func TestStandardizedMeanDifferenceRejectsNonpositiveScale(t *testing.T) {
+	_, _, err := (StandardizedMeanDifference{}).Calculate(map[string]string{
+		"mean_treatment": "10",
+		"mean_control":   "8",
+		"sd_pooled":      "-2",
+		"n_treatment":    "25",
+		"n_control":      "25",
+	})
+	if err == nil {
+		t.Fatal("Calculate returned nil error for a negative pooled standard deviation")
+	}
+}
+
+func TestStandardizedMeanDifferenceRejectsNonfiniteInput(t *testing.T) {
+	_, _, err := (StandardizedMeanDifference{}).Calculate(map[string]string{
+		"mean_treatment": "NaN",
+		"mean_control":   "8",
+		"sd_pooled":      "2",
+		"n_treatment":    "25",
+		"n_control":      "25",
+	})
+	if err == nil {
+		t.Fatal("Calculate returned nil error for a non-finite treatment mean")
+	}
+}
+
+func TestMeanDifferenceRejectsNonnumericInput(t *testing.T) {
+	_, _, err := (MeanDifference{}).Calculate(map[string]string{
+		"mean_treatment": "not-a-number",
+		"mean_control":   "8",
+		"sd_treatment":   "2",
+		"sd_control":     "2",
+		"n_treatment":    "25",
+		"n_control":      "25",
+	})
+	if err == nil {
+		t.Fatal("Calculate returned nil error for a nonnumeric treatment mean")
+	}
+}
+
+func TestMeanDifferenceRejectsNonpositiveScale(t *testing.T) {
+	_, _, err := (MeanDifference{}).Calculate(map[string]string{
+		"mean_treatment": "10",
+		"mean_control":   "8",
+		"sd_treatment":   "-2",
+		"sd_control":     "2",
+		"n_treatment":    "25",
+		"n_control":      "25",
+	})
+	if err == nil {
+		t.Fatal("Calculate returned nil error for a negative treatment standard deviation")
+	}
+}
+
 func TestLogOddsRatioCalculatesBinaryOutcomeEffect(t *testing.T) {
 	es, variance, err := (LogOddsRatio{}).Calculate(map[string]string{
 		"events_treatment": "30",
@@ -23,6 +90,30 @@ func TestLogOddsRatioCalculatesBinaryOutcomeEffect(t *testing.T) {
 	}
 	if variance <= 0 {
 		t.Fatalf("variance = %g, want positive", variance)
+	}
+}
+
+func TestLogOddsRatioRejectsNonnumericInput(t *testing.T) {
+	_, _, err := (LogOddsRatio{}).Calculate(map[string]string{
+		"events_treatment": "not-a-number",
+		"n_treatment":      "100",
+		"events_control":   "20",
+		"n_control":        "100",
+	})
+	if err == nil {
+		t.Fatal("Calculate returned nil error for a nonnumeric treatment event count")
+	}
+}
+
+func TestLogOddsRatioRejectsNegativeCounts(t *testing.T) {
+	_, _, err := (LogOddsRatio{}).Calculate(map[string]string{
+		"events_treatment": "-1",
+		"n_treatment":      "100",
+		"events_control":   "20",
+		"n_control":        "100",
+	})
+	if err == nil {
+		t.Fatal("Calculate returned nil error for a negative treatment event count")
 	}
 }
 
@@ -57,6 +148,13 @@ func TestAdditionalEffectCalculatorsMeanDifferenceRiskDifferenceAndCorrelation(t
 	z, zVar, err := (FisherZCorrelation{}).Calculate(map[string]string{"correlation": "0.5", "n": "30"})
 	if err != nil || math.Abs(z-math.Atanh(0.5)) > 1e-12 || math.Abs(zVar-(1.0/27.0)) > 1e-12 {
 		t.Fatalf("fisher z = %g var=%g err=%v", z, zVar, err)
+	}
+}
+
+func TestFisherZCorrelationRejectsNonnumericInput(t *testing.T) {
+	_, _, err := (FisherZCorrelation{}).Calculate(map[string]string{"correlation": "not-a-number", "n": "30"})
+	if err == nil {
+		t.Fatal("Calculate returned nil error for a nonnumeric correlation")
 	}
 }
 

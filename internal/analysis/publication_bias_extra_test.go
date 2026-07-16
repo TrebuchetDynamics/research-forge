@@ -1,6 +1,9 @@
 package analysis
 
-import "testing"
+import (
+	"math"
+	"testing"
+)
 
 func TestBeggRankCorrelationPublicationBiasDiagnostic(t *testing.T) {
 	run := AnalysisRun{ID: "bias-run", InputRows: []InputRow{{PaperID: "p1", EffectSize: 0.1, Variance: 0.01}, {PaperID: "p2", EffectSize: 0.2, Variance: 0.04}, {PaperID: "p3", EffectSize: 0.4, Variance: 0.09}, {PaperID: "p4", EffectSize: 0.8, Variance: 0.16}}}
@@ -13,5 +16,12 @@ func TestBeggRankCorrelationPublicationBiasDiagnostic(t *testing.T) {
 	}
 	if report.Warning == "" {
 		t.Fatalf("expected small-study warning")
+	}
+}
+
+func TestBeggRankCorrelationRejectsNonfiniteRows(t *testing.T) {
+	run := AnalysisRun{ID: "bias-run", InputRows: []InputRow{{PaperID: "p1", EffectSize: math.Inf(1), Variance: 0.01}, {PaperID: "p2", EffectSize: 0.2, Variance: 0.04}, {PaperID: "p3", EffectSize: 0.4, Variance: 0.09}}}
+	if _, err := BeggRankCorrelation(run); err == nil {
+		t.Fatal("BeggRankCorrelation returned nil error for a non-finite effect size")
 	}
 }

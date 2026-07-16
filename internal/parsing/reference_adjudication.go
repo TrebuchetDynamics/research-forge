@@ -4,10 +4,13 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/TrebuchetDynamics/research-forge/internal/filetxn"
 )
 
 const ReferenceAdjudicationSchemaVersion = "1"
@@ -102,20 +105,56 @@ func ValidReferenceAdjudicationDecision(decision string) bool {
 }
 
 func AppendReferenceAdjudication(path string, record ReferenceAdjudication) error {
-	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+	return appendReferenceAdjudication(path, record, nil)
+}
+
+func AppendReferenceAdjudicationThen(path string, record ReferenceAdjudication, commit func() error) error {
+	if commit == nil {
+		return fmt.Errorf("reference adjudication commit callback is required")
+	}
+	return appendReferenceAdjudication(path, record, commit)
+}
+
+func appendReferenceAdjudication(path string, record ReferenceAdjudication, commit func() error) error {
+	if strings.TrimSpace(path) == "" {
+		return fmt.Errorf("reference adjudication log path is required")
+	}
+	dir := filepath.Dir(path)
+	if err := os.MkdirAll(dir, 0o755); err != nil {
 		return err
 	}
-	file, err := os.OpenFile(path, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0o644)
+	dirInfo, err := os.Lstat(dir)
 	if err != nil {
 		return err
 	}
-	defer file.Close()
-	data, err := json.Marshal(record)
+	if !dirInfo.IsDir() || dirInfo.Mode()&os.ModeSymlink != 0 {
+		return fmt.Errorf("reference adjudication log path is not a directory: %s", dir)
+	}
+	existing := []byte{}
+	mode := os.FileMode(0o644)
+	if info, err := os.Lstat(path); err == nil {
+		if !info.Mode().IsRegular() {
+			return fmt.Errorf("reference adjudication log is not a regular file: %s", path)
+		}
+		mode = info.Mode().Perm()
+		existing, err = os.ReadFile(path)
+		if err != nil {
+			return err
+		}
+	} else if !os.IsNotExist(err) {
+		return err
+	}
+	payload, err := json.Marshal(record)
 	if err != nil {
 		return err
 	}
-	_, err = file.Write(append(data, '\n'))
-	return err
+	payload = append(payload, '\n')
+	data := append(existing, payload...)
+	outputs := []filetxn.Output{{Path: path, Data: data, Mode: mode}}
+	if commit != nil {
+		return filetxn.ReplaceAllThen(outputs, commit)
+	}
+	return filetxn.ReplaceAll(outputs)
 }
 
 func LoadReferenceAdjudications(path string) ([]ReferenceAdjudication, error) {
@@ -128,10 +167,17 @@ func LoadReferenceAdjudications(path string) ([]ReferenceAdjudication, error) {
 	}
 	defer file.Close()
 	records := []ReferenceAdjudication{}
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		line := strings.TrimSpace(scanner.Text())
+	reader := bufio.NewReader(file)
+	for {
+		text, readErr := reader.ReadString('\n')
+		line := strings.TrimSpace(text)
 		if line == "" {
+			if readErr == io.EOF {
+				break
+			}
+			if readErr != nil {
+				return nil, readErr
+			}
 			continue
 		}
 		var record ReferenceAdjudication
@@ -139,8 +185,14 @@ func LoadReferenceAdjudications(path string) ([]ReferenceAdjudication, error) {
 			return nil, err
 		}
 		records = append(records, record)
+		if readErr == io.EOF {
+			break
+		}
+		if readErr != nil {
+			return nil, readErr
+		}
 	}
-	return records, scanner.Err()
+	return records, nil
 }
 
 func ApplyReferenceAdjudications(doc ParsedDocument, records []ReferenceAdjudication) ReferenceAdjudicationReport {

@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+
+	"github.com/TrebuchetDynamics/research-forge/internal/filetxn"
 )
 
 type AnalysisArtifactManifest struct {
@@ -56,7 +58,7 @@ func WriteAnalysisArtifactManifest(path string, manifest AnalysisArtifactManifes
 	if err != nil {
 		return err
 	}
-	return os.WriteFile(path, data, 0o644)
+	return filetxn.Replace(path, data, 0o644)
 }
 
 func defaultPlotSettings(kind string) map[string]string {

@@ -10,6 +10,7 @@ import (
 
 	"github.com/TrebuchetDynamics/research-forge/internal/analysis"
 	"github.com/TrebuchetDynamics/research-forge/internal/evidence"
+	"github.com/TrebuchetDynamics/research-forge/internal/filetxn"
 	"github.com/TrebuchetDynamics/research-forge/internal/library"
 	"github.com/TrebuchetDynamics/research-forge/internal/parsing"
 	"github.com/TrebuchetDynamics/research-forge/internal/provenance"
@@ -434,7 +435,7 @@ func propertiesContain(m map[string]string, term string) bool {
 }
 
 func readJSON(path string, out any) error {
-	data, err := os.ReadFile(path)
+	data, err := filetxn.ReadRegular(path)
 	if err != nil {
 		return err
 	}
@@ -475,7 +476,7 @@ func readTextDocuments(dir string) []parsing.ParsedDocument {
 		if entry.IsDir() || !strings.HasSuffix(entry.Name(), ".txt") {
 			continue
 		}
-		data, err := os.ReadFile(filepath.Join(dir, entry.Name()))
+		data, err := filetxn.ReadRegular(filepath.Join(dir, entry.Name()))
 		if err != nil {
 			continue
 		}

@@ -1,6 +1,9 @@
 package analysis
 
-import "testing"
+import (
+	"math"
+	"testing"
+)
 
 func TestEggerRegressionComputesPublicationBiasDiagnostic(t *testing.T) {
 	run := AnalysisRun{ID: "bias-run", InputRows: []InputRow{
@@ -25,5 +28,12 @@ func TestEggerRegressionRequiresAtLeastThreeStudies(t *testing.T) {
 	_, err := EggerRegression(AnalysisRun{ID: "bias-run", InputRows: []InputRow{{PaperID: "p1", EffectSize: 1, Variance: 1}}})
 	if err == nil {
 		t.Fatalf("expected error for too few studies")
+	}
+}
+
+func TestEggerRegressionRejectsNonfiniteRows(t *testing.T) {
+	run := AnalysisRun{ID: "bias-run", InputRows: []InputRow{{PaperID: "p1", EffectSize: 0.2, Variance: math.NaN()}, {PaperID: "p2", EffectSize: 0.3, Variance: 0.05}, {PaperID: "p3", EffectSize: 0.4, Variance: 0.06}}}
+	if _, err := EggerRegression(run); err == nil {
+		t.Fatal("EggerRegression returned nil error for a non-finite variance")
 	}
 }

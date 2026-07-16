@@ -12,6 +12,7 @@ import (
 	"strings"
 
 	"github.com/TrebuchetDynamics/research-forge/internal/evidence"
+	"github.com/TrebuchetDynamics/research-forge/internal/filetxn"
 )
 
 type AnalysisRun struct {
@@ -26,6 +27,19 @@ type InputRow struct {
 	ViSource   string            // "ci", "se", "floor", or "" for arm-pair calculators
 	Moderators map[string]string // benchmarking moderator fields keyed by field name
 }
+
+func validateAnalysisRows(rows []InputRow) error {
+	for _, row := range rows {
+		if math.IsNaN(row.EffectSize) || math.IsInf(row.EffectSize, 0) {
+			return fmt.Errorf("effect size must be finite for paper %s", row.PaperID)
+		}
+		if row.Variance <= 0 || math.IsNaN(row.Variance) || math.IsInf(row.Variance, 0) {
+			return fmt.Errorf("variance must be a finite positive number for paper %s", row.PaperID)
+		}
+	}
+	return nil
+}
+
 type EffectSizeCalculator interface {
 	Calculate(map[string]string) (float64, float64, error)
 }
@@ -42,25 +56,67 @@ type RiskDifference struct{}
 type FisherZCorrelation struct{}
 
 func (StandardizedMeanDifference) Calculate(values map[string]string) (float64, float64, error) {
-	mt, _ := strconv.ParseFloat(values["mean_treatment"], 64)
-	mc, _ := strconv.ParseFloat(values["mean_control"], 64)
-	sd, _ := strconv.ParseFloat(values["sd_pooled"], 64)
-	nt, _ := strconv.ParseFloat(values["n_treatment"], 64)
-	nc, _ := strconv.ParseFloat(values["n_control"], 64)
-	if sd == 0 || nt == 0 || nc == 0 {
+	mt, err := parseEffectFloat(values, "mean_treatment")
+	if err != nil {
+		return 0, 0, err
+	}
+	mc, err := parseEffectFloat(values, "mean_control")
+	if err != nil {
+		return 0, 0, err
+	}
+	sd, err := parseEffectFloat(values, "sd_pooled")
+	if err != nil {
+		return 0, 0, err
+	}
+	nt, err := parseEffectFloat(values, "n_treatment")
+	if err != nil {
+		return 0, 0, err
+	}
+	nc, err := parseEffectFloat(values, "n_control")
+	if err != nil {
+		return 0, 0, err
+	}
+	if sd <= 0 || nt <= 0 || nc <= 0 {
 		return 0, 0, fmt.Errorf("effect size inputs are incomplete")
 	}
 	return (mt - mc) / sd, 1/nt + 1/nc, nil
 }
 
+func parseEffectFloat(values map[string]string, field string) (float64, error) {
+	raw := strings.TrimSpace(values[field])
+	value, err := strconv.ParseFloat(raw, 64)
+	if err != nil || math.IsNaN(value) || math.IsInf(value, 0) {
+		return 0, fmt.Errorf("effect size field %s must be a finite number", field)
+	}
+	return value, nil
+}
+
 func (MeanDifference) Calculate(values map[string]string) (float64, float64, error) {
-	mt, _ := strconv.ParseFloat(values["mean_treatment"], 64)
-	mc, _ := strconv.ParseFloat(values["mean_control"], 64)
-	sdt, _ := strconv.ParseFloat(values["sd_treatment"], 64)
-	sdc, _ := strconv.ParseFloat(values["sd_control"], 64)
-	nt, _ := strconv.ParseFloat(values["n_treatment"], 64)
-	nc, _ := strconv.ParseFloat(values["n_control"], 64)
-	if nt == 0 || nc == 0 || sdt == 0 || sdc == 0 {
+	mt, err := parseEffectFloat(values, "mean_treatment")
+	if err != nil {
+		return 0, 0, err
+	}
+	mc, err := parseEffectFloat(values, "mean_control")
+	if err != nil {
+		return 0, 0, err
+	}
+	sdt, err := parseEffectFloat(values, "sd_treatment")
+	if err != nil {
+		return 0, 0, err
+	}
+	sdc, err := parseEffectFloat(values, "sd_control")
+	if err != nil {
+		return 0, 0, err
+	}
+	nt, err := parseEffectFloat(values, "n_treatment")
+	if err != nil {
+		return 0, 0, err
+	}
+	nc, err := parseEffectFloat(values, "n_control")
+	if err != nil {
+		return 0, 0, err
+	}
+	if nt <= 0 || nc <= 0 || sdt <= 0 || sdc <= 0 {
 		return 0, 0, fmt.Errorf("mean difference inputs are incomplete")
 	}
 	return mt - mc, (sdt*sdt)/nt + (sdc*sdc)/nc, nil
@@ -108,8 +164,14 @@ func (RiskDifference) Calculate(values map[string]string) (float64, float64, err
 }
 
 func (FisherZCorrelation) Calculate(values map[string]string) (float64, float64, error) {
-	r, _ := strconv.ParseFloat(values["correlation"], 64)
-	n, _ := strconv.ParseFloat(values["n"], 64)
+	r, err := parseEffectFloat(values, "correlation")
+	if err != nil {
+		return 0, 0, err
+	}
+	n, err := parseEffectFloat(values, "n")
+	if err != nil {
+		return 0, 0, err
+	}
 	if r <= -1 || r >= 1 || n <= 3 {
 		return 0, 0, fmt.Errorf("correlation inputs are incomplete")
 	}
@@ -117,11 +179,23 @@ func (FisherZCorrelation) Calculate(values map[string]string) (float64, float64,
 }
 
 func binaryOutcomeInputs(values map[string]string, name string) (float64, float64, float64, float64, error) {
-	eventsT, _ := strconv.ParseFloat(values["events_treatment"], 64)
-	totalT, _ := strconv.ParseFloat(values["n_treatment"], 64)
-	eventsC, _ := strconv.ParseFloat(values["events_control"], 64)
-	totalC, _ := strconv.ParseFloat(values["n_control"], 64)
-	if totalT == 0 || totalC == 0 || eventsT > totalT || eventsC > totalC {
+	eventsT, err := parseEffectFloat(values, "events_treatment")
+	if err != nil {
+		return 0, 0, 0, 0, err
+	}
+	totalT, err := parseEffectFloat(values, "n_treatment")
+	if err != nil {
+		return 0, 0, 0, 0, err
+	}
+	eventsC, err := parseEffectFloat(values, "events_control")
+	if err != nil {
+		return 0, 0, 0, 0, err
+	}
+	totalC, err := parseEffectFloat(values, "n_control")
+	if err != nil {
+		return 0, 0, 0, 0, err
+	}
+	if totalT <= 0 || totalC <= 0 || eventsT < 0 || eventsC < 0 || eventsT > totalT || eventsC > totalC {
 		return 0, 0, 0, 0, fmt.Errorf("%s inputs are incomplete", name)
 	}
 	return eventsT, totalT, eventsC, totalC, nil
@@ -174,17 +248,26 @@ func (r RawContinuousOutcome) CalculateRaw(values map[string]string) (RawContinu
 		return RawContinuousResult{}, fmt.Errorf("value_pct is required for raw-continuous effect measure")
 	}
 	yi, err := strconv.ParseFloat(yiStr, 64)
-	if err != nil {
-		return RawContinuousResult{}, fmt.Errorf("value_pct is not numeric: %s", yiStr)
+	if err != nil || math.IsNaN(yi) || math.IsInf(yi, 0) {
+		return RawContinuousResult{}, fmt.Errorf("value_pct is not a finite number: %s", yiStr)
 	}
-	ciLow, errLow := strconv.ParseFloat(strings.TrimSpace(values["ci_lower"]), 64)
-	ciHigh, errHigh := strconv.ParseFloat(strings.TrimSpace(values["ci_upper"]), 64)
-	if errLow == nil && errHigh == nil && ciHigh > ciLow {
+	ciLowRaw := strings.TrimSpace(values["ci_lower"])
+	ciHighRaw := strings.TrimSpace(values["ci_upper"])
+	if ciLowRaw != "" || ciHighRaw != "" {
+		ciLow, errLow := strconv.ParseFloat(ciLowRaw, 64)
+		ciHigh, errHigh := strconv.ParseFloat(ciHighRaw, 64)
+		if errLow != nil || errHigh != nil || math.IsNaN(ciLow) || math.IsInf(ciLow, 0) || math.IsNaN(ciHigh) || math.IsInf(ciHigh, 0) || ciHigh <= ciLow {
+			return RawContinuousResult{}, fmt.Errorf("ci_lower and ci_upper must define a finite increasing confidence interval")
+		}
 		se := (ciHigh - ciLow) / (2 * 1.96)
 		return RawContinuousResult{Yi: yi, Vi: se * se, ViSource: "ci"}, nil
 	}
-	se, errSE := strconv.ParseFloat(strings.TrimSpace(values["se"]), 64)
-	if errSE == nil && se > 0 {
+	seRaw := strings.TrimSpace(values["se"])
+	if seRaw != "" {
+		se, errSE := strconv.ParseFloat(seRaw, 64)
+		if errSE != nil || math.IsNaN(se) || math.IsInf(se, 0) || se <= 0 {
+			return RawContinuousResult{}, fmt.Errorf("se must be a finite positive number")
+		}
 		return RawContinuousResult{Yi: yi, Vi: se * se, ViSource: "se"}, nil
 	}
 	return RawContinuousResult{Yi: yi, Vi: r.floor(), ViSource: "floor"}, nil
@@ -323,6 +406,9 @@ func GenerateMetaforScript(run AnalysisRun) string {
 		b.WriteString("model <- rma(yi = yi, vi = vi, data=data)\n")
 	}
 	b.WriteString("print(model)\n")
+	b.WriteString("cat(\"I2=\", model$I2, \"\\n\", sep=\"\")\n")
+	b.WriteString("cat(\"tau2=\", model$tau2, \"\\n\", sep=\"\")\n")
+	b.WriteString("cat(\"Q=\", model$QE, \"\\n\", sep=\"\")\n")
 	return b.String()
 }
 
@@ -366,8 +452,19 @@ func ParseHeterogeneity(output string) (HeterogeneityMetrics, error) {
 		if len(parts) != 2 {
 			continue
 		}
-		value, _ := strconv.ParseFloat(strings.TrimSpace(parts[1]), 64)
-		switch strings.TrimSpace(parts[0]) {
+		key := strings.TrimSpace(parts[0])
+		if key != "I2" && key != "tau2" && key != "Q" {
+			continue
+		}
+		rawValue := strings.TrimSpace(parts[1])
+		value, err := strconv.ParseFloat(rawValue, 64)
+		if err != nil {
+			return HeterogeneityMetrics{}, fmt.Errorf("parse heterogeneity metric %s value %q: %w", key, rawValue, err)
+		}
+		if math.IsNaN(value) || math.IsInf(value, 0) {
+			return HeterogeneityMetrics{}, fmt.Errorf("parse heterogeneity metric %s value %q: value must be finite", key, rawValue)
+		}
+		switch key {
 		case "I2":
 			m.I2 = value
 		case "tau2":
@@ -418,12 +515,24 @@ type AnalysisResult struct {
 }
 
 func RunMetafor(dir string, run AnalysisRun, runner Runner) (AnalysisResult, error) {
+	if err := validateAnalysisRunID(run.ID); err != nil {
+		return AnalysisResult{}, err
+	}
+	if len(run.InputRows) == 0 {
+		return AnalysisResult{}, fmt.Errorf("metafor analysis requires input rows")
+	}
+	if err := validateAnalysisRows(run.InputRows); err != nil {
+		return AnalysisResult{}, err
+	}
+	if runner == nil {
+		return AnalysisResult{}, fmt.Errorf("metafor runner is required")
+	}
 	if err := os.MkdirAll(dir, 0o755); err != nil {
 		return AnalysisResult{}, err
 	}
 	script := GenerateMetaforScript(run)
 	scriptPath := filepath.Join(dir, run.ID+"-script.R")
-	if err := os.WriteFile(scriptPath, []byte(script), 0o644); err != nil {
+	if err := writeAnalysisArtifact(scriptPath, []byte(script)); err != nil {
 		return AnalysisResult{}, err
 	}
 	out, err := runner.Run(script)
@@ -431,7 +540,7 @@ func RunMetafor(dir string, run AnalysisRun, runner Runner) (AnalysisResult, err
 		return AnalysisResult{}, err
 	}
 	outputPath := filepath.Join(dir, run.ID+"-output.txt")
-	if err := os.WriteFile(outputPath, []byte(out.Stdout), 0o644); err != nil {
+	if err := writeAnalysisArtifact(outputPath, []byte(out.Stdout)); err != nil {
 		return AnalysisResult{}, err
 	}
 	forest, err := writeForestPlotArtifact(dir, run)
@@ -446,13 +555,31 @@ func RunMetafor(dir string, run AnalysisRun, runner Runner) (AnalysisResult, err
 	if strings.TrimSpace(out.Stderr) != "" {
 		warnings = append(warnings, out.Stderr)
 	}
-	metrics, _ := ParseHeterogeneity(out.Stdout)
+	metrics, err := ParseHeterogeneity(out.Stdout)
+	if err != nil {
+		return AnalysisResult{}, fmt.Errorf("parse metafor heterogeneity output: %w", err)
+	}
 	return AnalysisResult{Versions: runner.ToolVersions(), ScriptChecksum: checksum([]byte(script)), OutputChecksum: checksum([]byte(out.Stdout)), Warnings: warnings, ForestPlot: forest, FunnelPlot: funnel, Metrics: metrics}, nil
 }
+
+func validateAnalysisRunID(runID string) error {
+	if strings.TrimSpace(runID) == "" {
+		return fmt.Errorf("analysis run ID is required")
+	}
+	if runID == "." || runID == ".." || filepath.Base(runID) != runID {
+		return fmt.Errorf("analysis run ID must be a single filename component: %q", runID)
+	}
+	return nil
+}
+
+func writeAnalysisArtifact(path string, data []byte) error {
+	return filetxn.ReplaceAll([]filetxn.Output{{Path: path, Data: data, Mode: 0o644}})
+}
+
 func writeForestPlotArtifact(dir string, run AnalysisRun) (Artifact, error) {
 	path := filepath.Join(dir, run.ID+"-forest.svg")
 	data := []byte(forestPlotSVG(run))
-	if err := os.WriteFile(path, data, 0o644); err != nil {
+	if err := writeAnalysisArtifact(path, data); err != nil {
 		return Artifact{}, err
 	}
 	return Artifact{Path: path, Checksum: checksum(data)}, nil
@@ -461,7 +588,7 @@ func writeForestPlotArtifact(dir string, run AnalysisRun) (Artifact, error) {
 func writeFunnelPlotArtifact(dir string, run AnalysisRun) (Artifact, error) {
 	path := filepath.Join(dir, run.ID+"-funnel.svg")
 	data := []byte(funnelPlotSVG(run))
-	if err := os.WriteFile(path, data, 0o644); err != nil {
+	if err := writeAnalysisArtifact(path, data); err != nil {
 		return Artifact{}, err
 	}
 	return Artifact{Path: path, Checksum: checksum(data)}, nil

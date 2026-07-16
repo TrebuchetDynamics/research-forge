@@ -2,6 +2,7 @@ package parsing
 
 import (
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -23,6 +24,30 @@ func TestRecordAndLoadReferenceAdjudicationsPersistsReviewerDecisions(t *testing
 	}
 	if len(records) != 4 || records[0].Decision != "accept" || records[1].Correction.Title != "Corrected" || records[3].Reviewer != "reviewer-a" {
 		t.Fatalf("records = %#v", records)
+	}
+}
+
+func TestLoadReferenceAdjudicationsReadsLargeAppendedRecord(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "reference-adjudications.jsonl")
+	largeReason := strings.Repeat("x", 128*1024)
+	doc := ParsedDocument{PaperID: "paper-1", References: []Reference{{Title: "Original", DOI: "10.1/a"}}}
+	record, err := NewReferenceAdjudication(doc, 0, "accept", "reviewer-a", largeReason, ReferenceCorrection{})
+	if err != nil {
+		t.Fatalf("NewReferenceAdjudication returned error: %v", err)
+	}
+	if err := AppendReferenceAdjudication(path, record); err != nil {
+		t.Fatalf("AppendReferenceAdjudication returned error: %v", err)
+	}
+
+	records, err := LoadReferenceAdjudications(path)
+	if err != nil {
+		t.Fatalf("LoadReferenceAdjudications returned error: %v", err)
+	}
+	if len(records) != 1 {
+		t.Fatalf("len(records) = %d, want 1", len(records))
+	}
+	if got := records[0].Reason; got != largeReason {
+		t.Fatalf("reason length = %d, want %d", len(got), len(largeReason))
 	}
 }
 

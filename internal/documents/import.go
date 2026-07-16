@@ -16,12 +16,8 @@ func ImportLocalFile(projectPath, sourcePath, paperID string) (DocumentAsset, er
 	if err != nil {
 		return DocumentAsset{}, err
 	}
-	dir := filepath.Join(projectPath, "documents", "local")
-	if err := os.MkdirAll(dir, 0o755); err != nil {
-		return DocumentAsset{}, err
-	}
-	destination := filepath.Join(dir, filepath.Base(sourcePath))
-	if err := os.WriteFile(destination, data, 0o644); err != nil {
+	destination := filepath.Join(projectPath, "documents", "local", filepath.Base(sourcePath))
+	if err := writeDocumentFile(projectPath, destination, data, 0o644); err != nil {
 		return DocumentAsset{}, err
 	}
 	return NewDocumentAsset(DocumentAssetInput{

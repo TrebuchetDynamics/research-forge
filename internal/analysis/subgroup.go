@@ -25,6 +25,9 @@ func SubgroupAnalysis(run AnalysisRun, variable string, groups map[string]string
 	if variable == "" {
 		return SubgroupReport{}, fmt.Errorf("subgroup variable is required")
 	}
+	if err := validateAnalysisRows(run.InputRows); err != nil {
+		return SubgroupReport{}, err
+	}
 	byGroup := map[string][]InputRow{}
 	order := []string{}
 	seen := map[string]bool{}
@@ -51,6 +54,9 @@ func SubgroupAnalysis(run AnalysisRun, variable string, groups map[string]string
 }
 
 func pooledEstimate(rows []InputRow) (float64, float64, int, error) {
+	if err := validateAnalysisRows(rows); err != nil {
+		return 0, 0, 0, err
+	}
 	weighted := 0.0
 	weights := 0.0
 	for _, row := range rows {

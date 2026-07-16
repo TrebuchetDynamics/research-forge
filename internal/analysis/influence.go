@@ -21,6 +21,9 @@ func InfluenceDiagnostics(run AnalysisRun) (InfluenceReport, error) {
 	if len(run.InputRows) < 2 {
 		return InfluenceReport{}, fmt.Errorf("influence diagnostics require at least two input rows")
 	}
+	if err := validateAnalysisRows(run.InputRows); err != nil {
+		return InfluenceReport{}, err
+	}
 	baselineEstimate, baselineVariance, _, err := pooledEstimateExcluding(run.InputRows, -1)
 	if err != nil {
 		return InfluenceReport{}, err

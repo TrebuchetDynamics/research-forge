@@ -1,6 +1,9 @@
 package analysis
 
-import "testing"
+import (
+	"math"
+	"testing"
+)
 
 func TestLeaveOneOutComputesInverseVarianceSensitivity(t *testing.T) {
 	run := AnalysisRun{ID: "run-1", InputRows: []InputRow{
@@ -28,5 +31,12 @@ func TestLeaveOneOutRequiresAtLeastTwoRows(t *testing.T) {
 	_, err := LeaveOneOut(AnalysisRun{ID: "run-1", InputRows: []InputRow{{PaperID: "paper-1", EffectSize: 1, Variance: 1}}})
 	if err == nil {
 		t.Fatalf("expected error for too few rows")
+	}
+}
+
+func TestLeaveOneOutRejectsNonfiniteRows(t *testing.T) {
+	run := AnalysisRun{ID: "run-1", InputRows: []InputRow{{PaperID: "p1", EffectSize: 1, Variance: math.NaN()}, {PaperID: "p2", EffectSize: 2, Variance: 1}}}
+	if _, err := LeaveOneOut(run); err == nil {
+		t.Fatal("LeaveOneOut returned nil error for a non-finite variance")
 	}
 }

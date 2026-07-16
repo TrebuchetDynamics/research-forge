@@ -10,6 +10,8 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/TrebuchetDynamics/research-forge/internal/filetxn"
 )
 
 const maxPDFDownloadBytes int64 = 100 << 20
@@ -35,6 +37,11 @@ func FetchArXivAsset(ctx context.Context, projectPath, arxivID, assetURL, kind s
 	} else if kind != "pdf" {
 		return DocumentAsset{}, fmt.Errorf("arxiv asset kind must be pdf or source")
 	}
+	dir := filepath.Join(projectPath, "documents", "arxiv")
+	path := filepath.Join(dir, safeDocumentName(arxivID)+ext)
+	if err := validateDocumentOutputPath(projectPath, path); err != nil {
+		return DocumentAsset{}, err
+	}
 	request, err := http.NewRequestWithContext(ctx, http.MethodGet, assetURL, nil)
 	if err != nil {
 		return DocumentAsset{}, err
@@ -54,12 +61,7 @@ func FetchArXivAsset(ctx context.Context, projectPath, arxivID, assetURL, kind s
 	if err := ensureDocumentsGitignored(projectPath); err != nil {
 		return DocumentAsset{}, err
 	}
-	dir := filepath.Join(projectPath, "documents", "arxiv")
-	if err := os.MkdirAll(dir, 0o755); err != nil {
-		return DocumentAsset{}, err
-	}
-	path := filepath.Join(dir, safeDocumentName(arxivID)+ext)
-	if err := os.WriteFile(path, data, 0o644); err != nil {
+	if err := writeDocumentFile(projectPath, path, data, 0o644); err != nil {
 		return DocumentAsset{}, err
 	}
 	return NewDocumentAsset(DocumentAssetInput{PaperID: arxivID, AcquisitionSource: "arxiv-" + kind, License: "arXiv", OAStatus: "green", LocalPath: path, MIMEType: mimeType, LocalOnly: localOnly})
@@ -83,6 +85,11 @@ func FetchPDF(ctx context.Context, projectPath, paperID string, metadata OpenAcc
 	if err := validatePDFURL(pdfURL); err != nil {
 		return DocumentAsset{}, err
 	}
+	dir := filepath.Join(projectPath, "documents", "open-access")
+	path := filepath.Join(dir, safeDocumentName(paperID)+".pdf")
+	if err := validateDocumentOutputPath(projectPath, path); err != nil {
+		return DocumentAsset{}, err
+	}
 	request, err := http.NewRequestWithContext(ctx, http.MethodGet, pdfURL, nil)
 	if err != nil {
 		return DocumentAsset{}, err
@@ -102,12 +109,7 @@ func FetchPDF(ctx context.Context, projectPath, paperID string, metadata OpenAcc
 	if err := ensureDocumentsGitignored(projectPath); err != nil {
 		return DocumentAsset{}, err
 	}
-	dir := filepath.Join(projectPath, "documents", "open-access")
-	if err := os.MkdirAll(dir, 0o755); err != nil {
-		return DocumentAsset{}, err
-	}
-	path := filepath.Join(dir, safeDocumentName(paperID)+".pdf")
-	if err := os.WriteFile(path, data, 0o644); err != nil {
+	if err := writeDocumentFile(projectPath, path, data, 0o644); err != nil {
 		return DocumentAsset{}, err
 	}
 	return NewDocumentAsset(DocumentAssetInput{
@@ -147,10 +149,17 @@ func readPDFResponse(response *http.Response) ([]byte, error) {
 
 func ensureDocumentsGitignored(projectPath string) error {
 	path := filepath.Join(projectPath, ".gitignore")
+	if err := validateDocumentOutputPath(projectPath, path); err != nil {
+		return err
+	}
 	data, err := os.ReadFile(path)
 	if os.IsNotExist(err) {
-		return os.WriteFile(path, []byte("documents/\n"), 0o644)
+		return writeDocumentFile(projectPath, path, []byte("documents/\n"), 0o644)
 	}
+	if err != nil {
+		return err
+	}
+	info, err := os.Lstat(path)
 	if err != nil {
 		return err
 	}
@@ -164,7 +173,7 @@ func ensureDocumentsGitignored(projectPath string) error {
 		data = append(data, '\n')
 	}
 	data = append(data, []byte("documents/\n")...)
-	return os.WriteFile(path, data, 0o644)
+	return writeDocumentFile(projectPath, path, data, info.Mode().Perm())
 }
 
 func safeDocumentName(value string) string {
@@ -176,4 +185,52 @@ func safeDocumentName(value string) string {
 		return "document"
 	}
 	return strings.Join(parts, "-")
+}
+
+func validateDocumentOutputPath(projectPath, path string) error {
+	root, err := filepath.Abs(projectPath)
+	if err != nil {
+		return err
+	}
+	target, err := filepath.Abs(path)
+	if err != nil {
+		return err
+	}
+	relative, err := filepath.Rel(root, target)
+	if err != nil || relative == "." || relative == ".." || strings.HasPrefix(relative, ".."+string(filepath.Separator)) {
+		return fmt.Errorf("document output escapes project: %s", path)
+	}
+	if info, err := os.Lstat(target); err == nil {
+		if !info.Mode().IsRegular() {
+			return fmt.Errorf("document output is not a regular file: %s", path)
+		}
+	} else if !os.IsNotExist(err) {
+		return err
+	}
+	for dir := filepath.Dir(target); dir != root; dir = filepath.Dir(dir) {
+		info, err := os.Lstat(dir)
+		if err != nil {
+			if os.IsNotExist(err) {
+				continue
+			}
+			return err
+		}
+		if !info.IsDir() || info.Mode()&os.ModeSymlink != 0 {
+			return fmt.Errorf("document output parent is not a directory: %s", dir)
+		}
+	}
+	return nil
+}
+
+func writeDocumentFile(projectPath, path string, data []byte, mode os.FileMode) error {
+	if err := validateDocumentOutputPath(projectPath, path); err != nil {
+		return err
+	}
+	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+		return err
+	}
+	if err := validateDocumentOutputPath(projectPath, path); err != nil {
+		return err
+	}
+	return filetxn.Replace(path, data, mode)
 }

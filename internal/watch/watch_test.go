@@ -18,7 +18,7 @@ func TestWatchedSearchRefreshCreatesInboxAndRequiresPDFApproval(t *testing.T) {
 	if !inbox.List()[0].PDFApproved {
 		t.Fatalf("approval not stored")
 	}
-	if event := run.ProvenanceEvent(); event.Action != "watch.refresh" || event.Outputs["newCount"] != 1 {
+	if event := run.ProvenanceEvent(); event.SchemaVersion != "1" || event.ID == "" || event.Timestamp == "" || event.Actor != "rforge" || event.Action != "watch.refresh" || event.Target != watched.Name || event.Outputs["newCount"] != 1 || event.Warnings == nil {
 		t.Fatalf("event=%#v", event)
 	}
 }

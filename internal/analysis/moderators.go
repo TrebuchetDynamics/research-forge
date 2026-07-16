@@ -2,6 +2,7 @@ package analysis
 
 import (
 	"fmt"
+	"math"
 	"sort"
 	"strconv"
 	"strings"
@@ -49,8 +50,8 @@ func MetaRegressionValuesFromEvidence(items []evidence.EvidenceItem, field strin
 	values := map[string]float64{}
 	for paperID, value := range raw {
 		parsed, err := strconv.ParseFloat(value, 64)
-		if err != nil {
-			return nil, fmt.Errorf("moderator field %s for paper %s is not numeric", field, paperID)
+		if err != nil || math.IsNaN(parsed) || math.IsInf(parsed, 0) {
+			return nil, fmt.Errorf("moderator field %s for paper %s is not a finite number", field, paperID)
 		}
 		values[paperID] = parsed
 	}
@@ -84,7 +85,8 @@ func ModeratorPreviewFromEvidence(items []evidence.EvidenceItem) ModeratorPrevie
 	for _, field := range names {
 		numeric := true
 		for _, value := range byField[field] {
-			if _, err := strconv.ParseFloat(value, 64); err != nil {
+			parsed, err := strconv.ParseFloat(value, 64)
+			if err != nil || math.IsNaN(parsed) || math.IsInf(parsed, 0) {
 				numeric = false
 				break
 			}

@@ -74,21 +74,36 @@ type RedactionItem struct {
 	Reason string `json:"reason"`
 }
 
+const (
+	packageSchemaVersion     = "1"
+	metaAnalysisSpineVersion = "1"
+	metaAnalysisPackageRole  = "meta-analysis-spine-first-done-artifact"
+	packageReplayCommand     = "rforge package replay ."
+	packageAuditCommand      = "rforge package audit ."
+	packageReplayScript      = "#!/bin/sh\nset -eu\n" + packageReplayCommand + "\n"
+)
+
 var errSkipCopy = errors.New("skip non-regular package input")
 
 func Create(projectPath, packagePath string, opts Options) (Package, error) {
 	if strings.TrimSpace(projectPath) == "" || strings.TrimSpace(packagePath) == "" {
 		return Package{}, fmt.Errorf("project and package paths are required")
 	}
-	if err := guardPackageOutputPath(projectPath, packagePath); err != nil {
+	if err := ValidatePackageOutputPath(projectPath, packagePath); err != nil {
 		return Package{}, err
 	}
 	if err := guardReferenceManagerPrivacyGate(projectPath); err != nil {
 		return Package{}, err
 	}
-	if err := os.RemoveAll(packagePath); err != nil {
+	if err := validateRequiredProjectArtifacts(projectPath); err != nil {
 		return Package{}, err
 	}
+	output, err := beginPackageOutputTransaction(packagePath)
+	if err != nil {
+		return Package{}, err
+	}
+	defer output.cleanup()
+	packagePath = output.stagingPath
 	if err := os.MkdirAll(filepath.Join(packagePath, "project"), 0o755); err != nil {
 		return Package{}, err
 	}
@@ -97,26 +112,42 @@ func Create(projectPath, packagePath string, opts Options) (Package, error) {
 		clock = time.Now
 	}
 	now := clock().UTC()
-	manifest := Manifest{SchemaVersion: "1", PackageID: "rforgepkg-" + now.Format("20060102T150405Z"), CreatedAt: now.Format(time.RFC3339), CreatedBy: strings.TrimSpace(opts.CreatedBy), ResearchForgeVersion: "dev", Question: strings.TrimSpace(opts.Question), MetaAnalysisSpineVersion: "1", PackageRole: "meta-analysis-spine-first-done-artifact", ProjectManifestRef: "project/rforge.project.toml", LockfileRef: "project/rforge.lock.json", LockfileRefs: []string{"project/rforge.lock.json"}, RedactionReportRef: "redaction-report.json", ChecksumManifestRef: "checksums.sha256", ReplayCommand: "rforge package replay .", AuditCommand: "rforge package audit ."}
+	manifest := Manifest{SchemaVersion: packageSchemaVersion, PackageID: "rforgepkg-" + now.Format("20060102T150405Z"), CreatedAt: now.Format(time.RFC3339), CreatedBy: strings.TrimSpace(opts.CreatedBy), ResearchForgeVersion: "dev", Question: strings.TrimSpace(opts.Question), MetaAnalysisSpineVersion: metaAnalysisSpineVersion, PackageRole: metaAnalysisPackageRole, ProjectManifestRef: "project/rforge.project.toml", LockfileRef: "project/rforge.lock.json", LockfileRefs: []string{"project/rforge.lock.json"}, RedactionReportRef: "redaction-report.json", ChecksumManifestRef: "checksums.sha256", ReplayCommand: packageReplayCommand, AuditCommand: packageAuditCommand}
 	redaction := RedactionReport{SchemaVersion: "1", Policy: "exclude private local paths, credentials, restricted documents, reviewer-private notes, caches"}
-	copyPlan := []string{"rforge.project.toml", "rforge.lock.json", "data/provenance.jsonl", "data/forge-state.json", "data/connector-capabilities.json", "data/library.json", "data/privacy-licensing-review.json", "data/legal-acquisition-queue.json", "data/document-assets.json", "data/identity-decisions.jsonl", "data/screening-audit.jsonl", "data/evidence.schemas.json", "data/evidence.items.json", "data/claim-trace.json"}
+	copyPlan := []string{"rforge.project.toml", "rforge.lock.json", "data/provenance.jsonl", "data/forge-state.json", "data/connector-capabilities.json", "data/library.json", "data/privacy-licensing-review.json", "data/legal-acquisition-queue.json", "data/document-assets.json", "data/identity-decisions.jsonl", "data/screening.events.json", "data/screening-audit.jsonl", "data/evidence.schemas.json", "data/evidence.items.json", "data/claim-trace.json"}
 	for _, rel := range copyPlan {
-		_ = copyIfExists(projectPath, packagePath, rel)
+		if err := copyIfExists(projectPath, packagePath, rel); err != nil {
+			return Package{}, fmt.Errorf("copy project artifact %s: %w", rel, err)
+		}
 	}
-	copyGlob(projectPath, packagePath, "data/*.lock.json", func(rel string) { manifest.LockfileRefs = append(manifest.LockfileRefs, "project/"+rel) })
-	copyGlob(projectPath, packagePath, "data/source-plans/*", func(rel string) { manifest.SourcePlanRefs = append(manifest.SourcePlanRefs, "project/"+rel) })
-	copyGlob(projectPath, packagePath, "data/import-receipts/*", func(rel string) { manifest.ImportReceiptRefs = append(manifest.ImportReceiptRefs, "project/"+rel) })
-	copyGlob(projectPath, packagePath, "data/source-cache/*", func(rel string) { manifest.SourceRecordRefs = append(manifest.SourceRecordRefs, "project/"+rel) })
-	copyGlob(projectPath, packagePath, "data/reference-manager/*", func(rel string) {
-		manifest.ReferenceManagerReportRefs = append(manifest.ReferenceManagerReportRefs, "project/"+rel)
-	})
-	copyGlob(projectPath, packagePath, "data/parser-manifests/*", func(rel string) { manifest.ParserManifestRefs = append(manifest.ParserManifestRefs, "project/"+rel) })
-	copyGlob(projectPath, packagePath, "analysis/*", func(rel string) {
-		manifest.AnalysisArtifactRefs = append(manifest.AnalysisArtifactRefs, "project/"+rel)
-	})
-	copyGlob(projectPath, packagePath, "reports/*", func(rel string) { manifest.ReportRefs = append(manifest.ReportRefs, "project/"+rel) })
-	_ = copyDirFiles(projectPath, packagePath, "documents/open-access")
-	_ = copyDirFiles(projectPath, packagePath, "parsed")
+	if err := sanitizePackagedForgeState(packagePath); err != nil {
+		return Package{}, err
+	}
+	globPlans := []struct {
+		pattern string
+		refs    *[]string
+	}{
+		{pattern: "data/*.lock.json", refs: &manifest.LockfileRefs},
+		{pattern: "data/source-plans/*", refs: &manifest.SourcePlanRefs},
+		{pattern: "data/import-receipts/*", refs: &manifest.ImportReceiptRefs},
+		{pattern: "data/source-cache/*", refs: &manifest.SourceRecordRefs},
+		{pattern: "data/reference-manager/*", refs: &manifest.ReferenceManagerReportRefs},
+		{pattern: "data/parser-manifests/*", refs: &manifest.ParserManifestRefs},
+		{pattern: "analysis/*", refs: &manifest.AnalysisArtifactRefs},
+		{pattern: "reports/*", refs: &manifest.ReportRefs},
+	}
+	for _, plan := range globPlans {
+		if err := copyGlob(projectPath, packagePath, plan.pattern, func(rel string) {
+			*plan.refs = append(*plan.refs, "project/"+rel)
+		}); err != nil {
+			return Package{}, fmt.Errorf("copy project artifacts matching %s: %w", plan.pattern, err)
+		}
+	}
+	for _, dir := range []string{"documents/open-access", "parsed"} {
+		if err := copyDirFiles(projectPath, packagePath, dir); err != nil {
+			return Package{}, fmt.Errorf("copy project directory %s: %w", dir, err)
+		}
+	}
 	if exists(filepath.Join(packagePath, "project", "data", "provenance.jsonl")) {
 		manifest.ProvenanceRef = "project/data/provenance.jsonl"
 	}
@@ -135,7 +166,9 @@ func Create(projectPath, packagePath string, opts Options) (Package, error) {
 	if exists(filepath.Join(packagePath, "project", "documents", "open-access")) {
 		manifest.DocumentAssetRefs = append(manifest.DocumentAssetRefs, "project/documents/open-access")
 	}
-	if exists(filepath.Join(packagePath, "project", "data", "screening-audit.jsonl")) {
+	if exists(filepath.Join(packagePath, "project", "data", "screening.events.json")) {
+		manifest.ScreeningAuditRef = "project/data/screening.events.json"
+	} else if exists(filepath.Join(packagePath, "project", "data", "screening-audit.jsonl")) {
 		manifest.ScreeningAuditRef = "project/data/screening-audit.jsonl"
 	}
 	if exists(filepath.Join(packagePath, "project", "data", "evidence.schemas.json")) {
@@ -143,12 +176,6 @@ func Create(projectPath, packagePath string, opts Options) (Package, error) {
 	}
 	if exists(filepath.Join(packagePath, "project", "data", "evidence.items.json")) {
 		manifest.AcceptedEvidenceRef = "project/data/evidence.items.json"
-	}
-	if !exists(filepath.Join(packagePath, manifest.ProjectManifestRef)) {
-		manifest.Warnings = append(manifest.Warnings, "missing project manifest")
-	}
-	if !exists(filepath.Join(packagePath, manifest.LockfileRef)) {
-		manifest.Warnings = append(manifest.Warnings, "missing lockfile")
 	}
 	redaction.Items = append(redaction.Items, RedactionItem{Path: "documents/local/", Action: "excluded", Reason: "local/restricted document assets require separate shareability approval"}, RedactionItem{Path: "documents/open-access/", Action: "included-if-approved", Reason: "only approved open-access fixture/shareable assets are copied"}, RedactionItem{Path: "cache/", Action: "excluded", Reason: "cache files are local/private state"})
 	pkg := Package{Manifest: manifest, RedactionReport: redaction}
@@ -164,7 +191,138 @@ func Create(projectPath, packagePath string, opts Options) (Package, error) {
 	if err := writeChecksums(packagePath); err != nil {
 		return Package{}, err
 	}
+	if err := output.commit(); err != nil {
+		return Package{}, err
+	}
 	return pkg, nil
+}
+
+type packageOutputTransaction struct {
+	finalPath   string
+	stagingPath string
+	newDirs     []string
+	committed   bool
+}
+
+func beginPackageOutputTransaction(packagePath string) (*packageOutputTransaction, error) {
+	finalPath, err := filepath.Abs(packagePath)
+	if err != nil {
+		return nil, err
+	}
+	parent := filepath.Dir(finalPath)
+	newDirs, err := missingPackageOutputDirectories(parent)
+	if err != nil {
+		return nil, err
+	}
+	if err := os.MkdirAll(parent, 0o755); err != nil {
+		removePackageOutputDirectories(newDirs)
+		return nil, err
+	}
+	stagingPath, err := os.MkdirTemp(parent, "."+filepath.Base(finalPath)+".rforge-stage-*")
+	if err != nil {
+		removePackageOutputDirectories(newDirs)
+		return nil, err
+	}
+	return &packageOutputTransaction{finalPath: finalPath, stagingPath: stagingPath, newDirs: newDirs}, nil
+}
+
+func validateRequiredProjectArtifacts(projectPath string) error {
+	for _, rel := range []string{"rforge.project.toml", "rforge.lock.json"} {
+		info, err := os.Lstat(filepath.Join(projectPath, rel))
+		if os.IsNotExist(err) {
+			return fmt.Errorf("required project artifact is missing: %s", rel)
+		}
+		if err != nil {
+			return fmt.Errorf("inspect required project artifact %s: %w", rel, err)
+		}
+		if !info.Mode().IsRegular() {
+			return fmt.Errorf("required project artifact is not a regular file: %s", rel)
+		}
+	}
+	return nil
+}
+
+func missingPackageOutputDirectories(path string) ([]string, error) {
+	missing := make([]string, 0)
+	for {
+		info, err := os.Stat(path)
+		if err == nil {
+			if !info.IsDir() {
+				return nil, fmt.Errorf("package output parent is not a directory: %s", path)
+			}
+			return missing, nil
+		}
+		if !os.IsNotExist(err) {
+			return nil, err
+		}
+		missing = append(missing, path)
+		parent := filepath.Dir(path)
+		if parent == path {
+			return nil, fmt.Errorf("package output has no existing parent directory: %s", path)
+		}
+		path = parent
+	}
+}
+
+func removePackageOutputDirectories(paths []string) {
+	for _, path := range paths {
+		_ = os.Remove(path)
+	}
+}
+
+func (output *packageOutputTransaction) commit() error {
+	if _, err := os.Lstat(output.finalPath); err != nil {
+		if !os.IsNotExist(err) {
+			return err
+		}
+		if err := os.Rename(output.stagingPath, output.finalPath); err != nil {
+			return err
+		}
+		output.stagingPath = ""
+		output.committed = true
+		return nil
+	}
+
+	backupPath, err := os.MkdirTemp(filepath.Dir(output.finalPath), "."+filepath.Base(output.finalPath)+".rforge-backup-*")
+	if err != nil {
+		return err
+	}
+	if err := os.Remove(backupPath); err != nil {
+		return err
+	}
+	if err := os.Rename(output.finalPath, backupPath); err != nil {
+		return err
+	}
+	if err := os.Rename(output.stagingPath, output.finalPath); err != nil {
+		if removeErr := os.RemoveAll(output.finalPath); removeErr != nil {
+			return fmt.Errorf("install package: %w; clear failed output before restoring prior package: %v", err, removeErr)
+		}
+		if restoreErr := os.Rename(backupPath, output.finalPath); restoreErr != nil {
+			return fmt.Errorf("install package: %w; restore prior package from %s: %v", err, backupPath, restoreErr)
+		}
+		return err
+	}
+	output.stagingPath = ""
+	output.committed = true
+	_ = os.RemoveAll(backupPath)
+	return nil
+}
+
+func (output *packageOutputTransaction) cleanup() {
+	if output.stagingPath != "" {
+		_ = os.RemoveAll(output.stagingPath)
+	}
+	if !output.committed {
+		removePackageOutputDirectories(output.newDirs)
+	}
+}
+
+// ValidatePackageOutputPath rejects package destinations that could overwrite the project, working directory, or filesystem root.
+func ValidatePackageOutputPath(projectPath, packagePath string) error {
+	if strings.TrimSpace(projectPath) == "" || strings.TrimSpace(packagePath) == "" {
+		return fmt.Errorf("project and package paths are required")
+	}
+	return guardPackageOutputPath(projectPath, packagePath)
 }
 
 func guardPackageOutputPath(projectPath, packagePath string) error {
@@ -228,19 +386,39 @@ func guardReferenceManagerPrivacyGate(projectPath string) error {
 	return nil
 }
 
-func copyGlob(projectPath, packagePath, pattern string, onCopy func(string)) {
-	matches, _ := filepath.Glob(filepath.Join(projectPath, filepath.FromSlash(pattern)))
-	sort.Strings(matches)
-	for _, match := range matches {
-		info, err := os.Lstat(match)
-		if err != nil || !info.Mode().IsRegular() {
+func copyGlob(projectPath, packagePath, pattern string, onCopy func(string)) error {
+	dir, namePattern := filepath.Split(filepath.FromSlash(pattern))
+	entries, err := os.ReadDir(filepath.Join(projectPath, dir))
+	if os.IsNotExist(err) {
+		return nil
+	}
+	if err != nil {
+		return err
+	}
+	for _, entry := range entries {
+		matches, err := filepath.Match(namePattern, entry.Name())
+		if err != nil {
+			return err
+		}
+		if !matches {
 			continue
 		}
-		rel, _ := filepath.Rel(projectPath, match)
-		if copyIfExists(projectPath, packagePath, filepath.ToSlash(rel)) == nil {
-			onCopy(filepath.ToSlash(rel))
+		info, err := entry.Info()
+		if err != nil {
+			return err
 		}
+		if !info.Mode().IsRegular() {
+			continue
+		}
+		rel := filepath.ToSlash(filepath.Join(dir, entry.Name()))
+		if err := copyIfExists(projectPath, packagePath, rel); errors.Is(err, errSkipCopy) {
+			continue
+		} else if err != nil {
+			return err
+		}
+		onCopy(rel)
 	}
+	return nil
 }
 
 func copyDirFiles(projectPath, packagePath, dir string) error {
@@ -292,6 +470,26 @@ func copyIfExists(projectPath, packagePath, rel string) error {
 	return copyAndClose(out, in)
 }
 
+func sanitizePackagedForgeState(packagePath string) error {
+	path := filepath.Join(packagePath, "project", "data", "forge-state.json")
+	data, err := os.ReadFile(path)
+	if os.IsNotExist(err) {
+		return nil
+	}
+	if err != nil {
+		return fmt.Errorf("read packaged forge state: %w", err)
+	}
+	var state map[string]json.RawMessage
+	if err := json.Unmarshal(data, &state); err != nil {
+		return fmt.Errorf("parse packaged forge state: %w", err)
+	}
+	state["projectPath"] = json.RawMessage(`"project"`)
+	if err := writeJSON(path, state); err != nil {
+		return fmt.Errorf("sanitize packaged forge state: %w", err)
+	}
+	return nil
+}
+
 // copyAndClose copies src into dst and closes dst, returning the copy error
 // if any, otherwise the close error. A bare deferred Close would silently
 // discard a flush failure (e.g. disk full) and report a package file as
@@ -306,7 +504,7 @@ func copyAndClose(dst io.WriteCloser, src io.Reader) error {
 }
 
 func writePackageHelperFiles(packagePath string) error {
-	if err := os.WriteFile(filepath.Join(packagePath, "replay.sh"), []byte("#!/bin/sh\nset -eu\nrforge package replay .\n"), 0o755); err != nil {
+	if err := os.WriteFile(filepath.Join(packagePath, "replay.sh"), []byte(packageReplayScript), 0o755); err != nil {
 		return err
 	}
 	return writeJSON(filepath.Join(packagePath, "audit-report.json"), map[string]any{"schemaVersion": "1", "status": "created", "message": "run rforge package audit . to verify checksums and replay gates"})

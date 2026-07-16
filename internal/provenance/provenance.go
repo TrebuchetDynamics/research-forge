@@ -10,6 +10,8 @@ import (
 	"reflect"
 	"strings"
 	"time"
+
+	"github.com/TrebuchetDynamics/research-forge/internal/filetxn"
 )
 
 const eventsRelativePath = "provenance/events.jsonl"
@@ -44,6 +46,7 @@ func Note(projectPath, message, actorName string) error {
 		Timestamp:     now.Format(time.RFC3339),
 		Actor:         actorName,
 		Action:        "provenance.researcher.note",
+		Target:        projectPath,
 		Inputs:        map[string]any{"message": message},
 		Outputs:       map[string]any{},
 		Warnings:      []string{},
@@ -52,7 +55,7 @@ func Note(projectPath, message, actorName string) error {
 
 // Append records one Provenance event in the project JSONL ledger.
 func Append(projectPath string, event Event) error {
-	if err := os.MkdirAll(filepath.Join(projectPath, "provenance"), 0o755); err != nil {
+	if err := validateEvent(event); err != nil {
 		return err
 	}
 	eventBytes, err := json.Marshal(event)
@@ -60,39 +63,64 @@ func Append(projectPath string, event Event) error {
 		return err
 	}
 	eventBytes = append(eventBytes, '\n')
-	file, err := os.OpenFile(filepath.Join(projectPath, eventsRelativePath), os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0o644)
-	if err != nil {
+	if err := os.MkdirAll(filepath.Join(projectPath, "provenance"), 0o755); err != nil {
 		return err
 	}
-	return writeAndClose(file, eventBytes)
+	return filetxn.Append(filepath.Join(projectPath, eventsRelativePath), eventBytes, 0o644)
 }
 
-// writeAndClose writes data to f and closes it, returning the write error if
-// any, otherwise the close error. A bare deferred Close would silently
-// discard a flush failure (e.g. disk full) and report a provenance event as
-// recorded when it never reached the audit trail.
-func writeAndClose(f io.WriteCloser, data []byte) error {
-	_, writeErr := f.Write(data)
-	closeErr := f.Close()
-	if writeErr != nil {
-		return writeErr
+func validateEvent(event Event) error {
+	if event.SchemaVersion != "1" {
+		return fmt.Errorf("unsupported provenance schema version %q", event.SchemaVersion)
 	}
-	return closeErr
+	for _, field := range []struct {
+		name  string
+		value string
+	}{
+		{name: "ID", value: event.ID},
+		{name: "actor", value: event.Actor},
+		{name: "action", value: event.Action},
+		{name: "target", value: event.Target},
+	} {
+		if strings.TrimSpace(field.value) == "" {
+			return fmt.Errorf("provenance event %s is required", field.name)
+		}
+	}
+	if _, err := time.Parse(time.RFC3339, event.Timestamp); err != nil {
+		return fmt.Errorf("invalid provenance event timestamp %q: %w", event.Timestamp, err)
+	}
+	if event.Inputs == nil {
+		return fmt.Errorf("provenance event inputs are required")
+	}
+	if event.Outputs == nil {
+		return fmt.Errorf("provenance event outputs are required")
+	}
+	if event.Warnings == nil {
+		return fmt.Errorf("provenance event warnings are required")
+	}
+	return nil
 }
 
 // Read returns all Provenance events from the project JSONL ledger.
 func Read(projectPath string) ([]Event, error) {
-	file, err := os.Open(filepath.Join(projectPath, eventsRelativePath))
+	file, err := filetxn.OpenRegular(filepath.Join(projectPath, eventsRelativePath))
 	if err != nil {
 		return nil, err
 	}
 	defer file.Close()
 
 	events := []Event{}
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		line := strings.TrimSpace(scanner.Text())
+	reader := bufio.NewReader(file)
+	for {
+		text, readErr := reader.ReadString('\n')
+		line := strings.TrimSpace(text)
 		if line == "" {
+			if readErr == io.EOF {
+				break
+			}
+			if readErr != nil {
+				return nil, readErr
+			}
 			continue
 		}
 		var event Event
@@ -100,9 +128,12 @@ func Read(projectPath string) ([]Event, error) {
 			return nil, err
 		}
 		events = append(events, event)
-	}
-	if err := scanner.Err(); err != nil {
-		return nil, err
+		if readErr == io.EOF {
+			break
+		}
+		if readErr != nil {
+			return nil, readErr
+		}
 	}
 	return events, nil
 }

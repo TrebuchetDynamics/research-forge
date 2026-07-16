@@ -1,6 +1,9 @@
 package analysis
 
-import "testing"
+import (
+	"math"
+	"testing"
+)
 
 func TestInfluenceDiagnosticsAndRichSensitivityArtifacts(t *testing.T) {
 	run := AnalysisRun{ID: "run-1", InputRows: []InputRow{{PaperID: "p1", EffectSize: 1, Variance: 1}, {PaperID: "p2", EffectSize: 2, Variance: 1}, {PaperID: "p3", EffectSize: 10, Variance: 1}}}
@@ -17,5 +20,12 @@ func TestInfluenceDiagnosticsAndRichSensitivityArtifacts(t *testing.T) {
 	}
 	if sensitivity.BaselineEstimate == 0 || sensitivity.MaxAbsoluteDelta == 0 || sensitivity.Rows[0].Delta == 0 {
 		t.Fatalf("sensitivity = %#v", sensitivity)
+	}
+}
+
+func TestInfluenceDiagnosticsRejectsNonfiniteRows(t *testing.T) {
+	run := AnalysisRun{ID: "run-1", InputRows: []InputRow{{PaperID: "p1", EffectSize: math.Inf(1), Variance: 1}, {PaperID: "p2", EffectSize: 2, Variance: 1}}}
+	if _, err := InfluenceDiagnostics(run); err == nil {
+		t.Fatal("InfluenceDiagnostics returned nil error for a non-finite effect size")
 	}
 }

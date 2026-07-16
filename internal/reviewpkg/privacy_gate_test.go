@@ -13,6 +13,8 @@ import (
 
 func TestCreateBlocksReferenceManagerPrivateFieldsUntilPrivacyApproved(t *testing.T) {
 	project := t.TempDir()
+	write(t, filepath.Join(project, "rforge.project.toml"), "title='Review'\n")
+	write(t, filepath.Join(project, "rforge.lock.json"), `{"version":"1"}`)
 	if err := os.MkdirAll(filepath.Join(project, "data"), 0o755); err != nil {
 		t.Fatal(err)
 	}

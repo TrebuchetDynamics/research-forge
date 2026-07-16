@@ -86,7 +86,10 @@ func CompareAnalysisEngines(run AnalysisRun, primary, secondary EngineResult, to
 	for _, warning := range secondary.Warnings {
 		report.Warnings = append(report.Warnings, EngineWarning{Engine: secondary.Engine, Message: warning})
 	}
-	if primary.InputHash != "" && secondary.InputHash != "" && primary.InputHash != secondary.InputHash {
+	if !finiteEngineResult(primary) || !finiteEngineResult(secondary) {
+		report.Disagreement.RequiresReview = true
+		report.Disagreement.Reason = "engine output contains an invalid estimate or variance"
+	} else if primary.InputHash != "" && secondary.InputHash != "" && primary.InputHash != secondary.InputHash {
 		report.Disagreement.RequiresReview = true
 		report.Disagreement.Reason = "engine input hashes differ"
 	} else if !report.ModelSettingParity {
@@ -97,6 +100,10 @@ func CompareAnalysisEngines(run AnalysisRun, primary, secondary EngineResult, to
 		report.Disagreement.Reason = fmt.Sprintf("engine outputs differ beyond tolerance %.6g", tolerance)
 	}
 	return report
+}
+
+func finiteEngineResult(result EngineResult) bool {
+	return !math.IsNaN(result.Estimate) && !math.IsInf(result.Estimate, 0) && !math.IsNaN(result.Variance) && !math.IsInf(result.Variance, 0) && result.Variance >= 0
 }
 
 func hashJSON(value any) string {

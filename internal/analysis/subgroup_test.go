@@ -1,6 +1,9 @@
 package analysis
 
-import "testing"
+import (
+	"math"
+	"testing"
+)
 
 func TestSubgroupAnalysisComputesPooledGroupEstimates(t *testing.T) {
 	run := AnalysisRun{ID: "sub-run", InputRows: []InputRow{
@@ -29,5 +32,19 @@ func TestSubgroupAnalysisRequiresAllGroupValues(t *testing.T) {
 	_, err := SubgroupAnalysis(run, "region", map[string]string{})
 	if err == nil {
 		t.Fatalf("expected missing group error")
+	}
+}
+
+func TestSubgroupAnalysisRejectsNonfiniteVariance(t *testing.T) {
+	run := AnalysisRun{ID: "sub-run", InputRows: []InputRow{{PaperID: "p1", EffectSize: 1, Variance: math.NaN()}}}
+	if _, err := SubgroupAnalysis(run, "region", map[string]string{"p1": "EU"}); err == nil {
+		t.Fatal("SubgroupAnalysis returned nil error for a non-finite variance")
+	}
+}
+
+func TestSubgroupAnalysisRejectsNonfiniteEffectSize(t *testing.T) {
+	run := AnalysisRun{ID: "sub-run", InputRows: []InputRow{{PaperID: "p1", EffectSize: math.Inf(1), Variance: 1}}}
+	if _, err := SubgroupAnalysis(run, "region", map[string]string{"p1": "EU"}); err == nil {
+		t.Fatal("SubgroupAnalysis returned nil error for a non-finite effect size")
 	}
 }

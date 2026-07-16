@@ -27,6 +27,9 @@ func LeaveOneOut(run AnalysisRun) (SensitivityReport, error) {
 	if len(run.InputRows) < 2 {
 		return SensitivityReport{}, fmt.Errorf("leave-one-out sensitivity requires at least two input rows")
 	}
+	if err := validateAnalysisRows(run.InputRows); err != nil {
+		return SensitivityReport{}, err
+	}
 	baselineEstimate, baselineVariance, _, err := pooledEstimateExcluding(run.InputRows, -1)
 	if err != nil {
 		return SensitivityReport{}, err

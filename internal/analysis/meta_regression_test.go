@@ -1,6 +1,9 @@
 package analysis
 
-import "testing"
+import (
+	"math"
+	"testing"
+)
 
 func TestMetaRegressionFitsWeightedModeratorSlope(t *testing.T) {
 	run := AnalysisRun{ID: "reg-run", InputRows: []InputRow{
@@ -23,5 +26,26 @@ func TestMetaRegressionRequiresModeratorValues(t *testing.T) {
 	_, err := MetaRegression(run, "dose", map[string]float64{"p1": 1})
 	if err == nil {
 		t.Fatalf("expected missing moderator value error")
+	}
+}
+
+func TestMetaRegressionRejectsConstantModerator(t *testing.T) {
+	run := AnalysisRun{ID: "reg-run", InputRows: []InputRow{{PaperID: "p1", EffectSize: 1, Variance: 1}, {PaperID: "p2", EffectSize: 2, Variance: 1}}}
+	if _, err := MetaRegression(run, "dose", map[string]float64{"p1": 1, "p2": 1}); err == nil {
+		t.Fatal("MetaRegression returned nil error for a constant moderator")
+	}
+}
+
+func TestMetaRegressionRejectsNonfiniteRows(t *testing.T) {
+	run := AnalysisRun{ID: "reg-run", InputRows: []InputRow{{PaperID: "p1", EffectSize: math.Inf(1), Variance: 1}, {PaperID: "p2", EffectSize: 2, Variance: 1}}}
+	if _, err := MetaRegression(run, "dose", map[string]float64{"p1": 1, "p2": 2}); err == nil {
+		t.Fatal("MetaRegression returned nil error for a non-finite effect size")
+	}
+}
+
+func TestMetaRegressionRejectsNonfiniteModerator(t *testing.T) {
+	run := AnalysisRun{ID: "reg-run", InputRows: []InputRow{{PaperID: "p1", EffectSize: 1, Variance: 1}, {PaperID: "p2", EffectSize: 2, Variance: 1}}}
+	if _, err := MetaRegression(run, "dose", map[string]float64{"p1": math.NaN(), "p2": 2}); err == nil {
+		t.Fatal("MetaRegression returned nil error for a non-finite moderator")
 	}
 }

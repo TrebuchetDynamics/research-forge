@@ -50,7 +50,7 @@ func TestBuildProjectKnowledgeGraphFromProjectReadsLocalArtifacts(t *testing.T) 
 	writeJSON(t, filepath.Join(project, "data", "screening.events.json"), []screening.DecisionEvent{{PaperID: "10.1000/cat", Stage: screening.StageTitleAbstract, Decision: screening.DecisionInclude}})
 	writeJSON(t, filepath.Join(project, "analysis", "run1-run.json"), analysis.AnalysisRun{ID: "run1", InputRows: []analysis.InputRow{{PaperID: "10.1000/cat", EffectSize: 1}}})
 	writeJSON(t, filepath.Join(project, "data", "claim-trace.json"), report.CitationEvidenceTraceView{Claims: []report.ClaimTraceView{{ClaimID: "claim1", PaperID: "10.1000/cat", ClaimText: "claim"}}})
-	if err := provenance.Append(project, provenance.Event{ID: "evt1", Action: "forge.state.transition", Target: "10.1000/cat"}); err != nil {
+	if err := provenance.Append(project, provenance.Event{SchemaVersion: "1", ID: "evt1", Timestamp: "2026-01-01T00:00:00Z", Actor: "tester", Action: "forge.state.transition", Target: "10.1000/cat", Inputs: map[string]any{}, Outputs: map[string]any{}, Warnings: []string{}}); err != nil {
 		t.Fatalf("provenance: %v", err)
 	}
 	graph, err := BuildProjectKnowledgeGraphFromProject(project)
@@ -74,6 +74,34 @@ func TestLoadProjectKnowledgeGraphFromProjectPrefersGeneratedArtifact(t *testing
 	}
 	if !graph.HasNode("paper:generated") || graph.HasNode("paper:10.1000/raw") {
 		t.Fatalf("did not prefer generated artifact: %#v", graph.Nodes)
+	}
+}
+
+func TestReadProjectKnowledgeGraphArtifactRejectsSymlink(t *testing.T) {
+	project := t.TempDir()
+	dataDir := filepath.Join(project, "data")
+	if err := os.MkdirAll(dataDir, 0o755); err != nil {
+		t.Fatalf("create data directory: %v", err)
+	}
+	outsidePath := filepath.Join(t.TempDir(), "outside-knowledge-graph.json")
+	writeJSON(t, outsidePath, ProjectKnowledgeGraph{
+		SchemaVersion: "1",
+		Nodes:         []KnowledgeNode{{ID: "external-private", Kind: "paper", Label: "External private graph"}},
+	})
+	artifactPath := filepath.Join(dataDir, "knowledge-graph.json")
+	if err := os.Symlink(outsidePath, artifactPath); err != nil {
+		t.Skipf("symlinks are unavailable: %v", err)
+	}
+
+	if graph, err := ReadProjectKnowledgeGraphArtifact(project); err == nil {
+		t.Fatalf("ReadProjectKnowledgeGraphArtifact returned external graph through symlink: %#v", graph)
+	}
+	info, err := os.Lstat(artifactPath)
+	if err != nil {
+		t.Fatalf("lstat knowledge graph artifact: %v", err)
+	}
+	if info.Mode()&os.ModeSymlink == 0 {
+		t.Fatalf("knowledge graph read replaced the symlink: mode=%v", info.Mode())
 	}
 }
 

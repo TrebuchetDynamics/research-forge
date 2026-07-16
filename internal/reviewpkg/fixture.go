@@ -1,15 +1,26 @@
 package reviewpkg
 
 import (
+	"crypto/sha256"
 	"encoding/json"
+	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
+	"sort"
 	"time"
 
 	"github.com/TrebuchetDynamics/research-forge/internal/documents"
+	"github.com/TrebuchetDynamics/research-forge/internal/filetxn"
 )
 
 const ArtificialPhotosynthesisQuestion = "Do artificial photosynthesis catalysts improve solar fuel generation outcomes?"
+
+const (
+	artificialPhotosynthesisAcquisitionAssetPath = "documents/open-access/ap-fixture.txt"
+	artificialPhotosynthesisDocumentAssetsPath   = "data/document-assets.json"
+	artificialPhotosynthesisLegalAcquisitionPath = "data/legal-acquisition-queue.json"
+)
 
 var fixtureTime = time.Date(2026, 1, 2, 3, 4, 5, 0, time.UTC)
 
@@ -34,8 +45,8 @@ func CreateArtificialPhotosynthesisFixturePackage(packagePath string, opts Optio
 	return Create(projectPath, packagePath, opts)
 }
 
-func WriteArtificialPhotosynthesisFixtureSourceImport(projectPath string) error {
-	files := map[string]string{
+func artificialPhotosynthesisFixtureSourceImportFiles() map[string]string {
+	return map[string]string{
 		"data/connector-capabilities.json": `{
   "schemaVersion": "1",
   "connectors": [
@@ -90,27 +101,118 @@ func WriteArtificialPhotosynthesisFixtureSourceImport(projectPath string) error 
 ]
 `,
 	}
-	return writeFixtureFiles(projectPath, files)
+}
+
+func WriteArtificialPhotosynthesisFixtureSourceImport(projectPath string) error {
+	return writeFixtureFiles(projectPath, artificialPhotosynthesisFixtureSourceImportFiles())
+}
+
+// ArtificialPhotosynthesisFixtureSourceImportPaths returns every project-relative artifact written by the source-import fixture.
+func ArtificialPhotosynthesisFixtureSourceImportPaths() []string {
+	return sortedFixturePaths(artificialPhotosynthesisFixtureSourceImportFiles())
+}
+
+func sortedFixturePaths(fileSets ...map[string]string) []string {
+	seen := map[string]bool{}
+	for _, files := range fileSets {
+		for path := range files {
+			seen[path] = true
+		}
+	}
+	paths := make([]string, 0, len(seen))
+	for path := range seen {
+		paths = append(paths, path)
+	}
+	sort.Strings(paths)
+	return paths
+}
+
+func mergeFixtureFiles(fileSets ...map[string]string) map[string]string {
+	merged := map[string]string{}
+	for _, files := range fileSets {
+		for path, content := range files {
+			merged[path] = content
+		}
+	}
+	return merged
 }
 
 func writeFixtureFiles(projectPath string, files map[string]string) error {
-	for rel, content := range files {
+	outputs := make([]filetxn.Output, 0, len(files))
+	paths := make([]string, 0, len(files))
+	for _, rel := range sortedFixturePaths(files) {
 		path := filepath.Join(projectPath, filepath.FromSlash(rel))
-		if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
-			return err
-		}
-		if err := os.WriteFile(path, []byte(content), 0o644); err != nil {
-			return err
-		}
+		paths = append(paths, path)
+		outputs = append(outputs, filetxn.Output{Path: path, Data: []byte(files[rel]), Mode: 0o644})
+	}
+	createdDirs, err := createFixtureDirectories(paths)
+	if err != nil {
+		return err
+	}
+	if err := filetxn.ReplaceAll(outputs); err != nil {
+		return fixtureDirectoryFailure(createdDirs, err)
 	}
 	return nil
 }
 
-func WriteArtificialPhotosynthesisReferenceManagerFixture(projectPath string) error {
-	if err := WriteArtificialPhotosynthesisFixtureSourceImport(projectPath); err != nil {
-		return err
+func createFixtureDirectories(paths []string) ([]string, error) {
+	created := make([]string, 0)
+	createdSet := map[string]bool{}
+	for _, path := range paths {
+		missing := make([]string, 0)
+		for dir := filepath.Dir(path); ; dir = filepath.Dir(dir) {
+			if createdSet[dir] {
+				break
+			}
+			info, err := os.Lstat(dir)
+			if err == nil {
+				if !info.IsDir() {
+					return nil, fixtureDirectoryFailure(created, fmt.Errorf("fixture parent is not a directory: %s", dir))
+				}
+				break
+			}
+			if !os.IsNotExist(err) {
+				return nil, fixtureDirectoryFailure(created, fmt.Errorf("inspect fixture parent: %w", err))
+			}
+			missing = append(missing, dir)
+			if parent := filepath.Dir(dir); parent == dir {
+				return nil, fixtureDirectoryFailure(created, fmt.Errorf("fixture path has no existing parent: %s", path))
+			}
+		}
+		for i := len(missing) - 1; i >= 0; i-- {
+			dir := missing[i]
+			if createdSet[dir] {
+				continue
+			}
+			if err := os.Mkdir(dir, 0o755); err != nil {
+				return nil, fixtureDirectoryFailure(created, fmt.Errorf("create fixture directory: %w", err))
+			}
+			createdSet[dir] = true
+			created = append(created, dir)
+		}
 	}
-	files := map[string]string{
+	return created, nil
+}
+
+func fixtureDirectoryFailure(created []string, cause error) error {
+	if cleanupErr := removeFixtureDirectories(created); cleanupErr != nil {
+		return fmt.Errorf("%w; clean created directories: %v", cause, cleanupErr)
+	}
+	return cause
+}
+
+func removeFixtureDirectories(paths []string) error {
+	var result error
+	for i := len(paths) - 1; i >= 0; i-- {
+		if err := os.Remove(paths[i]); err != nil && !os.IsNotExist(err) {
+			result = errors.Join(result, fmt.Errorf("remove %s: %w", paths[i], err))
+		}
+	}
+	return result
+}
+
+func artificialPhotosynthesisReferenceManagerFiles() map[string]string {
+	return map[string]string{
 		"data/library.json": `[
   {
     "Title": "Fixture artificial photosynthesis catalyst review",
@@ -155,7 +257,7 @@ func WriteArtificialPhotosynthesisReferenceManagerFixture(projectPath string) er
 ]
 `,
 		"data/source-cache/zotero-rdf-artificial-photosynthesis.xml": `<rdf:RDF><z:item rdf:about="ZTAP2026"><dc:title>Zotero fixture artificial photosynthesis annotations</dc:title><better-bibtex:citekey>zotero2026ap</better-bibtex:citekey></z:item></rdf:RDF>`,
-		"data/source-cache/jabref-artificial-photosynthesis.bib":     `@article{JabRef2026AP,title={JabRef fixture artificial photosynthesis library context},doi={HTTPS://DOI.ORG/10.0000/AP.JABREF},groups={Screened/In; Included},file={:/Users/alice/Zotero/storage/ABC/jabref-paper.pdf:PDF}}`,
+		"data/source-cache/jabref-artificial-photosynthesis.bib":     `@article{JabRef2026AP,title={JabRef fixture artificial photosynthesis library context},doi={HTTPS://DOI.ORG/10.0000/AP.JABREF},groups={Screened/In; Included},file={:jabref-paper.pdf:PDF}}`,
 		"data/reference-manager/fidelity.json": `{
   "schemaVersion": "1",
   "records": [
@@ -198,38 +300,44 @@ func WriteArtificialPhotosynthesisReferenceManagerFixture(projectPath string) er
 }
 `,
 	}
-	return writeFixtureFiles(projectPath, files)
+}
+
+func WriteArtificialPhotosynthesisReferenceManagerFixture(projectPath string) error {
+	return writeFixtureFiles(projectPath, mergeFixtureFiles(artificialPhotosynthesisFixtureSourceImportFiles(), artificialPhotosynthesisReferenceManagerFiles()))
+}
+
+// ArtificialPhotosynthesisReferenceManagerFixturePaths returns every project-relative artifact written by the reference-manager fixture.
+func ArtificialPhotosynthesisReferenceManagerFixturePaths() []string {
+	return sortedFixturePaths(artificialPhotosynthesisFixtureSourceImportFiles(), artificialPhotosynthesisReferenceManagerFiles())
 }
 
 func WriteArtificialPhotosynthesisAcquisitionFixture(projectPath string) error {
-	if err := WriteArtificialPhotosynthesisReferenceManagerFixture(projectPath); err != nil {
+	acquisitionFiles, err := artificialPhotosynthesisAcquisitionFileContents()
+	if err != nil {
 		return err
 	}
-	assetPath := filepath.Join(projectPath, "documents", "open-access", "ap-fixture.txt")
-	if err := os.MkdirAll(filepath.Dir(assetPath), 0o755); err != nil {
-		return err
-	}
-	if err := os.WriteFile(assetPath, []byte("Open-access artificial photosynthesis fixture text; no copyrighted full text.\n"), 0o644); err != nil {
-		return err
-	}
-	asset, err := documents.NewDocumentAsset(documents.DocumentAssetInput{
+	return writeFixtureFiles(projectPath, mergeFixtureFiles(artificialPhotosynthesisFixtureSourceImportFiles(), artificialPhotosynthesisReferenceManagerFiles(), acquisitionFiles))
+}
+
+func artificialPhotosynthesisAcquisitionFileContents() (map[string]string, error) {
+	assetContent := []byte("Open-access artificial photosynthesis fixture text; no copyrighted full text.\n")
+	asset := documents.DocumentAsset{
+		SchemaVersion:     "1",
 		PaperID:           "doi:10.0000/ap.fixture",
 		AcquisitionSource: "fixture-unpaywall",
 		License:           "CC-BY-4.0",
 		OAStatus:          "gold",
-		LocalPath:         assetPath,
+		ChecksumSHA256:    fmt.Sprintf("%x", sha256.Sum256(assetContent)),
+		LocalPath:         artificialPhotosynthesisAcquisitionAssetPath,
 		MIMEType:          "text/plain",
-	})
-	if err != nil {
-		return err
 	}
-	asset.LocalPath = "documents/open-access/ap-fixture.txt"
 	assetData, err := json.MarshalIndent([]documents.DocumentAsset{asset}, "", "  ")
 	if err != nil {
-		return err
+		return nil, err
 	}
-	files := map[string]string{
-		"data/legal-acquisition-queue.json": `{
+	return map[string]string{
+		artificialPhotosynthesisAcquisitionAssetPath: string(assetContent),
+		artificialPhotosynthesisLegalAcquisitionPath: `{
   "schemaVersion": "1",
   "items": [
     {
@@ -255,13 +363,25 @@ func WriteArtificialPhotosynthesisAcquisitionFixture(projectPath string) error {
   ]
 }
 `,
-		"data/document-assets.json": string(assetData) + "\n",
-	}
-	return writeFixtureFiles(projectPath, files)
+		artificialPhotosynthesisDocumentAssetsPath: string(assetData) + "\n",
+	}, nil
 }
 
-func WriteArtificialPhotosynthesisFixtureProject(projectPath string) error {
-	files := map[string]string{
+// ArtificialPhotosynthesisAcquisitionFixturePaths returns every project-relative artifact written by the acquisition fixture.
+func ArtificialPhotosynthesisAcquisitionFixturePaths() []string {
+	return sortedFixturePaths(artificialPhotosynthesisFixtureSourceImportFiles(), artificialPhotosynthesisReferenceManagerFiles(), artificialPhotosynthesisAcquisitionFilePaths())
+}
+
+func artificialPhotosynthesisAcquisitionFilePaths() map[string]string {
+	return map[string]string{
+		artificialPhotosynthesisAcquisitionAssetPath: "",
+		artificialPhotosynthesisDocumentAssetsPath:   "",
+		artificialPhotosynthesisLegalAcquisitionPath: "",
+	}
+}
+
+func artificialPhotosynthesisFixtureProjectFiles() map[string]string {
+	return map[string]string{
 		"rforge.project.toml": "schema_version = \"1\"\ntitle = \"Artificial photosynthesis fixture review\"\nstorage_mode = \"sqlite\"\n",
 		"rforge.lock.json": `{
   "schemaVersion": "1",
@@ -340,10 +460,22 @@ func WriteArtificialPhotosynthesisFixtureProject(projectPath string) error {
 `,
 		"data/parser-manifests/fake-parser.json": `{
   "schemaVersion": "1",
-  "parser": "fake-parser-adapter",
-  "version": "fixture-1",
+  "paperId": "doi:10.0000/ap.fixture",
+  "parserName": "fake-parser-adapter",
+  "parserVersion": "fixture-1",
+  "parserSource": "fixture",
+  "outputKind": "passages-json",
+  "command": ["fake-parser-adapter", "parse"],
   "inputChecksum": "fixture-input",
   "outputChecksum": "fixture-output",
+  "parsedPath": "parsed/artificial-photosynthesis-passages.json",
+  "licenseConstraints": "fixture-only",
+  "shareability": "shareable",
+  "provenanceFields": ["paperId", "parserName", "parserVersion", "parsedPath"],
+  "reviewerApprovalRequired": false,
+  "sections": 1,
+  "passages": 1,
+  "references": 0,
   "warnings": []
 }
 `,
@@ -381,14 +513,51 @@ func WriteArtificialPhotosynthesisFixtureProject(projectPath string) error {
 		"data/claim-trace.json": `{
   "schemaVersion": "1",
   "claims": [
-    {"claimId":"claim-1","text":"The fixture package is replayable offline.","supportRefs":["passage:ap-001:intro"],"status":"supported"}
+    {
+      "claimId": "claim-1",
+      "paperId": "doi:10.0000/ap.fixture",
+      "claimText": "The fixture package is replayable offline.",
+      "claimStatus": "accepted",
+      "effectSizeRows": [
+        {"PaperID":"doi:10.0000/ap.fixture","EffectSize":1,"Variance":0.1,"ViSource":"ci"}
+      ],
+      "acceptedEvidence": [
+        {
+          "PaperID": "doi:10.0000/ap.fixture",
+          "SchemaName": "solar_fuel_outcome",
+          "Values": {"outcome":"solar fuel generation","direction":"improved in fixture evidence"},
+          "Support": {"Kind":"passage","Ref":"passage:ap-001:intro"},
+          "Status": "accepted",
+          "History": [{"Status":"accepted","Reviewer":"fixture","Note":"accepted for deterministic package replay fixture"}]
+        }
+      ],
+      "passages": [
+        {
+          "passageId": "passage:ap-001:intro",
+          "text": "Fixture passage describing artificial photosynthesis catalyst outcomes for audit and replay tests.",
+          "parserName": "fake-parser-adapter",
+          "parserVersion": "fixture-1",
+          "offset": {"Start":0,"End":103}
+        }
+      ],
+      "parserOutputs": ["parsed/artificial-photosynthesis-passages.json"]
+    }
   ]
 }
 `,
 		"reports/report.md": "# Artificial photosynthesis fixture review\n\nThis offline fixture report exists to validate package create, audit, and replay. It makes no real scientific performance claim.\n\nSupported fixture claim: the package includes a source-supported accepted evidence item (`passage:ap-001:intro`).\n",
 	}
-	if err := writeFixtureFiles(projectPath, files); err != nil {
+}
+
+// ArtificialPhotosynthesisFixtureProjectPaths returns every project-relative artifact written by the complete fixture.
+func ArtificialPhotosynthesisFixtureProjectPaths() []string {
+	return sortedFixturePaths(artificialPhotosynthesisFixtureProjectFiles(), artificialPhotosynthesisFixtureSourceImportFiles(), artificialPhotosynthesisReferenceManagerFiles(), artificialPhotosynthesisAcquisitionFilePaths())
+}
+
+func WriteArtificialPhotosynthesisFixtureProject(projectPath string) error {
+	acquisitionFiles, err := artificialPhotosynthesisAcquisitionFileContents()
+	if err != nil {
 		return err
 	}
-	return WriteArtificialPhotosynthesisAcquisitionFixture(projectPath)
+	return writeFixtureFiles(projectPath, mergeFixtureFiles(artificialPhotosynthesisFixtureProjectFiles(), artificialPhotosynthesisFixtureSourceImportFiles(), artificialPhotosynthesisReferenceManagerFiles(), acquisitionFiles))
 }

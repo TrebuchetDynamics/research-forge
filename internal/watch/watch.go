@@ -3,6 +3,7 @@ package watch
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/TrebuchetDynamics/research-forge/internal/provenance"
 )
@@ -62,5 +63,6 @@ func Refresh(search WatchedSearch, papers []Paper, inbox *Inbox) RefreshRun {
 	return RefreshRun{WatchedName: search.Name, NewCount: len(papers)}
 }
 func (r RefreshRun) ProvenanceEvent() provenance.Event {
-	return provenance.Event{SchemaVersion: "1", Action: "watch.refresh", Inputs: map[string]any{"watch": r.WatchedName}, Outputs: map[string]any{"newCount": r.NewCount}}
+	now := time.Now().UTC()
+	return provenance.Event{SchemaVersion: "1", ID: "evt_" + now.Format("20060102T150405Z") + "_watch", Timestamp: now.Format(time.RFC3339), Actor: "rforge", Action: "watch.refresh", Target: r.WatchedName, Inputs: map[string]any{"watch": r.WatchedName}, Outputs: map[string]any{"newCount": r.NewCount}, Warnings: []string{}}
 }

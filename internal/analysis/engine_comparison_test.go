@@ -21,6 +21,28 @@ func TestCompareAnalysisEnginesCapturesLocksParityWarningsDeltasAndDisagreement(
 	}
 }
 
+func TestCompareAnalysisEnginesRequiresReviewForNonfiniteOutput(t *testing.T) {
+	run := AnalysisRun{SchemaVersion: "1", ID: "run1"}
+	settings := DefaultEngineModelSettings()
+	primary := EngineResult{Engine: "metafor", Estimate: 2, Variance: 0.5, ModelSettings: settings}
+	secondary := EngineResult{Engine: "pymare", Estimate: math.NaN(), Variance: 0.5, ModelSettings: settings}
+	report := CompareAnalysisEngines(run, primary, secondary, 0.1)
+	if !report.Disagreement.RequiresReview {
+		t.Fatalf("non-finite engine output did not require review: %#v", report.Disagreement)
+	}
+}
+
+func TestCompareAnalysisEnginesRequiresReviewForNegativeVariance(t *testing.T) {
+	run := AnalysisRun{SchemaVersion: "1", ID: "run1"}
+	settings := DefaultEngineModelSettings()
+	primary := EngineResult{Engine: "metafor", Estimate: 2, Variance: -1, ModelSettings: settings}
+	secondary := EngineResult{Engine: "pymare", Estimate: 2, Variance: -1, ModelSettings: settings}
+	report := CompareAnalysisEngines(run, primary, secondary, 0.1)
+	if !report.Disagreement.RequiresReview {
+		t.Fatalf("negative engine variances did not require review: %#v", report.Disagreement)
+	}
+}
+
 func TestBuildPyMAREFixtureResultUsesSameInputSnapshot(t *testing.T) {
 	run := AnalysisRun{ID: "run1", InputRows: []InputRow{{PaperID: "p1", EffectSize: 1, Variance: 1}, {PaperID: "p2", EffectSize: 3, Variance: 1}}}
 	result, err := BuildPyMAREFixtureResult(run, 0)
@@ -29,5 +51,12 @@ func TestBuildPyMAREFixtureResultUsesSameInputSnapshot(t *testing.T) {
 	}
 	if result.Engine != "pymare-fixture" || result.Estimate != 2 || result.Variance != 0.5 || result.InputHash == "" || result.Versions["pymare"] == "" {
 		t.Fatalf("result = %#v", result)
+	}
+}
+
+func TestBuildPyMAREFixtureResultRejectsNonfiniteRows(t *testing.T) {
+	run := AnalysisRun{ID: "run1", InputRows: []InputRow{{PaperID: "p1", EffectSize: math.NaN(), Variance: 1}}}
+	if _, err := BuildPyMAREFixtureResult(run, 0); err == nil {
+		t.Fatal("BuildPyMAREFixtureResult returned nil error for a non-finite effect size")
 	}
 }
