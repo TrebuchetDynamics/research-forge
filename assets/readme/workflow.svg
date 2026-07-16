@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="430" viewBox="0 0 1200 430" role="img" aria-labelledby="title desc">
+  <title id="title">ResearchForge workflow from question to auditable artifacts</title>
+  <desc id="desc">Five stages connect a research question to source discovery, normalized records, legal open-access files, and citable or replayable outputs.</desc>
+
+  <rect width="1200" height="430" rx="20" fill="#F4F0E8"/>
+  <text x="52" y="55" fill="#0F1115" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="30" font-weight="760">From question to auditable artifacts</text>
+  <text x="52" y="83" fill="#5D6670" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13">ONE LOCAL PIPELINE · MACHINE-READABLE RECEIPTS AT EVERY STAGE</text>
+
+  <path d="M120 191H1060" stroke="#B7B0A5" stroke-width="2"/>
+  <path d="M1050 181L1062 191L1050 201" fill="none" stroke="#B7B0A5" stroke-width="2"/>
+
+  <g transform="translate(52 126)">
+    <circle cx="66" cy="66" r="54" fill="#0F1115"/>
+    <text x="66" y="60" text-anchor="middle" fill="#FF6B35" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12" font-weight="700">01 / ASK</text>
+    <text x="66" y="82" text-anchor="middle" fill="#F4F0E8" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="15" font-weight="700">question</text>
+    <text x="66" y="145" text-anchor="middle" fill="#0F1115" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">queries.txt</text>
+    <text x="66" y="165" text-anchor="middle" fill="#717982" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="12">exact search intent</text>
+  </g>
+
+  <g transform="translate(270 126)">
+    <circle cx="66" cy="66" r="54" fill="#FFFFFF" stroke="#AFA79B" stroke-width="2"/>
+    <text x="66" y="60" text-anchor="middle" fill="#B74720" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12" font-weight="700">02 / FIND</text>
+    <text x="66" y="82" text-anchor="middle" fill="#0F1115" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="15" font-weight="700">44 sources</text>
+    <text x="66" y="145" text-anchor="middle" fill="#0F1115" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">search batch</text>
+    <text x="66" y="165" text-anchor="middle" fill="#717982" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="12">resume + refresh</text>
+  </g>
+
+  <g transform="translate(488 126)">
+    <circle cx="66" cy="66" r="54" fill="#FFFFFF" stroke="#AFA79B" stroke-width="2"/>
+    <text x="66" y="60" text-anchor="middle" fill="#B74720" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12" font-weight="700">03 / KEEP</text>
+    <text x="66" y="82" text-anchor="middle" fill="#0F1115" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="15" font-weight="700">records</text>
+    <text x="66" y="145" text-anchor="middle" fill="#0F1115" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">results.jsonl</text>
+    <text x="66" y="165" text-anchor="middle" fill="#717982" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="12">dedupe + failures</text>
+  </g>
+
+  <g transform="translate(706 126)">
+    <circle cx="66" cy="66" r="54" fill="#FFFFFF" stroke="#AFA79B" stroke-width="2"/>
+    <text x="66" y="60" text-anchor="middle" fill="#B74720" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12" font-weight="700">04 / FETCH</text>
+    <text x="66" y="82" text-anchor="middle" fill="#0F1115" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="15" font-weight="700">OA only</text>
+    <text x="66" y="145" text-anchor="middle" fill="#0F1115" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">pdfs/</text>
+    <text x="66" y="165" text-anchor="middle" fill="#717982" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="12">license-aware</text>
+  </g>
+
+  <g transform="translate(924 126)">
+    <circle cx="66" cy="66" r="54" fill="#FF6B35"/>
+    <text x="66" y="60" text-anchor="middle" fill="#0F1115" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12" font-weight="800">05 / PROVE</text>
+    <text x="66" y="82" text-anchor="middle" fill="#0F1115" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="15" font-weight="800">outputs</text>
+    <text x="66" y="145" text-anchor="middle" fill="#0F1115" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">CITATIONS.md</text>
+    <text x="66" y="165" text-anchor="middle" fill="#5B3A2B" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="12">or .rforgepkg</text>
+  </g>
+
+  <g transform="translate(52 342)">
+    <rect width="1096" height="48" rx="8" fill="#E8E2D8"/>
+    <text x="22" y="30" fill="#343A40" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13">TRACE</text>
+    <text x="91" y="30" fill="#68717A" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13">manifest.json</text>
+    <text x="248" y="30" fill="#A79E91" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13">→</text>
+    <text x="281" y="30" fill="#68717A" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13">provenance.json</text>
+    <text x="449" y="30" fill="#A79E91" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13">→</text>
+    <text x="482" y="30" fill="#68717A" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13">checksums.sha256</text>
+    <text x="658" y="30" fill="#A79E91" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13">→</text>
+    <text x="691" y="30" fill="#68717A" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13">audit-report.json</text>
+    <text x="1058" y="30" text-anchor="end" fill="#B74720" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12" font-weight="700">HUMAN GATES STAY HUMAN</text>
+  </g>
+</svg>
