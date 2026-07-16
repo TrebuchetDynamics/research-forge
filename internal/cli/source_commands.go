@@ -812,7 +812,7 @@ func executeOAFetch(args []string, stdout, stderr io.Writer, opts globalOptions)
 		fetched++
 	}
 
-	report := fmt.Sprintf("fetched: %d  skipped: %d  failed: %d\n", fetched, skipped, len(failures))
+	report := fmt.Sprintf("fetched: %d  no open-access copy: %d (expected)  download failures: %d\n", fetched, skipped, len(failures))
 	if err := os.WriteFile(filepath.Join(workOutDir, "fetch-report.txt"), []byte(report), 0o644); err != nil {
 		return writeError(stdout, stderr, opts, 1, "oa_fetch_report_write_failed", err.Error())
 	}
@@ -834,9 +834,9 @@ func executeOAFetch(args []string, stdout, stderr io.Writer, opts globalOptions)
 
 	if opts.JSON {
 		return writeJSON(stdout, 0, map[string]any{
-			"fetched":  fetched,
-			"skipped":  skipped,
-			"failures": len(failures),
+			"fetched":        fetched,
+			"oa_unavailable": skipped,
+			"failures":       len(failures),
 		})
 	}
 	fmt.Fprint(stdout, report)
