@@ -150,11 +150,16 @@ func executeDuplicate(args []string, stdout, stderr io.Writer, opts globalOption
 		merged := library.MergeDuplicate(papers[leftIndex], papers[rightIndex])
 		updated := removePaperIndexes(papers, leftIndex, rightIndex)
 		updated = append(updated, merged)
-		if err := store.ReplaceAll(updated); err != nil {
-			return writeError(stdout, stderr, opts, 1, "duplicate_merge_failed", fmt.Sprintf("merge duplicate: %v", err))
-		}
-		if err := recordDuplicateEvent(opts.Project, "duplicate.merge", map[string]any{"leftIndex": leftIndex, "rightIndex": rightIndex}, map[string]any{"recordCount": len(updated)}); err != nil {
-			return writeError(stdout, stderr, opts, 1, "duplicate_provenance_failed", fmt.Sprintf("record duplicate provenance: %v", err))
+		var provenanceErr error
+		transactionErr := store.ReplaceAllThen(updated, func() error {
+			provenanceErr = recordDuplicateEvent(opts.Project, "duplicate.merge", map[string]any{"leftIndex": leftIndex, "rightIndex": rightIndex}, map[string]any{"recordCount": len(updated)})
+			return provenanceErr
+		})
+		if transactionErr != nil {
+			if provenanceErr != nil {
+				return writeError(stdout, stderr, opts, 1, "duplicate_provenance_failed", fmt.Sprintf("record duplicate provenance: %v", transactionErr))
+			}
+			return writeError(stdout, stderr, opts, 1, "duplicate_merge_failed", fmt.Sprintf("merge duplicate: %v", transactionErr))
 		}
 		if opts.JSON {
 			return writeJSON(stdout, 0, map[string]any{"merged": true, "recordCount": len(updated)})
@@ -176,11 +181,16 @@ func executeDuplicate(args []string, stdout, stderr io.Writer, opts globalOption
 		updated := append([]library.PaperRecord{}, papers[:index]...)
 		updated = append(updated, replacements...)
 		updated = append(updated, papers[index+1:]...)
-		if err := store.ReplaceAll(updated); err != nil {
-			return writeError(stdout, stderr, opts, 1, "duplicate_split_failed", fmt.Sprintf("split duplicate: %v", err))
-		}
-		if err := recordDuplicateEvent(opts.Project, "duplicate.split", map[string]any{"index": index, "replacementFile": args[2]}, map[string]any{"recordCount": len(updated), "replacementCount": len(replacements)}); err != nil {
-			return writeError(stdout, stderr, opts, 1, "duplicate_provenance_failed", fmt.Sprintf("record duplicate provenance: %v", err))
+		var provenanceErr error
+		transactionErr := store.ReplaceAllThen(updated, func() error {
+			provenanceErr = recordDuplicateEvent(opts.Project, "duplicate.split", map[string]any{"index": index, "replacementFile": args[2]}, map[string]any{"recordCount": len(updated), "replacementCount": len(replacements)})
+			return provenanceErr
+		})
+		if transactionErr != nil {
+			if provenanceErr != nil {
+				return writeError(stdout, stderr, opts, 1, "duplicate_provenance_failed", fmt.Sprintf("record duplicate provenance: %v", transactionErr))
+			}
+			return writeError(stdout, stderr, opts, 1, "duplicate_split_failed", fmt.Sprintf("split duplicate: %v", transactionErr))
 		}
 		if opts.JSON {
 			return writeJSON(stdout, 0, map[string]any{"split": true, "recordCount": len(updated)})
@@ -550,11 +560,16 @@ func executeIdentityDecision(args []string, stdout, stderr io.Writer, opts globa
 		return writeError(stdout, stderr, opts, 2, "invalid_identity_decision_indexes", "after indexes must reference existing records")
 	}
 	decision := library.IdentityDecision{ID: "identity-decision-" + time.Now().UTC().Format("20060102T150405Z"), ClusterID: values["--cluster"], Action: values["--action"], Reviewer: values["--reviewer"], Reason: values["--reason"], Reversible: true, Before: before, After: after}
-	if err := library.AppendIdentityDecision(identityDecisionLogPath(opts.Project), decision); err != nil {
-		return writeError(stdout, stderr, opts, 1, "identity_decision_record_failed", err.Error())
-	}
-	if err := recordDuplicateEvent(opts.Project, "identity."+decision.Action+".approved", map[string]any{"clusterId": decision.ClusterID, "reason": decision.Reason}, map[string]any{"reversible": true, "before": len(before), "after": len(after)}); err != nil {
-		return writeError(stdout, stderr, opts, 1, "identity_decision_provenance_failed", err.Error())
+	var provenanceErr error
+	transactionErr := library.AppendIdentityDecisionThen(identityDecisionLogPath(opts.Project), decision, func() error {
+		provenanceErr = recordDuplicateEvent(opts.Project, "identity."+decision.Action+".approved", map[string]any{"clusterId": decision.ClusterID, "reason": decision.Reason}, map[string]any{"reversible": true, "before": len(before), "after": len(after)})
+		return provenanceErr
+	})
+	if transactionErr != nil {
+		if provenanceErr != nil {
+			return writeError(stdout, stderr, opts, 1, "identity_decision_provenance_failed", transactionErr.Error())
+		}
+		return writeError(stdout, stderr, opts, 1, "identity_decision_record_failed", transactionErr.Error())
 	}
 	if opts.JSON {
 		return writeJSON(stdout, 0, map[string]any{"decision": decision})

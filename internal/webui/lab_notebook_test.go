@@ -83,6 +83,27 @@ func hasNotebookCategory(state LabNotebookTimelineState, category string) bool {
 func appendNotebookEvent(t *testing.T, project string, event provenance.Event) {
 	t.Helper()
 	event.SchemaVersion = "1"
+	if event.ID == "" {
+		event.ID = "evt_" + t.Name()
+	}
+	if event.Timestamp == "" {
+		event.Timestamp = "2026-01-01T00:00:00Z"
+	}
+	if event.Actor == "" {
+		event.Actor = "tester"
+	}
+	if event.Target == "" {
+		event.Target = project
+	}
+	if event.Inputs == nil {
+		event.Inputs = map[string]any{}
+	}
+	if event.Outputs == nil {
+		event.Outputs = map[string]any{}
+	}
+	if event.Warnings == nil {
+		event.Warnings = []string{}
+	}
 	if err := provenance.Append(project, event); err != nil {
 		t.Fatalf("append event: %v", err)
 	}

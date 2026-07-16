@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/TrebuchetDynamics/research-forge/internal/analysis"
@@ -32,5 +33,29 @@ func TestExecuteAnalysisEngineCompareWritesPyMAREStyleReport(t *testing.T) {
 	}
 	if report.PrimaryEngine != "metafor" || report.SecondaryEngine != "pymare-fixture" || !report.Disagreement.RequiresReview || len(report.EnvironmentLocks) != 2 || !report.ModelSettingParity || len(report.Warnings) == 0 || report.OutputDeltas.EstimateDelta == 0 {
 		t.Fatalf("report = %#v", report)
+	}
+}
+
+func TestExecuteAnalysisEngineCompareRequiresPrimaryResult(t *testing.T) {
+	project := filepath.Join(t.TempDir(), "demo")
+	if code := Execute([]string{"project", "create", project, "--title", "Engine Compare"}, ioDiscard{}, ioDiscard{}); code != 0 {
+		t.Fatalf("project create code=%d", code)
+	}
+	if err := os.MkdirAll(filepath.Join(project, "analysis"), 0o755); err != nil {
+		t.Fatalf("mkdir analysis: %v", err)
+	}
+	run := analysis.AnalysisRun{SchemaVersion: "1", ID: "run1", InputRows: []analysis.InputRow{{PaperID: "p1", EffectSize: 1, Variance: 1}, {PaperID: "p2", EffectSize: 3, Variance: 1}}}
+	writeJSONForCLITest(t, filepath.Join(project, "analysis", "run1.json"), run)
+	out := filepath.Join(project, "analysis", "run1-engine-comparison.json")
+	var stdout, stderr bytes.Buffer
+	code := Execute([]string{"--json", "--project", project, "analysis", "engine-compare", "run1", "--out", out}, &stdout, &stderr)
+	if code != 1 {
+		t.Fatalf("engine-compare code=%d, want 1; stderr=%s stdout=%s", code, stderr.String(), stdout.String())
+	}
+	if !strings.Contains(stdout.String(), `"code":"analysis_result_read_failed"`) {
+		t.Fatalf("engine-compare did not report missing primary result: %s", stdout.String())
+	}
+	if _, err := os.Stat(out); !os.IsNotExist(err) {
+		t.Fatalf("engine-compare wrote report without primary result: %v", err)
 	}
 }

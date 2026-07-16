@@ -13,6 +13,7 @@ func TestExecutePackageArchiveRestoreCompatibility(t *testing.T) {
 		t.Fatalf("project create code=%d", code)
 	}
 	writeJSONForCLITest(t, filepath.Join(project, "rforge.lock.json"), map[string]string{"version": "1"})
+	writeAuditablePackageInputs(t, project)
 	pkgDir := filepath.Join(t.TempDir(), "review.rforgepkg")
 	if code := Execute([]string{"--project", project, "package", "create", "--out", pkgDir}, ioDiscard{}, ioDiscard{}); code != 0 {
 		t.Fatalf("package create code=%d", code)

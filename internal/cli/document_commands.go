@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/TrebuchetDynamics/research-forge/internal/documents"
+	"github.com/TrebuchetDynamics/research-forge/internal/filetxn"
 	"github.com/TrebuchetDynamics/research-forge/internal/parsing"
 	"github.com/TrebuchetDynamics/research-forge/internal/retrieval"
 )
@@ -40,6 +41,27 @@ func executeIndex(args []string, stdout, stderr io.Writer, opts globalOptions) i
 	if err != nil {
 		return writeError(stdout, stderr, opts, 1, "parsed_read_failed", fmt.Sprintf("read parsed documents: %v", err))
 	}
+	if backend == "opensearch" {
+		if err := validateIndexMetadataTargets(
+			filepath.Join(opts.Project, "data", "opensearch.bulk-report.json"),
+			filepath.Join(opts.Project, "data", "opensearch.mapping.lock.json"),
+			filepath.Join(opts.Project, "data", "retrieval.lock.json"),
+		); err != nil {
+			return writeError(stdout, stderr, opts, 1, "index_metadata_preflight_failed", err.Error())
+		}
+	} else if backend == "qdrant" {
+		if err := validateIndexMetadataTargets(
+			filepath.Join(opts.Project, "data", "qdrant.index-report.json"),
+			filepath.Join(opts.Project, "data", "qdrant.vector.lock.json"),
+			filepath.Join(opts.Project, "data", "retrieval.lock.json"),
+		); err != nil {
+			return writeError(stdout, stderr, opts, 1, "index_metadata_preflight_failed", err.Error())
+		}
+	} else if backend == "sqlite" || backend == "hybrid" {
+		if err := validateIndexMetadataTargets(filepath.Join(opts.Project, "data", "retrieval.lock.json")); err != nil {
+			return writeError(stdout, stderr, opts, 1, "index_metadata_preflight_failed", err.Error())
+		}
+	}
 	index, err := openRetrievalBackend(opts.Project, backend)
 	if err != nil {
 		return writeError(stdout, stderr, opts, 1, "index_open_failed", fmt.Sprintf("open index: %v", err))
@@ -47,35 +69,47 @@ func executeIndex(args []string, stdout, stderr io.Writer, opts globalOptions) i
 	defer index.Close()
 	var openSearchReport *retrieval.OpenSearchBulkReport
 	var qdrantReport *retrieval.QdrantRebuildReport
+	metadataOutputs := []filetxn.Output{}
 	if osIndex, ok := index.(*retrieval.OpenSearchIndex); ok {
 		report, err := osIndex.RebuildWithReport(docs)
 		if err != nil {
 			return writeError(stdout, stderr, opts, 1, "index_rebuild_failed", fmt.Sprintf("rebuild index: %v", err))
 		}
 		openSearchReport = &report
-		if err := writeJSONFile(filepath.Join(opts.Project, "data", "opensearch.bulk-report.json"), report); err != nil {
+		reportOutput, err := jsonFileOutput(filepath.Join(opts.Project, "data", "opensearch.bulk-report.json"), report)
+		if err != nil {
 			return writeError(stdout, stderr, opts, 1, "index_bulk_report_failed", fmt.Sprintf("write OpenSearch bulk report: %v", err))
 		}
-		if err := writeOpenSearchMappingLock(opts.Project, report); err != nil {
+		mappingOutput, err := openSearchMappingLockOutput(opts.Project, report)
+		if err != nil {
 			return writeError(stdout, stderr, opts, 1, "index_mapping_lock_failed", fmt.Sprintf("write OpenSearch mapping lock: %v", err))
 		}
+		metadataOutputs = append(metadataOutputs, reportOutput, mappingOutput)
 	} else if qdrantIndex, ok := index.(*retrieval.QdrantIndex); ok {
 		report, err := qdrantIndex.RebuildWithReport(docs)
 		if err != nil {
 			return writeError(stdout, stderr, opts, 1, "index_rebuild_failed", fmt.Sprintf("rebuild index: %v", err))
 		}
 		qdrantReport = &report
-		if err := writeJSONFile(filepath.Join(opts.Project, "data", "qdrant.index-report.json"), report); err != nil {
+		reportOutput, err := jsonFileOutput(filepath.Join(opts.Project, "data", "qdrant.index-report.json"), report)
+		if err != nil {
 			return writeError(stdout, stderr, opts, 1, "index_qdrant_report_failed", fmt.Sprintf("write Qdrant report: %v", err))
 		}
-		if err := writeQdrantVectorLock(opts.Project, report); err != nil {
+		vectorLockOutput, err := qdrantVectorLockOutput(opts.Project, report)
+		if err != nil {
 			return writeError(stdout, stderr, opts, 1, "index_qdrant_lock_failed", fmt.Sprintf("write Qdrant vector lock: %v", err))
 		}
+		metadataOutputs = append(metadataOutputs, reportOutput, vectorLockOutput)
 	} else if err := index.Rebuild(docs); err != nil {
 		return writeError(stdout, stderr, opts, 1, "index_rebuild_failed", fmt.Sprintf("rebuild index: %v", err))
 	}
-	if err := writeRetrievalLock(opts.Project, backend, len(docs)); err != nil {
+	retrievalOutput, err := retrievalLockOutput(opts.Project, backend, len(docs))
+	if err != nil {
 		return writeError(stdout, stderr, opts, 1, "index_lock_failed", fmt.Sprintf("write retrieval lock: %v", err))
+	}
+	metadataOutputs = append(metadataOutputs, retrievalOutput)
+	if err := filetxn.ReplaceAll(metadataOutputs); err != nil {
+		return writeError(stdout, stderr, opts, 1, "index_metadata_write_failed", fmt.Sprintf("write index metadata: %v", err))
 	}
 	if opts.JSON {
 		data := map[string]any{"indexedDocuments": len(docs), "backend": backend}
@@ -91,6 +125,30 @@ func executeIndex(args []string, stdout, stderr io.Writer, opts globalOptions) i
 	return 0
 }
 
+func validateIndexMetadataTargets(paths ...string) error {
+	for _, path := range paths {
+		parent := filepath.Dir(path)
+		if info, err := os.Lstat(parent); err == nil {
+			if !info.IsDir() {
+				return fmt.Errorf("index metadata parent is not a directory: %s", parent)
+			}
+		} else if !os.IsNotExist(err) {
+			return err
+		}
+		info, err := os.Lstat(path)
+		if err != nil {
+			if os.IsNotExist(err) {
+				continue
+			}
+			return err
+		}
+		if !info.Mode().IsRegular() {
+			return fmt.Errorf("index metadata target is not a regular file: %s", path)
+		}
+	}
+	return nil
+}
+
 type retrievalLock struct {
 	SchemaVersion    string `json:"schemaVersion"`
 	Backend          string `json:"backend"`
@@ -104,8 +162,8 @@ type retrievalLock struct {
 	PayloadPrivacy   string `json:"payloadPrivacy,omitempty"`
 }
 
-func writeQdrantVectorLock(project string, report retrieval.QdrantRebuildReport) error {
-	return writeJSONFile(filepath.Join(project, "data", "qdrant.vector.lock.json"), map[string]any{
+func qdrantVectorLockOutput(project string, report retrieval.QdrantRebuildReport) (filetxn.Output, error) {
+	return jsonFileOutput(filepath.Join(project, "data", "qdrant.vector.lock.json"), map[string]any{
 		"schemaVersion":           "1",
 		"backend":                 "qdrant",
 		"collection":              report.Collection,
@@ -117,8 +175,8 @@ func writeQdrantVectorLock(project string, report retrieval.QdrantRebuildReport)
 	})
 }
 
-func writeOpenSearchMappingLock(project string, report retrieval.OpenSearchBulkReport) error {
-	return writeJSONFile(filepath.Join(project, "data", "opensearch.mapping.lock.json"), map[string]any{
+func openSearchMappingLockOutput(project string, report retrieval.OpenSearchBulkReport) (filetxn.Output, error) {
+	return jsonFileOutput(filepath.Join(project, "data", "opensearch.mapping.lock.json"), map[string]any{
 		"schemaVersion":  "1",
 		"backend":        "opensearch",
 		"index":          report.Index,
@@ -126,7 +184,7 @@ func writeOpenSearchMappingLock(project string, report retrieval.OpenSearchBulkR
 	})
 }
 
-func writeRetrievalLock(project, backend string, indexedDocuments int) error {
+func retrievalLockOutput(project, backend string, indexedDocuments int) (filetxn.Output, error) {
 	lock := retrievalLock{SchemaVersion: "1", Backend: backend, IndexedDocuments: indexedDocuments}
 	switch backend {
 	case "qdrant":
@@ -148,7 +206,7 @@ func writeRetrievalLock(project, backend string, indexedDocuments int) error {
 	default:
 		lock.LexicalBackend = "sqlite-fts5"
 	}
-	return writeJSONFile(filepath.Join(project, "data", "retrieval.lock.json"), lock)
+	return jsonFileOutput(filepath.Join(project, "data", "retrieval.lock.json"), lock)
 }
 
 func executeRetrieve(args []string, stdout, stderr io.Writer, opts globalOptions) int {
@@ -460,11 +518,16 @@ func executeParse(args []string, stdout, stderr io.Writer, opts globalOptions) i
 		if err != nil {
 			return writeError(stdout, stderr, opts, 1, "parse_ref_adjudication_invalid", err.Error())
 		}
-		if err := parsing.AppendReferenceAdjudication(logPath, record); err != nil {
-			return writeError(stdout, stderr, opts, 1, "parse_ref_adjudication_write_failed", err.Error())
-		}
-		if err := recordDuplicateEvent(opts.Project, "reference.adjudication.recorded", map[string]any{"parsed": parsedPath, "paperId": record.PaperID, "referenceIndex": record.ReferenceIndex, "decision": record.Decision}, map[string]any{"path": logPath, "reviewer": record.Reviewer, "reason": record.Reason}); err != nil {
-			return writeError(stdout, stderr, opts, 1, "parse_ref_adjudication_provenance_failed", err.Error())
+		var provenanceErr error
+		transactionErr := parsing.AppendReferenceAdjudicationThen(logPath, record, func() error {
+			provenanceErr = recordDuplicateEvent(opts.Project, "reference.adjudication.recorded", map[string]any{"parsed": parsedPath, "paperId": record.PaperID, "referenceIndex": record.ReferenceIndex, "decision": record.Decision}, map[string]any{"path": logPath, "reviewer": record.Reviewer, "reason": record.Reason})
+			return provenanceErr
+		})
+		if transactionErr != nil {
+			if provenanceErr != nil {
+				return writeError(stdout, stderr, opts, 1, "parse_ref_adjudication_provenance_failed", transactionErr.Error())
+			}
+			return writeError(stdout, stderr, opts, 1, "parse_ref_adjudication_write_failed", transactionErr.Error())
 		}
 		if opts.JSON {
 			return writeJSON(stdout, 0, map[string]any{"referenceAdjudication": record, "path": logPath})
@@ -487,21 +550,35 @@ func executeParse(args []string, stdout, stderr io.Writer, opts globalOptions) i
 		}
 		report := parsing.ApplyReferenceAdjudications(doc, records)
 		var ambiguityQueue *parsing.ReferenceAmbiguityExport
+		outputs := make([]filetxn.Output, 0, 2)
 		if ambiguityOut != "" {
 			matches, err := loadReferenceMatches(matchesPath)
 			if err != nil {
 				return writeError(stdout, stderr, opts, 1, "parse_ref_matches_read_failed", err.Error())
 			}
 			queue := parsing.ExportReferenceAmbiguityQueue(doc, matches, records)
-			if err := writeJSONFile(ambiguityOut, queue); err != nil {
+			output, err := jsonFileOutput(ambiguityOut, queue)
+			if err != nil {
 				return writeError(stdout, stderr, opts, 1, "parse_ref_ambiguity_write_failed", err.Error())
 			}
+			outputs = append(outputs, output)
 			ambiguityQueue = &queue
 		}
 		if out != "" {
-			if err := writeJSONFile(out, report); err != nil {
+			output, err := jsonFileOutput(out, report)
+			if err != nil {
 				return writeError(stdout, stderr, opts, 1, "parse_ref_adjudication_report_write_failed", err.Error())
 			}
+			outputs = append(outputs, output)
+		}
+		if err := filetxn.ReplaceAll(outputs); err != nil {
+			code := "parse_ref_outputs_write_failed"
+			if ambiguityOut == "" {
+				code = "parse_ref_adjudication_report_write_failed"
+			} else if out == "" {
+				code = "parse_ref_ambiguity_write_failed"
+			}
+			return writeError(stdout, stderr, opts, 1, code, err.Error())
 		}
 		if opts.JSON {
 			return writeJSON(stdout, 0, map[string]any{"referenceAdjudication": report, "ambiguityQueue": ambiguityQueue, "path": out, "ambiguityPath": ambiguityOut, "logPath": logPath})
@@ -558,13 +635,18 @@ func executeParse(args []string, stdout, stderr io.Writer, opts globalOptions) i
 		if err := os.MkdirAll(filepath.Dir(out), 0o755); err != nil {
 			return writeError(stdout, stderr, opts, 1, "parse_references_write_failed", err.Error())
 		}
-		if err := os.WriteFile(out, parsedData, 0o644); err != nil {
-			return writeError(stdout, stderr, opts, 1, "parse_references_write_failed", err.Error())
-		}
 		manifestPath := strings.TrimSuffix(out, filepath.Ext(out)) + ".manifest.json"
 		manifest := parsing.NewParserRunManifestWithOutput(doc, input, parsedData, out, command)
-		if err := writeJSONFile(manifestPath, manifest); err != nil {
+		manifestData, err := json.MarshalIndent(manifest, "", "  ")
+		if err != nil {
 			return writeError(stdout, stderr, opts, 1, "parse_references_manifest_failed", err.Error())
+		}
+		manifestData = append(manifestData, '\n')
+		if err := filetxn.ReplaceAll([]filetxn.Output{
+			{Path: out, Data: parsedData, Mode: 0o644},
+			{Path: manifestPath, Data: manifestData, Mode: 0o644},
+		}); err != nil {
+			return writeError(stdout, stderr, opts, 1, "parse_references_write_failed", err.Error())
 		}
 		if opts.JSON {
 			return writeJSON(stdout, 0, map[string]any{"parsed": doc, "path": out, "manifestPath": manifestPath})
@@ -608,11 +690,16 @@ func executeParse(args []string, stdout, stderr io.Writer, opts globalOptions) i
 			return writeError(stdout, stderr, opts, 1, "parse_arbitrate_read_failed", err.Error())
 		}
 		report := parsing.ArbitrateParserOutputs(docs, parsing.ArbitrationDecisionInput{AcceptedParser: accepted, Reason: reason, Reviewer: reviewer})
-		if err := writeJSONFile(out, report); err != nil {
-			return writeError(stdout, stderr, opts, 1, "parse_arbitrate_write_failed", err.Error())
-		}
-		if err := recordDuplicateEvent(opts.Project, "parser.arbitration.decided", map[string]any{"parsed": parsedPaths, "left": left, "right": right, "accepted": report.Decision.AcceptedParser}, map[string]any{"path": out, "reason": report.Decision.Reason, "reviewer": report.Decision.Reviewer, "conflicts": len(report.ConflictReviewQueue)}); err != nil {
-			return writeError(stdout, stderr, opts, 1, "parse_arbitrate_provenance_failed", err.Error())
+		var provenanceErr error
+		transactionErr := writeJSONFileThen(out, report, func() error {
+			provenanceErr = recordDuplicateEvent(opts.Project, "parser.arbitration.decided", map[string]any{"parsed": parsedPaths, "left": left, "right": right, "accepted": report.Decision.AcceptedParser}, map[string]any{"path": out, "reason": report.Decision.Reason, "reviewer": report.Decision.Reviewer, "conflicts": len(report.ConflictReviewQueue)})
+			return provenanceErr
+		})
+		if transactionErr != nil {
+			if provenanceErr != nil {
+				return writeError(stdout, stderr, opts, 1, "parse_arbitrate_provenance_failed", transactionErr.Error())
+			}
+			return writeError(stdout, stderr, opts, 1, "parse_arbitrate_write_failed", transactionErr.Error())
 		}
 		if opts.JSON {
 			return writeJSON(stdout, 0, map[string]any{"arbitration": report, "path": out})
@@ -731,16 +818,26 @@ func executeParse(args []string, stdout, stderr io.Writer, opts globalOptions) i
 		return writeError(stdout, stderr, opts, 1, "parse_store_failed", fmt.Sprintf("marshal parsed doc: %v", err))
 	}
 	data = append(data, '\n')
-	if err := os.WriteFile(parsedPath, data, 0o644); err != nil {
-		return writeError(stdout, stderr, opts, 1, "parse_store_failed", fmt.Sprintf("write parsed doc: %v", err))
-	}
 	manifestPath := filepath.Join(parsedDir, safeFileStem(paperID)+".manifest.json")
 	manifest := parsing.NewParserRunManifestWithOutput(doc, inputData, data, parsedPath, parserCommand(parserName, inputPath))
-	if err := writeJSONFile(manifestPath, manifest); err != nil {
-		return writeError(stdout, stderr, opts, 1, "parse_manifest_failed", fmt.Sprintf("write parser manifest: %v", err))
+	manifestData, err := json.MarshalIndent(manifest, "", "  ")
+	if err != nil {
+		return writeError(stdout, stderr, opts, 1, "parse_manifest_failed", fmt.Sprintf("marshal parser manifest: %v", err))
 	}
-	if err := recordDuplicateEvent(opts.Project, "parser.run", map[string]any{"paperID": paperID, "parser": parserName, "input": inputPath}, map[string]any{"parsedPath": parsedPath, "manifestPath": manifestPath, "parserVersion": doc.ParserVersion, "warnings": doc.Warnings}); err != nil {
-		return writeError(stdout, stderr, opts, 1, "parse_provenance_failed", fmt.Sprintf("record parse provenance: %v", err))
+	manifestData = append(manifestData, '\n')
+	var provenanceErr error
+	transactionErr := filetxn.ReplaceAllThen([]filetxn.Output{
+		{Path: parsedPath, Data: data, Mode: 0o644},
+		{Path: manifestPath, Data: manifestData, Mode: 0o644},
+	}, func() error {
+		provenanceErr = recordDuplicateEvent(opts.Project, "parser.run", map[string]any{"paperID": paperID, "parser": parserName, "input": inputPath}, map[string]any{"parsedPath": parsedPath, "manifestPath": manifestPath, "parserVersion": doc.ParserVersion, "warnings": doc.Warnings})
+		return provenanceErr
+	})
+	if transactionErr != nil {
+		if provenanceErr != nil {
+			return writeError(stdout, stderr, opts, 1, "parse_provenance_failed", fmt.Sprintf("record parse provenance: %v", transactionErr))
+		}
+		return writeError(stdout, stderr, opts, 1, "parse_store_failed", fmt.Sprintf("write parser artifacts: %v", transactionErr))
 	}
 	if opts.JSON {
 		return writeJSON(stdout, 0, map[string]any{"parsed": doc, "path": parsedPath, "manifestPath": manifestPath})

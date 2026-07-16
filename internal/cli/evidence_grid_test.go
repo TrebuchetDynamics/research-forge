@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/TrebuchetDynamics/research-forge/internal/analysis"
@@ -41,5 +42,27 @@ func TestExecuteEvidenceGridWritesExtractionGrid(t *testing.T) {
 	}
 	if len(grid.Rows) != 1 || grid.Rows[0].ParserName != "grobid" || !grid.Rows[0].DownstreamAnalysisIncluded || grid.Rows[0].PDFViewURL != "/papers/paper-1/pdf#passage-1" {
 		t.Fatalf("grid = %#v", grid)
+	}
+}
+
+func TestExecuteEvidenceGridRejectsMalformedEvidenceStore(t *testing.T) {
+	project := t.TempDir()
+	if code := Execute([]string{"project", "create", project, "--title", "Evidence Grid"}, ioDiscard{}, ioDiscard{}); code != 0 {
+		t.Fatalf("project create code=%d", code)
+	}
+	if err := os.WriteFile(evidenceItemsPath(project), []byte(`[{"PaperID":`), 0o644); err != nil {
+		t.Fatalf("write malformed evidence: %v", err)
+	}
+	out := filepath.Join(project, "data", "evidence-grid.json")
+	var stdout, stderr bytes.Buffer
+	code := Execute([]string{"--json", "--project", project, "evidence", "grid", "--out", out}, &stdout, &stderr)
+	if code != 1 {
+		t.Fatalf("grid code=%d, want 1; stderr=%s stdout=%s", code, stderr.String(), stdout.String())
+	}
+	if !strings.Contains(stdout.String(), `"code":"evidence_read_failed"`) {
+		t.Fatalf("grid did not report evidence read failure: %s", stdout.String())
+	}
+	if _, err := os.Stat(out); !os.IsNotExist(err) {
+		t.Fatalf("grid wrote output after evidence read failure: %v", err)
 	}
 }

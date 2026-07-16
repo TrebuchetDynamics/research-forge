@@ -16,11 +16,175 @@ import (
 	"github.com/TrebuchetDynamics/research-forge/internal/citations"
 	"github.com/TrebuchetDynamics/research-forge/internal/documents"
 	"github.com/TrebuchetDynamics/research-forge/internal/evidence"
+	"github.com/TrebuchetDynamics/research-forge/internal/filetxn"
 	"github.com/TrebuchetDynamics/research-forge/internal/library"
 	"github.com/TrebuchetDynamics/research-forge/internal/parsing"
 	"github.com/TrebuchetDynamics/research-forge/internal/provenance"
 	"github.com/TrebuchetDynamics/research-forge/internal/sources"
 )
+
+type fileSnapshot struct {
+	path    string
+	data    []byte
+	mode    os.FileMode
+	existed bool
+}
+
+func captureFileSnapshot(path string) (fileSnapshot, error) {
+	info, err := os.Lstat(path)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return fileSnapshot{path: path}, nil
+		}
+		return fileSnapshot{}, err
+	}
+	if !info.Mode().IsRegular() {
+		return fileSnapshot{}, fmt.Errorf("output path is not a regular file: %s", path)
+	}
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return fileSnapshot{}, err
+	}
+	return fileSnapshot{path: path, data: data, mode: info.Mode(), existed: true}, nil
+}
+
+func restoreFileSnapshots(snapshots ...fileSnapshot) error {
+	failures := make([]string, 0)
+	for i := len(snapshots) - 1; i >= 0; i-- {
+		snapshot := snapshots[i]
+		var err error
+		if snapshot.existed {
+			err = filetxn.Replace(snapshot.path, snapshot.data, snapshot.mode)
+		} else {
+			err = os.Remove(snapshot.path)
+			if os.IsNotExist(err) {
+				err = nil
+			}
+		}
+		if err != nil {
+			failures = append(failures, fmt.Sprintf("%s: %v", snapshot.path, err))
+		}
+	}
+	if len(failures) > 0 {
+		return fmt.Errorf("restore output snapshots: %s", strings.Join(failures, "; "))
+	}
+	return nil
+}
+
+type stagedOutputTransaction struct {
+	stagingDir string
+	paths      []string
+	snapshots  []fileSnapshot
+	newDirs    []string
+}
+
+func beginSearchBatchOutputTransaction(outDir string, queries, sources []string, writeStats bool) (*stagedOutputTransaction, error) {
+	relativePaths := []string{"results.jsonl", "results-deduped.jsonl", "failures.jsonl", "results.md", "manifest.json"}
+	if writeStats {
+		relativePaths = append(relativePaths, "search-stats.txt")
+	}
+	for qi, query := range queries {
+		for _, source := range sources {
+			relativePaths = append(relativePaths, filepath.Join("raw", fmt.Sprintf("search-%s-%03d-%s.txt", source, qi+1, slugifySearchBatch(query))))
+		}
+	}
+	return beginStagedOutputTransaction(outDir, relativePaths)
+}
+
+func beginStagedOutputTransaction(outDir string, relativePaths []string) (*stagedOutputTransaction, error) {
+	transaction := &stagedOutputTransaction{paths: relativePaths, snapshots: make([]fileSnapshot, 0, len(relativePaths))}
+	for _, relativePath := range relativePaths {
+		snapshot, err := captureFileSnapshot(filepath.Join(outDir, relativePath))
+		if err != nil {
+			return nil, err
+		}
+		transaction.snapshots = append(transaction.snapshots, snapshot)
+	}
+	newDirs, err := missingStagedOutputDirectories(transaction.snapshots)
+	if err != nil {
+		return nil, err
+	}
+	transaction.newDirs = newDirs
+	stagingDir, err := os.MkdirTemp("", "rforge-search-batch-*")
+	if err != nil {
+		return nil, err
+	}
+	transaction.stagingDir = stagingDir
+	return transaction, nil
+}
+
+func missingStagedOutputDirectories(snapshots []fileSnapshot) ([]string, error) {
+	missing := map[string]bool{}
+	for _, snapshot := range snapshots {
+		for dir := filepath.Dir(snapshot.path); ; dir = filepath.Dir(dir) {
+			info, err := os.Stat(dir)
+			if err == nil {
+				if !info.IsDir() {
+					return nil, fmt.Errorf("search batch output parent is not a directory: %s", dir)
+				}
+				break
+			}
+			if !os.IsNotExist(err) {
+				return nil, err
+			}
+			missing[dir] = true
+			if parent := filepath.Dir(dir); parent == dir {
+				break
+			}
+		}
+	}
+	dirs := make([]string, 0, len(missing))
+	for dir := range missing {
+		dirs = append(dirs, dir)
+	}
+	sort.Slice(dirs, func(i, j int) bool { return len(dirs[i]) > len(dirs[j]) })
+	return dirs, nil
+}
+
+func (transaction *stagedOutputTransaction) commit() error {
+	for i, relativePath := range transaction.paths {
+		sourcePath := filepath.Join(transaction.stagingDir, relativePath)
+		data, err := os.ReadFile(sourcePath)
+		if err != nil {
+			if os.IsNotExist(err) {
+				continue
+			}
+			return transaction.rollback(err)
+		}
+		info, err := os.Stat(sourcePath)
+		if err != nil {
+			return transaction.rollback(err)
+		}
+		targetPath := transaction.snapshots[i].path
+		if err := os.MkdirAll(filepath.Dir(targetPath), 0o755); err != nil {
+			return transaction.rollback(err)
+		}
+		if err := filetxn.Replace(targetPath, data, info.Mode()); err != nil {
+			return transaction.rollback(err)
+		}
+	}
+	return nil
+}
+
+func (transaction *stagedOutputTransaction) rollback(cause error) error {
+	failures := make([]string, 0, 2)
+	if err := restoreFileSnapshots(transaction.snapshots...); err != nil {
+		failures = append(failures, err.Error())
+	}
+	for _, dir := range transaction.newDirs {
+		if err := os.Remove(dir); err != nil && !os.IsNotExist(err) {
+			failures = append(failures, fmt.Sprintf("remove created directory %s: %v", dir, err))
+		}
+	}
+	if len(failures) > 0 {
+		return fmt.Errorf("%w; roll back search batch outputs: %s", cause, strings.Join(failures, "; "))
+	}
+	return cause
+}
+
+func (transaction *stagedOutputTransaction) cleanup() {
+	_ = os.RemoveAll(transaction.stagingDir)
+}
 
 func executeCitations(args []string, stdout, stderr io.Writer, opts globalOptions) int {
 	if len(args) == 0 {
@@ -56,7 +220,7 @@ func executeCitations(args []string, stdout, stderr io.Writer, opts globalOption
 			if err := os.MkdirAll(filepath.Dir(outPath), 0o755); err != nil {
 				return writeError(stdout, stderr, opts, 1, "accessible_graph_write_failed", err.Error())
 			}
-			if err := os.WriteFile(outPath, []byte(citations.AccessibleGraphMarkdown(view)), 0o644); err != nil {
+			if err := filetxn.ReplaceAll([]filetxn.Output{{Path: outPath, Data: []byte(citations.AccessibleGraphMarkdown(view)), Mode: 0o644}}); err != nil {
 				return writeError(stdout, stderr, opts, 1, "accessible_graph_write_failed", err.Error())
 			}
 		}
@@ -86,12 +250,21 @@ func executeCitations(args []string, stdout, stderr io.Writer, opts globalOption
 		if err != nil {
 			return writeError(stdout, stderr, opts, 1, "domain_map_failed", err.Error())
 		}
+		outSnapshot, err := captureFileSnapshot(outPath)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "domain_map_snapshot_failed", err.Error())
+		}
 		if err := writeJSONFile(outPath, artifact); err != nil {
 			return writeError(stdout, stderr, opts, 1, "domain_map_write_failed", err.Error())
 		}
 		if opts.Project != "" {
 			now := time.Now().UTC()
-			_ = provenance.Append(opts.Project, provenance.Event{SchemaVersion: "1", ID: "evt_" + now.Format("20060102T150405Z") + "_domain_map", Timestamp: now.Format(time.RFC3339), Actor: "rforge", Action: "citations.domain_map.created", Target: outPath, Inputs: map[string]any{"parsedDir": parsedDir, "graph": graphPath}, Outputs: map[string]any{"topics": len(artifact.Topics), "path": outPath}})
+			if err := provenance.Append(opts.Project, provenance.Event{SchemaVersion: "1", ID: "evt_" + now.Format("20060102T150405Z") + "_domain_map", Timestamp: now.Format(time.RFC3339), Actor: "rforge", Action: "citations.domain_map.created", Target: outPath, Inputs: map[string]any{"parsedDir": parsedDir, "graph": graphPath}, Outputs: map[string]any{"topics": len(artifact.Topics), "path": outPath}, Warnings: []string{}}); err != nil {
+				if restoreErr := restoreFileSnapshots(outSnapshot); restoreErr != nil {
+					return writeError(stdout, stderr, opts, 1, "domain_map_provenance_rollback_failed", fmt.Sprintf("append provenance: %v; %v", err, restoreErr))
+				}
+				return writeError(stdout, stderr, opts, 1, "domain_map_provenance_failed", err.Error())
+			}
 		}
 		if opts.JSON {
 			return writeJSON(stdout, 0, map[string]any{"domainMap": artifact, "path": outPath})
@@ -120,7 +293,9 @@ func executeCitations(args []string, stdout, stderr io.Writer, opts globalOption
 		}
 		var items []evidence.EvidenceItem
 		if evidencePath != "" {
-			_ = readJSONFile(evidencePath, &items)
+			if err := readJSONFile(evidencePath, &items); err != nil && !os.IsNotExist(err) {
+				return writeError(stdout, stderr, opts, 1, "citation_evidence_read_failed", err.Error())
+			}
 		}
 		report := citations.ImportParsedBibliographies(docs, items)
 		graphData, err := report.Graph.ExportJSON()
@@ -130,17 +305,27 @@ func executeCitations(args []string, stdout, stderr io.Writer, opts globalOption
 		if err := os.MkdirAll(filepath.Dir(outPath), 0o755); err != nil {
 			return writeError(stdout, stderr, opts, 1, "citation_bibliography_write_failed", err.Error())
 		}
-		if err := os.WriteFile(outPath, graphData, 0o644); err != nil {
-			return writeError(stdout, stderr, opts, 1, "citation_bibliography_write_failed", err.Error())
-		}
-		if err := writeJSONFile(reportPath, report); err != nil {
+		reportOutput, err := jsonFileOutput(reportPath, report)
+		if err != nil {
 			return writeError(stdout, stderr, opts, 1, "citation_bibliography_report_write_failed", err.Error())
 		}
-		if opts.Project != "" {
-			now := time.Now().UTC()
-			if err := provenance.Append(opts.Project, provenance.Event{SchemaVersion: "1", ID: "evt_" + now.Format("20060102T150405Z") + "_bibliography_import", Timestamp: now.Format(time.RFC3339), Actor: "rforge", Action: "citations.bibliography.imported", Target: outPath, Inputs: map[string]any{"parsed": parsedPath, "parsedDir": parsedDir, "evidence": evidencePath}, Outputs: map[string]any{"graph": outPath, "report": reportPath, "edges": report.EdgeCount}}); err != nil {
-				return writeError(stdout, stderr, opts, 1, "citation_bibliography_provenance_failed", err.Error())
+		var provenanceErr error
+		transactionErr := filetxn.ReplaceAllThen([]filetxn.Output{
+			{Path: outPath, Data: graphData, Mode: 0o644},
+			reportOutput,
+		}, func() error {
+			if opts.Project == "" {
+				return nil
 			}
+			now := time.Now().UTC()
+			provenanceErr = provenance.Append(opts.Project, provenance.Event{SchemaVersion: "1", ID: "evt_" + now.Format("20060102T150405Z") + "_bibliography_import", Timestamp: now.Format(time.RFC3339), Actor: "rforge", Action: "citations.bibliography.imported", Target: outPath, Inputs: map[string]any{"parsed": parsedPath, "parsedDir": parsedDir, "evidence": evidencePath}, Outputs: map[string]any{"graph": outPath, "report": reportPath, "edges": report.EdgeCount}, Warnings: []string{}})
+			return provenanceErr
+		})
+		if transactionErr != nil {
+			if provenanceErr != nil {
+				return writeError(stdout, stderr, opts, 1, "citation_bibliography_provenance_failed", transactionErr.Error())
+			}
+			return writeError(stdout, stderr, opts, 1, "citation_bibliography_write_failed", transactionErr.Error())
 		}
 		if opts.JSON {
 			return writeJSON(stdout, 0, map[string]any{"bibliographyImport": report, "graphPath": outPath, "reportPath": reportPath})
@@ -165,7 +350,7 @@ func executeCitations(args []string, stdout, stderr io.Writer, opts globalOption
 		if err := os.MkdirAll(filepath.Dir(outPath), 0o755); err != nil {
 			return writeError(stdout, stderr, opts, 1, "citation_report_write_failed", err.Error())
 		}
-		if err := os.WriteFile(outPath, []byte(markdown), 0o644); err != nil {
+		if err := filetxn.ReplaceAll([]filetxn.Output{{Path: outPath, Data: []byte(markdown), Mode: 0o644}}); err != nil {
 			return writeError(stdout, stderr, opts, 1, "citation_report_write_failed", err.Error())
 		}
 		if opts.JSON {
@@ -189,6 +374,9 @@ func executeCitations(args []string, stdout, stderr io.Writer, opts globalOption
 		}
 		fmt.Fprintln(stdout, budgetEstimate.DryRunPlan)
 		return 0
+	}
+	if importLibrary && opts.Project == "" {
+		return writeError(stdout, stderr, opts, 2, "missing_project", "--project is required when using --import-library")
 	}
 	var expansion sources.CitationGraphExpansion
 	var err error
@@ -215,27 +403,55 @@ func executeCitations(args []string, stdout, stderr io.Writer, opts globalOption
 	if err != nil {
 		return writeError(stdout, stderr, opts, 1, "citation_graph_export_failed", err.Error())
 	}
-	if err := os.MkdirAll(filepath.Dir(out), 0o755); err != nil {
-		return writeError(stdout, stderr, opts, 1, "citation_graph_write_failed", err.Error())
+	snapshots := make([]fileSnapshot, 0, 3)
+	graphSnapshot, err := captureFileSnapshot(out)
+	if err != nil {
+		return writeError(stdout, stderr, opts, 1, "citation_graph_snapshot_failed", err.Error())
 	}
-	if err := os.WriteFile(out, data, 0o644); err != nil {
-		return writeError(stdout, stderr, opts, 1, "citation_graph_write_failed", err.Error())
+	snapshots = append(snapshots, graphSnapshot)
+	if runStatePath != "" && source == "semantic-scholar" {
+		runSnapshot, err := captureFileSnapshot(runStatePath)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "citation_run_state_snapshot_failed", err.Error())
+		}
+		snapshots = append(snapshots, runSnapshot)
+	}
+	if importLibrary {
+		librarySnapshot, err := captureFileSnapshot(filepath.Join(opts.Project, "data", "library.json"))
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "citation_import_snapshot_failed", err.Error())
+		}
+		snapshots = append(snapshots, librarySnapshot)
+	}
+	rollback := func(code string, cause error) int {
+		if restoreErr := restoreFileSnapshots(snapshots...); restoreErr != nil {
+			rollbackCode := strings.TrimSuffix(code, "_failed") + "_rollback_failed"
+			return writeError(stdout, stderr, opts, 1, rollbackCode, fmt.Sprintf("%v; %v", cause, restoreErr))
+		}
+		return writeError(stdout, stderr, opts, 1, code, cause.Error())
+	}
+	if err := os.MkdirAll(filepath.Dir(out), 0o755); err != nil {
+		return rollback("citation_graph_write_failed", err)
+	}
+	graphMode := os.FileMode(0o644)
+	if graphSnapshot.existed {
+		graphMode = graphSnapshot.mode
+	}
+	if err := filetxn.Replace(out, data, graphMode); err != nil {
+		return rollback("citation_graph_write_failed", err)
 	}
 	if runStatePath != "" && source == "semantic-scholar" {
 		run := sources.NewSemanticScholarGraphRun(sources.SemanticScholarGraphRunOptions{SeedID: paperID, Direction: sources.SemanticScholarGraphDirection(direction), Limit: limit, Depth: budget.MaxDepth, MaxRecords: budget.MaxNodes, RequestedFields: []string{"paperId", "title", "abstract", "year", "venue", "externalIds"}, Budget: budget})
 		run = run.RecordExpansion(expansion, nil, 0)
 		if err := writeJSONFile(runStatePath, run); err != nil {
-			return writeError(stdout, stderr, opts, 1, "citation_run_state_write_failed", err.Error())
+			return rollback("citation_run_state_write_failed", err)
 		}
 	}
 	imported := 0
 	if importLibrary {
-		if opts.Project == "" {
-			return writeError(stdout, stderr, opts, 2, "missing_project", "--project is required when using --import-library")
-		}
 		store, err := library.OpenStore(filepath.Join(opts.Project, "data", "library.json"))
 		if err != nil {
-			return writeError(stdout, stderr, opts, 1, "library_open_failed", err.Error())
+			return rollback("library_open_failed", err)
 		}
 		records := make([]sources.SourceRecord, 0, len(expansion.Records))
 		for _, record := range expansion.Records {
@@ -243,11 +459,11 @@ func executeCitations(args []string, stdout, stderr io.Writer, opts globalOption
 		}
 		papers, err := sources.PaperRecords(sources.SourceResponse{Records: records, RawRef: expansion.RawRef})
 		if err != nil {
-			return writeError(stdout, stderr, opts, 1, "citation_import_normalize_failed", err.Error())
+			return rollback("citation_import_normalize_failed", err)
 		}
 		summary, err := store.ImportRecords(papers)
 		if err != nil {
-			return writeError(stdout, stderr, opts, 1, "citation_import_failed", err.Error())
+			return rollback("citation_import_failed", err)
 		}
 		imported = summary.Imported
 	}
@@ -280,7 +496,7 @@ func executeCitations(args []string, stdout, stderr io.Writer, opts globalOption
 			},
 			Warnings: []string{},
 		}); err != nil {
-			return writeError(stdout, stderr, opts, 1, "citation_provenance_failed", err.Error())
+			return rollback("citation_provenance_failed", err)
 		}
 	}
 	if opts.JSON {
@@ -548,10 +764,6 @@ func executeOAFetch(args []string, stdout, stderr io.Writer, opts globalOptions)
 	if outDir == "" {
 		outDir = dir
 	}
-	if err := os.MkdirAll(filepath.Join(outDir, "pdfs"), 0o755); err != nil {
-		return writeError(stdout, stderr, opts, 1, "oa_fetch_mkdir_failed", err.Error())
-	}
-
 	records, err := readResultsJSONL(filepath.Join(dir, "results.jsonl"))
 	if err != nil {
 		return writeError(stdout, stderr, opts, 1, "oa_fetch_read_failed", fmt.Sprintf("read results.jsonl: %v", err))
@@ -561,24 +773,38 @@ func executeOAFetch(args []string, stdout, stderr io.Writer, opts globalOptions)
 	if arxivPDFBase == "" {
 		arxivPDFBase = "https://arxiv.org"
 	}
-	httpClient := defaultSourceHTTPClient(arxivPDFBase)
-
-	fetched := 0
-	skipped := 0
-	failures := []map[string]any{}
-
+	type oaDownload struct {
+		record       library.PaperRecord
+		url          string
+		relativePath string
+	}
+	downloads := make([]oaDownload, 0, len(records))
+	relativePaths := []string{"fetch-report.txt", "fetch-failures.jsonl"}
 	for _, record := range records {
 		pdfURL := oaFetchPDFURL(record, arxivPDFBase)
 		if pdfURL == "" {
-			skipped++
 			continue
 		}
-		slug := oaFetchSlug(record)
-		destPath := filepath.Join(outDir, "pdfs", slug+".pdf")
-		if err := downloadPDF(httpClient, pdfURL, destPath); err != nil {
+		relativePath := filepath.Join("pdfs", oaFetchSlug(record)+".pdf")
+		downloads = append(downloads, oaDownload{record: record, url: pdfURL, relativePath: relativePath})
+		relativePaths = append(relativePaths, relativePath)
+	}
+	output, err := beginStagedOutputTransaction(outDir, uniqueNonEmptyStrings(relativePaths))
+	if err != nil {
+		return writeError(stdout, stderr, opts, 1, "oa_fetch_output_snapshot_failed", err.Error())
+	}
+	defer output.cleanup()
+	workOutDir := output.stagingDir
+	fetched := 0
+	skipped := len(records) - len(downloads)
+	failures := []map[string]any{}
+
+	for _, download := range downloads {
+		destPath := filepath.Join(workOutDir, download.relativePath)
+		if err := downloadPDF(download.url, destPath); err != nil {
 			failures = append(failures, map[string]any{
-				"doi":   record.Identifiers.DOI,
-				"url":   pdfURL,
+				"doi":   download.record.Identifiers.DOI,
+				"url":   download.url,
 				"error": err.Error(),
 			})
 			continue
@@ -587,17 +813,23 @@ func executeOAFetch(args []string, stdout, stderr io.Writer, opts globalOptions)
 	}
 
 	report := fmt.Sprintf("fetched: %d  skipped: %d  failed: %d\n", fetched, skipped, len(failures))
-	_ = os.WriteFile(filepath.Join(outDir, "fetch-report.txt"), []byte(report), 0o644)
-
-	if len(failures) > 0 {
-		failLines := []byte{}
-		for _, f := range failures {
-			if line, err := json.Marshal(f); err == nil {
-				failLines = append(failLines, line...)
-				failLines = append(failLines, '\n')
-			}
+	if err := os.WriteFile(filepath.Join(workOutDir, "fetch-report.txt"), []byte(report), 0o644); err != nil {
+		return writeError(stdout, stderr, opts, 1, "oa_fetch_report_write_failed", err.Error())
+	}
+	failLines := []byte{}
+	for _, failure := range failures {
+		line, err := json.Marshal(failure)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "oa_fetch_failures_write_failed", err.Error())
 		}
-		_ = os.WriteFile(filepath.Join(outDir, "fetch-failures.jsonl"), failLines, 0o644)
+		failLines = append(failLines, line...)
+		failLines = append(failLines, '\n')
+	}
+	if err := os.WriteFile(filepath.Join(workOutDir, "fetch-failures.jsonl"), failLines, 0o644); err != nil {
+		return writeError(stdout, stderr, opts, 1, "oa_fetch_failures_write_failed", err.Error())
+	}
+	if err := output.commit(); err != nil {
+		return writeError(stdout, stderr, opts, 1, "oa_fetch_output_commit_failed", err.Error())
 	}
 
 	if opts.JSON {
@@ -650,10 +882,13 @@ func min(a, b int) int {
 	return b
 }
 
-func downloadPDF(client sources.HTTPClient, pdfURL, destPath string) error {
-	// Extract path from URL for the HTTP client's Get method.
-	// The client already has the base URL baked in for arXiv,
-	// but for arbitrary OA URLs we use a plain HTTP GET.
+func downloadPDF(pdfURL, destPath string) error {
+	// OA URLs may point beyond the connector's base URL, so fetch them directly.
+	output, err := beginStagedOutputTransaction(filepath.Dir(destPath), []string{filepath.Base(destPath)})
+	if err != nil {
+		return err
+	}
+	defer output.cleanup()
 	resp, err := http.Get(pdfURL) //nolint:gosec // URL comes from published OA metadata, not user input
 	if err != nil {
 		return err
@@ -666,29 +901,58 @@ func downloadPDF(client sources.HTTPClient, pdfURL, destPath string) error {
 	if err != nil {
 		return err
 	}
-	return os.WriteFile(destPath, body, 0o644)
+	if err := os.WriteFile(filepath.Join(output.stagingDir, filepath.Base(destPath)), body, 0o644); err != nil {
+		return err
+	}
+	return output.commit()
 }
 
 func readResultsJSONL(path string) ([]library.PaperRecord, error) {
-	data, err := os.ReadFile(path)
+	info, err := os.Lstat(path)
 	if err != nil {
 		if os.IsNotExist(err) {
 			return nil, nil
 		}
 		return nil, err
 	}
+	if !info.Mode().IsRegular() {
+		return nil, fmt.Errorf("results.jsonl is not a regular file: %s", path)
+	}
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return nil, err
+	}
 	var records []library.PaperRecord
-	for _, line := range strings.Split(string(data), "\n") {
+	for index, line := range strings.Split(string(data), "\n") {
 		line = strings.TrimSpace(line)
 		if line == "" {
 			continue
 		}
 		var r library.PaperRecord
-		if json.Unmarshal([]byte(line), &r) == nil && (r.Title != "" || r.Identifiers.DOI != "") {
-			records = append(records, r)
+		if err := json.Unmarshal([]byte(line), &r); err != nil {
+			return nil, fmt.Errorf("decode results.jsonl line %d: %w", index+1, err)
 		}
+		if strings.TrimSpace(r.Title) == "" {
+			return nil, fmt.Errorf("decode results.jsonl line %d: paper title is required", index+1)
+		}
+		if !resultHasIdentifier(r.Identifiers) {
+			return nil, fmt.Errorf("decode results.jsonl line %d: at least one paper identifier is required", index+1)
+		}
+		records = append(records, r)
 	}
 	return records, nil
+}
+
+func resultHasIdentifier(identifiers library.Identifiers) bool {
+	return strings.TrimSpace(identifiers.DOI) != "" ||
+		strings.TrimSpace(identifiers.ArXivID) != "" ||
+		strings.TrimSpace(identifiers.PMID) != "" ||
+		strings.TrimSpace(identifiers.PMCID) != "" ||
+		strings.TrimSpace(identifiers.OpenAlexID) != "" ||
+		strings.TrimSpace(identifiers.CrossrefID) != "" ||
+		strings.TrimSpace(identifiers.SemanticScholarID) != "" ||
+		strings.TrimSpace(identifiers.ZoteroItemKey) != "" ||
+		strings.TrimSpace(identifiers.ADSBibcode) != ""
 }
 
 func executePrivacyReview(args []string, stdout, stderr io.Writer, opts globalOptions) int {
@@ -749,7 +1013,12 @@ func executePrivacyApprove(args []string, stdout, stderr io.Writer, opts globalO
 		return writeError(stdout, stderr, opts, 1, "privacy_review_write_failed", err.Error())
 	}
 	now := time.Now().UTC()
-	_ = provenance.Append(opts.Project, provenance.Event{SchemaVersion: "1", ID: "evt_" + now.Format("20060102T150405Z") + "_privacy_review", Timestamp: now.Format(time.RFC3339), Actor: "rforge", Action: "privacy.licensing.approved", Target: path, Inputs: map[string]any{"reviewer": values["--reviewer"], "reason": values["--reason"]}, Outputs: map[string]any{"issues": len(review.Issues)}, Warnings: []string{}})
+	if err := provenance.Append(opts.Project, provenance.Event{SchemaVersion: "1", ID: "evt_" + now.Format("20060102T150405Z") + "_privacy_review", Timestamp: now.Format(time.RFC3339), Actor: "rforge", Action: "privacy.licensing.approved", Target: path, Inputs: map[string]any{"reviewer": values["--reviewer"], "reason": values["--reason"]}, Outputs: map[string]any{"issues": len(review.Issues)}, Warnings: []string{}}); err != nil {
+		if restoreErr := os.WriteFile(path, data, 0o644); restoreErr != nil {
+			return writeError(stdout, stderr, opts, 1, "privacy_review_provenance_rollback_failed", fmt.Sprintf("append provenance: %v; restore review: %v", err, restoreErr))
+		}
+		return writeError(stdout, stderr, opts, 1, "privacy_review_provenance_failed", err.Error())
+	}
 	if opts.JSON {
 		return writeJSON(stdout, 0, map[string]any{"review": review, "path": path})
 	}
@@ -795,7 +1064,12 @@ func executeAcquisitionApprove(args []string, stdout, stderr io.Writer, opts glo
 		return writeError(stdout, stderr, opts, 1, "acquisition_queue_write_failed", err.Error())
 	}
 	now := time.Now().UTC()
-	_ = provenance.Append(opts.Project, provenance.Event{SchemaVersion: "1", ID: "evt_" + now.Format("20060102T150405Z") + "_document_acquisition", Timestamp: now.Format(time.RFC3339), Actor: "rforge", Action: "document.acquisition.approved", Target: args[0], Inputs: map[string]any{"reviewer": values["--reviewer"], "reason": values["--reason"]}, Outputs: map[string]any{"queue": path}, Warnings: []string{}})
+	if err := provenance.Append(opts.Project, provenance.Event{SchemaVersion: "1", ID: "evt_" + now.Format("20060102T150405Z") + "_document_acquisition", Timestamp: now.Format(time.RFC3339), Actor: "rforge", Action: "document.acquisition.approved", Target: args[0], Inputs: map[string]any{"reviewer": values["--reviewer"], "reason": values["--reason"]}, Outputs: map[string]any{"queue": path}, Warnings: []string{}}); err != nil {
+		if restoreErr := os.WriteFile(path, data, 0o644); restoreErr != nil {
+			return writeError(stdout, stderr, opts, 1, "acquisition_provenance_rollback_failed", fmt.Sprintf("append provenance: %v; restore queue: %v", err, restoreErr))
+		}
+		return writeError(stdout, stderr, opts, 1, "acquisition_provenance_failed", err.Error())
+	}
 	if opts.JSON {
 		return writeJSON(stdout, 0, map[string]any{"queue": queue, "path": path})
 	}
@@ -899,12 +1173,18 @@ func executeSearchBatch(args []string, stdout, stderr io.Writer, opts globalOpti
 	if batch.FetchPDFs && opts.Project == "" {
 		return writeError(stdout, stderr, opts, 2, "missing_project", "--project is required for search batch --fetch-pdfs")
 	}
-	if err := os.MkdirAll(filepath.Join(batch.OutDir, "raw"), 0o755); err != nil {
+	output, err := beginSearchBatchOutputTransaction(batch.OutDir, queries, batch.Sources, batch.WriteStats)
+	if err != nil {
+		return writeError(stdout, stderr, opts, 1, "search_batch_output_snapshot_failed", err.Error())
+	}
+	defer output.cleanup()
+	workOutDir := output.stagingDir
+	if err := os.MkdirAll(filepath.Join(workOutDir, "raw"), 0o755); err != nil {
 		return writeError(stdout, stderr, opts, 1, "search_batch_out_failed", err.Error())
 	}
-	resultsPath := filepath.Join(batch.OutDir, "results.jsonl")
-	dedupedPath := filepath.Join(batch.OutDir, "results-deduped.jsonl")
-	failuresPath := filepath.Join(batch.OutDir, "failures.jsonl")
+	resultsPath := filepath.Join(workOutDir, "results.jsonl")
+	dedupedPath := filepath.Join(workOutDir, "results-deduped.jsonl")
+	failuresPath := filepath.Join(workOutDir, "failures.jsonl")
 	resultsFile, err := os.Create(resultsPath)
 	if err != nil {
 		return writeError(stdout, stderr, opts, 1, "search_batch_write_failed", err.Error())
@@ -951,7 +1231,7 @@ func executeSearchBatch(args []string, stdout, stderr io.Writer, opts globalOpti
 				continue
 			}
 			rawName := fmt.Sprintf("search-%s-%03d-%s.txt", source, qi+1, slugifySearchBatch(query))
-			if err := writeSearchBatchRaw(filepath.Join(batch.OutDir, "raw", rawName), papers); err != nil {
+			if err := writeSearchBatchRaw(filepath.Join(workOutDir, "raw", rawName), papers); err != nil {
 				return writeError(stdout, stderr, opts, 1, "search_batch_write_failed", err.Error())
 			}
 			for _, paper := range papers {
@@ -972,15 +1252,15 @@ func executeSearchBatch(args []string, stdout, stderr io.Writer, opts globalOpti
 	if err := writeSearchBatchJSONL(dedupedPath, deduped); err != nil {
 		return writeError(stdout, stderr, opts, 1, "search_batch_write_failed", err.Error())
 	}
-	if err := writeSearchBatchMarkdown(filepath.Join(batch.OutDir, "results.md"), deduped, failures); err != nil {
+	if err := writeSearchBatchMarkdown(filepath.Join(workOutDir, "results.md"), deduped, failures); err != nil {
 		return writeError(stdout, stderr, opts, 1, "search_batch_write_failed", err.Error())
 	}
 	manifest := searchBatchManifest{SchemaVersion: "1", CreatedAt: time.Now().UTC().Format(time.RFC3339), Queries: queries, Sources: batch.Sources, Limit: batch.Limit, Results: len(allPapers), Deduped: len(deduped), Failures: len(failures)}
-	if err := writeJSONFile(filepath.Join(batch.OutDir, "manifest.json"), manifest); err != nil {
+	if err := writeJSONFile(filepath.Join(workOutDir, "manifest.json"), manifest); err != nil {
 		return writeError(stdout, stderr, opts, 1, "search_batch_write_failed", err.Error())
 	}
 	if batch.WriteStats {
-		if err := writeSearchBatchStats(filepath.Join(batch.OutDir, "search-stats.txt"), batch.Sources, len(queries), len(allPapers), len(deduped), failures); err != nil {
+		if err := writeSearchBatchStats(filepath.Join(workOutDir, "search-stats.txt"), batch.Sources, len(queries), len(allPapers), len(deduped), failures); err != nil {
 			return writeError(stdout, stderr, opts, 1, "search_batch_write_failed", err.Error())
 		}
 	}
@@ -999,6 +1279,9 @@ func executeSearchBatch(args []string, stdout, stderr io.Writer, opts globalOpti
 	fetchResult := fetchPDFsResult{}
 	if batch.FetchPDFs {
 		fetchResult = fetchProjectPDFs(context.Background(), opts.Project, deduped)
+	}
+	if err := output.commit(); err != nil {
+		return writeError(stdout, stderr, opts, 1, "search_batch_output_commit_failed", err.Error())
 	}
 	if opts.JSON {
 		return writeJSON(stdout, 0, map[string]any{"out": batch.OutDir, "results": len(allPapers), "deduped": len(deduped), "failures": len(failures), "manifest": filepath.Join(batch.OutDir, "manifest.json"), "imported": imported, "skippedDuplicate": skippedDuplicate, "skippedNoIdentifier": skippedNoIdentifier, "fetched": len(fetchResult.assets), "fetchFailed": len(fetchResult.failures), "fetchSkipped": fetchResult.skipped})
@@ -1188,11 +1471,21 @@ func executeSearchResume(args []string, stdout, stderr io.Writer, opts globalOpt
 		fmt.Fprintln(stdout, "no failures to resume")
 		return 0
 	}
-	if err := os.MkdirAll(filepath.Join(outDir, "raw"), 0o755); err != nil {
+	relativePaths := []string{"results.jsonl", "failures.jsonl"}
+	for qi, failure := range pending {
+		relativePaths = append(relativePaths, filepath.Join("raw", fmt.Sprintf("search-%s-%03d-%s.txt", failure.Source, qi+1, slugifySearchBatch(failure.Query))))
+	}
+	output, err := beginStagedOutputTransaction(outDir, relativePaths)
+	if err != nil {
+		return writeError(stdout, stderr, opts, 1, "search_resume_output_snapshot_failed", err.Error())
+	}
+	defer output.cleanup()
+	workOutDir := output.stagingDir
+	if err := os.MkdirAll(filepath.Join(workOutDir, "raw"), 0o755); err != nil {
 		return writeError(stdout, stderr, opts, 1, "search_resume_out_failed", err.Error())
 	}
-	resultsPath := filepath.Join(outDir, "results.jsonl")
-	newFailuresPath := filepath.Join(outDir, "failures.jsonl")
+	resultsPath := filepath.Join(workOutDir, "results.jsonl")
+	newFailuresPath := filepath.Join(workOutDir, "failures.jsonl")
 	resultsFile, err := os.Create(resultsPath)
 	if err != nil {
 		return writeError(stdout, stderr, opts, 1, "search_resume_write_failed", err.Error())
@@ -1210,26 +1503,36 @@ func executeSearchResume(args []string, stdout, stderr io.Writer, opts globalOpt
 		connector, ok := searchConnector(f.Source)
 		if !ok {
 			newFailures++
-			_ = writeJSONLine(newFailuresFile, searchBatchFailure{Source: f.Source, Query: f.Query, Error: "unknown source"})
+			if err := writeJSONLine(newFailuresFile, searchBatchFailure{Source: f.Source, Query: f.Query, Error: "unknown source"}); err != nil {
+				return writeError(stdout, stderr, opts, 1, "search_resume_write_failed", err.Error())
+			}
 			continue
 		}
 		response, searchErr := connector.Search(context.Background(), sources.SourceQuery{Terms: f.Query, Limit: 25, Filters: map[string]string{}})
 		if searchErr != nil {
 			newFailures++
-			_ = writeJSONLine(newFailuresFile, searchBatchFailure{Source: f.Source, Query: f.Query, Error: searchErr.Error()})
+			if err := writeJSONLine(newFailuresFile, searchBatchFailure{Source: f.Source, Query: f.Query, Error: searchErr.Error()}); err != nil {
+				return writeError(stdout, stderr, opts, 1, "search_resume_write_failed", err.Error())
+			}
 			continue
 		}
 		papers, normErr := sources.PaperRecords(response)
 		if normErr != nil {
 			newFailures++
-			_ = writeJSONLine(newFailuresFile, searchBatchFailure{Source: f.Source, Query: f.Query, Error: normErr.Error()})
+			if err := writeJSONLine(newFailuresFile, searchBatchFailure{Source: f.Source, Query: f.Query, Error: normErr.Error()}); err != nil {
+				return writeError(stdout, stderr, opts, 1, "search_resume_write_failed", err.Error())
+			}
 			continue
 		}
 		rawName := fmt.Sprintf("search-%s-%03d-%s.txt", f.Source, qi+1, slugifySearchBatch(f.Query))
-		_ = writeSearchBatchRaw(filepath.Join(outDir, "raw", rawName), papers)
+		if err := writeSearchBatchRaw(filepath.Join(workOutDir, "raw", rawName), papers); err != nil {
+			return writeError(stdout, stderr, opts, 1, "search_resume_write_failed", err.Error())
+		}
 		for _, paper := range papers {
 			results++
-			_ = writeJSONLine(resultsFile, paper)
+			if err := writeJSONLine(resultsFile, paper); err != nil {
+				return writeError(stdout, stderr, opts, 1, "search_resume_write_failed", err.Error())
+			}
 		}
 	}
 	if err := resultsFile.Close(); err != nil {
@@ -1237,6 +1540,9 @@ func executeSearchResume(args []string, stdout, stderr io.Writer, opts globalOpt
 	}
 	if err := newFailuresFile.Close(); err != nil {
 		return writeError(stdout, stderr, opts, 1, "search_resume_write_failed", err.Error())
+	}
+	if err := output.commit(); err != nil {
+		return writeError(stdout, stderr, opts, 1, "search_resume_output_commit_failed", err.Error())
 	}
 	if opts.JSON {
 		return writeJSON(stdout, 0, map[string]any{"resumed": len(pending), "results": results, "newFailures": newFailures})
@@ -1313,7 +1619,7 @@ func executeSearchImport(args []string, stdout, stderr io.Writer, opts globalOpt
 		cursor = strings.TrimSpace(state.NextCursor)
 	}
 	savedNextCursor := strings.TrimSpace(state.NextCursor)
-	imported, skippedDuplicate, skippedNoIdentifier := 0, 0, 0
+	papersToImport := []library.PaperRecord{}
 	rawRefs := []string{}
 	for page := 0; page < pages; page++ {
 		response, err := connector.Search(context.Background(), sources.SourceQuery{Terms: query, Limit: limit, PageCursor: cursor, Filters: filters})
@@ -1325,25 +1631,43 @@ func executeSearchImport(args []string, stdout, stderr io.Writer, opts globalOpt
 		if err != nil {
 			return writeError(stdout, stderr, opts, 1, "search_import_normalize_failed", err.Error())
 		}
-		summary, err := store.ImportRecords(papers)
-		if err != nil {
-			return writeError(stdout, stderr, opts, 1, "search_import_store_failed", err.Error())
-		}
-		imported += summary.Imported
-		skippedDuplicate += len(summary.SkippedDuplicate)
-		skippedNoIdentifier += summary.SkippedNoIdentifier
+		papersToImport = append(papersToImport, papers...)
 		savedNextCursor = strings.TrimSpace(response.NextPageCursor)
-		if err := saveOpenAlexImportState(resumeStatePath, openAlexImportState{Source: source, Query: query, Filters: filters, Limit: limit, NextCursor: savedNextCursor, UpdatedAt: time.Now().UTC().Format(time.RFC3339)}); err != nil {
-			return writeError(stdout, stderr, opts, 1, "search_import_resume_state_failed", err.Error())
-		}
 		if savedNextCursor == "" {
 			break
 		}
 		cursor = savedNextCursor
 	}
-	if err := recordDuplicateEvent(opts.Project, "search.import", map[string]any{"source": source, "query": query, "pages": pages, "limit": limit, "filters": filters, "resumeState": resumeStatePath}, map[string]any{"imported": imported, "skippedDuplicate": skippedDuplicate, "skippedNoIdentifier": skippedNoIdentifier, "rawRefs": rawRefs, "nextCursor": savedNextCursor}); err != nil {
-		return writeError(stdout, stderr, opts, 1, "search_import_provenance_failed", err.Error())
+	finalState := openAlexImportState{Source: source, Query: query, Filters: filters, Limit: limit, NextCursor: savedNextCursor, UpdatedAt: time.Now().UTC().Format(time.RFC3339)}
+	var stateErr, provenanceErr error
+	summary, transactionErr := store.ImportRecordsThen(papersToImport, func(summary library.ImportSummary) error {
+		commitProvenance := func() error {
+			provenanceErr = recordDuplicateEvent(opts.Project, "search.import", map[string]any{"source": source, "query": query, "pages": pages, "limit": limit, "filters": filters, "resumeState": resumeStatePath}, map[string]any{"imported": summary.Imported, "skippedDuplicate": len(summary.SkippedDuplicate), "skippedNoIdentifier": summary.SkippedNoIdentifier, "rawRefs": rawRefs, "nextCursor": savedNextCursor})
+			return provenanceErr
+		}
+		stateOutput, ok, err := openAlexImportStateOutput(resumeStatePath, finalState)
+		if err != nil {
+			stateErr = err
+			return err
+		}
+		if !ok {
+			return commitProvenance()
+		}
+		stateErr = filetxn.ReplaceAllThen([]filetxn.Output{stateOutput}, commitProvenance)
+		return stateErr
+	})
+	if transactionErr != nil {
+		if provenanceErr != nil {
+			return writeError(stdout, stderr, opts, 1, "search_import_provenance_failed", transactionErr.Error())
+		}
+		if stateErr != nil {
+			return writeError(stdout, stderr, opts, 1, "search_import_resume_state_failed", transactionErr.Error())
+		}
+		return writeError(stdout, stderr, opts, 1, "search_import_store_failed", transactionErr.Error())
 	}
+	imported := summary.Imported
+	skippedDuplicate := len(summary.SkippedDuplicate)
+	skippedNoIdentifier := summary.SkippedNoIdentifier
 	if opts.JSON {
 		return writeJSON(stdout, 0, map[string]any{"source": source, "imported": imported, "skippedDuplicate": skippedDuplicate, "skippedNoIdentifier": skippedNoIdentifier, "rawRefs": rawRefs, "resumeState": resumeStatePath, "nextCursor": savedNextCursor})
 	}
@@ -1400,19 +1724,19 @@ func loadOpenAlexImportState(path string) (openAlexImportState, error) {
 	return state, nil
 }
 
-func saveOpenAlexImportState(path string, state openAlexImportState) error {
+func openAlexImportStateOutput(path string, state openAlexImportState) (filetxn.Output, bool, error) {
 	if strings.TrimSpace(path) == "" {
-		return nil
+		return filetxn.Output{}, false, nil
 	}
 	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
-		return err
+		return filetxn.Output{}, false, err
 	}
 	data, err := json.MarshalIndent(state, "", "  ")
 	if err != nil {
-		return err
+		return filetxn.Output{}, false, err
 	}
 	data = append(data, '\n')
-	return os.WriteFile(path, data, 0o644)
+	return filetxn.Output{Path: path, Data: data, Mode: 0o644}, true, nil
 }
 
 type sourceConnector interface {

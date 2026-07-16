@@ -12,6 +12,8 @@ import (
 	"sort"
 	"strings"
 	"time"
+
+	"github.com/TrebuchetDynamics/research-forge/internal/filetxn"
 )
 
 // ── types ─────────────────────────────────────────────────────────────────────
@@ -30,6 +32,12 @@ type citationMeta struct {
 	IsArXiv bool     `json:"isArxiv"`
 	Type    string   `json:"type,omitempty"`
 	Event   string   `json:"event,omitempty"`
+}
+
+type citationMetadataWarning struct {
+	Source     string `json:"source"`
+	Identifier string `json:"identifier"`
+	Message    string `json:"message"`
 }
 
 // ── build ─────────────────────────────────────────────────────────────────────
@@ -58,7 +66,10 @@ func executeCitationsBuild(args []string, stdout, stderr io.Writer, opts globalO
 		outFile = filepath.Join(researchDir, "CITATIONS.md")
 	}
 
-	papers := collectDownloadedPapers(researchDir)
+	papers, err := collectDownloadedPapers(researchDir)
+	if err != nil {
+		return writeError(stdout, stderr, opts, 1, "citation_discovery_failed", err.Error())
+	}
 
 	crossrefBase := citEnvStr("RFORGE_CROSSREF_API_URL", "https://api.crossref.org")
 	arxivBase := citEnvStr("RFORGE_ARXIV_ATOM_URL", "https://export.arxiv.org")
@@ -67,6 +78,7 @@ func executeCitationsBuild(args []string, stdout, stderr io.Writer, opts globalO
 	arxivRe := regexp.MustCompile(`(?i)arxiv[./](.+)`)
 
 	metas := make([]citationMeta, 0, len(papers))
+	warnings := []citationMetadataWarning{}
 	for _, p := range papers {
 		var meta citationMeta
 		if p.arxivID != "" || arxivRe.MatchString(p.doi) {
@@ -76,11 +88,19 @@ func executeCitationsBuild(args []string, stdout, stderr io.Writer, opts globalO
 					arxivID = m[1]
 				}
 			}
-			meta, _ = fetchArXivCitMeta(arxivID, arxivBase)
+			var err error
+			meta, err = fetchArXivCitMeta(arxivID, arxivBase)
+			if err != nil {
+				warnings = append(warnings, citationMetadataWarning{Source: "arxiv", Identifier: arxivID, Message: err.Error()})
+			}
 			meta.IsArXiv = true
 			meta.ArXivID = arxivID
 		} else if p.doi != "" {
-			meta, _ = fetchCrossrefCitMeta(p.doi, crossrefBase)
+			var err error
+			meta, err = fetchCrossrefCitMeta(p.doi, crossrefBase)
+			if err != nil {
+				warnings = append(warnings, citationMetadataWarning{Source: "crossref", Identifier: p.doi, Message: err.Error()})
+			}
 			meta.IsArXiv = false
 		}
 		if meta.Title == "" {
@@ -127,7 +147,7 @@ func executeCitationsBuild(args []string, stdout, stderr io.Writer, opts globalO
 				ArXivID: m.ArXivID,
 			}
 		}
-		return writeJSON(stdout, 0, map[string]any{"count": len(metas), "citations": entries})
+		return writeJSON(stdout, 0, map[string]any{"count": len(metas), "citations": entries, "warnings": warnings})
 	}
 
 	var sb strings.Builder
@@ -141,11 +161,24 @@ func executeCitationsBuild(args []string, stdout, stderr io.Writer, opts globalO
 		sb.WriteString(citFormatCitation(m))
 		sb.WriteString("\n\n")
 	}
+	if len(warnings) > 0 {
+		sb.WriteString("## Metadata warnings\n\n")
+		sb.WriteString("Metadata enrichment failed for the entries below. ResearchForge used local metadata where available; verify these citations before publication.\n\n")
+		replacer := strings.NewReplacer("\r", " ", "\n", " ", "`", "'")
+		for _, warning := range warnings {
+			fmt.Fprintf(&sb, "- `%s:%s`: %s\n", replacer.Replace(warning.Source), replacer.Replace(warning.Identifier), replacer.Replace(warning.Message))
+		}
+		sb.WriteString("\n")
+	}
 
-	if err := os.WriteFile(outFile, []byte(sb.String()), 0o644); err != nil {
+	if err := filetxn.ReplaceAll([]filetxn.Output{{Path: outFile, Data: []byte(sb.String()), Mode: 0o644}}); err != nil {
 		return writeError(stdout, stderr, opts, 1, "write_failed", err.Error())
 	}
-	fmt.Fprintf(stdout, "wrote %s (%d citations)\n", outFile, len(metas))
+	if len(warnings) > 0 {
+		fmt.Fprintf(stdout, "wrote %s (%d citations, %d metadata warnings)\n", outFile, len(metas), len(warnings))
+	} else {
+		fmt.Fprintf(stdout, "wrote %s (%d citations)\n", outFile, len(metas))
+	}
 	return 0
 }
 
@@ -157,13 +190,13 @@ type downloadedPaper struct {
 	title   string
 }
 
-func collectDownloadedPapers(researchDir string) []downloadedPaper {
+func collectDownloadedPapers(researchDir string) ([]downloadedPaper, error) {
 	seenKeys := map[string]struct{}{}
 	var papers []downloadedPaper
 
 	entries, err := os.ReadDir(researchDir)
 	if err != nil {
-		return nil
+		return nil, fmt.Errorf("read research directory: %w", err)
 	}
 	for _, entry := range entries {
 		if !entry.IsDir() {
@@ -171,12 +204,21 @@ func collectDownloadedPapers(researchDir string) []downloadedPaper {
 		}
 		topic := entry.Name()
 		records, err := readResultsJSONL(filepath.Join(researchDir, topic, "results.jsonl"))
-		if err != nil || len(records) == 0 {
+		if err != nil {
+			if os.IsNotExist(err) {
+				continue
+			}
+			return nil, fmt.Errorf("read topic %q results: %w", topic, err)
+		}
+		if len(records) == 0 {
 			continue
 		}
 		pdfEntries, err := os.ReadDir(filepath.Join(researchDir, topic, "pdfs"))
 		if err != nil {
-			continue
+			if os.IsNotExist(err) {
+				continue
+			}
+			return nil, fmt.Errorf("read topic %q PDFs: %w", topic, err)
 		}
 		downloaded := map[string]struct{}{}
 		for _, f := range pdfEntries {
@@ -203,7 +245,7 @@ func collectDownloadedPapers(researchDir string) []downloadedPaper {
 			papers = append(papers, downloadedPaper{doi: doi, arxivID: arxivID, title: rec.Title})
 		}
 	}
-	return papers
+	return papers, nil
 }
 
 // ── Crossref ──────────────────────────────────────────────────────────────────

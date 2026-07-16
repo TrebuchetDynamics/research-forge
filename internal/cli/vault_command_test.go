@@ -287,6 +287,47 @@ func TestVaultBuildUsageError(t *testing.T) {
 	}
 }
 
+func TestVaultBuildFailurePreservesExistingVault(t *testing.T) {
+	researchDir := makeVaultResearchDir(t)
+	outDir := t.TempDir()
+	priorFiles := map[string][]byte{
+		filepath.Join(outDir, "papers", "alpha-paper-one.md"): []byte("prior paper note\n"),
+		filepath.Join(outDir, "topic-alpha.md"):               []byte("prior topic note\n"),
+	}
+	for path, content := range priorFiles {
+		if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+			t.Fatalf("create prior vault directory: %v", err)
+		}
+		if err := os.WriteFile(path, content, 0o600); err != nil {
+			t.Fatalf("write prior vault file %s: %v", path, err)
+		}
+	}
+	if err := os.Mkdir(filepath.Join(outDir, "index.md"), 0o755); err != nil {
+		t.Fatalf("create failing index target: %v", err)
+	}
+
+	code, _, stderr := runVaultBuild(t, researchDir, outDir)
+	if code != 1 {
+		t.Fatalf("exit code = %d; stderr = %s, want write failure", code, stderr)
+	}
+	for path, want := range priorFiles {
+		got, err := os.ReadFile(path)
+		if err != nil {
+			t.Fatalf("read preserved vault file %s: %v", path, err)
+		}
+		if !bytes.Equal(got, want) {
+			t.Errorf("vault file %s changed after failed build:\n got: %s\nwant: %s", path, got, want)
+		}
+		info, err := os.Stat(path)
+		if err != nil {
+			t.Fatalf("stat preserved vault file %s: %v", path, err)
+		}
+		if got := info.Mode().Perm(); got != 0o600 {
+			t.Errorf("vault file %s mode = %o, want 600", path, got)
+		}
+	}
+}
+
 // ── JSON output ─────────────────────────────────────────────────────────────
 
 func TestVaultBuildJSONOutput(t *testing.T) {

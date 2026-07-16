@@ -75,6 +75,95 @@ func TestArtifactsPageRendersAnalysisDetail(t *testing.T) {
 	}
 }
 
+func TestArtifactsPageDoesNotReadSymlinkedAnalysisResult(t *testing.T) {
+	projectPath := t.TempDir()
+	analysisDir := filepath.Join(projectPath, "analysis")
+	if err := os.MkdirAll(analysisDir, 0o755); err != nil {
+		t.Fatalf("mkdir project analysis: %v", err)
+	}
+	externalProject := t.TempDir()
+	writeAnalysisResult(t, externalProject, "external-private", analysis.AnalysisResult{
+		Metrics:  analysis.HeterogeneityMetrics{I2: 9876.5, Tau2: 765.4, Q: 543.2},
+		Warnings: []string{"external-private-analysis-warning"},
+	})
+	resultPath := filepath.Join(analysisDir, "external-private-result.json")
+	if err := os.Symlink(filepath.Join(externalProject, "analysis", "external-private-result.json"), resultPath); err != nil {
+		t.Skipf("symlinks unavailable: %v", err)
+	}
+	state, err := BuildArtifactDashboardState(projectPath)
+	if err != nil {
+		t.Fatalf("build artifact dashboard: %v", err)
+	}
+	if state.Analysis.Ready || state.Analysis.RunID != "" {
+		t.Fatalf("symlinked analysis result marked ready: %#v", state.Analysis)
+	}
+
+	ts := httptest.NewServer(NewRouter(Config{ProjectPath: projectPath}))
+	defer ts.Close()
+	body, status, _ := getURL(t, ts.URL+"/artifacts")
+	if status != http.StatusOK {
+		t.Fatalf("GET /artifacts status = %d", status)
+	}
+	for _, private := range []string{"9876.5", "external-private-analysis-warning", "external-private"} {
+		if strings.Contains(body, private) {
+			t.Fatalf("artifacts page disclosed %q from symlinked analysis result: %s", private, body)
+		}
+	}
+	if info, err := os.Lstat(resultPath); err != nil || info.Mode()&os.ModeSymlink == 0 {
+		t.Fatalf("analysis result symlink changed: info=%v err=%v", info, err)
+	}
+}
+
+func TestArtifactDashboardSkipsUnsafeAnalysisResultBeforeValidResult(t *testing.T) {
+	projectPath := t.TempDir()
+	externalProject := t.TempDir()
+	writeAnalysisResult(t, externalProject, "a-external", analysis.AnalysisResult{})
+	analysisDir := filepath.Join(projectPath, "analysis")
+	if err := os.MkdirAll(analysisDir, 0o755); err != nil {
+		t.Fatalf("mkdir project analysis: %v", err)
+	}
+	unsafePath := filepath.Join(analysisDir, "a-external-result.json")
+	if err := os.Symlink(filepath.Join(externalProject, "analysis", "a-external-result.json"), unsafePath); err != nil {
+		t.Skipf("symlinks unavailable: %v", err)
+	}
+	writeAnalysisResult(t, projectPath, "z-local", analysis.AnalysisResult{
+		Metrics: analysis.HeterogeneityMetrics{I2: 42.5},
+	})
+
+	state, err := BuildArtifactDashboardState(projectPath)
+	if err != nil {
+		t.Fatalf("build artifact dashboard: %v", err)
+	}
+	if !state.AnalysisDetail.Ready || state.AnalysisDetail.RunID != "z-local" || state.AnalysisDetail.I2 != 42.5 {
+		t.Fatalf("valid analysis result masked by unsafe entry: %#v", state.AnalysisDetail)
+	}
+	if info, err := os.Lstat(unsafePath); err != nil || info.Mode()&os.ModeSymlink == 0 {
+		t.Fatalf("unsafe analysis result symlink changed: info=%v err=%v", info, err)
+	}
+}
+
+func TestArtifactDashboardSkipsMalformedAnalysisResultBeforeValidResult(t *testing.T) {
+	projectPath := t.TempDir()
+	writeAnalysisResult(t, projectPath, "z-local", analysis.AnalysisResult{
+		Metrics: analysis.HeterogeneityMetrics{I2: 31.25},
+	})
+	malformedPath := filepath.Join(projectPath, "analysis", "a-malformed-result.json")
+	if err := os.WriteFile(malformedPath, []byte("{"), 0o644); err != nil {
+		t.Fatalf("write malformed analysis result: %v", err)
+	}
+
+	state, err := BuildArtifactDashboardState(projectPath)
+	if err != nil {
+		t.Fatalf("build artifact dashboard: %v", err)
+	}
+	if !state.AnalysisDetail.Ready || state.AnalysisDetail.RunID != "z-local" || state.AnalysisDetail.I2 != 31.25 {
+		t.Fatalf("valid analysis result masked by malformed entry: %#v", state.AnalysisDetail)
+	}
+	if !state.Analysis.Ready || state.Analysis.RunID != state.AnalysisDetail.RunID {
+		t.Fatalf("analysis summary and detail selected different runs: summary=%#v detail=%#v", state.Analysis, state.AnalysisDetail)
+	}
+}
+
 func TestBuildAnalysisDetailAbsentIsNotReady(t *testing.T) {
 	state, err := BuildArtifactDashboardState(t.TempDir())
 	if err != nil {

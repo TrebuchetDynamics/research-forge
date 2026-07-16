@@ -1,15 +1,18 @@
 package cli
 
 import (
+	"bytes"
 	"encoding/csv"
 	"encoding/json"
 	"fmt"
 	"io"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 	"time"
 
+	"github.com/TrebuchetDynamics/research-forge/internal/filetxn"
 	"github.com/TrebuchetDynamics/research-forge/internal/library"
 )
 
@@ -48,14 +51,22 @@ func executeScreenDirQueue(args []string, stdout, stderr io.Writer, opts globalO
 		return writeError(stdout, stderr, opts, 1, "results_read_failed", fmt.Sprintf("read results.jsonl: %v", err))
 	}
 
-	decided := screenDirLoadDecided(dir)
-
-	f, err := os.Create(outFile)
+	decided, err := screenDirLoadDecided(dir)
 	if err != nil {
+		return writeError(stdout, stderr, opts, 1, "screening_read_failed", err.Error())
+	}
+
+	mode := os.FileMode(0o644)
+	if info, err := os.Lstat(outFile); err == nil {
+		if !info.Mode().IsRegular() {
+			return writeError(stdout, stderr, opts, 1, "csv_create_failed", fmt.Sprintf("queue output is not a regular file: %s", outFile))
+		}
+		mode = info.Mode().Perm()
+	} else if !os.IsNotExist(err) {
 		return writeError(stdout, stderr, opts, 1, "csv_create_failed", err.Error())
 	}
-	defer f.Close()
-	w := csv.NewWriter(f)
+	var payload bytes.Buffer
+	w := csv.NewWriter(&payload)
 
 	if err := w.Write([]string{"doi", "arxiv_id", "title", "authors", "year", "abstract", "source", "decision", "reason"}); err != nil {
 		return writeError(stdout, stderr, opts, 1, "csv_write_failed", err.Error())
@@ -88,6 +99,9 @@ func executeScreenDirQueue(args []string, stdout, stderr io.Writer, opts globalO
 	w.Flush()
 	if err := w.Error(); err != nil {
 		return writeError(stdout, stderr, opts, 1, "csv_flush_failed", err.Error())
+	}
+	if err := filetxn.Replace(outFile, payload.Bytes(), mode); err != nil {
+		return writeError(stdout, stderr, opts, 1, "csv_replace_failed", err.Error())
 	}
 
 	fmt.Fprintf(stdout, "wrote %s (%d pending records)\n", outFile, pending)
@@ -144,7 +158,10 @@ func executeScreenDirImport(args []string, stdout, stderr io.Writer, opts global
 	reasonIdx := colIdx("reason")
 
 	// Load existing entries then overwrite per-identifier (last-write-wins).
-	existing := screenDirLoadEntries(dir)
+	existing, err := screenDirLoadEntries(dir)
+	if err != nil {
+		return writeError(stdout, stderr, opts, 1, "screening_read_failed", err.Error())
+	}
 	byKey := map[string]screenDirEntry{}
 	for _, e := range existing {
 		k := e.DOI
@@ -217,10 +234,16 @@ func executeScreenDirProgress(args []string, stdout, stderr io.Writer, opts glob
 		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge screen progress --dir <dir>")
 	}
 
-	records, _ := readResultsJSONL(filepath.Join(dir, "results.jsonl"))
+	records, err := readResultsJSONL(filepath.Join(dir, "results.jsonl"))
+	if err != nil {
+		return writeError(stdout, stderr, opts, 1, "results_read_failed", fmt.Sprintf("read results.jsonl: %v", err))
+	}
 	totalRecords := len(records)
 
-	entries := screenDirLoadEntries(dir)
+	entries, err := screenDirLoadEntries(dir)
+	if err != nil {
+		return writeError(stdout, stderr, opts, 1, "screening_read_failed", err.Error())
+	}
 	included, excluded, uncertain := 0, 0, 0
 	for _, e := range entries {
 		switch strings.ToLower(e.Decision) {
@@ -255,28 +278,47 @@ func executeScreenDirProgress(args []string, stdout, stderr io.Writer, opts glob
 
 // ── helpers ───────────────────────────────────────────────────────────────────
 
-func screenDirLoadEntries(dir string) []screenDirEntry {
-	data, err := os.ReadFile(filepath.Join(dir, "screening.jsonl"))
+func screenDirLoadEntries(dir string) ([]screenDirEntry, error) {
+	path := filepath.Join(dir, "screening.jsonl")
+	info, err := os.Lstat(path)
+	if os.IsNotExist(err) {
+		return []screenDirEntry{}, nil
+	}
 	if err != nil {
-		return nil
+		return nil, err
+	}
+	if !info.Mode().IsRegular() {
+		return nil, fmt.Errorf("screening log is not a regular file: %s", path)
+	}
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return nil, err
 	}
 	var entries []screenDirEntry
-	for _, line := range strings.Split(string(data), "\n") {
+	for index, line := range strings.Split(string(data), "\n") {
 		line = strings.TrimSpace(line)
 		if line == "" {
 			continue
 		}
 		var e screenDirEntry
-		if json.Unmarshal([]byte(line), &e) == nil {
-			entries = append(entries, e)
+		if err := json.Unmarshal([]byte(line), &e); err != nil {
+			return nil, fmt.Errorf("decode screening log line %d: %w", index+1, err)
 		}
+		if strings.TrimSpace(e.DOI) == "" && strings.TrimSpace(e.ArXivID) == "" {
+			return nil, fmt.Errorf("decode screening log line %d: DOI or arXiv ID is required", index+1)
+		}
+		entries = append(entries, e)
 	}
-	return entries
+	return entries, nil
 }
 
-func screenDirLoadDecided(dir string) map[string]bool {
+func screenDirLoadDecided(dir string) (map[string]bool, error) {
 	decided := map[string]bool{}
-	for _, e := range screenDirLoadEntries(dir) {
+	entries, err := screenDirLoadEntries(dir)
+	if err != nil {
+		return nil, err
+	}
+	for _, e := range entries {
 		k := e.DOI
 		if k == "" {
 			k = e.ArXivID
@@ -285,23 +327,33 @@ func screenDirLoadDecided(dir string) map[string]bool {
 			decided[k] = true
 		}
 	}
-	return decided
+	return decided, nil
 }
 
 func screenDirWriteEntries(dir string, byKey map[string]screenDirEntry) error {
 	path := filepath.Join(dir, "screening.jsonl")
-	f, err := os.Create(path)
-	if err != nil {
+	mode := os.FileMode(0o644)
+	if info, err := os.Lstat(path); err == nil {
+		if !info.Mode().IsRegular() {
+			return fmt.Errorf("screening log is not a regular file: %s", path)
+		}
+		mode = info.Mode().Perm()
+	} else if !os.IsNotExist(err) {
 		return err
 	}
-	defer f.Close()
-	enc := json.NewEncoder(f)
-	for _, e := range byKey {
-		if err := enc.Encode(e); err != nil {
+	var payload bytes.Buffer
+	enc := json.NewEncoder(&payload)
+	keys := make([]string, 0, len(byKey))
+	for key := range byKey {
+		keys = append(keys, key)
+	}
+	sort.Strings(keys)
+	for _, key := range keys {
+		if err := enc.Encode(byKey[key]); err != nil {
 			return err
 		}
 	}
-	return nil
+	return filetxn.Replace(path, payload.Bytes(), mode)
 }
 
 func screenDirFormatAuthors(rec library.PaperRecord) string {

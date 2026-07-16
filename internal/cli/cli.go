@@ -19,6 +19,7 @@ import (
 	"github.com/TrebuchetDynamics/research-forge/internal/benchmarks"
 	"github.com/TrebuchetDynamics/research-forge/internal/documents"
 	"github.com/TrebuchetDynamics/research-forge/internal/evidence"
+	"github.com/TrebuchetDynamics/research-forge/internal/filetxn"
 	"github.com/TrebuchetDynamics/research-forge/internal/forge"
 	"github.com/TrebuchetDynamics/research-forge/internal/knowledge"
 	"github.com/TrebuchetDynamics/research-forge/internal/library"
@@ -28,6 +29,7 @@ import (
 	"github.com/TrebuchetDynamics/research-forge/internal/report"
 	"github.com/TrebuchetDynamics/research-forge/internal/reviewpkg"
 	"github.com/TrebuchetDynamics/research-forge/internal/screening"
+	"github.com/TrebuchetDynamics/research-forge/internal/security"
 	"github.com/TrebuchetDynamics/research-forge/internal/sources"
 	rwatch "github.com/TrebuchetDynamics/research-forge/internal/watch"
 )
@@ -940,7 +942,7 @@ func executeServiceLifecycle(action, name string, stdout, stderr io.Writer, opts
 	}
 	marker := filepath.Join(stateDir, name+".started")
 	if action == "start" {
-		if err := os.WriteFile(marker, []byte("started\n"), 0o644); err != nil {
+		if err := writeServiceMarker(marker); err != nil {
 			return writeError(stdout, stderr, opts, 1, "service_start_failed", err.Error())
 		}
 	} else {
@@ -953,6 +955,19 @@ func executeServiceLifecycle(action, name string, stdout, stderr io.Writer, opts
 	}
 	fmt.Fprintf(stdout, "%s %s\n", action, name)
 	return 0
+}
+
+func writeServiceMarker(path string) error {
+	mode := os.FileMode(0o644)
+	if info, err := os.Lstat(path); err == nil {
+		if !info.Mode().IsRegular() {
+			return fmt.Errorf("service marker is not a regular file: %s", path)
+		}
+		mode = info.Mode().Perm()
+	} else if !os.IsNotExist(err) {
+		return err
+	}
+	return filetxn.Replace(path, []byte("started\n"), mode)
 }
 
 func serviceCheck(name string) (project.HealthCheck, bool) {
@@ -1011,7 +1026,9 @@ func executeWatch(args []string, stdout, stderr io.Writer, opts globalOptions) i
 			return writeError(stdout, stderr, opts, 2, "watch_invalid", err.Error())
 		}
 		var watches []rwatch.WatchedSearch
-		_ = readJSONFile(watchPath, &watches)
+		if err := readJSONFile(watchPath, &watches); err != nil && !os.IsNotExist(err) {
+			return writeError(stdout, stderr, opts, 1, "watch_store_read_failed", err.Error())
+		}
 		watches = append(watches, w)
 		if err := writeJSONFile(watchPath, watches); err != nil {
 			return writeError(stdout, stderr, opts, 1, "watch_store_failed", err.Error())
@@ -1038,12 +1055,31 @@ func executeWatch(args []string, stdout, stderr io.Writer, opts globalOptions) i
 		if selected.Name == "" {
 			return writeError(stdout, stderr, opts, 1, "watch_not_found", "watched search not found")
 		}
+		previousInbox, readErr := os.ReadFile(inboxPath)
+		inboxExisted := readErr == nil
+		if readErr != nil && !os.IsNotExist(readErr) {
+			return writeError(stdout, stderr, opts, 1, "inbox_read_failed", readErr.Error())
+		}
 		inbox := rwatch.NewInbox()
 		run := rwatch.Refresh(selected, []rwatch.Paper{{ID: selected.Name + "-paper-1", Title: selected.Query}}, inbox)
 		if err := writeJSONFile(inboxPath, inbox.List()); err != nil {
 			return writeError(stdout, stderr, opts, 1, "inbox_store_failed", err.Error())
 		}
-		_ = provenance.Append(opts.Project, run.ProvenanceEvent())
+		if err := provenance.Append(opts.Project, run.ProvenanceEvent()); err != nil {
+			var restoreErr error
+			if inboxExisted {
+				restoreErr = os.WriteFile(inboxPath, previousInbox, 0o644)
+			} else {
+				restoreErr = os.Remove(inboxPath)
+				if os.IsNotExist(restoreErr) {
+					restoreErr = nil
+				}
+			}
+			if restoreErr != nil {
+				return writeError(stdout, stderr, opts, 1, "watch_provenance_rollback_failed", fmt.Sprintf("append provenance: %v; restore inbox: %v", err, restoreErr))
+			}
+			return writeError(stdout, stderr, opts, 1, "watch_provenance_failed", err.Error())
+		}
 		if opts.JSON {
 			return writeJSON(stdout, 0, map[string]any{"run": run})
 		}
@@ -1068,8 +1104,10 @@ func executeInbox(args []string, stdout, stderr io.Writer, opts globalOptions) i
 	if len(args) != 0 || opts.Project == "" {
 		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge inbox")
 	}
-	var items []rwatch.InboxItem
-	_ = readJSONFile(filepath.Join(opts.Project, "data", "inbox.json"), &items)
+	items := []rwatch.InboxItem{}
+	if err := readJSONFile(filepath.Join(opts.Project, "data", "inbox.json"), &items); err != nil && !os.IsNotExist(err) {
+		return writeError(stdout, stderr, opts, 1, "inbox_read_failed", err.Error())
+	}
 	if opts.JSON {
 		return writeJSON(stdout, 0, map[string]any{"items": items})
 	}
@@ -1184,26 +1222,64 @@ func paperPDFCandidates(record library.PaperRecord) []pdfCandidate {
 
 func writePDFDerivatives(ctx context.Context, projectPath string, asset documents.DocumentAsset) error {
 	name := safeFetchName(asset.PaperID)
-	textDir := filepath.Join(projectPath, "documents", "text")
-	if err := os.MkdirAll(textDir, 0o755); err != nil {
-		return err
-	}
 	text, err := exec.CommandContext(ctx, pdftotextCommand(), "-layout", asset.LocalPath, "-").Output()
 	if err != nil {
 		return fmt.Errorf("pdftotext %s: %w", asset.PaperID, err)
 	}
-	if err := os.WriteFile(filepath.Join(textDir, name+".txt"), text, 0o644); err != nil {
+	textRelPath := filepath.Join("documents", "text", name+".txt")
+	imageRootRelPath := filepath.Join("documents", "images")
+	imageDirRelPath := filepath.Join(imageRootRelPath, name)
+	for _, relPath := range []string{textRelPath, imageRootRelPath, imageDirRelPath} {
+		if err := security.ValidatePathWithinRoot(projectPath, relPath); err != nil {
+			return fmt.Errorf("validate PDF derivative path %s: %w", relPath, err)
+		}
+	}
+	imageRoot := filepath.Join(projectPath, imageRootRelPath)
+	if err := os.MkdirAll(imageRoot, 0o755); err != nil {
 		return err
 	}
-	imageDir := filepath.Join(projectPath, "documents", "images", name)
-	if err := os.MkdirAll(imageDir, 0o755); err != nil {
+	stagingDir, err := os.MkdirTemp(imageRoot, "."+name+"-images-")
+	if err != nil {
 		return err
 	}
-	prefix := filepath.Join(imageDir, "image")
+	defer os.RemoveAll(stagingDir)
+	prefix := filepath.Join(stagingDir, "image")
 	if err := exec.CommandContext(ctx, pdfimagesCommand(), "-all", asset.LocalPath, prefix).Run(); err != nil {
 		return fmt.Errorf("pdfimages %s: %w", asset.PaperID, err)
 	}
-	return nil
+	textDir := filepath.Dir(filepath.Join(projectPath, textRelPath))
+	imageDir := filepath.Join(projectPath, imageDirRelPath)
+	if err := os.MkdirAll(textDir, 0o755); err != nil {
+		return err
+	}
+	if err := os.MkdirAll(imageDir, 0o755); err != nil {
+		return err
+	}
+	for _, relPath := range []string{textRelPath, imageDirRelPath} {
+		if err := security.ValidatePathWithinRoot(projectPath, relPath); err != nil {
+			return fmt.Errorf("validate PDF derivative path %s: %w", relPath, err)
+		}
+	}
+	outputs := []filetxn.Output{{Path: filepath.Join(projectPath, textRelPath), Data: text, Mode: 0o644}}
+	entries, err := os.ReadDir(stagingDir)
+	if err != nil {
+		return err
+	}
+	for _, entry := range entries {
+		info, err := entry.Info()
+		if err != nil {
+			return err
+		}
+		if !info.Mode().IsRegular() {
+			return fmt.Errorf("pdfimages produced non-regular output: %s", entry.Name())
+		}
+		data, err := os.ReadFile(filepath.Join(stagingDir, entry.Name()))
+		if err != nil {
+			return err
+		}
+		outputs = append(outputs, filetxn.Output{Path: filepath.Join(imageDir, entry.Name()), Data: data, Mode: 0o644})
+	}
+	return filetxn.ReplaceAll(outputs)
 }
 
 func pdfimagesCommand() string {
@@ -1310,7 +1386,7 @@ func executeReport(args []string, stdout, stderr io.Writer, opts globalOptions) 
 		if err := os.MkdirAll(filepath.Dir(outPath), 0o755); err != nil {
 			return writeError(stdout, stderr, opts, 1, "report_final_export_write_failed", err.Error())
 		}
-		if err := os.WriteFile(outPath, data, 0o644); err != nil {
+		if err := filetxn.ReplaceAll([]filetxn.Output{{Path: outPath, Data: data, Mode: 0o644}}); err != nil {
 			return writeError(stdout, stderr, opts, 1, "report_final_export_write_failed", err.Error())
 		}
 		if opts.JSON {
@@ -1331,13 +1407,18 @@ func executeReport(args []string, stdout, stderr io.Writer, opts globalOptions) 
 		if err := readJSONFile(analysisPath, &run); err != nil {
 			return writeError(stdout, stderr, opts, 1, "report_trace_analysis_read_failed", err.Error())
 		}
-		var items []evidence.EvidenceItem
-		_ = readJSONFile(evidenceItemsPath(opts.Project), &items)
-		records := []library.PaperRecord{}
-		if store, err := library.OpenStore(filepath.Join(opts.Project, "data", "library.json")); err == nil {
-			records, _ = store.List()
+		items, err := loadOptionalEvidenceItems(opts.Project)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "report_trace_evidence_read_failed", err.Error())
 		}
-		parsedDocs, _ := readParsedDocuments(filepath.Join(opts.Project, "parsed"))
+		records, err := loadOptionalLibraryRecords(opts.Project)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "report_trace_library_read_failed", err.Error())
+		}
+		parsedDocs, err := loadOptionalParsedDocuments(opts.Project)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "report_trace_parsed_read_failed", err.Error())
+		}
 		view := report.BuildCitationEvidenceTraceView(report.CitationEvidenceTraceInput{Claims: queue.Suggestions, EvidenceItems: items, AnalysisRun: run, ParsedDocuments: parsedDocs, LibraryRecords: records, PDFBaseURL: "/papers"})
 		if err := writeJSONFile(outPath, view); err != nil {
 			return writeError(stdout, stderr, opts, 1, "report_trace_write_failed", err.Error())
@@ -1363,7 +1444,7 @@ func executeReport(args []string, stdout, stderr io.Writer, opts globalOptions) 
 		if err := os.MkdirAll(filepath.Dir(out), 0o755); err != nil {
 			return writeError(stdout, stderr, opts, 1, "report_write_failed", err.Error())
 		}
-		if err := os.WriteFile(out, []byte(md), 0o644); err != nil {
+		if err := filetxn.ReplaceAll([]filetxn.Output{{Path: out, Data: []byte(md), Mode: 0o644}}); err != nil {
 			return writeError(stdout, stderr, opts, 1, "report_write_failed", err.Error())
 		}
 		if opts.JSON {
@@ -1487,7 +1568,11 @@ func executePackage(args []string, stdout, stderr io.Writer, opts globalOptions)
 			return writeError(stdout, stderr, opts, 1, "package_audit_failed", err.Error())
 		}
 		if opts.JSON {
-			return writeJSON(stdout, 0, map[string]any{"audit": report, "ok": report.OK})
+			code := 0
+			if !report.OK {
+				code = 1
+			}
+			return writeJSON(stdout, code, map[string]any{"audit": report, "ok": report.OK})
 		}
 		fmt.Fprintf(stdout, "package audit ok=%t checks=%d\n", report.OK, len(report.Checks))
 		if !report.OK {
@@ -1503,7 +1588,11 @@ func executePackage(args []string, stdout, stderr io.Writer, opts globalOptions)
 			return writeError(stdout, stderr, opts, 1, "package_replay_failed", err.Error())
 		}
 		if opts.JSON {
-			return writeJSON(stdout, 0, map[string]any{"replay": report, "ok": report.OK})
+			code := 0
+			if !report.OK {
+				code = 1
+			}
+			return writeJSON(stdout, code, map[string]any{"replay": report, "ok": report.OK})
 		}
 		fmt.Fprintf(stdout, "package replay ok=%t checks=%d\n", report.OK, len(report.Checks))
 		if !report.OK {
@@ -1633,6 +1722,11 @@ func executeAnalysis(args []string, stdout, stderr io.Writer, opts globalOptions
 		if err := readJSONFile(runPath, &run); err != nil {
 			return writeError(stdout, stderr, opts, 1, "analysis_read_failed", err.Error())
 		}
+		// A floor-imputed run must be able to emit its mandatory no-floor sensitivity result (ADR-0007).
+		noFloor := analysis.ExcludeByViSource(run, "floor")
+		if len(run.InputRows) > 0 && len(noFloor.InputRows) == 0 {
+			return writeError(stdout, stderr, opts, 1, "analysis_sensitivity_failed", "automatic no-floor sensitivity analysis requires at least one non-floor input row")
+		}
 		result, err := analysis.RunMetafor(filepath.Join(opts.Project, "analysis"), run, analysis.FakeRunner{Stdout: "I2=0\ntau2=0\nQ=0\n", Versions: map[string]string{"R": "fake", "metafor": "fake"}})
 		if err != nil {
 			return writeError(stdout, stderr, opts, 1, "analysis_run_failed", err.Error())
@@ -1645,12 +1739,14 @@ func executeAnalysis(args []string, stdout, stderr io.Writer, opts globalOptions
 			return writeError(stdout, stderr, opts, 1, "analysis_manifest_store_failed", err.Error())
 		}
 		// Auto-emit a no-floor sensitivity run when floor-imputed rows exist (ADR-0007).
-		noFloor := analysis.ExcludeByViSource(run, "floor")
-		if len(noFloor.InputRows) >= 2 && len(noFloor.InputRows) < len(run.InputRows) {
+		if len(noFloor.InputRows) > 0 && len(noFloor.InputRows) < len(run.InputRows) {
 			fakeRunner := analysis.FakeRunner{Stdout: "I2=0\ntau2=0\nQ=0\n", Versions: map[string]string{"R": "fake", "metafor": "fake"}}
-			sensResult, sensErr := analysis.RunMetafor(filepath.Join(opts.Project, "analysis"), noFloor, fakeRunner)
-			if sensErr == nil {
-				_ = writeJSONFile(filepath.Join(opts.Project, "analysis", safeFileStem(noFloor.ID)+"-result.json"), sensResult)
+			sensResult, err := analysis.RunMetafor(filepath.Join(opts.Project, "analysis"), noFloor, fakeRunner)
+			if err != nil {
+				return writeError(stdout, stderr, opts, 1, "analysis_sensitivity_failed", err.Error())
+			}
+			if err := writeJSONFile(filepath.Join(opts.Project, "analysis", safeFileStem(noFloor.ID)+"-result.json"), sensResult); err != nil {
+				return writeError(stdout, stderr, opts, 1, "analysis_sensitivity_store_failed", err.Error())
 			}
 		}
 		if opts.JSON {
@@ -1699,7 +1795,9 @@ func executeAnalysis(args []string, stdout, stderr io.Writer, opts globalOptions
 			return writeError(stdout, stderr, opts, 1, "analysis_read_failed", err.Error())
 		}
 		var result analysis.AnalysisResult
-		_ = readJSONFile(filepath.Join(opts.Project, "analysis", safeFileStem(args[1])+"-result.json"), &result)
+		if err := readJSONFile(filepath.Join(opts.Project, "analysis", safeFileStem(args[1])+"-result.json"), &result); err != nil {
+			return writeError(stdout, stderr, opts, 1, "analysis_result_read_failed", err.Error())
+		}
 		primary, err := analysis.BuildMetaforFixtureResult(run, result)
 		if err != nil {
 			return writeError(stdout, stderr, opts, 1, "analysis_metafor_fixture_failed", err.Error())
@@ -1892,7 +1990,7 @@ func executeAnalysis(args []string, stdout, stderr io.Writer, opts globalOptions
 		if err := os.MkdirAll(filepath.Dir(args[2]), 0o755); err != nil {
 			return writeError(stdout, stderr, opts, 1, "analysis_export_failed", err.Error())
 		}
-		if err := os.WriteFile(args[2], data, 0o644); err != nil {
+		if err := filetxn.ReplaceAll([]filetxn.Output{{Path: args[2], Data: data, Mode: 0o644}}); err != nil {
 			return writeError(stdout, stderr, opts, 1, "analysis_export_failed", err.Error())
 		}
 		if opts.JSON {
@@ -2184,7 +2282,9 @@ func executeExtraction(args []string, stdout, stderr io.Writer, opts globalOptio
 		return writeError(stdout, stderr, opts, 2, "invalid_schema", err.Error())
 	}
 	var schemas []evidence.Schema
-	_ = readJSONFile(evidenceSchemasPath(opts.Project), &schemas)
+	if err := readJSONFile(evidenceSchemasPath(opts.Project), &schemas); err != nil && !os.IsNotExist(err) {
+		return writeError(stdout, stderr, opts, 1, "schema_store_read_failed", err.Error())
+	}
 	schemas = append(schemas, schema)
 	if err := writeJSONFile(evidenceSchemasPath(opts.Project), schemas); err != nil {
 		return writeError(stdout, stderr, opts, 1, "schema_store_failed", err.Error())
@@ -2227,7 +2327,9 @@ func executeExtract(args []string, stdout, stderr io.Writer, opts globalOptions)
 		return writeError(stdout, stderr, opts, 2, "invalid_evidence", err.Error())
 	}
 	var items []evidence.EvidenceItem
-	_ = readJSONFile(evidenceItemsPath(opts.Project), &items)
+	if err := readJSONFile(evidenceItemsPath(opts.Project), &items); err != nil && !os.IsNotExist(err) {
+		return writeError(stdout, stderr, opts, 1, "evidence_store_read_failed", err.Error())
+	}
 	items = append(items, item)
 	if err := writeJSONFile(evidenceItemsPath(opts.Project), items); err != nil {
 		return writeError(stdout, stderr, opts, 1, "evidence_store_failed", err.Error())
@@ -2248,8 +2350,10 @@ func executeEvidence(args []string, stdout, stderr io.Writer, opts globalOptions
 		if len(args) != 1 {
 			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge evidence audit")
 		}
-		var items []evidence.EvidenceItem
-		_ = readJSONFile(evidenceItemsPath(opts.Project), &items)
+		items, err := loadOptionalEvidenceItems(opts.Project)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "evidence_read_failed", err.Error())
+		}
 		issues := evidence.Audit(items)
 		if issues == nil {
 			issues = []evidence.AuditIssue{}
@@ -2266,8 +2370,10 @@ func executeEvidence(args []string, stdout, stderr io.Writer, opts globalOptions
 		if !ok {
 			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge evidence gaps --out <report.json> [--question <text> --screened-in <paper-id> --parsed-paper <paper-id> --outcome <name> --comparator <name> --full-text <paper-id> --available-full-text <paper-id> --claims <queue.json> --analysis <run.json>]")
 		}
-		var items []evidence.EvidenceItem
-		_ = readJSONFile(evidenceItemsPath(opts.Project), &items)
+		items, err := loadOptionalEvidenceItems(opts.Project)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "evidence_read_failed", err.Error())
+		}
 		claims := []evidence.CitationLockedSuggestion{}
 		if gapArgs.ClaimsPath != "" {
 			var queue evidence.CitationLockedSuggestionQueue
@@ -2300,8 +2406,10 @@ func executeEvidence(args []string, stdout, stderr io.Writer, opts globalOptions
 		if !ok {
 			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge evidence grid --out <grid.json> [--parsed <parsed.json>] [--analysis <run.json>]")
 		}
-		var items []evidence.EvidenceItem
-		_ = readJSONFile(evidenceItemsPath(opts.Project), &items)
+		items, err := loadOptionalEvidenceItems(opts.Project)
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "evidence_read_failed", err.Error())
+		}
 		docs := []parsing.ParsedDocument{}
 		for _, path := range parsedPaths {
 			var doc parsing.ParsedDocument
@@ -2702,6 +2810,47 @@ func evidenceSchemasPath(project string) string {
 }
 func evidenceItemsPath(project string) string {
 	return filepath.Join(project, "data", "evidence.items.json")
+}
+
+func loadOptionalEvidenceItems(project string) ([]evidence.EvidenceItem, error) {
+	var items []evidence.EvidenceItem
+	if err := readJSONFile(evidenceItemsPath(project), &items); err != nil {
+		if os.IsNotExist(err) {
+			return []evidence.EvidenceItem{}, nil
+		}
+		return nil, err
+	}
+	return items, nil
+}
+
+func loadOptionalLibraryRecords(project string) ([]library.PaperRecord, error) {
+	path := filepath.Join(project, "data", "library.json")
+	if _, err := os.Lstat(path); err != nil {
+		if os.IsNotExist(err) {
+			return []library.PaperRecord{}, nil
+		}
+		return nil, err
+	}
+	store, err := library.OpenStore(path)
+	if err != nil {
+		return nil, err
+	}
+	return store.List()
+}
+
+func loadOptionalParsedDocuments(project string) ([]parsing.ParsedDocument, error) {
+	dir := filepath.Join(project, "parsed")
+	info, err := os.Lstat(dir)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return []parsing.ParsedDocument{}, nil
+		}
+		return nil, err
+	}
+	if !info.IsDir() {
+		return nil, fmt.Errorf("parsed document path is not a directory: %s", dir)
+	}
+	return readParsedDocuments(dir)
 }
 
 func executeScreen(args []string, stdout, stderr io.Writer, opts globalOptions) int {
@@ -3190,7 +3339,8 @@ func parseScreenDecision(args []string) (screening.DecisionInput, bool) {
 			return screening.DecisionInput{}, false
 		}
 	}
-	return screening.DecisionInput{PaperID: values["--paper"], Stage: screening.Stage(values["--stage"]), Decision: screening.Decision(values["--decision"]), Reason: values["--reason"], Reviewer: values["--reviewer"]}, values["--paper"] != "" && values["--stage"] != "" && values["--decision"] != "" && values["--reviewer"] != ""
+	input := screening.NormalizeDecisionInput(screening.DecisionInput{PaperID: values["--paper"], Stage: screening.Stage(values["--stage"]), Decision: screening.Decision(values["--decision"]), Reason: values["--reason"], Reviewer: values["--reviewer"]})
+	return input, input.PaperID != "" && input.Stage != "" && input.Decision != "" && input.Reviewer != ""
 }
 func parseScreenAssign(args []string) (screening.Stage, []string, int, string, bool) {
 	values := map[string]string{}
@@ -3404,19 +3554,49 @@ func loadScreening(project string) (screening.Workflow, []screening.DecisionEven
 		return workflow, nil, err
 	}
 	var events []screening.DecisionEvent
-	_ = readJSONFile(screenEventsPath(project), &events)
+	if err := readJSONFile(screenEventsPath(project), &events); err != nil && !os.IsNotExist(err) {
+		return workflow, nil, fmt.Errorf("read screening decision history: %w", err)
+	}
+	store := screening.NewMemoryStore(workflow)
+	for i := range events {
+		events[i] = screening.NormalizeDecisionEvent(events[i])
+		event := events[i]
+		if err := store.Decide(screening.DecisionInput{PaperID: event.PaperID, Stage: event.Stage, Decision: event.Decision, Reason: event.Reason, Reviewer: event.Reviewer, Adjudicated: event.Adjudicated}); err != nil {
+			return workflow, nil, fmt.Errorf("validate screening decision history event %d: %w", i+1, err)
+		}
+	}
 	return workflow, events, nil
 }
 func writeJSONFile(path string, value any) error {
+	return writeJSONFileTransaction(path, value, nil)
+}
+func writeJSONFileThen(path string, value any, commit func() error) error {
+	if commit == nil {
+		return fmt.Errorf("commit callback is required")
+	}
+	return writeJSONFileTransaction(path, value, commit)
+}
+func jsonFileOutput(path string, value any) (filetxn.Output, error) {
 	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
-		return err
+		return filetxn.Output{}, err
 	}
 	data, err := json.MarshalIndent(value, "", "  ")
 	if err != nil {
-		return err
+		return filetxn.Output{}, err
 	}
 	data = append(data, '\n')
-	return os.WriteFile(path, data, 0o644)
+	return filetxn.Output{Path: path, Data: data, Mode: 0o644}, nil
+}
+func writeJSONFileTransaction(path string, value any, commit func() error) error {
+	output, err := jsonFileOutput(path, value)
+	if err != nil {
+		return err
+	}
+	outputs := []filetxn.Output{output}
+	if commit != nil {
+		return filetxn.ReplaceAllThen(outputs, commit)
+	}
+	return filetxn.ReplaceAll(outputs)
 }
 func readJSONFile(path string, value any) error {
 	data, err := os.ReadFile(path)
@@ -3586,7 +3766,7 @@ func parseGlobalOptions(args []string) (globalOptions, []string, bool) {
 }
 
 func writeJSON(stdout io.Writer, code int, data any) int {
-	_ = json.NewEncoder(stdout).Encode(map[string]any{"ok": true, "data": data})
+	_ = json.NewEncoder(stdout).Encode(map[string]any{"ok": code == 0, "data": data})
 	return code
 }
 
@@ -3679,7 +3859,7 @@ func writeRepoConfigForProject(proj project.Project) error {
 		return nil
 	}
 	content := fmt.Sprintf("default_project_path = %q\n", filepath.Base(proj.Path))
-	return os.WriteFile(filepath.Join(repoRoot, ".researchforge"), []byte(content), 0o644)
+	return filetxn.Replace(filepath.Join(repoRoot, ".researchforge"), []byte(content), 0o644)
 }
 
 func findRepoRoot(start string) (string, error) {

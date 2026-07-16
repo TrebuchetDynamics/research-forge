@@ -41,6 +41,31 @@ func TestBuildCitationGraphFromProjectData(t *testing.T) {
 	}
 }
 
+func TestBuildArtifactDashboardStateRejectsSymlinkedCitationGraph(t *testing.T) {
+	projectPath := t.TempDir()
+	dataDir := filepath.Join(projectPath, "data")
+	if err := os.MkdirAll(dataDir, 0o755); err != nil {
+		t.Fatalf("mkdir project data: %v", err)
+	}
+
+	externalProject := t.TempDir()
+	writeCitationGraph(t, externalProject, `{
+  "nodes": [{"id": "external-private-node"}],
+  "edges": []
+}`)
+	graphPath := filepath.Join(dataDir, "citation-graph.json")
+	if err := os.Symlink(filepath.Join(externalProject, "data", "citation-graph.json"), graphPath); err != nil {
+		t.Skipf("symlinks unavailable: %v", err)
+	}
+
+	if _, err := BuildArtifactDashboardState(projectPath); err == nil {
+		t.Fatal("BuildArtifactDashboardState accepted a symlinked citation graph")
+	}
+	if info, err := os.Lstat(graphPath); err != nil || info.Mode()&os.ModeSymlink == 0 {
+		t.Fatalf("citation graph symlink changed: info=%v err=%v", info, err)
+	}
+}
+
 func TestArtifactsPageRendersClickableCitationGraph(t *testing.T) {
 	dir := t.TempDir()
 	writeCitationGraph(t, dir, sampleCitationGraph)

@@ -25,7 +25,7 @@ func TestDedupeReviewHandlerRendersClustersDecisionHistoryAndAuditProvenance(t *
 	if err := library.AppendIdentityDecision(filepath.Join(project, "data", "identity-decisions.jsonl"), decision); err != nil {
 		t.Fatalf("append decision: %v", err)
 	}
-	if err := provenance.Append(project, provenance.Event{SchemaVersion: "1", ID: "evt-1", Action: "identity.merge.approved", Target: "identity-cluster-1", Outputs: map[string]any{"reversible": true}}); err != nil {
+	if err := provenance.Append(project, provenance.Event{SchemaVersion: "1", ID: "evt-1", Timestamp: "2026-01-01T00:00:00Z", Actor: "tester", Action: "identity.merge.approved", Target: "identity-cluster-1", Inputs: map[string]any{}, Outputs: map[string]any{"reversible": true}, Warnings: []string{}}); err != nil {
 		t.Fatalf("append provenance: %v", err)
 	}
 	req := httptest.NewRequest("GET", "/dedupe", nil)

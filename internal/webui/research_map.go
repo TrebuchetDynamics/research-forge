@@ -4,11 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"os"
 	"path/filepath"
 	"sort"
 	"strings"
 
+	"github.com/TrebuchetDynamics/research-forge/internal/filetxn"
 	"github.com/TrebuchetDynamics/research-forge/internal/knowledge"
 )
 
@@ -140,7 +140,7 @@ func newResearchMapSnapshotHandler(projectPath func() string) http.Handler {
 }
 
 func readResearchMapItems(path string) []ResearchMapItem {
-	payload, err := os.ReadFile(path)
+	payload, err := filetxn.ReadRegular(path)
 	if err != nil {
 		return nil
 	}
@@ -159,7 +159,7 @@ func readResearchMapItems(path string) []ResearchMapItem {
 }
 
 func readParserQualityItems(path string) []ResearchMapItem {
-	payload, err := os.ReadFile(path)
+	payload, err := filetxn.ReadRegular(path)
 	if err != nil {
 		return nil
 	}

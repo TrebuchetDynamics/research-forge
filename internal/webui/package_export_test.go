@@ -53,6 +53,60 @@ func TestPackageExportCenterPreviewsReviewPackageContentsBeforeCreation(t *testi
 	}
 }
 
+func TestPackageExportCenterDoesNotListSymlinkedGlobArtifacts(t *testing.T) {
+	projectPath := t.TempDir()
+	analysisDir := filepath.Join(projectPath, "analysis")
+	if err := os.MkdirAll(analysisDir, 0o755); err != nil {
+		t.Fatalf("mkdir project analysis: %v", err)
+	}
+	externalPath := filepath.Join(t.TempDir(), "external-private.json")
+	mustWrite(t, externalPath, `{"private":true}`)
+	artifactPath := filepath.Join(analysisDir, "external-private.json")
+	if err := os.Symlink(externalPath, artifactPath); err != nil {
+		t.Skipf("symlinks unavailable: %v", err)
+	}
+
+	state := BuildPackageExportCenterState(projectPath)
+	for _, artifact := range state.AnalysisArtifacts {
+		if artifact == "analysis/external-private.json" {
+			t.Fatalf("package preview listed symlinked artifact: %#v", state.AnalysisArtifacts)
+		}
+	}
+	rec := httptest.NewRecorder()
+	newPackageExportCenterHandler(func() string { return projectPath }).ServeHTTP(rec, httptest.NewRequest("GET", "/package", nil))
+	if body := rec.Body.String(); strings.Contains(body, "external-private.json") {
+		t.Fatalf("package preview rendered symlinked artifact: %s", body)
+	}
+	if info, err := os.Lstat(artifactPath); err != nil || info.Mode()&os.ModeSymlink == 0 {
+		t.Fatalf("analysis artifact symlink changed: info=%v err=%v", info, err)
+	}
+}
+
+func TestPackageExportCenterDoesNotListSymlinkedNamedContent(t *testing.T) {
+	projectPath := t.TempDir()
+	externalPath := filepath.Join(t.TempDir(), "external-project.toml")
+	mustWrite(t, externalPath, "title = \"private\"\n")
+	projectFilePath := filepath.Join(projectPath, "rforge.project.toml")
+	if err := os.Symlink(externalPath, projectFilePath); err != nil {
+		t.Skipf("symlinks unavailable: %v", err)
+	}
+
+	state := BuildPackageExportCenterState(projectPath)
+	for _, content := range state.PackageContents {
+		if content == "rforge.project.toml" {
+			t.Fatalf("package preview listed symlinked named content: %#v", state.PackageContents)
+		}
+	}
+	rec := httptest.NewRecorder()
+	newPackageExportCenterHandler(func() string { return projectPath }).ServeHTTP(rec, httptest.NewRequest("GET", "/package", nil))
+	if body := rec.Body.String(); strings.Contains(body, "rforge.project.toml") {
+		t.Fatalf("package preview rendered symlinked named content: %s", body)
+	}
+	if info, err := os.Lstat(projectFilePath); err != nil || info.Mode()&os.ModeSymlink == 0 {
+		t.Fatalf("named content symlink changed: info=%v err=%v", info, err)
+	}
+}
+
 func mustWrite(t *testing.T, path, content string) {
 	t.Helper()
 	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {

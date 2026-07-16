@@ -519,16 +519,107 @@ func TestExecuteServiceStartStopUsesSafeLocalState(t *testing.T) {
 	if code := Execute([]string{"--json", "service", "start", "grobid"}, stdout, stderr); code != 0 {
 		t.Fatalf("service start exit code = %d, stderr = %s", code, stderr.String())
 	}
-	if _, err := os.Stat(filepath.Join(stateDir, "grobid.started")); err != nil {
+	markerPath := filepath.Join(stateDir, "grobid.started")
+	markerData, err := os.ReadFile(markerPath)
+	if err != nil {
 		t.Fatalf("missing service state marker: %v", err)
+	}
+	if string(markerData) != "started\n" {
+		t.Fatalf("service state marker = %q, want started", markerData)
+	}
+	if err := os.Chmod(markerPath, 0o600); err != nil {
+		t.Fatalf("chmod service state marker: %v", err)
+	}
+	stdout.Reset()
+	stderr.Reset()
+	if code := Execute([]string{"--json", "service", "start", "grobid"}, stdout, stderr); code != 0 {
+		t.Fatalf("repeated service start exit code = %d, stderr = %s", code, stderr.String())
+	}
+	info, err := os.Stat(markerPath)
+	if err != nil {
+		t.Fatalf("stat service state marker: %v", err)
+	}
+	if info.Mode().Perm() != 0o600 {
+		t.Fatalf("service state marker mode = %o, want 600", info.Mode().Perm())
+	}
+	entries, err := os.ReadDir(stateDir)
+	if err != nil {
+		t.Fatalf("read service state directory: %v", err)
+	}
+	if len(entries) != 1 || entries[0].Name() != filepath.Base(markerPath) {
+		t.Fatalf("service state directory entries = %#v, want only %s", entries, filepath.Base(markerPath))
 	}
 	stdout.Reset()
 	stderr.Reset()
 	if code := Execute([]string{"--json", "service", "stop", "grobid"}, stdout, stderr); code != 0 {
 		t.Fatalf("service stop exit code = %d, stderr = %s", code, stderr.String())
 	}
-	if _, err := os.Stat(filepath.Join(stateDir, "grobid.started")); !os.IsNotExist(err) {
+	if _, err := os.Stat(markerPath); !os.IsNotExist(err) {
 		t.Fatalf("service marker still exists or unexpected stat err: %v", err)
+	}
+}
+
+func TestExecuteServiceStartDoesNotWriteThroughSymlinkedMarker(t *testing.T) {
+	stateDir := t.TempDir()
+	t.Setenv("RFORGE_SERVICE_STATE_DIR", stateDir)
+	outsidePath := filepath.Join(t.TempDir(), "outside.started")
+	outsideBefore := []byte("outside service state must remain unchanged\n")
+	if err := os.WriteFile(outsidePath, outsideBefore, 0o640); err != nil {
+		t.Fatalf("write outside service state: %v", err)
+	}
+	markerPath := filepath.Join(stateDir, "grobid.started")
+	if err := os.Symlink(outsidePath, markerPath); err != nil {
+		t.Skipf("symlink unsupported: %v", err)
+	}
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+
+	if code := Execute([]string{"--json", "service", "start", "grobid"}, stdout, stderr); code == 0 {
+		t.Fatalf("service start succeeded with a symlinked marker: stdout=%s", stdout.String())
+	}
+	outsideAfter, readErr := os.ReadFile(outsidePath)
+	if readErr != nil {
+		t.Fatalf("read outside service state: %v", readErr)
+	}
+	if !bytes.Equal(outsideAfter, outsideBefore) {
+		t.Fatalf("service start wrote through marker symlink: got %q, want %q", outsideAfter, outsideBefore)
+	}
+	info, lstatErr := os.Lstat(markerPath)
+	if lstatErr != nil {
+		t.Fatalf("lstat marker: %v", lstatErr)
+	}
+	if info.Mode()&os.ModeSymlink == 0 {
+		t.Fatalf("service start replaced symlink despite rejecting it: mode=%v", info.Mode())
+	}
+}
+
+func TestExecuteServiceStopRemovesSymlinkWithoutTouchingTarget(t *testing.T) {
+	stateDir := t.TempDir()
+	t.Setenv("RFORGE_SERVICE_STATE_DIR", stateDir)
+	outsidePath := filepath.Join(t.TempDir(), "outside.started")
+	outsideBefore := []byte("outside service state must remain unchanged\n")
+	if err := os.WriteFile(outsidePath, outsideBefore, 0o640); err != nil {
+		t.Fatalf("write outside service state: %v", err)
+	}
+	markerPath := filepath.Join(stateDir, "grobid.started")
+	if err := os.Symlink(outsidePath, markerPath); err != nil {
+		t.Skipf("symlink unsupported: %v", err)
+	}
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+
+	if code := Execute([]string{"--json", "service", "stop", "grobid"}, stdout, stderr); code != 0 {
+		t.Fatalf("service stop exit code = %d, stderr = %s", code, stderr.String())
+	}
+	outsideAfter, readErr := os.ReadFile(outsidePath)
+	if readErr != nil {
+		t.Fatalf("read outside service state: %v", readErr)
+	}
+	if !bytes.Equal(outsideAfter, outsideBefore) {
+		t.Fatalf("service stop changed marker target: got %q, want %q", outsideAfter, outsideBefore)
+	}
+	if _, lstatErr := os.Lstat(markerPath); !os.IsNotExist(lstatErr) {
+		t.Fatalf("service stop left marker symlink or returned unexpected error: %v", lstatErr)
 	}
 }
 
@@ -1190,6 +1281,45 @@ func TestExecuteCitationsReportWritesMarkdownSummary(t *testing.T) {
 	}
 }
 
+func TestExecuteCitationsReportDoesNotWriteThroughSymlink(t *testing.T) {
+	dir := t.TempDir()
+	graphPath := filepath.Join(dir, "graph.json")
+	reportPath := filepath.Join(dir, "graph-report.md")
+	outsidePath := filepath.Join(t.TempDir(), "outside.md")
+	graph := `{"nodes":[{"id":"paper-a"},{"id":"ref-1"}],"edges":[{"source":"paper-a","target":"ref-1"}]}`
+	if err := os.WriteFile(graphPath, []byte(graph), 0o644); err != nil {
+		t.Fatalf("write graph: %v", err)
+	}
+	outsideBefore := []byte("outside sentinel\n")
+	if err := os.WriteFile(outsidePath, outsideBefore, 0o600); err != nil {
+		t.Fatalf("write outside report: %v", err)
+	}
+	if err := os.Symlink(outsidePath, reportPath); err != nil {
+		t.Skipf("symlink unsupported: %v", err)
+	}
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+
+	code := Execute([]string{"--json", "citations", "report", "--graph", graphPath, "--out", reportPath}, stdout, stderr)
+	if code != 1 || !strings.Contains(stdout.String(), "citation_report_write_failed") {
+		t.Fatalf("citations report exit code = %d, stdout = %s, stderr = %s, want write failure", code, stdout.String(), stderr.String())
+	}
+	outsideAfter, err := os.ReadFile(outsidePath)
+	if err != nil {
+		t.Fatalf("read outside report: %v", err)
+	}
+	if !bytes.Equal(outsideAfter, outsideBefore) {
+		t.Fatalf("outside report changed through symlink:\n got: %s\nwant: %s", outsideAfter, outsideBefore)
+	}
+	info, err := os.Lstat(reportPath)
+	if err != nil {
+		t.Fatalf("lstat report symlink: %v", err)
+	}
+	if info.Mode()&os.ModeSymlink == 0 {
+		t.Fatalf("report target is no longer a symlink: %v", info.Mode())
+	}
+}
+
 func TestExecuteSearchPubMedJSONWithMockHTTP(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
@@ -1786,7 +1916,7 @@ func TestExecuteReportBuildAndAudit(t *testing.T) {
 	if code := Execute([]string{"project", "create", dir, "--title", "Demo Review"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
 		t.Fatalf("project create exit code = %d", code)
 	}
-	out := filepath.Join(t.TempDir(), "report.md")
+	out := filepath.Join(t.TempDir(), "nested", "report.md")
 	stdout := new(bytes.Buffer)
 	stderr := new(bytes.Buffer)
 	if code := Execute([]string{"--json", "--project", dir, "report", "build", "--out", out}, stdout, stderr); code != 0 {
@@ -1799,6 +1929,30 @@ func TestExecuteReportBuildAndAudit(t *testing.T) {
 	if !strings.Contains(string(data), "# Demo Review") || !strings.Contains(string(data), "Audit appendix") {
 		t.Fatalf("report = %s", data)
 	}
+	if err := os.Chmod(out, 0o600); err != nil {
+		t.Fatalf("chmod report: %v", err)
+	}
+	stdout.Reset()
+	stderr.Reset()
+	if code := Execute([]string{"--json", "--project", dir, "report", "build", "--out", out}, stdout, stderr); code != 0 {
+		t.Fatalf("report rebuild exit code = %d, stderr = %s", code, stderr.String())
+	}
+	info, err := os.Stat(out)
+	if err != nil {
+		t.Fatalf("stat rebuilt report: %v", err)
+	}
+	if got := info.Mode().Perm(); got != 0o600 {
+		t.Fatalf("rebuilt report mode = %o, want 600", got)
+	}
+	entries, err := os.ReadDir(filepath.Dir(out))
+	if err != nil {
+		t.Fatalf("read report directory: %v", err)
+	}
+	for _, entry := range entries {
+		if strings.Contains(entry.Name(), ".rforge-stage-") || strings.Contains(entry.Name(), ".rforge-backup-") {
+			t.Fatalf("report build left transaction debris: %s", entry.Name())
+		}
+	}
 	stdout.Reset()
 	stderr.Reset()
 	if code := Execute([]string{"--json", "--project", dir, "report", "audit"}, stdout, stderr); code != 0 {
@@ -1806,6 +1960,42 @@ func TestExecuteReportBuildAndAudit(t *testing.T) {
 	}
 	if !strings.Contains(stdout.String(), "issues") {
 		t.Fatalf("audit output = %s", stdout.String())
+	}
+}
+
+func TestExecuteReportBuildDoesNotWriteThroughSymlinkedOutput(t *testing.T) {
+	projectDir := filepath.Join(t.TempDir(), "demo")
+	if code := Execute([]string{"project", "create", projectDir, "--title", "Demo Review"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("project create exit code = %d", code)
+	}
+	outsidePath := filepath.Join(t.TempDir(), "outside.md")
+	outsideBefore := []byte("outside report must remain unchanged\n")
+	if err := os.WriteFile(outsidePath, outsideBefore, 0o640); err != nil {
+		t.Fatalf("write outside report: %v", err)
+	}
+	outPath := filepath.Join(t.TempDir(), "report.md")
+	if err := os.Symlink(outsidePath, outPath); err != nil {
+		t.Skipf("symlink unsupported: %v", err)
+	}
+	var stdout, stderr bytes.Buffer
+
+	code := Execute([]string{"--json", "--project", projectDir, "report", "build", "--out", outPath}, &stdout, &stderr)
+	if code == 0 {
+		t.Fatalf("report build succeeded with symlinked output: stdout=%s", stdout.String())
+	}
+	outsideAfter, err := os.ReadFile(outsidePath)
+	if err != nil {
+		t.Fatalf("read outside report: %v", err)
+	}
+	if !bytes.Equal(outsideAfter, outsideBefore) {
+		t.Fatalf("report build wrote through symlink: got %q, want %q", outsideAfter, outsideBefore)
+	}
+	info, err := os.Lstat(outPath)
+	if err != nil {
+		t.Fatalf("lstat report output: %v", err)
+	}
+	if info.Mode()&os.ModeSymlink == 0 {
+		t.Fatalf("report build replaced output symlink despite rejecting it: mode=%v", info.Mode())
 	}
 }
 
@@ -1830,7 +2020,7 @@ func TestExecuteAnalysisPrepareRunAndExport(t *testing.T) {
 	}
 	stdout.Reset()
 	stderr.Reset()
-	exportPath := filepath.Join(t.TempDir(), "analysis.json")
+	exportPath := filepath.Join(t.TempDir(), "nested", "analysis.json")
 	if code := Execute([]string{"--json", "--project", dir, "analysis", "export", "run-1", exportPath}, stdout, stderr); code != 0 {
 		t.Fatalf("analysis export exit code = %d, stderr = %s", code, stderr.String())
 	}
@@ -1840,6 +2030,75 @@ func TestExecuteAnalysisPrepareRunAndExport(t *testing.T) {
 	}
 	if !strings.Contains(string(data), "run-1") || !strings.Contains(string(data), "InputRows") {
 		t.Fatalf("export = %s", data)
+	}
+	if err := os.Chmod(exportPath, 0o600); err != nil {
+		t.Fatalf("chmod export: %v", err)
+	}
+	stdout.Reset()
+	stderr.Reset()
+	if code := Execute([]string{"--json", "--project", dir, "analysis", "export", "run-1", exportPath}, stdout, stderr); code != 0 {
+		t.Fatalf("analysis re-export exit code = %d, stderr = %s", code, stderr.String())
+	}
+	info, err := os.Stat(exportPath)
+	if err != nil {
+		t.Fatalf("stat export: %v", err)
+	}
+	if got := info.Mode().Perm(); got != 0o600 {
+		t.Fatalf("analysis export mode = %o, want 600", got)
+	}
+	entries, err := os.ReadDir(filepath.Dir(exportPath))
+	if err != nil {
+		t.Fatalf("read export directory: %v", err)
+	}
+	for _, entry := range entries {
+		if strings.Contains(entry.Name(), ".rforge-stage-") || strings.Contains(entry.Name(), ".rforge-backup-") {
+			t.Fatalf("analysis export left transaction debris: %s", entry.Name())
+		}
+	}
+}
+
+func TestExecuteAnalysisExportDoesNotWriteThroughSymlinkedOutput(t *testing.T) {
+	dir := filepath.Join(t.TempDir(), "demo")
+	if code := Execute([]string{"project", "create", dir, "--title", "Demo Review"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("project create exit code = %d", code)
+	}
+	item := `[{"PaperID":"paper-1","Values":{"mean_treatment":"10","mean_control":"8","sd_pooled":"2","n_treatment":"25","n_control":"25"},"Support":{"Kind":"passage","Ref":"p1"},"Status":"accepted"}]`
+	if err := os.WriteFile(filepath.Join(dir, "data", "evidence.items.json"), []byte(item), 0o644); err != nil {
+		t.Fatalf("write evidence: %v", err)
+	}
+	var stdout, stderr bytes.Buffer
+	if code := Execute([]string{"--json", "--project", dir, "analysis", "prepare", "run-1"}, &stdout, &stderr); code != 0 {
+		t.Fatalf("analysis prepare exit code = %d, stderr = %s", code, stderr.String())
+	}
+	outsidePath := filepath.Join(t.TempDir(), "outside.json")
+	outsideBefore := []byte("outside analysis must remain unchanged\n")
+	if err := os.WriteFile(outsidePath, outsideBefore, 0o640); err != nil {
+		t.Fatalf("write outside analysis: %v", err)
+	}
+	exportPath := filepath.Join(t.TempDir(), "analysis.json")
+	if err := os.Symlink(outsidePath, exportPath); err != nil {
+		t.Skipf("symlink unsupported: %v", err)
+	}
+	stdout.Reset()
+	stderr.Reset()
+
+	code := Execute([]string{"--json", "--project", dir, "analysis", "export", "run-1", exportPath}, &stdout, &stderr)
+	if code == 0 {
+		t.Fatalf("analysis export succeeded with symlinked output: stdout=%s", stdout.String())
+	}
+	outsideAfter, err := os.ReadFile(outsidePath)
+	if err != nil {
+		t.Fatalf("read outside analysis: %v", err)
+	}
+	if !bytes.Equal(outsideAfter, outsideBefore) {
+		t.Fatalf("analysis export wrote through symlink: got %q, want %q", outsideAfter, outsideBefore)
+	}
+	info, err := os.Lstat(exportPath)
+	if err != nil {
+		t.Fatalf("lstat analysis export: %v", err)
+	}
+	if info.Mode()&os.ModeSymlink == 0 {
+		t.Fatalf("analysis export replaced output symlink despite rejecting it: mode=%v", info.Mode())
 	}
 }
 
@@ -2473,9 +2732,17 @@ func TestExecuteParseReferencesWithAnyStyleCommand(t *testing.T) {
 		t.Fatalf("project create exit code = %d", code)
 	}
 	refs := filepath.Join(t.TempDir(), "refs.txt")
-	out := filepath.Join(t.TempDir(), "refs.json")
+	outDir := t.TempDir()
+	out := filepath.Join(outDir, "refs.json")
+	manifestPath := filepath.Join(outDir, "refs.manifest.json")
 	if err := os.WriteFile(refs, []byte("Reference text"), 0o644); err != nil {
 		t.Fatalf("write refs: %v", err)
+	}
+	if err := os.WriteFile(out, []byte("prior parsed references\n"), 0o600); err != nil {
+		t.Fatalf("write prior parsed references: %v", err)
+	}
+	if err := os.WriteFile(manifestPath, []byte("prior manifest\n"), 0o640); err != nil {
+		t.Fatalf("write prior manifest: %v", err)
 	}
 	script := filepath.Join(t.TempDir(), "anystyle-fixture")
 	if err := os.WriteFile(script, []byte("#!/bin/sh\nprintf '%s' '[{\"title\":\"Parsed reference\",\"doi\":\"10.1000/ref\"}]'\n"), 0o755); err != nil {
@@ -2493,6 +2760,89 @@ func TestExecuteParseReferencesWithAnyStyleCommand(t *testing.T) {
 	}
 	if !strings.Contains(string(data), `"ParserName": "anystyle"`) || !strings.Contains(string(data), `"DOI": "10.1000/ref"`) {
 		t.Fatalf("parsed references = %s", data)
+	}
+	manifestData, err := os.ReadFile(manifestPath)
+	if err != nil {
+		t.Fatalf("read parser manifest: %v", err)
+	}
+	if !strings.Contains(string(manifestData), `"parserName": "anystyle"`) {
+		t.Fatalf("parser manifest = %s", manifestData)
+	}
+	for path, wantMode := range map[string]os.FileMode{out: 0o600, manifestPath: 0o640} {
+		info, err := os.Stat(path)
+		if err != nil {
+			t.Fatalf("stat parse output %s: %v", path, err)
+		}
+		if got := info.Mode().Perm(); got != wantMode {
+			t.Fatalf("parse output %s mode = %o, want %o", path, got, wantMode)
+		}
+	}
+	entries, err := os.ReadDir(outDir)
+	if err != nil {
+		t.Fatalf("read parse output directory: %v", err)
+	}
+	for _, entry := range entries {
+		if strings.Contains(entry.Name(), ".rforge-stage-") || strings.Contains(entry.Name(), ".rforge-backup-") {
+			t.Fatalf("parse references left transaction debris: %s", entry.Name())
+		}
+	}
+}
+
+func TestExecuteParseReferencesDoesNotChangeOutputWhenManifestIsSymlinked(t *testing.T) {
+	dir := filepath.Join(t.TempDir(), "demo")
+	if code := Execute([]string{"project", "create", dir, "--title", "Anystyle"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("project create exit code = %d", code)
+	}
+	refs := filepath.Join(t.TempDir(), "refs.txt")
+	if err := os.WriteFile(refs, []byte("Reference text"), 0o644); err != nil {
+		t.Fatalf("write refs: %v", err)
+	}
+	script := filepath.Join(t.TempDir(), "anystyle-fixture")
+	if err := os.WriteFile(script, []byte("#!/bin/sh\nprintf '%s' '[{\"title\":\"Parsed reference\",\"doi\":\"10.1000/ref\"}]'\n"), 0o755); err != nil {
+		t.Fatalf("write script: %v", err)
+	}
+	t.Setenv("RFORGE_ANYSTYLE_CMD", script)
+	outDir := t.TempDir()
+	out := filepath.Join(outDir, "refs.json")
+	outBefore := []byte("existing parsed references must remain unchanged\n")
+	if err := os.WriteFile(out, outBefore, 0o600); err != nil {
+		t.Fatalf("write existing parsed references: %v", err)
+	}
+	outsidePath := filepath.Join(t.TempDir(), "outside-manifest.json")
+	outsideBefore := []byte("outside manifest must remain unchanged\n")
+	if err := os.WriteFile(outsidePath, outsideBefore, 0o640); err != nil {
+		t.Fatalf("write outside manifest: %v", err)
+	}
+	manifestPath := filepath.Join(outDir, "refs.manifest.json")
+	if err := os.Symlink(outsidePath, manifestPath); err != nil {
+		t.Skipf("symlink unsupported: %v", err)
+	}
+	var stdout, stderr bytes.Buffer
+
+	code := Execute([]string{"--json", "--project", dir, "parse", "references", "--paper", "paper-1", "--parser", "anystyle", "--file", refs, "--out", out}, &stdout, &stderr)
+	if code == 0 {
+		t.Fatalf("parse references succeeded with symlinked manifest: stdout=%s", stdout.String())
+	}
+	outAfter, err := os.ReadFile(out)
+	if err != nil {
+		t.Fatalf("read parsed references: %v", err)
+	}
+	if !bytes.Equal(outAfter, outBefore) {
+		t.Fatalf("parsed references changed before manifest failure: got %q, want %q", outAfter, outBefore)
+	}
+	outsideAfter, err := os.ReadFile(outsidePath)
+	if err != nil {
+		t.Fatalf("read outside manifest: %v", err)
+	}
+	if !bytes.Equal(outsideAfter, outsideBefore) {
+		t.Fatalf("parse references wrote through manifest symlink: got %q, want %q", outsideAfter, outsideBefore)
+	}
+	info, err := os.Lstat(manifestPath)
+	if err != nil {
+		t.Fatalf("lstat manifest: %v", err)
+	}
+	if info.Mode()&os.ModeSymlink == 0 {
+		t.Fatalf("parse references replaced manifest symlink despite rejecting it: mode=%v", info.Mode())
 	}
 }
 
@@ -2599,12 +2949,23 @@ func TestExecuteParseS2ORCWritesParsedDocument(t *testing.T) {
 	if err := os.WriteFile(s2orcPath, []byte(fixture), 0o644); err != nil {
 		t.Fatalf("write s2orc: %v", err)
 	}
+	parsedDir := filepath.Join(dir, "parsed")
+	if err := os.MkdirAll(parsedDir, 0o755); err != nil {
+		t.Fatalf("create parsed directory: %v", err)
+	}
+	parsedPath := filepath.Join(parsedDir, "paper-1.json")
+	manifestPath := filepath.Join(parsedDir, "paper-1.manifest.json")
+	if err := os.WriteFile(parsedPath, []byte("prior parsed document\n"), 0o600); err != nil {
+		t.Fatalf("write prior parsed document: %v", err)
+	}
+	if err := os.WriteFile(manifestPath, []byte("prior parser manifest\n"), 0o640); err != nil {
+		t.Fatalf("write prior parser manifest: %v", err)
+	}
 	stdout := new(bytes.Buffer)
 	stderr := new(bytes.Buffer)
 	if code := Execute([]string{"--json", "--project", dir, "parse", "--paper", "paper-1", "--parser", "s2orc", "--s2orc", s2orcPath}, stdout, stderr); code != 0 {
 		t.Fatalf("parse s2orc exit code = %d, stderr = %s", code, stderr.String())
 	}
-	parsedPath := filepath.Join(dir, "parsed", "paper-1.json")
 	data, err := os.ReadFile(parsedPath)
 	if err != nil {
 		t.Fatalf("read parsed: %v", err)
@@ -2612,12 +2973,86 @@ func TestExecuteParseS2ORCWritesParsedDocument(t *testing.T) {
 	if !strings.Contains(string(data), `"ParserName": "s2orc-doc2json"`) || !strings.Contains(string(data), "S2ORC Fixture") || !strings.Contains(string(data), "Body text") {
 		t.Fatalf("parsed doc = %s", data)
 	}
-	manifest, err := os.ReadFile(filepath.Join(dir, "parsed", "paper-1.manifest.json"))
+	manifest, err := os.ReadFile(manifestPath)
 	if err != nil {
 		t.Fatalf("read parser manifest: %v", err)
 	}
 	if !strings.Contains(string(manifest), `"parserName": "s2orc-doc2json"`) || !strings.Contains(string(manifest), `"passages": 1`) || !strings.Contains(string(manifest), `"references": 1`) {
 		t.Fatalf("parser manifest = %s", manifest)
+	}
+	for path, wantMode := range map[string]os.FileMode{parsedPath: 0o600, manifestPath: 0o640} {
+		info, err := os.Stat(path)
+		if err != nil {
+			t.Fatalf("stat parser output %s: %v", path, err)
+		}
+		if got := info.Mode().Perm(); got != wantMode {
+			t.Fatalf("parser output %s mode = %o, want %o", path, got, wantMode)
+		}
+	}
+	entries, err := os.ReadDir(parsedDir)
+	if err != nil {
+		t.Fatalf("read parsed directory: %v", err)
+	}
+	for _, entry := range entries {
+		if strings.Contains(entry.Name(), ".rforge-stage-") || strings.Contains(entry.Name(), ".rforge-backup-") {
+			t.Fatalf("parse s2orc left transaction debris: %s", entry.Name())
+		}
+	}
+}
+
+func TestExecuteParseS2ORCDoesNotChangeParsedDocumentWhenManifestIsSymlinked(t *testing.T) {
+	dir := filepath.Join(t.TempDir(), "demo")
+	if code := Execute([]string{"project", "create", dir, "--title", "S2ORC Parse"}, new(bytes.Buffer), new(bytes.Buffer)); code != 0 {
+		t.Fatalf("project create exit code = %d", code)
+	}
+	s2orcPath := filepath.Join(t.TempDir(), "paper.json")
+	fixture := `{"title":"S2ORC Fixture","abstract":"Abstract text.","body_text":[{"section":"Intro","text":"Body text."}],"bib_entries":{}}`
+	if err := os.WriteFile(s2orcPath, []byte(fixture), 0o644); err != nil {
+		t.Fatalf("write s2orc: %v", err)
+	}
+	if err := os.MkdirAll(filepath.Join(dir, "parsed"), 0o755); err != nil {
+		t.Fatalf("create parsed directory: %v", err)
+	}
+	parsedPath := filepath.Join(dir, "parsed", "paper-1.json")
+	parsedBefore := []byte("existing parsed document must remain unchanged\n")
+	if err := os.WriteFile(parsedPath, parsedBefore, 0o600); err != nil {
+		t.Fatalf("write existing parsed document: %v", err)
+	}
+	outsidePath := filepath.Join(t.TempDir(), "outside-manifest.json")
+	outsideBefore := []byte("outside parser manifest must remain unchanged\n")
+	if err := os.WriteFile(outsidePath, outsideBefore, 0o640); err != nil {
+		t.Fatalf("write outside manifest: %v", err)
+	}
+	manifestPath := filepath.Join(dir, "parsed", "paper-1.manifest.json")
+	if err := os.Symlink(outsidePath, manifestPath); err != nil {
+		t.Skipf("symlink unsupported: %v", err)
+	}
+	var stdout, stderr bytes.Buffer
+
+	code := Execute([]string{"--json", "--project", dir, "parse", "--paper", "paper-1", "--parser", "s2orc", "--s2orc", s2orcPath}, &stdout, &stderr)
+	if code == 0 {
+		t.Fatalf("parse s2orc succeeded with symlinked manifest: stdout=%s", stdout.String())
+	}
+	parsedAfter, err := os.ReadFile(parsedPath)
+	if err != nil {
+		t.Fatalf("read parsed document: %v", err)
+	}
+	if !bytes.Equal(parsedAfter, parsedBefore) {
+		t.Fatalf("parsed document changed before manifest failure: got %q, want %q", parsedAfter, parsedBefore)
+	}
+	outsideAfter, err := os.ReadFile(outsidePath)
+	if err != nil {
+		t.Fatalf("read outside manifest: %v", err)
+	}
+	if !bytes.Equal(outsideAfter, outsideBefore) {
+		t.Fatalf("parse s2orc wrote through manifest symlink: got %q, want %q", outsideAfter, outsideBefore)
+	}
+	info, err := os.Lstat(manifestPath)
+	if err != nil {
+		t.Fatalf("lstat manifest: %v", err)
+	}
+	if info.Mode()&os.ModeSymlink == 0 {
+		t.Fatalf("parse s2orc replaced manifest symlink despite rejecting it: mode=%v", info.Mode())
 	}
 }
 

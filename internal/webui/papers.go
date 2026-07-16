@@ -10,6 +10,7 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/TrebuchetDynamics/research-forge/internal/filetxn"
 	"github.com/TrebuchetDynamics/research-forge/internal/parsing"
 )
 
@@ -88,7 +89,7 @@ func authorsLine(doc parsing.ParsedDocument) string {
 
 func loadParsedDoc(projectPath, id string) (parsing.ParsedDocument, bool, error) {
 	var doc parsing.ParsedDocument
-	data, err := os.ReadFile(filepath.Join(projectPath, "parsed", id+".json"))
+	data, err := filetxn.ReadRegular(filepath.Join(projectPath, "parsed", id+".json"))
 	if os.IsNotExist(err) {
 		return doc, false, nil
 	}
@@ -101,18 +102,25 @@ func loadParsedDoc(projectPath, id string) (parsing.ParsedDocument, bool, error)
 	return doc, true, nil
 }
 
-// paperPDFPath returns the project-local PDF for a paper id, or "" when none is
-// present. It matches a fetched PDF whose filename stem equals the paper id,
-// which the CLI guarantees because parse and fetch share the same safe-stem
-// normalization.
-func paperPDFPath(projectPath, id string) string {
+// openPaperPDF opens the first project-local PDF for a paper id while retaining
+// the verified file identity for the caller. The caller owns the returned file.
+func openPaperPDF(projectPath, id string) (*os.File, bool) {
 	for _, sub := range paperPDFDirs {
-		candidate := filepath.Join(projectPath, sub, id+".pdf")
-		if info, err := os.Stat(candidate); err == nil && !info.IsDir() {
-			return candidate
+		name := filepath.Join(sub, id+".pdf")
+		file, err := filetxn.OpenRegularInRoot(projectPath, name)
+		if err == nil {
+			return file, true
 		}
 	}
-	return ""
+	return nil, false
+}
+
+func paperPDFAvailable(projectPath, id string) bool {
+	file, ok := openPaperPDF(projectPath, id)
+	if ok {
+		_ = file.Close()
+	}
+	return ok
 }
 
 // BuildPaperList reads the project's parsed/ directory into a readable paper
@@ -155,7 +163,7 @@ func BuildPaperList(projectPath string) (PaperListViewModel, error) {
 			Title:        title,
 			Authors:      authorsLine(doc),
 			PassageCount: passages,
-			HasPDF:       paperPDFPath(projectPath, id) != "",
+			HasPDF:       paperPDFAvailable(projectPath, id),
 		})
 	}
 	sort.Slice(papers, func(i, j int) bool { return papers[i].Title < papers[j].Title })
@@ -179,7 +187,7 @@ func BuildPaperView(projectPath, id string) (PaperView, bool, error) {
 		Authors:  authorsLine(doc),
 		Abstract: doc.Abstract,
 		Sections: doc.Sections,
-		HasPDF:   paperPDFPath(projectPath, id) != "",
+		HasPDF:   paperPDFAvailable(projectPath, id),
 		Warnings: doc.Warnings,
 	}, true, nil
 }
@@ -270,12 +278,18 @@ func newPaperPDFHandler(projectPath func() string) http.Handler {
 			http.NotFound(w, r)
 			return
 		}
-		path := paperPDFPath(projectPath(), id)
-		if path == "" {
+		file, ok := openPaperPDF(projectPath(), id)
+		if !ok {
 			http.NotFound(w, r)
 			return
 		}
+		defer file.Close()
+		info, err := file.Stat()
+		if err != nil {
+			http.Error(w, "failed to read PDF", http.StatusInternalServerError)
+			return
+		}
 		w.Header().Set("Content-Type", "application/pdf")
-		http.ServeFile(w, r, path)
+		http.ServeContent(w, r, info.Name(), info.ModTime(), file)
 	})
 }

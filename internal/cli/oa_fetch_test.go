@@ -88,6 +88,14 @@ func TestOAFetchDownloadsPDFFromExplicitOAURL(t *testing.T) {
 			"URLs":        []string{server.URL + "/lightgbm.pdf"},
 		},
 	})
+	pdfDir := filepath.Join(outDir, "pdfs")
+	if err := os.MkdirAll(pdfDir, 0o755); err != nil {
+		t.Fatalf("create PDF output directory: %v", err)
+	}
+	destPath := filepath.Join(pdfDir, "10_1000_lightgbm.pdf")
+	if err := os.WriteFile(destPath, []byte("prior PDF\n"), 0o600); err != nil {
+		t.Fatalf("write prior PDF: %v", err)
+	}
 
 	code := Execute([]string{"oa", "fetch", "--dir", batchDir, "--out", outDir}, new(bytes.Buffer), new(bytes.Buffer))
 	if code != 0 {
@@ -97,6 +105,71 @@ func TestOAFetchDownloadsPDFFromExplicitOAURL(t *testing.T) {
 	pdfs, _ := filepath.Glob(filepath.Join(outDir, "pdfs", "*.pdf"))
 	if len(pdfs) == 0 {
 		t.Fatal("no PDF written for explicit OA URL record")
+	}
+	got, err := os.ReadFile(destPath)
+	if err != nil {
+		t.Fatalf("read replacement PDF: %v", err)
+	}
+	if !bytes.Equal(got, pdfBytes) {
+		t.Fatalf("replacement PDF = %q, want %q", got, pdfBytes)
+	}
+	info, err := os.Stat(destPath)
+	if err != nil {
+		t.Fatalf("stat replacement PDF: %v", err)
+	}
+	if info.Mode().Perm() != 0o644 {
+		t.Fatalf("replacement PDF mode = %o, want 644", info.Mode().Perm())
+	}
+}
+
+func TestOAFetchDoesNotWriteThroughSymlinkedPDFDestination(t *testing.T) {
+	pdfBytes := []byte("%PDF-1.4 malicious overwrite")
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		w.Header().Set("Content-Type", "application/pdf")
+		_, _ = w.Write(pdfBytes)
+	}))
+	defer server.Close()
+	batchDir := t.TempDir()
+	outDir := t.TempDir()
+	writeBatchResults(t, batchDir, []map[string]any{
+		{
+			"Title":       "Symlink destination fixture",
+			"Identifiers": map[string]any{"DOI": "10.1000/symlink"},
+			"OpenAccess":  true,
+			"URLs":        []string{server.URL + "/paper.pdf"},
+		},
+	})
+	outsidePath := filepath.Join(t.TempDir(), "outside.pdf")
+	outsideBefore := []byte("outside file must remain unchanged\n")
+	if err := os.WriteFile(outsidePath, outsideBefore, 0o640); err != nil {
+		t.Fatalf("write outside file: %v", err)
+	}
+	pdfDir := filepath.Join(outDir, "pdfs")
+	if err := os.MkdirAll(pdfDir, 0o755); err != nil {
+		t.Fatalf("create PDF output directory: %v", err)
+	}
+	destPath := filepath.Join(pdfDir, "10_1000_symlink.pdf")
+	if err := os.Symlink(outsidePath, destPath); err != nil {
+		t.Skipf("symlink unsupported: %v", err)
+	}
+
+	code := Execute([]string{"oa", "fetch", "--dir", batchDir, "--out", outDir}, new(bytes.Buffer), new(bytes.Buffer))
+	if code == 0 {
+		t.Fatal("OA fetch succeeded with a symlinked PDF destination")
+	}
+	outsideAfter, err := os.ReadFile(outsidePath)
+	if err != nil {
+		t.Fatalf("read outside file: %v", err)
+	}
+	if !bytes.Equal(outsideAfter, outsideBefore) {
+		t.Fatalf("OA fetch wrote through PDF symlink: got %q, want %q", outsideAfter, outsideBefore)
+	}
+	info, err := os.Lstat(destPath)
+	if err != nil {
+		t.Fatalf("lstat PDF destination: %v", err)
+	}
+	if info.Mode()&os.ModeSymlink == 0 {
+		t.Fatalf("OA fetch replaced symlink destination despite rejecting download: mode=%v", info.Mode())
 	}
 }
 
@@ -152,6 +225,37 @@ func TestOAFetchWritesFetchReport(t *testing.T) {
 	}
 	if !strings.Contains(string(report), "1") {
 		t.Errorf("fetch-report.txt = %q, want mention of 1 fetched", string(report))
+	}
+}
+
+func TestOAFetchFailsWithoutMutatingOutputsWhenReportCannotBeWritten(t *testing.T) {
+	batchDir := t.TempDir()
+	outDir := t.TempDir()
+	writeBatchResults(t, batchDir, []map[string]any{
+		{
+			"Title":       "Closed report fixture",
+			"Identifiers": map[string]any{"DOI": "10.1000/report-conflict"},
+			"OpenAccess":  false,
+			"URLs":        []string{},
+		},
+	})
+	reportPath := filepath.Join(outDir, "fetch-report.txt")
+	if err := os.Mkdir(reportPath, 0o750); err != nil {
+		t.Fatalf("create conflicting report output: %v", err)
+	}
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+
+	code := Execute([]string{"oa", "fetch", "--dir", batchDir, "--out", outDir}, stdout, stderr)
+	if code == 0 {
+		t.Fatalf("OA fetch succeeded without writing its report; stdout=%s", stdout.String())
+	}
+	info, err := os.Stat(reportPath)
+	if err != nil || !info.IsDir() {
+		t.Fatalf("conflicting report output changed: info=%v err=%v", info, err)
+	}
+	if _, err := os.Stat(filepath.Join(outDir, "pdfs")); !os.IsNotExist(err) {
+		t.Fatalf("failed OA fetch left a PDF output directory: %v", err)
 	}
 }
 

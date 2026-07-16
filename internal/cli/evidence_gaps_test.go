@@ -2,7 +2,9 @@ package cli
 
 import (
 	"bytes"
+	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/TrebuchetDynamics/research-forge/internal/analysis"
@@ -34,6 +36,28 @@ func TestExecuteEvidenceGapsWritesGapReport(t *testing.T) {
 	}
 	if !hasEvidenceGapCode(report, "screened_in_missing_evidence") || !hasEvidenceGapCode(report, "screened_in_missing_parsed_passages") || !hasEvidenceGapCode(report, "question_term_missing_evidence") {
 		t.Fatalf("report missing cross-check gaps = %#v", report.Gaps)
+	}
+}
+
+func TestExecuteEvidenceGapsRejectsMalformedEvidenceStore(t *testing.T) {
+	project := t.TempDir()
+	if code := Execute([]string{"project", "create", project, "--title", "Gaps"}, ioDiscard{}, ioDiscard{}); code != 0 {
+		t.Fatalf("project create code=%d", code)
+	}
+	if err := os.WriteFile(evidenceItemsPath(project), []byte(`[{"PaperID":`), 0o644); err != nil {
+		t.Fatalf("write malformed evidence: %v", err)
+	}
+	out := filepath.Join(project, "data", "evidence-gaps.json")
+	var stdout, stderr bytes.Buffer
+	code := Execute([]string{"--json", "--project", project, "evidence", "gaps", "--out", out}, &stdout, &stderr)
+	if code != 1 {
+		t.Fatalf("gaps code=%d, want 1; stderr=%s stdout=%s", code, stderr.String(), stdout.String())
+	}
+	if !strings.Contains(stdout.String(), `"code":"evidence_read_failed"`) {
+		t.Fatalf("gaps did not report evidence read failure: %s", stdout.String())
+	}
+	if _, err := os.Stat(out); !os.IsNotExist(err) {
+		t.Fatalf("gaps wrote report after evidence read failure: %v", err)
 	}
 }
 

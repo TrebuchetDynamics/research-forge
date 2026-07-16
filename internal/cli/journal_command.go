@@ -9,6 +9,8 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/TrebuchetDynamics/research-forge/internal/filetxn"
 )
 
 type journalEntry struct {
@@ -77,6 +79,13 @@ func journalAppend(projectPath, entry string) error {
 	if err := os.MkdirAll(dir, 0o755); err != nil {
 		return err
 	}
+	dirInfo, err := os.Lstat(dir)
+	if err != nil {
+		return err
+	}
+	if !dirInfo.IsDir() || dirInfo.Mode()&os.ModeSymlink != 0 {
+		return fmt.Errorf("journal path is not a directory: %s", dir)
+	}
 	e := journalEntry{
 		Timestamp: time.Now().UTC().Format(time.RFC3339),
 		Entry:     entry,
@@ -85,36 +94,67 @@ func journalAppend(projectPath, entry string) error {
 	if err != nil {
 		return err
 	}
-	f, err := os.OpenFile(filepath.Join(dir, "entries.jsonl"), os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0o644)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-	_, err = fmt.Fprintf(f, "%s\n", line)
-	return err
+	path := filepath.Join(dir, "entries.jsonl")
+	return filetxn.Append(path, append(line, '\n'), 0o644)
 }
 
 func journalRead(projectPath string) ([]journalEntry, error) {
-	path := filepath.Join(projectPath, "journal", "entries.jsonl")
-	f, err := os.Open(path)
+	dir := filepath.Join(projectPath, "journal")
+	dirInfo, err := os.Lstat(dir)
 	if os.IsNotExist(err) {
 		return []journalEntry{}, nil
 	}
 	if err != nil {
 		return nil, err
 	}
+	if !dirInfo.IsDir() || dirInfo.Mode()&os.ModeSymlink != 0 {
+		return nil, fmt.Errorf("journal path is not a directory: %s", dir)
+	}
+	path := filepath.Join(dir, "entries.jsonl")
+	info, err := os.Lstat(path)
+	if os.IsNotExist(err) {
+		return []journalEntry{}, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+	if !info.Mode().IsRegular() {
+		return nil, fmt.Errorf("journal file is not a regular file: %s", path)
+	}
+	f, err := filetxn.OpenRegular(path)
+	if err != nil {
+		return nil, err
+	}
 	defer f.Close()
 	var entries []journalEntry
-	scanner := bufio.NewScanner(f)
-	for scanner.Scan() {
-		line := strings.TrimSpace(scanner.Text())
+	reader := bufio.NewReader(f)
+	lineNumber := 0
+	for {
+		text, readErr := reader.ReadString('\n')
+		if text != "" {
+			lineNumber++
+		}
+		line := strings.TrimSpace(text)
 		if line == "" {
+			if readErr == io.EOF {
+				break
+			}
+			if readErr != nil {
+				return nil, readErr
+			}
 			continue
 		}
 		var e journalEntry
-		if json.Unmarshal([]byte(line), &e) == nil {
-			entries = append(entries, e)
+		if err := json.Unmarshal([]byte(line), &e); err != nil {
+			return nil, fmt.Errorf("decode journal line %d: %w", lineNumber, err)
+		}
+		entries = append(entries, e)
+		if readErr == io.EOF {
+			break
+		}
+		if readErr != nil {
+			return nil, readErr
 		}
 	}
-	return entries, scanner.Err()
+	return entries, nil
 }

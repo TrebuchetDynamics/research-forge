@@ -147,9 +147,6 @@ func obsidianInstallLinux(rel obsidianRelease, stdout, stderr io.Writer, opts gl
 	if err := downloadFile(rel.url, rel.dest); err != nil {
 		return writeError(stdout, stderr, opts, 1, "download_failed", err.Error())
 	}
-	if err := os.Chmod(rel.dest, 0o755); err != nil {
-		return writeError(stdout, stderr, opts, 1, "chmod_failed", err.Error())
-	}
 
 	fmt.Fprintln(stdout, "Obsidian installed.")
 	if !strings.Contains(obsidianLocalBin(), os.Getenv("PATH")) {
@@ -234,13 +231,29 @@ func downloadFile(url, dest string) error {
 	if resp.StatusCode != 200 {
 		return fmt.Errorf("HTTP %d from %s", resp.StatusCode, url)
 	}
-	f, err := os.Create(dest)
+	output, err := beginStagedOutputTransaction(filepath.Dir(dest), []string{filepath.Base(dest)})
 	if err != nil {
 		return err
 	}
-	defer f.Close()
-	_, err = io.Copy(f, resp.Body)
-	return err
+	defer output.cleanup()
+	stagingPath := filepath.Join(output.stagingDir, filepath.Base(dest))
+	f, err := os.Create(stagingPath)
+	if err != nil {
+		return err
+	}
+	_, copyErr := io.Copy(f, resp.Body)
+	chmodErr := f.Chmod(0o755)
+	closeErr := f.Close()
+	if copyErr != nil {
+		return copyErr
+	}
+	if chmodErr != nil {
+		return chmodErr
+	}
+	if closeErr != nil {
+		return closeErr
+	}
+	return output.commit()
 }
 
 var obsidianFindBinaryFunc = obsidianFindBinary

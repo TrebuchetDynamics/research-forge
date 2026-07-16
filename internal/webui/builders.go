@@ -2,6 +2,8 @@ package webui
 
 import (
 	"encoding/json"
+	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"sort"
@@ -10,6 +12,7 @@ import (
 	"github.com/TrebuchetDynamics/research-forge/internal/analysis"
 	"github.com/TrebuchetDynamics/research-forge/internal/documents"
 	"github.com/TrebuchetDynamics/research-forge/internal/evidence"
+	"github.com/TrebuchetDynamics/research-forge/internal/filetxn"
 	"github.com/TrebuchetDynamics/research-forge/internal/knowledge"
 	"github.com/TrebuchetDynamics/research-forge/internal/library"
 	"github.com/TrebuchetDynamics/research-forge/internal/project"
@@ -36,7 +39,7 @@ func BuildForgeHomeState(projectPath string) (ForgeHomeState, error) {
 		CurrentState string `json:"currentState"`
 		State        string `json:"state"`
 	}
-	if data, err := os.ReadFile(filepath.Join(projectPath, "data", "forge-state.json")); err == nil {
+	if data, err := filetxn.ReadRegular(filepath.Join(projectPath, "data", "forge-state.json")); err == nil {
 		_ = json.Unmarshal(data, &stored)
 		if stored.CurrentState != "" {
 			state.CurrentState = stored.CurrentState
@@ -47,7 +50,7 @@ func BuildForgeHomeState(projectPath string) (ForgeHomeState, error) {
 	if events, err := provenance.Read(projectPath); err == nil {
 		state.ProvenanceEvents = events
 	}
-	if data, err := os.ReadFile(filepath.Join(projectPath, "data", "jobs.json")); err == nil {
+	if data, err := filetxn.ReadRegular(filepath.Join(projectPath, "data", "jobs.json")); err == nil {
 		_ = json.Unmarshal(data, &state.BackgroundJobs)
 	}
 	state.BlockedReviewGates = forgeBlockedGates(projectPath, state.CurrentState)
@@ -58,8 +61,7 @@ func BuildForgeHomeState(projectPath string) (ForgeHomeState, error) {
 func forgeBlockedGates(projectPath, currentState string) []ForgeGate {
 	gates := []ForgeGate{}
 	missing := func(rel string) bool {
-		_, err := os.Stat(filepath.Join(projectPath, filepath.FromSlash(rel)))
-		return os.IsNotExist(err)
+		return !forgeArtifactExists(projectPath, rel)
 	}
 	switch currentState {
 	case "source_plan":
@@ -80,6 +82,21 @@ func forgeBlockedGates(projectPath, currentState string) []ForgeGate {
 		}
 	}
 	return gates
+}
+
+func forgeArtifactExists(projectPath, rel string) bool {
+	name := filepath.FromSlash(rel)
+	file, err := os.OpenInRoot(projectPath, name)
+	if err != nil {
+		return false
+	}
+	openedInfo, statErr := file.Stat()
+	visibleInfo, lstatErr := os.Lstat(filepath.Join(projectPath, name))
+	closeErr := file.Close()
+	if statErr != nil || lstatErr != nil || closeErr != nil {
+		return false
+	}
+	return (openedInfo.Mode().IsRegular() || openedInfo.IsDir()) && os.SameFile(openedInfo, visibleInfo)
 }
 
 func forgeNextActions(currentState string) []ForgeNextAction {
@@ -118,9 +135,14 @@ func BuildPackageExportCenterState(projectPath string) PackageExportCenterState 
 		return state
 	}
 	for _, rel := range []string{"rforge.project.toml", "rforge.lock.json", "data/provenance.jsonl", "data/forge-state.json", "data/connector-capabilities.json", "data/evidence.schemas.json", "data/evidence.items.json", "data/claim-trace.json"} {
-		if fileExists(filepath.Join(projectPath, filepath.FromSlash(rel))) {
-			state.PackageContents = append(state.PackageContents, rel)
+		file, err := filetxn.OpenRegularInRoot(projectPath, filepath.FromSlash(rel))
+		if err != nil {
+			continue
 		}
+		if err := file.Close(); err != nil {
+			continue
+		}
+		state.PackageContents = append(state.PackageContents, rel)
 	}
 	state.Lockfiles = appendExistingGlobs(projectPath, state.Lockfiles, "rforge.lock.json", "data/*.lock.json")
 	state.ParserManifests = appendExistingGlobs(projectPath, state.ParserManifests, "data/parser-manifests/*")
@@ -130,21 +152,23 @@ func BuildPackageExportCenterState(projectPath string) PackageExportCenterState 
 	return state
 }
 
-func fileExists(path string) bool {
-	info, err := os.Stat(path)
-	return err == nil && !info.IsDir()
-}
-
 func appendExistingGlobs(projectPath string, out []string, patterns ...string) []string {
 	for _, pattern := range patterns {
 		matches, _ := filepath.Glob(filepath.Join(projectPath, filepath.FromSlash(pattern)))
 		sort.Strings(matches)
 		for _, match := range matches {
-			if info, err := os.Stat(match); err == nil && !info.IsDir() {
-				if rel, err := filepath.Rel(projectPath, match); err == nil {
-					out = append(out, filepath.ToSlash(rel))
-				}
+			rel, err := filepath.Rel(projectPath, match)
+			if err != nil {
+				continue
 			}
+			file, err := filetxn.OpenRegularInRoot(projectPath, rel)
+			if err != nil {
+				continue
+			}
+			if err := file.Close(); err != nil {
+				continue
+			}
+			out = append(out, filepath.ToSlash(rel))
 		}
 	}
 	return out
@@ -164,7 +188,7 @@ func BuildReportClaimPanelState(projectPath string) ReportClaimPanelState {
 		return state
 	}
 	var panel reportpkg.ClaimTraceabilityPanel
-	if data, err := os.ReadFile(filepath.Join(projectPath, "data", "claim-panel.json")); err == nil {
+	if data, err := filetxn.ReadRegular(filepath.Join(projectPath, "data", "claim-panel.json")); err == nil {
 		_ = json.Unmarshal(data, &panel)
 		state.Rows = panel.Rows
 		state.BlockFinalExport = panel.BlockFinalExport
@@ -186,7 +210,7 @@ func BuildAnalysisWorkbenchState(projectPath string) AnalysisWorkbenchState {
 	}
 	matches, _ := filepath.Glob(filepath.Join(projectPath, "analysis", "*.json"))
 	for _, match := range matches {
-		data, err := os.ReadFile(match)
+		data, err := filetxn.ReadRegular(match)
 		if err != nil {
 			continue
 		}
@@ -215,7 +239,7 @@ func BuildEvidenceGridState(projectPath string) EvidenceGridState {
 		return state
 	}
 	var grid evidence.ExtractionGrid
-	if data, err := os.ReadFile(filepath.Join(projectPath, "data", "evidence-grid.json")); err == nil {
+	if data, err := filetxn.ReadRegular(filepath.Join(projectPath, "data", "evidence-grid.json")); err == nil {
 		_ = json.Unmarshal(data, &grid)
 		state.Rows = grid.Rows
 	}
@@ -251,7 +275,7 @@ func BuildAcquisitionQueueState(projectPath string) AcquisitionQueueState {
 		return state
 	}
 	var queue documents.LegalAcquisitionQueue
-	if data, err := os.ReadFile(filepath.Join(projectPath, "data", "legal-acquisition-queue.json")); err == nil {
+	if data, err := filetxn.ReadRegular(filepath.Join(projectPath, "data", "legal-acquisition-queue.json")); err == nil {
 		_ = json.Unmarshal(data, &queue)
 		state.Items = queue.Items
 	}
@@ -337,11 +361,60 @@ func BuildDedupeReviewState(projectPath string) (DedupeReviewState, error) {
 	return state, nil
 }
 
+const screeningAuditBundlePath = "data/screening-audit-bundle.json"
+
+func openScreeningAuditBundle(projectPath string) (*os.File, bool) {
+	file, err := filetxn.OpenRegularInRoot(projectPath, filepath.FromSlash(screeningAuditBundlePath))
+	if err != nil {
+		return nil, false
+	}
+	reject := func() (*os.File, bool) {
+		_ = file.Close()
+		return nil, false
+	}
+	var bundle screening.ScreeningAuditBundle
+	decoder := json.NewDecoder(file)
+	if err := decoder.Decode(&bundle); err != nil || bundle.SchemaVersion != "1" || bundle.Stage == "" {
+		return reject()
+	}
+	var trailing any
+	if err := decoder.Decode(&trailing); err != io.EOF {
+		return reject()
+	}
+	if _, err := file.Seek(0, io.SeekStart); err != nil {
+		return reject()
+	}
+	return file, true
+}
+
+func normalizeAndValidateScreeningEvents(projectPath string, events []screening.DecisionEvent) error {
+	if len(events) == 0 {
+		return nil
+	}
+	workflowData, err := filetxn.ReadRegular(filepath.Join(projectPath, "data", "screening.workflow.json"))
+	if err != nil {
+		return fmt.Errorf("read screening workflow: %w", err)
+	}
+	var workflow screening.Workflow
+	if err := json.Unmarshal(workflowData, &workflow); err != nil {
+		return fmt.Errorf("parse screening workflow: %w", err)
+	}
+	store := screening.NewMemoryStore(workflow)
+	for i := range events {
+		events[i] = screening.NormalizeDecisionEvent(events[i])
+		event := events[i]
+		if err := store.Decide(screening.DecisionInput{PaperID: event.PaperID, Stage: event.Stage, Decision: event.Decision, Reason: event.Reason, Reviewer: event.Reviewer, Adjudicated: event.Adjudicated}); err != nil {
+			return fmt.Errorf("validate screening event %d: %w", i+1, err)
+		}
+	}
+	return nil
+}
+
 // BuildScreeningCockpitState reads screening decisions and library records into
 // the HTMX screening cockpit: active-learning queue, uncertainty/exploration
 // flags, progress metrics, stopping diagnostics, and audit-bundle links.
 func BuildScreeningCockpitState(projectPath string) (ScreeningCockpitState, error) {
-	state := ScreeningCockpitState{ProjectPath: projectPath, Stage: screening.StageTitleAbstract, AuditBundlePath: "data/screening-audit-bundle.json"}
+	state := ScreeningCockpitState{ProjectPath: projectPath, Stage: screening.StageTitleAbstract, AuditBundlePath: screeningAuditBundlePath}
 	if strings.TrimSpace(projectPath) == "" {
 		return state, nil
 	}
@@ -351,8 +424,13 @@ func BuildScreeningCockpitState(projectPath string) (ScreeningCockpitState, erro
 	}
 	state.TotalRecords = len(records)
 	var events []screening.DecisionEvent
-	if data, err := os.ReadFile(filepath.Join(projectPath, "data", "screening.events.json")); err == nil {
-		_ = json.Unmarshal(data, &events)
+	if data, err := filetxn.ReadRegular(filepath.Join(projectPath, "data", "screening.events.json")); err == nil {
+		if err := json.Unmarshal(data, &events); err != nil {
+			return state, fmt.Errorf("parse screening events: %w", err)
+		}
+	}
+	if err := normalizeAndValidateScreeningEvents(projectPath, events); err != nil {
+		return state, err
 	}
 	run, err := screening.BuildActiveLearningRun(screening.ActiveLearningRunInput{Records: records, Events: events, Stage: state.Stage, RankingMethod: "active-learning", TargetRecall: 0.95})
 	if err == nil {
@@ -363,8 +441,10 @@ func BuildScreeningCockpitState(projectPath string) (ScreeningCockpitState, erro
 	state.UncertainQueue = screening.UncertainQueue(events, state.Stage)
 	state.Progress = screening.Progress(events, state.Stage, len(records))
 	state.Stopping = screening.StoppingCriteria(events, state.Stage, 0.95, len(records))
-	if _, err := os.Stat(filepath.Join(projectPath, state.AuditBundlePath)); err == nil {
-		state.HasAuditBundle = true
+	if file, ok := openScreeningAuditBundle(projectPath); ok {
+		if err := file.Close(); err == nil {
+			state.HasAuditBundle = true
+		}
 	}
 	return state, nil
 }
@@ -418,11 +498,12 @@ func BuildArtifactDashboardState(projectPath string) (ArtifactDashboardState, er
 	if err != nil {
 		return ArtifactDashboardState{}, err
 	}
+	analysisDetail := buildAnalysisDetail(projectPath)
 	return ArtifactDashboardState{
 		Papers:         papers,
 		PRISMA:         prisma,
-		Analysis:       buildAnalysisViewModel(projectPath),
-		AnalysisDetail: buildAnalysisDetail(projectPath),
+		Analysis:       ui.NewAnalysisViewModel(analysisDetail.RunID, analysisDetail.Ready),
+		AnalysisDetail: analysisDetail,
 		CitationGraph:  graph,
 	}, nil
 }
@@ -440,7 +521,7 @@ func buildCitationGraph(projectPath string) (ui.CitationGraphViewModel, error) {
 	} else if !os.IsNotExist(err) {
 		return ui.CitationGraphViewModel{}, err
 	}
-	data, err := os.ReadFile(filepath.Join(projectPath, "data", "citation-graph.json"))
+	data, err := filetxn.ReadRegular(filepath.Join(projectPath, "data", "citation-graph.json"))
 	if os.IsNotExist(err) {
 		return ui.CitationGraphViewModel{}, nil
 	}
@@ -519,13 +600,13 @@ func buildAnalysisDetail(projectPath string) AnalysisDetail {
 		if entry.IsDir() || !strings.HasSuffix(entry.Name(), "-result.json") {
 			continue
 		}
-		data, err := os.ReadFile(filepath.Join(dir, entry.Name()))
+		data, err := filetxn.ReadRegular(filepath.Join(dir, entry.Name()))
 		if err != nil {
-			return AnalysisDetail{}
+			continue
 		}
 		var result analysis.AnalysisResult
 		if err := json.Unmarshal(data, &result); err != nil {
-			return AnalysisDetail{}
+			continue
 		}
 		return AnalysisDetail{
 			Ready:         true,
@@ -549,7 +630,7 @@ func buildPRISMAFlowState(projectPath string, libraryCount int) (PRISMAFlowState
 	if strings.TrimSpace(projectPath) == "" {
 		return state, nil
 	}
-	workflowData, err := os.ReadFile(filepath.Join(projectPath, "data", "screening.workflow.json"))
+	workflowData, err := filetxn.ReadRegular(filepath.Join(projectPath, "data", "screening.workflow.json"))
 	if os.IsNotExist(err) {
 		return state, nil
 	}
@@ -561,37 +642,21 @@ func buildPRISMAFlowState(projectPath string, libraryCount int) (PRISMAFlowState
 		return state, err
 	}
 	var events []screening.DecisionEvent
-	if eventsData, err := os.ReadFile(filepath.Join(projectPath, "data", "screening.events.json")); err == nil {
-		_ = json.Unmarshal(eventsData, &events)
+	if eventsData, err := filetxn.ReadRegular(filepath.Join(projectPath, "data", "screening.events.json")); err == nil {
+		if err := json.Unmarshal(eventsData, &events); err != nil {
+			return state, fmt.Errorf("parse screening events: %w", err)
+		}
 	}
 	store := screening.NewMemoryStore(workflow)
 	decided := map[string]bool{}
-	for _, event := range events {
-		_ = store.Decide(screening.DecisionInput{PaperID: event.PaperID, Stage: event.Stage, Decision: event.Decision, Reason: event.Reason, Reviewer: event.Reviewer})
+	for i, event := range events {
+		event = screening.NormalizeDecisionEvent(event)
+		if err := store.Decide(screening.DecisionInput{PaperID: event.PaperID, Stage: event.Stage, Decision: event.Decision, Reason: event.Reason, Reviewer: event.Reviewer}); err != nil {
+			return state, fmt.Errorf("apply screening event %d: %w", i+1, err)
+		}
 		decided[event.PaperID] = true
 	}
 	state.Screened = len(decided)
 	state.Included = store.PRISMACounts().Included
 	return state, nil
-}
-
-// buildAnalysisViewModel reports whether the project has a stored meta-analysis
-// result (analysis/<run>-result.json), naming the first run it finds.
-func buildAnalysisViewModel(projectPath string) ui.AnalysisViewModel {
-	if strings.TrimSpace(projectPath) == "" {
-		return ui.NewAnalysisViewModel("", false)
-	}
-	entries, err := os.ReadDir(filepath.Join(projectPath, "analysis"))
-	if err != nil {
-		return ui.NewAnalysisViewModel("", false)
-	}
-	for _, entry := range entries {
-		if entry.IsDir() {
-			continue
-		}
-		if strings.HasSuffix(entry.Name(), "-result.json") {
-			return ui.NewAnalysisViewModel(strings.TrimSuffix(entry.Name(), "-result.json"), true)
-		}
-	}
-	return ui.NewAnalysisViewModel("", false)
 }

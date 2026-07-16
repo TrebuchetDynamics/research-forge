@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/TrebuchetDynamics/research-forge/internal/analysis"
@@ -49,5 +50,96 @@ func TestExecuteReportTraceWritesCitationEvidenceTraceView(t *testing.T) {
 	}
 	if len(view.Claims) != 1 || len(view.Claims[0].EffectSizeRows) != 1 || len(view.Claims[0].AcceptedEvidence) != 1 || len(view.Claims[0].Passages) != 1 || view.Claims[0].Passages[0].ParserName != "grobid" || view.Claims[0].ReferenceManagerItems[0] != "zotero:ZOT-1" {
 		t.Fatalf("view = %#v", view)
+	}
+}
+
+func TestExecuteReportTraceRejectsMalformedEvidenceStore(t *testing.T) {
+	project := filepath.Join(t.TempDir(), "demo")
+	if code := Execute([]string{"project", "create", project, "--title", "Trace"}, ioDiscard{}, ioDiscard{}); code != 0 {
+		t.Fatalf("project create code=%d", code)
+	}
+	if err := os.WriteFile(evidenceItemsPath(project), []byte(`[{"PaperID":`), 0o644); err != nil {
+		t.Fatalf("write malformed evidence: %v", err)
+	}
+	claimsPath := filepath.Join(project, "data", "claims.json")
+	writeJSONForCLITest(t, claimsPath, evidence.CitationLockedSuggestionQueue{SchemaVersion: "1"})
+	analysisPath := filepath.Join(project, "analysis", "run1.json")
+	if err := os.MkdirAll(filepath.Dir(analysisPath), 0o755); err != nil {
+		t.Fatalf("mkdir analysis: %v", err)
+	}
+	writeJSONForCLITest(t, analysisPath, analysis.AnalysisRun{SchemaVersion: "1", ID: "run1"})
+	out := filepath.Join(project, "data", "trace.json")
+	var stdout, stderr bytes.Buffer
+	code := Execute([]string{"--json", "--project", project, "report", "trace", "--claims", claimsPath, "--analysis", analysisPath, "--out", out}, &stdout, &stderr)
+	if code != 1 {
+		t.Fatalf("trace code=%d, want 1; stderr=%s stdout=%s", code, stderr.String(), stdout.String())
+	}
+	if !strings.Contains(stdout.String(), `"code":"report_trace_evidence_read_failed"`) {
+		t.Fatalf("trace did not report evidence read failure: %s", stdout.String())
+	}
+	if _, err := os.Stat(out); !os.IsNotExist(err) {
+		t.Fatalf("trace wrote output after evidence read failure: %v", err)
+	}
+}
+
+func TestExecuteReportTraceRejectsMalformedLibraryStore(t *testing.T) {
+	project := filepath.Join(t.TempDir(), "demo")
+	if code := Execute([]string{"project", "create", project, "--title", "Trace"}, ioDiscard{}, ioDiscard{}); code != 0 {
+		t.Fatalf("project create code=%d", code)
+	}
+	if err := os.WriteFile(filepath.Join(project, "data", "library.json"), []byte(`[{"title":`), 0o644); err != nil {
+		t.Fatalf("write malformed library: %v", err)
+	}
+	claimsPath := filepath.Join(project, "data", "claims.json")
+	writeJSONForCLITest(t, claimsPath, evidence.CitationLockedSuggestionQueue{SchemaVersion: "1"})
+	analysisPath := filepath.Join(project, "analysis", "run1.json")
+	if err := os.MkdirAll(filepath.Dir(analysisPath), 0o755); err != nil {
+		t.Fatalf("mkdir analysis: %v", err)
+	}
+	writeJSONForCLITest(t, analysisPath, analysis.AnalysisRun{SchemaVersion: "1", ID: "run1"})
+	out := filepath.Join(project, "data", "trace.json")
+	var stdout, stderr bytes.Buffer
+	code := Execute([]string{"--json", "--project", project, "report", "trace", "--claims", claimsPath, "--analysis", analysisPath, "--out", out}, &stdout, &stderr)
+	if code != 1 {
+		t.Fatalf("trace code=%d, want 1; stderr=%s stdout=%s", code, stderr.String(), stdout.String())
+	}
+	if !strings.Contains(stdout.String(), `"code":"report_trace_library_read_failed"`) {
+		t.Fatalf("trace did not report library read failure: %s", stdout.String())
+	}
+	if _, err := os.Stat(out); !os.IsNotExist(err) {
+		t.Fatalf("trace wrote output after library read failure: %v", err)
+	}
+}
+
+func TestExecuteReportTraceRejectsMalformedParsedDocument(t *testing.T) {
+	project := filepath.Join(t.TempDir(), "demo")
+	if code := Execute([]string{"project", "create", project, "--title", "Trace"}, ioDiscard{}, ioDiscard{}); code != 0 {
+		t.Fatalf("project create code=%d", code)
+	}
+	parsedPath := filepath.Join(project, "parsed", "paper-1.json")
+	if err := os.MkdirAll(filepath.Dir(parsedPath), 0o755); err != nil {
+		t.Fatalf("mkdir parsed: %v", err)
+	}
+	if err := os.WriteFile(parsedPath, []byte(`{"paperId":`), 0o644); err != nil {
+		t.Fatalf("write malformed parsed document: %v", err)
+	}
+	claimsPath := filepath.Join(project, "data", "claims.json")
+	writeJSONForCLITest(t, claimsPath, evidence.CitationLockedSuggestionQueue{SchemaVersion: "1"})
+	analysisPath := filepath.Join(project, "analysis", "run1.json")
+	if err := os.MkdirAll(filepath.Dir(analysisPath), 0o755); err != nil {
+		t.Fatalf("mkdir analysis: %v", err)
+	}
+	writeJSONForCLITest(t, analysisPath, analysis.AnalysisRun{SchemaVersion: "1", ID: "run1"})
+	out := filepath.Join(project, "data", "trace.json")
+	var stdout, stderr bytes.Buffer
+	code := Execute([]string{"--json", "--project", project, "report", "trace", "--claims", claimsPath, "--analysis", analysisPath, "--out", out}, &stdout, &stderr)
+	if code != 1 {
+		t.Fatalf("trace code=%d, want 1; stderr=%s stdout=%s", code, stderr.String(), stdout.String())
+	}
+	if !strings.Contains(stdout.String(), `"code":"report_trace_parsed_read_failed"`) {
+		t.Fatalf("trace did not report parsed document read failure: %s", stdout.String())
+	}
+	if _, err := os.Stat(out); !os.IsNotExist(err) {
+		t.Fatalf("trace wrote output after parsed document read failure: %v", err)
 	}
 }

@@ -3,6 +3,7 @@ package webui
 import (
 	"encoding/json"
 	"net/http/httptest"
+	"os"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -51,6 +52,65 @@ func TestResearchMapCockpitShowsLiveFeaturesAndSnapshot(t *testing.T) {
 		if !strings.Contains(body, want) {
 			t.Fatalf("missing %q:\n%s", want, body)
 		}
+	}
+}
+
+func TestResearchMapCockpitDoesNotReadSymlinkedRetrievalItems(t *testing.T) {
+	projectPath := t.TempDir()
+	writeJSON(t, filepath.Join(projectPath, "data", "library.json"), []library.PaperRecord{})
+	externalPath := filepath.Join(t.TempDir(), "retrieval-hits.json")
+	writeJSON(t, externalPath, []ResearchMapItem{{ID: "external-private-hit", Label: "External private retrieval", Detail: "external-private-ranking"}})
+	retrievalPath := filepath.Join(projectPath, "data", "retrieval-hits.json")
+	if err := os.Symlink(externalPath, retrievalPath); err != nil {
+		t.Skipf("symlinks unavailable: %v", err)
+	}
+
+	state, err := BuildResearchMapCockpitState(projectPath)
+	if err != nil {
+		t.Fatalf("BuildResearchMapCockpitState: %v", err)
+	}
+	if len(state.RetrievalHits) != 0 {
+		t.Fatalf("research map accepted symlinked retrieval items: %#v", state.RetrievalHits)
+	}
+	body := renderHandler(t, NewResearchMapHandler(state))
+	for _, private := range []string{"external-private-hit", "External private retrieval", "external-private-ranking"} {
+		if strings.Contains(body, private) {
+			t.Fatalf("research map disclosed %q from symlinked retrieval items: %s", private, body)
+		}
+	}
+	if info, err := os.Lstat(retrievalPath); err != nil || info.Mode()&os.ModeSymlink == 0 {
+		t.Fatalf("retrieval items symlink changed: info=%v err=%v", info, err)
+	}
+}
+
+func TestResearchMapCockpitDoesNotReadSymlinkedParserQuality(t *testing.T) {
+	projectPath := t.TempDir()
+	writeJSON(t, filepath.Join(projectPath, "data", "library.json"), []library.PaperRecord{})
+	externalPath := filepath.Join(t.TempDir(), "parser-quality.json")
+	writeJSON(t, externalPath, map[string]any{
+		"parserRuns": []map[string]any{{"parserName": "external-private-parser", "qualityScore": 9.99}},
+		"conflicts":  []map[string]any{{"field": "external-private-field", "status": "external-private-status"}},
+	})
+	qualityPath := filepath.Join(projectPath, "data", "parser-quality.json")
+	if err := os.Symlink(externalPath, qualityPath); err != nil {
+		t.Skipf("symlinks unavailable: %v", err)
+	}
+
+	state, err := BuildResearchMapCockpitState(projectPath)
+	if err != nil {
+		t.Fatalf("BuildResearchMapCockpitState: %v", err)
+	}
+	if len(state.ParserQuality) != 0 {
+		t.Fatalf("research map accepted symlinked parser quality: %#v", state.ParserQuality)
+	}
+	body := renderHandler(t, NewResearchMapHandler(state))
+	for _, private := range []string{"external-private-parser", "external-private-field", "external-private-status"} {
+		if strings.Contains(body, private) {
+			t.Fatalf("research map disclosed %q from symlinked parser quality: %s", private, body)
+		}
+	}
+	if info, err := os.Lstat(qualityPath); err != nil || info.Mode()&os.ModeSymlink == 0 {
+		t.Fatalf("parser quality symlink changed: info=%v err=%v", info, err)
 	}
 }
 

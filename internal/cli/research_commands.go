@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -11,6 +12,7 @@ import (
 	"strconv"
 
 	"github.com/TrebuchetDynamics/research-forge/internal/documents"
+	"github.com/TrebuchetDynamics/research-forge/internal/filetxn"
 	"github.com/TrebuchetDynamics/research-forge/internal/research"
 )
 
@@ -82,7 +84,7 @@ func writePDFText(values map[string]string, stdout, stderr io.Writer, opts globa
 			return writeError(stdout, stderr, opts, 1, "parse_pdftotext_mkdir_failed", err.Error())
 		}
 	}
-	if err := os.WriteFile(values["--out"], data, 0o644); err != nil {
+	if err := filetxn.ReplaceAll([]filetxn.Output{{Path: values["--out"], Data: data, Mode: 0o644}}); err != nil {
 		return writeError(stdout, stderr, opts, 1, "parse_pdftotext_write_failed", err.Error())
 	}
 	if opts.JSON {
@@ -108,28 +110,22 @@ func executeResearchScreenQueue(args []string, stdout, stderr io.Writer, opts gl
 	if err != nil {
 		return writeError(stdout, stderr, opts, 1, "screen_queue_failed", err.Error())
 	}
-	if err := writeScreeningCSV(values["--out"], queue); err != nil {
+	var csvPayload bytes.Buffer
+	if err := research.WriteScreeningCSV(&csvPayload, queue); err != nil {
 		return writeError(stdout, stderr, opts, 1, "screen_queue_write_failed", err.Error())
 	}
+	outputs := []filetxn.Output{{Path: values["--out"], Data: csvPayload.Bytes(), Mode: 0o644}}
 	if values["--markdown"] != "" {
-		if err := os.WriteFile(values["--markdown"], []byte(research.ScreeningMarkdown(queue, 40)), 0o644); err != nil {
-			return writeError(stdout, stderr, opts, 1, "screen_queue_markdown_failed", err.Error())
-		}
+		outputs = append(outputs, filetxn.Output{Path: values["--markdown"], Data: []byte(research.ScreeningMarkdown(queue, 40)), Mode: 0o644})
+	}
+	if err := filetxn.ReplaceAll(outputs); err != nil {
+		return writeError(stdout, stderr, opts, 1, "screen_queue_write_failed", err.Error())
 	}
 	if opts.JSON {
 		return writeJSON(stdout, 0, map[string]any{"records": len(queue), "path": values["--out"], "markdown": values["--markdown"]})
 	}
 	fmt.Fprintf(stdout, "wrote screening queue with %d records to %s\n", len(queue), values["--out"])
 	return 0
-}
-
-func writeScreeningCSV(path string, queue []research.ScreeningRecord) error {
-	file, err := os.Create(path)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-	return research.WriteScreeningCSV(file, queue)
 }
 
 func executeResearchLeakageAudit(args []string, stdout, stderr io.Writer, opts globalOptions) int {
@@ -159,13 +155,12 @@ func executeResearchLeakageAudit(args []string, stdout, stderr io.Writer, opts g
 	if err != nil {
 		return writeError(stdout, stderr, opts, 1, "leakage_audit_marshal_failed", err.Error())
 	}
-	if err := os.WriteFile(values["--out"], data, 0o644); err != nil {
-		return writeError(stdout, stderr, opts, 1, "leakage_audit_write_failed", err.Error())
-	}
+	outputs := []filetxn.Output{{Path: values["--out"], Data: data, Mode: 0o644}}
 	if values["--markdown"] != "" {
-		if err := os.WriteFile(values["--markdown"], []byte(research.LeakageAuditMarkdown(rows)), 0o644); err != nil {
-			return writeError(stdout, stderr, opts, 1, "leakage_audit_markdown_failed", err.Error())
-		}
+		outputs = append(outputs, filetxn.Output{Path: values["--markdown"], Data: []byte(research.LeakageAuditMarkdown(rows)), Mode: 0o644})
+	}
+	if err := filetxn.ReplaceAll(outputs); err != nil {
+		return writeError(stdout, stderr, opts, 1, "leakage_audit_write_failed", err.Error())
 	}
 	if opts.JSON {
 		return writeJSON(stdout, 0, map[string]any{"records": len(rows), "path": values["--out"], "markdown": values["--markdown"]})

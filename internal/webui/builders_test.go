@@ -96,6 +96,112 @@ func TestBuildArtifactDashboardStateFromProject(t *testing.T) {
 	}
 }
 
+func TestBuildArtifactDashboardStateDoesNotReadSymlinkedScreeningEvents(t *testing.T) {
+	proj := seedProject(t)
+	eventsPath := filepath.Join(proj, "data", "screening.events.json")
+	if err := os.Remove(eventsPath); err != nil {
+		t.Fatalf("remove project screening events fixture: %v", err)
+	}
+	outsidePath := filepath.Join(t.TempDir(), "outside-screening-events.json")
+	writeJSON(t, outsidePath, []screening.DecisionEvent{{
+		PaperID: "10.1000/ap-1", Stage: screening.StageTitleAbstract,
+		Decision: screening.DecisionInclude, Reviewer: "external-private-reviewer",
+	}})
+	if err := os.Symlink(outsidePath, eventsPath); err != nil {
+		t.Skipf("symlinks are unavailable: %v", err)
+	}
+
+	state, err := BuildArtifactDashboardState(proj)
+	if err != nil {
+		t.Fatalf("BuildArtifactDashboardState: %v", err)
+	}
+	if state.PRISMA.Screened != 0 || state.PRISMA.Included != 0 {
+		t.Fatalf("BuildArtifactDashboardState exposed external screening events: %#v", state.PRISMA)
+	}
+	info, err := os.Lstat(eventsPath)
+	if err != nil {
+		t.Fatalf("lstat screening events: %v", err)
+	}
+	if info.Mode()&os.ModeSymlink == 0 {
+		t.Fatalf("artifact dashboard read replaced symlink: mode=%v", info.Mode())
+	}
+}
+
+func TestArtifactDashboardFailsClosedOnMalformedScreeningEvents(t *testing.T) {
+	proj := seedProject(t)
+	eventsPath := filepath.Join(proj, "data", "screening.events.json")
+	if err := os.WriteFile(eventsPath, []byte("["), 0o644); err != nil {
+		t.Fatalf("write malformed screening events: %v", err)
+	}
+
+	if _, err := BuildArtifactDashboardState(proj); err == nil {
+		t.Fatal("BuildArtifactDashboardState accepted malformed screening events")
+	}
+	ts := httptest.NewServer(NewRouter(Config{ProjectPath: proj}))
+	defer ts.Close()
+	body, status, _ := getURL(t, ts.URL+"/artifacts")
+	if status != http.StatusInternalServerError {
+		t.Fatalf("GET /artifacts with malformed events status = %d: %s", status, body)
+	}
+	if !strings.Contains(body, "parse screening events") {
+		t.Fatalf("malformed artifacts response lacks parse context: %s", body)
+	}
+}
+
+func TestArtifactDashboardFailsClosedOnInvalidScreeningDecision(t *testing.T) {
+	proj := seedProject(t)
+	writeJSON(t, filepath.Join(proj, "data", "screening.events.json"), []screening.DecisionEvent{
+		{
+			PaperID:  "10.1000/ap-1",
+			Stage:    screening.StageTitleAbstract,
+			Decision: screening.DecisionExclude,
+			Reason:   "not-configured",
+			Reviewer: "ada",
+		},
+	})
+
+	if state, err := BuildArtifactDashboardState(proj); err == nil {
+		t.Fatalf("BuildArtifactDashboardState accepted invalid screening decision: %#v", state.PRISMA)
+	}
+	ts := httptest.NewServer(NewRouter(Config{ProjectPath: proj}))
+	defer ts.Close()
+	body, status, _ := getURL(t, ts.URL+"/artifacts")
+	if status != http.StatusInternalServerError {
+		t.Fatalf("GET /artifacts with invalid screening decision status = %d: %s", status, body)
+	}
+	if !strings.Contains(body, "apply screening event") {
+		t.Fatalf("invalid screening decision response lacks event context: %s", body)
+	}
+}
+
+func TestBuildArtifactDashboardStateRejectsSymlinkedScreeningWorkflow(t *testing.T) {
+	proj := seedProject(t)
+	workflowPath := filepath.Join(proj, "data", "screening.workflow.json")
+	if err := os.Remove(workflowPath); err != nil {
+		t.Fatalf("remove project screening workflow fixture: %v", err)
+	}
+	outsidePath := filepath.Join(t.TempDir(), "outside-screening-workflow.json")
+	externalWorkflow, err := screening.Configure(screening.Options{ExclusionReasons: []string{"external-private-reason"}})
+	if err != nil {
+		t.Fatalf("configure external workflow: %v", err)
+	}
+	writeJSON(t, outsidePath, externalWorkflow)
+	if err := os.Symlink(outsidePath, workflowPath); err != nil {
+		t.Skipf("symlinks are unavailable: %v", err)
+	}
+
+	if state, err := BuildArtifactDashboardState(proj); err == nil {
+		t.Fatalf("BuildArtifactDashboardState accepted external screening workflow: %#v", state.PRISMA)
+	}
+	info, err := os.Lstat(workflowPath)
+	if err != nil {
+		t.Fatalf("lstat screening workflow: %v", err)
+	}
+	if info.Mode()&os.ModeSymlink == 0 {
+		t.Fatalf("artifact dashboard workflow read replaced symlink: mode=%v", info.Mode())
+	}
+}
+
 // TestE2EWebCockpitServesProjectViewModelsThroughHandlers ties CLI-produced
 // project state to the cockpit: it builds the library and artifacts view models
 // from a project workspace on disk and serves them through the internal/webui

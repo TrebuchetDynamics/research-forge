@@ -65,6 +65,28 @@ func TestBuildPaperListReadsParsedDocuments(t *testing.T) {
 	}
 }
 
+func TestBuildPaperListRejectsSymlinkedParsedDocument(t *testing.T) {
+	projectPath := t.TempDir()
+	parsedDir := filepath.Join(projectPath, "parsed")
+	if err := os.MkdirAll(parsedDir, 0o755); err != nil {
+		t.Fatalf("mkdir project parsed: %v", err)
+	}
+
+	externalProject := t.TempDir()
+	writeParsedDoc(t, externalProject, "external-private-paper", sampleParsedDoc)
+	docPath := filepath.Join(parsedDir, "external-private-paper.json")
+	if err := os.Symlink(filepath.Join(externalProject, "parsed", "external-private-paper.json"), docPath); err != nil {
+		t.Skipf("symlinks unavailable: %v", err)
+	}
+
+	if _, err := BuildPaperList(projectPath); err == nil {
+		t.Fatal("BuildPaperList accepted a symlinked parsed document")
+	}
+	if info, err := os.Lstat(docPath); err != nil || info.Mode()&os.ModeSymlink == 0 {
+		t.Fatalf("parsed document symlink changed: info=%v err=%v", info, err)
+	}
+}
+
 func TestPapersRoutesServeListAndDetail(t *testing.T) {
 	dir := t.TempDir()
 	writeParsedDoc(t, dir, "10-1000-ap", sampleParsedDoc)
@@ -126,6 +148,66 @@ func TestPaperPDFServedWhenPresent(t *testing.T) {
 	}
 	if !strings.HasPrefix(pdfBody, "%PDF") {
 		t.Fatalf("pdf body = %q", pdfBody)
+	}
+}
+
+func TestPaperPDFSymlinkIsNotServed(t *testing.T) {
+	projectPath := t.TempDir()
+	writeParsedDoc(t, projectPath, "10-1000-ap", sampleParsedDoc)
+	pdfDir := filepath.Join(projectPath, "documents", "open-access")
+	if err := os.MkdirAll(pdfDir, 0o755); err != nil {
+		t.Fatalf("mkdir project PDFs: %v", err)
+	}
+	externalPath := filepath.Join(t.TempDir(), "external-private.pdf")
+	if err := os.WriteFile(externalPath, []byte("%PDF-1.4 external-private-content"), 0o644); err != nil {
+		t.Fatalf("write external PDF: %v", err)
+	}
+	pdfPath := filepath.Join(pdfDir, "10-1000-ap.pdf")
+	if err := os.Symlink(externalPath, pdfPath); err != nil {
+		t.Skipf("symlinks unavailable: %v", err)
+	}
+
+	ts := httptest.NewServer(NewRouter(Config{ProjectPath: projectPath}))
+	defer ts.Close()
+	body, status, _ := getURL(t, ts.URL+"/papers/10-1000-ap/pdf")
+	if status != http.StatusNotFound {
+		t.Fatalf("symlinked PDF status = %d, want 404; body=%q", status, body)
+	}
+	if strings.Contains(body, "external-private-content") {
+		t.Fatalf("symlinked PDF disclosed external content: %q", body)
+	}
+	if info, err := os.Lstat(pdfPath); err != nil || info.Mode()&os.ModeSymlink == 0 {
+		t.Fatalf("PDF symlink changed: info=%v err=%v", info, err)
+	}
+}
+
+func TestPaperPDFAncestorSymlinkIsNotServed(t *testing.T) {
+	projectPath := t.TempDir()
+	writeParsedDoc(t, projectPath, "10-1000-ap", sampleParsedDoc)
+	externalDocuments := filepath.Join(t.TempDir(), "documents")
+	externalPDFDir := filepath.Join(externalDocuments, "open-access")
+	if err := os.MkdirAll(externalPDFDir, 0o755); err != nil {
+		t.Fatalf("mkdir external PDFs: %v", err)
+	}
+	if err := os.WriteFile(filepath.Join(externalPDFDir, "10-1000-ap.pdf"), []byte("%PDF-1.4 external-ancestor-content"), 0o644); err != nil {
+		t.Fatalf("write external PDF: %v", err)
+	}
+	documentsPath := filepath.Join(projectPath, "documents")
+	if err := os.Symlink(externalDocuments, documentsPath); err != nil {
+		t.Skipf("symlinks unavailable: %v", err)
+	}
+
+	ts := httptest.NewServer(NewRouter(Config{ProjectPath: projectPath}))
+	defer ts.Close()
+	body, status, _ := getURL(t, ts.URL+"/papers/10-1000-ap/pdf")
+	if status != http.StatusNotFound {
+		t.Fatalf("ancestor-symlinked PDF status = %d, want 404; body=%q", status, body)
+	}
+	if strings.Contains(body, "external-ancestor-content") {
+		t.Fatalf("ancestor-symlinked PDF disclosed external content: %q", body)
+	}
+	if info, err := os.Lstat(documentsPath); err != nil || info.Mode()&os.ModeSymlink == 0 {
+		t.Fatalf("documents symlink changed: info=%v err=%v", info, err)
 	}
 }
 

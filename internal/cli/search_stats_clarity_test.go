@@ -85,9 +85,9 @@ func TestSearchStatsIgnoresSearchStatsTxt(t *testing.T) {
 	if strings.Contains(out, `"stats"`) || strings.Contains(out, "  stats ") {
 		t.Errorf("search-stats.txt was treated as a source; output:\n%s", out)
 	}
-	// The number 265 from search-stats.txt body must not inflate unique DOIs
-	if strings.Contains(out, "265") {
-		t.Errorf("search-stats.txt content bled into DOI count; output:\n%s", out)
+	// search-stats.txt must not inflate the two unique DOIs in the raw file.
+	if !strings.Contains(out, "Total unique DOIs: 2") {
+		t.Errorf("unexpected unique DOI count; output:\n%s", out)
 	}
 }
 

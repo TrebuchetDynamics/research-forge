@@ -136,6 +136,38 @@ func TestExecuteProtocolLiveSmokeSnapshotWritesStorage(t *testing.T) {
 	}
 }
 
+func TestExecuteProtocolLiveSmokeSnapshotDoesNotWriteThroughSymlink(t *testing.T) {
+	outsidePath := filepath.Join(t.TempDir(), "outside-snapshot.json")
+	outsideBefore := []byte("outside snapshot\n")
+	if err := os.WriteFile(outsidePath, outsideBefore, 0o600); err != nil {
+		t.Fatalf("write outside snapshot: %v", err)
+	}
+	outputPath := filepath.Join(t.TempDir(), "latest.json")
+	if err := os.Symlink(outsidePath, outputPath); err != nil {
+		t.Skipf("symlinks unavailable: %v", err)
+	}
+	var stdout, stderr bytes.Buffer
+
+	code := Execute([]string{"protocol", "live-smoke-snapshot", "--output", outputPath}, &stdout, &stderr)
+	if code != 1 {
+		t.Errorf("exit code = %d stderr=%s stdout=%s, want snapshot failure", code, stderr.String(), stdout.String())
+	}
+	outsideAfter, err := os.ReadFile(outsidePath)
+	if err != nil {
+		t.Fatalf("read outside snapshot: %v", err)
+	}
+	if !bytes.Equal(outsideAfter, outsideBefore) {
+		t.Errorf("snapshot wrote through symlink:\n got: %s\nwant: %s", outsideAfter, outsideBefore)
+	}
+	info, err := os.Stat(outsidePath)
+	if err != nil {
+		t.Fatalf("stat outside snapshot: %v", err)
+	}
+	if got := info.Mode().Perm(); got != 0o600 {
+		t.Errorf("outside snapshot mode = %o, want 600", got)
+	}
+}
+
 func TestExecuteProtocolCapabilitiesJSON(t *testing.T) {
 	var stdout, stderr bytes.Buffer
 	code := Execute([]string{"--json", "protocol", "capabilities"}, &stdout, &stderr)

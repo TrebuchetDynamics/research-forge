@@ -9,6 +9,7 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/TrebuchetDynamics/research-forge/internal/filetxn"
 	"github.com/TrebuchetDynamics/research-forge/internal/library"
 )
 
@@ -114,14 +115,14 @@ func executeVaultBuild(args []string, stdout, stderr io.Writer, opts globalOptio
 		return writeError(stdout, stderr, opts, 1, "mkdir_failed", err.Error())
 	}
 
-	// Write per-paper notes
+	outputs := make([]filetxn.Output, 0, len(byKey)+len(topicPapers)+1)
+
+	// Generate per-paper notes
 	for _, p := range byKey {
 		sort.Strings(p.Topics)
 		content := vaultPaperNote(p)
 		path := filepath.Join(papersDir, p.Slug+".md")
-		if err := os.WriteFile(path, []byte(content), 0o644); err != nil {
-			return writeError(stdout, stderr, opts, 1, "paper_note_write_failed", err.Error())
-		}
+		outputs = append(outputs, filetxn.Output{Path: path, Data: []byte(content), Mode: 0o644})
 	}
 
 	// Slug lookup by key for wikilinks
@@ -134,7 +135,7 @@ func executeVaultBuild(args []string, stdout, stderr io.Writer, opts globalOptio
 		titleByKey[key] = p.Title
 	}
 
-	// Write per-topic index notes
+	// Generate per-topic index notes
 	topics := make([]string, 0, len(topicPapers))
 	for t := range topicPapers {
 		topics = append(topics, t)
@@ -147,9 +148,7 @@ func executeVaultBuild(args []string, stdout, stderr io.Writer, opts globalOptio
 		topicCounts[topic] = len(keys)
 		content := vaultTopicNote(topic, keys, byKey)
 		path := filepath.Join(outDir, topic+".md")
-		if err := os.WriteFile(path, []byte(content), 0o644); err != nil {
-			return writeError(stdout, stderr, opts, 1, "topic_note_write_failed", err.Error())
-		}
+		outputs = append(outputs, filetxn.Output{Path: path, Data: []byte(content), Mode: 0o644})
 	}
 
 	// Cross-topic papers (appear in 2+ topics)
@@ -166,10 +165,11 @@ func executeVaultBuild(args []string, stdout, stderr io.Writer, opts globalOptio
 		return crossTopicPapers[i].Title < crossTopicPapers[j].Title
 	})
 
-	// Write main index
+	// Generate the main index and replace the complete vault as one transaction.
 	indexContent := vaultMainIndex(topics, topicCounts, crossTopicPapers)
-	if err := os.WriteFile(filepath.Join(outDir, "index.md"), []byte(indexContent), 0o644); err != nil {
-		return writeError(stdout, stderr, opts, 1, "index_write_failed", err.Error())
+	outputs = append(outputs, filetxn.Output{Path: filepath.Join(outDir, "index.md"), Data: []byte(indexContent), Mode: 0o644})
+	if err := filetxn.ReplaceAll(outputs); err != nil {
+		return writeError(stdout, stderr, opts, 1, "vault_write_failed", err.Error())
 	}
 
 	if opts.JSON {

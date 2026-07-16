@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/TrebuchetDynamics/research-forge/internal/filetxn"
 	"github.com/TrebuchetDynamics/research-forge/internal/knowledge"
 	"github.com/TrebuchetDynamics/research-forge/internal/library"
 )
@@ -40,14 +41,16 @@ func executeGraph(args []string, stdout, stderr io.Writer, opts globalOptions) i
 	jsonPath := filepath.Join(opts.Project, "data", "knowledge-graph.json")
 	htmlPath := filepath.Join(opts.Project, "data", "knowledge-graph.html")
 	reportPath := filepath.Join(opts.Project, "data", "knowledge-graph-report.md")
-	if err := writeJSONFile(jsonPath, graph); err != nil {
+	jsonOutput, err := jsonFileOutput(jsonPath, graph)
+	if err != nil {
 		return writeError(stdout, stderr, opts, 1, "graph_write_failed", err.Error())
 	}
-	if err := os.WriteFile(htmlPath, []byte(knowledgeGraphHTML(graph)), 0o644); err != nil {
-		return writeError(stdout, stderr, opts, 1, "graph_html_failed", err.Error())
-	}
-	if err := os.WriteFile(reportPath, []byte(knowledge.BuildKnowledgeGraphReport(graph)), 0o644); err != nil {
-		return writeError(stdout, stderr, opts, 1, "graph_report_failed", err.Error())
+	if err := filetxn.ReplaceAll([]filetxn.Output{
+		jsonOutput,
+		{Path: htmlPath, Data: []byte(knowledgeGraphHTML(graph)), Mode: 0o644},
+		{Path: reportPath, Data: []byte(knowledge.BuildKnowledgeGraphReport(graph)), Mode: 0o644},
+	}); err != nil {
+		return writeError(stdout, stderr, opts, 1, "graph_write_failed", err.Error())
 	}
 	if opts.JSON {
 		return writeJSON(stdout, 0, map[string]any{"graph": jsonPath, "html": htmlPath, "report": reportPath, "nodes": len(graph.Nodes), "edges": len(graph.Edges), "fetched": len(fetches.assets), "fetchFailures": fetches.failures})

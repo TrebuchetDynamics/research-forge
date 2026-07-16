@@ -123,6 +123,7 @@ func NewRouter(cfg Config) http.Handler {
 	screeningHandler := newScreeningCockpitHandler(state.get)
 	mux.Handle("/screening", screeningHandler)
 	mux.Handle("/screening/refresh", screeningHandler)
+	mux.Handle("GET /"+screeningAuditBundlePath, newScreeningAuditBundleHandler(state.get))
 
 	libraryHandler := newProjectLibraryHandler(state.get)
 	mux.Handle("/library", libraryHandler)
@@ -142,6 +143,25 @@ func NewRouter(cfg Config) http.Handler {
 	}
 
 	return mux
+}
+
+func newScreeningAuditBundleHandler(projectPath func() string) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		file, ok := openScreeningAuditBundle(projectPath())
+		if !ok {
+			http.NotFound(w, r)
+			return
+		}
+		defer file.Close()
+		info, err := file.Stat()
+		if err != nil {
+			http.Error(w, "failed to read screening audit bundle", http.StatusInternalServerError)
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Content-Disposition", `attachment; filename="screening-audit-bundle.json"`)
+		http.ServeContent(w, r, info.Name(), info.ModTime(), file)
+	})
 }
 
 // newRootHandler serves the shell only for the exact "/" path and 404s any

@@ -9,6 +9,8 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/TrebuchetDynamics/research-forge/internal/filetxn"
 )
 
 type goalDefinition struct {
@@ -69,9 +71,18 @@ func parseGoalSet(args []string) (name, metric string, min int, ok bool) {
 
 func goalSet(projectPath, name, metric string, min int) error {
 	goalsPath := filepath.Join(projectPath, "goals.json")
-	var goals []goalDefinition
-	if data, err := os.ReadFile(goalsPath); err == nil {
-		_ = json.Unmarshal(data, &goals)
+	mode := os.FileMode(0o644)
+	if info, err := os.Lstat(goalsPath); err == nil {
+		if !info.Mode().IsRegular() {
+			return fmt.Errorf("goals file is not a regular file: %s", goalsPath)
+		}
+		mode = info.Mode().Perm()
+	} else if !os.IsNotExist(err) {
+		return err
+	}
+	goals, err := goalLoad(projectPath)
+	if err != nil {
+		return fmt.Errorf("load goals: %w", err)
 	}
 	goals = append(goals, goalDefinition{
 		Name:      name,
@@ -83,7 +94,7 @@ func goalSet(projectPath, name, metric string, min int) error {
 	if err != nil {
 		return err
 	}
-	return os.WriteFile(goalsPath, data, 0o644)
+	return filetxn.Replace(goalsPath, data, mode)
 }
 
 func executeGoalAudit(args []string, stdout, stderr io.Writer, opts globalOptions) int {
@@ -101,7 +112,10 @@ func executeGoalAudit(args []string, stdout, stderr io.Writer, opts globalOption
 		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge goal audit --ledger <file>")
 	}
 	goals, loadErr := goalLoad(opts.Project)
-	if loadErr != nil || len(goals) == 0 {
+	if loadErr != nil {
+		return writeError(stdout, stderr, opts, 1, "goal_audit_failed", loadErr.Error())
+	}
+	if len(goals) == 0 {
 		if opts.JSON {
 			return writeJSON(stdout, 0, map[string]any{"goals": []any{}, "count": 0})
 		}
@@ -143,7 +157,7 @@ func executeGoalAudit(args []string, stdout, stderr io.Writer, opts globalOption
 }
 
 func goalLoad(projectPath string) ([]goalDefinition, error) {
-	data, err := os.ReadFile(filepath.Join(projectPath, "goals.json"))
+	data, err := filetxn.ReadRegular(filepath.Join(projectPath, "goals.json"))
 	if os.IsNotExist(err) {
 		return nil, nil
 	}
@@ -164,11 +178,18 @@ func goalCountLedger(path string) (int, error) {
 	}
 	defer f.Close()
 	count := 0
-	scanner := bufio.NewScanner(f)
-	for scanner.Scan() {
-		if strings.TrimSpace(scanner.Text()) != "" {
+	reader := bufio.NewReader(f)
+	for {
+		line, readErr := reader.ReadString('\n')
+		if strings.TrimSpace(line) != "" {
 			count++
 		}
+		if readErr == io.EOF {
+			break
+		}
+		if readErr != nil {
+			return 0, readErr
+		}
 	}
-	return count, scanner.Err()
+	return count, nil
 }

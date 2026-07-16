@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/TrebuchetDynamics/research-forge/internal/reviewpkg"
@@ -42,5 +43,28 @@ func TestExecutePackageCreateWritesReproducibleReviewPackageFormat(t *testing.T)
 	}
 	if _, err := os.Stat(filepath.Join(out, "redaction-report.json")); err != nil {
 		t.Fatalf("missing redaction report: %v", err)
+	}
+}
+
+func TestExecutePackageCreateRejectsMissingLockfile(t *testing.T) {
+	project := filepath.Join(t.TempDir(), "demo")
+	if code := Execute([]string{"project", "create", project, "--title", "Missing Lock"}, ioDiscard{}, ioDiscard{}); code != 0 {
+		t.Fatalf("project create code=%d", code)
+	}
+	if err := os.Remove(filepath.Join(project, "rforge.lock.json")); err != nil {
+		t.Fatalf("remove generated lockfile: %v", err)
+	}
+	out := filepath.Join(t.TempDir(), "review.rforgepkg")
+	var stdout, stderr bytes.Buffer
+
+	code := Execute([]string{"--json", "--project", project, "package", "create", "--out", out}, &stdout, &stderr)
+	if code != 1 {
+		t.Fatalf("package create code=%d stdout=%s stderr=%s, want 1", code, stdout.String(), stderr.String())
+	}
+	if !strings.Contains(stdout.String(), `"code":"package_create_failed"`) || !strings.Contains(stdout.String(), "rforge.lock.json") {
+		t.Fatalf("package create output=%s, want missing lockfile error", stdout.String())
+	}
+	if _, err := os.Stat(out); !os.IsNotExist(err) {
+		t.Fatalf("failed package create left output behind: %v", err)
 	}
 }

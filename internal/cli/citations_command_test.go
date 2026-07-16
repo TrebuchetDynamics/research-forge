@@ -66,6 +66,77 @@ func TestCitationsBuildRequiresResearchDir(t *testing.T) {
 	}
 }
 
+func TestCitationsBuildRejectsUnreadableResearchDirectory(t *testing.T) {
+	researchDir := filepath.Join(t.TempDir(), "missing")
+	var stdout, stderr bytes.Buffer
+	code := Execute([]string{"--json", "citations", "build", "--research-dir", researchDir}, &stdout, &stderr)
+	if code != 1 {
+		t.Fatalf("exit code = %d, want 1; stderr = %s, stdout = %s", code, stderr.String(), stdout.String())
+	}
+	if !strings.Contains(stdout.String(), `"code":"citation_discovery_failed"`) {
+		t.Fatalf("missing discovery error: %s", stdout.String())
+	}
+}
+
+func TestCitationsBuildRejectsMalformedTopicResultsWithoutWritingOutput(t *testing.T) {
+	dir := makeCitationsResearchDir(t,
+		map[string][]map[string]any{
+			"topic-a": {
+				{"Title": "Paper", "Identifiers": map[string]any{"DOI": "10.1000/paper"}, "OpenAccess": true, "URLs": []string{}},
+			},
+		},
+		map[string][]string{"topic-a": {"10_1000_paper"}},
+	)
+	if err := os.WriteFile(filepath.Join(dir, "topic-a", "results.jsonl"), []byte(`{"Title":`), 0o644); err != nil {
+		t.Fatalf("write malformed results: %v", err)
+	}
+	outPath := filepath.Join(dir, "CITATIONS.md")
+	var stdout, stderr bytes.Buffer
+	code := Execute([]string{"--json", "citations", "build", "--research-dir", dir, "--out", outPath}, &stdout, &stderr)
+	if code != 1 {
+		t.Fatalf("exit code = %d, want 1; stderr = %s, stdout = %s", code, stderr.String(), stdout.String())
+	}
+	if !strings.Contains(stdout.String(), `"code":"citation_discovery_failed"`) {
+		t.Fatalf("missing discovery error: %s", stdout.String())
+	}
+	if _, err := os.Stat(outPath); !os.IsNotExist(err) {
+		t.Fatalf("citations output exists after discovery failure: %v", err)
+	}
+}
+
+func TestCitationsBuildDoesNotWriteThroughSymlinkedOutput(t *testing.T) {
+	researchDir := t.TempDir()
+	outsidePath := filepath.Join(t.TempDir(), "outside.md")
+	outsideBefore := []byte("outside citations must remain unchanged\n")
+	if err := os.WriteFile(outsidePath, outsideBefore, 0o640); err != nil {
+		t.Fatalf("write outside citations: %v", err)
+	}
+	outPath := filepath.Join(researchDir, "CITATIONS.md")
+	if err := os.Symlink(outsidePath, outPath); err != nil {
+		t.Skipf("symlink unsupported: %v", err)
+	}
+	var stdout, stderr bytes.Buffer
+
+	code := Execute([]string{"citations", "build", "--research-dir", researchDir, "--out", outPath}, &stdout, &stderr)
+	if code == 0 {
+		t.Fatalf("citations build succeeded with symlinked output: stdout=%s", stdout.String())
+	}
+	outsideAfter, err := os.ReadFile(outsidePath)
+	if err != nil {
+		t.Fatalf("read outside citations: %v", err)
+	}
+	if !bytes.Equal(outsideAfter, outsideBefore) {
+		t.Fatalf("citations build wrote through symlink: got %q, want %q", outsideAfter, outsideBefore)
+	}
+	info, err := os.Lstat(outPath)
+	if err != nil {
+		t.Fatalf("lstat citations output: %v", err)
+	}
+	if info.Mode()&os.ModeSymlink == 0 {
+		t.Fatalf("citations build replaced output symlink despite rejecting it: mode=%v", info.Mode())
+	}
+}
+
 func TestCitationsBuildWritesCitationsFile(t *testing.T) {
 	crossref := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -83,6 +154,10 @@ func TestCitationsBuildWritesCitationsFile(t *testing.T) {
 		},
 		map[string][]string{"topic-a": {"10_1000_test"}},
 	)
+	outPath := filepath.Join(dir, "CITATIONS.md")
+	if err := os.WriteFile(outPath, []byte("prior citations\n"), 0o600); err != nil {
+		t.Fatalf("write prior citations: %v", err)
+	}
 
 	stdout := new(bytes.Buffer)
 	code := Execute([]string{"citations", "build", "--research-dir", dir}, stdout, new(bytes.Buffer))
@@ -90,7 +165,7 @@ func TestCitationsBuildWritesCitationsFile(t *testing.T) {
 		t.Fatalf("exit code = %d, stdout = %s", code, stdout.String())
 	}
 
-	out, err := os.ReadFile(filepath.Join(dir, "CITATIONS.md"))
+	out, err := os.ReadFile(outPath)
 	if err != nil {
 		t.Fatalf("CITATIONS.md not written: %v", err)
 	}
@@ -100,6 +175,56 @@ func TestCitationsBuildWritesCitationsFile(t *testing.T) {
 	}
 	if !strings.Contains(s, "Mock Journal Paper") {
 		t.Errorf("CITATIONS.md missing paper title: %s", s)
+	}
+	info, err := os.Stat(outPath)
+	if err != nil {
+		t.Fatalf("stat citations output: %v", err)
+	}
+	if got := info.Mode().Perm(); got != 0o600 {
+		t.Fatalf("citations output mode = %o, want 600", got)
+	}
+	entries, err := os.ReadDir(dir)
+	if err != nil {
+		t.Fatalf("read citations directory: %v", err)
+	}
+	for _, entry := range entries {
+		if strings.Contains(entry.Name(), ".rforge-stage-") || strings.Contains(entry.Name(), ".rforge-backup-") {
+			t.Fatalf("citations build left transaction debris: %s", entry.Name())
+		}
+	}
+}
+
+func TestCitationsBuildWritesMetadataWarningsForFallbackCitations(t *testing.T) {
+	crossref := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		http.Error(w, "temporarily unavailable", http.StatusBadGateway)
+	}))
+	defer crossref.Close()
+	t.Setenv("RFORGE_CROSSREF_API_URL", crossref.URL)
+	t.Setenv("RFORGE_CITATIONS_FETCH_DELAY", "0")
+	dir := makeCitationsResearchDir(t,
+		map[string][]map[string]any{
+			"topic-a": {
+				{"Title": "Local fallback title", "Identifiers": map[string]any{"DOI": "10.1000/fallback"}, "OpenAccess": true, "URLs": []string{}},
+			},
+		},
+		map[string][]string{"topic-a": {"10_1000_fallback"}},
+	)
+	var stdout, stderr bytes.Buffer
+	code := Execute([]string{"citations", "build", "--research-dir", dir}, &stdout, &stderr)
+	if code != 0 {
+		t.Fatalf("exit code = %d, stderr = %s, stdout = %s", code, stderr.String(), stdout.String())
+	}
+	data, err := os.ReadFile(filepath.Join(dir, "CITATIONS.md"))
+	if err != nil {
+		t.Fatalf("read citations: %v", err)
+	}
+	for _, want := range []string{"Local fallback title", "## Metadata warnings", "crossref:10.1000/fallback", "verify"} {
+		if !strings.Contains(string(data), want) {
+			t.Fatalf("CITATIONS.md missing %q:\n%s", want, data)
+		}
+	}
+	if !strings.Contains(stdout.String(), "1 metadata warning") {
+		t.Fatalf("stdout did not report degraded metadata: %s", stdout.String())
 	}
 }
 
@@ -271,6 +396,53 @@ func TestCitationsBuildJSONOutput(t *testing.T) {
 	citations, _ := data["citations"].([]any)
 	if len(citations) == 0 {
 		t.Errorf("citations empty in JSON output")
+	}
+}
+
+func TestCitationsBuildJSONReportsMetadataFetchFailure(t *testing.T) {
+	crossref := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		http.Error(w, "temporarily unavailable", http.StatusBadGateway)
+	}))
+	defer crossref.Close()
+	t.Setenv("RFORGE_CROSSREF_API_URL", crossref.URL)
+	t.Setenv("RFORGE_CITATIONS_FETCH_DELAY", "0")
+	dir := makeCitationsResearchDir(t,
+		map[string][]map[string]any{
+			"topic-a": {
+				{"Title": "Local fallback title", "Identifiers": map[string]any{"DOI": "10.1000/fallback"}, "OpenAccess": true, "URLs": []string{}},
+			},
+		},
+		map[string][]string{"topic-a": {"10_1000_fallback"}},
+	)
+	var stdout, stderr bytes.Buffer
+	code := Execute([]string{"--json", "citations", "build", "--research-dir", dir}, &stdout, &stderr)
+	if code != 0 {
+		t.Fatalf("exit code = %d, stderr = %s, stdout = %s", code, stderr.String(), stdout.String())
+	}
+	var envelope struct {
+		Data struct {
+			Citations []struct {
+				Title string `json:"title"`
+			} `json:"citations"`
+			Warnings []struct {
+				Source     string `json:"source"`
+				Identifier string `json:"identifier"`
+				Message    string `json:"message"`
+			} `json:"warnings"`
+		} `json:"data"`
+	}
+	if err := json.Unmarshal(stdout.Bytes(), &envelope); err != nil {
+		t.Fatalf("decode JSON output: %v", err)
+	}
+	if len(envelope.Data.Citations) != 1 || envelope.Data.Citations[0].Title != "Local fallback title" {
+		t.Fatalf("fallback citations = %#v", envelope.Data.Citations)
+	}
+	if len(envelope.Data.Warnings) != 1 {
+		t.Fatalf("metadata warnings = %#v, want one", envelope.Data.Warnings)
+	}
+	warning := envelope.Data.Warnings[0]
+	if warning.Source != "crossref" || warning.Identifier != "10.1000/fallback" || warning.Message == "" {
+		t.Fatalf("metadata warning = %#v", warning)
 	}
 }
 

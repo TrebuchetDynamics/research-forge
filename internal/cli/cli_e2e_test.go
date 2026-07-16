@@ -382,3 +382,41 @@ func TestE2EProjectCreateInsideRepoUsesArtificialPhotosynthesisDefaults(t *testi
 		t.Fatalf("default Research project storage missing: %v", err)
 	}
 }
+
+func TestE2EProjectCreateDoesNotWriteThroughSymlinkedRepoConfig(t *testing.T) {
+	repo := t.TempDir()
+	if err := os.Mkdir(filepath.Join(repo, ".git"), 0o755); err != nil {
+		t.Fatalf("create fake git repo: %v", err)
+	}
+	outsidePath := filepath.Join(t.TempDir(), "outside-config")
+	outsideBefore := []byte("outside configuration\n")
+	if err := os.WriteFile(outsidePath, outsideBefore, 0o600); err != nil {
+		t.Fatalf("write outside config: %v", err)
+	}
+	configPath := filepath.Join(repo, ".researchforge")
+	if err := os.Symlink(outsidePath, configPath); err != nil {
+		t.Skipf("symlinks unavailable: %v", err)
+	}
+
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+	projectDir := filepath.Join(repo, "review")
+	code := Execute([]string{"project", "create", projectDir, "--title", "Symlink Safety Review"}, stdout, stderr)
+	if code != 1 {
+		t.Errorf("exit code = %d, stdout = %s, stderr = %s; want repo config failure", code, stdout.String(), stderr.String())
+	}
+	outsideAfter, err := os.ReadFile(outsidePath)
+	if err != nil {
+		t.Fatalf("read outside config: %v", err)
+	}
+	if !bytes.Equal(outsideAfter, outsideBefore) {
+		t.Fatalf("project create wrote through repository config symlink:\n got: %s\nwant: %s", outsideAfter, outsideBefore)
+	}
+	info, err := os.Stat(outsidePath)
+	if err != nil {
+		t.Fatalf("stat outside config: %v", err)
+	}
+	if got := info.Mode().Perm(); got != 0o600 {
+		t.Fatalf("outside config mode = %o, want 600", got)
+	}
+}

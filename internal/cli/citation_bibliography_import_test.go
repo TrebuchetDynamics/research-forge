@@ -70,3 +70,95 @@ func TestExecuteCitationsImportBibliographyLinksSpansAndEvidence(t *testing.T) {
 		t.Fatalf("graph err=%v data=%s", err, string(graphData))
 	}
 }
+
+func TestExecuteCitationsImportBibliographyRejectsMalformedEvidence(t *testing.T) {
+	project := t.TempDir()
+	doc := parsing.EnrichParsedDocumentModel(parsing.ParsedDocument{PaperID: "paper-1", References: []parsing.Reference{{Title: "Ref", DOI: "10.1000/ref"}}})
+	parsedPath := filepath.Join(project, "parsed.json")
+	writeParsedFixture(t, parsedPath, doc)
+	if err := os.MkdirAll(filepath.Dir(evidenceItemsPath(project)), 0o755); err != nil {
+		t.Fatalf("mkdir evidence directory: %v", err)
+	}
+	if err := os.WriteFile(evidenceItemsPath(project), []byte(`[{"PaperID":`), 0o644); err != nil {
+		t.Fatalf("write malformed evidence: %v", err)
+	}
+	graphPath := filepath.Join(project, "data", "citation-graph.json")
+	reportPath := filepath.Join(project, "data", "bibliography-import.json")
+	var stdout, stderr bytes.Buffer
+	code := Execute([]string{"--json", "--project", project, "citations", "import-bibliography", "--parsed", parsedPath, "--out", graphPath, "--report", reportPath}, &stdout, &stderr)
+	if code != 1 {
+		t.Fatalf("code=%d, want 1; stderr=%s stdout=%s", code, stderr.String(), stdout.String())
+	}
+	if !bytes.Contains(stdout.Bytes(), []byte(`"code":"citation_evidence_read_failed"`)) {
+		t.Fatalf("missing evidence read error: %s", stdout.String())
+	}
+	for _, path := range []string{graphPath, reportPath} {
+		if _, err := os.Stat(path); !os.IsNotExist(err) {
+			t.Fatalf("citation import wrote %s after evidence read failure: %v", path, err)
+		}
+	}
+}
+
+func TestExecuteCitationsImportBibliographyRejectsSharedOutputPathWithoutReplacingIt(t *testing.T) {
+	project := t.TempDir()
+	doc := parsing.EnrichParsedDocumentModel(parsing.ParsedDocument{PaperID: "paper-1", References: []parsing.Reference{{Title: "Ref", DOI: "10.1000/ref"}}})
+	parsedPath := filepath.Join(project, "parsed.json")
+	writeParsedFixture(t, parsedPath, doc)
+	sharedPath := filepath.Join(project, "data", "citation-output.json")
+	if err := os.MkdirAll(filepath.Dir(sharedPath), 0o755); err != nil {
+		t.Fatalf("mkdir output directory: %v", err)
+	}
+	prior := []byte("prior output\n")
+	if err := os.WriteFile(sharedPath, prior, 0o644); err != nil {
+		t.Fatalf("seed output: %v", err)
+	}
+	var stdout, stderr bytes.Buffer
+	code := Execute([]string{"--json", "--project", project, "citations", "import-bibliography", "--parsed", parsedPath, "--out", sharedPath, "--report", sharedPath}, &stdout, &stderr)
+	if code != 1 {
+		t.Fatalf("code=%d, want 1; stderr=%s stdout=%s", code, stderr.String(), stdout.String())
+	}
+	data, err := os.ReadFile(sharedPath)
+	if err != nil {
+		t.Fatalf("read prior output: %v", err)
+	}
+	if !bytes.Equal(data, prior) {
+		t.Fatalf("shared output changed after rejected import: got %q want %q", data, prior)
+	}
+}
+
+func TestExecuteCitationsImportBibliographyRestoresBothOutputsAfterProvenanceFailure(t *testing.T) {
+	project := t.TempDir()
+	doc := parsing.EnrichParsedDocumentModel(parsing.ParsedDocument{PaperID: "paper-1", References: []parsing.Reference{{Title: "Ref", DOI: "10.1000/ref"}}})
+	parsedPath := filepath.Join(project, "parsed.json")
+	writeParsedFixture(t, parsedPath, doc)
+	graphPath := filepath.Join(project, "data", "citation-graph.json")
+	reportPath := filepath.Join(project, "data", "bibliography-import.json")
+	if err := os.MkdirAll(filepath.Dir(graphPath), 0o755); err != nil {
+		t.Fatalf("mkdir output directory: %v", err)
+	}
+	priorGraph := []byte("prior graph\n")
+	priorReport := []byte("prior report\n")
+	if err := os.WriteFile(graphPath, priorGraph, 0o600); err != nil {
+		t.Fatalf("seed graph: %v", err)
+	}
+	if err := os.WriteFile(reportPath, priorReport, 0o640); err != nil {
+		t.Fatalf("seed report: %v", err)
+	}
+	blockProvenance(t, project)
+	var stdout, stderr bytes.Buffer
+	code := Execute([]string{"--json", "--project", project, "citations", "import-bibliography", "--parsed", parsedPath, "--out", graphPath, "--report", reportPath}, &stdout, &stderr)
+	if code != 1 || !bytes.Contains(stdout.Bytes(), []byte(`"code":"citation_bibliography_provenance_failed"`)) {
+		t.Fatalf("code=%d, want provenance failure; stderr=%s stdout=%s", code, stderr.String(), stdout.String())
+	}
+	assertFileRestored(t, graphPath, priorGraph)
+	assertFileRestored(t, reportPath, priorReport)
+	for path, want := range map[string]os.FileMode{graphPath: 0o600, reportPath: 0o640} {
+		info, err := os.Stat(path)
+		if err != nil {
+			t.Fatalf("stat restored output %s: %v", path, err)
+		}
+		if got := info.Mode().Perm(); got != want {
+			t.Fatalf("restored output mode for %s = %o, want %o", path, got, want)
+		}
+	}
+}

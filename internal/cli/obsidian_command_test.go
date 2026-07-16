@@ -2,6 +2,8 @@ package cli
 
 import (
 	"bytes"
+	"net/http"
+	"net/http/httptest"
 	"os"
 	"path/filepath"
 	"strings"
@@ -62,6 +64,85 @@ func TestObsidianInstallDryRunJSONOutput(t *testing.T) {
 }
 
 // ── open ─────────────────────────────────────────────────────────────────────
+
+func TestObsidianInstallPreservesExistingBinaryAfterTruncatedDownload(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		w.Header().Set("Content-Length", "100")
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte("partial download"))
+	}))
+	defer server.Close()
+	t.Setenv("HOME", t.TempDir())
+	outputDir := t.TempDir()
+	dest := filepath.Join(outputDir, "obsidian")
+	priorBinary := []byte("existing obsidian binary\n")
+	if err := os.WriteFile(dest, priorBinary, 0o755); err != nil {
+		t.Fatalf("write prior Obsidian binary: %v", err)
+	}
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+
+	code := obsidianInstallLinux(obsidianRelease{version: "test", url: server.URL, dest: dest}, stdout, stderr, globalOptions{})
+	if code == 0 {
+		t.Fatalf("install succeeded despite a truncated download; stdout=%s", stdout.String())
+	}
+	got, err := os.ReadFile(dest)
+	if err != nil {
+		t.Fatalf("read prior Obsidian binary after failure: %v", err)
+	}
+	if !bytes.Equal(got, priorBinary) {
+		t.Fatalf("Obsidian binary after failure = %q, want %q", got, priorBinary)
+	}
+	entries, err := os.ReadDir(outputDir)
+	if err != nil {
+		t.Fatalf("read download output directory: %v", err)
+	}
+	if len(entries) != 1 || entries[0].Name() != filepath.Base(dest) {
+		t.Fatalf("download output entries = %#v, want only %s", entries, filepath.Base(dest))
+	}
+}
+
+func TestObsidianInstallReplacesExistingBinaryWithoutTransactionDebris(t *testing.T) {
+	newBinary := []byte("complete obsidian binary\n")
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		_, _ = w.Write(newBinary)
+	}))
+	defer server.Close()
+	t.Setenv("HOME", t.TempDir())
+	outputDir := t.TempDir()
+	dest := filepath.Join(outputDir, "obsidian")
+	if err := os.WriteFile(dest, []byte("prior binary\n"), 0o755); err != nil {
+		t.Fatalf("write prior Obsidian binary: %v", err)
+	}
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+
+	code := obsidianInstallLinux(obsidianRelease{version: "test", url: server.URL, dest: dest}, stdout, stderr, globalOptions{})
+	if code != 0 {
+		t.Fatalf("install code = %d; stderr=%s stdout=%s", code, stderr.String(), stdout.String())
+	}
+	got, err := os.ReadFile(dest)
+	if err != nil {
+		t.Fatalf("read installed Obsidian binary: %v", err)
+	}
+	if !bytes.Equal(got, newBinary) {
+		t.Fatalf("installed Obsidian binary = %q, want %q", got, newBinary)
+	}
+	info, err := os.Stat(dest)
+	if err != nil {
+		t.Fatalf("stat installed Obsidian binary: %v", err)
+	}
+	if info.Mode().Perm() != 0o755 {
+		t.Fatalf("installed Obsidian mode = %o, want 755", info.Mode().Perm())
+	}
+	entries, err := os.ReadDir(outputDir)
+	if err != nil {
+		t.Fatalf("read download output directory: %v", err)
+	}
+	if len(entries) != 1 || entries[0].Name() != filepath.Base(dest) {
+		t.Fatalf("download output entries = %#v, want only %s", entries, filepath.Base(dest))
+	}
+}
 
 func TestObsidianOpenRequiresVaultFlag(t *testing.T) {
 	stdout, stderr := new(bytes.Buffer), new(bytes.Buffer)

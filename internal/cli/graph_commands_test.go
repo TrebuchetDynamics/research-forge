@@ -83,3 +83,66 @@ func TestExecuteGraphPapersBuildsHTMLFromExtractedText(t *testing.T) {
 		}
 	}
 }
+
+func TestExecuteGraphPapersDoesNotPartiallyReplaceOutputs(t *testing.T) {
+	dir := t.TempDir()
+	textDir := filepath.Join(dir, "documents", "text")
+	dataDir := filepath.Join(dir, "data")
+	if err := os.MkdirAll(textDir, 0o755); err != nil {
+		t.Fatalf("create text directory: %v", err)
+	}
+	if err := os.MkdirAll(dataDir, 0o755); err != nil {
+		t.Fatalf("create data directory: %v", err)
+	}
+	if err := os.WriteFile(filepath.Join(textDir, "paper.txt"), []byte("Paper title\n\nGraph concepts and evidence."), 0o644); err != nil {
+		t.Fatalf("write extracted text: %v", err)
+	}
+	jsonPath := filepath.Join(dataDir, "knowledge-graph.json")
+	htmlPath := filepath.Join(dataDir, "knowledge-graph.html")
+	reportPath := filepath.Join(dataDir, "knowledge-graph-report.md")
+	jsonBefore := []byte("{\"sentinel\":\"prior graph\"}\n")
+	htmlBefore := []byte("prior graph html\n")
+	if err := os.WriteFile(jsonPath, jsonBefore, 0o600); err != nil {
+		t.Fatalf("write prior graph JSON: %v", err)
+	}
+	if err := os.WriteFile(htmlPath, htmlBefore, 0o600); err != nil {
+		t.Fatalf("write prior graph HTML: %v", err)
+	}
+	outsidePath := filepath.Join(t.TempDir(), "outside-report.md")
+	outsideBefore := []byte("outside report\n")
+	if err := os.WriteFile(outsidePath, outsideBefore, 0o600); err != nil {
+		t.Fatalf("write outside report: %v", err)
+	}
+	if err := os.Symlink(outsidePath, reportPath); err != nil {
+		t.Skipf("symlink unsupported: %v", err)
+	}
+	var stdout, stderr bytes.Buffer
+
+	code := Execute([]string{"--json", "--project", dir, "graph", "papers"}, &stdout, &stderr)
+	if code != 1 || !strings.Contains(stdout.String(), "graph_write_failed") {
+		t.Fatalf("code=%d stdout=%s stderr=%s, want graph write failure", code, stdout.String(), stderr.String())
+	}
+	for path, before := range map[string][]byte{jsonPath: jsonBefore, htmlPath: htmlBefore, outsidePath: outsideBefore} {
+		after, err := os.ReadFile(path)
+		if err != nil {
+			t.Fatalf("read preserved output %s: %v", path, err)
+		}
+		if !bytes.Equal(after, before) {
+			t.Errorf("output %s changed:\n got: %s\nwant: %s", path, after, before)
+		}
+		info, err := os.Stat(path)
+		if err != nil {
+			t.Fatalf("stat preserved output %s: %v", path, err)
+		}
+		if got := info.Mode().Perm(); got != 0o600 {
+			t.Errorf("output %s mode = %o, want 600", path, got)
+		}
+	}
+	info, err := os.Lstat(reportPath)
+	if err != nil {
+		t.Fatalf("lstat report symlink: %v", err)
+	}
+	if info.Mode()&os.ModeSymlink == 0 {
+		t.Fatalf("report output is no longer a symlink: %v", info.Mode())
+	}
+}
