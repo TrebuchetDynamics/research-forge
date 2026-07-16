@@ -2,7 +2,6 @@ package oss
 
 import (
 	"fmt"
-	"os"
 	"path/filepath"
 	"strings"
 )
@@ -19,9 +18,6 @@ func WriteStudyNote(projectPath, name, area string) (string, error) {
 	}
 	filename := safeNoteName(area) + ".md"
 	dir := filepath.Join(projectPath, "opensource", "notes", study.Owner, study.Repo)
-	if err := os.MkdirAll(dir, 0o755); err != nil {
-		return "", err
-	}
 	path := filepath.Join(dir, filename)
 	content := fmt.Sprintf(`# %s — %s
 
@@ -45,7 +41,7 @@ func WriteStudyNote(projectPath, name, area string) (string, error) {
 
 Do not copy external source code into ResearchForge production code without explicit license and provenance review.
 `, study.Name, area)
-	return path, os.WriteFile(path, []byte(content), 0o644)
+	return path, writeOutput(path, []byte(content))
 }
 
 func safeNoteName(value string) string {

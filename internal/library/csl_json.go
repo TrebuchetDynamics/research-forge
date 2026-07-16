@@ -74,9 +74,6 @@ func ImportCSLJSON(path string) ([]PaperRecord, int, error) {
 
 // ExportCSLJSON writes PaperRecords as Zotero-compatible CSL-JSON items.
 func ExportCSLJSON(path string, records []PaperRecord) error {
-	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
-		return err
-	}
 	items := make([]cslItem, 0, len(records))
 	for i, record := range records {
 		item := cslItem{
@@ -105,7 +102,7 @@ func ExportCSLJSON(path string, records []PaperRecord) error {
 		return err
 	}
 	data = append(data, '\n')
-	return os.WriteFile(path, data, 0o644)
+	return writeExport(path, data)
 }
 
 func cslMetadata(item cslItem) map[string]string {

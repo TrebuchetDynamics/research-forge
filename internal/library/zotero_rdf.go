@@ -89,9 +89,6 @@ func ImportZoteroRDF(path string) ([]PaperRecord, int, error) {
 
 // ExportZoteroRDF writes PaperRecords as a conservative Zotero-compatible RDF/XML subset.
 func ExportZoteroRDF(path string, records []PaperRecord) error {
-	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
-		return err
-	}
 	var b strings.Builder
 	b.WriteString(`<?xml version="1.0" encoding="UTF-8"?>` + "\n")
 	b.WriteString(`<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:prism="http://prismstandard.org/namespaces/1.2/basic/" xmlns:bib="http://purl.org/net/biblio#" xmlns:z="http://www.zotero.org/namespaces/export#" xmlns:better-bibtex="https://retorque.re/zotero-better-bibtex/export#">` + "\n")
@@ -128,7 +125,7 @@ func ExportZoteroRDF(path string, records []PaperRecord) error {
 		b.WriteString("  </bib:Article>\n")
 	}
 	b.WriteString("</rdf:RDF>\n")
-	return os.WriteFile(path, []byte(b.String()), 0o644)
+	return writeExport(path, []byte(b.String()))
 }
 
 func doiFromIdentifiers(values []string) string {

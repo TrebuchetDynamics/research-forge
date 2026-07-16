@@ -18,6 +18,62 @@ func TestConfigureWorkflowValidatesReasonsStagesAndDecisions(t *testing.T) {
 	}
 }
 
+func TestDecideRejectsStageOutsideWorkflow(t *testing.T) {
+	workflow, _ := Configure(Options{})
+	store := NewMemoryStore(workflow)
+	err := store.Decide(DecisionInput{
+		PaperID:  "paper-1",
+		Stage:    Stage("unsupported"),
+		Decision: DecisionInclude,
+		Reviewer: "ada",
+	})
+	if err == nil {
+		t.Fatal("Decide accepted a stage outside the workflow")
+	}
+	if history := store.History("paper-1"); len(history) != 0 {
+		t.Fatalf("rejected decision was recorded: %#v", history)
+	}
+}
+
+func TestDecideRejectsDecisionOutsideWorkflow(t *testing.T) {
+	workflow, _ := Configure(Options{})
+	store := NewMemoryStore(workflow)
+	err := store.Decide(DecisionInput{
+		PaperID:  "paper-1",
+		Stage:    StageTitleAbstract,
+		Decision: Decision("unsupported"),
+		Reviewer: "ada",
+	})
+	if err == nil {
+		t.Fatal("Decide accepted a decision outside the workflow")
+	}
+	if history := store.History("paper-1"); len(history) != 0 {
+		t.Fatalf("rejected decision was recorded: %#v", history)
+	}
+}
+
+func TestDecideStoresCanonicalTextFields(t *testing.T) {
+	workflow, _ := Configure(Options{ExclusionReasons: []string{"off-topic"}})
+	store := NewMemoryStore(workflow)
+	err := store.Decide(DecisionInput{
+		PaperID:  "  paper-1  ",
+		Stage:    StageTitleAbstract,
+		Decision: DecisionExclude,
+		Reason:   "  off-topic  ",
+		Reviewer: "  ada  ",
+	})
+	if err != nil {
+		t.Fatalf("Decide returned error: %v", err)
+	}
+	history := store.History("paper-1")
+	if len(history) != 1 {
+		t.Fatalf("canonical history length = %d, want 1: %#v", len(history), history)
+	}
+	if got := history[0]; got.PaperID != "paper-1" || got.Reviewer != "ada" || got.Reason != "off-topic" {
+		t.Fatalf("stored decision was not canonicalized: %#v", got)
+	}
+}
+
 func TestDecisionHistoryReviewerAttributionQueuesConflictsAndPrismaCounts(t *testing.T) {
 	workflow, _ := Configure(Options{ExclusionReasons: []string{"wrong population"}})
 	store := NewMemoryStore(workflow)

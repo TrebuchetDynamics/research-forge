@@ -1,6 +1,7 @@
 package library
 
 import (
+	"bytes"
 	"encoding/csv"
 	"encoding/json"
 	"fmt"
@@ -8,6 +9,8 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+
+	"github.com/TrebuchetDynamics/research-forge/internal/filetxn"
 )
 
 // ImportJSON reads PaperRecords from a deterministic JSON fixture/export file.
@@ -86,9 +89,6 @@ func ImportBibTeX(path string) ([]PaperRecord, int, error) {
 
 // ExportBibTeX writes a minimal deterministic BibTeX file.
 func ExportBibTeX(path string, records []PaperRecord) error {
-	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
-		return err
-	}
 	var builder strings.Builder
 	for i, record := range records {
 		key := metadataValue(record, "citation_key")
@@ -111,7 +111,7 @@ func ExportBibTeX(path string, records []PaperRecord) error {
 		}
 		builder.WriteString("\n}\n")
 	}
-	return os.WriteFile(path, []byte(builder.String()), 0o644)
+	return writeExport(path, []byte(builder.String()))
 }
 
 func writeBibTeXMetadataField(builder *strings.Builder, record PaperRecord, fieldName, metadataKey string) {
@@ -239,9 +239,6 @@ func ImportRIS(path string) ([]PaperRecord, int, error) {
 
 // ExportRIS writes a minimal deterministic RIS file.
 func ExportRIS(path string, records []PaperRecord) error {
-	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
-		return err
-	}
 	var builder strings.Builder
 	for _, record := range records {
 		builder.WriteString("TY  - JOUR\n")
@@ -253,7 +250,7 @@ func ExportRIS(path string, records []PaperRecord) error {
 		}
 		builder.WriteString("ER  - \n")
 	}
-	return os.WriteFile(path, []byte(builder.String()), 0o644)
+	return writeExport(path, []byte(builder.String()))
 }
 
 // ImportCSV reads PaperRecords from a deterministic CSV fixture/export file. It
@@ -308,16 +305,8 @@ func ImportCSV(path string) ([]PaperRecord, int, error) {
 
 // ExportCSV writes PaperRecords as stable CSV.
 func ExportCSV(path string, records []PaperRecord) error {
-	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
-		return err
-	}
-	file, err := os.Create(path)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-	writer := csv.NewWriter(file)
-	defer writer.Flush()
+	var buffer bytes.Buffer
+	writer := csv.NewWriter(&buffer)
 	if err := writer.Write([]string{"title", "doi", "arxiv_id", "pmid", "pmcid", "openalex_id", "crossref_id", "semantic_scholar_id", "year", "abstract", "venue", "publisher", "license", "open_access"}); err != nil {
 		return err
 	}
@@ -326,7 +315,11 @@ func ExportCSV(path string, records []PaperRecord) error {
 			return err
 		}
 	}
-	return writer.Error()
+	writer.Flush()
+	if err := writer.Error(); err != nil {
+		return err
+	}
+	return writeExport(path, buffer.Bytes())
 }
 
 func csvValue(row []string, header map[string]int, name string) string {
@@ -339,13 +332,17 @@ func csvValue(row []string, header map[string]int, name string) string {
 
 // ExportJSON writes PaperRecords as stable, pretty JSON.
 func ExportJSON(path string, records []PaperRecord) error {
-	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
-		return err
-	}
 	data, err := json.MarshalIndent(records, "", "  ")
 	if err != nil {
 		return err
 	}
 	data = append(data, '\n')
-	return os.WriteFile(path, data, 0o644)
+	return writeExport(path, data)
+}
+
+func writeExport(path string, data []byte) error {
+	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+		return err
+	}
+	return filetxn.Replace(path, data, 0o644)
 }

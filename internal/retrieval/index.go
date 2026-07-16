@@ -48,7 +48,23 @@ type SQLiteIndex struct{ db *sql.DB }
 
 // OpenSQLiteIndex opens a local SQLite FTS passage index.
 func OpenSQLiteIndex(path string) (*SQLiteIndex, error) {
-	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+	parent := filepath.Dir(path)
+	if info, err := os.Lstat(parent); err == nil {
+		if !info.IsDir() {
+			return nil, fmt.Errorf("SQLite index parent is not a directory: %s", parent)
+		}
+	} else if os.IsNotExist(err) {
+		if err := os.MkdirAll(parent, 0o755); err != nil {
+			return nil, err
+		}
+	} else {
+		return nil, err
+	}
+	if info, err := os.Lstat(path); err == nil {
+		if !info.Mode().IsRegular() {
+			return nil, fmt.Errorf("SQLite index path is not a regular file: %s", path)
+		}
+	} else if !os.IsNotExist(err) {
 		return nil, err
 	}
 	db, err := sql.Open("sqlite", path)

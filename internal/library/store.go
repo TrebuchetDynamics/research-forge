@@ -7,6 +7,8 @@ import (
 	"path/filepath"
 	"sort"
 	"strings"
+
+	"github.com/TrebuchetDynamics/research-forge/internal/filetxn"
 )
 
 // Store persists PaperRecords for local library workflows.
@@ -22,12 +24,14 @@ func OpenStore(path string) (Store, error) {
 	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
 		return Store{}, err
 	}
-	if _, err := os.Stat(path); os.IsNotExist(err) {
-		if err := os.WriteFile(path, []byte("[]\n"), 0o644); err != nil {
+	if info, err := os.Lstat(path); os.IsNotExist(err) {
+		if err := writeStoreFile(path, []byte("[]\n"), 0o644); err != nil {
 			return Store{}, err
 		}
 	} else if err != nil {
 		return Store{}, err
+	} else if !info.Mode().IsRegular() {
+		return Store{}, fmt.Errorf("library store is not a regular file: %s", path)
 	}
 	return Store{path: path}, nil
 }
@@ -64,6 +68,19 @@ type ImportSummary struct {
 // duplicate or identifier-less record, so a single bad record cannot abort an
 // import or leave the library in a partial state.
 func (s Store) ImportRecords(records []PaperRecord) (ImportSummary, error) {
+	return s.importRecords(records, nil)
+}
+
+// ImportRecordsThen imports records, runs commit with the import summary, and
+// restores the prior store if commit fails.
+func (s Store) ImportRecordsThen(records []PaperRecord, commit func(ImportSummary) error) (ImportSummary, error) {
+	if commit == nil {
+		return ImportSummary{}, fmt.Errorf("library import commit callback is required")
+	}
+	return s.importRecords(records, commit)
+}
+
+func (s Store) importRecords(records []PaperRecord, commit func(ImportSummary) error) (ImportSummary, error) {
 	existing, err := s.List()
 	if err != nil {
 		return ImportSummary{}, err
@@ -91,7 +108,12 @@ func (s Store) ImportRecords(records []PaperRecord) (ImportSummary, error) {
 		merged = append(merged, record)
 		summary.Imported++
 	}
-	if err := s.ReplaceAll(merged); err != nil {
+	if commit != nil {
+		err = s.ReplaceAllThen(merged, func() error { return commit(summary) })
+	} else {
+		err = s.ReplaceAll(merged)
+	}
+	if err != nil {
 		return ImportSummary{}, err
 	}
 	return summary, nil
@@ -127,8 +149,25 @@ func (s Store) ReplaceAll(records []PaperRecord) error {
 	return s.write(records)
 }
 
+// ReplaceAllThen replaces the store contents, runs commit, and restores the
+// prior store if commit fails.
+func (s Store) ReplaceAllThen(records []PaperRecord, commit func() error) error {
+	data, err := marshalStoreRecords(records)
+	if err != nil {
+		return err
+	}
+	return filetxn.ReplaceAllThen([]filetxn.Output{{Path: s.path, Data: data, Mode: 0o644}}, commit)
+}
+
 // List returns all PaperRecords sorted by title.
 func (s Store) List() ([]PaperRecord, error) {
+	info, err := os.Lstat(s.path)
+	if err != nil {
+		return nil, err
+	}
+	if !info.Mode().IsRegular() {
+		return nil, fmt.Errorf("library store is not a regular file: %s", s.path)
+	}
 	data, err := os.ReadFile(s.path)
 	if err != nil {
 		return nil, err
@@ -162,12 +201,32 @@ func (s Store) Search(query string) ([]PaperRecord, error) {
 }
 
 func (s Store) write(records []PaperRecord) error {
-	data, err := json.MarshalIndent(records, "", "  ")
+	data, err := marshalStoreRecords(records)
 	if err != nil {
 		return err
 	}
+	return writeStoreFile(s.path, data, 0o644)
+}
+
+func marshalStoreRecords(records []PaperRecord) ([]byte, error) {
+	data, err := json.MarshalIndent(records, "", "  ")
+	if err != nil {
+		return nil, err
+	}
 	data = append(data, '\n')
-	return os.WriteFile(s.path, data, 0o644)
+	return data, nil
+}
+
+func writeStoreFile(path string, data []byte, mode os.FileMode) error {
+	if info, err := os.Lstat(path); err == nil {
+		if !info.Mode().IsRegular() {
+			return fmt.Errorf("library store is not a regular file: %s", path)
+		}
+		mode = info.Mode().Perm()
+	} else if !os.IsNotExist(err) {
+		return err
+	}
+	return filetxn.Replace(path, data, mode)
 }
 
 func recordKey(record PaperRecord) string {

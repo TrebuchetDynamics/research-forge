@@ -4,10 +4,13 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"reflect"
 	"strings"
+
+	"github.com/TrebuchetDynamics/research-forge/internal/filetxn"
 )
 
 const (
@@ -50,6 +53,19 @@ type identityLogEntry struct {
 }
 
 func AppendIdentityDecision(path string, decision IdentityDecision) error {
+	return appendIdentityDecision(path, decision, nil)
+}
+
+// AppendIdentityDecisionThen appends a decision, runs commit, and restores the
+// prior log if commit fails.
+func AppendIdentityDecisionThen(path string, decision IdentityDecision, commit func() error) error {
+	if commit == nil {
+		return fmt.Errorf("identity decision commit callback is required")
+	}
+	return appendIdentityDecision(path, decision, commit)
+}
+
+func appendIdentityDecision(path string, decision IdentityDecision, commit func() error) error {
 	if strings.TrimSpace(decision.ID) == "" || strings.TrimSpace(decision.ClusterID) == "" {
 		return fmt.Errorf("identity decision id and cluster id are required")
 	}
@@ -58,7 +74,7 @@ func AppendIdentityDecision(path string, decision IdentityDecision) error {
 	}
 	decision.SchemaVersion = "1"
 	decision.Reversible = true
-	return appendIdentityLogEntry(path, identityLogEntry{Type: "decision", Decision: &decision})
+	return appendIdentityLogEntryThen(path, identityLogEntry{Type: "decision", Decision: &decision}, commit)
 }
 
 func AppendIdentityConflict(path string, conflict IdentityConflictRecord) error {
@@ -99,37 +115,76 @@ func ApplyIdentityDecision(records []PaperRecord, decision IdentityDecision) ([]
 }
 
 func ReadIdentityDecisionLog(path string) (IdentityDecisionLog, error) {
-	file, err := os.Open(path)
+	dir := filepath.Dir(path)
+	dirInfo, err := os.Lstat(dir)
 	if os.IsNotExist(err) {
 		return IdentityDecisionLog{SchemaVersion: "1"}, nil
 	}
 	if err != nil {
 		return IdentityDecisionLog{}, err
 	}
+	if !dirInfo.IsDir() || dirInfo.Mode()&os.ModeSymlink != 0 {
+		return IdentityDecisionLog{}, fmt.Errorf("identity log path is not a directory: %s", dir)
+	}
+	info, err := os.Lstat(path)
+	if os.IsNotExist(err) {
+		return IdentityDecisionLog{SchemaVersion: "1"}, nil
+	}
+	if err != nil {
+		return IdentityDecisionLog{}, err
+	}
+	if !info.Mode().IsRegular() {
+		return IdentityDecisionLog{}, fmt.Errorf("identity log is not a regular file: %s", path)
+	}
+	file, err := os.Open(path)
+	if err != nil {
+		return IdentityDecisionLog{}, err
+	}
 	defer file.Close()
 	log := IdentityDecisionLog{SchemaVersion: "1"}
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		line := strings.TrimSpace(scanner.Text())
+	reader := bufio.NewReader(file)
+	lineNumber := 0
+	for {
+		text, readErr := reader.ReadString('\n')
+		if text != "" {
+			lineNumber++
+		}
+		line := strings.TrimSpace(text)
 		if line == "" {
+			if readErr == io.EOF {
+				break
+			}
+			if readErr != nil {
+				return IdentityDecisionLog{}, readErr
+			}
 			continue
 		}
 		var entry identityLogEntry
 		if err := json.Unmarshal([]byte(line), &entry); err != nil {
-			return IdentityDecisionLog{}, err
+			return IdentityDecisionLog{}, fmt.Errorf("decode identity log line %d: %w", lineNumber, err)
 		}
 		switch entry.Type {
 		case "decision":
-			if entry.Decision != nil {
-				log.Decisions = append(log.Decisions, *entry.Decision)
+			if entry.Decision == nil {
+				return IdentityDecisionLog{}, fmt.Errorf("decode identity log line %d: decision payload is required", lineNumber)
 			}
+			log.Decisions = append(log.Decisions, *entry.Decision)
 		case "conflict":
-			if entry.Conflict != nil {
-				log.Conflicts = append(log.Conflicts, *entry.Conflict)
+			if entry.Conflict == nil {
+				return IdentityDecisionLog{}, fmt.Errorf("decode identity log line %d: conflict payload is required", lineNumber)
 			}
+			log.Conflicts = append(log.Conflicts, *entry.Conflict)
+		default:
+			return IdentityDecisionLog{}, fmt.Errorf("decode identity log line %d: unknown entry type %q", lineNumber, entry.Type)
+		}
+		if readErr == io.EOF {
+			break
+		}
+		if readErr != nil {
+			return IdentityDecisionLog{}, readErr
 		}
 	}
-	return log, scanner.Err()
+	return log, nil
 }
 
 func DetectIdentityConflicts(report IdentityResolutionReport, records []PaperRecord) []IdentityConflictRecord {
@@ -146,10 +201,36 @@ func DetectIdentityConflicts(report IdentityResolutionReport, records []PaperRec
 }
 
 func appendIdentityLogEntry(path string, entry identityLogEntry) error {
+	return appendIdentityLogEntryThen(path, entry, nil)
+}
+
+func appendIdentityLogEntryThen(path string, entry identityLogEntry, commit func() error) error {
 	if strings.TrimSpace(path) == "" {
 		return fmt.Errorf("identity log path is required")
 	}
-	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+	dir := filepath.Dir(path)
+	if err := os.MkdirAll(dir, 0o755); err != nil {
+		return err
+	}
+	dirInfo, err := os.Lstat(dir)
+	if err != nil {
+		return err
+	}
+	if !dirInfo.IsDir() || dirInfo.Mode()&os.ModeSymlink != 0 {
+		return fmt.Errorf("identity log path is not a directory: %s", dir)
+	}
+	existing := []byte{}
+	mode := os.FileMode(0o644)
+	if info, err := os.Lstat(path); err == nil {
+		if !info.Mode().IsRegular() {
+			return fmt.Errorf("identity log is not a regular file: %s", path)
+		}
+		mode = info.Mode().Perm()
+		existing, err = os.ReadFile(path)
+		if err != nil {
+			return err
+		}
+	} else if !os.IsNotExist(err) {
 		return err
 	}
 	payload, err := json.Marshal(entry)
@@ -157,13 +238,12 @@ func appendIdentityLogEntry(path string, entry identityLogEntry) error {
 		return err
 	}
 	payload = append(payload, '\n')
-	file, err := os.OpenFile(path, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0o644)
-	if err != nil {
-		return err
+	data := append(existing, payload...)
+	output := []filetxn.Output{{Path: path, Data: data, Mode: mode}}
+	if commit != nil {
+		return filetxn.ReplaceAllThen(output, commit)
 	}
-	defer file.Close()
-	_, err = file.Write(payload)
-	return err
+	return filetxn.ReplaceAll(output)
 }
 
 func conflictingClusterReason(cluster IdentityCluster, records []PaperRecord) string {

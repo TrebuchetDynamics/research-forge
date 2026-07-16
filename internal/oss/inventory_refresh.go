@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
-	"os"
 	"strings"
 	"time"
 )
@@ -75,7 +74,7 @@ func SaveInventoryManifest(path string, manifest InventoryManifest) error {
 		return err
 	}
 	data = append(data, '\n')
-	return os.WriteFile(path, data, 0o644)
+	return writeOutput(path, data)
 }
 
 type githubRepositoryMetadata struct {

@@ -1,6 +1,7 @@
 package evidence
 
 import (
+	"bytes"
 	"os"
 	"path/filepath"
 	"strings"
@@ -24,5 +25,48 @@ func TestEvidenceExportsCSVJSONAndMarkdown(t *testing.T) {
 	mdData, _ := os.ReadFile(filepath.Join(dir, "evidence.md"))
 	if !strings.Contains(string(csvData), "paper-1,schema,accepted,passage,p1") || !strings.Contains(string(jsonData), "TiO2") || !strings.Contains(string(mdData), "| paper-1 | schema | accepted | passage:p1 |") {
 		t.Fatalf("exports:\n%s\n%s\n%s", csvData, jsonData, mdData)
+	}
+}
+
+func TestEvidenceExportsDoNotWriteThroughSymlinkedDestinations(t *testing.T) {
+	exporters := []struct {
+		name   string
+		export func(string, []EvidenceItem) error
+	}{
+		{name: "csv", export: ExportCSV},
+		{name: "json", export: ExportJSON},
+		{name: "markdown", export: ExportMarkdown},
+	}
+	for _, tc := range exporters {
+		t.Run(tc.name, func(t *testing.T) {
+			outsidePath := filepath.Join(t.TempDir(), "outside-export")
+			outsideBefore := []byte("outside evidence\n")
+			if err := os.WriteFile(outsidePath, outsideBefore, 0o600); err != nil {
+				t.Fatalf("write outside evidence: %v", err)
+			}
+			exportPath := filepath.Join(t.TempDir(), "evidence."+tc.name)
+			if err := os.Symlink(outsidePath, exportPath); err != nil {
+				t.Skipf("symlinks unavailable: %v", err)
+			}
+
+			err := tc.export(exportPath, []EvidenceItem{{PaperID: "replacement"}})
+			if err == nil {
+				t.Errorf("export succeeded through symlink, want error")
+			}
+			outsideAfter, readErr := os.ReadFile(outsidePath)
+			if readErr != nil {
+				t.Fatalf("read outside evidence: %v", readErr)
+			}
+			if !bytes.Equal(outsideAfter, outsideBefore) {
+				t.Errorf("export wrote through symlink:\n got: %s\nwant: %s", outsideAfter, outsideBefore)
+			}
+			info, statErr := os.Stat(outsidePath)
+			if statErr != nil {
+				t.Fatalf("stat outside evidence: %v", statErr)
+			}
+			if got := info.Mode().Perm(); got != 0o600 {
+				t.Errorf("outside evidence mode = %o, want 600", got)
+			}
+		})
 	}
 }

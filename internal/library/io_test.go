@@ -1,6 +1,7 @@
 package library
 
 import (
+	"bytes"
 	"os"
 	"path/filepath"
 	"testing"
@@ -144,6 +145,52 @@ func TestExportCSVWritesGoldenPaperRecords(t *testing.T) {
 	want := "title,doi,arxiv_id,pmid,pmcid,openalex_id,crossref_id,semantic_scholar_id,year,abstract,venue,publisher,license,open_access\nArtificial photosynthesis CSV export,10.1000/csv-export,,,,,,,2026,,,,,false\n"
 	if string(data) != want {
 		t.Fatalf("export mismatch:\n%s", string(data))
+	}
+}
+
+func TestLibraryExportsDoNotWriteThroughSymlinkedDestinations(t *testing.T) {
+	exporters := []struct {
+		name   string
+		export func(string, []PaperRecord) error
+	}{
+		{name: "csv", export: ExportCSV},
+		{name: "bibtex", export: ExportBibTeX},
+		{name: "ris", export: ExportRIS},
+		{name: "json", export: ExportJSON},
+		{name: "csl-json", export: ExportCSLJSON},
+		{name: "zotero-rdf", export: ExportZoteroRDF},
+	}
+	for _, tc := range exporters {
+		t.Run(tc.name, func(t *testing.T) {
+			outsidePath := filepath.Join(t.TempDir(), "outside-export")
+			outsideBefore := []byte("outside export\n")
+			if err := os.WriteFile(outsidePath, outsideBefore, 0o600); err != nil {
+				t.Fatalf("write outside export: %v", err)
+			}
+			exportPath := filepath.Join(t.TempDir(), "export."+tc.name)
+			if err := os.Symlink(outsidePath, exportPath); err != nil {
+				t.Skipf("symlinks unavailable: %v", err)
+			}
+
+			err := tc.export(exportPath, []PaperRecord{{Title: "Replacement export"}})
+			if err == nil {
+				t.Errorf("export succeeded through symlink, want error")
+			}
+			outsideAfter, readErr := os.ReadFile(outsidePath)
+			if readErr != nil {
+				t.Fatalf("read outside export: %v", readErr)
+			}
+			if !bytes.Equal(outsideAfter, outsideBefore) {
+				t.Errorf("export wrote through symlink:\n got: %s\nwant: %s", outsideAfter, outsideBefore)
+			}
+			info, statErr := os.Stat(outsidePath)
+			if statErr != nil {
+				t.Fatalf("stat outside export: %v", statErr)
+			}
+			if got := info.Mode().Perm(); got != 0o600 {
+				t.Errorf("outside export mode = %o, want 600", got)
+			}
+		})
 	}
 }
 

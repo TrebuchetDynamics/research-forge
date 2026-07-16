@@ -2,6 +2,7 @@ package screening
 
 import (
 	"fmt"
+	"slices"
 	"sort"
 	"strings"
 )
@@ -65,6 +66,14 @@ type DecisionInput struct {
 	Reviewer    string
 	Adjudicated bool
 }
+
+func NormalizeDecisionInput(input DecisionInput) DecisionInput {
+	input.PaperID = strings.TrimSpace(input.PaperID)
+	input.Reviewer = strings.TrimSpace(input.Reviewer)
+	input.Reason = strings.TrimSpace(input.Reason)
+	return input
+}
+
 type DecisionEvent struct {
 	PaperID     string
 	Stage       Stage
@@ -73,6 +82,15 @@ type DecisionEvent struct {
 	Reviewer    string
 	Adjudicated bool
 }
+
+func NormalizeDecisionEvent(event DecisionEvent) DecisionEvent {
+	input := NormalizeDecisionInput(DecisionInput{PaperID: event.PaperID, Reason: event.Reason, Reviewer: event.Reviewer})
+	event.PaperID = input.PaperID
+	event.Reason = input.Reason
+	event.Reviewer = input.Reviewer
+	return event
+}
+
 type QueueFilter struct {
 	Stage    Stage
 	Decision Decision
@@ -91,11 +109,18 @@ type MemoryStore struct {
 func NewMemoryStore(workflow Workflow) *MemoryStore { return &MemoryStore{workflow: workflow} }
 
 func (s *MemoryStore) Decide(input DecisionInput) error {
-	if strings.TrimSpace(input.PaperID) == "" {
+	input = NormalizeDecisionInput(input)
+	if input.PaperID == "" {
 		return fmt.Errorf("paper id is required")
 	}
-	if strings.TrimSpace(input.Reviewer) == "" {
+	if input.Reviewer == "" {
 		return fmt.Errorf("reviewer is required")
+	}
+	if !slices.Contains(s.workflow.Stages, input.Stage) {
+		return fmt.Errorf("unknown screening stage %q", input.Stage)
+	}
+	if !slices.Contains(s.workflow.Decisions, input.Decision) {
+		return fmt.Errorf("unknown screening decision %q", input.Decision)
 	}
 	if input.Decision == DecisionExclude {
 		if err := s.workflow.ValidateReason(input.Reason); err != nil {

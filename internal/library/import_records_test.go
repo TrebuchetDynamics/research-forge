@@ -1,6 +1,7 @@
 package library
 
 import (
+	"errors"
 	"os"
 	"path/filepath"
 	"testing"
@@ -54,6 +55,36 @@ func TestImportRecordsImportsNewRecords(t *testing.T) {
 	}
 	if len(records) != 2 {
 		t.Fatalf("store has %d records, want 2", len(records))
+	}
+}
+
+func TestImportRecordsThenRestoresStoreWhenCommitFails(t *testing.T) {
+	store, err := OpenStore(filepath.Join(t.TempDir(), "library.json"))
+	if err != nil {
+		t.Fatalf("OpenStore: %v", err)
+	}
+	commitErr := errors.New("commit failed")
+	summary, err := store.ImportRecordsThen([]PaperRecord{{
+		Title:       "Transactional import",
+		Identifiers: Identifiers{DOI: "10.1000/transactional"},
+	}}, func(summary ImportSummary) error {
+		if summary.Imported != 1 {
+			t.Fatalf("callback summary = %+v, want one import", summary)
+		}
+		return commitErr
+	})
+	if !errors.Is(err, commitErr) {
+		t.Fatalf("ImportRecordsThen error = %v, want %v", err, commitErr)
+	}
+	if summary.Imported != 0 || len(summary.SkippedDuplicate) != 0 || summary.SkippedNoIdentifier != 0 {
+		t.Fatalf("returned summary = %+v, want zero on failed transaction", summary)
+	}
+	records, err := store.List()
+	if err != nil {
+		t.Fatalf("List: %v", err)
+	}
+	if len(records) != 0 {
+		t.Fatalf("store contains records after failed commit: %#v", records)
 	}
 }
 

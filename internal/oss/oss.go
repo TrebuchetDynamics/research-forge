@@ -8,6 +8,8 @@ import (
 	"regexp"
 	"sort"
 	"strings"
+
+	"github.com/TrebuchetDynamics/research-forge/internal/filetxn"
 )
 
 var repoNamePattern = regexp.MustCompile(`^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$`)
@@ -67,12 +69,14 @@ func OpenRegistry(path string) (Registry, error) {
 	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
 		return Registry{}, err
 	}
-	if _, err := os.Stat(path); os.IsNotExist(err) {
-		if err := os.WriteFile(path, []byte("[]\n"), 0o644); err != nil {
+	if info, err := os.Lstat(path); os.IsNotExist(err) {
+		if err := writeRegistryFile(path, []byte("[]\n"), 0o644); err != nil {
 			return Registry{}, err
 		}
 	} else if err != nil {
 		return Registry{}, err
+	} else if !info.Mode().IsRegular() {
+		return Registry{}, fmt.Errorf("oss registry is not a regular file: %s", path)
 	}
 	return Registry{path: path}, nil
 }
@@ -118,6 +122,13 @@ func (r Registry) RefreshMetadata(name string, metadata RefreshMetadata) error {
 
 // List returns repository studies sorted by name.
 func (r Registry) List() ([]OSSRepositoryStudy, error) {
+	info, err := os.Lstat(r.path)
+	if err != nil {
+		return nil, err
+	}
+	if !info.Mode().IsRegular() {
+		return nil, fmt.Errorf("oss registry is not a regular file: %s", r.path)
+	}
 	data, err := os.ReadFile(r.path)
 	if err != nil {
 		return nil, err
@@ -136,7 +147,19 @@ func (r Registry) write(items []OSSRepositoryStudy) error {
 		return err
 	}
 	data = append(data, '\n')
-	return os.WriteFile(r.path, data, 0o644)
+	return writeRegistryFile(r.path, data, 0o644)
+}
+
+func writeRegistryFile(path string, data []byte, mode os.FileMode) error {
+	if info, err := os.Lstat(path); err == nil {
+		if !info.Mode().IsRegular() {
+			return fmt.Errorf("oss registry is not a regular file: %s", path)
+		}
+		mode = info.Mode().Perm()
+	} else if !os.IsNotExist(err) {
+		return err
+	}
+	return filetxn.Replace(path, data, mode)
 }
 
 // ResolveClonePath returns the safe local clone location for owner/repo.

@@ -1,6 +1,7 @@
 package oss
 
 import (
+	"bytes"
 	"os"
 	"path/filepath"
 	"testing"
@@ -32,6 +33,132 @@ func TestNewRepositoryStudyRejectsUnsafeNames(t *testing.T) {
 		if _, err := NewRepositoryStudy(RepositoryStudyInput{Name: name}); err == nil {
 			t.Fatalf("NewRepositoryStudy(%q) returned nil error", name)
 		}
+	}
+}
+
+func TestOpenRegistryDoesNotFollowDanglingSymlink(t *testing.T) {
+	registryPath := filepath.Join(t.TempDir(), "oss.json")
+	outsidePath := filepath.Join(t.TempDir(), "outside.json")
+	if err := os.Symlink(outsidePath, registryPath); err != nil {
+		t.Skipf("symlink unsupported: %v", err)
+	}
+
+	_, err := OpenRegistry(registryPath)
+	if err == nil {
+		t.Fatal("OpenRegistry succeeded with a dangling registry symlink")
+	}
+	if _, statErr := os.Stat(outsidePath); !os.IsNotExist(statErr) {
+		t.Fatalf("outside path stat error = %v, want not exist", statErr)
+	}
+	info, lstatErr := os.Lstat(registryPath)
+	if lstatErr != nil {
+		t.Fatalf("lstat registry path: %v", lstatErr)
+	}
+	if info.Mode()&os.ModeSymlink == 0 {
+		t.Fatalf("OpenRegistry replaced symlink despite rejecting it: mode=%v", info.Mode())
+	}
+}
+
+func TestRegistryAddDoesNotWriteThroughSymlinkedPath(t *testing.T) {
+	registryPath := filepath.Join(t.TempDir(), "oss.json")
+	registry, err := OpenRegistry(registryPath)
+	if err != nil {
+		t.Fatalf("OpenRegistry returned error: %v", err)
+	}
+	outsidePath := filepath.Join(t.TempDir(), "outside.json")
+	outsideBefore := []byte("[]\n")
+	if err := os.WriteFile(outsidePath, outsideBefore, 0o640); err != nil {
+		t.Fatalf("write outside registry: %v", err)
+	}
+	if err := os.Remove(registryPath); err != nil {
+		t.Fatalf("remove registry path: %v", err)
+	}
+	if err := os.Symlink(outsidePath, registryPath); err != nil {
+		t.Skipf("symlink unsupported: %v", err)
+	}
+	study, err := NewRepositoryStudy(RepositoryStudyInput{Name: "owner/repo"})
+	if err != nil {
+		t.Fatalf("NewRepositoryStudy returned error: %v", err)
+	}
+
+	if err := registry.Add(study); err == nil {
+		t.Fatal("Add succeeded with a symlinked registry path")
+	}
+	outsideAfter, readErr := os.ReadFile(outsidePath)
+	if readErr != nil {
+		t.Fatalf("read outside registry: %v", readErr)
+	}
+	if !bytes.Equal(outsideAfter, outsideBefore) {
+		t.Fatalf("Add wrote through registry symlink: got %q, want %q", outsideAfter, outsideBefore)
+	}
+	info, lstatErr := os.Lstat(registryPath)
+	if lstatErr != nil {
+		t.Fatalf("lstat registry path: %v", lstatErr)
+	}
+	if info.Mode()&os.ModeSymlink == 0 {
+		t.Fatalf("Add replaced symlink despite rejecting it: mode=%v", info.Mode())
+	}
+}
+
+func TestRegistryListDoesNotReadThroughSymlinkedPath(t *testing.T) {
+	registryPath := filepath.Join(t.TempDir(), "oss.json")
+	registry, err := OpenRegistry(registryPath)
+	if err != nil {
+		t.Fatalf("OpenRegistry returned error: %v", err)
+	}
+	outsidePath := filepath.Join(t.TempDir(), "outside.json")
+	if err := os.WriteFile(outsidePath, []byte("[{\"Name\":\"outside/private\"}]\n"), 0o640); err != nil {
+		t.Fatalf("write outside registry: %v", err)
+	}
+	if err := os.Remove(registryPath); err != nil {
+		t.Fatalf("remove registry path: %v", err)
+	}
+	if err := os.Symlink(outsidePath, registryPath); err != nil {
+		t.Skipf("symlink unsupported: %v", err)
+	}
+
+	if items, err := registry.List(); err == nil {
+		t.Fatalf("List succeeded through a registry symlink: items=%#v", items)
+	}
+	info, lstatErr := os.Lstat(registryPath)
+	if lstatErr != nil {
+		t.Fatalf("lstat registry path: %v", lstatErr)
+	}
+	if info.Mode()&os.ModeSymlink == 0 {
+		t.Fatalf("List replaced registry symlink despite rejecting it: mode=%v", info.Mode())
+	}
+}
+
+func TestRegistryAddPreservesPermissionsAndCleansStagingFiles(t *testing.T) {
+	dir := t.TempDir()
+	registryPath := filepath.Join(dir, "oss.json")
+	if err := os.WriteFile(registryPath, []byte("[]\n"), 0o600); err != nil {
+		t.Fatalf("write prior registry: %v", err)
+	}
+	registry, err := OpenRegistry(registryPath)
+	if err != nil {
+		t.Fatalf("OpenRegistry returned error: %v", err)
+	}
+	study, err := NewRepositoryStudy(RepositoryStudyInput{Name: "owner/repo"})
+	if err != nil {
+		t.Fatalf("NewRepositoryStudy returned error: %v", err)
+	}
+	if err := registry.Add(study); err != nil {
+		t.Fatalf("Add returned error: %v", err)
+	}
+	info, err := os.Stat(registryPath)
+	if err != nil {
+		t.Fatalf("stat registry: %v", err)
+	}
+	if info.Mode().Perm() != 0o600 {
+		t.Fatalf("registry mode = %o, want 600", info.Mode().Perm())
+	}
+	entries, err := os.ReadDir(dir)
+	if err != nil {
+		t.Fatalf("read registry directory: %v", err)
+	}
+	if len(entries) != 1 || entries[0].Name() != filepath.Base(registryPath) {
+		t.Fatalf("registry directory entries = %#v, want only %s", entries, filepath.Base(registryPath))
 	}
 }
 

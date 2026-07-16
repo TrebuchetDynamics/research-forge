@@ -7,6 +7,8 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/TrebuchetDynamics/research-forge/internal/filetxn"
 )
 
 // ResponseCache stores raw source payloads for reproducible connector runs.
@@ -36,7 +38,16 @@ func (c ResponseCache) Write(source, query string, payload []byte) (string, erro
 	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
 		return "", err
 	}
-	if err := os.WriteFile(path, payload, 0o644); err != nil {
+	mode := os.FileMode(0o644)
+	if info, err := os.Lstat(path); err == nil {
+		if !info.Mode().IsRegular() {
+			return "", fmt.Errorf("cache entry is not a regular file: %s", path)
+		}
+		mode = info.Mode().Perm()
+	} else if !os.IsNotExist(err) {
+		return "", err
+	}
+	if err := filetxn.Replace(path, payload, mode); err != nil {
 		return "", err
 	}
 	return ref, nil
@@ -44,10 +55,21 @@ func (c ResponseCache) Write(source, query string, payload []byte) (string, erro
 
 // Read returns a raw source response by cache reference.
 func (c ResponseCache) Read(ref string) ([]byte, error) {
+	if c.root == "" {
+		return nil, fmt.Errorf("cache root is required")
+	}
 	if ref == "" || strings.Contains(ref, "..") || filepath.IsAbs(ref) {
 		return nil, fmt.Errorf("invalid cache ref")
 	}
-	return os.ReadFile(filepath.Join(c.root, filepath.FromSlash(ref)))
+	path := filepath.Join(c.root, filepath.FromSlash(ref))
+	info, err := os.Lstat(path)
+	if err != nil {
+		return nil, err
+	}
+	if !info.Mode().IsRegular() {
+		return nil, fmt.Errorf("cache entry is not a regular file: %s", path)
+	}
+	return os.ReadFile(path)
 }
 
 func slug(value string) string {

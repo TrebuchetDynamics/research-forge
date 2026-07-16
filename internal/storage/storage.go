@@ -3,11 +3,11 @@ package storage
 import (
 	"database/sql"
 	"fmt"
-	"io"
 	"net/url"
 	"os"
 	"path/filepath"
 
+	"github.com/TrebuchetDynamics/research-forge/internal/filetxn"
 	_ "modernc.org/sqlite"
 )
 
@@ -60,6 +60,9 @@ func Initialize(path string) (*Store, error) {
 	if err := ensureParent(path); err != nil {
 		return nil, err
 	}
+	if err := validateRegularFileOrMissing(path, "database"); err != nil {
+		return nil, err
+	}
 	if err := backupBeforeMigrations(path); err != nil {
 		return nil, err
 	}
@@ -75,17 +78,37 @@ func Initialize(path string) (*Store, error) {
 	return store, nil
 }
 
+func validateRegularFileOrMissing(path, kind string) error {
+	info, err := os.Lstat(path)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return nil
+		}
+		return err
+	}
+	if !info.Mode().IsRegular() {
+		return fmt.Errorf("%s path is not a regular file: %s", kind, path)
+	}
+	return nil
+}
+
 // CheckExisting verifies that an existing SQLite database can answer a simple query without creating, migrating, or backing it up.
 func CheckExisting(path string) error {
 	if path == "" {
 		return fmt.Errorf("database path is required")
 	}
-	info, err := os.Stat(path)
+	info, err := os.Lstat(path)
 	if err != nil {
 		return err
 	}
 	if info.IsDir() {
 		return fmt.Errorf("database path is a directory")
+	}
+	if !info.Mode().IsRegular() {
+		return fmt.Errorf("database path is not a regular file: %s", path)
+	}
+	if err := validateDatabaseParent(path); err != nil {
+		return err
 	}
 	dsn := (&url.URL{Scheme: "file", Path: path, RawQuery: "mode=ro"}).String()
 	db, err := sql.Open("sqlite", dsn)
@@ -132,24 +155,8 @@ func backupBeforeMigrations(path string) error {
 	}
 	defer source.Close()
 
-	backup, err := os.OpenFile(path+".pre-migration.bak", os.O_CREATE|os.O_WRONLY|os.O_TRUNC, info.Mode())
-	if err != nil {
-		return err
-	}
-	return copyAndClose(backup, source)
-}
-
-// copyAndClose copies src into dst and closes dst, returning the copy error
-// if any, otherwise the close error. A bare deferred Close would silently
-// discard a flush failure (e.g. disk full) and report a successful backup
-// that was actually truncated.
-func copyAndClose(dst io.WriteCloser, src io.Reader) error {
-	_, copyErr := io.Copy(dst, src)
-	closeErr := dst.Close()
-	if copyErr != nil {
-		return copyErr
-	}
-	return closeErr
+	backupPath := path + ".pre-migration.bak"
+	return filetxn.ReplaceFromReader(backupPath, source, info.Mode())
 }
 
 func (s *Store) migrate() error {
@@ -165,9 +172,27 @@ INSERT OR IGNORE INTO schema_migrations(version) VALUES (1);
 }
 
 func ensureParent(path string) error {
+	err := validateDatabaseParent(path)
+	if err == nil {
+		return nil
+	}
+	if !os.IsNotExist(err) {
+		return err
+	}
+	return os.MkdirAll(filepath.Dir(path), 0o755)
+}
+
+func validateDatabaseParent(path string) error {
 	dir := filepath.Dir(path)
 	if dir == "." || dir == "" {
 		return nil
 	}
-	return nil
+	info, err := os.Lstat(dir)
+	if err == nil {
+		if !info.IsDir() {
+			return fmt.Errorf("database parent is not a directory: %s", dir)
+		}
+		return nil
+	}
+	return err
 }
