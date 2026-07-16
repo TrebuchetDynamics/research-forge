@@ -1450,18 +1450,27 @@ func readSearchBatchFailures(path string) []searchBatchFailure {
 func executeSearchResume(args []string, stdout, stderr io.Writer, opts globalOptions) int {
 	failuresFile := ""
 	outDir := ""
-	for i := 0; i < len(args)-1; i++ {
+	dryRun := false
+	for i := 0; i < len(args); i++ {
 		switch args[i] {
 		case "--failures":
+			if i+1 >= len(args) {
+				return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge search resume --failures <failures.jsonl> --out <dir> [--dry-run]")
+			}
 			failuresFile = args[i+1]
 			i++
 		case "--out":
+			if i+1 >= len(args) {
+				return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge search resume --failures <failures.jsonl> --out <dir> [--dry-run]")
+			}
 			outDir = args[i+1]
 			i++
+		case "--dry-run":
+			dryRun = true
 		}
 	}
 	if failuresFile == "" || outDir == "" {
-		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge search resume --failures <failures.jsonl> --out <dir>")
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge search resume --failures <failures.jsonl> --out <dir> [--dry-run]")
 	}
 	pending := readSearchBatchFailures(failuresFile)
 	if len(pending) == 0 {
@@ -1469,6 +1478,16 @@ func executeSearchResume(args []string, stdout, stderr io.Writer, opts globalOpt
 			return writeJSON(stdout, 0, map[string]any{"resumed": 0, "results": 0, "newFailures": 0})
 		}
 		fmt.Fprintln(stdout, "no failures to resume")
+		return 0
+	}
+	if dryRun {
+		if opts.JSON {
+			return writeJSON(stdout, 0, map[string]any{"pending": len(pending), "failures": pending})
+		}
+		fmt.Fprintf(stdout, "%d pending failure(s) to resume (dry run, no network calls):\n", len(pending))
+		for i, f := range pending {
+			fmt.Fprintf(stdout, "  %d. [%s] %s  (last error: %s)\n", i+1, f.Source, f.Query, f.Error)
+		}
 		return 0
 	}
 	relativePaths := []string{"results.jsonl", "failures.jsonl"}
