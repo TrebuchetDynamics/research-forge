@@ -1,0 +1,49 @@
+{
+  "question": "How should rforge itself be improved, based on evidence from real rforge usage across all projects under /home/xel/git/*?",
+  "rforge_version": "rforge v0.1.17 (fe2f413, 2026-07-08T01:25:35Z)",
+  "timestamp": "2026-07-14T00:00:00Z",
+  "depth": "comprehensive",
+  "save_path": "/home/xel/git/research-forge/research/rforge-usage-improvement-study",
+  "method": "OSS/evidence study over saved rforge artifacts (no live API calls). Aggregated 128 provenance.json files across 9 projects with jq; deduped and counted error strings; confirmed directory-structure patterns by listing.",
+  "projects_studied": [
+    "artificial-photosynthesis",
+    "fecim-lattice-tools",
+    "games",
+    "jepa",
+    "pi-package-goal",
+    "polymarket-mega-bot",
+    "sdrhf",
+    "trebuchet-dynamics",
+    "visor-box"
+  ],
+  "evidence_counts": {
+    "provenance_files": 128,
+    "distinct_rforge_version_strings": 27,
+    "total_error_entries": 506,
+    "semantic_scholar_429_errors": 226,
+    "manually_versioned_topic_dirs": 13,
+    "screening_jsonl_adoption": 0,
+    "citations_md_adoption": 3,
+    "vault_adoption": 1,
+    "evidence_grid_adoption": 22,
+    "handwritten_report_md": 134,
+    "uncleared_failures_jsonl": 39,
+    "fecim_parsed_paper_dirs": 68,
+    "polymarket_worktree_duplicated_topics": 10
+  },
+  "sources": [
+    "provenance.json corpus (offline aggregation)",
+    "report.md corpus (structure inspection)",
+    "directory structure (versioning/worktree/parsed patterns)",
+    "research-forge ROADMAP.md, TODO.md, docs/cli.md"
+  ],
+  "outputs": [
+    "report.md",
+    "provenance.json"
+  ],
+  "errors": [
+    "No live scholarly API calls made; evidence is observational from saved artifacts only.",
+    "Provenance schema drift across rforge versions (E2) makes per-version error rates approximate.",
+    "Adoption counts are lower bounds (a feature may be used without leaving a tracked artifact)."
+  ]
+}
