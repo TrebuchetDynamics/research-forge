@@ -229,6 +229,56 @@ func TestMakefileIncludesTodoCompletionAuditTarget(t *testing.T) {
 	}
 }
 
+func TestMakefilePinsGovulncheckTool(t *testing.T) {
+	root := filepath.Join("..", "..")
+	data, err := os.ReadFile(filepath.Join(root, "Makefile"))
+	if err != nil {
+		t.Fatalf("read Makefile: %v", err)
+	}
+	text := string(data)
+	for _, want := range []string{"GOVULNCHECK_VERSION ?= v", "golang.org/x/vuln/cmd/govulncheck@$(GOVULNCHECK_VERSION)"} {
+		if !strings.Contains(text, want) {
+			t.Errorf("Makefile missing reproducible govulncheck configuration %q", want)
+		}
+	}
+	if strings.Contains(text, "govulncheck@latest") {
+		t.Error("Makefile must not resolve an unpinned govulncheck binary")
+	}
+}
+
+func TestMakeCIIncludesInventoryCheck(t *testing.T) {
+	if !makeTargetHasDependency(t, "ci", "inventory-check") {
+		t.Fatal("Makefile CI target does not enforce the OSS inventory check")
+	}
+}
+
+func TestMakeCIIncludesCLIInstallSmoke(t *testing.T) {
+	if !makeTargetHasDependency(t, "ci", "install-smoke") {
+		t.Fatal("Makefile CI target does not enforce the CLI install smoke check")
+	}
+}
+
+func makeTargetHasDependency(t *testing.T, target, want string) bool {
+	t.Helper()
+	root := filepath.Join("..", "..")
+	data, err := os.ReadFile(filepath.Join(root, "Makefile"))
+	if err != nil {
+		t.Fatalf("read Makefile: %v", err)
+	}
+	prefix := target + ":"
+	for _, line := range strings.Split(string(data), "\n") {
+		if !strings.HasPrefix(line, prefix) {
+			continue
+		}
+		for _, dependency := range strings.Fields(strings.TrimPrefix(line, prefix)) {
+			if dependency == want {
+				return true
+			}
+		}
+	}
+	return false
+}
+
 func TestMakeCheckIncludesTodoDecisionAudit(t *testing.T) {
 	root := filepath.Join("..", "..")
 	data, err := os.ReadFile(filepath.Join(root, "Makefile"))
@@ -248,8 +298,28 @@ func TestCIEnforcesTodoDecisionAudit(t *testing.T) {
 		t.Fatalf("read CI workflow: %v", err)
 	}
 	text := string(data)
-	if !strings.Contains(text, "TODO decision audit") || !strings.Contains(text, "make todo-completion-audit") {
-		t.Fatalf("CI workflow does not enforce TODO decision audit:\n%s", text)
+	if !strings.Contains(text, "run: make ci") {
+		t.Fatalf("CI workflow does not delegate to the canonical gate:\n%s", text)
+	}
+	if strings.Contains(text, "run: make todo-completion-audit") {
+		t.Fatalf("CI workflow duplicates the TODO audit already enforced by make ci:\n%s", text)
+	}
+	if !makeTargetHasDependency(t, "ci", "todo-completion-audit") {
+		t.Fatal("Makefile CI target does not enforce the TODO completion audit")
+	}
+}
+
+func TestWorkflowsUseGoModToolchainVersion(t *testing.T) {
+	root := filepath.Join("..", "..")
+	for _, name := range []string{"ci.yml", "playwright-e2e.yml"} {
+		data, err := os.ReadFile(filepath.Join(root, ".github", "workflows", name))
+		if err != nil {
+			t.Fatalf("read %s: %v", name, err)
+		}
+		text := string(data)
+		if !strings.Contains(text, "go-version-file: 'go.mod'") || strings.Contains(text, "go-version:") {
+			t.Errorf("%s must use go.mod as its only Go version source", name)
+		}
 	}
 }
 

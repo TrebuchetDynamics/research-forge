@@ -3,6 +3,7 @@
 VERSION ?= $(shell git describe --tags --always --dirty 2>/dev/null || echo dev)
 COMMIT  ?= $(shell git rev-parse --short HEAD 2>/dev/null || echo unknown)
 DATE    ?= $(shell date -u +%Y-%m-%dT%H:%M:%SZ)
+GOVULNCHECK_VERSION ?= v1.6.0
 LDFLAGS  = -X main.version=$(VERSION) -X main.commit=$(COMMIT) -X main.date=$(DATE)
 
 fmt:
@@ -21,9 +22,9 @@ vet:
 	go vet ./...
 
 vuln:
-	go run golang.org/x/vuln/cmd/govulncheck@latest ./...
+	go run golang.org/x/vuln/cmd/govulncheck@$(GOVULNCHECK_VERSION) ./...
 
-ci: fmt-check mod-tidy-check test vet todo-completion-audit vuln install-script-smoke
+ci: fmt-check mod-tidy-check test vet todo-completion-audit vuln install-script-smoke install-smoke inventory-check
 	go list -m all >/dev/null
 	go list -m -json all >/dev/null
 	git diff --check

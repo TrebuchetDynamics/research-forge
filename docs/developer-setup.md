@@ -15,10 +15,12 @@ make license-decision-approval-gate
 
 `make license-decision-live-audit` prints the current issue #1 approval booleans. While owner approval is missing it reports `approved:false`; `make license-decision-approval-gate` must only pass with `approved:true` before adding `LICENSE` or checking off `TODO.md:34`.
 
-For the CI security gate, install `govulncheck` and run:
+Run the CI security gate with:
 
 ```sh
-govulncheck ./...
+make vuln
 ```
+
+The Makefile pins the scanner binary for reproducible runs; `govulncheck` still queries the live Go vulnerability database by default.
 
 Development is TDD-only. Add a failing behavior test first, implement the smallest shared service/CLI behavior, then refactor.
