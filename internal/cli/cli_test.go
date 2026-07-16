@@ -649,6 +649,66 @@ func TestExecuteServiceCheckGROBIDJSON(t *testing.T) {
 	}
 }
 
+func TestExecuteDoctorJSONReportsSemanticScholarAPIKeyMissing(t *testing.T) {
+	t.Setenv("RFORGE_SEMANTIC_SCHOLAR_API_KEY", "")
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+
+	code := Execute([]string{"--json", "doctor"}, stdout, stderr)
+	if code != 0 {
+		t.Fatalf("exit code = %d, stderr = %s", code, stderr.String())
+	}
+	var envelope map[string]any
+	if err := json.Unmarshal(stdout.Bytes(), &envelope); err != nil {
+		t.Fatalf("stdout is not JSON: %v\n%s", err, stdout.String())
+	}
+	data := envelope["data"].(map[string]any)
+	checks := data["checks"].([]any)
+	for _, raw := range checks {
+		check := raw.(map[string]any)
+		if check["name"] == "semantic_scholar_api_key" {
+			if check["ok"] != false {
+				t.Fatalf("semantic scholar key check should fail when unset: %#v", check)
+			}
+			if msg, _ := check["message"].(string); !strings.Contains(msg, "not set") {
+				t.Fatalf("semantic scholar key message should explain the key is unset: %#v", check["message"])
+			}
+			if action, _ := check["action"].(string); !strings.Contains(action, "RFORGE_SEMANTIC_SCHOLAR_API_KEY") {
+				t.Fatalf("semantic scholar key action should name the env var: %#v", check["action"])
+			}
+			return
+		}
+	}
+	t.Fatalf("missing semantic_scholar_api_key check: %#v", checks)
+}
+
+func TestExecuteDoctorJSONReportsSemanticScholarAPIKeyConfigured(t *testing.T) {
+	t.Setenv("RFORGE_SEMANTIC_SCHOLAR_API_KEY", "test-key")
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+
+	code := Execute([]string{"--json", "doctor"}, stdout, stderr)
+	if code != 0 {
+		t.Fatalf("exit code = %d, stderr = %s", code, stderr.String())
+	}
+	var envelope map[string]any
+	if err := json.Unmarshal(stdout.Bytes(), &envelope); err != nil {
+		t.Fatalf("stdout is not JSON: %v\n%s", err, stdout.String())
+	}
+	data := envelope["data"].(map[string]any)
+	checks := data["checks"].([]any)
+	for _, raw := range checks {
+		check := raw.(map[string]any)
+		if check["name"] == "semantic_scholar_api_key" {
+			if check["ok"] != true {
+				t.Fatalf("semantic scholar key check should pass when set: %#v", check)
+			}
+			return
+		}
+	}
+	t.Fatalf("missing semantic_scholar_api_key check: %#v", checks)
+}
+
 func TestExecuteDoctorJSONChecksConfiguredGROBIDEndpoint(t *testing.T) {
 	t.Setenv("RFORGE_GROBID_URL", "http://localhost:8070")
 	stdout := new(bytes.Buffer)

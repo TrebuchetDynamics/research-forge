@@ -871,6 +871,7 @@ func executeDoctor(stdout, stderr io.Writer, opts globalOptions) int {
 	checks := []project.HealthCheck{
 		{Name: "go_runtime", OK: runtime.Version() != "", Message: runtime.Version(), Action: "Use the reported Go runtime for local builds and CI."},
 	}
+	checks = append(checks, semanticScholarAPIKeyCheck())
 	if opts.Project != "" {
 		checks = append(checks, project.CheckHealth(opts.Project).Checks...)
 	}
@@ -897,6 +898,16 @@ func executeDoctor(stdout, stderr io.Writer, opts globalOptions) int {
 		fmt.Fprintf(stdout, "%s: %s (%s) action: %s\n", check.Name, status, check.Message, check.Action)
 	}
 	return 0
+}
+
+// semanticScholarAPIKeyCheck warns when the Semantic Scholar API key is unset.
+// Semantic Scholar is the dominant source of 429 rate-limit failures across real
+// rforge usage; the key is the one configuration change that resolves them.
+func semanticScholarAPIKeyCheck() project.HealthCheck {
+	if key := strings.TrimSpace(os.Getenv("RFORGE_SEMANTIC_SCHOLAR_API_KEY")); key != "" {
+		return project.HealthCheck{Name: "semantic_scholar_api_key", OK: true, Message: "set", Action: "No action needed. Semantic Scholar requests will include the API key."}
+	}
+	return project.HealthCheck{Name: "semantic_scholar_api_key", OK: false, Message: "RFORGE_SEMANTIC_SCHOLAR_API_KEY is not set", Action: "Set RFORGE_SEMANTIC_SCHOLAR_API_KEY to a Semantic Scholar API key to avoid the HTTP 429 rate-limit failures that dominate batch searches."}
 }
 
 func optionalRMetaforCheck(rscript string) project.HealthCheck {
