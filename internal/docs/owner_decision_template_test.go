@@ -323,6 +323,23 @@ func TestWorkflowsUseGoModToolchainVersion(t *testing.T) {
 	}
 }
 
+func TestPlaywrightPinsUseCurrentModuleAndVersion(t *testing.T) {
+	root := filepath.Join("..", "..")
+	for _, path := range []string{"go.mod", "Makefile", filepath.Join(".github", "workflows", "playwright-e2e.yml")} {
+		data, err := os.ReadFile(filepath.Join(root, path))
+		if err != nil {
+			t.Fatalf("read %s: %v", path, err)
+		}
+		text := string(data)
+		if !strings.Contains(text, "github.com/mxschmitt/playwright-go") || !strings.Contains(text, "v0.6100.0") {
+			t.Errorf("%s must pin github.com/mxschmitt/playwright-go v0.6100.0", path)
+		}
+		if strings.Contains(text, "github.com/playwright-community/playwright-go") {
+			t.Errorf("%s still references the retired Playwright driver downloader", path)
+		}
+	}
+}
+
 func TestPullRequestTemplateRequiresDecisionLinksForDecisionGatedTODOs(t *testing.T) {
 	root := filepath.Join("..", "..")
 	data, err := os.ReadFile(filepath.Join(root, ".github", "PULL_REQUEST_TEMPLATE.md"))

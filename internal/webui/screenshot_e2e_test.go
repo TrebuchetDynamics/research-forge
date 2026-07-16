@@ -21,7 +21,7 @@ import (
 
 	"net/http/httptest"
 
-	"github.com/playwright-community/playwright-go"
+	"github.com/mxschmitt/playwright-go"
 )
 
 // screenshotDiffTolerance is the maximum fraction of pixels allowed to differ

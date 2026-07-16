@@ -86,11 +86,11 @@ web-gui-smoke:
 	go test ./internal/webui
 
 web-gui-e2e:
-	go run github.com/playwright-community/playwright-go/cmd/playwright@v0.5200.1 install chromium
+	go run github.com/mxschmitt/playwright-go/cmd/playwright@v0.6100.0 install chromium
 	RFORGE_RUN_PLAYWRIGHT=1 go test -tags playwright_e2e ./internal/webui -run TestPlaywright -count=1 -v
 
 web-gui-screenshots-update:
-	go run github.com/playwright-community/playwright-go/cmd/playwright@v0.5200.1 install chromium
+	go run github.com/mxschmitt/playwright-go/cmd/playwright@v0.6100.0 install chromium
 	RFORGE_RUN_PLAYWRIGHT=1 RFORGE_UPDATE_SCREENSHOTS=1 go test -tags playwright_e2e ./internal/webui -run TestPlaywrightScreenshotRegression -count=1 -v
 
 source-live-smoke:
