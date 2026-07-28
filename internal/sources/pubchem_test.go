@@ -90,6 +90,22 @@ func TestPubChemSearchEmptyResults(t *testing.T) {
 	}
 }
 
+func TestPubChemSearchNotFoundIsEmptyResult(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.Error(w, "PUGREST.NotFound", http.StatusNotFound)
+	}))
+	defer server.Close()
+
+	connector := NewPubChemConnector(NewHTTPClient(HTTPClientOptions{BaseURL: server.URL, Timeout: time.Second}))
+	response, err := connector.Search(context.Background(), SourceQuery{Terms: "xyznotacompound"})
+	if err != nil {
+		t.Fatalf("Search error: %v", err)
+	}
+	if len(response.Records) != 0 {
+		t.Fatalf("records = %d, want 0", len(response.Records))
+	}
+}
+
 func TestPubChemSearchDefaultLimit(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {

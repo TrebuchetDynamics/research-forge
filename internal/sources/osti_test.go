@@ -80,6 +80,28 @@ func TestOSTISearchNormalizesRecords(t *testing.T) {
 	}
 }
 
+func TestOSTISearchAcceptsStringID(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		_, _ = w.Write([]byte(`[{"osti_id":"3371691","title":"String identifier","doi":""}]`))
+	}))
+	defer server.Close()
+
+	connector := NewOSTIConnector(NewHTTPClient(HTTPClientOptions{BaseURL: server.URL, Timeout: time.Second}))
+	response, err := connector.Search(context.Background(), SourceQuery{Terms: "string id", Limit: 1})
+	if err != nil {
+		t.Fatalf("Search returned error: %v", err)
+	}
+	if len(response.Records) != 1 {
+		t.Fatalf("records = %d, want 1", len(response.Records))
+	}
+	if got := response.Records[0].SourceID; got != "3371691" {
+		t.Fatalf("SourceID = %q, want 3371691", got)
+	}
+	if got := response.Records[0].Identifiers.CrossrefID; got != "osti:3371691" {
+		t.Fatalf("CrossrefID = %q, want osti:3371691", got)
+	}
+}
+
 func TestOSTISearchCrossrefIDFallback(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		_, _ = w.Write([]byte(`[

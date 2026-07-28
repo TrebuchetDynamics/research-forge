@@ -41,6 +41,9 @@ func (c PubChemConnector) Search(ctx context.Context, query SourceQuery) (Source
 
 	cidsBody, err := c.http.Get(ctx, cidsPath, nil)
 	if err != nil {
+		if isSourceHTTPStatus(err, 404) {
+			return SourceResponse{Records: []SourceRecord{}, RawRef: rawRef}, nil
+		}
 		return SourceResponse{}, err
 	}
 	var cidsResp pubchemCIDsResponse

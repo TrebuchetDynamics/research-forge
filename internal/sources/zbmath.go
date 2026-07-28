@@ -40,6 +40,9 @@ func (c ZbMATHConnector) Search(ctx context.Context, query SourceQuery) (SourceR
 	}
 	body, err := c.http.Get(ctx, "/v1/document/_search", params)
 	if err != nil {
+		if isSourceHTTPStatus(err, 404) {
+			return SourceResponse{Records: []SourceRecord{}, RawRef: rawZbMATHRef(query.Terms, limit)}, nil
+		}
 		return SourceResponse{}, err
 	}
 	var payload zbmathSearchResponse

@@ -3,6 +3,7 @@ package sources
 import (
 	"bytes"
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -26,6 +27,15 @@ type HTTPClientOptions struct {
 }
 
 const maxSourceResponseBytes int64 = 10 << 20
+
+type sourceHTTPStatusError struct{ status int }
+
+func (e sourceHTTPStatusError) Error() string { return fmt.Sprintf("source HTTP status %d", e.status) }
+
+func isSourceHTTPStatus(err error, status int) bool {
+	var statusErr sourceHTTPStatusError
+	return errors.As(err, &statusErr) && statusErr.status == status
+}
 
 // HTTPClient makes source HTTP requests through an injected base URL.
 type HTTPClient struct {
@@ -137,7 +147,7 @@ func (c HTTPClient) Get(ctx context.Context, path string, query map[string]strin
 	if lastStatus == http.StatusTooManyRequests {
 		return nil, rateLimitError(retryLater)
 	}
-	return nil, fmt.Errorf("source HTTP status %d", lastStatus)
+	return nil, sourceHTTPStatusError{status: lastStatus}
 }
 
 func readBoundedResponse(response *http.Response, maxBytes int64) ([]byte, error) {
@@ -257,5 +267,5 @@ func (c HTTPClient) postWithContentType(ctx context.Context, path string, body [
 	if lastStatus == http.StatusTooManyRequests {
 		return nil, rateLimitError(retryLater)
 	}
-	return nil, fmt.Errorf("source HTTP status %d", lastStatus)
+	return nil, sourceHTTPStatusError{status: lastStatus}
 }

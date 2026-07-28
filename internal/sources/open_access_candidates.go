@@ -74,7 +74,7 @@ func (c COREConnector) Search(ctx context.Context, query SourceQuery) (SourceRes
 		for _, link := range item.Links {
 			links = append(links, link.URL)
 		}
-		records = append(records, SourceRecord{Source: "core", SourceID: strings.TrimSpace(item.ID), Title: strings.TrimSpace(item.Title), Identifiers: Identifiers{DOI: normalizeSourceDOI(item.DOI)}, Year: item.YearPublished, Publisher: item.Publisher, URLs: nonEmptyStrings(links...), License: strings.TrimSpace(item.License), OpenAccess: true, Metadata: map[string]string{"download_url": strings.TrimSpace(item.DownloadURL), "license": strings.TrimSpace(item.License), "attribution": "CORE metadata", "rate_limit_policy": "CORE API limits/key policy; request limit recorded", "api_provenance": "core:/v3/search/works?q=" + url.QueryEscape(query.Terms)}})
+		records = append(records, SourceRecord{Source: "core", SourceID: jsonScalarString(item.ID), Title: strings.TrimSpace(item.Title), Identifiers: Identifiers{DOI: normalizeSourceDOI(item.DOI)}, Year: item.YearPublished, Publisher: item.Publisher, URLs: nonEmptyStrings(links...), License: strings.TrimSpace(item.License), OpenAccess: true, Metadata: map[string]string{"download_url": strings.TrimSpace(item.DownloadURL), "license": strings.TrimSpace(item.License), "attribution": "CORE metadata", "rate_limit_policy": "CORE API limits/key policy; request limit recorded", "api_provenance": "core:/v3/search/works?q=" + url.QueryEscape(query.Terms)}})
 	}
 	return SourceResponse{Records: records, RawRef: "core:/v3/search/works?q=" + url.QueryEscape(query.Terms)}, nil
 }
@@ -162,13 +162,13 @@ type coreResponse struct {
 	Results []coreItem `json:"results"`
 }
 type coreItem struct {
-	ID            string `json:"id"`
-	Title         string `json:"title"`
-	DOI           string `json:"doi"`
-	Publisher     string `json:"publisher"`
-	DownloadURL   string `json:"downloadUrl"`
-	License       string `json:"license"`
-	YearPublished int    `json:"yearPublished"`
+	ID            json.RawMessage `json:"id"`
+	Title         string          `json:"title"`
+	DOI           string          `json:"doi"`
+	Publisher     string          `json:"publisher"`
+	DownloadURL   string          `json:"downloadUrl"`
+	License       string          `json:"license"`
+	YearPublished int             `json:"yearPublished"`
 	Links         []struct {
 		URL string `json:"url"`
 	} `json:"links"`

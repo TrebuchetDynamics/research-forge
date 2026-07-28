@@ -94,6 +94,22 @@ func TestELifeSearchNormalizesRecords(t *testing.T) {
 	}
 }
 
+func TestELifeSearchAcceptsNumericVolume(t *testing.T) {
+	fixture := `{"total":1,"items":[{"id":"12345","doi":"10.7554/eLife.12345","title":"Numeric volume","volume":13}]}`
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		_, _ = w.Write([]byte(fixture))
+	}))
+	defer server.Close()
+
+	resp, err := NewELifeConnector(NewHTTPClient(HTTPClientOptions{BaseURL: server.URL})).Search(context.Background(), SourceQuery{Terms: "volume"})
+	if err != nil {
+		t.Fatalf("Search error: %v", err)
+	}
+	if len(resp.Records) != 1 || resp.Records[0].Metadata["volume"] != "13" {
+		t.Fatalf("records = %#v", resp.Records)
+	}
+}
+
 func TestELifeSearchStripsHTMLFromTitles(t *testing.T) {
 	fixture := `{"total":1,"items":[{
 		"id": "12345",

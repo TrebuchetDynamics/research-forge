@@ -50,6 +50,21 @@ func TestCOREConnectorSearchNormalizesOpenAccessCandidates(t *testing.T) {
 	}
 }
 
+func TestCOREConnectorAcceptsNumericID(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		_, _ = w.Write([]byte(`{"results":[{"id":12345,"title":"Numeric CORE id","doi":"10.1000/core-id"}]}`))
+	}))
+	defer ts.Close()
+
+	response, err := NewCOREConnector(NewHTTPClient(HTTPClientOptions{BaseURL: ts.URL})).Search(context.Background(), SourceQuery{Terms: "numeric id", Limit: 1})
+	if err != nil {
+		t.Fatalf("CORE Search: %v", err)
+	}
+	if len(response.Records) != 1 || response.Records[0].SourceID != "12345" {
+		t.Fatalf("records = %#v", response.Records)
+	}
+}
+
 func TestCompareOpenAccessCandidatesCoversRequiredSources(t *testing.T) {
 	paper := library.PaperRecord{Title: "Candidate fixture", Identifiers: library.Identifiers{DOI: "10.1000/candidate", ArXivID: "2401.12345", PMID: "123", PMCID: "PMC123"}, URLs: []string{"/tmp/local.pdf"}, License: "CC-BY", OpenAccess: true, SourceRefs: []library.SourceRef{{Source: "unpaywall", Metadata: map[string]string{"pdf_url": "https://example.org/unpaywall.pdf", "oa_status": "gold"}}, {Source: "doaj", RawPayloadRef: "doaj:/api/search/articles/candidate", Metadata: map[string]string{"full_text_url": "https://example.org/doaj.pdf", "license": "CC-BY", "attribution": "DOAJ", "rate_limit_policy": "polite"}}, {Source: "core", RawPayloadRef: "core:/v3/search/works?q=candidate", Metadata: map[string]string{"download_url": "https://example.org/core.pdf", "license": "CC-BY", "attribution": "CORE", "rate_limit_policy": "keyed"}}, {Source: "europepmc", Metadata: map[string]string{"full_text_url": "https://example.org/pmc.pdf", "license": "CC-BY"}}}}
 	comparison := CompareOpenAccessCandidates([]library.PaperRecord{paper})

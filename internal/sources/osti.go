@@ -47,7 +47,7 @@ func (c OSTIConnector) Search(ctx context.Context, query SourceQuery) (SourceRes
 		if title == "" {
 			continue
 		}
-		idStr := strconv.Itoa(result.OstiID)
+		idStr := jsonScalarString(result.OstiID)
 		doi := normalizeSourceDOI(result.DOI)
 
 		crossrefID := ""
@@ -107,15 +107,27 @@ func (c OSTIConnector) Search(ctx context.Context, query SourceQuery) (SourceRes
 	}, nil
 }
 
+func jsonScalarString(raw json.RawMessage) string {
+	var text string
+	if err := json.Unmarshal(raw, &text); err == nil {
+		return strings.TrimSpace(text)
+	}
+	var number json.Number
+	if err := json.Unmarshal(raw, &number); err == nil {
+		return number.String()
+	}
+	return ""
+}
+
 type ostiRecord struct {
-	OstiID          int          `json:"osti_id"`
-	Title           string       `json:"title"`
-	DOI             string       `json:"doi"`
-	PublicationDate string       `json:"publication_date"`
-	JournalName     string       `json:"journal_name"`
-	ProductType     string       `json:"product_type"`
-	Authors         []ostiAuthor `json:"authors"`
-	Subjects        string       `json:"subjects"`
+	OstiID          json.RawMessage `json:"osti_id"`
+	Title           string          `json:"title"`
+	DOI             string          `json:"doi"`
+	PublicationDate string          `json:"publication_date"`
+	JournalName     string          `json:"journal_name"`
+	ProductType     string          `json:"product_type"`
+	Authors         []ostiAuthor    `json:"authors"`
+	Subjects        string          `json:"subjects"`
 }
 
 type ostiAuthor struct {

@@ -95,6 +95,21 @@ func TestOpenAIRESearchNormalizesRecords(t *testing.T) {
 	}
 }
 
+func TestOpenAIRESearchAcceptsDescriptionArray(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		_, _ = w.Write([]byte(`{"response":{"results":{"result":[{"header":{"dri:objIdentifier":{"$":"id-array"}},"metadata":{"oaf:entity":{"oaf:result":{"title":{"@classid":"main title","$":"Array abstract"},"pid":{"@classid":"doi","$":"10.1000/array"},"description":[{"$":"First abstract"},{"$":"Second abstract"}]}}}}]}}}`))
+	}))
+	defer server.Close()
+
+	response, err := NewOpenAIREConnector(NewHTTPClient(HTTPClientOptions{BaseURL: server.URL, Timeout: time.Second})).Search(context.Background(), SourceQuery{Terms: "array"})
+	if err != nil {
+		t.Fatalf("Search returned error: %v", err)
+	}
+	if len(response.Records) != 1 || response.Records[0].Abstract != "First abstract" {
+		t.Fatalf("records = %#v", response.Records)
+	}
+}
+
 func TestOpenAIRESearchCrossrefIDFallback(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		_, _ = w.Write([]byte(`{

@@ -71,10 +71,7 @@ func (c OpenAIREConnector) Search(ctx context.Context, query SourceQuery) (Sourc
 			year, _ = strconv.Atoi(oafResult.DateOfAcceptance.Value[:4])
 		}
 
-		abstract := ""
-		if oafResult.Description != nil {
-			abstract = strings.TrimSpace(oafResult.Description.Value)
-		}
+		abstract := extractOpenAIREText(oafResult.Description)
 
 		venue := ""
 		if oafResult.Journal != nil {
@@ -145,7 +142,7 @@ type openAIREResultData struct {
 	Title            json.RawMessage    `json:"title"`
 	PID              json.RawMessage    `json:"pid"`
 	DateOfAcceptance *openAIRETextNode  `json:"dateofacceptance"`
-	Description      *openAIRETextNode  `json:"description"`
+	Description      json.RawMessage    `json:"description"`
 	BestAccessRight  *openAIREClassNode `json:"bestaccessright"`
 	Journal          *struct {
 		Title string `json:"$"`
@@ -179,6 +176,22 @@ func extractOpenAIREMainTitle(raw json.RawMessage) string {
 	var single openAIREClassNode
 	if err := json.Unmarshal(raw, &single); err == nil {
 		return single.Value
+	}
+	return ""
+}
+
+func extractOpenAIREText(raw json.RawMessage) string {
+	var single openAIRETextNode
+	if err := json.Unmarshal(raw, &single); err == nil {
+		return strings.TrimSpace(single.Value)
+	}
+	var list []openAIRETextNode
+	if err := json.Unmarshal(raw, &list); err == nil {
+		for _, node := range list {
+			if value := strings.TrimSpace(node.Value); value != "" {
+				return value
+			}
+		}
 	}
 	return ""
 }

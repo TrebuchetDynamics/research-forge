@@ -68,8 +68,8 @@ func (c ELifeConnector) Search(ctx context.Context, query SourceQuery) (SourceRe
 		if authorLine != "" {
 			metadata["author_line"] = authorLine
 		}
-		if item.Volume != "" {
-			metadata["volume"] = item.Volume
+		if volume := jsonScalarString(item.Volume); volume != "" {
+			metadata["volume"] = volume
 		}
 		if item.ElocationID != "" {
 			metadata["elocation_id"] = item.ElocationID
@@ -97,12 +97,12 @@ type elifeSearchResponse struct {
 }
 
 type elifeItem struct {
-	ID          string `json:"id"`
-	DOI         string `json:"doi"`
-	Title       string `json:"title"`
-	Published   string `json:"published"`
-	Type        string `json:"type"`
-	AuthorLine  string `json:"authorLine"`
-	Volume      string `json:"volume"`
-	ElocationID string `json:"elocationId"`
+	ID          string          `json:"id"`
+	DOI         string          `json:"doi"`
+	Title       string          `json:"title"`
+	Published   string          `json:"published"`
+	Type        string          `json:"type"`
+	AuthorLine  string          `json:"authorLine"`
+	Volume      json.RawMessage `json:"volume"`
+	ElocationID string          `json:"elocationId"`
 }

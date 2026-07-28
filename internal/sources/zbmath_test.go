@@ -130,6 +130,22 @@ func TestZbMATHSearchZblIDFallbackIdentifier(t *testing.T) {
 	}
 }
 
+func TestZbMATHSearchNotFoundIsEmptyResult(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.Error(w, "no matching documents", http.StatusNotFound)
+	}))
+	defer server.Close()
+
+	connector := NewZbMATHConnector(NewHTTPClient(HTTPClientOptions{BaseURL: server.URL, Timeout: time.Second}))
+	response, err := connector.Search(context.Background(), SourceQuery{Terms: "not mathematics"})
+	if err != nil {
+		t.Fatalf("Search error: %v", err)
+	}
+	if len(response.Records) != 0 {
+		t.Fatalf("records = %d, want 0", len(response.Records))
+	}
+}
+
 func TestZbMATHSearchDefaultLimit(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Query().Get("per_page") != "25" {
