@@ -128,7 +128,7 @@ See the [reproducible review package specification](./docs/reproducible-review-p
 | `biomedical` | PubMed, Europe PMC, bioRxiv |
 | `preprints` | arXiv, bioRxiv, medRxiv, ChemRxiv |
 | `open` | Open-access sources |
-| `all` | Maximum breadth; expect partial failures |
+| `all` | All keyword-search connectors; expect partial failures. Use `citations expand --source opencitations --paper <doi>` for DOI citation lookup |
 
 Run `rforge doctor` before a large sweep. It surfaces optional source configuration such as `RFORGE_SEMANTIC_SCHOLAR_API_KEY`, whose absence can cause HTTP 429 responses.
 

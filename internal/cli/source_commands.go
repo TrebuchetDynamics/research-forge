@@ -1140,9 +1140,10 @@ type searchBatchOptions struct {
 }
 
 type searchBatchFailure struct {
-	Source string `json:"source"`
-	Query  string `json:"query"`
-	Error  string `json:"error"`
+	Source  string `json:"source"`
+	Query   string `json:"query"`
+	Error   string `json:"error"`
+	Skipped bool   `json:"skipped,omitempty"`
 }
 
 type searchBatchManifest struct {
@@ -1154,6 +1155,7 @@ type searchBatchManifest struct {
 	Results       int      `json:"results"`
 	Deduped       int      `json:"deduped"`
 	Failures      int      `json:"failures"`
+	Skipped       int      `json:"skipped,omitempty"`
 }
 
 func executeSearchBatch(args []string, stdout, stderr io.Writer, opts globalOptions) int {
@@ -1175,6 +1177,18 @@ func executeSearchBatch(args []string, stdout, stderr io.Writer, opts globalOpti
 	}
 	if batch.FetchPDFs && opts.Project == "" {
 		return writeError(stdout, stderr, opts, 2, "missing_project", "--project is required for search batch --fetch-pdfs")
+	}
+	configurationErrors := map[string]string{}
+	for _, source := range batch.Sources {
+		if _, ok := searchConnector(source); !ok {
+			return writeError(stdout, stderr, opts, 2, "unknown_source", fmt.Sprintf("unknown source %q", source))
+		}
+		if message := searchBatchSourceConfigurationError(source); message != "" {
+			configurationErrors[source] = message
+			if !batch.ContinueOnError {
+				return writeError(stdout, stderr, opts, 2, "missing_source_configuration", message)
+			}
+		}
 	}
 	output, err := beginSearchBatchOutputTransaction(batch.OutDir, queries, batch.Sources, batch.WriteStats)
 	if err != nil {
@@ -1201,22 +1215,26 @@ func executeSearchBatch(args []string, stdout, stderr io.Writer, opts globalOpti
 
 	allPapers := []library.PaperRecord{}
 	failures := []searchBatchFailure{}
+	failureCount, skippedCount := 0, 0
+	for _, source := range batch.Sources {
+		if message := configurationErrors[source]; message != "" {
+			failure := searchBatchFailure{Source: source, Error: fmt.Sprintf("%s; skipped %d queries", message, len(queries)), Skipped: true}
+			failures = append(failures, failure)
+			skippedCount++
+			_ = writeJSONLine(failuresFile, failure)
+		}
+	}
 	for qi, query := range queries {
 		for _, source := range batch.Sources {
-			connector, ok := searchConnector(source)
-			if !ok {
-				failure := searchBatchFailure{Source: source, Query: query, Error: "unknown source"}
-				failures = append(failures, failure)
-				_ = writeJSONLine(failuresFile, failure)
-				if !batch.ContinueOnError {
-					return writeError(stdout, stderr, opts, 2, "unknown_source", fmt.Sprintf("unknown source %q", source))
-				}
+			if configurationErrors[source] != "" {
 				continue
 			}
+			connector, _ := searchConnector(source)
 			response, err := connector.Search(context.Background(), sources.SourceQuery{Terms: query, Limit: batch.Limit, Filters: map[string]string{}})
 			if err != nil {
 				failure := searchBatchFailure{Source: source, Query: query, Error: err.Error()}
 				failures = append(failures, failure)
+				failureCount++
 				_ = writeJSONLine(failuresFile, failure)
 				if !batch.ContinueOnError {
 					return writeError(stdout, stderr, opts, 1, "search_batch_failed", fmt.Sprintf("%s %q: %v", source, query, err))
@@ -1227,6 +1245,7 @@ func executeSearchBatch(args []string, stdout, stderr io.Writer, opts globalOpti
 			if err != nil {
 				failure := searchBatchFailure{Source: source, Query: query, Error: err.Error()}
 				failures = append(failures, failure)
+				failureCount++
 				_ = writeJSONLine(failuresFile, failure)
 				if !batch.ContinueOnError {
 					return writeError(stdout, stderr, opts, 1, "search_batch_normalize_failed", fmt.Sprintf("%s %q: %v", source, query, err))
@@ -1258,7 +1277,7 @@ func executeSearchBatch(args []string, stdout, stderr io.Writer, opts globalOpti
 	if err := writeSearchBatchMarkdown(filepath.Join(workOutDir, "results.md"), deduped, failures); err != nil {
 		return writeError(stdout, stderr, opts, 1, "search_batch_write_failed", err.Error())
 	}
-	manifest := searchBatchManifest{SchemaVersion: "1", CreatedAt: time.Now().UTC().Format(time.RFC3339), Queries: queries, Sources: batch.Sources, Limit: batch.Limit, Results: len(allPapers), Deduped: len(deduped), Failures: len(failures)}
+	manifest := searchBatchManifest{SchemaVersion: "1", CreatedAt: time.Now().UTC().Format(time.RFC3339), Queries: queries, Sources: batch.Sources, Limit: batch.Limit, Results: len(allPapers), Deduped: len(deduped), Failures: failureCount, Skipped: skippedCount}
 	if err := writeJSONFile(filepath.Join(workOutDir, "manifest.json"), manifest); err != nil {
 		return writeError(stdout, stderr, opts, 1, "search_batch_write_failed", err.Error())
 	}
@@ -1287,9 +1306,9 @@ func executeSearchBatch(args []string, stdout, stderr io.Writer, opts globalOpti
 		return writeError(stdout, stderr, opts, 1, "search_batch_output_commit_failed", err.Error())
 	}
 	if opts.JSON {
-		return writeJSON(stdout, 0, map[string]any{"out": batch.OutDir, "results": len(allPapers), "deduped": len(deduped), "failures": len(failures), "manifest": filepath.Join(batch.OutDir, "manifest.json"), "imported": imported, "skippedDuplicate": skippedDuplicate, "skippedNoIdentifier": skippedNoIdentifier, "fetched": len(fetchResult.assets), "fetchFailed": len(fetchResult.failures), "fetchSkipped": fetchResult.skipped})
+		return writeJSON(stdout, 0, map[string]any{"out": batch.OutDir, "results": len(allPapers), "deduped": len(deduped), "failures": failureCount, "skippedSources": skippedCount, "manifest": filepath.Join(batch.OutDir, "manifest.json"), "imported": imported, "skippedDuplicate": skippedDuplicate, "skippedNoIdentifier": skippedNoIdentifier, "fetched": len(fetchResult.assets), "fetchFailed": len(fetchResult.failures), "fetchSkipped": fetchResult.skipped})
 	}
-	fmt.Fprintf(stdout, "searched %d querie(s) across %d source(s): %d records, %d deduped, %d failure(s)\n", len(queries), len(batch.Sources), len(allPapers), len(deduped), len(failures))
+	fmt.Fprintf(stdout, "searched %d querie(s) across %d source(s): %d records, %d deduped, %d failure(s), %d skipped source(s)\n", len(queries), len(batch.Sources), len(allPapers), len(deduped), failureCount, skippedCount)
 	if opts.Project != "" {
 		fmt.Fprintf(stdout, "imported %d records to library; skipped %d duplicates, %d without identifiers\n", imported, skippedDuplicate, skippedNoIdentifier)
 	}
@@ -1365,14 +1384,12 @@ func executeSearchStats(args []string, stdout, stderr io.Writer, opts globalOpti
 			sourceFiles[source]++
 			count := 0
 			for _, line := range strings.Split(string(data), "\n") {
-				line = strings.TrimSpace(line)
-				if line == "" {
+				parts := strings.SplitN(line, "\t", 2)
+				if len(parts) != 2 {
 					continue
 				}
-				parts := strings.SplitN(line, "\t", 2)
-				doi := strings.TrimSpace(parts[0])
-				if doi != "" {
-					count++
+				count++
+				if doi := normalizeStatsDOI(parts[0]); doi != "" {
 					uniqueDOIs[doi] = struct{}{}
 				}
 			}
@@ -1413,6 +1430,17 @@ func executeSearchStats(args []string, stdout, stderr io.Writer, opts globalOpti
 		}
 	}
 	return 0
+}
+
+func normalizeStatsDOI(value string) string {
+	value = strings.ToLower(strings.TrimSpace(value))
+	value = strings.TrimPrefix(value, "https://doi.org/")
+	value = strings.TrimPrefix(value, "http://doi.org/")
+	value = strings.TrimPrefix(value, "doi:")
+	if !strings.HasPrefix(value, "10.") || !strings.Contains(value, "/") || strings.ContainsAny(value, " \t\r\n") {
+		return ""
+	}
+	return value
 }
 
 // countJSONLLines returns the number of non-empty lines in a JSONL file.
@@ -2246,10 +2274,26 @@ func searchConnector(source string) (sourceConnector, bool) {
 	}
 }
 
+func searchBatchSourceConfigurationError(source string) string {
+	requiredEnv := ""
+	switch source {
+	case "lens":
+		requiredEnv = "RFORGE_LENS_TOKEN"
+	case "ads", "nasa-ads":
+		requiredEnv = "RFORGE_ADS_TOKEN"
+	case "dimensions":
+		requiredEnv = "RFORGE_DIMENSIONS_TOKEN"
+	}
+	if requiredEnv != "" && strings.TrimSpace(os.Getenv(requiredEnv)) == "" {
+		return fmt.Sprintf("%s requires %s", source, requiredEnv)
+	}
+	return ""
+}
+
 func searchBatchSourcePreset(name string) []string {
 	switch strings.TrimSpace(strings.ToLower(name)) {
 	case "all":
-		return []string{"openalex", "crossref", "semantic-scholar", "arxiv", "pubmed", "europepmc", "biorxiv", "chemrxiv", "researchsquare", "zenodo", "datacite", "figshare", "dryad", "osf", "opencitations", "base", "openaire", "doaj", "core", "lens", "nasa-ads", "ntrs", "osti", "inspire-hep", "dblp", "zbmath", "eric", "hal", "dimensions", "pubchem", "doab", "cinii", "biostudies", "plos", "clinicaltrials", "gbif", "dataverse", "nasa-cmr", "pmc", "huggingface", "oapen", "nber", "openlibrary", "elife"}
+		return []string{"openalex", "crossref", "semantic-scholar", "arxiv", "pubmed", "europepmc", "biorxiv", "chemrxiv", "researchsquare", "zenodo", "datacite", "figshare", "dryad", "osf", "base", "openaire", "doaj", "core", "lens", "nasa-ads", "ntrs", "osti", "inspire-hep", "dblp", "zbmath", "eric", "hal", "dimensions", "pubchem", "doab", "cinii", "biostudies", "plos", "clinicaltrials", "gbif", "dataverse", "nasa-cmr", "pmc", "huggingface", "oapen", "nber", "openlibrary", "elife"}
 	case "scholarly-fast":
 		return []string{"openalex", "crossref", "semantic-scholar", "arxiv"}
 	case "biomedical":
@@ -2756,7 +2800,7 @@ func writeJSONLine(w io.Writer, value any) error {
 func writeSearchBatchRaw(path string, papers []library.PaperRecord) error {
 	var b strings.Builder
 	for _, paper := range papers {
-		fmt.Fprintf(&b, "%s\t%s\n", paper.Identifiers.DOI, paper.Title)
+		fmt.Fprintf(&b, "%s\t%s\n", paper.Identifiers.DOI, strings.Join(strings.Fields(paper.Title), " "))
 	}
 	return os.WriteFile(path, []byte(b.String()), 0o644)
 }
@@ -2807,19 +2851,42 @@ func writeSearchBatchMarkdown(path string, papers []library.PaperRecord, failure
 		}
 		b.WriteString("\n")
 	}
-	if len(failures) > 0 {
+	skipped := 0
+	for _, failure := range failures {
+		if failure.Skipped {
+			skipped++
+		}
+	}
+	if skipped > 0 {
+		b.WriteString("\n## Skipped sources\n\n")
+		for _, failure := range failures {
+			if failure.Skipped {
+				fmt.Fprintf(&b, "- %s: %s\n", failure.Source, failure.Error)
+			}
+		}
+	}
+	if len(failures) > skipped {
 		b.WriteString("\n## Failures\n\n")
 		for _, failure := range failures {
-			fmt.Fprintf(&b, "- %s / %q: %s\n", failure.Source, failure.Query, failure.Error)
+			if !failure.Skipped {
+				fmt.Fprintf(&b, "- %s / %q: %s\n", failure.Source, failure.Query, failure.Error)
+			}
 		}
 	}
 	return os.WriteFile(path, []byte(b.String()), 0o644)
 }
 
 func writeSearchBatchStats(path string, sources []string, queryCount, total, deduped int, failures []searchBatchFailure) error {
-	bySourceFailures := map[string]int{}
+	bySourceFailures, bySourceSkipped := map[string]int{}, map[string]int{}
+	failureCount, skippedCount := 0, 0
 	for _, failure := range failures {
-		bySourceFailures[failure.Source]++
+		if failure.Skipped {
+			bySourceSkipped[failure.Source]++
+			skippedCount++
+		} else {
+			bySourceFailures[failure.Source]++
+			failureCount++
+		}
 	}
 	var b strings.Builder
 	b.WriteString("Search batch stats\n")
@@ -2827,15 +2894,20 @@ func writeSearchBatchStats(path string, sources []string, queryCount, total, ded
 	fmt.Fprintf(&b, "Sources: %s\n", strings.Join(sources, ","))
 	fmt.Fprintf(&b, "Records: %d\n", total)
 	fmt.Fprintf(&b, "Deduped records: %d\n", deduped)
-	fmt.Fprintf(&b, "Failures: %d\n", len(failures))
-	if len(bySourceFailures) > 0 {
-		names := make([]string, 0, len(bySourceFailures))
-		for name := range bySourceFailures {
+	fmt.Fprintf(&b, "Failures: %d\n", failureCount)
+	fmt.Fprintf(&b, "Skipped sources: %d\n", skippedCount)
+	for _, group := range []struct {
+		label  string
+		counts map[string]int
+	}{{"failures", bySourceFailures}, {"skips", bySourceSkipped}} {
+		label, counts := group.label, group.counts
+		names := make([]string, 0, len(counts))
+		for name := range counts {
 			names = append(names, name)
 		}
 		sort.Strings(names)
 		for _, name := range names {
-			fmt.Fprintf(&b, "  %s failures: %d\n", name, bySourceFailures[name])
+			fmt.Fprintf(&b, "  %s %s: %d\n", name, label, counts[name])
 		}
 	}
 	return os.WriteFile(path, []byte(b.String()), 0o644)

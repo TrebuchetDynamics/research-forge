@@ -7,6 +7,8 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"github.com/TrebuchetDynamics/research-forge/internal/library"
 )
 
 // writeSearchRawFile writes a tab-separated DOI list into <dir>/raw/search-<source>-001-q.txt
@@ -66,6 +68,51 @@ func TestSearchStatsReadsFromRawSubdir(t *testing.T) {
 	}
 	if !strings.Contains(out, "4") {
 		t.Errorf("expected total 4 unique DOIs in output:\n%s", out)
+	}
+}
+
+func TestSearchStatsCountsOnlyNormalizedDOIs(t *testing.T) {
+	dir := t.TempDir()
+	rawDir := filepath.Join(dir, "raw")
+	if err := os.MkdirAll(rawDir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	raw := "10.1000/ABC\tPaper A\n\tPaper without DOI\nnot-a-doi\tBad identifier\n10.1000/abc\tDuplicate DOI\ncontinuation from a multiline title\n"
+	if err := os.WriteFile(filepath.Join(rawDir, "search-openalex-001-q.txt"), []byte(raw), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	stdout := new(bytes.Buffer)
+	code := Execute([]string{"search", "stats", "--dir", dir}, stdout, new(bytes.Buffer))
+	if code != 0 {
+		t.Fatalf("exit code = %d", code)
+	}
+	if !strings.Contains(stdout.String(), "Total unique DOIs: 1") {
+		t.Fatalf("non-DOIs or case variants inflated DOI count:\n%s", stdout.String())
+	}
+}
+
+func TestWriteSearchBatchRawKeepsOneRecordPerLine(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "raw.txt")
+	papers := []library.PaperRecord{
+		{Title: "A title\nwith\ttabs", Identifiers: library.Identifiers{DOI: "10.1000/a"}},
+		{Title: "Another title", Identifiers: library.Identifiers{DOI: "10.1000/b"}},
+	}
+	if err := writeSearchBatchRaw(path, papers); err != nil {
+		t.Fatal(err)
+	}
+	data, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	lines := strings.Split(strings.TrimSpace(string(data)), "\n")
+	if len(lines) != len(papers) {
+		t.Fatalf("raw lines = %d, want %d:\n%s", len(lines), len(papers), data)
+	}
+	for _, line := range lines {
+		if strings.Count(line, "\t") != 1 {
+			t.Fatalf("raw line is not two-column TSV: %q", line)
+		}
 	}
 }
 

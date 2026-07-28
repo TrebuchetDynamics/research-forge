@@ -1000,6 +1000,9 @@ func TestSearchBatchSourcePresetsExpandAllAndNamedGroups(t *testing.T) {
 			t.Fatalf("all preset missing %q: %#v", want, all)
 		}
 	}
+	if containsString(all, "opencitations") {
+		t.Fatalf("all keyword-search preset includes DOI-only OpenCitations: %#v", all)
+	}
 	fast := splitSearchBatchList("scholarly-fast,openalex")
 	if strings.Join(fast, ",") != "openalex,crossref,semantic-scholar,arxiv" {
 		t.Fatalf("scholarly-fast expansion/dedupe = %#v", fast)
