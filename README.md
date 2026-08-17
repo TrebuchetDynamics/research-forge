@@ -134,13 +134,19 @@ Run `rforge doctor` before a large sweep. It surfaces optional source configurat
 
 ## Use it from an agent
 
-The repository includes a retrieval-first skill at [`skills/research-forge/SKILL.md`](./skills/research-forge/SKILL.md):
+The repository includes a retrieval-first skill at [`skills/research-forge/SKILL.md`](./skills/research-forge/SKILL.md). It is a single, harness-agnostic directory — drop it into any agent's skills root. Both installs fetch the same file, so the body never forks.
 
 ```sh
+# Claude / Codex
 mkdir -p ~/.claude/skills/research-forge
 curl -fsSL \
   https://raw.githubusercontent.com/TrebuchetDynamics/research-forge/main/skills/research-forge/SKILL.md \
   > ~/.claude/skills/research-forge/SKILL.md
+
+# DeepSeek Harness (dsh) — use the shared ~/.agents root so the skill is
+# discovered by any {.dsh/skills, .agents/skills, ~/.dsh/skills, ~/.agents/skills} consumer.
+mkdir -p ~/.agents/skills/research-forge
+cp ~/.claude/skills/research-forge/SKILL.md ~/.agents/skills/research-forge/SKILL.md
 ```
 
 Then ask: `Use the research-forge skill to research: <your question>`.
