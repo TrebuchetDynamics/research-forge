@@ -68,8 +68,15 @@ func TestNewRouterServesLibraryFromProjectFolder(t *testing.T) {
 	if err := store.Create(library.PaperRecord{
 		Title:       "Artificial Photosynthesis Review",
 		Identifiers: library.Identifiers{DOI: "10.1000/ap"},
+		Authors:     []library.Author{{Given: "Ada", Family: "Lovelace"}},
+		Year:        2026,
+		SourceRefs:  []library.SourceRef{{Source: "zotero", Metadata: map[string]string{"collections": "Solar fuels", "tags": "catalysis"}}},
 	}); err != nil {
 		t.Fatalf("Create: %v", err)
+	}
+	records, err := store.List()
+	if err != nil || len(records) != 1 {
+		t.Fatalf("List after create: records=%#v err=%v", records, err)
 	}
 
 	ts := httptest.NewServer(NewRouter(Config{ProjectPath: dir}))
@@ -79,8 +86,107 @@ func TestNewRouterServesLibraryFromProjectFolder(t *testing.T) {
 	if status != http.StatusOK {
 		t.Fatalf("GET /library status = %d", status)
 	}
-	if !strings.Contains(body, "Artificial Photosynthesis Review") {
-		t.Fatalf("library body missing paper title: %s", body)
+	for _, want := range []string{
+		"Artificial Photosynthesis Review",
+		"Ada Lovelace",
+		"2026",
+		"Solar fuels",
+		"catalysis",
+		`href="/library/` + records[0].RecordID + `"`,
+	} {
+		if !strings.Contains(body, want) {
+			t.Fatalf("library body missing %q: %s", want, body)
+		}
+	}
+}
+
+func TestLibraryRecordRouteServesMetadataOnlyWorkspace(t *testing.T) {
+	dir := t.TempDir()
+	store, err := library.OpenStore(filepath.Join(dir, "data", "library.json"))
+	if err != nil {
+		t.Fatalf("OpenStore: %v", err)
+	}
+	if err := store.Create(library.PaperRecord{
+		Title:       "Metadata-only Research Record",
+		Identifiers: library.Identifiers{DOI: "10.1000/metadata-only"},
+		Authors:     []library.Author{{Given: "Grace", Family: "Hopper"}},
+		Year:        2025,
+		Venue:       "Journal of Durable Libraries",
+		SourceRefs:  []library.SourceRef{{Source: "zotero", Metadata: map[string]string{"collections": "Methods", "tags": "reproducibility"}}},
+	}); err != nil {
+		t.Fatalf("Create: %v", err)
+	}
+	records, err := store.List()
+	if err != nil || len(records) != 1 {
+		t.Fatalf("List: records=%#v err=%v", records, err)
+	}
+
+	ts := httptest.NewServer(NewRouter(Config{ProjectPath: dir}))
+	defer ts.Close()
+	body, status, _ := getURL(t, ts.URL+"/library/"+records[0].RecordID)
+	if status != http.StatusOK {
+		t.Fatalf("GET /library/{id} status = %d, body=%s", status, body)
+	}
+	for _, want := range []string{"Metadata-only Research Record", "Grace Hopper", "10.1000/metadata-only", "Journal of Durable Libraries", "Methods", "reproducibility", "Metadata only"} {
+		if !strings.Contains(body, want) {
+			t.Fatalf("workspace missing %q: %s", want, body)
+		}
+	}
+}
+
+func TestLibraryRecordRouteJoinsParsedTextAndPDF(t *testing.T) {
+	dir := t.TempDir()
+	store, err := library.OpenStore(filepath.Join(dir, "data", "library.json"))
+	if err != nil {
+		t.Fatalf("OpenStore: %v", err)
+	}
+	if err := store.Create(library.PaperRecord{Title: "Artificial Photosynthesis Review", Identifiers: library.Identifiers{DOI: "10.1000/ap"}}); err != nil {
+		t.Fatalf("Create: %v", err)
+	}
+	records, err := store.List()
+	if err != nil || len(records) != 1 {
+		t.Fatalf("List: records=%#v err=%v", records, err)
+	}
+	writeParsedDoc(t, dir, "10-1000-ap", sampleParsedDoc)
+	writeLocalPDF(t, dir, "10-1000-ap")
+
+	ts := httptest.NewServer(NewRouter(Config{ProjectPath: dir}))
+	defer ts.Close()
+	body, status, _ := getURL(t, ts.URL+"/library/"+records[0].RecordID)
+	if status != http.StatusOK {
+		t.Fatalf("GET workspace status = %d, body=%s", status, body)
+	}
+	for _, want := range []string{"We review water-splitting catalysts.", "Introduction", "Photosynthesis converts sunlight.", "/library/" + records[0].RecordID + "/pdf", "Parsed text"} {
+		if !strings.Contains(body, want) {
+			t.Fatalf("workspace missing %q: %s", want, body)
+		}
+	}
+	pdfBody, pdfStatus, pdfType := getURL(t, ts.URL+"/library/"+records[0].RecordID+"/pdf")
+	if pdfStatus != http.StatusOK || !strings.Contains(pdfType, "application/pdf") || !strings.HasPrefix(pdfBody, "%PDF") {
+		t.Fatalf("workspace PDF status=%d type=%q body=%q", pdfStatus, pdfType, pdfBody)
+	}
+}
+
+func TestLibraryListShowsResolvedAssetStatus(t *testing.T) {
+	dir := t.TempDir()
+	store, err := library.OpenStore(filepath.Join(dir, "data", "library.json"))
+	if err != nil {
+		t.Fatalf("OpenStore: %v", err)
+	}
+	if err := store.Create(library.PaperRecord{Title: "Readable record", Identifiers: library.Identifiers{DOI: "10.1000/ap"}}); err != nil {
+		t.Fatalf("Create: %v", err)
+	}
+	writeParsedDoc(t, dir, "10-1000-ap", sampleParsedDoc)
+	writeLocalPDF(t, dir, "10-1000-ap")
+
+	ts := httptest.NewServer(NewRouter(Config{ProjectPath: dir}))
+	defer ts.Close()
+	body, status, _ := getURL(t, ts.URL+"/library")
+	if status != http.StatusOK {
+		t.Fatalf("GET /library status = %d", status)
+	}
+	if !strings.Contains(body, "PDF") || !strings.Contains(body, "Parsed text") {
+		t.Fatalf("library missing resolved asset status: %s", body)
 	}
 }
 

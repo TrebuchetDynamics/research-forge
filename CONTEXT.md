@@ -36,6 +36,10 @@ The audit trail that records where research data came from, which actions were t
 
 A normalized scholarly metadata entry for a paper or preprint, preserving identifiers, source-specific metadata, and source provenance.
 
+### Paper workspace
+
+The read-only local web GUI view for one [[Paper record]], addressed by its stable opaque record ID and enriched with any available collections, tags, notes, [[Document asset]], and [[Parsed document]]. A metadata-only Paper record is still a valid Paper workspace; parsing and PDF acquisition add capabilities without changing its identity.
+
 ### Document asset
 
 A local PDF, XML, JATS, HTML, text file, or related full-text artifact with acquisition source, legality/OA status, license metadata where available, checksum, and provenance.

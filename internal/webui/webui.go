@@ -312,10 +312,18 @@ var libraryTemplate = template.Must(template.New("library").Parse(`<section aria
   <div role="table" aria-label="Paper library">
     <div role="row">
       <strong role="columnheader">Paper title</strong>
+      <strong role="columnheader">Authors</strong>
+      <strong role="columnheader">Year</strong>
+      <strong role="columnheader">Research context</strong>
+      <strong role="columnheader">Assets</strong>
     </div>
     {{range .Rows}}
     <div role="row">
-      <span role="cell">{{.Title}}</span>
+      <span role="cell"><a href="/library/{{.RecordID}}">{{.Title}}</a>{{if .Venue}}<small>{{.Venue}}</small>{{end}}</span>
+      <span role="cell">{{.Authors}}</span>
+      <span role="cell">{{if .Year}}{{.Year}}{{end}}</span>
+      <span role="cell">{{if .Collections}}<span>Collections: {{.Collections}}</span>{{end}} {{if .Tags}}<span>Tags: {{.Tags}}</span>{{end}}</span>
+      <span role="cell">{{if .HasPDF}}PDF {{end}}{{if .Parsed}}Parsed text{{else}}Metadata only{{end}}</span>
     </div>
     {{end}}
   </div>

@@ -257,6 +257,13 @@ func newPaperDetailHandler(projectPath func() string) http.Handler {
 			http.NotFound(w, r)
 			return
 		}
+		if recordID, matched, err := recordIDForAssetStem(projectPath(), id); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		} else if matched {
+			http.Redirect(w, r, "/library/"+recordID, http.StatusFound)
+			return
+		}
 		view, found, err := BuildPaperView(projectPath(), id)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)

@@ -20,7 +20,17 @@ type SearchFormState struct {
 
 func NewSearchFormState(sources []string) SearchFormState { return SearchFormState{Sources: sources} }
 
-type PaperRow struct{ Title string }
+type PaperRow struct {
+	RecordID    string
+	Title       string
+	Authors     string
+	Year        int
+	Venue       string
+	Collections string
+	Tags        string
+	HasPDF      bool
+	Parsed      bool
+}
 type LibraryViewModel struct {
 	Rows  []PaperRow
 	Empty bool

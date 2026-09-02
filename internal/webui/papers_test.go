@@ -7,6 +7,8 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"github.com/TrebuchetDynamics/research-forge/internal/library"
 )
 
 const sampleParsedDoc = `{
@@ -115,6 +117,32 @@ func TestPapersRoutesServeListAndDetail(t *testing.T) {
 		if !strings.Contains(detailBody, want) {
 			t.Fatalf("paper detail missing %q: %s", want, detailBody)
 		}
+	}
+}
+
+func TestLegacyPaperDetailRedirectsToMatchedLibraryWorkspace(t *testing.T) {
+	dir := t.TempDir()
+	store, err := library.OpenStore(filepath.Join(dir, "data", "library.json"))
+	if err != nil {
+		t.Fatalf("OpenStore: %v", err)
+	}
+	if err := store.Create(library.PaperRecord{Title: "Artificial Photosynthesis Review", Identifiers: library.Identifiers{DOI: "10.1000/ap"}}); err != nil {
+		t.Fatalf("Create: %v", err)
+	}
+	records, err := store.List()
+	if err != nil || len(records) != 1 {
+		t.Fatalf("List: records=%#v err=%v", records, err)
+	}
+	writeParsedDoc(t, dir, "10-1000-ap", sampleParsedDoc)
+
+	req := httptest.NewRequest(http.MethodGet, "/papers/10-1000-ap", nil)
+	rec := httptest.NewRecorder()
+	NewRouter(Config{ProjectPath: dir}).ServeHTTP(rec, req)
+	if rec.Code != http.StatusFound {
+		t.Fatalf("legacy paper status = %d, want redirect", rec.Code)
+	}
+	if location := rec.Header().Get("Location"); location != "/library/"+records[0].RecordID {
+		t.Fatalf("redirect location = %q", location)
 	}
 }
 

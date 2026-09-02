@@ -51,6 +51,8 @@ type PaperRecordInput struct {
 
 // PaperRecord is a normalized scholarly metadata entry for a paper or preprint.
 type PaperRecord struct {
+	// RecordID is the stable opaque identity assigned when the record enters a Store.
+	RecordID      string `json:",omitempty"`
 	Title         string
 	Identifiers   Identifiers
 	Authors       []Author

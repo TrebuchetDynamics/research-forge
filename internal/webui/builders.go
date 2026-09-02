@@ -303,9 +303,45 @@ func BuildLibraryViewModel(projectPath string) (ui.LibraryViewModel, error) {
 	}
 	rows := make([]ui.PaperRow, 0, len(papers))
 	for _, paper := range papers {
-		rows = append(rows, ui.PaperRow{Title: paper.Title})
+		hasPDF, parsed, err := workspaceAssetStatus(projectPath, paper)
+		if err != nil {
+			return ui.LibraryViewModel{}, err
+		}
+		rows = append(rows, ui.PaperRow{
+			RecordID:    paper.RecordID,
+			Title:       paper.Title,
+			Authors:     libraryAuthorsLine(paper.Authors),
+			Year:        paper.Year,
+			Venue:       paper.Venue,
+			Collections: libraryMetadataValue(paper, "collections", "groups"),
+			Tags:        libraryMetadataValue(paper, "tags", "keywords"),
+			HasPDF:      hasPDF,
+			Parsed:      parsed,
+		})
 	}
 	return ui.NewLibraryViewModel(rows), nil
+}
+
+func libraryAuthorsLine(authors []library.Author) string {
+	names := make([]string, 0, len(authors))
+	for _, author := range authors {
+		name := strings.TrimSpace(strings.TrimSpace(author.Given) + " " + strings.TrimSpace(author.Family))
+		if name != "" {
+			names = append(names, name)
+		}
+	}
+	return strings.Join(names, ", ")
+}
+
+func libraryMetadataValue(record library.PaperRecord, keys ...string) string {
+	for _, ref := range record.SourceRefs {
+		for _, key := range keys {
+			if value := strings.TrimSpace(ref.Metadata[key]); value != "" {
+				return value
+			}
+		}
+	}
+	return ""
 }
 
 // DedupeReviewState powers the visual identity-cluster review screen.

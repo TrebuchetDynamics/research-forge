@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -122,6 +123,44 @@ func TestStoreListDoesNotReadThroughSymlinkedPath(t *testing.T) {
 	}
 	if info.Mode()&os.ModeSymlink == 0 {
 		t.Fatalf("List replaced store symlink despite rejecting it: mode=%v", info.Mode())
+	}
+}
+
+func TestStoreListAssignsAndPersistsRecordIDForLegacyRecords(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "library.json")
+	legacy := `[{"Title":"Legacy paper","Identifiers":{"DOI":"10.1000/legacy"}}]`
+	if err := os.WriteFile(path, []byte(legacy), 0o644); err != nil {
+		t.Fatalf("write legacy library: %v", err)
+	}
+	store, err := OpenStore(path)
+	if err != nil {
+		t.Fatalf("OpenStore: %v", err)
+	}
+	records, err := store.List()
+	if err != nil {
+		t.Fatalf("List: %v", err)
+	}
+	if len(records) != 1 || records[0].RecordID == "" {
+		t.Fatalf("legacy records = %#v, want persisted record ID", records)
+	}
+	persisted, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatalf("read migrated library: %v", err)
+	}
+	if !strings.Contains(string(persisted), `"RecordID"`) || !strings.Contains(string(persisted), records[0].RecordID) {
+		t.Fatalf("migrated library missing record ID: %s", persisted)
+	}
+	secondPath := filepath.Join(t.TempDir(), "library.json")
+	if err := os.WriteFile(secondPath, []byte(legacy), 0o644); err != nil {
+		t.Fatalf("write second legacy library: %v", err)
+	}
+	secondStore, err := OpenStore(secondPath)
+	if err != nil {
+		t.Fatalf("OpenStore second legacy library: %v", err)
+	}
+	secondRecords, err := secondStore.List()
+	if err != nil || len(secondRecords) != 1 || secondRecords[0].RecordID != records[0].RecordID {
+		t.Fatalf("legacy migration is not deterministic: first=%#v second=%#v err=%v", records, secondRecords, err)
 	}
 }
 

@@ -1,6 +1,8 @@
 package library
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -45,6 +47,9 @@ func (s Store) Create(record PaperRecord) error {
 	key := recordKey(record)
 	if key == "" {
 		return fmt.Errorf("paper record identifier is required")
+	}
+	if strings.TrimSpace(record.RecordID) == "" {
+		record.RecordID = newRecordID(key)
 	}
 	for _, existing := range records {
 		if recordKey(existing) == key {
@@ -137,6 +142,9 @@ func (s Store) Update(record PaperRecord) error {
 	key := recordKey(record)
 	for i, existing := range records {
 		if recordKey(existing) == key {
+			if strings.TrimSpace(record.RecordID) == "" {
+				record.RecordID = existing.RecordID
+			}
 			records[i] = record
 			return s.write(records)
 		}
@@ -176,8 +184,31 @@ func (s Store) List() ([]PaperRecord, error) {
 	if err := json.Unmarshal(data, &records); err != nil {
 		return nil, err
 	}
+	if migrated := ensureRecordIDs(records); migrated {
+		if err := s.write(records); err != nil {
+			return nil, err
+		}
+	}
 	sort.Slice(records, func(i, j int) bool { return records[i].Title < records[j].Title })
 	return records, nil
+}
+
+// GetByRecordID returns one stored paper by its stable opaque identity.
+func (s Store) GetByRecordID(recordID string) (PaperRecord, bool, error) {
+	recordID = strings.TrimSpace(recordID)
+	if recordID == "" {
+		return PaperRecord{}, false, nil
+	}
+	records, err := s.List()
+	if err != nil {
+		return PaperRecord{}, false, err
+	}
+	for _, record := range records {
+		if record.RecordID == recordID {
+			return record, true, nil
+		}
+	}
+	return PaperRecord{}, false, nil
 }
 
 // Search returns PaperRecords whose title or abstract contains query.
@@ -209,6 +240,7 @@ func (s Store) write(records []PaperRecord) error {
 }
 
 func marshalStoreRecords(records []PaperRecord) ([]byte, error) {
+	ensureRecordIDs(records)
 	data, err := json.MarshalIndent(records, "", "  ")
 	if err != nil {
 		return nil, err
@@ -227,6 +259,41 @@ func writeStoreFile(path string, data []byte, mode os.FileMode) error {
 		return err
 	}
 	return filetxn.Replace(path, data, mode)
+}
+
+func ensureRecordIDs(records []PaperRecord) bool {
+	seen := make(map[string]bool, len(records))
+	changed := false
+	for i := range records {
+		id := strings.TrimSpace(records[i].RecordID)
+		if id != "" && !seen[id] {
+			seen[id] = true
+			continue
+		}
+		seed := recordKey(records[i])
+		if seed == "" {
+			seed = "title:" + strings.ToLower(strings.TrimSpace(records[i].Title))
+		}
+		for attempt := 0; ; attempt++ {
+			candidateSeed := seed
+			if attempt > 0 {
+				candidateSeed = fmt.Sprintf("%s#%d", seed, attempt)
+			}
+			generated := newRecordID(candidateSeed)
+			if !seen[generated] {
+				records[i].RecordID = generated
+				seen[generated] = true
+				changed = true
+				break
+			}
+		}
+	}
+	return changed
+}
+
+func newRecordID(seed string) string {
+	sum := sha256.Sum256([]byte("researchforge-paper-record-v1\x00" + seed))
+	return "rec_" + hex.EncodeToString(sum[:16])
 }
 
 func recordKey(record PaperRecord) string {

@@ -126,8 +126,10 @@ func NewRouter(cfg Config) http.Handler {
 	mux.Handle("GET /"+screeningAuditBundlePath, newScreeningAuditBundleHandler(state.get))
 
 	libraryHandler := newProjectLibraryHandler(state.get)
-	mux.Handle("/library", libraryHandler)
-	mux.Handle("/library/rows", libraryHandler)
+	mux.Handle("GET /library", libraryHandler)
+	mux.Handle("GET /library/rows", libraryHandler)
+	mux.Handle("GET /library/{id}", newPaperWorkspaceHandler(state.get))
+	mux.Handle("GET /library/{id}/pdf", newPaperWorkspacePDFHandler(state.get))
 
 	artifactsHandler := newProjectArtifactsHandler(state.get)
 	mux.Handle("/artifacts", artifactsHandler)

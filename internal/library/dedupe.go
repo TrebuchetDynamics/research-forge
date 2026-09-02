@@ -36,6 +36,9 @@ func ScoreDuplicate(left, right PaperRecord) DuplicateMatch {
 // MergeDuplicate merges metadata for two duplicate papers while preserving all identifiers and provenance.
 func MergeDuplicate(left, right PaperRecord) PaperRecord {
 	merged := left
+	if merged.RecordID == "" {
+		merged.RecordID = right.RecordID
+	}
 	if merged.Identifiers.DOI == "" {
 		merged.Identifiers.DOI = right.Identifiers.DOI
 	}
