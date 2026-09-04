@@ -214,6 +214,12 @@ make check
 
 ResearchForge uses Go, SQLite, a Go + HTMX local UI, deterministic fixtures, and test-first development.
 
+## Decision-gated scope
+
+The local Go + HTMX UI is tracked in issue #2 and ADR 0006. The MIT License decision is tracked in issue #1 and [docs/owner-decisions.md](docs/owner-decisions.md).
+
+Run `make todo-audit` to verify owner decisions, `make todo-completion-audit` for the closeout checklist, or `make decisions-markdown` for a blocker table.
+
 ## License
 
-[MIT](./LICENSE) © 2026 Trebuchet Dynamics.
+[MIT License](./LICENSE) (SPDX: `MIT`) © 2026 Trebuchet Dynamics.
