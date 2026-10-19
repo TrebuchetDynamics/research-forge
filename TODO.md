@@ -751,15 +751,18 @@ Owner answers (2026-10-19):
 
 - [ ] V-B9 — Semantic Scholar as a date-capped recording source
 - Status: open
-- Goal: RF-BENCH — Measure research quality against held-out ground truth.
+- Goal: RF-BENCH
+- Payoff: Measure research quality against held-out ground truth.
 - Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan); [benchmark spec](docs/benchmark/spec.md); Owner decision 2026-10-19: the benchmark must not depend on OpenAlex. Pool A's plans used OpenAlex for 24 of 24 calls, the engine qualified only OpenAlex and Crossref, and OpenAlex now meters anonymous use per IP (the first pool A capture got HTTP 429 on 18 of 24 calls).
 - Scope: make `semantic-scholar` a qualified benchmark source, mainly for the non-clinical questions. The connector (`internal/sources/semantic_scholar.go`) requests `year` only and sends no date filter: add the provider publication-date filter ending at the cap, request `publicationDate`, and expose raw dates in `Metadata["publication_dates"]`. Add the source to engine dispatch and `dateCapped`. Treat Semantic Scholar's anonymous rate limit as a source error, never as a pass; an optional API key may come from the environment and must never be written to snapshots (headers and URLs are already redacted; add a test).
-- Acceptance: offline record-then-replay test with an injected transport; uncapped plan fails `date_cap_unenforceable`; a configured key never appears in `snapshots/`; spec lists the source and its cap syntax.
-- Checks: go test ./internal/sources ./internal/benchmarks; make check
+- Evidence: `.git/autowork-execution/slot-data/V-B9/attempt-2/report.json` reports scoped package checks passing at `3075ba506509dc6e16bae22edc67803cd19200d1`, but integration `a160817c7579b561cf9ae12094806778e0c8c488` was held for a new `TestPassivePluginConformance` failure absent from its base `c2a2d5019dbc81334a84a9a2f02cf24753b5f670` (see `.git/autowork-execution/slots/V-B9.json` and `d7143a2e052b453ea5f692fc7d902981.log`). The retained full-check log (`/home/xel/.local/state/pi-autowork/d0648c07b9fe8e30/full-check/V-B9-merged.log`) shows the nested `adapters/test/parity.test.mjs` "output snapshot failure" case failing with `TypeError: Cannot read properties of undefined (reading 'job')` in `adapters/test/support/parity.mjs:118`. This identifies the failing path, not its cause. Attempt 1 also required regenerating `ProtocolSHA256` against the merged specification. Neither candidate is completion evidence on the current checkout.
+- Next action: reconcile the reported connector work with current source, then reproduce and repair the output-snapshot-failure path through CLI, MCP and Pi. Inspect the structured `job_status` response before dereferencing it; the helper calls `internal/mcp/server.go` and `internal/jobs` for durable job status. A reproducible defect in that shared path that stops these checks is in scope. Keep the injected failure and cross-surface error/status assertions; do not skip the scenario, swallow errors, weaken parity normalization or change adapter passivity. Regenerate `ProtocolSHA256` from the final specification bytes and retain the emitted-report regression. Use red-green-refactor and offline fixtures; no live capture, approval or new product behavior is authorized.
+- Acceptance: offline record-then-replay test with an injected transport; uncapped plan fails `date_cap_unenforceable`; a configured key never appears in `snapshots/`; spec lists the source and its cap syntax. Review findings must also be resolved: the final specification fingerprint matches emitted reports, and `TestPassivePluginConformance`, including output-snapshot-failure error/status parity through CLI, MCP and Pi, passes without hiding a missing job response. The full offline check has no new failures relative to its base.
+- Checks: go test ./internal/sources ./internal/benchmarks; go test ./internal/mcp ./internal/jobs; go test ./internal/docs -run '^TestPassivePluginConformance$' -count=1; make check
 - Dependencies: None.
 - Ownership: ResearchForge maintainer; Autowork runner may execute.
-- Touches: internal/sources/semantic_scholar.go, internal/sources/semantic_scholar_test.go, internal/benchmarks/engine.go, internal/benchmarks/validate.go, internal/benchmarks/transport.go, internal/benchmarks/semantic_scholar_record_test.go, docs/benchmark/spec.md
-- Resources: benchmark-engine — shared `internal/benchmarks/engine.go`, `internal/benchmarks/validate.go` and `docs/benchmark/spec.md`; tasks holding it run one at a time
+- Touches: internal/sources/semantic_scholar.go, internal/sources/semantic_scholar_test.go, internal/benchmarks/engine.go, internal/benchmarks/validate.go, internal/benchmarks/transport.go, internal/benchmarks/semantic_scholar_record_test.go, internal/benchmarks/record_incomplete_test.go, internal/benchmarks/record_test.go, docs/benchmark/spec.md, adapters/test/, internal/docs/plugin_conformance_test.go, internal/mcp/, internal/jobs/
+- Resources: benchmark-engine — shared `internal/benchmarks/engine.go`, `internal/benchmarks/validate.go` and `docs/benchmark/spec.md`; tasks holding it run one at a time; adapter-parity — shared adapter conformance fixtures and durable job error/status path
 
 - [ ] V-B10 — Re-plan pool A searches without OpenAlex dependence
 - Status: open
@@ -943,10 +946,10 @@ Generated from `goals.json` by `goals.py render`. `met` requires an executed, pa
 | --- | --- | --- | --- |
 | RF-V0: Land and harden the in-progress research commands | met | Executed check: pass ([V0-7](TODO.archive.md#v0-7)) | — |
 | RF-AGENT: Make the agent contract correct: install docs, search depth and provenance levels | met | Executed check: pass ([V-A4](TODO.archive.md#v-a4)) | — |
-| RF-BENCH: Measure research quality against held-out ground truth | unmet | — | V-B10, V-B11, V-B12, V-B3-LIVE, V-B4-LIVE, V-B4-lock, V-B5, V-B6-LIVE, V-B6-run, V-B8, V-B9 |
+| RF-BENCH: Measure research quality against held-out ground truth | unmet | — | V-B10, V-B11-LIVE, V-B3-LIVE, V-B4-LIVE, V-B4-lock, V-B5, V-B6-LIVE, V-B6-run, V-B9 |
 | RF-MCP: Expose the engine through a thin MCP adapter over shared services | unmet | — | V-C2-LIVE |
 | RF-CLAIMS: Verify claims against stored evidence with separate facets | met | Executed check: pass ([V-D4](TODO.archive.md#v-d4)) | — |
-| RF-PACK: Ship passive native plugins for Claude Code, Codex, Pi and Hermes over the same engine | unmet | Executed check: pass ([V-E2](TODO.archive.md#v-e2)) | V-E1-LIVE, V-E3, V-E4, V-E5, V-E5-run |
+| RF-PACK: Ship passive native plugins for Claude Code, Codex, Pi and Hermes over the same engine | unmet | Executed check: pass ([V-E2](TODO.archive.md#v-e2)) | V-E1-LIVE, V-E3-LIVE, V-E5-LIVE, V-E5-run |
 | RF-RELEASE: Release ResearchForge 2.0 only on measured improvement and cross-host parity | unmet | — | V-R1, V-R2 |
 
 <!-- goals:coverage:end -->
