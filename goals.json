@@ -6,18 +6,27 @@
         {
           "anchor": "v0-4",
           "archive": "TODO.archive.md",
-          "coverage_current": true,
           "kind": "executed",
           "ref": "4b926d7: TestGitCommandsIgnoreInheritedRepositoryEnvironment red then green; decoy-env replay of go test ./internal/oss ./internal/cli left decoy unchanged; make check via pre-commit passed",
           "result": "pass",
           "summary": "Executed check: pass",
           "task": "V0-4"
+        },
+        {
+          "anchor": "v0-2",
+          "archive": "TODO.archive.md",
+          "coverage_current": true,
+          "kind": "executed",
+          "ref": "env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE make check (revision e4787cfa703191db2ed892c59b63aa79f2aeab78; Go 1.26.6 linux/amd64; TODO.archive.md#rf-v0-aggregate-proof)",
+          "result": "pass",
+          "summary": "Merged workflow and provenance fixes pass the full offline check",
+          "task": "V0-2"
         }
       ],
       "id": "RF-V0",
       "priority": 10,
       "source": "docs/verifiable-engine-plan.md#verifiable-research-engine-plan",
-      "status": "partial",
+      "status": "met",
       "tasks": [
         "V0-1",
         "V0-2",

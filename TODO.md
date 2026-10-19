@@ -734,6 +734,8 @@ These tasks come from the expanded OSS inventory and deepen ResearchForge into a
 
 ## 12. Verifiable research engine cycle
 
+RF-V0 is complete: the merged workflow-hardening and provenance-path fixes pass the full offline check at `e4787cf`; see the [aggregate proof](TODO.archive.md#rf-v0-aggregate-proof). Existing V0-1 through V0-6 completion records remain in the archive. The remaining engine-cycle goals below are not qualified by this closeout.
+
 Plan, decisions and evidence: [docs/verifiable-engine-plan.md](docs/verifiable-engine-plan.md); terms: [ADR 0009](docs/adr/0009-verification-facets-and-provenance-levels.md), CONTEXT.md. Order A → B → C → D, with E (cross-host packaging) scaffolded early in parallel; the claim schema (V-B2) is designed during B. Every task follows red-green-refactor and keeps normal tests offline. Executable tasks are in `## Now` and `## Next` below; tasks needing live spend, owner approval or a release decision are in `## Needs decision`.
 
 Owner answers (2026-10-19):
@@ -1079,8 +1081,8 @@ Generated from `goals.json` by `goals.py render`. `met` requires an executed, pa
 
 | Goal | Status | Evidence | Task |
 | --- | --- | --- | --- |
-| RF-V0: Land and harden the in-progress research commands | partial | Executed check: pass ([V0-4](TODO.archive.md#v0-4)) | V0-2, V0-3 |
-| RF-AGENT: Make the agent contract correct: install docs, search depth and provenance levels | unmet | — | V-A1, V-A2, V-A3, V-A4 |
+| RF-V0: Land and harden the in-progress research commands | met | Merged workflow and provenance fixes pass the full offline check ([V0-2](TODO.archive.md#v0-2)) | — |
+| RF-AGENT: Make the agent contract correct: install docs, search depth and provenance levels | unmet | — | V-A2, V-A3, V-A4 |
 | RF-BENCH: Measure research quality against held-out ground truth | unmet | — | V-B1, V-B2, V-B3, V-B4, V-B4-lock, V-B5, V-B6, V-B6-run |
 | RF-MCP: Expose the engine through a thin MCP adapter over shared services | unmet | — | V-C1, V-C2, V-C3, V-C4 |
 | RF-CLAIMS: Verify claims against stored evidence with separate facets | unmet | — | V-D1, V-D2, V-D3, V-D4 |

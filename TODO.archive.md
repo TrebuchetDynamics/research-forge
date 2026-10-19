@@ -122,3 +122,11 @@ Source section: Now
 - Dependencies: V0-1.
 - Ownership: ResearchForge maintainer; Autowork runner may execute.
 - Touches: internal/cli/rank_command.go, internal/cli/draft_command.go, internal/cli/paper_command.go, internal/cli/lit_command.go, internal/cli/history_replicate.go, internal/sources/paper_resolver.go, internal/cli/rank_draft_paper_test.go, internal/cli/history_test.go, internal/sources/paper_resolver_test.go, docs/cli.md
+
+## RF-V0 aggregate proof
+
+- Goal: RF-V0; all six owned tasks V0-1 through V0-6 are already indexed as done. This receipt reconciles the remaining partial goal status; it does not change their acceptance or reopen completed work.
+- Sources: [accepted plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan), owner decision 4 and the provenance/in-progress-command findings; original completed task bodies above.
+- Implementation evidence: V0-2 worker report `.git/autowork-execution/slot-data/V0-2/attempt-1/report.json` records offline workflow regression and resolver tests passing at `7eaa47ba354f8d3f5815d45dc7fa1518e5817fdc`; V0-3 report at `.git/autowork-execution/slot-data/V0-3/attempt-1/report.json` records canonical/legacy event-path and export regressions passing at `f67dade4b850972e13f513d6725e3bd5fb366517`. Both commits are ancestors of the checked revision. These Git-common-directory reports are local operational evidence, not portable repository links.
+- Executed aggregate check: `env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE make check`, exit 0, at `e4787cfa703191db2ed892c59b63aa79f2aeab78`, using Go 1.26.6 on linux/amd64. Formatting, module tidy diff, all 30 tested Go packages, vet, TODO completion audit, inventory check (23 entries) and whitespace check passed; the CLI entry package has no tests. Normal tests stayed offline; live opt-in qualifications are not claimed.
+- Retained history: V0-1 landing, V0-4 Git-environment isolation, V0-5 no-push decision and V0-6 runner recovery retain their original evidence above. This pass does not rerun owner-only operations, authorize publication, or qualify RF-AGENT, RF-BENCH, RF-MCP, RF-CLAIMS, RF-PACK or RF-RELEASE.
