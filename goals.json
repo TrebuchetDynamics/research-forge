@@ -212,19 +212,6 @@
   "tasks": [
     {
       "depends_on": [
-        "V-D1",
-        "V-D2",
-        "V-D3",
-        "V-D4"
-      ],
-      "goal": "RF-CLAIMS",
-      "id": "CLAIMS-001-82",
-      "section": "Next",
-      "status": "open",
-      "title": "Aggregate offline proof for stored-evidence claim facets"
-    },
-    {
-      "depends_on": [
         "V-B3",
         "V-B4-lock"
       ],
@@ -370,6 +357,19 @@
       "section": "Needs decision",
       "status": "open",
       "title": "Cross-host release gate"
+    },
+    {
+      "depends_on": [
+        "V-D1",
+        "V-D2",
+        "V-D3",
+        "V-D4"
+      ],
+      "goal": "RF-CLAIMS",
+      "id": "CLAIMS-001-82",
+      "section": "Done",
+      "status": "done",
+      "title": "Aggregate offline proof for stored-evidence claim facets"
     },
     {
       "depends_on": [

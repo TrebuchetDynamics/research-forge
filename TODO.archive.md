@@ -523,3 +523,24 @@ Source section: Next
 - Dependencies: V-D3, V-C3.
 - Ownership: ResearchForge maintainer; Autowork runner may execute.
 - Touches: internal/report, internal/reviewpkg, internal/mcp
+
+
+<!-- archived from TODO.md -->
+
+Source section: Next
+
+<a id="claims-001-82"></a>
+
+- [x] CLAIMS-001-82 — Aggregate offline proof for stored-evidence claim facets
+- Status: done
+- Goal: RF-CLAIMS
+- Payoff: qualify the completed V-D1 through V-D4 work together without treating task closure as goal-level proof.
+- Sources: [accepted plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan) (Acceptance: five separate claim facets and facet-based export guards); [ADR 0009](docs/adr/0009-verification-facets-and-provenance-levels.md); [schema](docs/claim-evidence-schema.md#deterministic-checks); [completed V-D1 through V-D4 contracts](TODO.archive.md).
+- Evidence: V-D1 (`7a5430a`), V-D2 (`20ab2da`), V-D3 (`43f3faf`) and V-D4 (`cc97226`) worker reports under `.git/autowork-execution/slot-data/<task>/attempt-1/report.json` record passing focused offline checks and no pending live checks. V-D4 was integrated at `68292c5` and closed at `874992b`; RF-CLAIMS still has no goal evidence, and `goals.py validate .` reports `RF-CLAIMS: unmet goal has no open task`. These reports do not themselves record the aggregate full check.
+- Scope: record the remaining aggregate offline proof in `docs/tasks/rf-claims-proof.md`, bound to the tested revision, exact commands, exit results and existing test cases covering the original V-D1 through V-D4 contracts. Reuse an existing aggregate result only if its revision and commands can be verified; otherwise run Checks. Do not reimplement completed work, add product scope, run live services or claim scientific truth. Return executed results for normal goal-evidence closeout; no new coordinator receipt or registry is required.
+- Acceptance: the recorded proof covers stable unchanged passage IDs/hashes and changed-text hash locality; rejection of engine-attributed semantic support and unnamed human approval; separate facets where a missing quote fails passage match while source identity can pass; facet-based export blocking, package audit and MCP/CLI fixture parity without an approval tool. All listed offline Checks pass on the recorded revision; missing or failed checks remain unqualified, not fabricated passes.
+- Checks: `env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE go test ./internal/parsing ./internal/documents ./internal/claims ./internal/cli ./internal/evidence ./internal/report ./internal/benchmarks ./internal/reviewpkg ./internal/mcp`; `env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE make check`.
+- Dependencies: V-D1, V-D2, V-D3, V-D4.
+- Ownership: ResearchForge maintainer; Autowork runner may execute.
+- Touches: docs/tasks/rf-claims-proof.md
+- Next action: verify revision-bound aggregate results, run any missing Checks, and commit the proof document; leave RF-CLAIMS unqualified until executed passing evidence is recorded through `goals.py evidence`.
