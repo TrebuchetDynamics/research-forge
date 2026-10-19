@@ -145,14 +145,21 @@ registration. MCP = standardized typed operations. Go CLI = authoritative engine
   built-in MCP client; V-E3 verifies that and switches Pi to MCP if one exists.
 - **Before MCP lands,** plugins ship skill + workflow commands only; Pi typed tools for offline commands
   (`brief`, `compare`) can ship after V-C1.
-- **Versions:** every manifest version equals the rforge release version; the docs parity check (V-A1)
-  also asserts this and the skill's minimum rforge version.
+- **Versions:** manifest versions agree and the release check ties them to the release tag.
+  Compatibility is capability-based (owner, 2026-10-19): a release build needs version ≥ minimum and
+  the required capabilities from `rforge capabilities --json`; a `dev` build passes only on verified
+  capabilities (V-E0).
 - **Engine install:** plugins never download or install binaries. The skill keeps pointing users to
   `install.sh`; adapters report a clear "rforge missing / too old" error.
 - **Qualification split:** offline conformance and parity tests run in CI; per-host lifecycle checks
   are live, opt-in, run per release with receipts.
 - **Autowork-integration benchmark** (does installing rforge improve Autowork-driven engineering
   decisions?) is a proposal (V-B7) after the V-B6 pilot; it is not part of the 2.0 gate.
+
+**Owner principles (2026-10-19).** One engine, many interfaces (no implementation drift). Plugins are
+passive until invoked. Parity tests check behavior (evidence identity, provenance, resumability,
+errors), normalizing only timestamps and nondeterministic IDs. Public names: plugin `research-forge`;
+executable and Pi prefix `rforge`. Autowork stays an optional orchestration layer.
 
 **Anti-goals.** A plugin that alters host approvals/permissions/schedules; shipping developer TDD skills
 to end users; adapter-side research logic or adapter-only results; making Autowork a dependency.
