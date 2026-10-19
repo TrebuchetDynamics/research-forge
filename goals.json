@@ -243,14 +243,6 @@
       "title": "Re-plan pool A searches without OpenAlex dependence"
     },
     {
-      "depends_on": [],
-      "goal": "RF-BENCH",
-      "id": "V-B9",
-      "section": "Now",
-      "status": "open",
-      "title": "Semantic Scholar as a date-capped recording source"
-    },
-    {
       "depends_on": [
         "V-B3",
         "V-B4-lock"
@@ -522,6 +514,14 @@
       "section": "Done",
       "status": "done",
       "title": "Europe PMC as a date-capped recording source"
+    },
+    {
+      "depends_on": [],
+      "goal": "RF-BENCH",
+      "id": "V-B9",
+      "section": "Done",
+      "status": "done",
+      "title": "Semantic Scholar as a date-capped recording source"
     },
     {
       "depends_on": [
