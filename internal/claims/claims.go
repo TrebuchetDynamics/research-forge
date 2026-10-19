@@ -41,12 +41,20 @@ const (
 // SHA-256 of the complete UTF-8 passage text, formatted as sha256:<lowercase hex>.
 // Missing hashes/offsets mean unavailable, never a successful integrity check.
 type EvidenceReference struct {
-	Identifier  Identifier       `json:"identifier"`
-	PassageID   string           `json:"passageId,omitempty"`
-	Relation    EvidenceRelation `json:"relation"`
-	ExactText   string           `json:"exactText,omitempty"`
-	ContentHash string           `json:"contentHash,omitempty"`
-	Offsets     *TextOffsets     `json:"offsets,omitempty"`
+	Identifier     Identifier       `json:"identifier"`
+	PassageID      string           `json:"passageId,omitempty"`
+	Relation       EvidenceRelation `json:"relation"`
+	ExactText      string           `json:"exactText,omitempty"`
+	ContentHash    string           `json:"contentHash,omitempty"`
+	Offsets        *TextOffsets     `json:"offsets,omitempty"`
+	SourceMetadata *SourceMetadata  `json:"sourceMetadata,omitempty"`
+}
+
+// SourceMetadata contains optional expected bibliographic values. A resolved
+// identifier alone cannot override a disagreement with these values.
+type SourceMetadata struct {
+	Title string `json:"title,omitempty"`
+	Year  int    `json:"year,omitempty"`
 }
 
 // TextOffsets is a half-open UTF-8 byte range [Start, End) in the parser's

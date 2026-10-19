@@ -24,18 +24,19 @@ type CitationEvidenceTraceView struct {
 }
 
 type ClaimTraceView struct {
-	ClaimID               string                  `json:"claimId"`
-	PaperID               string                  `json:"paperId"`
-	ClaimText             string                  `json:"claimText"`
-	ClaimStatus           evidence.Status         `json:"claimStatus"`
-	EffectSizeRows        []analysis.InputRow     `json:"effectSizeRows"`
-	AcceptedEvidence      []evidence.EvidenceItem `json:"acceptedEvidence"`
-	Passages              []TracePassage          `json:"passages"`
-	ParserOutputs         []string                `json:"parserOutputs"`
-	PDFViewURL            string                  `json:"pdfViewUrl,omitempty"`
-	ReferenceManagerItems []string                `json:"referenceManagerItems,omitempty"`
-	SourceAPIRecords      []string                `json:"sourceApiRecords,omitempty"`
-	RawRequestResponse    map[string]string       `json:"rawRequestResponse,omitempty"`
+	ClaimID               string                       `json:"claimId"`
+	PaperID               string                       `json:"paperId"`
+	ClaimText             string                       `json:"claimText"`
+	ClaimStatus           evidence.Status              `json:"claimStatus"`
+	EffectSizeRows        []analysis.InputRow          `json:"effectSizeRows"`
+	AcceptedEvidence      []evidence.EvidenceItem      `json:"acceptedEvidence"`
+	Passages              []TracePassage               `json:"passages"`
+	CitationMatches       []evidence.CitationLockMatch `json:"citationMatches"`
+	ParserOutputs         []string                     `json:"parserOutputs"`
+	PDFViewURL            string                       `json:"pdfViewUrl,omitempty"`
+	ReferenceManagerItems []string                     `json:"referenceManagerItems,omitempty"`
+	SourceAPIRecords      []string                     `json:"sourceApiRecords,omitempty"`
+	RawRequestResponse    map[string]string            `json:"rawRequestResponse,omitempty"`
 }
 
 type TracePassage struct {
@@ -49,7 +50,7 @@ type TracePassage struct {
 func BuildCitationEvidenceTraceView(input CitationEvidenceTraceInput) CitationEvidenceTraceView {
 	view := CitationEvidenceTraceView{SchemaVersion: "1"}
 	for _, claim := range input.Claims {
-		row := ClaimTraceView{ClaimID: claim.ID, PaperID: claim.PaperID, ClaimText: claim.SuggestedText, ClaimStatus: claim.Status, RawRequestResponse: map[string]string{}}
+		row := ClaimTraceView{ClaimID: claim.ID, PaperID: claim.PaperID, ClaimText: claim.SuggestedText, ClaimStatus: claim.Status, RawRequestResponse: map[string]string{}, CitationMatches: claim.CheckCitationLocks(input.ParsedDocuments)}
 		for _, effect := range input.AnalysisRun.InputRows {
 			if effect.PaperID == claim.PaperID {
 				row.EffectSizeRows = append(row.EffectSizeRows, effect)
@@ -111,12 +112,12 @@ func claimRefs(claim evidence.CitationLockedSuggestion, items []evidence.Evidenc
 	refs := map[string]bool{}
 	for _, lock := range claim.CitationLocks {
 		if strings.TrimSpace(lock.Ref) != "" {
-			refs[lock.Ref] = true
+			refs[strings.TrimPrefix(lock.Ref, claim.PaperID+":")] = true
 		}
 	}
 	for _, item := range items {
 		if strings.TrimSpace(item.Support.Ref) != "" {
-			refs[item.Support.Ref] = true
+			refs[strings.TrimPrefix(item.Support.Ref, claim.PaperID+":")] = true
 		}
 	}
 	return refs
