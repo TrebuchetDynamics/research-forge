@@ -2,28 +2,17 @@ package cli
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"io"
 	"os"
 	"path/filepath"
 	"regexp"
-	"sort"
 	"strings"
 	"time"
 
+	"github.com/TrebuchetDynamics/research-forge/internal/research"
 	"github.com/TrebuchetDynamics/research-forge/internal/sources"
 )
-
-// sessionRecord is one hit in a history search against a research dir.
-type sessionRecord struct {
-	Topic   string `json:"topic"`
-	Title   string `json:"title"`
-	DOI     string `json:"doi,omitempty"`
-	ArXivID string `json:"arxivId,omitempty"`
-	Year    int    `json:"year"`
-	Matches int    `json:"matches"`
-}
 
 // executeHistory dispatches subcommands of the history top-level command.
 func executeHistory(args []string, stdout, stderr io.Writer, opts globalOptions) int {
@@ -76,121 +65,14 @@ func executeSessionSearch(args []string, stdout, stderr io.Writer, opts globalOp
 	if term == "" {
 		return writeError(stdout, stderr, opts, 2, "missing_term", "search term is required")
 	}
-	termLower := strings.ToLower(term)
-	termWords := strings.Fields(termLower)
-
-	entries, err := os.ReadDir(researchDir)
+	result, err := researchService().History(research.HistoryOptions{ResearchDir: researchDir, Term: term, Limit: limit, Out: outFile})
 	if err != nil {
-		return writeError(stdout, stderr, opts, 1, "history_read_failed", err.Error())
+		return writeResearchError(stdout, stderr, opts, err)
 	}
-
-	var results []sessionRecord
-	for _, e := range entries {
-		if !e.IsDir() {
-			continue
-		}
-		topic := e.Name()
-
-		// Search deduped results
-		dd, err := os.ReadFile(filepath.Join(researchDir, topic, "results-deduped.jsonl"))
-		if err != nil {
-			// try results.jsonl
-			dd, err = os.ReadFile(filepath.Join(researchDir, topic, "results.jsonl"))
-			if err != nil {
-				continue
-			}
-		}
-		for _, line := range strings.Split(string(dd), "\n") {
-			line = strings.TrimSpace(line)
-			if line == "" {
-				continue
-			}
-			var doc map[string]any
-			if err := json.Unmarshal([]byte(line), &doc); err != nil {
-				continue
-			}
-			title, _ := doc["title"].(string)
-			if title == "" {
-				// try uppercase key (library.PaperRecord serialization)
-				if v, ok := doc["Title"].(string); ok {
-					title = v
-				}
-			}
-			abstract, _ := doc["abstract"].(string)
-			if abstract == "" {
-				if v, ok := doc["Abstract"].(string); ok {
-					abstract = v
-				}
-			}
-			identifiers, _ := doc["identifiers"].(map[string]any)
-			if identifiers == nil {
-				if v, ok := doc["Identifiers"].(map[string]any); ok {
-					identifiers = v
-				}
-			}
-			doi, _ := identifiers["DOI"].(string)
-			if doi == "" {
-				if v, ok := doc["doi"].(string); ok {
-					doi = v
-				}
-			}
-			arx, _ := identifiers["ArXivID"].(string)
-			if arx == "" {
-				if v, ok := doc["arxivId"].(string); ok {
-					arx = v
-				}
-			}
-			year, _ := doc["year"].(float64)
-
-			// Score matches: 2 per word in title, 1 per word in abstract
-			haystack := strings.ToLower(title + " " + abstract + " " + doi + " " + arx)
-			matches := 0
-			for _, w := range termWords {
-				if strings.Contains(haystack, w) {
-					matches++
-				}
-			}
-			// Bonus for exact title match
-			if strings.Contains(strings.ToLower(title), termLower) {
-				matches += 3
-			}
-			if matches == 0 {
-				continue
-			}
-			results = append(results, sessionRecord{
-				Topic:   topic,
-				Title:   title,
-				DOI:     doi,
-				ArXivID: arx,
-				Year:    int(year),
-				Matches: matches,
-			})
-		}
-	}
-
-	// Sort: most matches first, then year desc, then title
-	sort.Slice(results, func(i, j int) bool {
-		if results[i].Matches != results[j].Matches {
-			return results[i].Matches > results[j].Matches
-		}
-		if results[i].Year != results[j].Year {
-			return results[i].Year > results[j].Year
-		}
-		return results[i].Title < results[j].Title
-	})
-	if len(results) > limit {
-		results = results[:limit]
-	}
-
-	if outFile != "" {
-		if err := writeJSONFile(outFile, map[string]any{"term": term, "count": len(results), "results": results}); err != nil {
-			return writeError(stdout, stderr, opts, 1, "history_write_failed", err.Error())
-		}
-	}
-
 	if opts.JSON {
-		return writeJSON(stdout, 0, map[string]any{"term": term, "count": len(results), "results": results})
+		return writeJSON(stdout, 0, result)
 	}
+	results := result.Results
 
 	if len(results) == 0 {
 		fmt.Fprintf(stdout, "no results for %q in %s\n", term, researchDir)
