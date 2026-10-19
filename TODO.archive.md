@@ -410,3 +410,23 @@ Source section: Next
 - Dependencies: V-B1, V-B3, V-A3, V-A4.
 - Ownership: ResearchForge maintainer; Autowork runner may execute.
 - Touches: benchmarks/agent-tier, docs/benchmark
+
+
+<!-- archived from TODO.md -->
+
+Source section: Next
+
+<a id="v-e2"></a>
+
+- [x] V-E2 — Explicit workflow commands
+- Status: done
+- Evidence: hand-integrated 2026-10-19 as `a30a567` (clean cherry-pick of `0a321ee`) after the runner held it for the protected `package.json` and could not re-admit it once Touches were widened (TrebuchetDynamics/autowork#8); `go test ./internal/docs`, `node --test adapters/test_pi.mjs`, explicit-only checks on all five skills, `rforge_` Pi commands with no subprocess use, and the pre-commit `make check` passed.
+- Goal: RF-PACK — Ship passive native plugins for Claude Code, Codex, Pi and Hermes over the same engine.
+- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan) (Workstream E).
+- Scope: thin explicit-only skills under `adapters/skills/` for `lit`, `paper`, `brief`, `compare` and `replicate` (`disable-model-invocation: true`; Codex `agents/openai.yaml` with `allow_implicit_invocation: false`); Pi `registerCommand` entries (`rforge_lit` and so on) that load them, Autowork-style. Each states the CLI/MCP call to make and defers methodology to `research-forge`; no research logic in adapters.
+- Acceptance: the conformance test covers the new allowed set and fails if any workflow skill is model-invocable.
+- Checks: go test ./internal/docs; make check
+- Dependencies: V-E1, V0-2.
+- Ownership: ResearchForge maintainer; Autowork runner may execute.
+- Touches: adapters, internal/docs, docs/agent-install.md, package.json
+- Resources: agent-docs — shared `skills/research-forge/SKILL.md`, `README.md` and `docs/agent-install.md`; tasks holding it run one at a time

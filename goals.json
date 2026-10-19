@@ -139,12 +139,21 @@
         {
           "anchor": "v-e0",
           "archive": "TODO.archive.md",
-          "coverage_current": true,
           "kind": "executed",
           "ref": "79606f1: go test ./internal/cli ./internal/docs; rforge capabilities --json smoke; make check via pre-commit",
           "result": "pass",
           "summary": "Executed check: pass",
           "task": "V-E0"
+        },
+        {
+          "anchor": "v-e2",
+          "archive": "TODO.archive.md",
+          "coverage_current": true,
+          "kind": "executed",
+          "ref": "a30a567: go test ./internal/docs; node --test adapters/test_pi.mjs; make check via pre-commit",
+          "result": "pass",
+          "summary": "Executed check: pass",
+          "task": "V-E2"
         }
       ],
       "id": "RF-PACK",
@@ -263,17 +272,6 @@
       "section": "Next",
       "status": "open",
       "title": "Facet-based guards and MCP claim check"
-    },
-    {
-      "depends_on": [
-        "V-E1",
-        "V0-2"
-      ],
-      "goal": "RF-PACK",
-      "id": "V-E2",
-      "section": "Next",
-      "status": "open",
-      "title": "Explicit workflow commands"
     },
     {
       "depends_on": [
@@ -534,6 +532,17 @@
       "section": "Done",
       "status": "done",
       "title": "Skill-only plugin scaffolding"
+    },
+    {
+      "depends_on": [
+        "V-E1",
+        "V0-2"
+      ],
+      "goal": "RF-PACK",
+      "id": "V-E2",
+      "section": "Done",
+      "status": "done",
+      "title": "Explicit workflow commands"
     },
     {
       "depends_on": [],
