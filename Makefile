@@ -33,6 +33,9 @@ ci: fmt-check mod-tidy-check test vet todo-completion-audit vuln install-script-
 install-script-smoke:
 	./install.sh --dry-run >/dev/null
 	./install.sh --from-source --dry-run >/dev/null
+	./install.sh --only binary,skills --dry-run >/dev/null
+	./install.sh --list >/dev/null
+	./install.sh --help >/dev/null
 
 check: fmt-check mod-tidy-check test vet todo-completion-audit inventory-check
 	git diff --check

@@ -51,6 +51,13 @@ curl -fsSL \
   https://raw.githubusercontent.com/TrebuchetDynamics/research-forge/main/install.sh | bash
 ```
 
+One command installs the engine, the public agent skills and the native Claude
+Code, Codex, Pi and Hermes integrations for your user account — no `sudo` and no
+system-wide changes. Select components with `--menu` or `--only binary,skills`,
+preview with `--dry-run`, and upgrade with `./install.sh update`. See
+[installation](./docs/install.md) for components, PATH handling, Hermes profiles
+and removal.
+
 Prebuilt binaries support Linux, macOS, and Windows. To build from source (Go 1.26+):
 
 ```sh
@@ -205,7 +212,7 @@ Run `rforge doctor` before a large sweep. It reports optional configuration such
 
 ## Use it from an agent
 
-Install the passive **Claude Code, Codex, Pi or Hermes plugin** using the [agent installation guide](./docs/agent-install.md), including per-host upgrade and removal steps. Before migrating, delete any old curl-installed `research-forge` skill copy to avoid duplicate discovery. Plugins do not install the engine or change host approvals, permissions or schedules.
+Install the passive **Claude Code, Codex, Pi or Hermes plugin** with the [unified installer](./docs/install.md) (`./install.sh`, or `--only claude` for one host), or follow the per-host commands in the [agent installation guide](./docs/agent-install.md). The installer moves an old curl-installed `research-forge` skill copy to `<name>.bak` instead of leaving it to shadow the plugin. Plugins do not change host approvals, permissions or schedules.
 
 All hosts expose the same retrieval-first skill at [`skills/research-forge/SKILL.md`](./skills/research-forge/SKILL.md). It defines source breadth, provenance requirements, legal-acquisition boundaries, and human approval gates; it never authorizes an agent to approve screening, extraction, final claims, or package export.
 
