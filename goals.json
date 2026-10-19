@@ -184,17 +184,6 @@
   "tasks": [
     {
       "depends_on": [
-        "V-A2",
-        "V0-1"
-      ],
-      "goal": "RF-AGENT",
-      "id": "V-A3",
-      "section": "Next",
-      "status": "open",
-      "title": "Skill depth rewrite: Standard by default"
-    },
-    {
-      "depends_on": [
         "V0-1",
         "V0-2"
       ],
@@ -440,6 +429,17 @@
       "section": "Done",
       "status": "done",
       "title": "Search budgets and structured stop reasons"
+    },
+    {
+      "depends_on": [
+        "V-A2",
+        "V0-1"
+      ],
+      "goal": "RF-AGENT",
+      "id": "V-A3",
+      "section": "Done",
+      "status": "done",
+      "title": "Skill depth rewrite: Standard by default"
     },
     {
       "depends_on": [],

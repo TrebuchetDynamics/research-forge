@@ -246,3 +246,22 @@ Source section: Next
 - Dependencies: V0-1.
 - Ownership: ResearchForge maintainer; Autowork runner may execute.
 - Touches: internal/search, internal/cli/source_commands.go, internal/cli/search_batch_state.go, internal/sources/graph_budget.go, docs/cli.md
+
+
+<!-- archived from TODO.md -->
+
+Source section: Next
+
+<a id="v-a3"></a>
+
+- [x] V-A3 — Skill depth rewrite: Standard by default
+- Status: done
+- Goal: RF-AGENT — Make the agent contract correct: install docs, search depth and provenance levels.
+- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan) (Owner decision 2).
+- Scope: the skill defaults to Standard; escalation to Comprehensive is driven by `stop_reason` and coverage (escalate when a standard run ends `budget_exhausted` without saturation, or the user asks); remove the "Comprehensive default" wording; document stop reasons.
+- Acceptance: the V-A1 parity test still passes; no sentence in the skill makes Comprehensive the default.
+- Checks: go test ./internal/docs; make check
+- Dependencies: V-A2, V0-1.
+- Ownership: ResearchForge maintainer; Autowork runner may execute.
+- Touches: skills/research-forge/SKILL.md, SKILLS.md
+- Resources: agent-docs — shared `skills/research-forge/SKILL.md`, `README.md` and `docs/agent-install.md`; tasks holding it run one at a time

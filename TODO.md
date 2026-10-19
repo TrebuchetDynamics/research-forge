@@ -751,18 +751,6 @@ Owner answers (2026-10-19):
 
 ## Next
 
-- [ ] V-A3 — Skill depth rewrite: Standard by default
-- Status: open
-- Goal: RF-AGENT — Make the agent contract correct: install docs, search depth and provenance levels.
-- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan) (Owner decision 2).
-- Scope: the skill defaults to Standard; escalation to Comprehensive is driven by `stop_reason` and coverage (escalate when a standard run ends `budget_exhausted` without saturation, or the user asks); remove the "Comprehensive default" wording; document stop reasons.
-- Acceptance: the V-A1 parity test still passes; no sentence in the skill makes Comprehensive the default.
-- Checks: go test ./internal/docs; make check
-- Dependencies: V-A2, V0-1.
-- Ownership: ResearchForge maintainer; Autowork runner may execute.
-- Touches: skills/research-forge/SKILL.md, SKILLS.md
-- Resources: agent-docs — shared `skills/research-forge/SKILL.md`, `README.md` and `docs/agent-install.md`; tasks holding it run one at a time
-
 - [ ] V-A4 — Provenance levels computed by the validator
 - Status: open
 - Goal: RF-AGENT — Make the agent contract correct: install docs, search depth and provenance levels.
@@ -866,18 +854,6 @@ Owner answers (2026-10-19):
 - Ownership: ResearchForge maintainer; Autowork runner may execute.
 - Touches: README.md, skills/research-forge/SKILL.md, docs/cli.md
 - Resources: cli-surface, agent-docs — shared `internal/cli/cli.go`, `docs/cli.md`, `skills/research-forge/SKILL.md` and `README.md`; tasks holding either run one at a time
-
-- [x] V-D2 — Claim store and CLI
-- Status: done
-- Goal: RF-CLAIMS — Verify claims against stored evidence with separate facets.
-- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan).
-- Scope: append-only `data/claims.jsonl` (via `filetxn`) with `rforge claim add|list|show`; semantic-support entries require agent/model identity and are always `agent_reported`; human approval requires a named reviewer.
-- Acceptance: tests refuse engine-attributed semantic support and approval without a reviewer.
-- Checks: go test ./internal/claims ./internal/cli; make check
-- Dependencies: V-B2, V-D1.
-- Ownership: ResearchForge maintainer; Autowork runner may execute.
-- Touches: internal/claims, internal/cli
-- Resources: cli-surface — shared `internal/cli/cli.go` command table/help and `docs/cli.md`; tasks holding it run one at a time (2026-10-19: parallel edits there held V-A2 and V-E0)
 
 - [ ] V-D3 — `rforge claim check` deterministic facets
 - Status: open
