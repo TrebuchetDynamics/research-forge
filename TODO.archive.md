@@ -392,3 +392,21 @@ Source section: Next
 - Ownership: ResearchForge maintainer; Autowork runner may execute.
 - Touches: internal/research, internal/cli/rank_command.go, internal/cli/brief_command.go, internal/cli/compare_command.go, internal/cli/lit_command.go, internal/cli/history_replicate.go
 - Resources: cli-surface — shared `internal/cli/cli.go` command table/help and `docs/cli.md`; tasks holding it run one at a time (2026-10-19: parallel edits there held V-A2 and V-E0)
+
+
+<!-- archived from TODO.md -->
+
+Source section: Next
+
+<a id="v-b6"></a>
+
+- [x] V-B6 — Agent-tier protocol and scripts
+- Status: done
+- Goal: RF-BENCH — Measure research quality against held-out ground truth.
+- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan) (Owner answers: agent tier).
+- Scope: runbook and scripts under `benchmarks/agent-tier/` per the owner answers: Pi primary, Codex second; same model per pair; equal caps on tokens and search/tool calls (the without-rforge condition uses the agent's native search); blind scoring that strips condition markers (rforge commands, provenance files, run IDs) and randomizes labels before scoring against held-out references with the V-B3 metrics; paired differences with 95% CIs over questions. Verify offline with a stub agent that emits canned outputs. Do not run live agents here (V-B6-run).
+- Acceptance: the stub run produces a scored, blinded report; the scorer cannot see condition labels.
+- Checks: make check
+- Dependencies: V-B1, V-B3, V-A3, V-A4.
+- Ownership: ResearchForge maintainer; Autowork runner may execute.
+- Touches: benchmarks/agent-tier, docs/benchmark

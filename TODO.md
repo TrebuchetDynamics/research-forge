@@ -773,17 +773,6 @@ Owner answers (2026-10-19):
 - Ownership: ResearchForge maintainer; Autowork runner may execute.
 - Touches: docs/benchmark, CONTRIBUTING.md, .github/PULL_REQUEST_TEMPLATE.md
 
-- [ ] V-B6 — Agent-tier protocol and scripts
-- Status: open
-- Goal: RF-BENCH — Measure research quality against held-out ground truth.
-- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan) (Owner answers: agent tier).
-- Scope: runbook and scripts under `benchmarks/agent-tier/` per the owner answers: Pi primary, Codex second; same model per pair; equal caps on tokens and search/tool calls (the without-rforge condition uses the agent's native search); blind scoring that strips condition markers (rforge commands, provenance files, run IDs) and randomizes labels before scoring against held-out references with the V-B3 metrics; paired differences with 95% CIs over questions. Verify offline with a stub agent that emits canned outputs. Do not run live agents here (V-B6-run).
-- Acceptance: the stub run produces a scored, blinded report; the scorer cannot see condition labels.
-- Checks: make check
-- Dependencies: V-B1, V-B3, V-A3, V-A4.
-- Ownership: ResearchForge maintainer; Autowork runner may execute.
-- Touches: benchmarks/agent-tier, docs/benchmark
-
 - [ ] V-C2 — Persistent job service
 - Status: open
 - Goal: RF-MCP — Expose the engine through a thin MCP adapter over shared services.
@@ -952,6 +941,15 @@ Owner answers (2026-10-19):
   - V-E5/V-E5-run: interactive install, upgrade, removal and research-session lifecycle qualification for all four hosts on the release version remains separate from these offline/package discovery checks.
   Checks: Live qualification by an authorized person; offline evidence does not count.
   Dependencies: V-E1.
+  Status: open
+
+- [ ] V-B6-LIVE — Live checks for V-B6
+  Scope: Run the live checks the offline work for V-B6 left pending.
+  Acceptance: Each check passes on the real target:
+  - V-B6-run: separately authorized Pi pilot (8 held-out questions x 2 conditions x 3 repetitions) and subsequent separate Codex experiment; no live agents or services were run here.
+  - Live qualification must verify actual host/model/sampling identities, trusted reference-review/date gates for both native and rforge search, complete measured nested accounting, fresh isolated sessions, and OS-level separation of scorer from custodian. Offline receipts cannot independently establish these host properties.
+  Checks: Live qualification by an authorized person; offline evidence does not count.
+  Dependencies: V-B6.
   Status: open
 
 ## Backlog (not ready)
