@@ -15,6 +15,7 @@ type Review struct {
 	Identifiers         []Identifier `json:"identifiers"`
 	Title               string       `json:"title"`
 	SearchDate          string       `json:"search_date"`
+	SearchDatePrecision string       `json:"search_date_precision,omitempty"`
 	SearchDateLocator   string       `json:"search_date_locator"`
 	IncludedListLocator string       `json:"included_list_locator"`
 	Rights              string       `json:"rights"`

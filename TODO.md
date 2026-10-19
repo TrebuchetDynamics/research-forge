@@ -984,10 +984,10 @@ Generated from `goals.json` by `goals.py render`. `met` requires an executed, pa
 | --- | --- | --- | --- |
 | RF-V0: Land and harden the in-progress research commands | met | Executed check: pass ([V0-7](TODO.archive.md#v0-7)) | — |
 | RF-AGENT: Make the agent contract correct: install docs, search depth and provenance levels | met | Executed check: pass ([V-A4](TODO.archive.md#v-a4)) | — |
-| RF-BENCH: Measure research quality against held-out ground truth | unmet | — | V-B3, V-B4, V-B4-lock, V-B5, V-B6, V-B6-run |
+| RF-BENCH: Measure research quality against held-out ground truth | unmet | — | V-B3-LIVE, V-B4, V-B4-lock, V-B5, V-B6, V-B6-run |
 | RF-MCP: Expose the engine through a thin MCP adapter over shared services | unmet | — | V-C1, V-C2, V-C3, V-C4 |
-| RF-CLAIMS: Verify claims against stored evidence with separate facets | unmet | — | V-D3, V-D4 |
-| RF-PACK: Ship passive native plugins for Claude Code, Codex, Pi and Hermes over the same engine | unmet | Executed check: pass ([V-E0](TODO.archive.md#v-e0)) | V-E1, V-E2, V-E3, V-E4, V-E5, V-E5-run |
+| RF-CLAIMS: Verify claims against stored evidence with separate facets | unmet | — | V-D4 |
+| RF-PACK: Ship passive native plugins for Claude Code, Codex, Pi and Hermes over the same engine | unmet | Executed check: pass ([V-E0](TODO.archive.md#v-e0)) | V-E1-LIVE, V-E2, V-E3, V-E4, V-E5, V-E5-run |
 | RF-RELEASE: Release ResearchForge 2.0 only on measured improvement and cross-host parity | unmet | — | V-R1, V-R2 |
 
 <!-- goals:coverage:end -->
