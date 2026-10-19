@@ -17,7 +17,7 @@ import (
 )
 
 var errBudget = errors.New("budget_exhausted")
-var secretKeys = map[string]bool{"api_key": true, "key": true, "token": true, "email": true, "mailto": true}
+var secretKeys = map[string]bool{"api_key": true, "x-api-key": true, "key": true, "token": true, "email": true, "mailto": true}
 
 func normalizedURL(s string) (string, error) {
 	u, e := url.Parse(s)
@@ -86,9 +86,11 @@ var embeddedURL = regexp.MustCompile(`https?://[^\s<>"']+`)
 
 func sanitizeText(value string) string {
 	// APIs may echo bearer credentials as plain text, not just api_key URLs.
-	if key := strings.TrimSpace(os.Getenv("RFORGE_OPENALEX_API_KEY")); key != "" {
-		for _, secret := range []string{url.QueryEscape(key), url.PathEscape(key), key} {
-			value = strings.ReplaceAll(value, secret, "REDACTED")
+	for _, name := range []string{"RFORGE_OPENALEX_API_KEY", "RFORGE_SEMANTIC_SCHOLAR_API_KEY"} {
+		if key := strings.TrimSpace(os.Getenv(name)); key != "" {
+			for _, secret := range []string{url.QueryEscape(key), url.PathEscape(key), key} {
+				value = strings.ReplaceAll(value, secret, "REDACTED")
+			}
 		}
 	}
 	return embeddedURL.ReplaceAllStringFunc(value, sanitizeLinkURL)
@@ -400,6 +402,8 @@ func projectBody(b []byte) ([]byte, error) {
 	allowed := map[string]bool{"results": true, "meta": true, "next_cursor": true, "id": true, "doi": true, "title": true, "publication_year": true, "publication_date": true, "ids": true, "pmid": true, "pmcid": true, "primary_location": true, "landing_page_url": true, "license": true, "open_access": true, "is_oa": true, "oa_status": true, "type": true, "message": true, "items": true, "DOI": true, "published-print": true, "published-online": true, "issued": true, "date-parts": true, "URL": true, "container-title": true, "publisher": true, "next-cursor": true, "status": true, "error": true,
 		"resultList": true, "result": true, "nextCursorMark": true, "pubYear": true,
 		"firstPublicationDate": true, "electronicPublicationDate": true, "journalInfo": true, "printPublicationDate": true,
+		"data": true, "next": true, "offset": true, "total": true, "paperId": true, "year": true, "publicationDate": true,
+		"externalIds": true, "ArXiv": true, "PubMed": true, "venue": true, "url": true, "isOpenAccess": true, "openAccessPdf": true,
 	}
 	var walk func(any) any
 	walk = func(x any) any {

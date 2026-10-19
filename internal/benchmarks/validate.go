@@ -17,6 +17,7 @@ var slugRE = regexp.MustCompile(`^[a-z][a-z0-9-]*$`)
 var hashRE = regexp.MustCompile(`^[0-9a-f]{64}$`)
 var arxivVersion = regexp.MustCompile(`v[0-9]+$`)
 var europePMCCapRE = regexp.MustCompile(`^FIRST_PDATE:\[\* TO ([0-9]{4}-[0-9]{2}-[0-9]{2})\]$`)
+var semanticScholarCapRE = regexp.MustCompile(`^:([0-9]{4}-[0-9]{2}-[0-9]{2})$`)
 
 func invalid(code string) error { return fmt.Errorf("%s", code) }
 
@@ -330,8 +331,11 @@ func dateCapped(c PlanCall, cap string) bool {
 		prefix = "to_publication_date:"
 	case "crossref":
 		prefix = "until-pub-date:"
-	case "europepmc":
+	case "europepmc", "semantic-scholar":
 		match := europePMCCapRE.FindStringSubmatch(c.Filters["filter"])
+		if c.Source == "semantic-scholar" {
+			match = semanticScholarCapRE.FindStringSubmatch(c.Filters["publicationDateOrYear"])
+		}
 		if match == nil {
 			return false
 		}

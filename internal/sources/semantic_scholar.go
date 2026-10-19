@@ -31,7 +31,10 @@ func (c SemanticScholarConnector) Search(ctx context.Context, query SourceQuery)
 	params := map[string]string{
 		"query":  query.Terms,
 		"limit":  strconv.Itoa(limit),
-		"fields": "paperId,title,abstract,year,venue,url,isOpenAccess,openAccessPdf,externalIds",
+		"fields": "paperId,title,abstract,year,publicationDate,venue,url,isOpenAccess,openAccessPdf,externalIds",
+	}
+	if cap := strings.TrimSpace(query.Filters["publicationDateOrYear"]); cap != "" {
+		params["publicationDateOrYear"] = cap
 	}
 	if strings.TrimSpace(query.PageCursor) != "" {
 		params["offset"] = strings.TrimSpace(query.PageCursor)
@@ -62,7 +65,8 @@ func (c SemanticScholarConnector) Search(ctx context.Context, query SourceQuery)
 			URLs:       nonEmptyStrings(paper.URL, paper.OpenAccessPDF.URL),
 			OpenAccess: paper.IsOpenAccess,
 			Metadata: map[string]string{
-				"pubmed_id": strings.TrimSpace(paper.ExternalIDs.PubMed),
+				"pubmed_id":         strings.TrimSpace(paper.ExternalIDs.PubMed),
+				"publication_dates": strings.TrimSpace(paper.PublicationDate),
 			},
 		})
 	}
@@ -75,15 +79,16 @@ type semanticScholarSearchResponse struct {
 }
 
 type semanticScholarPaper struct {
-	PaperID       string                       `json:"paperId"`
-	Title         string                       `json:"title"`
-	Abstract      string                       `json:"abstract"`
-	Year          int                          `json:"year"`
-	Venue         string                       `json:"venue"`
-	URL           string                       `json:"url"`
-	IsOpenAccess  bool                         `json:"isOpenAccess"`
-	OpenAccessPDF semanticScholarOpenAccessPDF `json:"openAccessPdf"`
-	ExternalIDs   semanticScholarExternalIDs   `json:"externalIds"`
+	PaperID         string                       `json:"paperId"`
+	Title           string                       `json:"title"`
+	Abstract        string                       `json:"abstract"`
+	Year            int                          `json:"year"`
+	PublicationDate string                       `json:"publicationDate"`
+	Venue           string                       `json:"venue"`
+	URL             string                       `json:"url"`
+	IsOpenAccess    bool                         `json:"isOpenAccess"`
+	OpenAccessPDF   semanticScholarOpenAccessPDF `json:"openAccessPdf"`
+	ExternalIDs     semanticScholarExternalIDs   `json:"externalIds"`
 }
 
 type semanticScholarOpenAccessPDF struct {
@@ -98,7 +103,7 @@ type semanticScholarExternalIDs struct {
 
 func rawSemanticScholarRef(params map[string]string) string {
 	values := url.Values{}
-	for _, key := range []string{"limit", "offset", "query"} {
+	for _, key := range []string{"limit", "offset", "publicationDateOrYear", "query"} {
 		if value := strings.TrimSpace(params[key]); value != "" {
 			values.Set(key, value)
 		}

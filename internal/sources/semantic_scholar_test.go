@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 	"time"
 )
@@ -19,8 +20,11 @@ func TestSemanticScholarSearchNormalizesPaperRecords(t *testing.T) {
 		if got := r.URL.Query().Get("limit"); got != "2" {
 			t.Fatalf("limit = %q", got)
 		}
-		if got := r.URL.Query().Get("fields"); got == "" {
-			t.Fatalf("fields parameter missing")
+		if got := r.URL.Query().Get("fields"); !strings.Contains(","+got+",", ",publicationDate,") {
+			t.Errorf("publicationDate field missing: %q", got)
+		}
+		if got := r.URL.Query().Get("publicationDateOrYear"); got != ":2020-06-30" {
+			t.Errorf("publicationDateOrYear = %q", got)
 		}
 		w.Header().Set("Content-Type", "application/json")
 		_, _ = w.Write([]byte(`{
@@ -33,6 +37,7 @@ func TestSemanticScholarSearchNormalizesPaperRecords(t *testing.T) {
       "title": "DeepLOB: Deep Convolutional Neural Networks for Limit Order Books",
       "abstract": "Limit order book prediction benchmark.",
       "year": 2019,
+      "publicationDate": "2019-03-15",
       "venue": "IEEE Transactions on Signal Processing",
       "url": "https://www.semanticscholar.org/paper/example",
       "isOpenAccess": true,
@@ -45,20 +50,23 @@ func TestSemanticScholarSearchNormalizesPaperRecords(t *testing.T) {
 	defer server.Close()
 
 	connector := NewSemanticScholarConnector(NewHTTPClient(HTTPClientOptions{BaseURL: server.URL, Timeout: time.Second}))
-	response, err := connector.Search(context.Background(), SourceQuery{Terms: "limit order book prediction", Limit: 2})
+	response, err := connector.Search(context.Background(), SourceQuery{Terms: "limit order book prediction", Limit: 2, Filters: map[string]string{"publicationDateOrYear": ":2020-06-30"}})
 	if err != nil {
 		t.Fatalf("Search returned error: %v", err)
 	}
 	if response.NextPageCursor != "2" {
 		t.Fatalf("NextPageCursor = %q, want 2", response.NextPageCursor)
 	}
-	if response.RawRef != "semantic-scholar:/graph/v1/paper/search?limit=2&query=limit+order+book+prediction" {
+	if response.RawRef != "semantic-scholar:/graph/v1/paper/search?limit=2&publicationDateOrYear=%3A2020-06-30&query=limit+order+book+prediction" {
 		t.Fatalf("RawRef = %q", response.RawRef)
 	}
 	if len(response.Records) != 1 {
 		t.Fatalf("records = %d, want 1", len(response.Records))
 	}
 	record := response.Records[0]
+	if got := record.Metadata["publication_dates"]; got != "2019-03-15" {
+		t.Fatalf("publication_dates = %q", got)
+	}
 	if record.Source != "semantic-scholar" || record.SourceID != "649def34f8be52c8b66281af98ae884c09aef38b" {
 		t.Fatalf("source identity = %s/%s", record.Source, record.SourceID)
 	}

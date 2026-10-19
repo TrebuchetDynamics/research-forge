@@ -3,7 +3,9 @@ package benchmarks
 import (
 	"bytes"
 	"context"
+	"crypto/sha256"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -119,6 +121,13 @@ func TestEngineRecordPublication(t *testing.T) {
 			var r EngineReport
 			if e = json.Unmarshal(replay.Report, &r); e != nil {
 				t.Fatal(e)
+			}
+			spec, err := os.ReadFile("../../docs/benchmark/spec.md")
+			if err != nil {
+				t.Fatal(err)
+			}
+			if want := fmt.Sprintf("%x", sha256.Sum256(spec)); r.ProtocolSHA256 != want {
+				t.Fatalf("report identifies the wrong protocol: got %s, spec %s", r.ProtocolSHA256, want)
 			}
 			requests := int64(2)
 			if tc.redirect {
