@@ -271,17 +271,6 @@
     },
     {
       "depends_on": [
-        "V-C3",
-        "V-E3"
-      ],
-      "goal": "RF-PACK",
-      "id": "V-E4",
-      "section": "Next",
-      "status": "open",
-      "title": "Cross-surface behavior parity suite"
-    },
-    {
-      "depends_on": [
         "V-E3"
       ],
       "goal": "RF-PACK",
@@ -660,6 +649,17 @@
       "section": "Done",
       "status": "done",
       "title": "Typed engine tools per host"
+    },
+    {
+      "depends_on": [
+        "V-C3",
+        "V-E3"
+      ],
+      "goal": "RF-PACK",
+      "id": "V-E4",
+      "section": "Done",
+      "status": "done",
+      "title": "Cross-surface behavior parity suite"
     },
     {
       "depends_on": [],

@@ -600,3 +600,21 @@ Source section: Next
 - Dependencies: None.
 - Ownership: ResearchForge maintainer; Autowork runner may execute.
 - Touches: benchmarks/agent-tier, docs/benchmark
+
+
+<!-- archived from TODO.md -->
+
+Source section: Next
+
+<a id="v-e4"></a>
+
+- [x] V-E4 — Cross-surface behavior parity suite
+- Status: done
+- Goal: RF-PACK — Ship passive native plugins for Claude Code, Codex, Pi and Hermes over the same engine.
+- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan) (Owner principles: test behavior).
+- Scope: offline CI test across CLI `--json`, MCP and the Pi adapter using the built binary and offline fixture directories: (1) evidence identity, meaning the same record identifiers, dedupe clusters and content hashes; (2) provenance, meaning the same computed level and output checksums; (3) resumability, meaning a job interrupted through one surface and resumed through another reaches the same final state; (4) errors, meaning invalid input, incompatible rforge, budget exhaustion and connector failure yield the same error codes and stop reasons. Comparison normalizes only an explicit allowlist (timestamps, run/job IDs, durations); any other difference fails.
+- Acceptance: the suite runs in CI and fails when an injected adapter-only difference is introduced.
+- Checks: go test ./internal/mcp; node --test adapters/test; make check
+- Dependencies: V-E3, V-C3.
+- Ownership: ResearchForge maintainer; Autowork runner may execute.
+- Touches: internal/mcp, adapters/test, Makefile, .github/workflows
