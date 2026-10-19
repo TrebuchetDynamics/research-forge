@@ -299,16 +299,6 @@
     },
     {
       "depends_on": [
-        "V-B2"
-      ],
-      "goal": "RF-CLAIMS",
-      "id": "V-D1",
-      "section": "Next",
-      "status": "open",
-      "title": "Content integrity and stable passage identity"
-    },
-    {
-      "depends_on": [
         "V-B2",
         "V-D1"
       ],
@@ -473,6 +463,16 @@
       "section": "Done",
       "status": "done",
       "title": "Claim-evidence schema v0 design"
+    },
+    {
+      "depends_on": [
+        "V-B2"
+      ],
+      "goal": "RF-CLAIMS",
+      "id": "V-D1",
+      "section": "Done",
+      "status": "done",
+      "title": "Content integrity and stable passage identity"
     },
     {
       "depends_on": [],

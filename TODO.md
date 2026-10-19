@@ -883,17 +883,6 @@ Owner answers (2026-10-19):
 - Ownership: ResearchForge maintainer; Autowork runner may execute.
 - Touches: README.md, skills/research-forge/SKILL.md, docs/cli.md
 
-- [ ] V-D1 — Content integrity and stable passage identity
-- Status: open
-- Goal: RF-CLAIMS — Verify claims against stored evidence with separate facets.
-- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan); [ADR 0009](docs/adr/0009-verification-facets-and-provenance-levels.md).
-- Scope: SHA-256 of normalized parsed text per parsed document; a content hash per passage; passage identity stays stable across re-parse when content is unchanged.
-- Acceptance: re-parsing unchanged content keeps passage IDs and hashes; a one-character change alters only the affected passage hash.
-- Checks: go test ./internal/parsing ./internal/documents; make check
-- Dependencies: V-B2.
-- Ownership: ResearchForge maintainer; Autowork runner may execute.
-- Touches: internal/parsing, internal/documents
-
 - [ ] V-D2 — Claim store and CLI
 - Status: open
 - Goal: RF-CLAIMS — Verify claims against stored evidence with separate facets.
