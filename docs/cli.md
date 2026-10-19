@@ -2,6 +2,8 @@
 
 Core commands:
 
+- `rforge capabilities --json [--min-rforge-version <version>] [--require <family>=<contract-version>]...` reports build metadata and command contracts, and optionally checks engine compatibility for skills, plugins, and adapters (see [compatibility checks](#capability-report-and-compatibility-checks))
+
 - `rforge automation policy [--action <action>]` prints the hybrid agent/human decision policy: LLM agents may decide reversible assists such as batch retrieval/dedupe, screening queues, extraction suggestions, analysis preparation, and claim-trace audits, while humans must approve inclusion/exclusion, full-text acquisition, extraction acceptance, analysis method selection, final claims, and package export
 - `rforge project create [path] --title <title>`
 - `rforge project inspect <path>`
@@ -132,3 +134,66 @@ The checkpoint's `result_count` identifies the committed prefix of `results.json
 `citations expand --json` uses the same typed `stop_reason` and reports `requests_used`; Semantic Scholar recursive expansion no longer encodes `budget_stopped` in `rawRef`. Its `--max-api-calls` counts references and citations separately for `--direction both`.
 
 Implementation: [search service](../internal/search/batch.go), [checkpoint/resume](../internal/search/batch_state.go), and [shared stop reasons](../internal/sources/graph_budget.go). Update this section when preset values, checkpoint accounting, or stop semantics change.
+
+## Capability report and compatibility checks
+
+`rforge capabilities --json` is an offline, read-only engine compatibility report.
+It needs no project, credentials, network, or external tools. The usual JSON envelope
+is `{"ok":true,"data":{...}}`; `data` contains:
+
+- `name`, `version`, `commit`, `date`: the same build metadata as `rforge version`.
+- `capabilities`: a map of family names to positive integer contract versions.
+  Currently `search`, `paper`, `brief`, `compare`, and `provenance` each report `1`.
+  `mcp` and `claims` are absent until implemented; absence never implies support.
+- `error_codes`: the stable codes for this command, listed below (not a catalog of
+  every error emitted by other commands).
+
+Contract versions are minimum-compatible and monotonically increasing. Consumers
+must check every required family, not infer support from the release number or
+ignore unknown/missing entries. A reported version must be at least the required
+contract version. Without `--json`, the command prints a human-readable report.
+
+For a consumer with `min_rforge_version: "1.0.0"` and required contracts
+`search: 1`, `paper: 1`, invoke:
+
+```sh
+rforge capabilities --json --min-rforge-version 1.0.0 --require search=1 --require paper=1
+```
+
+`--require` is repeatable; all requirements must pass. `--json` also works before
+`capabilities`. No check flags means report-only mode. When checks are supplied:
+
+- **Release:** the build version must be at least `--min-rforge-version` (when
+  supplied), and all required capabilities must be present and sufficiently new.
+- **Exact `dev` build:** skip the release-version comparison, but still verify all
+  required capabilities. Never order the string `dev` against a release number.
+- **Version syntax:** semantic `MAJOR.MINOR.PATCH` with an optional `v` prefix,
+  prerelease, and build metadata. Use SemVer precedence, not lexical comparison;
+  prereleases precede their release, and build metadata does not affect ordering.
+  Non-SemVer build strings fail closed when a version minimum is requested.
+
+Success exits `0`. Compatibility failures exit `1` with `ok:false` and an `error`
+object containing `code`, `message`, `actual`, `required`, and `install` (always
+`"install.sh"`); capability gaps also include `capability`. Values of `actual` and
+`required` are strings; a missing capability uses `actual:"missing"`. The message
+names the gap and points to `install.sh`. The command never installs anything or
+changes host settings.
+
+| Code | Meaning |
+| --- | --- |
+| `version_invalid` | Installed build version cannot be compared to the requested minimum. |
+| `version_too_old` | Release version is below the requested minimum. |
+| `capability_missing` | A required family is not reported. |
+| `capability_too_old` | A reported family has an older contract than required. |
+| `usage` | Invalid flags, minimum version, or contract requirement; exits `2`. |
+
+Checks report the first failure: build version first, then required capabilities
+in argument order. Usage errors use the standard `error.code`/`error.message`
+envelope. A binary too old to implement `capabilities` (or a missing executable)
+cannot pass a consumer's compatibility check; the consumer must name that gap and
+point users to [`install.sh`](../install.sh), never silently fall back to a version
+string. `rforge help --json` includes the capability command.
+
+Behavior source: [command implementation](../internal/cli/capabilities_command.go)
+and [public CLI tests](../internal/cli/capabilities_test.go). Update this section
+when capability contracts or compatibility/error semantics change.
