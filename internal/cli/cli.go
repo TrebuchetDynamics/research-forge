@@ -40,7 +40,7 @@ var (
 	Date    = "unknown"
 )
 
-var topLevelCommands = []string{"help", "vault", "version", "decisions", "benchmark", "automation", "completion", "forge", "project", "doctor", "service", "library", "search", "citations", "oa", "duplicate", "import", "export", "oss", "pdf", "parse", "index", "knowledge", "graph", "retrieve", "research", "protocol", "screen", "prisma", "extraction", "extract", "evidence", "analysis", "report", "package", "archive", "ui", "watch", "inbox", "fetch", "provenance", "journal", "goal", "meta", "paper", "rank", "brief", "compare", "lit", "note", "history", "replicate", "draft"}
+var topLevelCommands = []string{"help", "vault", "version", "decisions", "benchmark", "automation", "completion", "forge", "project", "doctor", "service", "library", "search", "citations", "oa", "duplicate", "import", "export", "oss", "pdf", "parse", "index", "knowledge", "graph", "retrieve", "research", "protocol", "screen", "prisma", "extraction", "extract", "evidence", "claim", "analysis", "report", "package", "archive", "ui", "watch", "inbox", "fetch", "provenance", "journal", "goal", "meta", "paper", "rank", "brief", "compare", "lit", "note", "history", "replicate", "draft"}
 
 type globalOptions struct {
 	JSON     bool
@@ -129,6 +129,8 @@ func Execute(args []string, stdout, stderr io.Writer) int {
 		return executeExtract(remaining[1:], stdout, stderr, opts)
 	case "evidence":
 		return executeEvidence(remaining[1:], stdout, stderr, opts)
+	case "claim":
+		return executeClaim(remaining[1:], stdout, stderr, opts)
 	case "analysis":
 		return executeAnalysis(remaining[1:], stdout, stderr, opts)
 	case "report":
@@ -4127,6 +4129,24 @@ func helpSections() []helpSection {
 				{
 					Usage:       "rforge duplicate report",
 					Description: "Report duplicate papers in the library.",
+				},
+			},
+		},
+		{
+			Name:        "claims",
+			Description: "Append-only claim snapshots with five separate verification facets; no truth judgment.",
+			Commands: []helpCommand{
+				{
+					Usage:       "rforge claim add --project <path> --file <claim.json>",
+					Description: "Append a schema-v0 claim snapshot to data/claims.jsonl. Semantic support requires agent/model identity and is always agent_reported; human approval requires a named human checker. No checks are inferred.",
+				},
+				{
+					Usage:       "rforge claim list --project <path>",
+					Description: "List the latest snapshot of each claim, preserving first-seen order.",
+				},
+				{
+					Usage:       "rforge claim show --project <path> --id <id>",
+					Description: "Show the latest claim snapshot, its separate facets and computed semantic-support attribution. Add --json for machine-readable output.",
 				},
 			},
 		},
