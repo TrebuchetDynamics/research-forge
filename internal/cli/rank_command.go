@@ -18,7 +18,7 @@ import (
 
 func executeRank(args []string, stdout, stderr io.Writer, opts globalOptions) int {
 	if len(args) == 0 {
-		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge rank <topic> [--sources scholarly-fast] [--limit N] [--out <file>] [--graph <graph.json>]")
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge rank <topic> [--sources openalex,crossref,semantic-scholar] [--limit N] [--out <file>] [--graph <graph.json>]")
 	}
 
 	topic := args[0]
@@ -55,7 +55,6 @@ func executeRank(args []string, stdout, stderr io.Writer, opts globalOptions) in
 		}
 	}
 
-	httpClient := sources.NewHTTPClient(sources.HTTPClientOptions{})
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
@@ -101,46 +100,21 @@ func executeRank(args []string, stdout, stderr io.Writer, opts globalOptions) in
 	var papers []scoredPaper
 
 	for _, name := range sourceNames {
-		switch strings.TrimSpace(name) {
-		case "openalex":
-			conn := sources.NewOpenAlexConnector(httpClient)
-			resp, err := conn.Search(ctx, sources.SourceQuery{Terms: topic, Limit: limit})
-			if err != nil {
+		name = strings.TrimSpace(name)
+		if name != "openalex" && name != "crossref" && name != "semantic-scholar" {
+			continue
+		}
+		conn, _ := searchConnector(name)
+		resp, err := conn.Search(ctx, sources.SourceQuery{Terms: topic, Limit: limit})
+		if err != nil {
+			continue
+		}
+		for _, rec := range resp.Records {
+			if seen[rec.SourceID] {
 				continue
 			}
-			for _, rec := range resp.Records {
-				if seen[rec.SourceID] {
-					continue
-				}
-				seen[rec.SourceID] = true
-				papers = append(papers, scoredPaper{record: rec})
-			}
-		case "crossref":
-			conn := sources.NewCrossrefConnector(httpClient)
-			resp, err := conn.Search(ctx, sources.SourceQuery{Terms: topic, Limit: limit})
-			if err != nil {
-				continue
-			}
-			for _, rec := range resp.Records {
-				if seen[rec.SourceID] {
-					continue
-				}
-				seen[rec.SourceID] = true
-				papers = append(papers, scoredPaper{record: rec})
-			}
-		case "semantic-scholar":
-			conn := sources.NewSemanticScholarConnector(httpClient)
-			resp, err := conn.Search(ctx, sources.SourceQuery{Terms: topic, Limit: limit})
-			if err != nil {
-				continue
-			}
-			for _, rec := range resp.Records {
-				if seen[rec.SourceID] {
-					continue
-				}
-				seen[rec.SourceID] = true
-				papers = append(papers, scoredPaper{record: rec})
-			}
+			seen[rec.SourceID] = true
+			papers = append(papers, scoredPaper{record: rec})
 		}
 	}
 
@@ -193,43 +167,49 @@ func executeRank(args []string, stdout, stderr io.Writer, opts globalOptions) in
 		papers = papers[:limit]
 	}
 
-	// For JSON, build a richer result
+	// Persist the same complete ranked result regardless of display format.
+	type rankItem struct {
+		Rank       int     `json:"rank"`
+		Title      string  `json:"title"`
+		Score      float64 `json:"score"`
+		DOI        string  `json:"doi,omitempty"`
+		ArXivID    string  `json:"arxivId,omitempty"`
+		Year       int     `json:"year"`
+		Venue      string  `json:"venue,omitempty"`
+		OpenAccess bool    `json:"openAccess"`
+		Source     string  `json:"source"`
+	}
+	items := make([]rankItem, len(papers))
+	for i, p := range papers {
+		items[i] = rankItem{
+			Rank:       i + 1,
+			Title:      p.record.Title,
+			Score:      math.Round(p.score*100) / 100,
+			DOI:        p.record.Identifiers.DOI,
+			ArXivID:    p.record.Identifiers.ArXivID,
+			Year:       p.record.Year,
+			Venue:      p.record.Venue,
+			OpenAccess: p.record.OpenAccess,
+			Source:     p.record.Source,
+		}
+	}
+	data := map[string]any{
+		"topic":    topic,
+		"total":    len(items),
+		"rankings": items,
+	}
+	if outFile != "" {
+		if filepath.Base(outFile) == "provenance.json" {
+			return writeError(stdout, stderr, opts, 1, "rank_write_failed", "rank output must not replace provenance.json; choose a rankings filename")
+		}
+		if err := writeJSONFile(outFile, data); err != nil {
+			return writeError(stdout, stderr, opts, 1, "rank_write_failed", err.Error())
+		}
+		if err := writeRankProvenance(outFile, topic, sourceNames, len(papers)); err != nil {
+			return writeError(stdout, stderr, opts, 1, "rank_write_failed", err.Error())
+		}
+	}
 	if opts.JSON {
-		type rankItem struct {
-			Rank       int     `json:"rank"`
-			Title      string  `json:"title"`
-			Score      float64 `json:"score"`
-			DOI        string  `json:"doi,omitempty"`
-			ArXivID    string  `json:"arxivId,omitempty"`
-			Year       int     `json:"year"`
-			Venue      string  `json:"venue,omitempty"`
-			OpenAccess bool    `json:"openAccess"`
-			Source     string  `json:"source"`
-		}
-		items := make([]rankItem, len(papers))
-		for i, p := range papers {
-			items[i] = rankItem{
-				Rank:       i + 1,
-				Title:      p.record.Title,
-				Score:      math.Round(p.score*100) / 100,
-				DOI:        p.record.Identifiers.DOI,
-				ArXivID:    p.record.Identifiers.ArXivID,
-				Year:       p.record.Year,
-				Venue:      p.record.Venue,
-				OpenAccess: p.record.OpenAccess,
-				Source:     p.record.Source,
-			}
-		}
-		data := map[string]any{
-			"topic":    topic,
-			"total":    len(items),
-			"rankings": items,
-		}
-		if outFile != "" {
-			if err := writeJSONFile(outFile, data); err != nil {
-				return writeError(stdout, stderr, opts, 1, "rank_write_failed", err.Error())
-			}
-		}
 		return writeJSON(stdout, 0, data)
 	}
 
@@ -258,31 +238,27 @@ func executeRank(args []string, stdout, stderr io.Writer, opts globalOptions) in
 	}
 
 	if outFile != "" {
-		_ = writeJSONFile(outFile, map[string]any{"topic": topic, "count": len(papers), "source": "rank"})
 		fmt.Fprintf(stdout, "\nrankings saved to %s\n", outFile)
 	}
-
-	// Write to topic dir if search batch dir exists
-	_ = writeRankProvenance(outFile, topic, len(papers))
 
 	return 0
 }
 
-func writeRankProvenance(outFile, topic string, count int) error {
+func writeRankProvenance(outFile, topic string, sourceNames []string, count int) error {
 	if outFile == "" {
 		return nil
 	}
-	dir := filepath.Dir(outFile)
-	if dir == "." {
-		return nil
-	}
-	provenancePath := filepath.Join(dir, "provenance.json")
+	provenancePath := outFile + ".provenance.json"
 	provenance := map[string]any{
 		"schema_version": "1",
 		"question":       "rank: " + topic,
 		"depth":          "standard",
 		"timestamp":      time.Now().UTC().Format(time.RFC3339),
 		"papers_ranked":  count,
+		"sources":        sourceNames,
+		"outputs":        []string{outFile},
+		"errors":         []string{},
+		"rforge_version": map[string]string{"version": Version, "commit": Commit, "date": Date},
 	}
 	return writeJSONFile(provenancePath, provenance)
 }

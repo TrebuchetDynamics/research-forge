@@ -4,8 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net"
 	"net/http"
 	"net/http/httptest"
+	"os"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -52,7 +55,10 @@ func resolverFixtureServer(t *testing.T) *httptest.Server {
 	})
 
 	// Unpaywall
-	mux.HandleFunc("/unpaywall/v2/10.1000/example", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/unpaywall/v2/", func(w http.ResponseWriter, r *http.Request) {
+		if got, want := r.URL.Query().Get("email"), os.Getenv("RFORGE_UNPAYWALL_EMAIL"); got != want {
+			t.Errorf("Unpaywall contact = %q, want %q", got, want)
+		}
 		w.Header().Set("Content-Type", "application/json")
 		fmt.Fprintln(w, `{
 			"doi": "10.1000/example",
@@ -108,7 +114,23 @@ func resolverFixtureServer(t *testing.T) *httptest.Server {
 		}`)
 	})
 
-	server := httptest.NewServer(mux)
+	var listener net.Listener
+	var err error
+	if base, _ := strconv.Atoi(os.Getenv("AUTOWORK_PORT_BASE")); base > 0 {
+		for port := base; port < base+100; port++ {
+			listener, err = net.Listen("tcp", fmt.Sprintf("127.0.0.1:%d", port))
+			if err == nil {
+				break
+			}
+		}
+	} else {
+		listener, err = net.Listen("tcp", "127.0.0.1:0")
+	}
+	if err != nil {
+		t.Fatal(err)
+	}
+	server := &httptest.Server{Listener: listener, Config: &http.Server{Handler: mux}}
+	server.Start()
 	t.Cleanup(server.Close)
 	return server
 }
@@ -187,6 +209,16 @@ func TestPaperResolutionJSONShape(t *testing.T) {
 	}
 	if !strings.Contains(string(data), `"resolved":true`) {
 		t.Fatal("resolved flag missing")
+	}
+}
+
+func TestResolvePaperUsesConfiguredContact(t *testing.T) {
+	t.Setenv("RFORGE_UNPAYWALL_EMAIL", "researcher@example.org")
+	server := resolverFixtureServer(t)
+	client := NewHTTPClient(HTTPClientOptions{BaseURL: server.URL + "/unpaywall"})
+	result, err := ResolvePaper(context.Background(), client, "10.1000/example")
+	if err != nil || result.OA == nil || !result.OA.IsOA || result.OA.License != "cc-by" {
+		t.Fatalf("configured Unpaywall lookup failed: %+v, %v", result, err)
 	}
 }
 
