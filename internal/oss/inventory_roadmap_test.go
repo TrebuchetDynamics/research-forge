@@ -20,7 +20,7 @@ func TestBuildInventoryRoadmapReportGroupsNextSlicesByAreaAndFindsCoverageGaps(t
 		t.Fatal(err)
 	}
 	todoPath := filepath.Join(dir, "TODO.md")
-	if err := os.WriteFile(todoPath, []byte("- [ ] Add alpha retrieval (`opensource/inventory/alpha.md`).\n"), 0o644); err != nil {
+	if err := os.WriteFile(todoPath, []byte("- [ ] Add alpha retrieval (`opensource/inventory/{alpha,gamma}.md`).\n"), 0o644); err != nil {
 		t.Fatal(err)
 	}
 	report, err := BuildInventoryRoadmapReport(manifestPath, todoPath)
@@ -35,6 +35,9 @@ func TestBuildInventoryRoadmapReportGroupsNextSlicesByAreaAndFindsCoverageGaps(t
 	}
 	if len(report.SuggestedSlices) == 0 || !roadmapHasSuggestion(report, "beta", "test") {
 		t.Fatalf("suggested slices missing: %#v", report.SuggestedSlices)
+	}
+	if roadmapHasSuggestion(report, "alpha", "test") {
+		t.Fatalf("covered TODO work should not be suggested again: %#v", report.SuggestedSlices)
 	}
 	if !strings.Contains(report.Markdown, "## retrieval") || !strings.Contains(report.Markdown, "Add alpha retrieval") || !strings.Contains(report.Markdown, "Suggested implementation slices") || strings.Contains(report.Markdown, "[x]") {
 		t.Fatalf("markdown:\n%s", report.Markdown)

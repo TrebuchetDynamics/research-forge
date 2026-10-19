@@ -62,17 +62,17 @@ rforge oss inventory-check opensource/inventory/manifest.json
 rforge oss inventory-refresh opensource/inventory/manifest.json --source github
 rforge oss inventory-policy opensource/inventory/manifest.json --stale-after 18mo
 rforge oss inventory-drift opensource/inventory/manifest.json
+rforge oss inventory-roadmap opensource/inventory/manifest.json --todo TODO.md
 rforge oss inventory-report opensource/inventory/manifest.json --area scholarly-graph-source
 ```
 
-The verifier checks that every manifest entry has governance metadata (`area`, `disposition`, `licensePolicy`, `risk`, `nextSlice`) and that its Markdown note exists inside this directory. The refresh command updates GitHub-backed entries with stars, forks, license, archive status, and push timestamp. The policy command flags archived repositories, stale `pushedAt` timestamps, missing/unknown licenses, and GPL/AGPL/LGPL entries whose disposition is not `adapter-only` or `pattern-reference`. The drift command compares manifest metadata with note headings and optional note fields (`Area`, `Disposition`, `Repository`, `URL`, `License policy`, `Next slice`) and flags unreferenced note files. The report command renders a deterministic Markdown ecosystem report with tool, area, disposition, refreshed metadata, risk, next slice, and note columns.
+The verifier checks that every manifest entry has governance metadata (`area`, `disposition`, `licensePolicy`, `risk`, `nextSlice`) and that its Markdown note exists inside this directory. The refresh command updates GitHub-backed entries with stars, forks, archive status, and push timestamp; a manually reviewed SPDX value is preserved when GitHub reports no license assertion. The policy command flags archived or stale repositories, missing/unknown licenses on repository-backed entries, and GPL/AGPL/LGPL entries whose disposition is not `adapter-only` or `pattern-reference`. API-only services remain governed by `licensePolicy`. The drift command compares manifest metadata with note headings and optional note fields (`Area`, `Disposition`, `Repository`, `URL`, `License policy`, `Next slice`) and flags unreferenced note files. The roadmap command accepts direct and grouped note references in `TODO.md`, reports uncovered inventory work, and does not re-suggest covered tasks. The report command renders a deterministic Markdown ecosystem report with tool, area, disposition, refreshed metadata, risk, next slice, and note columns.
 
-## Current highest-priority gaps from this inventory
+## Current maintenance priorities
 
-1. Build the `rforge forge` super-tool path: a resumable, provenance-first workflow that creates or opens a project, captures the research question and source/tool choices, previews privacy/legal implications, and combines source discovery, reference-manager import, dedupe, legal full-text acquisition, parser arbitration, retrieval, screening, extraction, statistics, and report packaging behind reviewer gates.
-2. Deepen reference-manager interoperability: Zotero/JabRef collection/group mapping, citation-key fidelity, annotation import/export, BibTeX cleanup diffs, and linked-file privacy gates.
-3. Add parser arbitration and parsed-reference normalization across GROBID, S2ORC-style JSON, PaperMage, CERMINE, Science Parse, and Anystyle with reviewer-adjudicated conflicts.
-4. Expand source coverage: NASA ADS for physics/astronomy and DOAJ/CORE for OA discovery; PubMed / Europe PMC / PMC full-text workflows now cover ID linking, OA license capture, structured JATS import, supplementary discovery, and opt-in drift smoke planning.
-5. Combine ASReview/revtools/RobotReviewer patterns into auditable review assistance: active-learning queues, cluster review, risk-of-bias/evidence suggestions, stopping diagnostics, and exportable audit bundles.
-6. Turn retrieval/NLP tools into governed adapters: OpenSearch/Qdrant/SentenceTransformers/KeyBERT/SciSpaCy/BERTopic with privacy profiles, model locks, benchmarks, and citation-linked suggestions.
-7. Add cross-engine statistical validation: metafor remains primary, with PyMARE-style secondary comparison reports and publication-ready artifact manifests.
+Snapshot refreshed 2026-07-28:
+
+1. Reassess stale upstreams before enabling or expanding adapters: s2orc-doc2json, PaperMage, CERMINE, Science Parse, and RobotReviewer currently exceed the 18-month activity threshold.
+2. Keep stale or copyleft projects behind `adapter-only` or `pattern-reference` boundaries; do not vendor their code, models, or fixtures without separate review.
+3. Preserve manually verified SPDX metadata for repositories where GitHub returns `NOASSERTION`, and rerun refresh, policy, drift, and roadmap checks together.
+4. Treat `TODO.md` as implementation truth. Update `nextSlice` only when a genuinely new, source-backed gap is identified instead of re-listing completed super-tool work.

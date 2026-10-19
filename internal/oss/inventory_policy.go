@@ -49,7 +49,7 @@ func CheckInventoryPolicy(manifest InventoryManifest, opts InventoryPolicyOption
 			result.Issues = append(result.Issues, id+": repository is archived")
 		}
 		license := strings.TrimSpace(entry.LicenseSPDX)
-		if license == "" || strings.EqualFold(license, "NOASSERTION") || strings.EqualFold(license, "unknown") {
+		if strings.TrimSpace(entry.Repository) != "" && (license == "" || strings.EqualFold(license, "NOASSERTION") || strings.EqualFold(license, "unknown")) {
 			result.Issues = append(result.Issues, id+": missing licenseSPDX")
 		}
 		if isCopyleftLicense(license) && entry.Disposition != "adapter-only" && entry.Disposition != "pattern-reference" {
