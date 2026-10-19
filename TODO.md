@@ -749,17 +749,6 @@ Owner answers (2026-10-19):
 
 ## Now
 
-- [ ] V-B10 — Re-plan pool A searches without OpenAlex dependence
-- Status: open
-- Goal: RF-BENCH — Measure research quality against held-out ground truth.
-- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan); [benchmark spec](docs/benchmark/spec.md); [pool A review sheet](benchmarks/sets/pool-a/review.md); Owner decision 2026-10-19: the benchmark must not depend on OpenAlex. Pool A's plans used OpenAlex for 24 of 24 calls, the engine qualified only OpenAlex and Crossref, and OpenAlex now meters anonymous use per IP (the first pool A capture got HTTP 429 on 18 of 24 calls).
-- Scope: rewrite only the `search_plan` of each pool A question so that no question depends on a single provider: clinical questions use Europe PMC plus Crossref; education, social-policy and performing-arts questions use Semantic Scholar plus Crossref (Europe PMC too where relevant); OpenAlex may appear only as an additional, never sole, provider. Keep two problem-based query terms per question as authored, equal budgets and caps at each review's `search_date`; terms must still pass the leakage rules and must not be chosen using any retrieval outcome. Gold, questions, splits, dates and review identities stay byte-identical in meaning. Because `search_plan` is inside the approved checksum, return the set to `state: candidate` with `approval: null`, and add a "Search-plan revision (2026-10-19)" section to `review.md` listing old and new providers per question, so the owner re-approves only this change at V-B4-lock. Do not record snapshots.
-- Acceptance: `ValidateCandidateSet` passes with the AP fallback; every question has at least two providers and at most half of its calls on any one provider; a diff shows only `search_plan`, `state`, `approval`, checksums and the review-sheet section changed.
-- Checks: go test ./internal/benchmarks; make check
-- Dependencies: V-B8, V-B9.
-- Ownership: ResearchForge maintainer; Autowork runner may execute; owner re-approves at V-B4-lock.
-- Touches: benchmarks/sets/pool-a/set.json, benchmarks/sets/pool-a/review.md
-
 ## Next
 
 - [ ] V-B5 — Engine-tier baseline
@@ -907,6 +896,14 @@ Owner answers (2026-10-19):
   - V-E5-run: execute the Hermes dedicated-profile local/published Git lifecycle, pinned-commit upgrade, operator-owned MCP add/remove, policy/schedule invariance, leftover-skill survival/detection and R1-R4 recovery cases with a completed receipt.
   Checks: Live qualification by an authorized person; offline evidence does not count.
   Dependencies: V-E5.
+  Status: open
+
+- [ ] V-B10-LIVE — Live checks for V-B10
+  Scope: Run the live checks the offline work for V-B10 left pending.
+  Acceptance: Each check passes on the real target:
+  - Owner must re-approve the search-plan revision at V-B4-lock, retaining the ap_domain_absent waiver if the documented fallback remains accepted, before snapshot recording.
+  Checks: Live qualification by an authorized person; offline evidence does not count.
+  Dependencies: V-B10.
   Status: open
 
 ## Backlog (not ready)

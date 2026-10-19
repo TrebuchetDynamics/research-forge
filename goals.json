@@ -92,6 +92,7 @@
       "tasks": [
         "V-B1",
         "V-B10",
+        "V-B10-LIVE",
         "V-B11",
         "V-B11-LIVE",
         "V-B12",
@@ -211,9 +212,6 @@
   "priority_order": {
     "schema": 1,
     "tasks": [
-      "V-B9",
-      "V-B10",
-      "V-B12",
       "V-B5",
       "V-B4-lock",
       "V-B6-run",
@@ -227,21 +225,11 @@
       "V-C2-LIVE",
       "V-E3-LIVE",
       "V-B11-LIVE",
-      "V-E5-LIVE"
+      "V-E5-LIVE",
+      "V-B10-LIVE"
     ]
   },
   "tasks": [
-    {
-      "depends_on": [
-        "V-B8",
-        "V-B9"
-      ],
-      "goal": "RF-BENCH",
-      "id": "V-B10",
-      "section": "Now",
-      "status": "open",
-      "title": "Re-plan pool A searches without OpenAlex dependence"
-    },
     {
       "depends_on": [
         "V-B3",
@@ -252,6 +240,16 @@
       "section": "Next",
       "status": "open",
       "title": "Engine-tier baseline"
+    },
+    {
+      "depends_on": [
+        "V-B10"
+      ],
+      "goal": "RF-BENCH",
+      "id": "V-B10-LIVE",
+      "section": "Needs decision",
+      "status": "open",
+      "title": "Live checks for V-B10"
     },
     {
       "depends_on": [
@@ -448,6 +446,17 @@
       "section": "Done",
       "status": "done",
       "title": "Research-quality benchmark specification"
+    },
+    {
+      "depends_on": [
+        "V-B8",
+        "V-B9"
+      ],
+      "goal": "RF-BENCH",
+      "id": "V-B10",
+      "section": "Done",
+      "status": "done",
+      "title": "Re-plan pool A searches without OpenAlex dependence"
     },
     {
       "depends_on": [],

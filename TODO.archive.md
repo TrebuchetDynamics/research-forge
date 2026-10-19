@@ -677,3 +677,21 @@ Source section: Now
 - Ownership: ResearchForge maintainer; Autowork runner may execute.
 - Touches: internal/sources/semantic_scholar.go, internal/sources/semantic_scholar_test.go, internal/benchmarks/engine.go, internal/benchmarks/validate.go, internal/benchmarks/transport.go, internal/benchmarks/semantic_scholar_record_test.go, internal/benchmarks/record_incomplete_test.go, internal/benchmarks/record_test.go, docs/benchmark/spec.md, adapters/test/, internal/docs/plugin_conformance_test.go, internal/mcp/, internal/jobs/
 - Resources: benchmark-engine — shared `internal/benchmarks/engine.go`, `internal/benchmarks/validate.go` and `docs/benchmark/spec.md`; tasks holding it run one at a time; adapter-parity — shared adapter conformance fixtures and durable job error/status path
+
+
+<!-- archived from TODO.md -->
+
+Source section: Now
+
+<a id="v-b10"></a>
+
+- [x] V-B10 — Re-plan pool A searches without OpenAlex dependence
+- Status: done
+- Goal: RF-BENCH — Measure research quality against held-out ground truth.
+- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan); [benchmark spec](docs/benchmark/spec.md); [pool A review sheet](benchmarks/sets/pool-a/review.md); Owner decision 2026-10-19: the benchmark must not depend on OpenAlex. Pool A's plans used OpenAlex for 24 of 24 calls, the engine qualified only OpenAlex and Crossref, and OpenAlex now meters anonymous use per IP (the first pool A capture got HTTP 429 on 18 of 24 calls).
+- Scope: rewrite only the `search_plan` of each pool A question so that no question depends on a single provider: clinical questions use Europe PMC plus Crossref; education, social-policy and performing-arts questions use Semantic Scholar plus Crossref (Europe PMC too where relevant); OpenAlex may appear only as an additional, never sole, provider. Keep two problem-based query terms per question as authored, equal budgets and caps at each review's `search_date`; terms must still pass the leakage rules and must not be chosen using any retrieval outcome. Gold, questions, splits, dates and review identities stay byte-identical in meaning. Because `search_plan` is inside the approved checksum, return the set to `state: candidate` with `approval: null`, and add a "Search-plan revision (2026-10-19)" section to `review.md` listing old and new providers per question, so the owner re-approves only this change at V-B4-lock. Do not record snapshots.
+- Acceptance: `ValidateCandidateSet` passes with the AP fallback; every question has at least two providers and at most half of its calls on any one provider; a diff shows only `search_plan`, `state`, `approval`, checksums and the review-sheet section changed.
+- Checks: go test ./internal/benchmarks; make check
+- Dependencies: V-B8, V-B9.
+- Ownership: ResearchForge maintainer; Autowork runner may execute; owner re-approves at V-B4-lock.
+- Touches: benchmarks/sets/pool-a/set.json, benchmarks/sets/pool-a/review.md
