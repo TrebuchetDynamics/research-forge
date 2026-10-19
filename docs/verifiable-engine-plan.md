@@ -111,6 +111,52 @@ change; agent outputs carry verification facets that state exactly what rforge c
 - **Release gate (owner, 2026-10-19):** ResearchForge 2.0 must demonstrably improve evidence quality,
   retrieval effectiveness or research efficiency over the same agent without rforge (TODO V-R1).
 
+## Workstream E — Cross-host packaging (added 2026-10-19)
+
+Owner direction: distribute native plugins for Claude Code, Codex, Pi and Hermes from this repository,
+modelled on Autowork's packaging but with no Autowork dependency. Autowork owns autonomous execution;
+ResearchForge owns verifiable research. Both stand alone and compose.
+
+**Surfaces.** Skill = research methodology. Native plugin = host commands, engine discovery, tool
+registration. MCP = standardized typed operations. Go CLI = authoritative engine, usable without agents.
+
+**Owner requirements.**
+- Workflow commands (`lit`, `paper`, `brief`, `compare`, `replicate`) may follow Autowork's pattern of
+  loading a skill and delegating to the host; searches, citation retrieval and evidence validation go
+  through typed tool calls into the Go engine, not LLM-built shell commands.
+- Plugins never change host approval settings, scheduling policies, execution permissions or other
+  runtime defaults (Autowork's Hermes `defaults.json` sets `approvals_mode: off`; rforge must not).
+- Release acceptance: the same fixture yields equivalent evidence, provenance and status via CLI, MCP
+  and every supported native adapter; install, upgrade, removal and failure recovery are qualified per
+  host.
+- Packaging scaffolding starts early; MCP registration is added incrementally and does not block
+  skill-only plugin releases.
+
+**Planner's calls.**
+- **Exposed skills:** only `skills/research-forge` plus thin workflow-command skills under
+  `adapters/skills/`. The 17 `research-forge-*-tdd` developer skills are never shipped. Manifests list
+  explicit skill paths, as Autowork's marketplace entry does.
+- **Invocation:** the `research-forge` methodology skill stays model-invocable (agents should reach for
+  it when research is needed); workflow-command skills are explicit-only
+  (`disable-model-invocation: true`, Codex `allow_implicit_invocation: false`).
+- **Typed tools per host:** Claude Code, Codex and Hermes register `rforge mcp serve` (stdio) from the
+  plugin once V-C3 lands. Pi registers extension tools that spawn `rforge <cmd> --json` with an argv
+  array (no shell) and return the parsed JSON, mirroring the MCP v1 tool set. This assumes Pi has no
+  built-in MCP client; V-E3 verifies that and switches Pi to MCP if one exists.
+- **Before MCP lands,** plugins ship skill + workflow commands only; Pi typed tools for offline commands
+  (`brief`, `compare`) can ship after V-C1.
+- **Versions:** every manifest version equals the rforge release version; the docs parity check (V-A1)
+  also asserts this and the skill's minimum rforge version.
+- **Engine install:** plugins never download or install binaries. The skill keeps pointing users to
+  `install.sh`; adapters report a clear "rforge missing / too old" error.
+- **Qualification split:** offline conformance and parity tests run in CI; per-host lifecycle checks
+  are live, opt-in, run per release with receipts.
+- **Autowork-integration benchmark** (does installing rforge improve Autowork-driven engineering
+  decisions?) is a proposal (V-B7) after the V-B6 pilot; it is not part of the 2.0 gate.
+
+**Anti-goals.** A plugin that alters host approvals/permissions/schedules; shipping developer TDD skills
+to end users; adapter-side research logic or adapter-only results; making Autowork a dependency.
+
 ## Owner answers (2026-10-19, follow-up)
 
 - **Threat model:** guard against accidental mislabeling only; no signing (signed log deferred).
