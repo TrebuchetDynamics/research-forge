@@ -843,18 +843,6 @@ Owner answers (2026-10-19):
 - Ownership: ResearchForge maintainer; Autowork runner may execute.
 - Touches: internal/report, internal/reviewpkg, internal/mcp
 
-- [ ] V-E1 — Skill-only plugin scaffolding
-- Status: open
-- Goal: RF-PACK — Ship passive native plugins for Claude Code, Codex, Pi and Hermes over the same engine.
-- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan) (Workstream E). Reference structure: Autowork's `.claude-plugin/`, `.codex-plugin/`, `.agents/plugins/marketplace.json`, `package.json` with `adapters/pi.mjs`, `plugin.yaml` and `docs/cross-host.md` at https://github.com/TrebuchetDynamics/autowork; never copy its Hermes `plugins/defaults.json` runtime defaults.
-- Scope: Claude Code plugin and marketplace listing explicit skill paths; Codex plugin and marketplace; Pi package (`package.json` with `pi.skills`/`pi.extensions`, `adapters/pi.mjs` registering no tools yet); Hermes `plugin.yaml` (`kind: standalone`, no `requires_plugins`, no defaults file; a minimal Python entry point mirroring Autowork's `__init__.py` is allowed if Hermes needs one, with a Python test). Names: plugin and marketplace `research-forge`; Pi commands prefixed `rforge_`. Expose only `skills/research-forge` (verify hosts accept a single-skill path; otherwise expose it via `adapters/skills/research-forge` as a relative symlink or a generated copy checked by the test). Manifest versions agree with each other; docs/release.md gains a step asserting they equal the release tag; the skill frontmatter declares `min_rforge_version` and its required capabilities (rule in V-E0). Write `docs/agent-install.md` with install/upgrade/remove per host; README points to it and keeps the curl path as the generic fallback; curl-install users are told to delete the old skill copy before installing the plugin.
-- Acceptance: an offline conformance test (Go, run by `make test`) checks that manifests parse, versions agree, exposed skills are exactly the allowed set (no `*-tdd`), and no manifest contains hooks, agents, settings, permission/approval keys, schedulers, autostart/background entries or install scripts; `adapters/pi.mjs` uses no `child_process` until V-E3.
-- Checks: go test ./internal/docs; make check
-- Dependencies: V-A1, V-E0.
-- Ownership: ResearchForge maintainer; Autowork runner may execute.
-- Touches: .claude-plugin, .codex-plugin, .agents/plugins, package.json, adapters, plugin.yaml, internal/docs, docs/agent-install.md, docs/release.md, README.md, skills/research-forge/SKILL.md
-- Resources: agent-docs — shared `skills/research-forge/SKILL.md`, `README.md` and `docs/agent-install.md`; tasks holding it run one at a time
-
 - [ ] V-E2 — Explicit workflow commands
 - Status: open
 - Goal: RF-PACK — Ship passive native plugins for Claude Code, Codex, Pi and Hermes over the same engine.
@@ -964,6 +952,14 @@ Owner answers (2026-10-19):
   - Opt-in live recording against owner-approved, redistribution-cleared evaluation sets was not run; recording was verified offline through the real connectors with an injected HTTP gateway. Initial qualifying adapters are OpenAlex and Crossref; unsupported adapters fail closed.
   Checks: Live qualification by an authorized person; offline evidence does not count.
   Dependencies: V-B3.
+  Status: open
+
+- [ ] V-E1-LIVE — Live checks for V-E1
+  Scope: Run the live checks the offline work for V-E1 left pending.
+  Acceptance: Each check passes on the real target:
+  - V-E5/V-E5-run: interactive install, upgrade, removal and research-session lifecycle qualification for all four hosts on the release version remains separate from these offline/package discovery checks.
+  Checks: Live qualification by an authorized person; offline evidence does not count.
+  Dependencies: V-E1.
   Status: open
 
 ## Backlog (not ready)
