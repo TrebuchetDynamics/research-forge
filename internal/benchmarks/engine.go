@@ -119,6 +119,11 @@ func RunEngine(ctx context.Context, o EngineOptions) (EngineResult, error) {
 	if len(report.Runs) == 0 {
 		return diagnostic("invalid_set")
 	}
+	if o.Record && report.Status == "complete" && len(report.Errors) > 0 {
+		// A capture with any source error (rate limit, outage, budget-exhausted provider)
+		// is not a lockable baseline: leave the approved manifest intact and publish nothing.
+		return diagnostic("capture_incomplete")
+	}
 	if o.Record && report.Status == "complete" {
 		idxHash := structuredHash(idx)
 		s.SnapshotsSHA256 = &idxHash

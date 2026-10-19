@@ -81,7 +81,10 @@ Lifecycle:
 3. V-B4-lock invokes opt-in `--record` on that approved package. A successful
    capture writes the snapshot bundle, sets its digest, changes state to `locked`
    and recomputes `set_checksum`. On failure, leave the approved manifest intact;
-   discard the incomplete bundle. Never overwrite a locked set in place.
+   discard the incomplete bundle. Never overwrite a locked set in place. A
+   capture in which any question ends in a `source_error` (for example HTTP 429
+   from an exhausted provider budget) is incomplete: it fails with
+   `capture_incomplete` and publishes nothing; retry once the provider allows it.
 4. Any change to a locked input (including gold, split, queries, rights, labels,
    snapshots or scoring settings) requires a new `set_id`, review and approval,
    and a new checksum/baseline. Old artifacts remain addressable. A schema change
