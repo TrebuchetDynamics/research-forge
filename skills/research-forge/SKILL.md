@@ -8,7 +8,7 @@ metadata:
 
 # rforge — Academic Research Skill
 
-Use this skill to conduct academic research with the `rforge` CLI. Works in any project — rforge is a standalone tool, not a dependency of your codebase.
+Use this skill to conduct academic research with `rforge` through CLI or MCP. Works in any project — rforge is a standalone tool, not a dependency of your codebase.
 
 Core principle: **retrieval-first, provenance-first, statistics-first, LLM-assisted**. Retrieve source metadata first, preserve exact query/source provenance, use auditable statistics where applicable, and never self-approve human review gates.
 
@@ -122,6 +122,41 @@ If the user declines installation, only use the explicitly labelled manual
 fallback below; never claim engine-verified provenance for that work.
 
 ---
+
+## Choose MCP or CLI
+
+MCP and CLI are equivalent interfaces to the same engine services, persistence,
+search budgets, provenance receipts, and human gates — not different research
+methods. Use registered typed MCP tools for supported operations; use CLI for
+shell scripts, hosts without MCP, and commands outside the MCP allowlist. The
+CLI examples below also describe the corresponding MCP workflow.
+
+| MCP tool | CLI equivalent |
+| --- | --- |
+| `search` | `rforge search batch --json` |
+| `job_status` | `rforge jobs status <id> --dir <dir> --json` |
+| `source_get` | `rforge paper <id> --json` |
+| `research_status` | `rforge brief <dir> --json` |
+| `compare` | `rforge compare <dirs...> --json` |
+| `evidence_retrieve` | `rforge --project <path> retrieve --query <query> --json` |
+
+For standalone registration, check `rforge capabilities --json --require mcp=1`
+and configure the client to launch `rforge` with args `["mcp", "serve"]` over
+stdio. No plugin is required. See [MCP client setup and tool arguments](https://github.com/TrebuchetDynamics/research-forge/blob/main/docs/cli.md#mcp-stdio-server).
+MCP is optional; lack of MCP support does not prevent CLI use after Step 0 passes.
+
+`search` returns `data.job_id` immediately, not completed results. Pass the same
+`dir` and ID to `job_status` until terminal, then inspect `data.job.result` and
+its artifact references, budget, coverage, failures and stop reason. Use
+`rforge jobs resume <id> --dir <dir>` for interrupted work; closing the MCP
+connection cancels active searches and preserves resumable checkpoints. MCP
+success envelopes are in `structuredContent` (also JSON text); tool errors are
+failures, not empty research results. Keep the same provenance and reporting
+rules whichever interface is used.
+
+MCP does not expose approval, claim acceptance, full-text acquisition, or export
+tools. Use CLI workflows for unsupported operations, and surface all human gates
+to the invoker — switching interfaces never grants approval.
 
 ## Quick-start routing
 
