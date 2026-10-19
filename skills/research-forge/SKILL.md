@@ -26,11 +26,43 @@ rforge citations build --research-dir research
 
 Cross-topic analysis: `rforge meta overlap --research-dir research [--min-topics 2]`
 
+Resolve and rank before deep reading:
+
+```sh
+# Resolve one paper by DOI, arXiv ID, OpenAlex ID, or title (merges OpenAlex +
+# Crossref + arXiv + Semantic Scholar + Unpaywall metadata in one shot)
+rforge paper 10.7717/peerj.4375
+rforge paper 2301.99999 "attention is all you need"
+
+# Decide what to read first: citation-weighted, recency-aware, OA-aware score
+rforge rank "mechanistic interpretability sparse autoencoders" \
+  --sources openalex,crossref,semantic-scholar --limit 20 --out rank.json
+
+# Boost rank with citation-graph prestige (run `citations expand` first)
+rforge citations expand --source openalex --paper <work-id> --direction both --out graph.json
+rforge rank "sparse autoencoders" --graph graph.json
+
+# Synthesize a one-page brief from a completed search dir
+rforge brief research/my-topic --out brief.md
+
+# Compare two search dirs: overlap table + shared vs unique gaps
+rforge compare research/topic-a research/topic-b --labels A,B --out comparison.md
+
+# When multiple topics are done, synthesize the whole corpus (Feynman `lit` analog):
+# consensus themes, cross-topic papers, open questions, screening status
+rforge lit --research-dir research --out research/synthesis
+
+# Keep per-paper notes in a project for later recall (Feynman `alpha annotate` analog)
+rforge note add --project <path> --paper <doi> --note "Key result"
+rforge note list --project <path>
+```
+
 For machine-readable command catalog: `rforge help --json`
 
 ---
 
 Before running searches, choose an output location and use Comprehensive depth unless the user explicitly asks quick/standard:
+
 - If inside a repo with `artifacts/`, use `artifacts/research/<topic-slug>/`.
 - If inside a repo without `artifacts/`, use `research/<topic-slug>/`.
 - If no clear project home exists, use `~/research/<topic-slug>/`.
@@ -56,13 +88,13 @@ If Go is not installed, tell the user:
 
 ## Quick-start routing
 
-| Goal | Entry point |
-|---|---|
-| Find papers on a topic | 3-command quickstart above, then Phase 2 — Discover for more depth |
-| Screen papers before downloading PDFs | Phase 4 — Analyze (screening before oa fetch) |
-| Study an open-source project | Phase 2 — Discover (OSS) |
-| Full systematic review | Phase 1 → 2 → 3 → 4 → 5 |
-| Save research notes or artifacts to a folder | Phase 5 — Save |
+| Goal                                         | Entry point                                                        |
+| -------------------------------------------- | ------------------------------------------------------------------ |
+| Find papers on a topic                       | 3-command quickstart above, then Phase 2 — Discover for more depth |
+| Screen papers before downloading PDFs        | Phase 4 — Analyze (screening before oa fetch)                      |
+| Study an open-source project                 | Phase 2 — Discover (OSS)                                           |
+| Full systematic review                       | Phase 1 → 2 → 3 → 4 → 5                                            |
+| Save research notes or artifacts to a folder | Phase 5 — Save                                                     |
 
 ---
 
@@ -115,10 +147,16 @@ rforge search batch --out <dir> --query "<query>" --sources scholarly-fast \
 # With a queries file (one query per line)
 rforge search batch --out <dir> --queries queries.txt --sources scholarly-fast --stats
 
-# Retry failed queries
-rforge search resume --dir <dir>
+# Sweeps checkpoint to batch-state.json after each (query, source) pair. If a
+# sweep is interrupted (timeout guard, Ctrl-C, killed process), the partial
+# results stay in the topic dir — re-run the same command with --resume to
+# complete never-run pairs and retry failed ones (exit 130/143 = interrupted).
+rforge search batch --out <dir> --queries queries.txt --sources scholarly-fast --resume --continue-on-error --stats
 
-# Show hit counts and library record count for a search dir
+# Retry only failed queries (legacy dirs without a checkpoint)
+rforge search resume --failures <dir>/failures.jsonl --out <dir> [--dry-run]
+
+# Show hit counts, library records, and checkpoint progress for a search dir
 rforge search stats --dir <dir>
 
 # Single-source search (prints results, does not save)
@@ -265,11 +303,13 @@ rforge screen progress --dir <topic-dir> --json   # machine-readable counts
 ```
 
 **After screening, fetch PDFs for included papers only:**
+
 ```sh
 rforge oa fetch --dir <topic-dir>
 ```
 
 **Project-based screening (requires --project):**
+
 ```sh
 rforge --project <path> screen configure
 rforge --project <path> screen decide --paper <id> --stage title_abstract --decision include|exclude|uncertain --reviewer <name>
@@ -341,6 +381,7 @@ rforge vault build --research-dir <research-dir> --out <vault-dir>
 ```
 
 The Obsidian vault output:
+
 - `papers/<slug>.md` — per-paper notes with YAML frontmatter (title, authors, year, doi, topics) and `[[wikilinks]]` to every topic the paper appears in
 - `<topic>.md` — topic index notes listing all papers with `[[papers/slug|Title]]` links
 - `index.md` — main dashboard with all topics, paper counts, and cross-topic papers highlighted
@@ -385,8 +426,12 @@ Every run must write or append `provenance.json` before finishing. Capture depth
   "sources": ["openalex", "arxiv"],
   "queries": ["<exact query string used>"],
   "timestamp": "<ISO 8601>",
-  "rforge_version": {"version": "<version or not available>", "commit": "<commit or unknown>", "date": "<build date or unknown>"},
-  "search_stats": {"openalex": 0, "arxiv": 0, "total_unique_dois": 0},
+  "rforge_version": {
+    "version": "<version or not available>",
+    "commit": "<commit or unknown>",
+    "date": "<build date or unknown>"
+  },
+  "search_stats": { "openalex": 0, "arxiv": 0, "total_unique_dois": 0 },
   "citation_expand_attempted": ["<paper id or DOI>"],
   "citation_expand_succeeded": ["<paper id or DOI>"],
   "outputs": ["<relative paths to all saved files>"],
@@ -401,6 +446,7 @@ If `rforge` is not available, write this file manually. A run without `provenanc
 ## Verification gate
 
 Before declaring research complete, verify:
+
 - `rforge version` was run or marked unavailable in provenance.
 - Every planned source/query has a saved result file, batch manifest, or explicit error note.
 - Source coverage stats were run and recorded.

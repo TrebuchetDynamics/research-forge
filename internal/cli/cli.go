@@ -40,7 +40,7 @@ var (
 	Date    = "unknown"
 )
 
-var topLevelCommands = []string{"version", "decisions", "benchmark", "automation", "completion", "forge", "project", "doctor", "service", "library", "search", "citations", "oa", "duplicate", "import", "export", "oss", "pdf", "parse", "index", "knowledge", "graph", "retrieve", "research", "protocol", "screen", "prisma", "extraction", "extract", "evidence", "analysis", "report", "package", "archive", "ui", "watch", "inbox", "fetch", "provenance", "journal", "goal", "meta"}
+var topLevelCommands = []string{"version", "decisions", "benchmark", "automation", "completion", "forge", "project", "doctor", "service", "library", "search", "citations", "oa", "duplicate", "import", "export", "oss", "pdf", "parse", "index", "knowledge", "graph", "retrieve", "research", "protocol", "screen", "prisma", "extraction", "extract", "evidence", "analysis", "report", "package", "archive", "ui", "watch", "inbox", "fetch", "provenance", "journal", "goal", "meta", "paper", "rank", "brief", "compare", "lit", "note", "history", "replicate", "draft"}
 
 type globalOptions struct {
 	JSON     bool
@@ -157,6 +157,24 @@ func Execute(args []string, stdout, stderr io.Writer) int {
 		return executeVault(remaining[1:], stdout, stderr, opts)
 	case "obsidian":
 		return executeObsidian(remaining[1:], stdout, stderr, opts)
+	case "paper":
+		return executePaper(remaining[1:], stdout, stderr, opts)
+	case "rank":
+		return executeRank(remaining[1:], stdout, stderr, opts)
+	case "brief":
+		return executeBrief(remaining[1:], stdout, stderr, opts)
+	case "compare":
+		return executeCompare(remaining[1:], stdout, stderr, opts)
+	case "lit":
+		return executeLit(remaining[1:], stdout, stderr, opts)
+	case "note":
+		return executeNote(remaining[1:], stdout, stderr, opts)
+	case "history":
+		return executeHistory(remaining[1:], stdout, stderr, opts)
+	case "replicate":
+		return executeReplicate(remaining[1:], stdout, stderr, opts)
+	case "draft":
+		return executeDraft(remaining[1:], stdout, stderr, opts)
 	default:
 		return writeError(stdout, stderr, opts, 2, "unknown_command", fmt.Sprintf("unknown command %q", remaining[0]))
 	}
@@ -3913,8 +3931,8 @@ func helpSections() []helpSection {
 			Description: "Core workflow — no project setup needed. Run these three commands to search, fetch, and cite.",
 			Commands: []helpCommand{
 				{
-					Usage:       "rforge search batch --out <dir> --query <q> --sources openalex,arxiv [--queries <file>] [--limit N] [--continue-on-error]",
-					Description: "Search papers across sources and write results.jsonl + manifest to <dir>. Use --queries for multi-query batch. Sources preset: openalex,arxiv (fast), scholarly-fast, all (44 sources), biomedical, preprints, open.",
+					Usage:       "rforge search batch --out <dir> --query <q> --sources openalex,arxiv [--queries <file>] [--limit N] [--continue-on-error] [--resume]",
+					Description: "Search papers across sources and write results.jsonl + manifest to <dir>. Use --queries for multi-query batch. Sources preset: openalex,arxiv (fast), scholarly-fast, all (44 sources), biomedical, preprints, open. Sweeps checkpoint to batch-state.json after each pair; add --resume to continue an interrupted sweep (skips completed pairs, retries failed ones).",
 				},
 				{
 					Usage:       "rforge oa fetch --dir <dir>",
@@ -3931,16 +3949,16 @@ func helpSections() []helpSection {
 			Description: "Search academic sources and manage results.",
 			Commands: []helpCommand{
 				{
-					Usage:       "rforge search batch --out <dir> --query <q> --sources <preset|list> [--queries <file>] [--limit N] [--continue-on-error] [--stats]",
-					Description: "Batch search: one or more queries across one or more sources. Writes results.jsonl, raw/, manifest.json, and optionally search-stats.txt.",
+					Usage:       "rforge search batch --out <dir> --query <q> --sources <preset|list> [--queries <file>] [--limit N] [--continue-on-error] [--stats] [--resume]",
+					Description: "Batch search: one or more queries across one or more sources. Writes results.jsonl, raw/, manifest.json, batch-state.json checkpoint, and optionally search-stats.txt.",
 				},
 				{
 					Usage:       "rforge search stats --dir <dir>",
-					Description: "Show hit counts per source and library record count for a search output dir.",
+					Description: "Show hit counts per source, library record count, and batch checkpoint progress (completed/failed/pending pairs, plus a resume hint) for a search output dir.",
 				},
 				{
-					Usage:       "rforge search resume --dir <dir>",
-					Description: "Retry any failed queries recorded in <dir>/failures.jsonl.",
+					Usage:       "rforge search resume --failures <dir>/failures.jsonl --out <dir> [--dry-run]",
+					Description: "Retry failed queries recorded in failures.jsonl. For interrupted sweeps (killed or timed-out batches), prefer search batch --resume, which also completes never-run queries.",
 				},
 				{
 					Usage:       "rforge search --source <source> --query <q> [--from-year YYYY] [--to-year YYYY] [--open-access true|false]",
@@ -3990,11 +4008,47 @@ func helpSections() []helpSection {
 		},
 		{
 			Name:        "meta",
-			Description: "Cross-topic analysis and research synthesis.",
+			Description: "Cross-topic analysis, synthesis, and research intelligence.",
 			Commands: []helpCommand{
 				{
 					Usage:       "rforge meta overlap --research-dir <dir> [--min-topics N]",
 					Description: "Find papers appearing in multiple topic subdirs. Use --min-topics 2 to see cross-topic core cluster.",
+				},
+				{
+					Usage:       "rforge lit --research-dir <dir> [--out <dir>]",
+					Description: "Deterministic cross-topic literature synthesis: consensus themes, cross-topic papers, open questions, screening status. Writes LIT.md + provenance.",
+				},
+				{
+					Usage:       "rforge paper <id> [<id>...] [--file <ids.txt>] [--out <file>]",
+					Description: "Resolve one or more papers by DOI, arXiv ID, OpenAlex ID, URL, or title — merges metadata from 5 sources.",
+				},
+				{
+					Usage:       "rforge rank <topic> [--sources openalex,crossref,semantic-scholar] [--limit N] [--out <file>] [--graph <graph.json>]",
+					Description: "Score papers by citation count, recency, OA bonus, and citation-graph prestige. Decide what to read first.",
+				},
+				{
+					Usage:       "rforge brief <search-dir> [--out <brief.md>]",
+					Description: "One-page research brief from a completed search dir: summary, top-papers table, gaps, next steps.",
+				},
+				{
+					Usage:       "rforge compare <dir1> <dir2> [<dir3>...] [--out <diff.md>] [--labels l1,l2,...]",
+					Description: "Overlap matrix across search directories: per-dir presence, shared vs unique counts, gap analysis.",
+				},
+				{
+					Usage:       "rforge history search <term> --research-dir <dir> [--limit N] [--out <file>]",
+					Description: "Search across past research sessions for matching papers by title, abstract, or ID.",
+				},
+				{
+					Usage:       "rforge replicate <doi|arxiv-id> [--out <plan.md>]",
+					Description: "Generate a deterministic replication plan from a resolved paper: OA status, code repos, method summary, checklist.",
+				},
+				{
+					Usage:       "rforge note add|list|clear --project <path> [--paper <id>]",
+					Description: "Per-paper annotations persisted in data/paper-notes.json for recall across sessions.",
+				},
+				{
+					Usage:       "rforge draft <doi|arxiv-id> [--out <draft.md>]",
+					Description: "Generate a structured research-note draft from a resolved paper or search directory (ID, OA, method signals, claim tables).",
 				},
 			},
 		},

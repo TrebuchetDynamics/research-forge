@@ -3,6 +3,7 @@ package sources
 import (
 	"context"
 	"encoding/xml"
+	"fmt"
 	"net/url"
 	"strconv"
 	"strings"
@@ -20,6 +21,41 @@ func NewArXivConnector(httpClient HTTPClient) ArXivConnector {
 
 // Name returns the connector source name.
 func (ArXivConnector) Name() string { return "arxiv" }
+
+// LookupPaperByArXivID resolves one arXiv paper by its arXiv ID.
+func (c ArXivConnector) LookupPaperByArXivID(ctx context.Context, id string) (SourceRecord, string, error) {
+	id = normalizeArXivID(id)
+	if id == "" {
+		return SourceRecord{}, "", fmt.Errorf("arxiv id is required")
+	}
+	params := map[string]string{"id_list": id, "max_results": "1"}
+	body, err := c.http.Get(ctx, "/api/query", params)
+	if err != nil {
+		return SourceRecord{}, "", err
+	}
+	var feed arxivFeed
+	if err := xml.Unmarshal(body, &feed); err != nil {
+		return SourceRecord{}, "", err
+	}
+	if len(feed.Entries) == 0 {
+		return SourceRecord{}, "", fmt.Errorf("arxiv: no paper found for id %s", id)
+	}
+	entry := feed.Entries[0]
+	normID := normalizeArXivID(entry.ID)
+	return SourceRecord{
+		Source:   "arxiv",
+		SourceID: normID,
+		Title:    compactSpace(entry.Title),
+		Abstract: compactSpace(entry.Summary),
+		Year:     yearFromPublished(entry.Published),
+		URLs:     arxivLinks(entry),
+		Identifiers: Identifiers{
+			ArXivID: normID,
+			DOI:     normalizeSourceDOI(entry.DOI),
+		},
+		Metadata: arxivMetadata(entry),
+	}, rawArXivRef(params), nil
+}
 
 // Search queries arXiv and normalizes entries into SourceRecords.
 func (c ArXivConnector) Search(ctx context.Context, query SourceQuery) (SourceResponse, error) {
