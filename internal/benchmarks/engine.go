@@ -18,7 +18,7 @@ import (
 
 // ProtocolSHA256 is the exact-byte digest of docs/benchmark/spec.md v1.
 // Changes to that contract require regenerating this fingerprint.
-const ProtocolSHA256 = "67d128f87b5f9d912b321080f8a3b47448aa93bf9df2a6594e265344cf0eca31"
+const ProtocolSHA256 = "cb3e2eb801d09108cd3f689d9ca855ec98e94e35849c531c48d88f756708dd11"
 
 type EngineOptions struct {
 	SetDir, Split, Version, Revision string
@@ -27,8 +27,10 @@ type EngineOptions struct {
 	RecordTransport http.RoundTripper
 }
 type EngineResult struct {
-	Report []byte
-	Audit  []byte
+	Report           []byte
+	Audit            []byte
+	DiagnosticsDir   string
+	DiagnosticsError error
 }
 type QuestionAudit struct {
 	QuestionID string                 `json:"question_id"`
@@ -38,7 +40,22 @@ type QuestionAudit struct {
 
 // RunEngine runs only locked plans through actual connectors and the production
 // batch deduper. Replay has no live transport, source cache, workspace or LLM.
-func RunEngine(ctx context.Context, o EngineOptions) (EngineResult, error) {
+func RunEngine(ctx context.Context, o EngineOptions) (result EngineResult, runErr error) {
+	var idx SnapshotIndex
+	bodies := map[string][]byte{}
+	failures := []CaptureFailure{}
+	defer func() {
+		if o.Record && runErr != nil {
+			if len(failures) == 0 {
+				failures = append(failures, CaptureFailure{Check: runErr.Error(), Why: "capture failed before a provider call or during publication"})
+			}
+			result.DiagnosticsDir, result.DiagnosticsError = writeCaptureDiagnostics(o.SetDir, idx, bodies, failures, result.Report, result.Audit)
+			// Failed-capture audits belong only in the safe diagnostics bundle.
+			// In particular, the CLI must not fall back to TMPDIR for an audit
+			// after that directory was rejected as inside the evaluated set.
+			result.Audit = nil
+		}
+	}()
 	diagnostic := func(code string) (EngineResult, error) {
 		b, _ := CanonicalJSON(map[string]string{"error": code})
 		return EngineResult{Report: b}, invalid(code)
@@ -59,8 +76,6 @@ func RunEngine(ctx context.Context, o EngineOptions) (EngineResult, error) {
 	if e != nil {
 		return diagnostic(e.Error())
 	}
-	var idx SnapshotIndex
-	bodies := map[string][]byte{}
 	if !o.Record {
 		idx, bodies, e = loadIndex(o.SetDir, s)
 		if e != nil {
@@ -100,9 +115,11 @@ func RunEngine(ctx context.Context, o EngineOptions) (EngineResult, error) {
 			sess.start, _ = time.Parse(time.RFC3339, sess.snap.StartedAt)
 		}
 		row, qa, codes := executeQuestion(ctx, sess, s.K, reviews)
+		failures = append(failures, sess.failures...)
 		if o.Record {
 			sess.snap.WallClockMS = sess.elapsed
 			sess.snap.DateExclusions = sess.exclusions
+			sess.snap.RecordExclusions = sess.recordExclusions
 			idx.Questions = append(idx.Questions, sess.snap)
 		}
 		for _, code := range codes {
@@ -135,7 +152,8 @@ func RunEngine(ctx context.Context, o EngineOptions) (EngineResult, error) {
 		c, _ := canonical(v)
 		s.SetChecksum = digest(c)
 		if e := publishCapture(o.SetDir, s, idx, bodies); e != nil {
-			return diagnostic("snapshot_mismatch")
+			failures = append(failures, CaptureFailure{Check: "capture_incomplete", Why: sanitizeText("publication: " + e.Error())})
+			return diagnostic("capture_incomplete")
 		}
 		report.SetChecksum = s.SetChecksum
 		report.SnapshotsSHA256 = s.SnapshotsSHA256
@@ -160,7 +178,7 @@ func RunEngine(ctx context.Context, o EngineOptions) (EngineResult, error) {
 		return diagnostic("protocol_violation")
 	}
 	a, _ := CanonicalJSON(audit)
-	result := EngineResult{Report: b, Audit: a}
+	result = EngineResult{Report: b, Audit: a}
 	if report.Status == "invalid" {
 		return result, invalid("protocol_violation")
 	}
@@ -191,6 +209,7 @@ func executeQuestion(ctx context.Context, s *session, ks []int, reviews []Review
 	rawByID := map[string]sources.SourceRecord{}
 	papers := []library.PaperRecord{}
 	excluded := map[string]string{}
+	recordExcluded := map[string]string{}
 	for i, call := range q.SearchPlan {
 		s.call = i + 1
 		if e := s.tick("before_call", 0); e != nil {
@@ -261,6 +280,7 @@ func executeQuestion(ctx context.Context, s *session, ks []int, reviews []Review
 			}
 			if !s.stopped || failedAttempt {
 				add("source_error")
+				s.trace("source_error", e.Error(), nil, s.exchangeIndex)
 			}
 		}
 		for _, raw := range response.Records {
@@ -271,8 +291,10 @@ func executeQuestion(ctx context.Context, s *session, ks []int, reviews []Review
 			}
 			id := recordID(raw)
 			if id == "" {
-				s.fail(invalid("protocol_violation"))
-				break
+				// With no native ID or aliases, hash the projected raw record
+				// solely to identify this exclusion, never a scored entity.
+				recordExcluded[structuredHash(raw)] = "missing_identity"
+				continue
 			}
 			reason := dateReason(raw, q.Review.SearchDate)
 			if reason != "" {
@@ -282,12 +304,12 @@ func executeQuestion(ctx context.Context, s *session, ks []int, reviews []Review
 			if _, ok := rawByID[id]; ok {
 				continue
 			}
-			rawByID[id] = raw
-			normalized, _ := sources.PaperRecords(sources.SourceResponse{Records: []sources.SourceRecord{raw}, RawRef: response.RawRef})
-			if len(normalized) != 1 {
-				s.fail(invalid("protocol_violation"))
-				break
+			normalized, err := sources.PaperRecords(sources.SourceResponse{Records: []sources.SourceRecord{raw}, RawRef: response.RawRef})
+			if err != nil || len(normalized) != 1 {
+				recordExcluded[id] = "normalization_failed"
+				continue
 			}
+			rawByID[id] = raw
 			// The production deduper preserves SourceRefs, so this private tag tracks
 			// membership even when the merged PaperRecord drops a competing alias.
 			normalized[0].SourceRefs[0].Metadata = map[string]string{"benchmark_record_id": id}
@@ -327,6 +349,10 @@ func executeQuestion(ctx context.Context, s *session, ks []int, reviews []Review
 		s.exclusions = append(s.exclusions, DateExclusion{RecordID: id, Reason: reason})
 	}
 	sort.Slice(s.exclusions, func(i, j int) bool { return s.exclusions[i].RecordID < s.exclusions[j].RecordID })
+	for id, reason := range recordExcluded {
+		s.recordExclusions = append(s.recordExclusions, DateExclusion{RecordID: id, Reason: reason})
+	}
+	sort.Slice(s.recordExclusions, func(i, j int) bool { return s.recordExclusions[i].RecordID < s.recordExclusions[j].RecordID })
 	reason := "completed"
 	if s.stopped {
 		reason = "budget_exhausted"
@@ -342,7 +368,7 @@ func executeQuestion(ctx context.Context, s *session, ks []int, reviews []Review
 				s.fail(invalid("snapshot_mismatch"))
 			}
 		}
-		if reason != s.snap.StopReason || s.tickIndex != len(s.snap.Timing) || s.exchangeIndex != len(s.snap.Exchanges) || structuredHash(s.exclusions) != structuredHash(s.snap.DateExclusions) || s.elapsed != s.snap.WallClockMS {
+		if reason != s.snap.StopReason || s.tickIndex != len(s.snap.Timing) || s.exchangeIndex != len(s.snap.Exchanges) || structuredHash(s.exclusions) != structuredHash(s.snap.DateExclusions) || structuredHash(s.recordExclusions) != structuredHash(s.snap.RecordExclusions) || s.elapsed != s.snap.WallClockMS {
 			s.fail(invalid("snapshot_mismatch"))
 		}
 	}

@@ -21,13 +21,16 @@ func (f fixtureTransport) RoundTrip(r *http.Request) (*http.Response, error) { r
 // and must leave approval untouched when a forbidden review is encountered.
 func TestEngineRecordPublication(t *testing.T) {
 	for _, tc := range []struct {
-		name                                      string
-		leak, redirect, budget, urlOnly, crossref bool
-	}{{name: "capture"}, {name: "rollback leak", leak: true}, {name: "redirect and retry", redirect: true}, {name: "request budget", budget: true}, {name: "URL-only identity", urlOnly: true}, {name: "Crossref precise online date and cursor", crossref: true}} {
+		name                                                  string
+		leak, redirect, budget, urlOnly, crossref, unsafeTemp bool
+	}{{name: "capture"}, {name: "rollback leak", leak: true}, {name: "rollback leak with unsafe TMPDIR", leak: true, unsafeTemp: true}, {name: "redirect and retry", redirect: true}, {name: "request budget", budget: true}, {name: "URL-only identity", urlOnly: true}, {name: "Crossref precise online date and cursor", crossref: true}} {
 		t.Run(tc.name, func(t *testing.T) {
 			leak := tc.leak
 			attempt := 0
 			dir := t.TempDir()
+			if tc.unsafeTemp {
+				t.Setenv("TMPDIR", dir)
+			}
 			for _, p := range []string{"set.json", "review.md"} {
 				b, e := os.ReadFile(filepath.Join("testdata/fixture-tiny", p))
 				if e != nil {
@@ -100,6 +103,12 @@ func TestEngineRecordPublication(t *testing.T) {
 			})}
 			got, e := RunEngine(context.Background(), o)
 			if leak {
+				if len(got.Audit) != 0 {
+					t.Fatal("failed capture exposes audit for CLI to write outside diagnostics")
+				}
+				if tc.unsafeTemp && (got.DiagnosticsDir != "" || got.DiagnosticsError == nil) {
+					t.Fatal("unsafe diagnostics TMPDIR accepted")
+				}
 				after, _ := os.ReadFile(filepath.Join(dir, "set.json"))
 				if e == nil || !bytes.Contains(got.Report, []byte("reference_review_leak")) || !bytes.Equal(after, approved) {
 					t.Fatalf("leak published: %v %s", e, got.Report)

@@ -47,11 +47,22 @@ func (c EuropePMCConnector) Search(ctx context.Context, query SourceQuery) (Sour
 	}
 	records := make([]SourceRecord, 0, len(payload.ResultList.Result))
 	for _, item := range payload.ResultList.Result {
-		pmid := strings.TrimSpace(firstNonEmpty(item.PMID, item.ID))
+		sourceID := strings.TrimSpace(firstNonEmpty(item.ID, item.PMID))
+		// Only MED's native ID is a PubMed identifier. Older responses may
+		// omit source but provide an explicit pmid field.
+		pmid := strings.TrimSpace(item.PMID)
+		if strings.EqualFold(strings.TrimSpace(item.Source), "MED") {
+			pmid = sourceID
+		} else if strings.TrimSpace(item.Source) != "" {
+			pmid = ""
+		}
+		if strings.IndexFunc(pmid, func(r rune) bool { return r < '0' || r > '9' }) >= 0 {
+			pmid = ""
+		}
 		fullTextURLs := item.FullTextURLList.URLs()
 		records = append(records, SourceRecord{
 			Source:   "europepmc",
-			SourceID: pmid,
+			SourceID: sourceID,
 			Title:    strings.TrimSpace(item.Title),
 			Identifiers: Identifiers{
 				DOI:   normalizeSourceDOI(item.DOI),
@@ -84,6 +95,7 @@ type europePMCSearchResponse struct {
 }
 
 type europePMCResult struct {
+	Source                    string `json:"source"`
 	ID                        string `json:"id"`
 	PMID                      string `json:"pmid"`
 	PMCID                     string `json:"pmcid"`

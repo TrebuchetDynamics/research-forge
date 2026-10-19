@@ -104,6 +104,7 @@ type SnapshotQuestion struct {
 	Timing           []Timing          `json:"timing"`
 	StopReason       string            `json:"stop_reason"`
 	DateExclusions   []DateExclusion   `json:"date_exclusions"`
+	RecordExclusions []DateExclusion   `json:"record_exclusions,omitempty"`
 	Identities       map[string]string `json:"identities"`
 	IdentityEvidence map[string]string `json:"identity_evidence"`
 	Exchanges        []Exchange        `json:"exchanges"`
