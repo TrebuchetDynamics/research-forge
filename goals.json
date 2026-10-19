@@ -224,17 +224,6 @@
     },
     {
       "depends_on": [
-        "V-C1",
-        "V-C2"
-      ],
-      "goal": "RF-MCP",
-      "id": "V-C3",
-      "section": "Next",
-      "status": "open",
-      "title": "`rforge mcp serve` over stdio"
-    },
-    {
-      "depends_on": [
         "V-C3"
       ],
       "goal": "RF-MCP",
@@ -503,6 +492,17 @@
       "section": "Done",
       "status": "done",
       "title": "Persistent job service"
+    },
+    {
+      "depends_on": [
+        "V-C1",
+        "V-C2"
+      ],
+      "goal": "RF-MCP",
+      "id": "V-C3",
+      "section": "Done",
+      "status": "done",
+      "title": "`rforge mcp serve` over stdio"
     },
     {
       "depends_on": [

@@ -467,3 +467,22 @@ Source section: Next
 - Ownership: ResearchForge maintainer; Autowork runner may execute.
 - Touches: internal/jobs, internal/search, internal/cli
 - Resources: cli-surface — shared `internal/cli/cli.go` command table/help and `docs/cli.md`; tasks holding it run one at a time (2026-10-19: parallel edits there held V-A2 and V-E0)
+
+
+<!-- archived from TODO.md -->
+
+Source section: Next
+
+<a id="v-c3"></a>
+
+- [x] V-C3 — `rforge mcp serve` over stdio
+- Status: done
+- Goal: RF-MCP — Expose the engine through a thin MCP adapter over shared services.
+- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan) (Planner's calls: MCP v1).
+- Scope: official Go MCP SDK (`github.com/modelcontextprotocol/go-sdk`). v1 tools: `search` (job-backed, returns a job ID), `job_status`, `source_get` (`sources.ResolvePaper`), `research_status` (brief), `compare`, `evidence_retrieve` (existing retrieve service). No approval, claim-acceptance or export tools. Responses are concise structured JSON with file references, not raw documents. The server does no work until a tool is called.
+- Acceptance: a parity test per tool asserts the MCP result equals the CLI `--json` output on the same fixture; for `search`, the completed job's result and manifest equal `search batch --json` on the same snapshot fixture.
+- Checks: go test ./internal/mcp ./internal/cli; make check
+- Dependencies: V-C1, V-C2.
+- Ownership: ResearchForge maintainer; Autowork runner may execute.
+- Touches: internal/mcp, cmd/rforge, internal/cli/cli.go, go.mod, go.sum, docs/cli.md
+- Resources: cli-surface — shared `internal/cli/cli.go` command table/help and `docs/cli.md`; tasks holding it run one at a time (2026-10-19: parallel edits there held V-A2 and V-E0)
