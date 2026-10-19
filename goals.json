@@ -189,16 +189,6 @@
       "depends_on": [
         "V0-1"
       ],
-      "goal": "RF-V0",
-      "id": "V0-2",
-      "section": "Now",
-      "status": "open",
-      "title": "Harden the new workflow commands"
-    },
-    {
-      "depends_on": [
-        "V0-1"
-      ],
       "goal": "RF-AGENT",
       "id": "V-A2",
       "section": "Next",
@@ -482,6 +472,16 @@
       "section": "Done",
       "status": "done",
       "title": "Land the in-progress workflow commands"
+    },
+    {
+      "depends_on": [
+        "V0-1"
+      ],
+      "goal": "RF-V0",
+      "id": "V0-2",
+      "section": "Done",
+      "status": "done",
+      "title": "Harden the new workflow commands"
     },
     {
       "depends_on": [],

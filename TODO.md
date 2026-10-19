@@ -747,17 +747,6 @@ Owner answers (2026-10-19):
 
 ## Now
 
-- [ ] V0-2 — Harden the new workflow commands
-- Status: open
-- Goal: RF-V0 — Land and harden the in-progress research commands.
-- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan) (Evidence: in-progress command findings).
-- Scope: `rank --out` writes the full ranked list and never overwrites an existing `provenance.json` (write rank provenance as a validator-passing record or a provenance event; surface write errors instead of discarding them); the Unpaywall contact comes from config/env instead of the hard-coded `rforge-resolver@local`; drop "deterministic" from `replicate`/`lit` help unless timestamps are injectable and outputs reproducible; the new commands record `recordCLICommand` events when run with `--project`; add CLI tests for `rank`, `draft` and `paper` and a real offline `replicate` test using an `httptest` server.
-- Acceptance: a rank run into a directory that already holds `provenance.json` leaves it byte-identical and writes all ranked records to `--out`; `rforge provenance validate` passes on any provenance file `rank` writes; the resolver sends the configured contact; new tests fail before the fix and pass after.
-- Checks: go test ./internal/cli ./internal/sources; make check
-- Dependencies: V0-1.
-- Ownership: ResearchForge maintainer; Autowork runner may execute.
-- Touches: internal/cli/rank_command.go, internal/cli/draft_command.go, internal/cli/paper_command.go, internal/cli/lit_command.go, internal/cli/history_replicate.go, internal/sources/paper_resolver.go, internal/cli/rank_draft_paper_test.go, internal/cli/history_test.go, internal/sources/paper_resolver_test.go, docs/cli.md
-
 - [ ] V-B1 — Research-quality benchmark specification
 - Status: open
 - Goal: RF-BENCH — Measure research quality against held-out ground truth.
