@@ -981,7 +981,7 @@ Generated from `goals.json` by `goals.py render`. `met` requires an executed, pa
 | RF-AGENT: Make the agent contract correct: install docs, search depth and provenance levels | met | Executed check: pass ([V-A4](TODO.archive.md#v-a4)) | — |
 | RF-BENCH: Measure research quality against held-out ground truth | unmet | — | V-B10, V-B11, V-B12, V-B3-LIVE, V-B4-LIVE, V-B4-lock, V-B5, V-B6-LIVE, V-B6-run, V-B8, V-B9 |
 | RF-MCP: Expose the engine through a thin MCP adapter over shared services | unmet | — | V-C2-LIVE |
-| RF-CLAIMS: Verify claims against stored evidence with separate facets | unmet | — | — |
+| RF-CLAIMS: Verify claims against stored evidence with separate facets | met | Executed check: pass ([V-D4](TODO.archive.md#v-d4)) | — |
 | RF-PACK: Ship passive native plugins for Claude Code, Codex, Pi and Hermes over the same engine | unmet | Executed check: pass ([V-E2](TODO.archive.md#v-e2)) | V-E1-LIVE, V-E3, V-E4, V-E5, V-E5-run |
 | RF-RELEASE: Release ResearchForge 2.0 only on measured improvement and cross-host parity | unmet | — | V-R1, V-R2 |
 
