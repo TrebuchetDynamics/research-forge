@@ -47,14 +47,10 @@ func BuildInventoryRoadmapReport(manifestPath, todoPath string) (InventoryRoadma
 	for _, entry := range manifest.Entries {
 		slice := InventoryRoadmapSlice{ID: entry.ID, Name: entry.Name, Note: entry.Note, NextSlice: entry.NextSlice}
 		report.Areas[entry.Area] = append(report.Areas[entry.Area], slice)
+		report.SuggestedSlices = append(report.SuggestedSlices, roadmapSuggestionsForEntry(entry)...)
 		note := filepath.ToSlash(entry.Note)
 		referenced[note] = true
-		covered := todoReferencesInventoryNote(todo, note)
-		if nextSlice := strings.TrimSpace(entry.NextSlice); nextSlice != "" {
-			covered = covered || strings.Contains(todo, nextSlice)
-		}
-		if !covered {
-			report.SuggestedSlices = append(report.SuggestedSlices, roadmapSuggestionsForEntry(entry)...)
+		if note != "" && !strings.Contains(todo, note) && !strings.Contains(todo, entry.NextSlice) {
 			report.CoverageGaps = append(report.CoverageGaps, fmt.Sprintf("%s: nextSlice not covered by TODO.md", note))
 		}
 	}
@@ -86,28 +82,6 @@ func BuildInventoryRoadmapReport(manifestPath, todoPath string) (InventoryRoadma
 	})
 	report.Markdown = inventoryRoadmapMarkdown(report)
 	return report, nil
-}
-
-func todoReferencesInventoryNote(todo, note string) bool {
-	if note == "" {
-		return false
-	}
-	if strings.Contains(todo, note) {
-		return true
-	}
-	stem := strings.TrimSuffix(filepath.Base(note), filepath.Ext(note))
-	for _, tail := range strings.Split(todo, "opensource/inventory/{")[1:] {
-		end := strings.Index(tail, "}.md")
-		if end < 0 {
-			continue
-		}
-		for _, candidate := range strings.Split(tail[:end], ",") {
-			if strings.TrimSpace(candidate) == stem {
-				return true
-			}
-		}
-	}
-	return false
 }
 
 func roadmapSuggestionsForEntry(entry InventoryEntry) []InventoryRoadmapImplementationSlice {
