@@ -291,6 +291,34 @@ Additional validation, mandatory even if the schema library ignores `format`:
   MUST start `fixture-` and reports MUST set `purpose: "fixture"`. Pilot sets
   have `purpose: "evaluation"` in reports and meet the counts in section 2.1.
 
+### 2.4 Qualified recording sources
+
+The engine supports these date-capped sources; other adapters fail
+`date_cap_unenforceable`. Each call supplies the cap in `filters.filter`:
+
+| Source | Accepted cap syntax (inclusive) |
+| --- | --- |
+| `openalex` | `to_publication_date:YYYY-MM-DD` (in its comma-separated filter) |
+| `crossref` | `until-pub-date:YYYY-MM-DD` (in its comma-separated filter) |
+| `europepmc` | Exactly `FIRST_PDATE:[* TO YYYY-MM-DD]` |
+
+The Europe PMC range must contain a valid day no later than `search_date`;
+missing caps, duplicate ranges or additional expressions in the filter are
+rejected. The connector sends `(terms) AND FIRST_PDATE:[* TO YYYY-MM-DD]` in
+Europe PMC's `query` parameter, requesting `resultType=core` and `format=json`.
+It sends `page_cursor` as `cursorMark` (empty starts at `*`) and exposes
+`nextCursorMark`; each subsequent page remains an explicit capped plan call.
+Raw `firstPublicationDate`, `electronicPublicationDate` and
+`journalInfo.printPublicationDate` retain their precision in
+`Metadata["publication_dates"]` for the independent date guard. Captures preserve
+these fields, PMID/PMCID/DOI and cursor metadata, but omit abstracts/full text.
+No Europe PMC API key is required, and benchmark recording need not use OpenAlex.
+
+Europe PMC uses the shared, locked HTTP policy in section 4.3, including
+per-attempt `request_delay_ms`, 429/5xx retries and `Retry-After` handling, with no
+adapter-specific retry loop. Curators must set the delay for live captures to
+respect the provider's current [service guidance](https://europepmc.org/RestfulWebService).
+
 ## 3. Leakage controls and access separation
 
 1. Curators/scorers may read the full package. Agents and query planners receive

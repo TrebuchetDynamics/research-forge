@@ -28,7 +28,15 @@ func (c EuropePMCConnector) Search(ctx context.Context, query SourceQuery) (Sour
 	if limit <= 0 {
 		limit = 25
 	}
-	params := map[string]string{"query": query.Terms, "pageSize": strconv.Itoa(limit), "format": "json"}
+	terms := query.Terms
+	if filter := strings.TrimSpace(query.Filters["filter"]); filter != "" {
+		terms = "(" + terms + ") AND " + filter
+	}
+	cursor := query.PageCursor
+	if cursor == "" {
+		cursor = "*"
+	}
+	params := map[string]string{"query": terms, "pageSize": strconv.Itoa(limit), "format": "json", "resultType": "core", "cursorMark": cursor}
 	body, err := c.http.Get(ctx, "/webservices/rest/search", params)
 	if err != nil {
 		return SourceResponse{}, err
@@ -52,37 +60,47 @@ func (c EuropePMCConnector) Search(ctx context.Context, query SourceQuery) (Sour
 			},
 			Year:       parseSourceYear(item.PubYear),
 			Abstract:   strings.TrimSpace(item.AbstractText),
-			Venue:      strings.TrimSpace(item.JournalTitle),
+			Venue:      strings.TrimSpace(firstNonEmpty(item.JournalInfo.Journal.Title, item.JournalTitle)),
 			URLs:       fullTextURLs,
 			License:    strings.TrimSpace(item.License),
 			OpenAccess: strings.EqualFold(strings.TrimSpace(item.IsOpenAccess), "Y"),
 			Metadata: map[string]string{
-				"author_string": strings.TrimSpace(item.AuthorString),
-				"mesh_terms":    strings.Join(item.MeshHeadingList.Terms(), "; "),
-				"full_text_url": firstNonEmpty(fullTextURLs...),
-				"license":       strings.TrimSpace(item.License),
+				"author_string":     strings.TrimSpace(item.AuthorString),
+				"mesh_terms":        strings.Join(item.MeshHeadingList.Terms(), "; "),
+				"full_text_url":     firstNonEmpty(fullTextURLs...),
+				"license":           strings.TrimSpace(item.License),
+				"publication_dates": strings.Join(nonEmptyStrings(item.FirstPublicationDate, item.ElectronicPublicationDate, item.JournalInfo.PrintPublicationDate), ";"),
 			},
 		})
 	}
-	return SourceResponse{Records: records, RawRef: rawEuropePMCRef(params)}, nil
+	return SourceResponse{Records: records, RawRef: rawEuropePMCRef(params), NextPageCursor: strings.TrimSpace(payload.NextCursorMark)}, nil
 }
 
 type europePMCSearchResponse struct {
-	ResultList struct {
+	NextCursorMark string `json:"nextCursorMark"`
+	ResultList     struct {
 		Result []europePMCResult `json:"result"`
 	} `json:"resultList"`
 }
 
 type europePMCResult struct {
-	ID              string                   `json:"id"`
-	PMID            string                   `json:"pmid"`
-	PMCID           string                   `json:"pmcid"`
-	DOI             string                   `json:"doi"`
-	Title           string                   `json:"title"`
-	AuthorString    string                   `json:"authorString"`
-	JournalTitle    string                   `json:"journalTitle"`
-	PubYear         string                   `json:"pubYear"`
-	AbstractText    string                   `json:"abstractText"`
+	ID                        string `json:"id"`
+	PMID                      string `json:"pmid"`
+	PMCID                     string `json:"pmcid"`
+	DOI                       string `json:"doi"`
+	Title                     string `json:"title"`
+	AuthorString              string `json:"authorString"`
+	JournalTitle              string `json:"journalTitle"`
+	PubYear                   string `json:"pubYear"`
+	AbstractText              string `json:"abstractText"`
+	FirstPublicationDate      string `json:"firstPublicationDate"`
+	ElectronicPublicationDate string `json:"electronicPublicationDate"`
+	JournalInfo               struct {
+		PrintPublicationDate string `json:"printPublicationDate"`
+		Journal              struct {
+			Title string `json:"title"`
+		} `json:"journal"`
+	} `json:"journalInfo"`
 	IsOpenAccess    string                   `json:"isOpenAccess"`
 	License         string                   `json:"license"`
 	MeshHeadingList europePMCMeshHeadingList `json:"meshHeadingList"`
@@ -129,7 +147,7 @@ func (l europePMCMeshHeadingList) Terms() []string {
 
 func rawEuropePMCRef(params map[string]string) string {
 	values := url.Values{}
-	for _, key := range []string{"format", "pageSize", "query"} {
+	for _, key := range []string{"format", "pageSize", "query", "resultType", "cursorMark"} {
 		if value := strings.TrimSpace(params[key]); value != "" {
 			values.Set(key, value)
 		}
