@@ -36,6 +36,12 @@ Production code changes that skip the red step are not accepted unless they are 
 | [`research-forge-release-packaging-tdd`](./skills/research-forge-release-packaging-tdd/SKILL.md) | Versioning, cross-platform builds, web GUI packaging, checksums, install smoke tests, release notes |
 | [`research-forge-developer-docs-tdd`](./skills/research-forge-developer-docs-tdd/SKILL.md) | CLI docs, architecture docs, ADR index, contributor guides, examples, tutorials, generated help |
 
+## Agent research depth contract
+
+The [`research-forge`](./skills/research-forge/SKILL.md#search-depth-and-stopping) usage skill starts at **Standard** depth (`--depth standard`); Quick is only for an explicit user request. Escalate to Comprehensive when a Standard run ends with `stop_reason: budget_exhausted` without coverage saturation, or when the user asks. A completed sweep is not proof of exhaustive coverage, and `coverage_saturated` is a reason to stop rather than fill a query quota.
+
+Runs report depth, effective query/source/request caps, requests used, coverage, remaining gaps, and the engine's stop reason: `completed`, `budget_exhausted`, `coverage_saturated`, `interrupted`, or `error_threshold`. Resume interruptions and address errors rather than treating them as coverage signals. The skill documents the decision workflow; [CLI search budgets](./docs/cli.md#search-budgets-and-stop-reasons) defines cap values and checkpoint accounting. Keep this guidance aligned when the engine's stop semantics change.
+
 ## Recommended usage order
 
 1. Workflow orchestration TDD to pick the smallest vertical slice.
