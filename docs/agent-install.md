@@ -1,12 +1,18 @@
 # Agent installation
 
-ResearchForge provides passive, skill-only plugins for Claude Code, Codex, Pi and
-Hermes over the same standalone `rforge` engine. Install one integration per host.
-Only the `research-forge` methodology skill is exposed; developer `*-tdd` skills
-are not. There are no native tools, workflow commands, MCP servers, hooks,
-schedules, background jobs, permission changes or runtime defaults in this release.
-The skill remains model-invocable when research is relevant. Installation does
-not start research or approve human review gates.
+ResearchForge provides passive plugins for Claude Code, Codex, Pi and Hermes over
+the same standalone `rforge` engine. Install one integration per host. The
+`research-forge` methodology skill remains model-invocable when research is relevant;
+developer `*-tdd` skills are never exposed. Claude Code, Codex and Pi also expose
+five explicit-only workflows: `lit`, `paper`, `brief`, `compare` and `replicate`.
+Hermes currently exposes only the methodology skill.
+
+Workflow skills have `disable-model-invocation: true` and Codex policies with
+`allow_implicit_invocation: false`. They name the CLI call and defer methodology
+to `research-forge`; they contain no research logic. Pi registers only commands
+that load these instructions on invocation. There are no native tools, MCP
+servers, hooks, schedules, background jobs, permission changes or runtime defaults
+in this release. Installation does not start research or approve human review gates.
 
 ## Install the engine separately
 
@@ -50,6 +56,8 @@ claude plugin install research-forge@research-forge
 For a local checkout, replace the marketplace source with `.` from its root.
 Start a new session (or `/reload-plugins`) and invoke
 `/research-forge:research-forge <question>`, or ask for the research-forge skill.
+For an explicit workflow, use `/research-forge:lit <request>` (or `paper`, `brief`,
+`compare`, `replicate` in place of `lit`).
 
 Upgrade and remove:
 
@@ -76,7 +84,9 @@ codex plugin add research-forge@research-forge
 
 For a local checkout use `codex plugin marketplace add .` instead. Start a new
 session and invoke `$research-forge:research-forge <question>`, or ask Codex to
-use the methodology skill. There is no Hermes-style slash command.
+use the methodology skill. Invoke a workflow explicitly with
+`$research-forge:lit <request>` (or `paper`, `brief`, `compare`, `replicate`).
+There is no Hermes-style slash command.
 
 Upgrade the Git marketplace snapshot, then start a new session:
 
@@ -101,9 +111,23 @@ pi install git:github.com/TrebuchetDynamics/research-forge
 ```
 
 Use `/reload` or start a new session, then
-`/skill:research-forge <question>`. The extension entry point is intentionally a
-no-op: no tools or commands are registered yet. Future native commands use the
-`rforge_` prefix; the skill command keeps its portable name.
+`/skill:research-forge <question>`. Native commands load the corresponding
+explicit-only workflow skill and pass your request unchanged to the host agent:
+
+| Command | Engine call described by the skill |
+| --- | --- |
+| `/rforge_lit <request>` | `rforge lit --research-dir <dir> --out <dir>` |
+| `/rforge_paper <request>` | `rforge paper <identifier-or-title>` |
+| `/rforge_brief <request>` | `rforge brief <search-dir> --out <brief.md>` |
+| `/rforge_compare <request>` | `rforge compare <dir-a> <dir-b> --out <comparison.md>` |
+| `/rforge_replicate <request>` | `rforge replicate <doi-or-arxiv-id> --out <plan.md>` |
+
+For example: `/rforge_brief summarize research/topic into research/brief.md`.
+These commands do not execute the engine themselves or interpret your request
+as shell arguments. While the agent is busy, the request queues as a follow-up.
+Pi also supports explicit `/skill:lit`, `/skill:paper`, `/skill:brief`,
+`/skill:compare` and `/skill:replicate` invocation. The methodology skill keeps
+its portable `/skill:research-forge` name.
 
 ```sh
 pi list
@@ -183,12 +207,22 @@ go test ./internal/docs
 PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s adapters -p test_hermes.py
 ```
 
-Pi uses an explicit single-skill directory; Hermes registers the canonical
-`SKILL.md` directly. `plugin.yaml` uses JSON syntax (a YAML subset) so Go's offline
-conformance gate can parse it without adding a YAML dependency. The gate is part
-of `make test`; it checks manifests, versions, skill isolation and prohibited
-runtime surfaces. Actual per-host install/upgrade/remove session qualification
-is live, opt-in release work, not claimed by this offline check.
+Claude lists the six public skill paths explicitly; Codex points at the isolated
+`adapters/skills/` root. Pi lists the canonical methodology directory and the five
+workflow directories explicitly, and its npm archive includes those workflow files.
+Hermes registers only the canonical methodology `SKILL.md` directly. `plugin.yaml`
+and workflow `agents/openai.yaml` policies use JSON syntax (a YAML subset) so Go's
+offline conformance gate can parse them without adding a YAML dependency. The gate
+is part of `make test`; it requires Node 22+ and checks manifests, versions, the
+allowed skill set, explicit-only workflow policies, passive Pi command loading and
+prohibited runtime surfaces. The Pi command contract can also run independently:
+
+```sh
+node --test adapters/test_pi.mjs
+```
+
+Actual per-host install/upgrade/remove session qualification is live, opt-in
+release work, not claimed by this offline check.
 
 Host format references: [Claude manifest](https://code.claude.com/docs/en/plugins/manifest-reference),
 [Claude marketplace](https://code.claude.com/docs/en/plugins/marketplace-reference),

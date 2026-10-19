@@ -820,18 +820,6 @@ Owner answers (2026-10-19):
 - Ownership: ResearchForge maintainer; Autowork runner may execute.
 - Touches: internal/report, internal/reviewpkg, internal/mcp
 
-- [ ] V-E2 — Explicit workflow commands
-- Status: open
-- Goal: RF-PACK — Ship passive native plugins for Claude Code, Codex, Pi and Hermes over the same engine.
-- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan) (Workstream E).
-- Scope: thin explicit-only skills under `adapters/skills/` for `lit`, `paper`, `brief`, `compare` and `replicate` (`disable-model-invocation: true`; Codex `agents/openai.yaml` with `allow_implicit_invocation: false`); Pi `registerCommand` entries (`rforge_lit` and so on) that load them, Autowork-style. Each states the CLI/MCP call to make and defers methodology to `research-forge`; no research logic in adapters.
-- Acceptance: the conformance test covers the new allowed set and fails if any workflow skill is model-invocable.
-- Checks: go test ./internal/docs; make check
-- Dependencies: V-E1, V0-2.
-- Ownership: ResearchForge maintainer; Autowork runner may execute.
-- Touches: adapters, internal/docs, docs/agent-install.md, package.json
-- Resources: agent-docs — shared `skills/research-forge/SKILL.md`, `README.md` and `docs/agent-install.md`; tasks holding it run one at a time
-
 - [ ] V-E3 — Typed engine tools per host
 - Status: open
 - Goal: RF-PACK — Ship passive native plugins for Claude Code, Codex, Pi and Hermes over the same engine.
@@ -974,10 +962,10 @@ Generated from `goals.json` by `goals.py render`. `met` requires an executed, pa
 | --- | --- | --- | --- |
 | RF-V0: Land and harden the in-progress research commands | met | Executed check: pass ([V0-7](TODO.archive.md#v0-7)) | — |
 | RF-AGENT: Make the agent contract correct: install docs, search depth and provenance levels | met | Executed check: pass ([V-A4](TODO.archive.md#v-a4)) | — |
-| RF-BENCH: Measure research quality against held-out ground truth | unmet | — | V-B3-LIVE, V-B4, V-B4-lock, V-B5, V-B6, V-B6-run |
+| RF-BENCH: Measure research quality against held-out ground truth | unmet | — | V-B3-LIVE, V-B4, V-B4-lock, V-B5, V-B6-LIVE, V-B6-run |
 | RF-MCP: Expose the engine through a thin MCP adapter over shared services | unmet | — | V-C2, V-C3, V-C4 |
 | RF-CLAIMS: Verify claims against stored evidence with separate facets | unmet | — | V-D4 |
-| RF-PACK: Ship passive native plugins for Claude Code, Codex, Pi and Hermes over the same engine | unmet | Executed check: pass ([V-E0](TODO.archive.md#v-e0)) | V-E1-LIVE, V-E2, V-E3, V-E4, V-E5, V-E5-run |
+| RF-PACK: Ship passive native plugins for Claude Code, Codex, Pi and Hermes over the same engine | unmet | Executed check: pass ([V-E2](TODO.archive.md#v-e2)) | V-E1-LIVE, V-E3, V-E4, V-E5, V-E5-run |
 | RF-RELEASE: Release ResearchForge 2.0 only on measured improvement and cross-host parity | unmet | — | V-R1, V-R2 |
 
 <!-- goals:coverage:end -->
