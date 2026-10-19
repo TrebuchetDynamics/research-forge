@@ -823,6 +823,7 @@ Owner answers (2026-10-19):
 
 - [ ] V-B4-lock — Owner approves and locks the gold sets
 - Status: open
+- Progress: 2026-10-19 owner approval recorded (`93c00f2`): pool A moved to `benchmarks/sets/pool-a/`, state `approved`, approver xel, `approval.waivers: ["ap_domain_absent"]` (`78c1ff2`), independent spot audit of q-d, q-h and q-m in the review sheet (dates and membership match PMC sources). Lock not done: the first `--record` capture got HTTP 429 on 18 of 24 OpenAlex calls (free daily budget for this machine's IP exhausted, shared with the other runners; resets 00:00 UTC) and was discarded; recording now refuses incomplete captures with `capture_incomplete` (`8c3ec21`). Next: rerun `rforge benchmark run --set benchmarks/sets/pool-a --record` soon after 00:00 UTC, or with an OpenAlex API key if the owner provides one (needs connector support for the key).
 - Goal: RF-BENCH — Measure research quality against held-out ground truth.
 - Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan) (Owner answers: gold sets).
 - Scope: the owner reviews each V-B4 candidate set; approved sets move to `benchmarks/sets/`, their snapshots are recorded with `--record`, and the held-out split is locked by checksum. Rejected sets are dropped or redrafted.
