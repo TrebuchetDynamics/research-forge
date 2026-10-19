@@ -13,7 +13,7 @@ Core principle: **retrieval-first, provenance-first, statistics-first, LLM-assis
 
 ```sh
 # 1. Search — writes results.jsonl, raw/, manifest.json to <dir>
-rforge search batch --out research/my-topic --query "<topic>" --sources scholarly-fast
+rforge search batch --out research/my-topic --query "<topic>" --sources scholarly-fast --depth standard
 
 # 2. Fetch open-access PDFs for included papers (run AFTER screening)
 rforge oa fetch --dir research/my-topic
@@ -22,7 +22,7 @@ rforge oa fetch --dir research/my-topic
 rforge citations build --research-dir research
 ```
 
-**Source presets:** `scholarly-fast` (comprehensive default) | `all` (slow scout; use on a small query subset) | `biomedical` | `preprints` | `openalex,arxiv` (quick only)
+**Source presets:** `scholarly-fast` (Standard starting preset) | `all` (slow scout; use on a small query subset) | `biomedical` | `preprints` | `openalex,arxiv` (quick only)
 
 Cross-topic analysis: `rforge meta overlap --research-dir research [--min-topics 2]`
 
@@ -61,12 +61,35 @@ For machine-readable command catalog: `rforge help --json`
 
 ---
 
-Before running searches, choose an output location and use Comprehensive depth unless the user explicitly asks quick/standard:
+Before running searches, choose an output location and use **Standard depth by default**:
 
 - If inside a repo with `artifacts/`, use `artifacts/research/<topic-slug>/`.
 - If inside a repo without `artifacts/`, use `research/<topic-slug>/`.
 - If no clear project home exists, use `~/research/<topic-slug>/`.
-- Quick only when explicitly requested: 3 query variants × 2–3 sources. Standard only when explicitly requested: 5–8 query variants × scholarly-fast sources plus citation expansion. Comprehensive default: 20–30 query variants × scholarly-fast or domain-relevant sources, optional `all` scout on 3–5 queries, citation expansion, evidence grid, and explicit gaps.
+
+### Search depth and stopping
+
+| Depth | When to use | Query plan |
+| --- | --- | --- |
+| Standard (`standard`) | Default | 5–8 query variants × `scholarly-fast` sources, plus citation expansion |
+| Quick (`quick`) | User explicitly requests a quick search | Up to 3 query variants × 2 sources |
+| Comprehensive (`comprehensive`) | Standard exhausts its budget without saturation, or the user asks | 20–30 query variants × `scholarly-fast` or domain-relevant sources, citation expansion, evidence grid, and explicit gaps |
+
+Query plans are starting points, not completion quotas. `search batch` enforces query, source, and request caps; it does not generate variants or automatically escalate. The Standard caps are 10 query variants, 5 sources, and 50 requests. Use `--depth standard` explicitly for clarity; pass the selected depth for Quick or Comprehensive. See [search budgets and stop reasons](../../docs/cli.md#search-budgets-and-stop-reasons) for all caps, thresholds, and resume semantics.
+
+After each batch, inspect `stop_reason`, `coverage`, `budget`, and `requests_used` in `manifest.json`, `batch-state.json`, or `--json` output. Coverage measures marginal yield: new unique deduped records per query, not relevance or proof of exhaustive coverage. Only fully successful queries count toward saturation.
+
+| `stop_reason` | Meaning and next action |
+| --- | --- |
+| `completed` | Selected sweep was attempted; inspect failures and coverage before reporting. Completion alone does not prove saturation or justify escalation. |
+| `budget_exhausted` | A query, source, or request cap was reached. For a Standard run without saturation, escalate to Comprehensive and record the coverage gap and reason. |
+| `coverage_saturated` | Consecutive low-yield queries met the configured threshold. Stop expanding; report remaining gaps rather than escalating just to fill a quota. |
+| `interrupted` | Execution stopped before completion. Resume the checkpoint; do not interpret interruption as thin coverage. |
+| `error_threshold` | Failures stopped the sweep (the configured consecutive-error threshold under `--continue-on-error`; first error otherwise). Address failures before retrying; errors are not evidence of saturation. |
+
+For the escalation decision, compare `coverage.consecutive_low_yield` with `budget.saturation_queries`; do not infer saturation from total hit counts. A user request for Comprehensive is an independent reason to select it. When escalating a checkpointed batch, extend the query/source plan as needed and rerun with `--resume --depth comprehensive`. Resume retains consumed requests; `--max-requests N` sets a new total allowance, not N additional requests. An optional `all` scout on 3–5 queries is still subject to the selected source cap: record which sources were actually attempted.
+
+Every research report must state the selected depth, effective caps, requests used, stop reason, coverage signal, and remaining gaps. Preserve the engine artifacts in provenance outputs; never relabel a capped or interrupted run as exhaustive.
 
 ## Step 0 — Check and install rforge
 
@@ -416,7 +439,7 @@ Or write directly without `rforge`:
 
 ## Provenance rules (always required)
 
-Every run must write or append `provenance.json` before finishing. Capture depth, exact queries, sources, coverage stats, citation expansion attempts, outputs, and failures/rate limits. If `search batch --stats` was used, include `search-stats.txt` or equivalent stats output. Depth must be exactly `quick`, `standard`, or `comprehensive`; the validator rejects free-form variants such as `standard-plus`. Run `rforge --json version` and copy its `data` object into `rforge_version` instead of pasting the human-readable version line.
+Every run must write or append `provenance.json` before finishing. Capture depth, exact queries, sources, coverage stats, citation expansion attempts, outputs, and failures/rate limits. Include the batch manifest and checkpoint in `outputs` when present so effective caps, requests used, and `stop_reason` remain auditable. If `search batch --stats` was used, include `search-stats.txt` or equivalent stats output. Depth must be exactly `quick`, `standard`, or `comprehensive`; the validator rejects free-form variants such as `standard-plus`. Run `rforge --json version` and copy its `data` object into `rforge_version` instead of pasting the human-readable version line.
 
 ```json
 {
@@ -449,7 +472,7 @@ Before declaring research complete, verify:
 
 - `rforge version` was run or marked unavailable in provenance.
 - Every planned source/query has a saved result file, batch manifest, or explicit error note.
-- Source coverage stats were run and recorded.
+- Source coverage stats were run and recorded, with depth, effective caps, requests used, and stop reason reported; any escalation is justified by unsaturated budget exhaustion or the user's request.
 - `report.md` or the requested output exists and cites exact papers, repositories, or artifacts.
 - `provenance.json` exists, is valid JSON, and lists all outputs.
 - `rforge provenance validate <folder>/provenance.json` passes (enum depth, string-only errors, required fields present); fix any reported field before finishing.
