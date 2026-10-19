@@ -10,8 +10,10 @@ set**. It is distinct from **Scientific benchmarking meta-analysis**; use these
 terms as defined in [CONTEXT.md](../../CONTEXT.md#research-quality-benchmark).
 
 Start here: dataset builders use sections 2–3; harness builders use sections 4–7;
-agent-runner builders additionally use section 8. MUST, MUST NOT and SHOULD are
-normative requirements, recommendations being explicitly identified as such.
+agent-runner builders additionally use section 8. The implemented V-B6 tooling
+and offline acceptance commands are in the [agent-tier runbook](agent-tier.md).
+MUST, MUST NOT and SHOULD are normative requirements, recommendations being
+explicitly identified as such.
 
 ## 1. Authority, boundaries and tiers
 
