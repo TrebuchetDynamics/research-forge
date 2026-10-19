@@ -883,17 +883,6 @@ Owner answers (2026-10-19):
 - Ownership: ResearchForge maintainer; Autowork runner may execute.
 - Touches: README.md, skills/research-forge/SKILL.md, docs/cli.md
 
-- [ ] V-D2 — Claim store and CLI
-- Status: open
-- Goal: RF-CLAIMS — Verify claims against stored evidence with separate facets.
-- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan).
-- Scope: append-only `data/claims.jsonl` (via `filetxn`) with `rforge claim add|list|show`; semantic-support entries require agent/model identity and are always `agent_reported`; human approval requires a named reviewer.
-- Acceptance: tests refuse engine-attributed semantic support and approval without a reviewer.
-- Checks: go test ./internal/claims ./internal/cli; make check
-- Dependencies: V-B2, V-D1.
-- Ownership: ResearchForge maintainer; Autowork runner may execute.
-- Touches: internal/claims, internal/cli
-
 - [ ] V-D3 — `rforge claim check` deterministic facets
 - Status: open
 - Goal: RF-CLAIMS — Verify claims against stored evidence with separate facets.
