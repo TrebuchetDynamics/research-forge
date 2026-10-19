@@ -1,12 +1,20 @@
 # Candidate pool A — owner review sheet
 
-**UNAPPROVED, UNLOCKED PILOT CANDIDATES — OWNER-AUTHORIZED AP FALLBACK.** This pool has eight independent held-out families, four separate dev families and 113 included-paper records. Four held-out domains are represented; **artificial photosynthesis (AP) is absent** under the [V-B4 task's owner decision of 2026-10-19](../../../../TODO.md), not by relabelling another topic or substituting synthetic gold. This is candidate metadata, not an approved set, runnable input or baseline. No approval, locking or recording is authorized here.
+**APPROVED BY THE OWNER 2026-10-19 (16:06 UTC) WITH WAIVER `ap_domain_absent`; NOT YET LOCKED.** This pool has eight independent held-out families, four separate dev families and 113 included-paper records across four held-out domains. **Artificial photosynthesis (AP) is absent** under the owner-authorized fallback recorded below and in the [V-B4 task](../../../TODO.md); no topic was relabelled and no synthetic gold was substituted. Snapshots are recorded at V-B4-lock; until `state` is `locked`, this is not a runnable baseline.
+
+
+## Owner approval (2026-10-19)
+
+- Approver: xel (repository owner). Approved at 2026-10-19T16:06:30Z, after reviewing this sheet.
+- Waiver `ap_domain_absent`: the owner accepts the AP fallback documented in "AP fallback" (14 AP reviews checked; none with a verifiable complete included list).
+- Accepted as recorded: the clinical skew (7 of 12 questions, all four dev questions); Lubega `2018-01` (q-m); Heller's provisional OpenAlex online date 2018-05-17 (q-i); Palm identified by PMID 34232000 despite its DOI resolving 404 during curation (q-j).
+- Independent spot audit before approval (Claude, from the public PMC full text): q-d (PMC11439454), q-h (PMC10855653) and q-m (PMC11647709). For all three the quoted final search date matches the recorded `search_date` ("the search date of July 1, 2023"; "until 13 October 2023"; "searched seven databases on May 20, 2024"), and the included-paper count and membership match gold exactly (4/4, 5/5, 5/5; none missing, none extra). Observed differences are expected: three q-m gold dates are earlier online-first dates than the issue years the review cites; the CONIITI conference paper (q-d) and Neri 2014 (q-m) DOIs are not printed in the reviews and were resolved independently. The remaining 99 gold records are unaudited by anyone but the curator; their source re-audit stays open as V-B4-LIVE.
 
 ## AP fallback
 
 The preferred 14-study TiO2 nanotube review (DOI `10.1007/978-3-030-86822-2_10`) was rechecked under the new month rule. Its final search **April 2021** would use `search_date_precision: "month"` with cap **2021-04-01**, including every search plan. The authorized Google Books Table 1 snippets on pp.175–176 established refs **25 and 28–39** (13 distinct paper references), but not a reconciled complete paper-level corpus for the reported 14 studies. Snippet truncation or study/paper distinctions may explain the discrepancy; no source error or missing fourteenth paper is assumed. No incomplete list, all-reference list, guessed member, or post-cap exclusion is used to hide the unresolved membership.
 
-The owner explicitly permits shipping without AP if no complete AP inclusion list is verifiable. That fallback is exercised here. The [discovery record](../discovery.md) supplies public locators and detailed evidence for these checked reviews:
+The owner explicitly permits shipping without AP if no complete AP inclusion list is verifiable. That fallback is exercised here. The [discovery record](../candidates/discovery.md) supplies public locators and detailed evidence for these checked reviews:
 
 | AP review DOI | Qualification failure under the current month-permitted rule |
 | --- | --- |

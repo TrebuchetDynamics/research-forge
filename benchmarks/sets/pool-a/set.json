@@ -1,0 +1,2959 @@
+{
+  "approval": {
+    "approved_at": "2026-10-19T16:06:30Z",
+    "approver": "xel (repository owner)",
+    "waivers": [
+      "ap_domain_absent"
+    ]
+  },
+  "http_policy": {
+    "algorithm": "source-http-v1",
+    "max_redirects": 10,
+    "max_response_bytes": 10485760,
+    "max_retries": 2,
+    "max_retry_after_ms": 30000,
+    "request_delay_ms": 0,
+    "timeout_ms": 10000
+  },
+  "k": [
+    10,
+    20,
+    50
+  ],
+  "questions": [
+    {
+      "budgets": {
+        "max_http_requests": 100,
+        "max_wall_clock_ms": 600000
+      },
+      "domain": "clinical-medicine",
+      "gold": [
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1016/j.ygyno.2013.03.002"
+            },
+            {
+              "scheme": "pmid",
+              "value": "23474348"
+            }
+          ],
+          "included_list_entry": "Table 1 and references 17, 18, 22–26; bibliography entry REF17",
+          "paper_id": "p-aaa",
+          "publication_date": "2013-03-06",
+          "publication_date_locator": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID:23474348%20AND%20SRC:MED\u0026resultType=core\u0026format=json field electronicPublicationDate ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1200/jco.2015.63.2596"
+            },
+            {
+              "scheme": "pmid",
+              "value": "27001568"
+            }
+          ],
+          "included_list_entry": "Table 1 and references 17, 18, 22–26; bibliography entry REF18",
+          "paper_id": "p-aab",
+          "publication_date": "2016-03-21",
+          "publication_date_locator": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID:27001568%20AND%20SRC:MED\u0026resultType=core\u0026format=json field electronicPublicationDate ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1016/j.ygyno.2015.11.031"
+            },
+            {
+              "scheme": "pmcid",
+              "value": "PMC4729193"
+            },
+            {
+              "scheme": "pmid",
+              "value": "26644263"
+            }
+          ],
+          "included_list_entry": "Table 1 and references 17, 18, 22–26; bibliography entry REF22",
+          "paper_id": "p-aac",
+          "publication_date": "2015-11-28",
+          "publication_date_locator": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID:26644263%20AND%20SRC:MED\u0026resultType=core\u0026format=json field electronicPublicationDate ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1158/1078-0432.ccr-10-0700"
+            },
+            {
+              "scheme": "pmid",
+              "value": "20855460"
+            }
+          ],
+          "included_list_entry": "Table 1 and references 17, 18, 22–26; bibliography entry REF23",
+          "paper_id": "p-aad",
+          "publication_date": "2010-09-20",
+          "publication_date_locator": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID:20855460%20AND%20SRC:MED\u0026resultType=core\u0026format=json field electronicPublicationDate ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1007/s10637-014-0180-8"
+            },
+            {
+              "scheme": "pmcid",
+              "value": "PMC4387250"
+            },
+            {
+              "scheme": "pmid",
+              "value": "25380636"
+            }
+          ],
+          "included_list_entry": "Table 1 and references 17, 18, 22–26; bibliography entry REF24",
+          "paper_id": "p-aae",
+          "publication_date": "2014-11-09",
+          "publication_date_locator": "https://api.crossref.org/works/10.1007%2Fs10637-014-0180-8 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1158/1078-0432.ccr-20-4740"
+            },
+            {
+              "scheme": "pmid",
+              "value": "33926914"
+            }
+          ],
+          "included_list_entry": "Table 1 and references 17, 18, 22–26; bibliography entry REF25",
+          "paper_id": "p-aaf",
+          "publication_date": "2021-04-29",
+          "publication_date_locator": "https://api.crossref.org/works/10.1158%2F1078-0432.ccr-20-4740 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1016/j.ygyno.2023.01.003"
+            },
+            {
+              "scheme": "pmid",
+              "value": "36758420"
+            }
+          ],
+          "included_list_entry": "Table 1 and references 17, 18, 22–26; bibliography entry REF26",
+          "paper_id": "p-aag",
+          "publication_date": "2023-02-07",
+          "publication_date_locator": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID:36758420%20AND%20SRC:MED\u0026resultType=core\u0026format=json field electronicPublicationDate ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        }
+      ],
+      "gold_source_review": {
+        "identifiers": [
+          {
+            "scheme": "doi",
+            "value": "10.7759/cureus.73503"
+          },
+          {
+            "scheme": "openalex",
+            "value": "W4404283283"
+          },
+          {
+            "scheme": "pmcid",
+            "value": "PMC11638381"
+          },
+          {
+            "scheme": "pmid",
+            "value": "39677200"
+          },
+          {
+            "scheme": "url",
+            "value": "https://doi.org/10.7759/cureus.73503"
+          },
+          {
+            "scheme": "url",
+            "value": "https://europepmc.org/article/MED/39677200"
+          },
+          {
+            "scheme": "url",
+            "value": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11638381/"
+          },
+          {
+            "scheme": "url",
+            "value": "https://pubmed.ncbi.nlm.nih.gov/39677200"
+          },
+          {
+            "scheme": "url",
+            "value": "https://pubmed.ncbi.nlm.nih.gov/39677200/"
+          },
+          {
+            "scheme": "url",
+            "value": "https://www.ncbi.nlm.nih.gov/pmc/articles/11638381"
+          }
+        ],
+        "included_list_locator": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11638381/#TAB1 ; Table 1 and references 17, 18, 22–26",
+        "rights": "Source attribution: Efficacy and Safety of Farletuzumab in Ovarian Cancer: A Systematic Review and Single-Arm Meta-Analysis (10.7759/cureus.73503); article CC BY 4.0. Only factual bibliographic identities, inclusion-row locators and publication/search dates are transcribed; no abstracts, prose, tables, PDFs or API bodies are redistributed. OA article licensing is not snapshot permission; owner must check capture rights separately.",
+        "search_date": "2024-04-01",
+        "search_date_locator": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11638381/ ; Review / Data Sources and Search Strategy",
+        "title": "Efficacy and Safety of Farletuzumab in Ovarian Cancer: A Systematic Review and Single-Arm Meta-Analysis"
+      },
+      "question": "What human trial reports evaluate farletuzumab, including its eribulin conjugate, for solid malignancies, and which treatment and safety endpoints do they measure?",
+      "question_id": "q-b",
+      "search_plan": [
+        {
+          "filters": {
+            "filter": "to_publication_date:2024-04-01"
+          },
+          "limit": 50,
+          "page_cursor": "",
+          "source": "openalex",
+          "terms": "farletuzumab solid tumor clinical trial"
+        },
+        {
+          "filters": {
+            "filter": "to_publication_date:2024-04-01"
+          },
+          "limit": 50,
+          "page_cursor": "",
+          "source": "openalex",
+          "terms": "MORAb-202 eribulin folate receptor cancer"
+        }
+      ],
+      "split": "held_out"
+    },
+    {
+      "budgets": {
+        "max_http_requests": 100,
+        "max_wall_clock_ms": 600000
+      },
+      "domain": "clinical-medicine",
+      "gold": [
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1007/s10350-003-0129-z"
+            },
+            {
+              "scheme": "pmid",
+              "value": "15054681"
+            }
+          ],
+          "included_list_entry": "Table 1 and references 11, 13–17; bibliography entry CR11",
+          "paper_id": "p-aaa",
+          "publication_date": "2004-04-02",
+          "publication_date_locator": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID:15054681%20AND%20SRC:MED\u0026resultType=core\u0026format=json field electronicPublicationDate ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1007/s10350-007-9174-3"
+            },
+            {
+              "scheme": "pmid",
+              "value": "18176825"
+            }
+          ],
+          "included_list_entry": "Table 1 and references 11, 13–17; bibliography entry CR13",
+          "paper_id": "p-aab",
+          "publication_date": "2008-01-04",
+          "publication_date_locator": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID:18176825%20AND%20SRC:MED\u0026resultType=core\u0026format=json field electronicPublicationDate ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.18203/2349-2902.isj20184629"
+            }
+          ],
+          "included_list_entry": "Table 1 and references 11, 13–17; bibliography entry CR14",
+          "paper_id": "p-aac",
+          "publication_date": "2018-10-26",
+          "publication_date_locator": "https://api.crossref.org/works/10.18203%2F2349-2902.isj20184629 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "url",
+              "value": "https://medicalforummonthly.com/index.php/mfm/article/view/2546"
+            }
+          ],
+          "included_list_entry": "Table 1 and references 11, 13–17; bibliography entry CR15",
+          "paper_id": "p-aad",
+          "publication_date": "2020-10",
+          "publication_date_locator": "https://medicalforummonthly.com/index.php/mfm/article/view/2546 ; Vol.31 No.10 (2020), and https://medicalforummonthly.com/index.php/mfm/article/download/2546/2215 p.111: October 2020. Online Published=2020-11-07 is later; CENTRAL addition in 2021 is not publication."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1097/dcr.0000000000002163"
+            },
+            {
+              "scheme": "pmid",
+              "value": "34897211"
+            }
+          ],
+          "included_list_entry": "Table 1 and references 11, 13–17; bibliography entry CR16",
+          "paper_id": "p-aae",
+          "publication_date": "2021-12-09",
+          "publication_date_locator": "https://api.crossref.org/works/10.1097%2Fdcr.0000000000002163 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.12669/pjms.36.5.1796"
+            },
+            {
+              "scheme": "pmcid",
+              "value": "PMC7372682"
+            },
+            {
+              "scheme": "pmid",
+              "value": "32704254"
+            }
+          ],
+          "included_list_entry": "Table 1 and references 11, 13–17; bibliography entry CR17",
+          "paper_id": "p-aaf",
+          "publication_date": "2020",
+          "publication_date_locator": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed\u0026id=32704254\u0026retmode=xml field Article/Journal/JournalIssue/PubDate ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        }
+      ],
+      "gold_source_review": {
+        "identifiers": [
+          {
+            "scheme": "doi",
+            "value": "10.1007/s13304-024-01930-3"
+          },
+          {
+            "scheme": "openalex",
+            "value": "W4401419819"
+          },
+          {
+            "scheme": "pmcid",
+            "value": "PMC11341760"
+          },
+          {
+            "scheme": "pmid",
+            "value": "39117876"
+          },
+          {
+            "scheme": "url",
+            "value": "https://doi.org/10.1007/s13304-024-01930-3"
+          },
+          {
+            "scheme": "url",
+            "value": "https://europepmc.org/article/MED/39117876"
+          },
+          {
+            "scheme": "url",
+            "value": "https://hdl.handle.net/11573/1717147"
+          },
+          {
+            "scheme": "url",
+            "value": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11341760/"
+          },
+          {
+            "scheme": "url",
+            "value": "https://pubmed.ncbi.nlm.nih.gov/39117876"
+          },
+          {
+            "scheme": "url",
+            "value": "https://pubmed.ncbi.nlm.nih.gov/39117876/"
+          },
+          {
+            "scheme": "url",
+            "value": "https://www.ncbi.nlm.nih.gov/pmc/articles/11341760"
+          }
+        ],
+        "included_list_locator": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11341760/#Tab1 ; Table 1 and references 11, 13–17",
+        "rights": "Source attribution: Topical metronidazole after haemorrhoidectomy to reduce postoperative pain: a systematic review (10.1007/s13304-024-01930-3); article CC BY 4.0. Only factual bibliographic identities, inclusion-row locators and publication/search dates are transcribed; no abstracts, prose, tables, PDFs or API bodies are redistributed. OA article licensing is not snapshot permission; owner must check capture rights separately.",
+        "search_date": "2023-09-15",
+        "search_date_locator": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11341760/ ; Methods, final-search sentence",
+        "title": "Topical metronidazole after haemorrhoidectomy to reduce postoperative pain: a systematic review"
+      },
+      "question": "Which randomized comparisons have tested locally applied metronidazole against an oral regimen or a vehicle for pain following excisional haemorrhoid surgery?",
+      "question_id": "q-c",
+      "search_plan": [
+        {
+          "filters": {
+            "filter": "to_publication_date:2023-09-15"
+          },
+          "limit": 50,
+          "page_cursor": "",
+          "source": "openalex",
+          "terms": "haemorrhoid surgery metronidazole randomized topical"
+        },
+        {
+          "filters": {
+            "filter": "to_publication_date:2023-09-15"
+          },
+          "limit": 50,
+          "page_cursor": "",
+          "source": "openalex",
+          "terms": "hemorrhoidectomy local oral antibiotic pain trial"
+        }
+      ],
+      "split": "held_out"
+    },
+    {
+      "budgets": {
+        "max_http_requests": 100,
+        "max_wall_clock_ms": 600000
+      },
+      "domain": "education",
+      "gold": [
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1016/j.arthro.2015.12.047"
+            },
+            {
+              "scheme": "pmid",
+              "value": "27006104"
+            }
+          ],
+          "included_list_entry": "Table 1 and references 23, 25, 27, 28; bibliography entry REF23",
+          "paper_id": "p-aaa",
+          "publication_date": "2016-03-19",
+          "publication_date_locator": "https://api.crossref.org/works/10.1016%2Fj.arthro.2015.12.047 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.5116/ijme.58e3.c236"
+            },
+            {
+              "scheme": "pmcid",
+              "value": "PMC5440060"
+            },
+            {
+              "scheme": "pmid",
+              "value": "28412723"
+            }
+          ],
+          "included_list_entry": "Table 1 and references 23, 25, 27, 28; bibliography entry REF25",
+          "paper_id": "p-aab",
+          "publication_date": "2017-04-13",
+          "publication_date_locator": "https://api.crossref.org/works/10.5116%2Fijme.58e3.c236 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1109/coniiti.2018.8587058"
+            },
+            {
+              "scheme": "openalex",
+              "value": "W2907355375"
+            },
+            {
+              "scheme": "url",
+              "value": "https://ieeexplore.ieee.org/abstract/document/8587058"
+            }
+          ],
+          "included_list_entry": "Table 1 and references 23, 25, 27, 28; bibliography entry REF27",
+          "paper_id": "p-aac",
+          "publication_date": "2018-10",
+          "publication_date_locator": "https://api.crossref.org/works/10.1109%2Fconiiti.2018.8587058 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1016/j.jsurg.2020.05.009"
+            },
+            {
+              "scheme": "pmid",
+              "value": "32536577"
+            }
+          ],
+          "included_list_entry": "Table 1 and references 23, 25, 27, 28; bibliography entry REF28",
+          "paper_id": "p-aad",
+          "publication_date": "2020",
+          "publication_date_locator": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed\u0026id=32536577\u0026retmode=xml field Article/Journal/JournalIssue/PubDate ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        }
+      ],
+      "gold_source_review": {
+        "identifiers": [
+          {
+            "scheme": "doi",
+            "value": "10.7759/cureus.68234"
+          },
+          {
+            "scheme": "openalex",
+            "value": "W4402043265"
+          },
+          {
+            "scheme": "pmcid",
+            "value": "PMC11439454"
+          },
+          {
+            "scheme": "pmid",
+            "value": "39347195"
+          },
+          {
+            "scheme": "url",
+            "value": "https://doi.org/10.7759/cureus.68234"
+          },
+          {
+            "scheme": "url",
+            "value": "https://europepmc.org/article/MED/39347195"
+          },
+          {
+            "scheme": "url",
+            "value": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11439454/"
+          },
+          {
+            "scheme": "url",
+            "value": "https://pubmed.ncbi.nlm.nih.gov/39347195"
+          },
+          {
+            "scheme": "url",
+            "value": "https://pubmed.ncbi.nlm.nih.gov/39347195/"
+          },
+          {
+            "scheme": "url",
+            "value": "https://www.ncbi.nlm.nih.gov/pmc/articles/11439454"
+          }
+        ],
+        "included_list_locator": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11439454/#TAB1 ; Table 1 and references 23, 25, 27, 28",
+        "rights": "Source attribution: Gamification and Serious Games in Orthopedic Education: A Systematic Review (10.7759/cureus.68234); article CC BY 4.0. Only factual bibliographic identities, inclusion-row locators and publication/search dates are transcribed; no abstracts, prose, tables, PDFs or API bodies are redistributed. OA article licensing is not snapshot permission; owner must check capture rights separately.",
+        "search_date": "2023-07-01",
+        "search_date_locator": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11439454/ ; Review / Data Sources and Search Strategy",
+        "title": "Gamification and Serious Games in Orthopedic Education: A Systematic Review"
+      },
+      "question": "What empirical work tests game-based tools or competitive simulated tasks for learning orthopaedic procedures or assessing surgical trainees?",
+      "question_id": "q-d",
+      "search_plan": [
+        {
+          "filters": {
+            "filter": "to_publication_date:2023-07-01"
+          },
+          "limit": 50,
+          "page_cursor": "",
+          "source": "openalex",
+          "terms": "orthopaedic training game simulation learning"
+        },
+        {
+          "filters": {
+            "filter": "to_publication_date:2023-07-01"
+          },
+          "limit": 50,
+          "page_cursor": "",
+          "source": "openalex",
+          "terms": "orthopedic resident competitive simulation video game"
+        }
+      ],
+      "split": "held_out"
+    },
+    {
+      "budgets": {
+        "max_http_requests": 100,
+        "max_wall_clock_ms": 600000
+      },
+      "domain": "social-policy",
+      "gold": [
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1111/eip.12175"
+            },
+            {
+              "scheme": "pmcid",
+              "value": "PMC4417652"
+            },
+            {
+              "scheme": "pmid",
+              "value": "25138195"
+            }
+          ],
+          "included_list_entry": "Table 3 and references 39–47; bibliography entry pone.0306285.ref039",
+          "paper_id": "p-aaa",
+          "publication_date": "2014-08-19",
+          "publication_date_locator": "https://api.crossref.org/works/10.1111%2Feip.12175 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1086/658090"
+            },
+            {
+              "scheme": "openalex",
+              "value": "W2108977677"
+            }
+          ],
+          "included_list_entry": "Table 3 and references 39–47; bibliography entry pone.0306285.ref040",
+          "paper_id": "p-aab",
+          "publication_date": "2011-03",
+          "publication_date_locator": "https://api.openalex.org/works/W2108977677 ; publication_date=2011-03-01, retained at month precision rather than asserting an observed first-of-month day; Crossref print date 2011-04 is later."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.2478/izajolp-2023-0004"
+            },
+            {
+              "scheme": "openalex",
+              "value": "W4388484428"
+            }
+          ],
+          "included_list_entry": "Table 3 and references 39–47; bibliography entry pone.0306285.ref041",
+          "paper_id": "p-aac",
+          "publication_date": "2023-11-09",
+          "publication_date_locator": "https://www.wifo.ac.at/en/publication/175795/ ; Online since 09.11.2023; Crossref published-online agrees. Its published-print=2023-01-01 is an issue-year placeholder, not evidence of actual earlier public release."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1016/j.jue.2016.10.003"
+            },
+            {
+              "scheme": "openalex",
+              "value": "W2549649705"
+            }
+          ],
+          "included_list_entry": "Table 3 and references 39–47; bibliography entry pone.0306285.ref042",
+          "paper_id": "p-aad",
+          "publication_date": "2016-11-19",
+          "publication_date_locator": "https://api.openalex.org/works/W2549649705 ; publication_date=2016-11-19 for the exact DOI/title, independently rechecked; earlier than Crossref print2017-01."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1016/s0176-2680(02)00171-4"
+            },
+            {
+              "scheme": "openalex",
+              "value": "W2089057041"
+            }
+          ],
+          "included_list_entry": "Table 3 and references 39–47; bibliography entry pone.0306285.ref043",
+          "paper_id": "p-aae",
+          "publication_date": "2003-05-12",
+          "publication_date_locator": "https://api.openalex.org/works/W2089057041 ; publication_date=2003-05-12 for the exact DOI/title, independently rechecked; earlier than Crossref print2003-06."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1016/j.childyouth.2020.105404"
+            },
+            {
+              "scheme": "pmcid",
+              "value": "PMC7449934"
+            },
+            {
+              "scheme": "pmid",
+              "value": "32868958"
+            }
+          ],
+          "included_list_entry": "Table 3 and references 39–47; bibliography entry pone.0306285.ref044",
+          "paper_id": "p-aaf",
+          "publication_date": "2020-08-27",
+          "publication_date_locator": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID:32868958%20AND%20SRC:MED\u0026resultType=core\u0026format=json field electronicPublicationDate ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1371/journal.pone.0216226"
+            },
+            {
+              "scheme": "pmcid",
+              "value": "PMC6485762"
+            },
+            {
+              "scheme": "pmid",
+              "value": "31026298"
+            }
+          ],
+          "included_list_entry": "Table 3 and references 39–47; bibliography entry pone.0306285.ref045",
+          "paper_id": "p-aag",
+          "publication_date": "2019",
+          "publication_date_locator": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed\u0026id=31026298\u0026retmode=xml field Article/Journal/JournalIssue/PubDate ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.5271/sjweh.3837"
+            },
+            {
+              "scheme": "pmid",
+              "value": "31170299"
+            }
+          ],
+          "included_list_entry": "Table 3 and references 39–47; bibliography entry pone.0306285.ref046",
+          "paper_id": "p-aah",
+          "publication_date": "2019-06-06",
+          "publication_date_locator": "https://api.crossref.org/works/10.5271%2Fsjweh.3837 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "url",
+              "value": "https://www.econstor.eu/handle/10419/125568"
+            }
+          ],
+          "included_list_entry": "Table 3 and references 39–47; bibliography entry pone.0306285.ref047",
+          "paper_id": "p-aai",
+          "publication_date": "2012",
+          "publication_date_locator": "https://www.econstor.eu/handle/10419/125568 ; Year of Publication=2012, Document Version=Published Version; no publication day inferred."
+        }
+      ],
+      "gold_source_review": {
+        "identifiers": [
+          {
+            "scheme": "doi",
+            "value": "10.1371/journal.pone.0306285"
+          },
+          {
+            "scheme": "openalex",
+            "value": "W4400071323"
+          },
+          {
+            "scheme": "pmcid",
+            "value": "PMC11210863"
+          },
+          {
+            "scheme": "pmid",
+            "value": "38935788"
+          },
+          {
+            "scheme": "url",
+            "value": "https://doaj.org/article/57d21614a1f24b2cbee309b92aecf747"
+          },
+          {
+            "scheme": "url",
+            "value": "https://doi.org/10.1371/journal.pone.0306285"
+          },
+          {
+            "scheme": "url",
+            "value": "https://europepmc.org/article/MED/38935788"
+          },
+          {
+            "scheme": "url",
+            "value": "https://hdl.handle.net/11250/3144745"
+          },
+          {
+            "scheme": "url",
+            "value": "https://hdl.handle.net/11250/3155024"
+          },
+          {
+            "scheme": "url",
+            "value": "https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0306285"
+          },
+          {
+            "scheme": "url",
+            "value": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11210863/"
+          },
+          {
+            "scheme": "url",
+            "value": "https://pubmed.ncbi.nlm.nih.gov/38935788"
+          },
+          {
+            "scheme": "url",
+            "value": "https://pubmed.ncbi.nlm.nih.gov/38935788/"
+          },
+          {
+            "scheme": "url",
+            "value": "https://www.ncbi.nlm.nih.gov/pmc/articles/11210863"
+          }
+        ],
+        "included_list_locator": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11210863/#pone.0306285.t003 ; Table 3 and references 39–47",
+        "rights": "Source attribution: Interventions targeting young people not in employment, education or training (NEET) for increased likelihood of return to school or employment—A systematic review (10.1371/journal.pone.0306285); article CC BY 4.0. Only factual bibliographic identities, inclusion-row locators and publication/search dates are transcribed; no abstracts, prose, tables, PDFs or API bodies are redistributed. OA article licensing is not snapshot permission; owner must check capture rights separately.",
+        "search_date": "2023-11-28",
+        "search_date_locator": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11210863/ ; Information sources and search strategy, updated-search sentence",
+        "title": "Interventions targeting young people not in employment, education or training (NEET) for increased likelihood of return to school or employment—A systematic review"
+      },
+      "question": "Which controlled interventions help young people outside work and education re-enter employment, schooling or training, including programmes that address practical barriers to participation?",
+      "question_id": "q-e",
+      "search_plan": [
+        {
+          "filters": {
+            "filter": "to_publication_date:2023-11-28"
+          },
+          "limit": 50,
+          "page_cursor": "",
+          "source": "openalex",
+          "terms": "NEET youth employment education intervention controlled"
+        },
+        {
+          "filters": {
+            "filter": "to_publication_date:2023-11-28"
+          },
+          "limit": 50,
+          "page_cursor": "",
+          "source": "openalex",
+          "terms": "disadvantaged young people reengagement training employment program"
+        }
+      ],
+      "split": "held_out"
+    },
+    {
+      "budgets": {
+        "max_http_requests": 100,
+        "max_wall_clock_ms": 600000
+      },
+      "domain": "clinical-medicine",
+      "gold": [
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.4274/mirt.galenos.2021.92053"
+            },
+            {
+              "scheme": "pmcid",
+              "value": "PMC8185475"
+            },
+            {
+              "scheme": "pmid",
+              "value": "34082503"
+            }
+          ],
+          "included_list_entry": "Table 1 and references 21–29; bibliography entry B21-cancers-16-03865",
+          "paper_id": "p-aaa",
+          "publication_date": "2021-06-01",
+          "publication_date_locator": "https://api.crossref.org/works/10.4274%2Fmirt.galenos.2021.92053 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.2967/jnumed.120.257915"
+            },
+            {
+              "scheme": "pmcid",
+              "value": "PMC8882890"
+            },
+            {
+              "scheme": "pmid",
+              "value": "33509970"
+            }
+          ],
+          "included_list_entry": "Table 1 and references 21–29; bibliography entry B22-cancers-16-03865",
+          "paper_id": "p-aab",
+          "publication_date": "2021-01-28",
+          "publication_date_locator": "https://api.crossref.org/works/10.2967%2Fjnumed.120.257915 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1007/s00259-020-05017-0"
+            },
+            {
+              "scheme": "pmcid",
+              "value": "PMC8036201"
+            },
+            {
+              "scheme": "pmid",
+              "value": "32885272"
+            }
+          ],
+          "included_list_entry": "Table 1 and references 21–29; bibliography entry B23-cancers-16-03865",
+          "paper_id": "p-aac",
+          "publication_date": "2020-09-03",
+          "publication_date_locator": "https://api.crossref.org/works/10.1007%2Fs00259-020-05017-0 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1097/rlu.0000000000002701"
+            },
+            {
+              "scheme": "pmid",
+              "value": "31348076"
+            }
+          ],
+          "included_list_entry": "Table 1 and references 21–29; bibliography entry B24-cancers-16-03865",
+          "paper_id": "p-aad",
+          "publication_date": "2019-07-25",
+          "publication_date_locator": "https://api.crossref.org/works/10.1097%2Frlu.0000000000002701 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1007/s12149-023-01876-3"
+            },
+            {
+              "scheme": "pmid",
+              "value": "37926772"
+            }
+          ],
+          "included_list_entry": "Table 1 and references 21–29; bibliography entry B25-cancers-16-03865",
+          "paper_id": "p-aae",
+          "publication_date": "2023-11-06",
+          "publication_date_locator": "https://api.crossref.org/works/10.1007%2Fs12149-023-01876-3 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1002/hep4.1861"
+            },
+            {
+              "scheme": "pmcid",
+              "value": "PMC9035563"
+            },
+            {
+              "scheme": "pmid",
+              "value": "34783177"
+            }
+          ],
+          "included_list_entry": "Table 1 and references 21–29; bibliography entry B26-cancers-16-03865",
+          "paper_id": "p-aaf",
+          "publication_date": "2021-11-15",
+          "publication_date_locator": "https://api.crossref.org/works/10.1002%2Fhep4.1861 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "url",
+              "value": "https://jnm.snmjournals.org/content/61/supplement_1/472"
+            }
+          ],
+          "included_list_entry": "Table 1 and references 21–29; bibliography entry B27-cancers-16-03865",
+          "paper_id": "p-aag",
+          "publication_date": "2020-05",
+          "publication_date_locator": "https://jnm.snmjournals.org/content/61/supplement_1/472 ; Journal of Nuclear Medicine May 2020, 61(supplement 1):472; month precision retained."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.3390/tomography9010011"
+            },
+            {
+              "scheme": "pmcid",
+              "value": "PMC9844456"
+            },
+            {
+              "scheme": "pmid",
+              "value": "36648998"
+            }
+          ],
+          "included_list_entry": "Table 1 and references 21–29; bibliography entry B28-cancers-16-03865",
+          "paper_id": "p-aah",
+          "publication_date": "2023-01-13",
+          "publication_date_locator": "https://api.crossref.org/works/10.3390%2Ftomography9010011 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.2967/jnumed.118.214833"
+            },
+            {
+              "scheme": "pmid",
+              "value": "30002112"
+            }
+          ],
+          "included_list_entry": "Table 1 and references 21–29; bibliography entry B29-cancers-16-03865",
+          "paper_id": "p-aai",
+          "publication_date": "2018-07-12",
+          "publication_date_locator": "https://api.crossref.org/works/10.2967%2Fjnumed.118.214833 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        }
+      ],
+      "gold_source_review": {
+        "identifiers": [
+          {
+            "scheme": "doi",
+            "value": "10.3390/cancers16223865"
+          },
+          {
+            "scheme": "openalex",
+            "value": "W4404494653"
+          },
+          {
+            "scheme": "pmcid",
+            "value": "PMC11592426"
+          },
+          {
+            "scheme": "pmid",
+            "value": "39594820"
+          },
+          {
+            "scheme": "url",
+            "value": "https://doi.org/10.3390/cancers16223865"
+          },
+          {
+            "scheme": "url",
+            "value": "https://europepmc.org/article/MED/39594820"
+          },
+          {
+            "scheme": "url",
+            "value": "https://hdl.handle.net/11343/359266"
+          },
+          {
+            "scheme": "url",
+            "value": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11592426/"
+          },
+          {
+            "scheme": "url",
+            "value": "https://pubmed.ncbi.nlm.nih.gov/39594820"
+          },
+          {
+            "scheme": "url",
+            "value": "https://pubmed.ncbi.nlm.nih.gov/39594820/"
+          },
+          {
+            "scheme": "url",
+            "value": "https://www.ncbi.nlm.nih.gov/pmc/articles/11592426"
+          }
+        ],
+        "included_list_locator": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11592426/#cancers-16-03865-t001 ; Table 1 and references 21–29",
+        "rights": "Source attribution: Prostate-Specific Membrane Antigen (PSMA) PET/CT in the Detection and Diagnosis of Hepatocellular Carcinoma (HCC): A Systematic Review and Meta-Analysis (10.3390/cancers16223865); article CC BY 4.0. Only factual bibliographic identities, inclusion-row locators and publication/search dates are transcribed; no abstracts, prose, tables, PDFs or API bodies are redistributed. OA article licensing is not snapshot permission; owner must check capture rights separately.",
+        "search_date": "2023-11-30",
+        "search_date_locator": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11592426/ ; Materials and Methods, searches-run sentence",
+        "title": "Prostate-Specific Membrane Antigen (PSMA) PET/CT in the Detection and Diagnosis of Hepatocellular Carcinoma (HCC): A Systematic Review and Meta-Analysis"
+      },
+      "question": "How has gallium-68 PSMA imaging been evaluated for identifying liver tumours in adults with hepatocellular carcinoma, relative to conventional imaging or tissue diagnosis?",
+      "question_id": "q-f",
+      "search_plan": [
+        {
+          "filters": {
+            "filter": "to_publication_date:2023-11-30"
+          },
+          "limit": 50,
+          "page_cursor": "",
+          "source": "openalex",
+          "terms": "gallium 68 PSMA hepatocellular carcinoma imaging"
+        },
+        {
+          "filters": {
+            "filter": "to_publication_date:2023-11-30"
+          },
+          "limit": 50,
+          "page_cursor": "",
+          "source": "openalex",
+          "terms": "liver cancer PSMA PET diagnosis"
+        }
+      ],
+      "split": "held_out"
+    },
+    {
+      "budgets": {
+        "max_http_requests": 100,
+        "max_wall_clock_ms": 600000
+      },
+      "domain": "education",
+      "gold": [
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1016/j.nedt.2010.06.004"
+            },
+            {
+              "scheme": "pmid",
+              "value": "20655633"
+            }
+          ],
+          "included_list_entry": "Table 1, first-author column, references 51–64; bibliography entry CR51",
+          "paper_id": "p-aaa",
+          "publication_date": "2010-07-23",
+          "publication_date_locator": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID:20655633%20AND%20SRC:MED\u0026resultType=core\u0026format=json field electronicPublicationDate ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.3109/13561820.2014.984286"
+            },
+            {
+              "scheme": "pmid",
+              "value": "25412759"
+            }
+          ],
+          "included_list_entry": "Table 1, first-author column, references 51–64; bibliography entry CR52",
+          "paper_id": "p-aab",
+          "publication_date": "2014-11-21",
+          "publication_date_locator": "https://api.crossref.org/works/10.3109%2F13561820.2014.984286 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1080/13561820.2019.1682531"
+            },
+            {
+              "scheme": "pmid",
+              "value": "31696755"
+            }
+          ],
+          "included_list_entry": "Table 1, first-author column, references 51–64; bibliography entry CR53",
+          "paper_id": "p-aac",
+          "publication_date": "2019-11-07",
+          "publication_date_locator": "https://api.crossref.org/works/10.1080%2F13561820.2019.1682531 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.3946/kjme.2020.161"
+            },
+            {
+              "scheme": "pmcid",
+              "value": "PMC7272380"
+            },
+            {
+              "scheme": "pmid",
+              "value": "32486622"
+            }
+          ],
+          "included_list_entry": "Table 1, first-author column, references 51–64; bibliography entry CR54",
+          "paper_id": "p-aad",
+          "publication_date": "2020-05-28",
+          "publication_date_locator": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID:32486622%20AND%20SRC:MED\u0026resultType=core\u0026format=json field electronicPublicationDate ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1186/s12912-022-01108-5"
+            },
+            {
+              "scheme": "pmcid",
+              "value": "PMC9762020"
+            },
+            {
+              "scheme": "pmid",
+              "value": "36536429"
+            }
+          ],
+          "included_list_entry": "Table 1, first-author column, references 51–64; bibliography entry CR55",
+          "paper_id": "p-aae",
+          "publication_date": "2022-12-19",
+          "publication_date_locator": "https://api.crossref.org/works/10.1186%2Fs12912-022-01108-5 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1080/13561820.2022.2147153"
+            },
+            {
+              "scheme": "pmid",
+              "value": "36606366"
+            }
+          ],
+          "included_list_entry": "Table 1, first-author column, references 51–64; bibliography entry CR56",
+          "paper_id": "p-aaf",
+          "publication_date": "2023-01-06",
+          "publication_date_locator": "https://api.crossref.org/works/10.1080%2F13561820.2022.2147153 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.3390/pharmacy12040128"
+            },
+            {
+              "scheme": "pmcid",
+              "value": "PMC11359710"
+            },
+            {
+              "scheme": "pmid",
+              "value": "39195857"
+            }
+          ],
+          "included_list_entry": "Table 1, first-author column, references 51–64; bibliography entry CR57",
+          "paper_id": "p-aag",
+          "publication_date": "2024-08-21",
+          "publication_date_locator": "https://api.crossref.org/works/10.3390%2Fpharmacy12040128 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.5688/ajpe766111"
+            },
+            {
+              "scheme": "pmcid",
+              "value": "PMC3425926"
+            },
+            {
+              "scheme": "pmid",
+              "value": "22919087"
+            }
+          ],
+          "included_list_entry": "Table 1, first-author column, references 51–64; bibliography entry CR58",
+          "paper_id": "p-aah",
+          "publication_date": "2012-08",
+          "publication_date_locator": "https://api.crossref.org/works/10.5688%2Fajpe766111 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.3109/13561820.2015.1025373"
+            },
+            {
+              "scheme": "pmid",
+              "value": "26091368"
+            }
+          ],
+          "included_list_entry": "Table 1, first-author column, references 51–64; bibliography entry CR59",
+          "paper_id": "p-aai",
+          "publication_date": "2015",
+          "publication_date_locator": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed\u0026id=26091368\u0026retmode=xml field Article/Journal/JournalIssue/PubDate ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1186/s12909-016-0674-5"
+            },
+            {
+              "scheme": "pmcid",
+              "value": "PMC4884367"
+            },
+            {
+              "scheme": "pmid",
+              "value": "27233631"
+            }
+          ],
+          "included_list_entry": "Table 1, first-author column, references 51–64; bibliography entry CR60",
+          "paper_id": "p-aaj",
+          "publication_date": "2016-05-28",
+          "publication_date_locator": "https://api.crossref.org/works/10.1186%2Fs12909-016-0674-5 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.5688/ajpe6361"
+            },
+            {
+              "scheme": "pmcid",
+              "value": "PMC5909874"
+            },
+            {
+              "scheme": "pmid",
+              "value": "29692442"
+            }
+          ],
+          "included_list_entry": "Table 1, first-author column, references 51–64; bibliography entry CR61",
+          "paper_id": "p-aak",
+          "publication_date": "2018-04",
+          "publication_date_locator": "https://api.crossref.org/works/10.5688%2Fajpe6361 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1136/bmjopen-2021-060066"
+            },
+            {
+              "scheme": "pmcid",
+              "value": "PMC9305815"
+            },
+            {
+              "scheme": "pmid",
+              "value": "35858731"
+            }
+          ],
+          "included_list_entry": "Table 1, first-author column, references 51–64; bibliography entry CR62",
+          "paper_id": "p-aal",
+          "publication_date": "2022-07",
+          "publication_date_locator": "https://api.crossref.org/works/10.1136%2Fbmjopen-2021-060066 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1080/13561820.2022.2124237"
+            },
+            {
+              "scheme": "pmid",
+              "value": "36264082"
+            }
+          ],
+          "included_list_entry": "Table 1, first-author column, references 51–64; bibliography entry CR63",
+          "paper_id": "p-aam",
+          "publication_date": "2022-10-20",
+          "publication_date_locator": "https://api.crossref.org/works/10.1080%2F13561820.2022.2124237 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1016/j.heliyon.2023.e13122"
+            },
+            {
+              "scheme": "pmcid",
+              "value": "PMC9922953"
+            },
+            {
+              "scheme": "pmid",
+              "value": "36793967"
+            }
+          ],
+          "included_list_entry": "Table 1, first-author column, references 51–64; bibliography entry CR64",
+          "paper_id": "p-aan",
+          "publication_date": "2023-01-21",
+          "publication_date_locator": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID:36793967%20AND%20SRC:MED\u0026resultType=core\u0026format=json field electronicPublicationDate ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        }
+      ],
+      "gold_source_review": {
+        "identifiers": [
+          {
+            "scheme": "doi",
+            "value": "10.1186/s12909-024-06313-1"
+          },
+          {
+            "scheme": "openalex",
+            "value": "W4404512160"
+          },
+          {
+            "scheme": "pmcid",
+            "value": "PMC11577742"
+          },
+          {
+            "scheme": "pmid",
+            "value": "39563306"
+          },
+          {
+            "scheme": "url",
+            "value": "https://doaj.org/article/3dd580b449c54a77b7dcc2784746539c"
+          },
+          {
+            "scheme": "url",
+            "value": "https://doi.org/10.1186/s12909-024-06313-1"
+          },
+          {
+            "scheme": "url",
+            "value": "https://europepmc.org/article/MED/39563306"
+          },
+          {
+            "scheme": "url",
+            "value": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11577742/"
+          },
+          {
+            "scheme": "url",
+            "value": "https://pubmed.ncbi.nlm.nih.gov/39563306"
+          },
+          {
+            "scheme": "url",
+            "value": "https://pubmed.ncbi.nlm.nih.gov/39563306/"
+          },
+          {
+            "scheme": "url",
+            "value": "https://www.ncbi.nlm.nih.gov/pmc/articles/11577742"
+          }
+        ],
+        "included_list_locator": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11577742/#Tab1 ; Table 1, first-author column, references 51–64",
+        "rights": "Source attribution: Outcomes of interprofessional education for pharmacy students: a systematic review (10.1186/s12909-024-06313-1); article CC BY-NC-ND 4.0. Only factual bibliographic identities, inclusion-row locators and publication/search dates are transcribed; no abstracts, prose, tables, PDFs or API bodies are redistributed. OA article licensing is not snapshot permission; owner must check capture rights separately.",
+        "search_date": "2024-09-20",
+        "search_date_locator": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11577742/ ; Search strategy, updated-search sentence",
+        "title": "Outcomes of interprofessional education for pharmacy students: a systematic review"
+      },
+      "question": "What comparative evidence measures learning and collaboration when pharmacy trainees learn alongside students from other health professions instead of receiving lecture-based teaching alone?",
+      "question_id": "q-g",
+      "search_plan": [
+        {
+          "filters": {
+            "filter": "to_publication_date:2024-09-20"
+          },
+          "limit": 50,
+          "page_cursor": "",
+          "source": "openalex",
+          "terms": "pharmacy students collaborative health professions learning comparison"
+        },
+        {
+          "filters": {
+            "filter": "to_publication_date:2024-09-20"
+          },
+          "limit": 50,
+          "page_cursor": "",
+          "source": "openalex",
+          "terms": "pharmacy interprofessional education lecture controlled cohort"
+        }
+      ],
+      "split": "held_out"
+    },
+    {
+      "budgets": {
+        "max_http_requests": 100,
+        "max_wall_clock_ms": 600000
+      },
+      "domain": "performing-arts",
+      "gold": [
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1080/15290824.2004.10387263"
+            }
+          ],
+          "included_list_entry": "Tables 3–6 and references 33–37; bibliography entry B33-healthcare-12-00402",
+          "paper_id": "p-aaa",
+          "publication_date": "2004-07",
+          "publication_date_locator": "https://api.crossref.org/works/10.1080%2F15290824.2004.10387263 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1080/15290824.2006.10387320"
+            }
+          ],
+          "included_list_entry": "Tables 3–6 and references 33–37; bibliography entry B34-healthcare-12-00402",
+          "paper_id": "p-aab",
+          "publication_date": "2006-07",
+          "publication_date_locator": "https://api.crossref.org/works/10.1080%2F15290824.2006.10387320 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1080/15290824.2010.10387158"
+            }
+          ],
+          "included_list_entry": "Tables 3–6 and references 33–37; bibliography entry B35-healthcare-12-00402",
+          "paper_id": "p-aac",
+          "publication_date": "2010-06",
+          "publication_date_locator": "https://api.crossref.org/works/10.1080%2F15290824.2010.10387158 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.2307/1478236"
+            }
+          ],
+          "included_list_entry": "Tables 3–6 and references 33–37; bibliography entry B36-healthcare-12-00402",
+          "paper_id": "p-aad",
+          "publication_date": "1997",
+          "publication_date_locator": "https://api.crossref.org/works/10.2307%2F1478236 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1386/jdsp.1.2.237_1"
+            }
+          ],
+          "included_list_entry": "Tables 3–6 and references 33–37; bibliography entry B37-healthcare-12-00402",
+          "paper_id": "p-aae",
+          "publication_date": "2009-12-01",
+          "publication_date_locator": "https://api.crossref.org/works/10.1386%2Fjdsp.1.2.237_1 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        }
+      ],
+      "gold_source_review": {
+        "identifiers": [
+          {
+            "scheme": "doi",
+            "value": "10.3390/healthcare12030402"
+          },
+          {
+            "scheme": "openalex",
+            "value": "W4391542563"
+          },
+          {
+            "scheme": "pmcid",
+            "value": "PMC10855653"
+          },
+          {
+            "scheme": "pmid",
+            "value": "38338286"
+          },
+          {
+            "scheme": "url",
+            "value": "https://doi.org/10.3390/healthcare12030402"
+          },
+          {
+            "scheme": "url",
+            "value": "https://europepmc.org/article/MED/38338286"
+          },
+          {
+            "scheme": "url",
+            "value": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10855653/"
+          },
+          {
+            "scheme": "url",
+            "value": "https://pubmed.ncbi.nlm.nih.gov/38338286"
+          },
+          {
+            "scheme": "url",
+            "value": "https://pubmed.ncbi.nlm.nih.gov/38338286/"
+          },
+          {
+            "scheme": "url",
+            "value": "https://www.ncbi.nlm.nih.gov/pmc/articles/10855653"
+          }
+        ],
+        "included_list_locator": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10855653/#healthcare-12-00402-t006 ; Tables 3–6 and references 33–37",
+        "rights": "Source attribution: The Concept of Neuromuscular Repatterning in Dancers: A Systematic Review (10.3390/healthcare12030402); article CC BY 4.0. Only factual bibliographic identities, inclusion-row locators and publication/search dates are transcribed; no abstracts, prose, tables, PDFs or API bodies are redistributed. OA article licensing is not snapshot permission; owner must check capture rights separately.",
+        "search_date": "2023-10-13",
+        "search_date_locator": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10855653/ ; 2.1 Information Sources and Search Strategy",
+        "title": "The Concept of Neuromuscular Repatterning in Dancers: A Systematic Review"
+      },
+      "question": "Which studies examine whether body-awareness imagery and developmental movement exercises change alignment, performance or wellbeing in dancers?",
+      "question_id": "q-h",
+      "search_plan": [
+        {
+          "filters": {
+            "filter": "to_publication_date:2023-10-13"
+          },
+          "limit": 50,
+          "page_cursor": "",
+          "source": "openalex",
+          "terms": "dancer somatic imagery developmental movement training"
+        },
+        {
+          "filters": {
+            "filter": "to_publication_date:2023-10-13"
+          },
+          "limit": 50,
+          "page_cursor": "",
+          "source": "openalex",
+          "terms": "dance body awareness movement pattern education"
+        }
+      ],
+      "split": "held_out"
+    },
+    {
+      "budgets": {
+        "max_http_requests": 100,
+        "max_wall_clock_ms": 600000
+      },
+      "domain": "clinical-medicine",
+      "gold": [
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.2147/jmdh.s312395"
+            },
+            {
+              "scheme": "pmcid",
+              "value": "PMC8214550"
+            },
+            {
+              "scheme": "pmid",
+              "value": "34163171"
+            }
+          ],
+          "included_list_entry": "Table 1 and bibliography entries Badr, Bunkenborg, De Meester, Haegdorens, Heller, Kyriacos, Mitchell, Patel; bibliography entry bib0002",
+          "paper_id": "p-aaa",
+          "publication_date": "2021",
+          "publication_date_locator": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed\u0026id=34163171\u0026retmode=xml field Article/Journal/JournalIssue/PubDate ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1016/j.resuscitation.2013.11.023"
+            },
+            {
+              "scheme": "pmid",
+              "value": "24321322"
+            }
+          ],
+          "included_list_entry": "Table 1 and bibliography entries Badr, Bunkenborg, De Meester, Haegdorens, Heller, Kyriacos, Mitchell, Patel; bibliography entry bib0004",
+          "paper_id": "p-aab",
+          "publication_date": "2013-12-07",
+          "publication_date_locator": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID:24321322%20AND%20SRC:MED\u0026resultType=core\u0026format=json field electronicPublicationDate ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1016/j.jcrc.2013.07.061"
+            },
+            {
+              "scheme": "pmid",
+              "value": "24011975"
+            }
+          ],
+          "included_list_entry": "Table 1 and bibliography entries Badr, Bunkenborg, De Meester, Haegdorens, Heller, Kyriacos, Mitchell, Patel; bibliography entry bib0005",
+          "paper_id": "p-aac",
+          "publication_date": "2013-09-06",
+          "publication_date_locator": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID:24011975%20AND%20SRC:MED\u0026resultType=core\u0026format=json field electronicPublicationDate ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1016/j.resuscitation.2018.04.018"
+            },
+            {
+              "scheme": "pmid",
+              "value": "29679694"
+            }
+          ],
+          "included_list_entry": "Table 1 and bibliography entries Badr, Bunkenborg, De Meester, Haegdorens, Heller, Kyriacos, Mitchell, Patel; bibliography entry bib0007",
+          "paper_id": "p-aad",
+          "publication_date": "2018-04-18",
+          "publication_date_locator": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID:29679694%20AND%20SRC:MED\u0026resultType=core\u0026format=json field electronicPublicationDate ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1097/sla.0000000000002830"
+            },
+            {
+              "scheme": "pmid",
+              "value": "29771722"
+            }
+          ],
+          "included_list_entry": "Table 1 and bibliography entries Badr, Bunkenborg, De Meester, Haegdorens, Heller, Kyriacos, Mitchell, Patel; bibliography entry bib0008",
+          "paper_id": "p-aae",
+          "publication_date": "2018-05-17",
+          "publication_date_locator": "https://api.openalex.org/works/https://doi.org/10.1097/sla.0000000000002830 field publication_date ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1186/s13063-019-3916-0"
+            },
+            {
+              "scheme": "pmcid",
+              "value": "PMC6937946"
+            },
+            {
+              "scheme": "pmid",
+              "value": "31888745"
+            }
+          ],
+          "included_list_entry": "Table 1 and bibliography entries Badr, Bunkenborg, De Meester, Haegdorens, Heller, Kyriacos, Mitchell, Patel; bibliography entry bib0011",
+          "paper_id": "p-aaf",
+          "publication_date": "2019-12",
+          "publication_date_locator": "https://api.crossref.org/works/10.1186%2Fs13063-019-3916-0 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1016/j.resuscitation.2010.03.001"
+            },
+            {
+              "scheme": "pmid",
+              "value": "20378235"
+            }
+          ],
+          "included_list_entry": "Table 1 and bibliography entries Badr, Bunkenborg, De Meester, Haegdorens, Heller, Kyriacos, Mitchell, Patel; bibliography entry bib0015",
+          "paper_id": "p-aag",
+          "publication_date": "2010-04-07",
+          "publication_date_locator": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID:20378235%20AND%20SRC:MED\u0026resultType=core\u0026format=json field electronicPublicationDate ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1016/j.injury.2011.05.030"
+            },
+            {
+              "scheme": "pmid",
+              "value": "21696724"
+            }
+          ],
+          "included_list_entry": "Table 1 and bibliography entries Badr, Bunkenborg, De Meester, Haegdorens, Heller, Kyriacos, Mitchell, Patel; bibliography entry bib0018",
+          "paper_id": "p-aah",
+          "publication_date": "2011-06-21",
+          "publication_date_locator": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID:21696724%20AND%20SRC:MED\u0026resultType=core\u0026format=json field electronicPublicationDate ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        }
+      ],
+      "gold_source_review": {
+        "identifiers": [
+          {
+            "scheme": "doi",
+            "value": "10.1016/j.ijnsa.2024.100256"
+          },
+          {
+            "scheme": "openalex",
+            "value": "W4403837004"
+          },
+          {
+            "scheme": "pmcid",
+            "value": "PMC11665940"
+          },
+          {
+            "scheme": "pmid",
+            "value": "39717155"
+          },
+          {
+            "scheme": "url",
+            "value": "https://doi.org/10.1016/j.ijnsa.2024.100256"
+          },
+          {
+            "scheme": "url",
+            "value": "https://europepmc.org/article/MED/39717155"
+          },
+          {
+            "scheme": "url",
+            "value": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11665940/"
+          },
+          {
+            "scheme": "url",
+            "value": "https://pubmed.ncbi.nlm.nih.gov/39717155"
+          },
+          {
+            "scheme": "url",
+            "value": "https://pubmed.ncbi.nlm.nih.gov/39717155/"
+          },
+          {
+            "scheme": "url",
+            "value": "https://pure.amsterdamumc.nl/en/publications/7f4a7366-97e5-4b43-8bb5-be8252c1bb51"
+          },
+          {
+            "scheme": "url",
+            "value": "https://www.ncbi.nlm.nih.gov/pmc/articles/11665940"
+          }
+        ],
+        "included_list_locator": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11665940/#tbl0001 ; Table 1 and bibliography entries Badr, Bunkenborg, De Meester, Haegdorens, Heller, Kyriacos, Mitchell, Patel",
+        "rights": "Source attribution: The effect of early warning scoring systems on adverse outcome in surgical patients: A systematic review (10.1016/j.ijnsa.2024.100256); article CC BY 4.0. Only factual bibliographic identities, inclusion-row locators and publication/search dates are transcribed; no abstracts, prose, tables, PDFs or API bodies are redistributed. OA article licensing is not snapshot permission; owner must check capture rights separately.",
+        "search_date": "2023-06-20",
+        "search_date_locator": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11665940/ ; Search strategy",
+        "title": "The effect of early warning scoring systems on adverse outcome in surgical patients: A systematic review"
+      },
+      "question": "Do bedside vital-sign scoring and escalation protocols on surgical wards change arrests, unplanned intensive-care transfers or survival compared with previous or usual monitoring practice?",
+      "question_id": "q-i",
+      "search_plan": [
+        {
+          "filters": {
+            "filter": "to_publication_date:2023-06-20"
+          },
+          "limit": 50,
+          "page_cursor": "",
+          "source": "openalex",
+          "terms": "surgical ward vital signs escalation protocol outcomes"
+        },
+        {
+          "filters": {
+            "filter": "to_publication_date:2023-06-20"
+          },
+          "limit": 50,
+          "page_cursor": "",
+          "source": "openalex",
+          "terms": "surgical patient early warning score implementation trial"
+        }
+      ],
+      "split": "dev"
+    },
+    {
+      "budgets": {
+        "max_http_requests": 100,
+        "max_wall_clock_ms": 600000
+      },
+      "domain": "clinical-medicine",
+      "gold": [
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1016/j.jaad.2009.07.040"
+            },
+            {
+              "scheme": "pmid",
+              "value": "20159311"
+            }
+          ],
+          "included_list_entry": "Table 1, eleven included reports; bibliography entry B2-polymers-16-02564",
+          "paper_id": "p-aaa",
+          "publication_date": "2010-03",
+          "publication_date_locator": "https://api.crossref.org/works/10.1016%2Fj.jaad.2009.07.040 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1097/dss.0000000000001772"
+            },
+            {
+              "scheme": "pmid",
+              "value": "30741790"
+            }
+          ],
+          "included_list_entry": "Table 1, eleven included reports; bibliography entry B3-polymers-16-02564",
+          "paper_id": "p-aab",
+          "publication_date": "2019-05",
+          "publication_date_locator": "https://api.crossref.org/works/10.1097%2Fdss.0000000000001772 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1097/qai.0b013e318158bec9"
+            },
+            {
+              "scheme": "pmid",
+              "value": "18193500"
+            }
+          ],
+          "included_list_entry": "Table 1, eleven included reports; bibliography entry B5-polymers-16-02564",
+          "paper_id": "p-aac",
+          "publication_date": "2007-12-15",
+          "publication_date_locator": "https://api.crossref.org/works/10.1097%2Fqai.0b013e318158bec9 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1111/j.1468-1293.2004.00190.x"
+            },
+            {
+              "scheme": "pmid",
+              "value": "15012646"
+            }
+          ],
+          "included_list_entry": "Table 1, eleven included reports; bibliography entry B6-polymers-16-02564",
+          "paper_id": "p-aad",
+          "publication_date": "2004-03",
+          "publication_date_locator": "https://api.crossref.org/works/10.1111%2Fj.1468-1293.2004.00190.x field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.36849/jdd.7729"
+            },
+            {
+              "scheme": "pmid",
+              "value": "38206151"
+            }
+          ],
+          "included_list_entry": "Table 1, eleven included reports; bibliography entry B8-polymers-16-02564",
+          "paper_id": "p-aae",
+          "publication_date": "2023-12-01",
+          "publication_date_locator": "https://api.crossref.org/works/10.36849%2Fjdd.7729 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1177/1090820x11411161"
+            },
+            {
+              "scheme": "pmid",
+              "value": "21719865"
+            }
+          ],
+          "included_list_entry": "Table 1, eleven included reports; bibliography entry B10-polymers-16-02564",
+          "paper_id": "p-aaf",
+          "publication_date": "2011-07-01",
+          "publication_date_locator": "https://api.crossref.org/works/10.1177%2F1090820x11411161 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1111/j.1468-1293.2006.00342.x"
+            },
+            {
+              "scheme": "pmid",
+              "value": "16494632"
+            }
+          ],
+          "included_list_entry": "Table 1, eleven included reports; bibliography entry B20-polymers-16-02564",
+          "paper_id": "p-aag",
+          "publication_date": "2006-02-23",
+          "publication_date_locator": "https://api.crossref.org/works/10.1111%2Fj.1468-1293.2006.00342.x field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1097/prs.0b013e318208d371"
+            },
+            {
+              "scheme": "pmid",
+              "value": "21460676"
+            }
+          ],
+          "included_list_entry": "Table 1, eleven included reports; bibliography entry B21-polymers-16-02564",
+          "paper_id": "p-aah",
+          "publication_date": "2011-04",
+          "publication_date_locator": "https://api.crossref.org/works/10.1097%2Fprs.0b013e318208d371 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1111/hiv.12021"
+            },
+            {
+              "scheme": "pmid",
+              "value": "23432777"
+            }
+          ],
+          "included_list_entry": "Table 1, eleven included reports; bibliography entry B22-polymers-16-02564",
+          "paper_id": "p-aai",
+          "publication_date": "2013-02-24",
+          "publication_date_locator": "https://api.crossref.org/works/10.1111%2Fhiv.12021 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.36849/jdd.6034"
+            },
+            {
+              "scheme": "pmid",
+              "value": "34232000"
+            }
+          ],
+          "included_list_entry": "Table 1, eleven included reports; bibliography entry B23-polymers-16-02564",
+          "paper_id": "p-aaj",
+          "publication_date": "2021-07-01",
+          "publication_date_locator": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed\u0026id=34232000\u0026retmode=xml field Article/Journal/JournalIssue/PubDate ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1007/s00266-023-03600-y"
+            },
+            {
+              "scheme": "pmid",
+              "value": "37626137"
+            }
+          ],
+          "included_list_entry": "Table 1, eleven included reports; bibliography entry B24-polymers-16-02564",
+          "paper_id": "p-aak",
+          "publication_date": "2023-08-25",
+          "publication_date_locator": "https://api.crossref.org/works/10.1007%2Fs00266-023-03600-y field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        }
+      ],
+      "gold_source_review": {
+        "identifiers": [
+          {
+            "scheme": "doi",
+            "value": "10.20944/preprints202407.1452.v1"
+          },
+          {
+            "scheme": "doi",
+            "value": "10.3390/polym16182564"
+          },
+          {
+            "scheme": "openalex",
+            "value": "W4402448390"
+          },
+          {
+            "scheme": "pmcid",
+            "value": "PMC11435306"
+          },
+          {
+            "scheme": "pmid",
+            "value": "39339028"
+          },
+          {
+            "scheme": "url",
+            "value": "https://doaj.org/article/96e808522e024c6b841a5b94da97e26f"
+          },
+          {
+            "scheme": "url",
+            "value": "https://doi.org/10.20944/preprints202407.1452.v1"
+          },
+          {
+            "scheme": "url",
+            "value": "https://doi.org/10.3390/polym16182564"
+          },
+          {
+            "scheme": "url",
+            "value": "https://europepmc.org/article/MED/39339028"
+          },
+          {
+            "scheme": "url",
+            "value": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11435306/"
+          },
+          {
+            "scheme": "url",
+            "value": "https://pubmed.ncbi.nlm.nih.gov/39339028"
+          },
+          {
+            "scheme": "url",
+            "value": "https://pubmed.ncbi.nlm.nih.gov/39339028/"
+          },
+          {
+            "scheme": "url",
+            "value": "https://www.ncbi.nlm.nih.gov/pmc/articles/11435306"
+          },
+          {
+            "scheme": "url",
+            "value": "https://www.preprints.org/manuscript/202407.1452/v1"
+          }
+        ],
+        "included_list_locator": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11435306/#polymers-16-02564-t001 ; Table 1, eleven included reports",
+        "rights": "Source attribution: Efficacy and Safety of Poly- l -Lactic Acid in Facial Aesthetics: A Systematic Review (10.3390/polym16182564); article CC BY 4.0. Only factual bibliographic identities, inclusion-row locators and publication/search dates are transcribed; no abstracts, prose, tables, PDFs or API bodies are redistributed. OA article licensing is not snapshot permission; owner must check capture rights separately.",
+        "search_date": "2024-02-12",
+        "search_date_locator": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11435306/ ; 2.2 Search Strategy and Selection Criteria",
+        "title": "Efficacy and Safety of Poly- l -Lactic Acid in Facial Aesthetics: A Systematic Review"
+      },
+      "question": "What randomized human studies evaluate injectable poly-L-lactic acid for facial volume loss or ageing, including durability and adverse events against alternative treatments?",
+      "question_id": "q-j",
+      "search_plan": [
+        {
+          "filters": {
+            "filter": "to_publication_date:2024-02-12"
+          },
+          "limit": 50,
+          "page_cursor": "",
+          "source": "openalex",
+          "terms": "injectable poly L lactic acid facial volume randomized"
+        },
+        {
+          "filters": {
+            "filter": "to_publication_date:2024-02-12"
+          },
+          "limit": 50,
+          "page_cursor": "",
+          "source": "openalex",
+          "terms": "facial lipoatrophy PLLA filler controlled trial"
+        }
+      ],
+      "split": "dev"
+    },
+    {
+      "budgets": {
+        "max_http_requests": 100,
+        "max_wall_clock_ms": 600000
+      },
+      "domain": "clinical-medicine",
+      "gold": [
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1016/j.apmr.2013.05.026"
+            },
+            {
+              "scheme": "pmid",
+              "value": "23806610"
+            }
+          ],
+          "included_list_entry": "Table 1 and references 23–36; bibliography entry REF23",
+          "paper_id": "p-aaa",
+          "publication_date": "2013-06-24",
+          "publication_date_locator": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID:23806610%20AND%20SRC:MED\u0026resultType=core\u0026format=json field electronicPublicationDate ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.3390/ijerph19137793"
+            },
+            {
+              "scheme": "pmcid",
+              "value": "PMC9265800"
+            },
+            {
+              "scheme": "pmid",
+              "value": "35805451"
+            }
+          ],
+          "included_list_entry": "Table 1 and references 23–36; bibliography entry REF24",
+          "paper_id": "p-aab",
+          "publication_date": "2022-06-25",
+          "publication_date_locator": "https://api.crossref.org/works/10.3390%2Fijerph19137793 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.3310/hta9390"
+            },
+            {
+              "scheme": "pmid",
+              "value": "16181565"
+            }
+          ],
+          "included_list_entry": "Table 1 and references 23–36; bibliography entry REF25",
+          "paper_id": "p-aac",
+          "publication_date": "2005-10",
+          "publication_date_locator": "https://api.crossref.org/works/10.3310%2Fhta9390 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1093/jpepsy/jsy066"
+            },
+            {
+              "scheme": "pmcid",
+              "value": "PMC6415659"
+            },
+            {
+              "scheme": "pmid",
+              "value": "30204919"
+            }
+          ],
+          "included_list_entry": "Table 1 and references 23–36; bibliography entry REF26",
+          "paper_id": "p-aad",
+          "publication_date": "2018-09-10",
+          "publication_date_locator": "https://api.crossref.org/works/10.1093%2Fjpepsy%2Fjsy066 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1097/phm.0000000000000347"
+            },
+            {
+              "scheme": "pmid",
+              "value": "26135372"
+            }
+          ],
+          "included_list_entry": "Table 1 and references 23–36; bibliography entry REF27",
+          "paper_id": "p-aae",
+          "publication_date": "2016-02",
+          "publication_date_locator": "https://api.crossref.org/works/10.1097%2Fphm.0000000000000347 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.2340/16501977-1051"
+            },
+            {
+              "scheme": "pmid",
+              "value": "23027068"
+            }
+          ],
+          "included_list_entry": "Table 1 and references 23–36; bibliography entry REF28",
+          "paper_id": "p-aaf",
+          "publication_date": "2012",
+          "publication_date_locator": "https://api.crossref.org/works/10.2340%2F16501977-1051 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "pmid",
+              "value": "15868634"
+            }
+          ],
+          "included_list_entry": "Table 1 and references 23–36; bibliography entry REF29",
+          "paper_id": "p-aag",
+          "publication_date": "2005-05",
+          "publication_date_locator": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID:15868634\u0026format=json\u0026resultType=core ; journalInfo.dateOfPublication=2005 May (precision retained)"
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1136/archdischild-2013-305166"
+            },
+            {
+              "scheme": "pmid",
+              "value": "24636956"
+            }
+          ],
+          "included_list_entry": "Table 1 and references 23–36; bibliography entry REF30",
+          "paper_id": "p-aah",
+          "publication_date": "2014-03-17",
+          "publication_date_locator": "https://api.crossref.org/works/10.1136%2Farchdischild-2013-305166 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1002/acr.23100"
+            },
+            {
+              "scheme": "pmid",
+              "value": "27696793"
+            }
+          ],
+          "included_list_entry": "Table 1 and references 23–36; bibliography entry REF31",
+          "paper_id": "p-aai",
+          "publication_date": "2017-06-09",
+          "publication_date_locator": "https://api.crossref.org/works/10.1002%2Facr.23100 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1007/s10103-021-03427-6"
+            },
+            {
+              "scheme": "pmid",
+              "value": "34599401"
+            }
+          ],
+          "included_list_entry": "Table 1 and references 23–36; bibliography entry REF32",
+          "paper_id": "p-aaj",
+          "publication_date": "2021-10-02",
+          "publication_date_locator": "https://api.crossref.org/works/10.1007%2Fs10103-021-03427-6 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.32641/rchped.v90i3.886"
+            },
+            {
+              "scheme": "pmid",
+              "value": "31344188"
+            }
+          ],
+          "included_list_entry": "Table 1 and references 23–36; bibliography entry REF33",
+          "paper_id": "p-aak",
+          "publication_date": "2019-06",
+          "publication_date_locator": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed\u0026id=31344188\u0026retmode=xml field Article/Journal/JournalIssue/PubDate ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1097/phm.0000000000001001"
+            },
+            {
+              "scheme": "pmid",
+              "value": "30020092"
+            }
+          ],
+          "included_list_entry": "Table 1 and references 23–36; bibliography entry REF34",
+          "paper_id": "p-aal",
+          "publication_date": "2019-03",
+          "publication_date_locator": "https://api.crossref.org/works/10.1097%2Fphm.0000000000001001 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1186/1546-0096-11-7"
+            },
+            {
+              "scheme": "pmcid",
+              "value": "PMC3614532"
+            },
+            {
+              "scheme": "pmid",
+              "value": "23432796"
+            }
+          ],
+          "included_list_entry": "Table 1 and references 23–36; bibliography entry REF35",
+          "paper_id": "p-aam",
+          "publication_date": "2013-02-22",
+          "publication_date_locator": "https://api.crossref.org/works/10.1186%2F1546-0096-11-7 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1097/phm.0000000000000279"
+            },
+            {
+              "scheme": "pmid",
+              "value": "25802953"
+            }
+          ],
+          "included_list_entry": "Table 1 and references 23–36; bibliography entry REF36",
+          "paper_id": "p-aan",
+          "publication_date": "2015-06",
+          "publication_date_locator": "https://api.crossref.org/works/10.1097%2Fphm.0000000000000279 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        }
+      ],
+      "gold_source_review": {
+        "identifiers": [
+          {
+            "scheme": "doi",
+            "value": "10.7759/cureus.73295"
+          },
+          {
+            "scheme": "openalex",
+            "value": "W4404178081"
+          },
+          {
+            "scheme": "pmcid",
+            "value": "PMC11625471"
+          },
+          {
+            "scheme": "pmid",
+            "value": "39650967"
+          },
+          {
+            "scheme": "url",
+            "value": "https://doi.org/10.7759/cureus.73295"
+          },
+          {
+            "scheme": "url",
+            "value": "https://europepmc.org/article/MED/39650967"
+          },
+          {
+            "scheme": "url",
+            "value": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11625471/"
+          },
+          {
+            "scheme": "url",
+            "value": "https://pubmed.ncbi.nlm.nih.gov/39650967"
+          },
+          {
+            "scheme": "url",
+            "value": "https://pubmed.ncbi.nlm.nih.gov/39650967/"
+          },
+          {
+            "scheme": "url",
+            "value": "https://www.ncbi.nlm.nih.gov/pmc/articles/11625471"
+          }
+        ],
+        "included_list_locator": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11625471/#TAB1 ; Table 1 and references 23–36",
+        "rights": "Source attribution: Conservative, Non-pharmacological Interventions for Pain Management in Juvenile Idiopathic Arthritis: A Systematic Review and Meta-Analysis of Randomized Controlled Trials (10.7759/cureus.73295); article CC BY 4.0. Only factual bibliographic identities, inclusion-row locators and publication/search dates are transcribed; no abstracts, prose, tables, PDFs or API bodies are redistributed. OA article licensing is not snapshot permission; owner must check capture rights separately.",
+        "search_date": "2023-09-22",
+        "search_date_locator": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11625471/ ; Review / Methods, literature-search paragraph",
+        "title": "Conservative, Non-pharmacological Interventions for Pain Management in Juvenile Idiopathic Arthritis: A Systematic Review and Meta-Analysis of Randomized Controlled Trials"
+      },
+      "question": "Which randomized studies assess pain in young people with juvenile inflammatory arthritis after exercise, water-based therapy, orthoses, laser therapy or digital self-management interventions?",
+      "question_id": "q-k",
+      "search_plan": [
+        {
+          "filters": {
+            "filter": "to_publication_date:2023-09-22"
+          },
+          "limit": 50,
+          "page_cursor": "",
+          "source": "openalex",
+          "terms": "juvenile idiopathic arthritis pain non drug randomized"
+        },
+        {
+          "filters": {
+            "filter": "to_publication_date:2023-09-22"
+          },
+          "limit": 50,
+          "page_cursor": "",
+          "source": "openalex",
+          "terms": "juvenile arthritis exercise hydrotherapy orthosis self management pain"
+        }
+      ],
+      "split": "dev"
+    },
+    {
+      "budgets": {
+        "max_http_requests": 100,
+        "max_wall_clock_ms": 600000
+      },
+      "domain": "clinical-medicine",
+      "gold": [
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1111/bjh.16490"
+            },
+            {
+              "scheme": "pmcid",
+              "value": "PMC7318706"
+            },
+            {
+              "scheme": "pmid",
+              "value": "32201943"
+            }
+          ],
+          "included_list_entry": "Tables 1–3, the 21 PMID-labelled rows; bibliography entry JR24070076-17",
+          "paper_id": "p-aaa",
+          "publication_date": "2020-03-22",
+          "publication_date_locator": "https://api.crossref.org/works/10.1111%2Fbjh.16490 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1016/j.thromres.2023.02.016"
+            },
+            {
+              "scheme": "pmid",
+              "value": "36934482"
+            }
+          ],
+          "included_list_entry": "Tables 1–3, the 21 PMID-labelled rows; bibliography entry JR24070076-16",
+          "paper_id": "p-aab",
+          "publication_date": "2023-03-05",
+          "publication_date_locator": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID:36934482%20AND%20SRC:MED\u0026resultType=core\u0026format=json field electronicPublicationDate ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1016/j.thromres.2023.10.012"
+            },
+            {
+              "scheme": "pmid",
+              "value": "37931538"
+            }
+          ],
+          "included_list_entry": "Tables 1–3, the 21 PMID-labelled rows; bibliography entry JR24070076-15",
+          "paper_id": "p-aac",
+          "publication_date": "2023-10-21",
+          "publication_date_locator": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID:37931538%20AND%20SRC:MED\u0026resultType=core\u0026format=json field electronicPublicationDate ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1111/hae.14815"
+            },
+            {
+              "scheme": "pmid",
+              "value": "37347648"
+            }
+          ],
+          "included_list_entry": "Tables 1–3, the 21 PMID-labelled rows; bibliography entry JR24070076-30",
+          "paper_id": "p-aad",
+          "publication_date": "2023-06-22",
+          "publication_date_locator": "https://api.crossref.org/works/10.1111%2Fhae.14815 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1111/bjh.13131"
+            },
+            {
+              "scheme": "pmid",
+              "value": "25244644"
+            }
+          ],
+          "included_list_entry": "Tables 1–3, the 21 PMID-labelled rows; bibliography entry JR24070076-18",
+          "paper_id": "p-aae",
+          "publication_date": "2014-09-22",
+          "publication_date_locator": "https://api.crossref.org/works/10.1111%2Fbjh.13131 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1016/j.jval.2018.03.008"
+            },
+            {
+              "scheme": "pmid",
+              "value": "30224115"
+            }
+          ],
+          "included_list_entry": "Tables 1–3, the 21 PMID-labelled rows; bibliography entry JR24070076-12",
+          "paper_id": "p-aaf",
+          "publication_date": "2018-05-07",
+          "publication_date_locator": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID:30224115%20AND%20SRC:MED\u0026resultType=core\u0026format=json field electronicPublicationDate ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1016/j.ygeno.2020.09.020"
+            },
+            {
+              "scheme": "pmid",
+              "value": "32927010"
+            }
+          ],
+          "included_list_entry": "Tables 1–3, the 21 PMID-labelled rows; bibliography entry JR24070076-14",
+          "paper_id": "p-aag",
+          "publication_date": "2020-09-11",
+          "publication_date_locator": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID:32927010%20AND%20SRC:MED\u0026resultType=core\u0026format=json field electronicPublicationDate ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1055/s-0041-1739514"
+            },
+            {
+              "scheme": "pmcid",
+              "value": "PMC9251711"
+            },
+            {
+              "scheme": "pmid",
+              "value": "34865209"
+            }
+          ],
+          "included_list_entry": "Tables 1–3, the 21 PMID-labelled rows; bibliography entry JR24070076-22",
+          "paper_id": "p-aah",
+          "publication_date": "2021-12-05",
+          "publication_date_locator": "https://api.crossref.org/works/10.1055%2Fs-0041-1739514 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1111/hae.14517"
+            },
+            {
+              "scheme": "pmid",
+              "value": "35201643"
+            }
+          ],
+          "included_list_entry": "Tables 1–3, the 21 PMID-labelled rows; bibliography entry JR24070076-31",
+          "paper_id": "p-aai",
+          "publication_date": "2022-02-24",
+          "publication_date_locator": "https://api.crossref.org/works/10.1111%2Fhae.14517 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1111/jth.13711"
+            },
+            {
+              "scheme": "pmid",
+              "value": "28440011"
+            }
+          ],
+          "included_list_entry": "Tables 1–3, the 21 PMID-labelled rows; bibliography entry JR24070076-21",
+          "paper_id": "p-aaj",
+          "publication_date": "2017-06-02",
+          "publication_date_locator": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID:28440011%20AND%20SRC:MED\u0026resultType=core\u0026format=json field electronicPublicationDate ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1007/s10928-019-09637-4"
+            },
+            {
+              "scheme": "pmcid",
+              "value": "PMC6820598"
+            },
+            {
+              "scheme": "pmid",
+              "value": "31115857"
+            }
+          ],
+          "included_list_entry": "Tables 1–3, the 21 PMID-labelled rows; bibliography entry JR24070076-13",
+          "paper_id": "p-aak",
+          "publication_date": "2019-05-21",
+          "publication_date_locator": "https://api.crossref.org/works/10.1007%2Fs10928-019-09637-4 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1002/psp4.12808"
+            },
+            {
+              "scheme": "pmcid",
+              "value": "PMC9286722"
+            },
+            {
+              "scheme": "pmid",
+              "value": "38100092"
+            }
+          ],
+          "included_list_entry": "Tables 1–3, the 21 PMID-labelled rows; bibliography entry JR24070076-19",
+          "paper_id": "p-aal",
+          "publication_date": "2022-05-27",
+          "publication_date_locator": "https://api.crossref.org/works/10.1002%2Fpsp4.12808 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1002/psp4.12828"
+            },
+            {
+              "scheme": "pmcid",
+              "value": "PMC9381890"
+            },
+            {
+              "scheme": "pmid",
+              "value": "38100100"
+            }
+          ],
+          "included_list_entry": "Tables 1–3, the 21 PMID-labelled rows; bibliography entry JR24070076-20",
+          "paper_id": "p-aam",
+          "publication_date": "2022-06-24",
+          "publication_date_locator": "https://api.crossref.org/works/10.1002%2Fpsp4.12828 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1177/1043454215607340"
+            },
+            {
+              "scheme": "pmid",
+              "value": "26510644"
+            }
+          ],
+          "included_list_entry": "Tables 1–3, the 21 PMID-labelled rows; bibliography entry JR24070076-28",
+          "paper_id": "p-aan",
+          "publication_date": "2015-10-28",
+          "publication_date_locator": "https://api.crossref.org/works/10.1177%2F1043454215607340 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1111/hae.13287"
+            },
+            {
+              "scheme": "pmid",
+              "value": "28806858"
+            }
+          ],
+          "included_list_entry": "Tables 1–3, the 21 PMID-labelled rows; bibliography entry JR24070076-11",
+          "paper_id": "p-aao",
+          "publication_date": "2017-08-14",
+          "publication_date_locator": "https://api.crossref.org/works/10.1111%2Fhae.13287 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1111/hae.13444"
+            },
+            {
+              "scheme": "pmid",
+              "value": "29493864"
+            }
+          ],
+          "included_list_entry": "Tables 1–3, the 21 PMID-labelled rows; bibliography entry JR24070076-23",
+          "paper_id": "p-aap",
+          "publication_date": "2018-03-01",
+          "publication_date_locator": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID:29493864%20AND%20SRC:MED\u0026resultType=core\u0026format=json field electronicPublicationDate ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1055/s-0038-1675575"
+            },
+            {
+              "scheme": "pmid",
+              "value": "30620988"
+            }
+          ],
+          "included_list_entry": "Tables 1–3, the 21 PMID-labelled rows; bibliography entry JR24070076-25",
+          "paper_id": "p-aaq",
+          "publication_date": "2019-01-08",
+          "publication_date_locator": "https://api.crossref.org/works/10.1055%2Fs-0038-1675575 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1055/s-0038-1676128"
+            },
+            {
+              "scheme": "pmid",
+              "value": "30654393"
+            }
+          ],
+          "included_list_entry": "Tables 1–3, the 21 PMID-labelled rows; bibliography entry JR24070076-24",
+          "paper_id": "p-aar",
+          "publication_date": "2019-01-17",
+          "publication_date_locator": "https://api.crossref.org/works/10.1055%2Fs-0038-1676128 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1111/hae.14178"
+            },
+            {
+              "scheme": "pmid",
+              "value": "33084135"
+            }
+          ],
+          "included_list_entry": "Tables 1–3, the 21 PMID-labelled rows; bibliography entry JR24070076-27",
+          "paper_id": "p-aas",
+          "publication_date": "2020-10-21",
+          "publication_date_locator": "https://api.crossref.org/works/10.1111%2Fhae.14178 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.2196/30797"
+            },
+            {
+              "scheme": "pmcid",
+              "value": "PMC8928049"
+            },
+            {
+              "scheme": "pmid",
+              "value": "35234648"
+            }
+          ],
+          "included_list_entry": "Tables 1–3, the 21 PMID-labelled rows; bibliography entry JR24070076-29",
+          "paper_id": "p-aat",
+          "publication_date": "2022-03-02",
+          "publication_date_locator": "https://api.crossref.org/works/10.2196%2F30797 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1111/hae.14869"
+            },
+            {
+              "scheme": "pmid",
+              "value": "37729471"
+            }
+          ],
+          "included_list_entry": "Tables 1–3, the 21 PMID-labelled rows; bibliography entry JR24070076-26",
+          "paper_id": "p-aau",
+          "publication_date": "2023-09-20",
+          "publication_date_locator": "https://api.crossref.org/works/10.1111%2Fhae.14869 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        }
+      ],
+      "gold_source_review": {
+        "identifiers": [
+          {
+            "scheme": "doi",
+            "value": "10.1055/a-2415-8646"
+          },
+          {
+            "scheme": "openalex",
+            "value": "W4405222507"
+          },
+          {
+            "scheme": "pmcid",
+            "value": "PMC11631203"
+          },
+          {
+            "scheme": "pmid",
+            "value": "39657653"
+          },
+          {
+            "scheme": "url",
+            "value": "https://doi.org/10.1055/a-2415-8646"
+          },
+          {
+            "scheme": "url",
+            "value": "https://europepmc.org/article/MED/39657653"
+          },
+          {
+            "scheme": "url",
+            "value": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11631203/"
+          },
+          {
+            "scheme": "url",
+            "value": "https://pubmed.ncbi.nlm.nih.gov/39657653"
+          },
+          {
+            "scheme": "url",
+            "value": "https://pubmed.ncbi.nlm.nih.gov/39657653/"
+          },
+          {
+            "scheme": "url",
+            "value": "https://www.ncbi.nlm.nih.gov/pmc/articles/11631203"
+          }
+        ],
+        "included_list_locator": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11631203/#TB24070076-1 ; Tables 1–3, the 21 PMID-labelled rows",
+        "rights": "Source attribution: Digital Technologies in Hereditary Coagulation Disorders: A Systematic Review (10.1055/a-2415-8646); article CC BY-NC-ND 4.0. Only factual bibliographic identities, inclusion-row locators and publication/search dates are transcribed; no abstracts, prose, tables, PDFs or API bodies are redistributed. OA article licensing is not snapshot permission; owner must check capture rights separately.",
+        "search_date": "2024-01-29",
+        "search_date_locator": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11631203/ ; Search Strategy",
+        "title": "Digital Technologies in Hereditary Coagulation Disorders: A Systematic Review"
+      },
+      "question": "Which human studies apply software, remote-care tools or artificial intelligence to diagnosis, monitoring or treatment of inherited clotting-factor disorders?",
+      "question_id": "q-l",
+      "search_plan": [
+        {
+          "filters": {
+            "filter": "to_publication_date:2024-01-29"
+          },
+          "limit": 50,
+          "page_cursor": "",
+          "source": "openalex",
+          "terms": "hemophilia digital application artificial intelligence human study"
+        },
+        {
+          "filters": {
+            "filter": "to_publication_date:2024-01-29"
+          },
+          "limit": 50,
+          "page_cursor": "",
+          "source": "openalex",
+          "terms": "hereditary coagulation disorder telemedicine software"
+        }
+      ],
+      "split": "dev"
+    },
+    {
+      "budgets": {
+        "max_http_requests": 100,
+        "max_wall_clock_ms": 600000
+      },
+      "domain": "clinical-medicine",
+      "gold": [
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1177/0018578721999806"
+            },
+            {
+              "scheme": "pmcid",
+              "value": "PMC9065532"
+            },
+            {
+              "scheme": "pmid",
+              "value": "35521018"
+            }
+          ],
+          "included_list_entry": "Table 1 and references 17–21; bibliography entry jha21050-bib-0017",
+          "paper_id": "p-aaa",
+          "publication_date": "2021-03-06",
+          "publication_date_locator": "https://api.crossref.org/works/10.1177%2F0018578721999806 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1111/acem.14382"
+            },
+            {
+              "scheme": "pmcid",
+              "value": "PMC9292870"
+            },
+            {
+              "scheme": "pmid",
+              "value": "34449939"
+            }
+          ],
+          "included_list_entry": "Table 1 and references 17–21; bibliography entry jha21050-bib-0018",
+          "paper_id": "p-aab",
+          "publication_date": "2021-09-21",
+          "publication_date_locator": "https://api.crossref.org/works/10.1111%2Facem.14382 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1515/sjpain-2017-0140"
+            },
+            {
+              "scheme": "pmid",
+              "value": "29794277"
+            }
+          ],
+          "included_list_entry": "Table 1 and references 17–21; bibliography entry jha21050-bib-0019",
+          "paper_id": "p-aac",
+          "publication_date": "2018-01",
+          "publication_date_locator": "https://api.crossref.org/works/10.1515/sjpain-2017-0140 ; generic published=2018-01-01 conflicts with published-print=2018-01-26 and published-online=2018-02-14. PubMed PMID29794277 also records print January26. Retain January at month precision; unresolved release day is not asserted as either January1 or January26. Owner must reconcile before lock."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.4172/2155-6148.1000394"
+            },
+            {
+              "scheme": "url",
+              "value": "https://hsrc.himmelfarb.gwu.edu/smhs_peds_facpubs/737/"
+            }
+          ],
+          "included_list_entry": "Table 1 and references 17–21; bibliography entry jha21050-bib-0020",
+          "paper_id": "p-aad",
+          "publication_date": "2014",
+          "publication_date_locator": "https://hsrc.himmelfarb.gwu.edu/smhs_peds_facpubs/737/ ; Publication Date=2014, Journal Article, volume5 article394; download-counter start is not used as a publication date."
+        },
+        {
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "value": "10.1038/pr.2017.197"
+            },
+            {
+              "scheme": "pmid",
+              "value": "28902183"
+            }
+          ],
+          "included_list_entry": "Table 1 and references 17–21; bibliography entry jha21050-bib-0021",
+          "paper_id": "p-aae",
+          "publication_date": "2017-09-13",
+          "publication_date_locator": "https://api.crossref.org/works/10.1038%2Fpr.2017.197 field published ; earliest documented online/print publication metadata, retaining recorded precision; indexing/deposit/acceptance dates excluded."
+        }
+      ],
+      "gold_source_review": {
+        "identifiers": [
+          {
+            "scheme": "doi",
+            "value": "10.1002/jha2.1050"
+          },
+          {
+            "scheme": "openalex",
+            "value": "W4404693900"
+          },
+          {
+            "scheme": "pmcid",
+            "value": "PMC11647709"
+          },
+          {
+            "scheme": "pmid",
+            "value": "39691255"
+          },
+          {
+            "scheme": "url",
+            "value": "https://doaj.org/article/6cf3fca7e4c84f5887dd9938f99fa3bb"
+          },
+          {
+            "scheme": "url",
+            "value": "https://doi.org/10.1002/jha2.1050"
+          },
+          {
+            "scheme": "url",
+            "value": "https://europepmc.org/article/MED/39691255"
+          },
+          {
+            "scheme": "url",
+            "value": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11647709/"
+          },
+          {
+            "scheme": "url",
+            "value": "https://pubmed.ncbi.nlm.nih.gov/39691255"
+          },
+          {
+            "scheme": "url",
+            "value": "https://pubmed.ncbi.nlm.nih.gov/39691255/"
+          },
+          {
+            "scheme": "url",
+            "value": "https://www.ncbi.nlm.nih.gov/pmc/articles/11647709"
+          }
+        ],
+        "included_list_locator": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11647709/#jha21050-tbl-0001 ; Table 1 and references 17–21",
+        "rights": "Source attribution: Safety and efficacy of ketamine use in patients with vaso‐occlusive crisis: A systematic review and meta‐analysis (10.1002/jha2.1050); article CC BY-NC-ND 4.0. Only factual bibliographic identities, inclusion-row locators and publication/search dates are transcribed; no abstracts, prose, tables, PDFs or API bodies are redistributed. OA article licensing is not snapshot permission; owner must check capture rights separately.",
+        "search_date": "2024-05-20",
+        "search_date_locator": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11647709/ ; Search methods and abstract Methods",
+        "title": "Safety and efficacy of ketamine use in patients with vaso‐occlusive crisis: A systematic review and meta‐analysis"
+      },
+      "question": "What comparative clinical reports evaluate low-dose ketamine, alone or alongside opioids, for acute painful sickle-cell episodes, and which pain, opioid-use and safety outcomes are assessed?",
+      "question_id": "q-m",
+      "search_plan": [
+        {
+          "filters": {
+            "filter": "to_publication_date:2024-05-20"
+          },
+          "limit": 50,
+          "page_cursor": "",
+          "source": "openalex",
+          "terms": "sickle cell acute pain ketamine comparative"
+        },
+        {
+          "filters": {
+            "filter": "to_publication_date:2024-05-20"
+          },
+          "limit": 50,
+          "page_cursor": "",
+          "source": "openalex",
+          "terms": "vaso occlusive episode ketamine morphine study"
+        }
+      ],
+      "split": "held_out"
+    }
+  ],
+  "review_sheet_sha256": "57a041fd9a5fe2769cafd859ac1b9648bf1ed7148c0d86796bbb06f3ea6f50a4",
+  "schema_version": 1,
+  "set_checksum": "6be0c95303674599c2fd49be68abf3cdba84314af621a412f30fa88765a4db71",
+  "set_id": "pool-a",
+  "snapshots_sha256": null,
+  "state": "approved"
+}

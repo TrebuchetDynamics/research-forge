@@ -11,7 +11,7 @@ import (
 // given waivers and re-seals set_checksum, so only the waiver is under test.
 func approvedPoolVariant(t *testing.T, waivers []any) string {
 	t.Helper()
-	src := filepath.Join("..", "..", "benchmarks", "sets", "candidates", "pool-a")
+	src := filepath.Join("..", "..", "benchmarks", "sets", "pool-a")
 	dir := t.TempDir()
 	for _, name := range []string{"review.md", "set.json"} {
 		b, err := os.ReadFile(filepath.Join(src, name))
