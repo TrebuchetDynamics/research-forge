@@ -246,17 +246,6 @@
   "tasks": [
     {
       "depends_on": [
-        "V-B3",
-        "V-B4-lock"
-      ],
-      "goal": "RF-BENCH",
-      "id": "V-B5",
-      "section": "Next",
-      "status": "open",
-      "title": "Engine-tier baseline"
-    },
-    {
-      "depends_on": [
         "V-B10"
       ],
       "goal": "RF-BENCH",
@@ -534,6 +523,17 @@
       "section": "Done",
       "status": "done",
       "title": "Owner approves and locks the gold sets"
+    },
+    {
+      "depends_on": [
+        "V-B3",
+        "V-B4-lock"
+      ],
+      "goal": "RF-BENCH",
+      "id": "V-B5",
+      "section": "Done",
+      "status": "done",
+      "title": "Engine-tier baseline"
     },
     {
       "depends_on": [

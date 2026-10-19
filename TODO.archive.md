@@ -734,3 +734,21 @@ Source section: Needs decision
 - Dependencies: V-B4, V-B3.
 - Ownership: ResearchForge owner (approval); the runner may record snapshots only after approval.
 - Touches: benchmarks/sets
+
+
+<!-- archived from TODO.md -->
+
+Source section: Next
+
+<a id="v-b5"></a>
+
+- [x] V-B5 — Engine-tier baseline
+- Status: done
+- Goal: RF-BENCH — Measure research quality against held-out ground truth.
+- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan) (Owner decision 6).
+- Scope: run `rforge benchmark run --replay` on the locked held-out set at current `main`; commit `docs/benchmark/baseline-<date>.md` and its JSON. Add to CONTRIBUTING.md and the PR template that improvement claims cite a delta against this baseline.
+- Acceptance: the baseline reproduces byte-identically from the committed snapshots.
+- Checks: make check
+- Dependencies: V-B3, V-B4-lock.
+- Ownership: ResearchForge maintainer; Autowork runner may execute.
+- Touches: docs/benchmark, CONTRIBUTING.md, .github/PULL_REQUEST_TEMPLATE.md
