@@ -37,6 +37,7 @@ func approvedPoolVariant(t *testing.T, waivers []any) string {
 	}
 	set["state"] = "approved"
 	set["approval"] = approval
+	set["snapshots_sha256"] = nil // the real pool may be locked; test the approved lifecycle
 	delete(set, "set_checksum")
 	c, err := canonical(set)
 	if err != nil {
