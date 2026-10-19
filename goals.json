@@ -49,7 +49,18 @@
     },
     {
       "depends_on": [],
-      "evidence": [],
+      "evidence": [
+        {
+          "anchor": "v-a4",
+          "archive": "TODO.archive.md",
+          "coverage_current": true,
+          "kind": "executed",
+          "ref": "8b6408e: go test ./internal/provenance ./internal/reviewpkg ./internal/cli; make check via pre-commit with home TMPDIR",
+          "result": "pass",
+          "summary": "Executed check: pass",
+          "task": "V-A4"
+        }
+      ],
       "id": "RF-AGENT",
       "priority": 20,
       "source": "docs/verifiable-engine-plan.md#verifiable-research-engine-plan",
@@ -192,17 +203,6 @@
       "section": "Next",
       "status": "open",
       "title": "Skill depth rewrite: Standard by default"
-    },
-    {
-      "depends_on": [
-        "V0-1",
-        "V0-2"
-      ],
-      "goal": "RF-AGENT",
-      "id": "V-A4",
-      "section": "Next",
-      "status": "open",
-      "title": "Provenance levels computed by the validator"
     },
     {
       "depends_on": [
@@ -440,6 +440,17 @@
       "section": "Done",
       "status": "done",
       "title": "Search budgets and structured stop reasons"
+    },
+    {
+      "depends_on": [
+        "V0-1",
+        "V0-2"
+      ],
+      "goal": "RF-AGENT",
+      "id": "V-A4",
+      "section": "Done",
+      "status": "done",
+      "title": "Provenance levels computed by the validator"
     },
     {
       "depends_on": [],
