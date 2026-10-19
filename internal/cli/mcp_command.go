@@ -56,7 +56,9 @@ func executeMCP(args []string, stdin io.Reader, stdout, stderr io.Writer, opts g
 			var out, diagnostics bytes.Buffer
 			code := executeSearchBatchRunContext(ctx, func() syscall.Signal { return 0 }, batch, input.Queries, configurationErrors, &out, &diagnostics, options, run)
 			if code != 0 && run.Job().StopReason != "interrupted" {
-				return fmt.Errorf("search batch exited with code %d: %s%s", code, &out, &diagnostics)
+				// Detailed engine diagnostics are retained in the shared job Result.
+				// Keep the job's summary identical to the synchronous CLI host.
+				return fmt.Errorf("search batch exited with code %d", code)
 			}
 			return nil
 		},

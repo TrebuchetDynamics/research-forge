@@ -210,7 +210,15 @@ func addTool[In any](server *sdk.Server, name, description string, run func(cont
 	sdk.AddTool(server, &sdk.Tool{Name: name, Description: description}, func(ctx context.Context, _ *sdk.CallToolRequest, in In) (*sdk.CallToolResult, map[string]any, error) {
 		data, err := run(ctx, in)
 		if err != nil {
-			return nil, nil, err
+			code := "research_failed"
+			var operation *research.Error
+			if errors.As(err, &operation) {
+				code = operation.Code
+			}
+			return &sdk.CallToolResult{IsError: true}, map[string]any{
+				"ok":    false,
+				"error": map[string]any{"code": code, "message": err.Error()},
+			}, nil
 		}
 		return nil, map[string]any{"ok": true, "data": data}, nil
 	})

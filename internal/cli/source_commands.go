@@ -1279,9 +1279,18 @@ func executeSearchBatchRun(batch searchBatchOptions, queries []string, configura
 // The CLI and MCP hosts share publication, provenance and checkpoint behavior;
 // only the host owns cancellation and the transport used to display the result.
 func executeSearchBatchRunContext(ctx context.Context, interruptSignal func() syscall.Signal, batch searchBatchOptions, queries []string, configurationErrors map[string]string, stdout, stderr io.Writer, opts globalOptions, job *jobs.Run) int {
+	writeFailure := func(kind, message string) int {
+		// Persist the same machine-readable failure shown by CLI --json so an
+		// asynchronous host can return its code, not just a generic job error.
+		result, _ := json.Marshal(map[string]any{"ok": false, "error": map[string]any{"code": kind, "message": message}})
+		if err := job.SetResult(result); err != nil {
+			return writeError(stdout, stderr, opts, 1, "job_result_failed", err.Error())
+		}
+		return writeError(stdout, stderr, opts, 1, kind, message)
+	}
 	priorState, stateExists, stateErr := readSearchBatchState(batch.OutDir)
 	if stateErr != nil {
-		return writeError(stdout, stderr, opts, 1, "search_batch_state_read_failed", stateErr.Error())
+		return writeFailure("search_batch_state_read_failed", stateErr.Error())
 	}
 	resuming := batch.Resume && stateExists
 	budget, _ := search.DepthBudget(batch.Depth)
@@ -1307,7 +1316,7 @@ func executeSearchBatchRunContext(ctx context.Context, interruptSignal func() sy
 	if resuming {
 		priorPapers, loadErr := search.LoadCheckpointResults(filepath.Join(batch.OutDir, "results.jsonl"), priorState.ResultCount)
 		if loadErr != nil {
-			return writeError(stdout, stderr, opts, 1, "search_batch_results_read_failed", loadErr.Error())
+			return writeFailure("search_batch_results_read_failed", loadErr.Error())
 		}
 		allPapers = priorPapers
 		state = priorState
@@ -1321,7 +1330,7 @@ func executeSearchBatchRunContext(ctx context.Context, interruptSignal func() sy
 	state.ResultCount = &resultCount
 	output, err := beginSearchBatchOutputTransaction(batch.OutDir, queries, batch.Sources, batch.WriteStats)
 	if err != nil {
-		return writeError(stdout, stderr, opts, 1, "search_batch_output_snapshot_failed", err.Error())
+		return writeFailure("search_batch_output_snapshot_failed", err.Error())
 	}
 	defer output.cleanup()
 	workOutDir := output.stagingDir
@@ -1352,9 +1361,9 @@ func executeSearchBatchRunContext(ctx context.Context, interruptSignal func() sy
 			message += "; save failed job progress: " + err.Error()
 		}
 		if err := restoreFileSnapshots(projectSnapshots...); err != nil {
-			return writeError(stdout, stderr, opts, 1, kind+"_rollback_failed", message+"; "+err.Error())
+			return writeFailure(kind+"_rollback_failed", message+"; "+err.Error())
 		}
-		return writeError(stdout, stderr, opts, 1, kind, message)
+		return writeFailure(kind, message)
 	}
 	rawDir := filepath.Join(batch.OutDir, "raw")
 	if err := os.MkdirAll(rawDir, 0o755); err != nil {

@@ -17,6 +17,7 @@ mod-tidy-check:
 
 test:
 	go test ./...
+	node --test adapters/test
 
 vet:
 	go vet ./...

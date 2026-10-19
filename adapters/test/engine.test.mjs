@@ -102,6 +102,17 @@ test('missing and incompatible engines fail closed with structured install.sh re
       assert.equal(result.error.data.error.code, code);
       assert.equal(result.error.data.error.install, 'install.sh');
       assert.match(result.error.message, /install.sh/);
+      if (code === 'version_too_old') {
+        let expected;
+        try {
+          await exec(join(old, 'rforge'), ['capabilities', '--json', '--min-rforge-version', '0.1.22']);
+          assert.fail('old engine passed compatibility check');
+        } catch (error) {
+          assert.equal(error.code, 1);
+          expected = JSON.parse(error.stdout);
+        }
+        assert.deepEqual(result.error.data, expected, 'Pi must preserve the engine compatibility error verbatim');
+      }
     });
   }
 });
