@@ -1,6 +1,9 @@
 ---
 name: research-forge
 description: Research academic or OSS topics using rforge with provenance, source coverage, human gates, and reproducible outputs. Use for literature search, OSS study, systematic review, evidence extraction, meta-analysis, or review packages.
+metadata:
+  min_rforge_version: "0.1.22"
+  required_capabilities: "search=1,paper=1,brief=1,compare=1,provenance=1"
 ---
 
 # rforge — Academic Research Skill
@@ -75,7 +78,7 @@ Before running searches, choose an output location and use **Standard depth by d
 | Quick (`quick`) | User explicitly requests a quick search | Up to 3 query variants × 2 sources |
 | Comprehensive (`comprehensive`) | Standard exhausts its budget without saturation, or the user asks | 20–30 query variants × `scholarly-fast` or domain-relevant sources, citation expansion, evidence grid, and explicit gaps |
 
-Query plans are starting points, not completion quotas. `search batch` enforces query, source, and request caps; it does not generate variants or automatically escalate. The Standard caps are 10 query variants, 5 sources, and 50 requests. Use `--depth standard` explicitly for clarity; pass the selected depth for Quick or Comprehensive. See [search budgets and stop reasons](../../docs/cli.md#search-budgets-and-stop-reasons) for all caps, thresholds, and resume semantics.
+Query plans are starting points, not completion quotas. `search batch` enforces query, source, and request caps; it does not generate variants or automatically escalate. The Standard caps are 10 query variants, 5 sources, and 50 requests. Use `--depth standard` explicitly for clarity; pass the selected depth for Quick or Comprehensive. See [search budgets and stop reasons](https://github.com/TrebuchetDynamics/research-forge/blob/main/docs/cli.md#search-budgets-and-stop-reasons) for all caps, thresholds, and resume semantics.
 
 After each batch, inspect `stop_reason`, `coverage`, `budget`, and `requests_used` in `manifest.json`, `batch-state.json`, or `--json` output. Coverage measures marginal yield: new unique deduped records per query, not relevance or proof of exhaustive coverage. Only fully successful queries count toward saturation.
 
@@ -91,21 +94,32 @@ For the escalation decision, compare `coverage.consecutive_low_yield` with `budg
 
 Every research report must state the selected depth, effective caps, requests used, stop reason, coverage signal, and remaining gaps. Preserve the engine artifacts in provenance outputs; never relabel a capped or interrupted run as exhaustive.
 
-## Step 0 — Check and install rforge
+## Step 0 — Check rforge compatibility
 
 ```sh
 rforge version
+rforge capabilities --json --min-rforge-version 0.1.22 \
+  --require search=1 --require paper=1 --require brief=1 \
+  --require compare=1 --require provenance=1
 ```
 
-If the command is not found, install it:
+The frontmatter's `min_rforge_version` and `required_capabilities` define this
+compatibility check. Release builds must meet both the minimum version and all
+required capability contracts. A `dev` build passes only when those capabilities
+are verified; its version label alone is not sufficient.
+
+If rforge is missing, too old, or lacks a required capability, stop engine work
+and ask the user to install or upgrade it using
+[install.sh](https://github.com/TrebuchetDynamics/research-forge/blob/main/install.sh)
+or the [installation guide](https://github.com/TrebuchetDynamics/research-forge/blob/main/docs/agent-install.md).
+Plugins never download or install the binary. Source builds require Go 1.26+:
 
 ```sh
 go install github.com/TrebuchetDynamics/research-forge/cmd/rforge@latest
 ```
 
-If Go is not installed, tell the user:
-
-> rforge requires Go 1.26+. Install from https://go.dev/dl/ then run the above command.
+If the user declines installation, only use the explicitly labelled manual
+fallback below; never claim engine-verified provenance for that work.
 
 ---
 

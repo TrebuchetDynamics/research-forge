@@ -1,0 +1,9 @@
+{
+  "name": "research-forge",
+  "plugins": [
+    {
+      "name": "research-forge",
+      "source": {"source": "local", "path": "./adapters"}
+    }
+  ]
+}

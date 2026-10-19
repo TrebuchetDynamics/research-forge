@@ -1,0 +1,9 @@
+{
+  "name": "research-forge",
+  "version": "0.1.22",
+  "description": "Retrieval-first research methodology with rforge provenance and human review gates.",
+  "author": {"name": "TrebuchetDynamics"},
+  "license": "MIT",
+  "repository": "https://github.com/TrebuchetDynamics/research-forge",
+  "skills": ["./skills/research-forge"]
+}

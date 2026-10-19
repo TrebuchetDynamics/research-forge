@@ -1,0 +1,23 @@
+{
+  "name": "research-forge",
+  "version": "0.1.22",
+  "description": "Passive research methodology skill for the Pi coding agent",
+  "license": "MIT",
+  "type": "module",
+  "keywords": ["pi-package"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TrebuchetDynamics/research-forge.git"
+  },
+  "files": [
+    "adapters/pi.mjs",
+    "skills/research-forge/",
+    "LICENSE",
+    "docs/agent-install.md"
+  ],
+  "pi": {
+    "skills": ["./skills/research-forge"],
+    "extensions": ["./adapters/pi.mjs"]
+  },
+  "engines": {"node": ">=22"}
+}

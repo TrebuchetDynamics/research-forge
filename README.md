@@ -205,7 +205,9 @@ Run `rforge doctor` before a large sweep. It reports optional configuration such
 
 ## Use it from an agent
 
-The repository ships one retrieval-first skill at [`skills/research-forge/SKILL.md`](./skills/research-forge/SKILL.md). The skill defines source breadth, provenance requirements, legal-acquisition boundaries, and human approval gates; it never authorizes an agent to approve screening, extraction, final claims, or package export.
+Install the passive **Claude Code, Codex, Pi or Hermes plugin** using the [agent installation guide](./docs/agent-install.md), including per-host upgrade and removal steps. Before migrating, delete any old curl-installed `research-forge` skill copy to avoid duplicate discovery. Plugins do not install the engine or change host approvals, permissions or schedules.
+
+All hosts expose the same retrieval-first skill at [`skills/research-forge/SKILL.md`](./skills/research-forge/SKILL.md). It defines source breadth, provenance requirements, legal-acquisition boundaries, and human approval gates; it never authorizes an agent to approve screening, extraction, final claims, or package export.
 
 ### Quick commands: resolve, rank, brief, compare
 
@@ -242,7 +244,7 @@ rforge history search "PRISMA 2020" --research-dir research --limit 5
 rforge replicate 10.1136/bmj.n160 --out replan.md
 ```
 
-**DeepSeek Harness and other shared-agent consumers:**
+**Generic fallback — DeepSeek Harness and other shared-agent consumers without native plugins:**
 
 ```sh
 mkdir -p ~/.agents/skills/research-forge
@@ -251,16 +253,9 @@ curl -fsSL \
   > ~/.agents/skills/research-forge/SKILL.md
 ```
 
-**Claude:**
+Use your host's documented skill directory if it does not read `~/.agents/skills`. Upgrade the fallback by repeating the download; remove it by deleting only that skill copy. Do not keep it alongside the native plugin in the same host.
 
-```sh
-mkdir -p ~/.claude/skills/research-forge
-curl -fsSL \
-  https://raw.githubusercontent.com/TrebuchetDynamics/research-forge/main/skills/research-forge/SKILL.md \
-  > ~/.claude/skills/research-forge/SKILL.md
-```
-
-Then ask: **“Use the research-forge skill to research: `<your question>`.”** The skill calls the standalone `rforge` CLI; no harness-specific plugin or product fork is required.
+Then ask: **“Use the research-forge skill to research: `<your question>`.”** The skill calls the standalone `rforge` CLI; no product fork is required.
 
 ## Trust boundaries
 
