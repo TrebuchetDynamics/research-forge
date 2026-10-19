@@ -18,11 +18,4 @@
 - Since: 2026-10-19T14:56:53Z
 - Answer: Answer in V-E2's TODO.md entry: widen `Touches:`, supply the input, narrow the acceptance, or add a dated `Owner decision:` line. The runner reruns it when the entry changes.
 
-### Q-V-B4 — USER_DECISION — effort investigate — unblocks 0
-
-- Task: V-B4 — Draft candidate gold sets
-- Needs: report.json does not match worker commit/files or reports failure: a check did not pass
-- Since: 2026-10-19T14:50:35Z
-- Answer: Read the evidence (the worker's report and validation log under .git/autowork-execution/slot-data/V-B4/), then rescope or split V-B4 in its TODO.md entry. The runner reruns it when the entry changes.
-
 <!-- pi-autowork:questions:end -->
