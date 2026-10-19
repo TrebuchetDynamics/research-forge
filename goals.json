@@ -225,8 +225,6 @@
   "priority_order": {
     "schema": 1,
     "tasks": [
-      "V-B5",
-      "V-B4-lock",
       "V-B6-run",
       "V-E5-run",
       "V-R1",

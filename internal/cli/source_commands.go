@@ -1728,7 +1728,9 @@ func executeSearchStats(args []string, stdout, stderr io.Writer, opts globalOpti
 	}
 
 	// Count library records from results.jsonl — the ground-truth accumulated store.
-	libraryRecords := countJSONLLines(filepath.Join(dir, "results.jsonl"))
+	// Only lines that decode into a valid record count, so stats agrees with
+	// readResultsJSONL and does not report a truncated tail as a record.
+	libraryRecords, malformedRecords := countResultsJSONL(filepath.Join(dir, "results.jsonl"))
 
 	failures := readSearchBatchFailures(filepath.Join(dir, "failures.jsonl"))
 	// Surface the incremental sweep checkpoint so interrupted batches are
@@ -1736,11 +1738,12 @@ func executeSearchStats(args []string, stdout, stderr io.Writer, opts globalOpti
 	checkpoint := searchBatchCheckpointSummary(dir)
 	if opts.JSON {
 		payload := map[string]any{
-			"sources":         sourceCounts,
-			"sourceFiles":     sourceFiles,
-			"totalUniqueDOIs": len(uniqueDOIs),
-			"libraryRecords":  libraryRecords,
-			"failures":        failures,
+			"sources":          sourceCounts,
+			"sourceFiles":      sourceFiles,
+			"totalUniqueDOIs":  len(uniqueDOIs),
+			"libraryRecords":   libraryRecords,
+			"malformedRecords": malformedRecords,
+			"failures":         failures,
 		}
 		if checkpoint != nil {
 			payload["batchState"] = checkpoint
@@ -1759,7 +1762,15 @@ func executeSearchStats(args []string, stdout, stderr io.Writer, opts globalOpti
 		fmt.Fprintf(stdout, "  %-24s %d records (%d files)\n", src, sourceCounts[src], files)
 	}
 	fmt.Fprintf(stdout, "\nTotal unique DOIs: %d\n", len(uniqueDOIs))
-	fmt.Fprintf(stdout, "Library (results.jsonl): %d records\n", libraryRecords)
+	if malformedRecords > 0 {
+		label := "lines"
+		if malformedRecords == 1 {
+			label = "line"
+		}
+		fmt.Fprintf(stdout, "Library (results.jsonl): %d records (%d malformed %s skipped)\n", libraryRecords, malformedRecords, label)
+	} else {
+		fmt.Fprintf(stdout, "Library (results.jsonl): %d records\n", libraryRecords)
+	}
 	if len(failures) > 0 {
 		fmt.Fprintf(stdout, "\nFailed queries (%d):\n", len(failures))
 		for _, f := range failures {
@@ -1826,20 +1837,33 @@ func normalizeStatsDOI(value string) string {
 	return value
 }
 
-// countJSONLLines returns the number of non-empty lines in a JSONL file.
-// Returns 0 if the file does not exist or cannot be read.
-func countJSONLLines(path string) int {
+// countResultsJSONL returns how many lines of a results.jsonl file decode into a
+// valid library record and how many non-empty lines did not. It applies the same
+// per-record checks as readResultsJSONL so search stats and every other
+// results.jsonl consumer report the same record count. A missing or unreadable
+// file counts as no records, matching readResultsJSONL's lenient not-exist case.
+func countResultsJSONL(path string) (records, malformed int) {
 	data, err := os.ReadFile(path)
 	if err != nil {
-		return 0
+		return 0, 0
 	}
-	count := 0
 	for _, line := range strings.Split(string(data), "\n") {
-		if strings.TrimSpace(line) != "" {
-			count++
+		line = strings.TrimSpace(line)
+		if line == "" {
+			continue
 		}
+		var record library.PaperRecord
+		if err := json.Unmarshal([]byte(line), &record); err != nil {
+			malformed++
+			continue
+		}
+		if strings.TrimSpace(record.Title) == "" || !resultHasIdentifier(record.Identifiers) {
+			malformed++
+			continue
+		}
+		records++
 	}
-	return count
+	return records, malformed
 }
 
 func readSearchBatchFailures(path string) []searchBatchFailure {

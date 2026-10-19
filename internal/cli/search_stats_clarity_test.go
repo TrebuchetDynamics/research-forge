@@ -179,3 +179,54 @@ func TestSearchStatsJSONIncludesResultsJSONLCount(t *testing.T) {
 		t.Errorf("libraryRecords = %v, want 17", count)
 	}
 }
+
+// A results.jsonl truncated mid-write (interrupted batch) must not inflate the
+// library count: search stats has to agree with readResultsJSONL, which every
+// other results.jsonl consumer uses.
+func TestSearchStatsCountsOnlyDecodableRecords(t *testing.T) {
+	dir := t.TempDir()
+	body := `{"Title":"Paper A","Identifiers":{"DOI":"10.1/a"}}` + "\n" +
+		`{"Title":"Paper B","Identifiers":{"DOI":"10.1/b"}}` + "\n" +
+		`{"Title":"Paper C","Identifiers":{"DOI":"10.1/c`
+	if err := os.WriteFile(filepath.Join(dir, "results.jsonl"), []byte(body), 0o644); err != nil {
+		t.Fatalf("write results.jsonl: %v", err)
+	}
+
+	stdout := new(bytes.Buffer)
+	code := Execute([]string{"search", "stats", "--dir", dir}, stdout, new(bytes.Buffer))
+	if code != 0 {
+		t.Fatalf("exit code = %d; stdout = %s", code, stdout.String())
+	}
+	out := stdout.String()
+	if !strings.Contains(out, "Library (results.jsonl): 2 records") {
+		t.Errorf("decodable record count (2) not reported:\n%s", out)
+	}
+	if !strings.Contains(out, "1 malformed") {
+		t.Errorf("malformed line not surfaced:\n%s", out)
+	}
+}
+
+func TestSearchStatsJSONReportsMalformedRecords(t *testing.T) {
+	dir := t.TempDir()
+	body := `not json` + "\n" + `{"id":"x"` + "\n"
+	if err := os.WriteFile(filepath.Join(dir, "results.jsonl"), []byte(body), 0o644); err != nil {
+		t.Fatalf("write results.jsonl: %v", err)
+	}
+
+	stdout := new(bytes.Buffer)
+	code := Execute([]string{"--json", "search", "stats", "--dir", dir}, stdout, new(bytes.Buffer))
+	if code != 0 {
+		t.Fatalf("exit code = %d", code)
+	}
+	var envelope map[string]any
+	if err := json.Unmarshal(stdout.Bytes(), &envelope); err != nil {
+		t.Fatalf("not JSON: %v\n%s", err, stdout.String())
+	}
+	data, _ := envelope["data"].(map[string]any)
+	if got, ok := data["libraryRecords"].(float64); !ok || int(got) != 0 {
+		t.Errorf("libraryRecords = %v, want 0 for an unreadable store", data["libraryRecords"])
+	}
+	if got, ok := data["malformedRecords"].(float64); !ok || int(got) != 2 {
+		t.Errorf("malformedRecords = %v, want 2", data["malformedRecords"])
+	}
+}

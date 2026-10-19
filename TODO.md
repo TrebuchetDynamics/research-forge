@@ -921,7 +921,7 @@ Generated from `goals.json` by `goals.py render`. `met` requires an executed, pa
 | --- | --- | --- | --- |
 | RF-V0: Land and harden the in-progress research commands | met | Executed check: pass ([V0-7](TODO.archive.md#v0-7)) | — |
 | RF-AGENT: Make the agent contract correct: install docs, search depth and provenance levels | met | Executed check: pass ([V-A4](TODO.archive.md#v-a4)) | — |
-| RF-BENCH: Measure research quality against held-out ground truth | unmet | Executed check: pass ([V-B4-lock](TODO.archive.md#v-b4-lock)) | V-B10-LIVE, V-B11-LIVE, V-B13-LIVE, V-B3-LIVE, V-B4-LIVE, V-B5, V-B6-LIVE, V-B6-run |
+| RF-BENCH: Measure research quality against held-out ground truth | unmet | Executed check: pass ([V-B4-lock](TODO.archive.md#v-b4-lock)) | V-B10-LIVE, V-B11-LIVE, V-B13-LIVE, V-B3-LIVE, V-B4-LIVE, V-B6-LIVE, V-B6-run |
 | RF-MCP: Expose the engine through a thin MCP adapter over shared services | unmet | — | V-C2-LIVE |
 | RF-CLAIMS: Verify claims against stored evidence with separate facets | met | Executed check: pass ([V-D4](TODO.archive.md#v-d4)) | — |
 | RF-PACK: Ship passive native plugins for Claude Code, Codex, Pi and Hermes over the same engine | unmet | Executed check: pass ([V-E2](TODO.archive.md#v-e2)) | V-E1-LIVE, V-E3-LIVE, V-E5-LIVE, V-E5-run |
