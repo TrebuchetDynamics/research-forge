@@ -695,3 +695,22 @@ Source section: Now
 - Dependencies: V-B8, V-B9.
 - Ownership: ResearchForge maintainer; Autowork runner may execute; owner re-approves at V-B4-lock.
 - Touches: benchmarks/sets/pool-a/set.json, benchmarks/sets/pool-a/review.md
+
+
+<!-- archived from TODO.md -->
+
+Source section: Now
+
+<a id="v-b13"></a>
+
+- [x] V-B13 — Make live capture robust to odd provider records
+- Status: done
+- Goal: RF-BENCH — Measure research quality against held-out ground truth.
+- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan); [benchmark spec](docs/benchmark/spec.md); second pool A capture 2026-10-19 18:07 UTC (re-approved set `cc6869e`, 52 calls, 1m35s): `protocol_violation` on q-c (Europe PMC + Crossref), `snapshot_mismatch` raised during recording on q-d, and `source_error` on q-d/q-e/q-g/q-h (Semantic Scholar answering HTTP 429 to anonymous requests). The set stayed `approved` and nothing was published (`capture_incomplete` rule), but the bundle was discarded, so no raw responses were kept.
+- Scope: (1) on any failed `--record`, write the incomplete bundle and a per-question failure trace (call, provider, HTTP status, which check failed and why) to a diagnostics directory outside the set (default `$TMPDIR`, path printed), never into `benchmarks/sets/`; (2) a provider record that cannot be identified or normalized (for example a Crossref item without a title, or a Europe PMC preprint/agricola record) is excluded with a recorded reason in the snapshot, like date exclusions, instead of failing the whole question with `protocol_violation`; failing remains correct for leaks and cap violations; (3) the Europe PMC connector stores non-PubMed IDs (`PPR…`, `AGR…`, other sources) only as `SourceID`, never as `PMID`, and only numeric MED IDs become PMIDs; (4) recording must never raise `snapshot_mismatch` (a replay-only check): reproduce q-d's case (a provider error mid-question after retries/backoff) with an injected transport and fix it; (5) keep `capture_incomplete` for real source errors.
+- Acceptance: offline tests with injected transports for each of (2)–(4) fail before and pass after; a failed record run leaves the set byte-identical and writes diagnostics outside it; record-then-replay remains byte-identical for successful captures.
+- Checks: go test ./internal/benchmarks ./internal/sources; make check
+- Dependencies: None.
+- Ownership: ResearchForge maintainer; Autowork runner may execute.
+- Touches: internal/benchmarks/engine.go, internal/benchmarks/transport.go, internal/benchmarks/validate.go, internal/benchmarks/record_robustness_test.go, internal/sources/europepmc.go, internal/sources/europepmc_test.go, internal/cli/benchmark_engine.go, docs/benchmark/spec.md
+- Resources: benchmark-engine — shared `internal/benchmarks/engine.go`, `internal/benchmarks/validate.go` and `docs/benchmark/spec.md`; tasks holding it run one at a time
