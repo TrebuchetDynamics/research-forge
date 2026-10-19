@@ -1,0 +1,13 @@
+{
+  "name": "research-forge",
+  "owner": {"name": "TrebuchetDynamics"},
+  "description": "Passive ResearchForge research skill",
+  "plugins": [
+    {
+      "name": "research-forge",
+      "source": "./adapters",
+      "description": "Retrieval-first research methodology with rforge provenance and human review gates.",
+      "skills": ["./skills/research-forge"]
+    }
+  ]
+}

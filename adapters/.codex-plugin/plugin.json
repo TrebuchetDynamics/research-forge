@@ -1,0 +1,7 @@
+{
+  "name": "research-forge",
+  "version": "0.1.22",
+  "description": "Retrieval-first research methodology with rforge provenance and human review gates.",
+  "license": "MIT",
+  "skills": "./skills/research-forge"
+}
