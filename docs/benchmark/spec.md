@@ -169,6 +169,7 @@ committed candidate data or executable schema migrations.
         "identifiers": {"$ref": "#/$defs/identifiers"},
         "title": {"$ref": "#/$defs/text"},
         "search_date": {"type": "string", "format": "date"},
+        "search_date_precision": {"enum": ["day", "month"]},
         "search_date_locator": {"$ref": "#/$defs/text"},
         "included_list_locator": {"$ref": "#/$defs/text"},
         "rights": {"$ref": "#/$defs/text"}
@@ -251,9 +252,16 @@ Additional validation, mandatory even if the schema library ignores `format`:
   gold dates to rescue retrieved records whose own date metadata is missing.
 - `search_date` is the review's last completed literature-search date, not its
   publication date. With several databases/dates, use the latest final search
-  date and document the others in `review.md`. Month-only/year-only/absent dates
-  are not conforming; do not invent a day. Locators name a public URL/identifier
-  and section/table/page allowing a curator to verify the date and included list.
+  date and document the others in `review.md`. Do not invent a day.
+  `search_date_precision` is optional and defaults to `day`. When the review
+  reports only the month of its final search (owner decision 2026-10-19), set
+  `search_date_precision: "month"` and `search_date` to the **first day of that
+  month**: the conservative cap. Every search plan is capped at that day, and any
+  gold paper whose publication-date upper bound falls after it (published later
+  in the same month) is dropped from gold and listed under "Dropped gold" in
+  `review.md` with its date evidence. Year-only or absent dates are not
+  conforming. Locators name a public URL/identifier and section/table/page
+  allowing a curator to verify the date and included list.
 - Identifier aliases cannot map to two different gold papers or to both gold and
   a reference review. Collect known aliases of the review, including alternate
   editions, preprints and updates, in its identifier list. The review sheet

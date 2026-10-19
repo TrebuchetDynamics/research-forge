@@ -275,19 +275,25 @@ func shape(v any, t reflect.Type) error {
 		if !ok {
 			return fmt.Errorf("expected object")
 		}
-		if len(m) != t.NumField() {
-			return fmt.Errorf("missing or unknown field")
-		}
+		// Every field is required unless tagged omitempty; unknown keys are rejected.
+		seen := 0
 		for i := 0; i < t.NumField(); i++ {
 			f := t.Field(i)
-			key := f.Tag.Get("json")
+			key, opts, _ := strings.Cut(f.Tag.Get("json"), ",")
 			x, ok := m[key]
 			if !ok {
+				if opts == "omitempty" {
+					continue
+				}
 				return fmt.Errorf("missing %s", key)
 			}
+			seen++
 			if e := shape(x, f.Type); e != nil {
 				return fmt.Errorf("%s: %w", key, e)
 			}
+		}
+		if seen != len(m) {
+			return fmt.Errorf("missing or unknown field")
 		}
 	case reflect.Slice:
 		a, ok := v.([]any)

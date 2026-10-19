@@ -196,7 +196,11 @@ func loadSet(dir string, record bool) (Set, error) {
 		last = q.QuestionID
 		r := q.Review
 		cap, e := time.Parse("2006-01-02", r.SearchDate)
-		if e != nil || cap.Year() < 1 || !validateIdentifiers(r.Identifiers) || strings.TrimSpace(r.Title) == "" || strings.TrimSpace(r.SearchDateLocator) == "" || strings.TrimSpace(r.IncludedListLocator) == "" || strings.TrimSpace(r.Rights) == "" {
+		// Month precision: the review reports only the month of its final search, so the
+		// cap is conservatively that month's first day; gold published later in the month
+		// then fails the gold date check below and must be dropped by the curator.
+		precisionOK := r.SearchDatePrecision == "" || r.SearchDatePrecision == "day" || (r.SearchDatePrecision == "month" && e == nil && cap.Day() == 1)
+		if e != nil || cap.Year() < 1 || !precisionOK || !validateIdentifiers(r.Identifiers) || strings.TrimSpace(r.Title) == "" || strings.TrimSpace(r.SearchDateLocator) == "" || strings.TrimSpace(r.IncludedListLocator) == "" || strings.TrimSpace(r.Rights) == "" {
 			return s, invalid("invalid_set")
 		}
 		title := normalizeTitle(r.Title)
