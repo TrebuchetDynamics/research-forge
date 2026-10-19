@@ -2,11 +2,37 @@ package sources
 
 import (
 	"context"
+	"io"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 	"time"
 )
+
+type europePMCTransport func(*http.Request) (*http.Response, error)
+
+func (f europePMCTransport) RoundTrip(r *http.Request) (*http.Response, error) { return f(r) }
+
+func TestEuropePMCSourceIDsAreNotAlwaysPMIDs(t *testing.T) {
+	for _, tc := range []struct{ source, id, want string }{
+		{"MED", "123", "123"}, {"PPR", "PPR123", ""}, {"AGR", "AGR123", ""}, {"OTHER", "123", ""}, {"MED", "PPR123", ""},
+	} {
+		t.Run(tc.source+tc.id, func(t *testing.T) {
+			connector := NewEuropePMCConnector(NewHTTPClient(HTTPClientOptions{BaseURL: "https://example.org", Transport: europePMCTransport(func(r *http.Request) (*http.Response, error) {
+				return &http.Response{StatusCode: 200, Header: http.Header{}, Body: io.NopCloser(strings.NewReader(`{"resultList":{"result":[{"source":"` + tc.source + `","id":"` + tc.id + `","title":"Example"}]}}`)), Request: r}, nil
+			})}))
+			response, err := connector.Search(context.Background(), SourceQuery{Terms: "example"})
+			if err != nil {
+				t.Fatal(err)
+			}
+			record := response.Records[0]
+			if record.SourceID != tc.id || record.Identifiers.PMID != tc.want {
+				t.Fatalf("incorrect source identity: %#v", record)
+			}
+		})
+	}
+}
 
 func TestEuropePMCSearchNormalizesBiomedicalRecords(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

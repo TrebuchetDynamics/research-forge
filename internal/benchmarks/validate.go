@@ -454,6 +454,11 @@ func loadIndex(dir string, s Set) (SnapshotIndex, map[string][]byte, error) {
 		if !sort.SliceIsSorted(q.DateExclusions, func(i, j int) bool { return q.DateExclusions[i].RecordID < q.DateExclusions[j].RecordID }) {
 			return idx, nil, invalid("snapshot_mismatch")
 		}
+		for n, ex := range q.RecordExclusions {
+			if !hashRE.MatchString(ex.RecordID) || (ex.Reason != "missing_identity" && ex.Reason != "normalization_failed") || n > 0 && q.RecordExclusions[n-1].RecordID >= ex.RecordID {
+				return idx, nil, invalid("snapshot_mismatch")
+			}
+		}
 	}
 	return idx, bodies, nil
 }

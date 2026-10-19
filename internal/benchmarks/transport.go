@@ -120,31 +120,38 @@ func sanitizeLinkURL(value string) string {
 }
 
 type session struct {
-	record        bool
-	q             Question
-	snap          SnapshotQuestion
-	policy        HTTPPolicy
-	bodies        map[string][]byte
-	start         time.Time
-	elapsed       int64
-	tickIndex     int
-	exchangeIndex int
-	call          int
-	requests      int
-	calls         int
-	stopped       bool
-	failure       error
-	live          http.RoundTripper
-	exclusions    []DateExclusion
-	attemptStart  int64
-	newAttempt    bool
-	backoffs      map[int]int64
+	record           bool
+	q                Question
+	snap             SnapshotQuestion
+	policy           HTTPPolicy
+	bodies           map[string][]byte
+	start            time.Time
+	elapsed          int64
+	tickIndex        int
+	exchangeIndex    int
+	call             int
+	requests         int
+	calls            int
+	stopped          bool
+	failure          error
+	live             http.RoundTripper
+	exclusions       []DateExclusion
+	recordExclusions []DateExclusion
+	failures         []CaptureFailure
+	attemptStart     int64
+	newAttempt       bool
+	backoffs         map[int]int64
 }
 
 func intPtr(i int) *int { return &i }
 func (s *session) fail(e error) error {
 	if s.failure == nil {
+		if s.record && e.Error() == "snapshot_mismatch" {
+			// Snapshot consistency checks belong to replay, never live capture.
+			e = invalid("protocol_violation")
+		}
 		s.failure = e
+		s.trace(e.Error(), "capture check failed: "+e.Error(), nil, s.exchangeIndex)
 	}
 	return e
 }
@@ -238,7 +245,7 @@ func (s *session) wait(ctx context.Context, d time.Duration, retry bool) error {
 	if e := s.tick("after_wait", 0); e != nil {
 		return e
 	}
-	if s.elapsed-before < ms {
+	if !s.record && s.elapsed-before < ms {
 		return s.fail(invalid("snapshot_mismatch"))
 	}
 	return nil
@@ -283,6 +290,7 @@ func (s *session) RoundTrip(r *http.Request) (*http.Response, error) {
 	key := structuredHash(req)
 	var ex Exchange
 	var liveHeaders http.Header
+	var captureFailure error
 	if !s.record {
 		if s.exchangeIndex >= len(s.snap.Exchanges) {
 			return nil, s.fail(invalid("snapshot_mismatch"))
@@ -307,24 +315,42 @@ func (s *session) RoundTrip(r *http.Request) (*http.Response, error) {
 				code = "connection_refused"
 			}
 			ex.TransportError = &code
+			s.trace("source_error", "transport: "+err.Error(), nil, sequence)
 		} else {
 			liveHeaders = resp.Header.Clone()
-			b, err := io.ReadAll(io.LimitReader(resp.Body, s.policy.MaxResponseBytes+1))
+			b, readErr := io.ReadAll(io.LimitReader(resp.Body, s.policy.MaxResponseBytes+1))
 			_ = resp.Body.Close()
-			if err != nil {
-				return nil, s.fail(invalid("snapshot_mismatch"))
-			}
 			if int64(len(b)) > s.policy.MaxResponseBytes {
-				return nil, s.fail(invalid("snapshot_mismatch"))
+				// The cap is a protocol failure even when the same Read also
+				// reports an error; a successful retry cannot erase it.
+				captureFailure = invalid("protocol_violation")
+				s.trace("protocol_violation", "response exceeds max_response_bytes", intPtr(resp.StatusCode), sequence)
+				b, readErr = nil, nil // Never retain over-cap/unprojected bytes.
 			}
-			safe, err := projectBody(b)
-			if err != nil {
-				return nil, s.fail(err)
+			if readErr != nil {
+				// A broken provider body is an attempted request and must retain
+				// its place in the retry transcript, not poison replay state.
+				code := "connection_reset"
+				var ne net.Error
+				if errors.As(readErr, &ne) && ne.Timeout() {
+					code = "timeout"
+				}
+				ex.TransportError = &code
+				s.trace("source_error", "response body: "+readErr.Error(), intPtr(resp.StatusCode), sequence)
+			} else {
+				safe, err := projectBody(b)
+				if err != nil {
+					captureFailure = invalid("protocol_violation")
+					safe = []byte{}
+				}
+				h := digest(safe)
+				s.bodies[h] = safe
+				ex.Response = &Response{Status: resp.StatusCode, Headers: cleanHeaders(resp.Header, true), BodySHA256: h}
+				ex.Redactions = append(ex.Redactions, "Metadata projection: identifiers, titles, public dates, pagination and API errors only; credential fields redacted.")
+				if resp.StatusCode >= 400 {
+					s.trace("source_error", "provider HTTP error", intPtr(resp.StatusCode), sequence)
+				}
 			}
-			h := digest(safe)
-			s.bodies[h] = safe
-			ex.Response = &Response{Status: resp.StatusCode, Headers: cleanHeaders(resp.Header, true), BodySHA256: h}
-			ex.Redactions = append(ex.Redactions, "Metadata projection: identifiers, titles, public dates, pagination and API errors only; credential fields redacted.")
 		}
 		ex.ElapsedMS = time.Since(started).Milliseconds()
 		s.snap.Exchanges = append(s.snap.Exchanges, ex)
@@ -338,6 +364,9 @@ func (s *session) RoundTrip(r *http.Request) (*http.Response, error) {
 	}
 	if s.record {
 		s.snap.Exchanges[sequence-1].ElapsedMS = s.elapsed - before
+	}
+	if captureFailure != nil {
+		return nil, s.fail(captureFailure)
 	}
 	if ex.TransportError != nil {
 		switch *ex.TransportError {
@@ -400,7 +429,7 @@ func projectBody(b []byte) ([]byte, error) {
 		return []byte{}, nil
 	}
 	allowed := map[string]bool{"results": true, "meta": true, "next_cursor": true, "id": true, "doi": true, "title": true, "publication_year": true, "publication_date": true, "ids": true, "pmid": true, "pmcid": true, "primary_location": true, "landing_page_url": true, "license": true, "open_access": true, "is_oa": true, "oa_status": true, "type": true, "message": true, "items": true, "DOI": true, "published-print": true, "published-online": true, "issued": true, "date-parts": true, "URL": true, "container-title": true, "publisher": true, "next-cursor": true, "status": true, "error": true,
-		"resultList": true, "result": true, "nextCursorMark": true, "pubYear": true,
+		"resultList": true, "result": true, "nextCursorMark": true, "pubYear": true, "source": true,
 		"firstPublicationDate": true, "electronicPublicationDate": true, "journalInfo": true, "printPublicationDate": true,
 		"data": true, "next": true, "offset": true, "total": true, "paperId": true, "year": true, "publicationDate": true,
 		"externalIds": true, "ArXiv": true, "PubMed": true, "venue": true, "url": true, "isOpenAccess": true, "openAccessPdf": true,

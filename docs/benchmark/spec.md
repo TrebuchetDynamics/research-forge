@@ -402,7 +402,8 @@ does not depend on OpenAlex.
 ### 4.1 Index and response bodies
 
 `snapshots/index.json` has exactly these fields. The typed notation below is
-normative: all fields required, nullable only where stated, no extra fields.
+normative: all fields required unless marked optional, nullable only where stated,
+no extra fields.
 Arrays preserve capture order unless an ordering rule is specified.
 
 | Field | Type and rule |
@@ -422,6 +423,7 @@ Each question object has:
 | `timing` | Ordered clock checkpoints as defined in section 4.4; includes unsuccessful budget checks, not just completed HTTP |
 | `stop_reason` | `completed`, `budget_exhausted`, `coverage_saturated`, `interrupted`, or `error_threshold` |
 | `date_exclusions` | Array of `{record_id, reason}`; reason `after_cap` or `unknown_date`, sorted by record ID |
+| `record_exclusions` | Optional array of `{record_id, reason}`, omitted when empty; reason `missing_identity` or `normalization_failed`, unique and sorted by record ID; not counted in `date_excluded` |
 | `identities` | Object mapping stable raw `record_id` to independently curated entity-ID slug; absent keys mean unjudged, not distinct |
 | `identity_evidence` | Object mapping each used entity ID to nonempty metadata-only curator rationale/identifier evidence; gold entities use their `paper_id`, non-gold use `other-` prefixed slugs |
 | `exchanges` | Array of the exchange objects below in request-start order |
@@ -454,6 +456,17 @@ canonical identifier array as the second element instead. Repeated occurrences
 of the same raw identity count once for pairwise dedupe evaluation. The harness
 retains raw-to-output-cluster membership even when merged Paper records drop an
 identifier. Entity labels are private scorer data, not connector inputs.
+
+A raw record with neither native ID nor canonical aliases is excluded with
+`missing_identity`; its exclusion ID is SHA-256 of JCS of the projected raw
+`SourceRecord`, used only for diagnostics, never entity matching. A record the
+production normalizer cannot convert (for example, no title or no usable public
+identifier) is excluded with `normalization_failed`. These exclusions do not
+invalidate the question. The reference-review leak gate still runs **first**, even
+for unusable records, and caps remain enforced. Europe PMC's PPR, AGR and other
+non-MED native IDs remain source IDs, never PMIDs; only numeric MED IDs are
+promoted to PMIDs (an explicit numeric `pmid` is accepted in legacy responses
+without a `source` field). Preserve Europe PMC's `source` in body projections.
 
 ### 4.2 Request normalization, privacy and legality
 
@@ -596,6 +609,28 @@ rforge benchmark run --set <dir> [--replay|--record] [--split dev|held_out] [--o
   its actual output, including empty output; no silent question deletion.
   `coverage_saturated` is reserved for a recorded engine stop signal, not a
   scorer decision. Emit source failures visibly in the report.
+- Recording with any real source error, including a provider failure whose retry
+  cannot fit the budget, fails with `capture_incomplete`; it must not lock a set.
+  `snapshot_mismatch` is replay-only. A response-body disconnect is a transport
+  failure and follows the normal retry path, preserving each attempted exchange.
+  An oversized response remains a `protocol_violation`, not an excluded record.
+- Every failed `--record` preserves the incomplete metadata-only bundle in a
+  private `rforge-benchmark-diagnostics-*` directory under `$TMPDIR` (the OS temp
+  directory when unset). Print its path on stderr, never in canonical report JSON.
+  Diagnostics must be outside the input set and never under `benchmarks/sets/`;
+  reject an unsafe temporary-directory configuration rather than write there.
+  Preserve `snapshots/index.json`, all projected bodies collected so far, the
+  original manifest/review sheet when readable, `report.json`, any available
+  `audit.json`, and `failures.json`. Failed-record audits are not returned for CLI
+  fallback writes outside this bundle. `failures.json`
+  is an array of private per-question failure traces: `question_id`, `plan_call`,
+  `provider`, `sequence`, nullable `http_status`, `check`, and sanitized `why`.
+  Status is null when no response exists or no provider call was attempted.
+  Body-read failures retain their observed HTTP status in the trace; incomplete
+  unprojectable bodies are omitted, never stored as raw unlicensed text. Preflight
+  and publication failures use an empty question/provider and call/sequence zero.
+  These are diagnostic artifacts, **not** a replayable or lockable baseline. No
+  failed capture may change the approved set or publish a partial snapshot bundle.
 - Emit the section 7 report to stdout (only JSON), or to `--out` with a concise
   path message on stderr. Exit 0 for a valid scored run, including low scores or
   budget stops; exit 1 for invalid/checksum/leakage/replay failures; exit 2 for

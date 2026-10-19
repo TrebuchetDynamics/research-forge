@@ -53,6 +53,12 @@ func executeBenchmarkEngine(args []string, stdout, stderr io.Writer) int {
 		return usage()
 	}
 	result, err := benchmarks.RunEngine(context.Background(), o)
+	if result.DiagnosticsDir != "" {
+		fmt.Fprintln(stderr, "private failed-capture diagnostics:", result.DiagnosticsDir)
+	}
+	if result.DiagnosticsError != nil {
+		fmt.Fprintln(stderr, "benchmark diagnostics:", result.DiagnosticsError)
+	}
 	code := 0
 	if err != nil {
 		code = 1
