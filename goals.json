@@ -224,16 +224,6 @@
     },
     {
       "depends_on": [
-        "V-C3"
-      ],
-      "goal": "RF-MCP",
-      "id": "V-C4",
-      "section": "Next",
-      "status": "open",
-      "title": "Standalone MCP documentation"
-    },
-    {
-      "depends_on": [
         "V-C3",
         "V-D3"
       ],
@@ -503,6 +493,16 @@
       "section": "Done",
       "status": "done",
       "title": "`rforge mcp serve` over stdio"
+    },
+    {
+      "depends_on": [
+        "V-C3"
+      ],
+      "goal": "RF-MCP",
+      "id": "V-C4",
+      "section": "Done",
+      "status": "done",
+      "title": "Standalone MCP documentation"
     },
     {
       "depends_on": [

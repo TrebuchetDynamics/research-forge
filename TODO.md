@@ -762,18 +762,6 @@ Owner answers (2026-10-19):
 - Ownership: ResearchForge maintainer; Autowork runner may execute.
 - Touches: docs/benchmark, CONTRIBUTING.md, .github/PULL_REQUEST_TEMPLATE.md
 
-- [ ] V-C4 — Standalone MCP documentation
-- Status: open
-- Goal: RF-MCP — Expose the engine through a thin MCP adapter over shared services.
-- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan).
-- Scope: document standalone `rforge mcp serve` setup for any MCP client (plugin-managed registration is V-E3); the skill says MCP and CLI are equivalent and when to use which.
-- Acceptance: the documented config starts the server in a smoke test.
-- Checks: make check
-- Dependencies: V-C3.
-- Ownership: ResearchForge maintainer; Autowork runner may execute.
-- Touches: README.md, skills/research-forge/SKILL.md, docs/cli.md
-- Resources: cli-surface, agent-docs — shared `internal/cli/cli.go`, `docs/cli.md`, `skills/research-forge/SKILL.md` and `README.md`; tasks holding either run one at a time
-
 - [ ] V-D4 — Facet-based guards and MCP claim check
 - Status: open
 - Goal: RF-CLAIMS — Verify claims against stored evidence with separate facets.

@@ -486,3 +486,22 @@ Source section: Next
 - Ownership: ResearchForge maintainer; Autowork runner may execute.
 - Touches: internal/mcp, cmd/rforge, internal/cli/cli.go, go.mod, go.sum, docs/cli.md
 - Resources: cli-surface — shared `internal/cli/cli.go` command table/help and `docs/cli.md`; tasks holding it run one at a time (2026-10-19: parallel edits there held V-A2 and V-E0)
+
+
+<!-- archived from TODO.md -->
+
+Source section: Next
+
+<a id="v-c4"></a>
+
+- [x] V-C4 — Standalone MCP documentation
+- Status: done
+- Goal: RF-MCP — Expose the engine through a thin MCP adapter over shared services.
+- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan).
+- Scope: document standalone `rforge mcp serve` setup for any MCP client (plugin-managed registration is V-E3); the skill says MCP and CLI are equivalent and when to use which.
+- Acceptance: the documented config starts the server in a smoke test.
+- Checks: make check
+- Dependencies: V-C3.
+- Ownership: ResearchForge maintainer; Autowork runner may execute.
+- Touches: README.md, skills/research-forge/SKILL.md, docs/cli.md
+- Resources: cli-surface, agent-docs — shared `internal/cli/cli.go`, `docs/cli.md`, `skills/research-forge/SKILL.md` and `README.md`; tasks holding either run one at a time
