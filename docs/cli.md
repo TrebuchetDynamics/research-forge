@@ -176,17 +176,79 @@ lifecycle, request persistence, or command flags change.
 
 ## MCP stdio server
 
+### Standalone client setup
+
+Any MCP client supporting local **stdio** servers can launch the installed
+`rforge` binary directly. No ResearchForge plugin, SDK installation, credentials,
+or initialized project is required to connect and list tools. First [install the
+engine](../README.md#quick-start) and verify support:
+
 ```sh
+rforge capabilities --json --require mcp=1
 rforge mcp serve
-# Default project for library imports during search and evidence retrieval:
-rforge --project ./review mcp serve
 ```
 
-Configure an MCP client's command as `rforge`, with arguments
-`["--project", "./review", "mcp", "serve"]` (omit the project pair when unused).
-Use an absolute project path if the client's working directory differs. No HTTP
-listener, startup search, index opening, or project creation occurs. Stdout carries
-only newline-delimited MCP JSON-RPC; server diagnostics go to stderr.
+The server waits for an MCP client on stdin; a quiet terminal is expected, not a
+startup failure. Normally let the client launch it rather than starting a second
+process yourself. Merge this entry into a client configuration using `mcpServers`:
+
+```json
+{
+  "mcpServers": {
+    "research-forge": {
+      "command": "rforge",
+      "args": ["mcp", "serve"]
+    }
+  }
+}
+```
+
+If your client uses a different config format, set its transport to stdio and
+copy the same command and argument array into its local-server fields. Do not
+supply a URL or use `--json`: stdout is already exclusively newline-delimited
+MCP JSON-RPC, with diagnostics on stderr. There is no HTTP listener, startup
+search, index opening, or project creation. This is standalone, manual setup;
+plugin-managed registration is separate.
+
+Use the absolute installed executable path for `command` if the client's `PATH`
+differs from your terminal (on Windows, use `rforge.exe` and JSON-escaped paths).
+To set a default project for library imports during search and evidence retrieval,
+replace `args` with `["--project", "/absolute/path/to/review", "mcp", "serve"]`,
+equivalent to:
+
+```sh
+rforge --project /absolute/path/to/review mcp serve
+```
+
+The project is not created at startup. Relative project paths and tool arguments
+such as `dir`, `dirs`, and `out` resolve from the **server process's working
+directory**, not the config file's directory; use absolute paths when uncertain.
+Pass connector credentials and endpoint overrides through the client's server
+environment settings or inherited environment, just as for CLI commands. Keep
+secrets out of versioned configuration. Retrieval still needs an existing index
+and any backend-specific configuration/consent.
+
+### Offline connection smoke check
+
+Reload/reconnect the client after saving its config. Its MCP initialization must
+identify the server as `rforge`; `tools/list` must return exactly `search`,
+`job_status`, `source_get`, `research_status`, `compare`, and `evidence_retrieve`.
+Initialization and tool discovery use no network or project data. Do not call
+`search` or `source_get` for this offline check: those operations use scholarly
+APIs. Disconnecting should stop the server cleanly.
+
+If launch fails, verify the executable path and the client's stderr log. If the
+capability check fails, upgrade the engine; installing a skill alone does not add
+MCP support. If artifact paths are wrong, check the server's working directory or
+pass absolute paths.
+
+### Tools and CLI equivalence
+
+MCP is a thin adapter over the same services, persistence, search budgets and
+provenance as CLI. Prefer typed MCP tools when registered in an agent host; use
+CLI for shell scripts, offline batch automation, resuming jobs, or commands not
+in this allowlist. Equivalent inputs produce equivalent research results, not a
+separate MCP research workflow.
 
 | Tool | Arguments | Equivalent CLI JSON operation |
 | --- | --- | --- |

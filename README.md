@@ -209,6 +209,34 @@ Install the passive **Claude Code, Codex, Pi or Hermes plugin** using the [agent
 
 All hosts expose the same retrieval-first skill at [`skills/research-forge/SKILL.md`](./skills/research-forge/SKILL.md). It defines source breadth, provenance requirements, legal-acquisition boundaries, and human approval gates; it never authorizes an agent to approve screening, extraction, final claims, or package export.
 
+### Standalone MCP (any stdio MCP client)
+
+Install `rforge` using the [quick start](#quick-start), then check server support:
+
+```sh
+rforge capabilities --json --require mcp=1
+```
+
+Register a local stdio server in your MCP client's configuration; for clients using
+`mcpServers`, merge this entry into the existing configuration:
+
+```json
+{
+  "mcpServers": {
+    "research-forge": {
+      "command": "rforge",
+      "args": ["mcp", "serve"]
+    }
+  }
+}
+```
+
+Use an absolute executable path if the client cannot find `rforge` on its `PATH`.
+No plugin or project is required. MCP and CLI use the same engine and artifacts:
+use MCP for registered typed tools, and CLI for scripts or operations outside the
+six-tool MCP surface. See [MCP setup, project paths, and offline smoke verification](./docs/cli.md#mcp-stdio-server).
+This is manual registration, independent of plugin-managed setup.
+
 ### Quick commands: resolve, rank, brief, compare
 
 ```sh
@@ -255,7 +283,7 @@ curl -fsSL \
 
 Use your host's documented skill directory if it does not read `~/.agents/skills`. Upgrade the fallback by repeating the download; remove it by deleting only that skill copy. Do not keep it alongside the native plugin in the same host.
 
-Then ask: **“Use the research-forge skill to research: `<your question>`.”** The skill calls the standalone `rforge` CLI; no product fork is required.
+Then ask: **“Use the research-forge skill to research: `<your question>`.”** The skill uses the standalone `rforge` engine through CLI or registered MCP tools; no product fork is required.
 
 ## Trust boundaries
 
