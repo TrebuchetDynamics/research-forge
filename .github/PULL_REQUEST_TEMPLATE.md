@@ -22,6 +22,13 @@
 - [ ] External tool/API versions or parameters are recorded, or not applicable.
 - [ ] Reports/exports remain reproducible, or not applicable.
 
+## Research-quality improvement claims
+
+- [ ] Improvement claims cite the [engine-tier baseline](../docs/benchmark/baseline-2026-10-19.md) and [JSON](../docs/benchmark/baseline-2026-10-19.json), with signed deltas (new minus baseline), metric/K and macro/micro aggregation, or no improvement is claimed.
+- Baseline and new reports, deltas, both engine versions/revisions, set checksums, snapshot digests and protocol hashes:
+- [ ] Implementation comparisons use identical locked inputs; held-out results were not used for tuning (otherwise mark the set version exposed and obtain a newly approved held-out set for fresh claims), or not applicable.
+- [ ] Unavailable metrics remain null; captured replay timing is not presented as a code-speed improvement, or not applicable.
+
 ## Privacy, copyright, and safety
 
 - [ ] No secrets, credentials, private paths, local clones, or copyrighted assets are committed.
