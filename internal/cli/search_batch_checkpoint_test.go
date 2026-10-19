@@ -11,6 +11,7 @@ import (
 	"sync/atomic"
 	"testing"
 
+	"github.com/TrebuchetDynamics/research-forge/internal/jobs"
 	"github.com/TrebuchetDynamics/research-forge/internal/provenance"
 )
 
@@ -279,7 +280,11 @@ func TestExecuteSearchBatchResumeWithoutStateRunsFresh(t *testing.T) {
 // contract: without --continue-on-error a failing pair must leave the topic
 // dir untouched, including the incremental checkpoint.
 func TestExecuteSearchBatchFailedRunLeavesNoCheckpoint(t *testing.T) {
-	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Query().Get("search") == "alpha topic" {
+			_, _ = w.Write([]byte(`{"results":[{"id":"https://openalex.org/W-A","title":"Alpha"}]}`))
+			return
+		}
 		http.Error(w, "not found", http.StatusNotFound)
 	}))
 	defer server.Close()
@@ -289,7 +294,7 @@ func TestExecuteSearchBatchFailedRunLeavesNoCheckpoint(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	code, _, _ := runSearchBatch(t, "--query", "alpha topic", "--sources", "openalex", "--out", out)
+	code, _, _ := runSearchBatch(t, "--query", "alpha topic", "--query", "beta topic", "--sources", "openalex", "--out", out)
 	if code == 0 {
 		t.Fatalf("expected non-zero exit for failing pair")
 	}
@@ -302,6 +307,10 @@ func TestExecuteSearchBatchFailedRunLeavesNoCheckpoint(t *testing.T) {
 	}
 	if _, err := os.Stat(filepath.Join(out, "raw")); !os.IsNotExist(err) {
 		t.Fatalf("failed run left a raw dir: %v", err)
+	}
+	all, err := jobs.NewStore(out).List()
+	if err != nil || len(all) != 1 || all[0].Status != jobs.Failed || all[0].Progress.Completed != 0 || all[0].StopReason != "error_threshold" {
+		t.Fatalf("failed job must reflect the rolled-back results: %+v err=%v", all, err)
 	}
 }
 

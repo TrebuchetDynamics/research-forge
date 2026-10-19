@@ -117,7 +117,7 @@ func restore(snapshots []snapshot) error {
 }
 
 // Replace writes data to a sibling staging file and installs it at path.
-// Existing regular files are restored if installing the staged file fails.
+// Existing regular files stay in place until the staged file replaces them.
 func Replace(path string, data []byte, mode os.FileMode) error {
 	return ReplaceFromReader(path, bytes.NewReader(data), mode)
 }
@@ -184,28 +184,8 @@ func install(stagingPath, path string) error {
 	if !info.Mode().IsRegular() {
 		return fmt.Errorf("file transaction target is not a regular file: %s", path)
 	}
-	backup, err := os.CreateTemp(filepath.Dir(path), "."+filepath.Base(path)+".rforge-backup-*")
-	if err != nil {
-		return err
-	}
-	backupPath := backup.Name()
-	if err := backup.Close(); err != nil {
-		_ = os.Remove(backupPath)
-		return err
-	}
-	if err := os.Remove(backupPath); err != nil {
-		_ = os.RemoveAll(backupPath)
-		return err
-	}
-	if err := os.Rename(path, backupPath); err != nil {
-		return err
-	}
-	if err := os.Rename(stagingPath, path); err != nil {
-		if restoreErr := os.Rename(backupPath, path); restoreErr != nil {
-			return fmt.Errorf("replace file: %w; restore prior file from %s: %v", err, backupPath, restoreErr)
-		}
-		return err
-	}
-	_ = os.Remove(backupPath)
-	return nil
+	// A single rename over the existing file keeps the old or new checkpoint
+	// visible even if the process is killed during publication. Moving the old
+	// file aside first creates a window in which durable jobs disappear.
+	return os.Rename(stagingPath, path)
 }

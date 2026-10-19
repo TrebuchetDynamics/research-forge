@@ -138,6 +138,39 @@ The checkpoint's `result_count` identifies the committed prefix of `results.json
 
 Implementation: [search service](../internal/search/batch.go), [checkpoint/resume](../internal/search/batch_state.go), and [shared stop reasons](../internal/sources/graph_budget.go). Update this section when preset values, checkpoint accounting, or stop semantics change.
 
+## Persistent research jobs
+
+Each `search batch` registers a job under `<out>/jobs/`; its ID appears as
+`job_id` in JSON output and `job:` in text output. Inspect or resume it with:
+
+```sh
+rforge jobs list --dir ./research/topic
+rforge jobs status <id> --dir ./research/topic
+rforge jobs resume <id> --dir ./research/topic
+```
+
+`--dir` defaults to the current directory. With `--json`, list returns
+`data.jobs` and status returns `data.job`, including `id`, `kind`, `status`,
+`progress.completed`, `progress.total`, and `stop_reason`. Progress counts
+committed pairs in the selected worklist; budget or saturation stops can finish
+before total progress is reached. Statuses are `queued`, `running`, `completed`,
+`interrupted`, and `failed`.
+
+Jobs run in the invoking process, never a detached daemon. A process-held lease
+allows only one job writer per research directory. Inspecting a live job does
+not interrupt it; after its host exits (including SIGKILL), the next inspection
+or resume persists `interrupted`. Resumption uses saved, resolved queries and
+options, so the original query file is not required. Connector credentials and
+endpoints still come from the current host configuration. Completed pairs and
+consumed request budget come from `batch-state.json`. Fail-fast artifact rollback
+is preserved; its durable job record remains `failed` and can be retried.
+
+Implementation: [job service](../internal/jobs/persistent.go),
+[search integration](../internal/search/batch.go),
+[shared request](../internal/search/jobs.go), and
+[CLI adapter](../internal/cli/jobs_command.go). Update this section when job
+lifecycle, request persistence, or command flags change.
+
 ## Capability report and compatibility checks
 
 `rforge capabilities --json` is an offline, read-only engine compatibility report.

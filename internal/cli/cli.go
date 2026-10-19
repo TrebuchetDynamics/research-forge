@@ -40,7 +40,7 @@ var (
 	Date    = "unknown"
 )
 
-var topLevelCommands = []string{"help", "vault", "version", "capabilities", "decisions", "benchmark", "automation", "completion", "forge", "project", "doctor", "service", "library", "search", "citations", "oa", "duplicate", "import", "export", "oss", "pdf", "parse", "index", "knowledge", "graph", "retrieve", "research", "protocol", "screen", "prisma", "extraction", "extract", "evidence", "claim", "analysis", "report", "package", "archive", "ui", "watch", "inbox", "fetch", "provenance", "journal", "goal", "meta", "paper", "rank", "brief", "compare", "lit", "note", "history", "replicate", "draft"}
+var topLevelCommands = []string{"help", "vault", "version", "capabilities", "decisions", "benchmark", "automation", "completion", "forge", "project", "doctor", "service", "library", "search", "jobs", "citations", "oa", "duplicate", "import", "export", "oss", "pdf", "parse", "index", "knowledge", "graph", "retrieve", "research", "protocol", "screen", "prisma", "extraction", "extract", "evidence", "claim", "analysis", "report", "package", "archive", "ui", "watch", "inbox", "fetch", "provenance", "journal", "goal", "meta", "paper", "rank", "brief", "compare", "lit", "note", "history", "replicate", "draft"}
 
 type globalOptions struct {
 	JSON     bool
@@ -98,6 +98,8 @@ func Execute(args []string, stdout, stderr io.Writer) int {
 		return executeLibrary(remaining[1:], stdout, stderr, opts)
 	case "search":
 		return executeSearch(remaining[1:], stdout, stderr, opts)
+	case "jobs":
+		return executeJobs(remaining[1:], stdout, stderr, opts)
 	case "citations":
 		return executeCitations(remaining[1:], stdout, stderr, opts)
 	case "oa":
@@ -3965,6 +3967,15 @@ func helpSections() []helpSection {
 					Usage:       "rforge search --source <source> --query <q> [--from-year YYYY] [--to-year YYYY] [--open-access true|false]",
 					Description: "Single-source search (openalex, arxiv, crossref, semantic-scholar, europepmc, pubmed, and 38 more).",
 				},
+			},
+		},
+		{
+			Name:        "jobs",
+			Description: "Persistent in-process research jobs",
+			Commands: []helpCommand{
+				{Usage: "rforge jobs list [--dir <research-dir>]", Description: "List durable jobs; hosts that exited are reported interrupted."},
+				{Usage: "rforge jobs status <id> [--dir <research-dir>]", Description: "Show status, completed/total progress and stop_reason."},
+				{Usage: "rforge jobs resume <id> [--dir <research-dir>]", Description: "Resume a search job in this process using saved inputs and pair checkpoints. No detached daemon."},
 			},
 		},
 		{

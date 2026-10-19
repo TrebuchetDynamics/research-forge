@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/TrebuchetDynamics/research-forge/internal/jobs"
 	"github.com/TrebuchetDynamics/research-forge/internal/library"
 	"github.com/TrebuchetDynamics/research-forge/internal/sources"
 )
@@ -55,6 +56,8 @@ type BatchProgress struct {
 // BatchHooks keep output transactions and rendering in callers, while the
 // service owns dispatch, resume, deduplication, coverage and stopping policy.
 type BatchHooks struct {
+	// Job attaches durable progress to the same lease used by CLI and MCP hosts.
+	Job        *jobs.Run
 	Search     func(context.Context, string, string) ([]library.PaperRecord, error)
 	Checkpoint func() error
 	Completed  func(source, query string, queryIndex int, papers []library.PaperRecord) (rawFile string, err error)
@@ -67,6 +70,22 @@ type BatchHooks struct {
 // commits that result prefix with pair identity and coverage. Supply a budget
 // from DepthBudget and load prior records with LoadCheckpointResults on resume.
 func RunBatch(ctx context.Context, state *BatchState, prior []library.PaperRecord, configurationErrors map[string]string, continueOnError bool, h BatchHooks) (resumedPairs int, err error) {
+	if h.Job != nil {
+		state.JobID = h.Job.Job().ID
+		persist := h.Checkpoint
+		h.Checkpoint = func() error {
+			if err := persist(); err != nil {
+				return err
+			}
+			reason := string(state.StopReason)
+			// The pre-dispatch checkpoint reserves budget for a possible kill;
+			// a live host has not actually interrupted until finish says so.
+			if state.StopReason == sources.StopInterrupted && !state.Interrupted {
+				reason = ""
+			}
+			return h.Job.Checkpoint(BatchJobProgress(state), reason)
+		}
+	}
 	b := state.Budget
 	papers := append([]library.PaperRecord{}, prior...)
 	state.Coverage.UniqueRecords = len(DedupePapers(papers))

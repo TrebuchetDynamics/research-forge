@@ -30,6 +30,7 @@ type BatchFailure struct {
 // BatchState is the durable checkpoint shared by CLI and service consumers.
 // RequestsUsed is persisted before dispatch, so interrupted calls consume budget.
 type BatchState struct {
+	JobID         string         `json:"job_id,omitempty"`
 	SchemaVersion string         `json:"schemaVersion"`
 	CreatedAt     string         `json:"createdAt"`
 	UpdatedAt     string         `json:"updatedAt"`
