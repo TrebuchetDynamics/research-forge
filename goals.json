@@ -289,16 +289,6 @@
     },
     {
       "depends_on": [
-        "V-D2"
-      ],
-      "goal": "RF-CLAIMS",
-      "id": "V-D3",
-      "section": "Next",
-      "status": "open",
-      "title": "`rforge claim check` deterministic facets"
-    },
-    {
-      "depends_on": [
         "V-C3",
         "V-D3"
       ],
@@ -495,6 +485,16 @@
       "section": "Done",
       "status": "done",
       "title": "Claim store and CLI"
+    },
+    {
+      "depends_on": [
+        "V-D2"
+      ],
+      "goal": "RF-CLAIMS",
+      "id": "V-D3",
+      "section": "Done",
+      "status": "done",
+      "title": "`rforge claim check` deterministic facets"
     },
     {
       "depends_on": [],
