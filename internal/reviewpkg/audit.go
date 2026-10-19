@@ -15,15 +15,17 @@ import (
 
 	"github.com/TrebuchetDynamics/research-forge/internal/documents"
 	"github.com/TrebuchetDynamics/research-forge/internal/evidence"
+	"github.com/TrebuchetDynamics/research-forge/internal/provenance"
 	reportmodel "github.com/TrebuchetDynamics/research-forge/internal/report"
 	"github.com/TrebuchetDynamics/research-forge/internal/screening"
 	"github.com/TrebuchetDynamics/research-forge/internal/security"
 )
 
 type AuditReport struct {
-	SchemaVersion string       `json:"schemaVersion"`
-	OK            bool         `json:"ok"`
-	Checks        []AuditCheck `json:"checks"`
+	ProvenanceLevel provenance.Level `json:"provenance_level"`
+	SchemaVersion   string           `json:"schemaVersion"`
+	OK              bool             `json:"ok"`
+	Checks          []AuditCheck     `json:"checks"`
 }
 
 type AuditCheck struct {
@@ -43,6 +45,10 @@ func Audit(packagePath string) (AuditReport, error) {
 		if !ok {
 			report.OK = false
 		}
+	}
+	report.ProvenanceLevel = provenance.DirectoryLevel(filepath.Join(packagePath, "project"))
+	if manifest.ProvenanceLevel != "" {
+		add("provenance_level", manifest.ProvenanceLevel == report.ProvenanceLevel, "computed provenance: "+string(report.ProvenanceLevel))
 	}
 	add("manifest_schema", manifest.SchemaVersion == packageSchemaVersion, "manifest schema version is supported")
 	manifestFieldsOK, manifestFieldsMsg := auditManifestFields(manifest)

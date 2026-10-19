@@ -14,6 +14,7 @@ import (
 	"github.com/TrebuchetDynamics/research-forge/internal/documents"
 	"github.com/TrebuchetDynamics/research-forge/internal/filetxn"
 	"github.com/TrebuchetDynamics/research-forge/internal/parsing"
+	"github.com/TrebuchetDynamics/research-forge/internal/provenance"
 	"github.com/TrebuchetDynamics/research-forge/internal/retrieval"
 )
 
@@ -219,11 +220,16 @@ func executeRetrieve(args []string, stdout, stderr io.Writer, opts globalOptions
 		if err != nil {
 			return writeError(stdout, stderr, opts, 1, "retrieval_benchmark_failed", err.Error())
 		}
-		if err := writeJSONFile(outPath, report); err != nil {
+		var run provenance.Validation
+		if err := writeJSONFileThen(outPath, report, func() error {
+			var err error
+			run, err = recordEngineRun(filepath.Dir(outPath), "retrieve.benchmark", nil, []string{outPath}, "")
+			return err
+		}); err != nil {
 			return writeError(stdout, stderr, opts, 1, "retrieval_benchmark_write_failed", err.Error())
 		}
 		if opts.JSON {
-			return writeJSON(stdout, 0, map[string]any{"retrievalBenchmark": report, "path": outPath})
+			return writeJSON(stdout, 0, map[string]any{"run_id": run.RunID, "provenance_level": run.Level, "retrievalBenchmark": report, "path": outPath})
 		}
 		fmt.Fprintf(stdout, "wrote retrieval benchmark to %s\n", outPath)
 		return 0

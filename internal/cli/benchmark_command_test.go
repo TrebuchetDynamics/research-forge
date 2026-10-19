@@ -20,6 +20,7 @@ func TestExecuteBenchmarkCrossToolWritesReport(t *testing.T) {
 	if code != 0 {
 		t.Fatalf("code=%d stderr=%s stdout=%s", code, stderr.String(), stdout.String())
 	}
+	assertEngineReceipt(t, dir, "cross-tool.json")
 	data, err := os.ReadFile(out)
 	if err != nil {
 		t.Fatalf("read out: %v", err)

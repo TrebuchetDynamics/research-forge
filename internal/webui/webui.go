@@ -386,6 +386,7 @@ var forgeHomeTemplate = template.Must(template.New("forge-home").Parse(`<section
   <p>Current state: <strong>{{.CurrentState}}</strong></p>
   <section aria-labelledby="forge-provenance-title">
     <h3 id="forge-provenance-title">Provenance timeline</h3>
+    <p>Computed provenance: {{if .ProvenanceLevel}}{{.ProvenanceLevel}}{{else}}unverified{{end}} (mechanical integrity, not scientific truth).</p>
     {{range .ProvenanceEvents}}<p>{{.Timestamp}} {{.Action}} {{.Target}}</p>{{else}}<p>No provenance events recorded.</p>{{end}}
   </section>
   <section aria-labelledby="forge-gates-title">
@@ -407,6 +408,7 @@ type ForgeHomeState struct {
 	ProjectTitle       string
 	CurrentState       string
 	ProvenanceEvents   []provenance.Event
+	ProvenanceLevel    provenance.Level `json:"provenance_level"`
 	BlockedReviewGates []ForgeGate
 	BackgroundJobs     []ForgeBackgroundJob
 	NextSafeActions    []ForgeNextAction

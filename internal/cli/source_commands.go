@@ -447,8 +447,17 @@ func executeCitations(args []string, stdout, stderr io.Writer, opts globalOption
 		}
 		snapshots = append(snapshots, librarySnapshot)
 	}
+	projectEventWritten := false
 	rollback := func(code string, cause error) int {
-		if restoreErr := restoreFileSnapshots(snapshots...); restoreErr != nil {
+		restoreErr := restoreFileSnapshots(snapshots...)
+		if projectEventWritten {
+			now := time.Now().UTC()
+			eventErr := provenance.Append(opts.Project, provenance.Event{SchemaVersion: "1", ID: "evt_" + now.Format("20060102T150405.000000000Z") + "_citations_rollback", Timestamp: now.Format(time.RFC3339Nano), Actor: "rforge", Action: "citations.expand.rolled_back", Target: paperID, Inputs: map[string]any{"path": out}, Outputs: map[string]any{"restored": restoreErr == nil}, Warnings: []string{cause.Error()}})
+			if eventErr != nil {
+				cause = fmt.Errorf("%w; record rollback: %v", cause, eventErr)
+			}
+		}
+		if restoreErr != nil {
 			rollbackCode := strings.TrimSuffix(code, "_failed") + "_rollback_failed"
 			return writeError(stdout, stderr, opts, 1, rollbackCode, fmt.Sprintf("%v; %v", cause, restoreErr))
 		}
@@ -524,9 +533,23 @@ func executeCitations(args []string, stdout, stderr io.Writer, opts globalOption
 		}); err != nil {
 			return rollback("citation_provenance_failed", err)
 		}
+		projectEventWritten = true
+	}
+	receiptOutputs := []string{out}
+	if runStatePath != "" && source == "semantic-scholar" {
+		// Run-state may live outside the output directory; only local outputs can
+		// be carried by its receipt.
+		rel, err := filepath.Rel(filepath.Dir(out), runStatePath)
+		if err == nil && filepath.IsLocal(rel) {
+			receiptOutputs = append(receiptOutputs, runStatePath)
+		}
+	}
+	run, err := recordEngineRun(filepath.Dir(out), "citations.expand", map[string]any{"question": "citations: " + paperID, "sources": []string{source}, "direction": direction, "budget": budget}, receiptOutputs, "")
+	if err != nil {
+		return rollback("citation_provenance_failed", err)
 	}
 	if opts.JSON {
-		return writeJSON(stdout, 0, map[string]any{"path": out, "runState": runStatePath, "edges": len(expansion.Edges), "rawRef": expansion.RawRef, "imported": imported, "depth": budget.MaxDepth, "maxRecords": budget.MaxNodes, "budgetEstimate": budgetEstimate, "stop_reason": expansion.StopReason, "requests_used": expansion.RequestsUsed})
+		return writeJSON(stdout, 0, map[string]any{"run_id": run.RunID, "provenance_level": run.Level, "path": out, "runState": runStatePath, "edges": len(expansion.Edges), "rawRef": expansion.RawRef, "imported": imported, "depth": budget.MaxDepth, "maxRecords": budget.MaxNodes, "budgetEstimate": budgetEstimate, "stop_reason": expansion.StopReason, "requests_used": expansion.RequestsUsed})
 	}
 	fmt.Fprintf(stdout, "wrote citation graph with %d edges to %s\n", len(expansion.Edges), out)
 	return 0
@@ -1272,6 +1295,7 @@ func executeSearchBatch(args []string, stdout, stderr io.Writer, opts globalOpti
 	}
 	defer output.cleanup()
 	workOutDir := output.stagingDir
+	var projectSnapshots []fileSnapshot
 	// Aggregates are staged and committed atomically. Per-pair artifacts (raw
 	// files, results.jsonl, failures.jsonl, batch-state.json) are written
 	// incrementally straight to the topic dir so a killed sweep leaves a
@@ -1283,6 +1307,9 @@ func executeSearchBatch(args []string, stdout, stderr io.Writer, opts globalOpti
 			if err := preserveSearchBatchUsage(batch.OutDir, priorState, state); err != nil {
 				message += "; preserve request accounting: " + err.Error()
 			}
+		}
+		if err := restoreFileSnapshots(projectSnapshots...); err != nil {
+			return writeError(stdout, stderr, opts, 1, kind+"_rollback_failed", message+"; "+err.Error())
 		}
 		return writeError(stdout, stderr, opts, 1, kind, message)
 	}
@@ -1427,6 +1454,11 @@ func executeSearchBatch(args []string, stdout, stderr io.Writer, opts globalOpti
 	}
 	imported, skippedDuplicate, skippedNoIdentifier := 0, 0, 0
 	if opts.Project != "" {
+		snapshot, err := captureFileSnapshot(filepath.Join(opts.Project, "data", "library.json"))
+		if err != nil {
+			return failBatch("library_snapshot_failed", err.Error())
+		}
+		projectSnapshots = append(projectSnapshots, snapshot)
 		store, err := library.OpenStore(filepath.Join(opts.Project, "data", "library.json"))
 		if err != nil {
 			return failBatch("library_open_failed", err.Error())
@@ -1437,12 +1469,28 @@ func executeSearchBatch(args []string, stdout, stderr io.Writer, opts globalOpti
 		}
 		imported, skippedDuplicate, skippedNoIdentifier = summary.Imported, len(summary.SkippedDuplicate), summary.SkippedNoIdentifier
 	}
+	if err := output.commit(); err != nil {
+		return failBatch("search_batch_output_commit_failed", err.Error())
+	}
+	receiptOutputs := []string{}
+	for _, name := range []string{"results.jsonl", "results-deduped.jsonl", "results.md", "failures.jsonl", "manifest.json", searchBatchStateFile} {
+		receiptOutputs = append(receiptOutputs, filepath.Join(batch.OutDir, name))
+	}
+	if batch.WriteStats {
+		receiptOutputs = append(receiptOutputs, filepath.Join(batch.OutDir, "search-stats.txt"))
+	}
+	for _, pair := range state.Completed {
+		receiptOutputs = append(receiptOutputs, filepath.Join(batch.OutDir, pair.RawFile))
+	}
+	run, err := recordEngineRun(batch.OutDir, "search.batch", map[string]any{"question": strings.Join(queries, "; "), "queries": queries, "sources": batch.Sources, "limit": batch.Limit, "interrupted": interrupted}, receiptOutputs, "")
+	if err != nil {
+		return failBatch("search_batch_provenance_failed", err.Error())
+	}
+	// No fallible output commit remains: fetching project assets is a best-effort
+	// post-publication step, so a failed receipt cannot leave orphaned downloads.
 	fetchResult := fetchPDFsResult{}
 	if batch.FetchPDFs && !interrupted {
 		fetchResult = fetchProjectPDFs(context.Background(), opts.Project, deduped)
-	}
-	if err := output.commit(); err != nil {
-		return failBatch("search_batch_output_commit_failed", err.Error())
 	}
 	exitCode := 0
 	if interrupted {
@@ -1453,7 +1501,7 @@ func executeSearchBatch(args []string, stdout, stderr io.Writer, opts globalOpti
 		}
 	}
 	if opts.JSON {
-		payload := map[string]any{"out": batch.OutDir, "results": len(allPapers), "deduped": len(deduped), "failures": failureCount, "skippedSources": skippedCount, "manifest": filepath.Join(batch.OutDir, "manifest.json"), "imported": imported, "skippedDuplicate": skippedDuplicate, "skippedNoIdentifier": skippedNoIdentifier, "fetched": len(fetchResult.assets), "fetchFailed": len(fetchResult.failures), "fetchSkipped": fetchResult.skipped, "resumed": resuming, "resumedPairs": resumedPairs, "interrupted": interrupted, "pending": pending, "stop_reason": state.StopReason, "requests_used": state.RequestsUsed, "coverage": state.Coverage, "budget": state.Budget}
+		payload := map[string]any{"run_id": run.RunID, "provenance_level": run.Level, "out": batch.OutDir, "results": len(allPapers), "deduped": len(deduped), "failures": failureCount, "skippedSources": skippedCount, "manifest": filepath.Join(batch.OutDir, "manifest.json"), "imported": imported, "skippedDuplicate": skippedDuplicate, "skippedNoIdentifier": skippedNoIdentifier, "fetched": len(fetchResult.assets), "fetchFailed": len(fetchResult.failures), "fetchSkipped": fetchResult.skipped, "resumed": resuming, "resumedPairs": resumedPairs, "interrupted": interrupted, "pending": pending, "stop_reason": state.StopReason, "requests_used": state.RequestsUsed, "coverage": state.Coverage, "budget": state.Budget}
 		if interrupted {
 			payload["resumeCommand"] = searchBatchResumeHint(batch.OutDir, batch)
 		}

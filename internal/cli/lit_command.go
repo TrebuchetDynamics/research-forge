@@ -10,6 +10,9 @@ import (
 	"strings"
 	"time"
 	"unicode"
+
+	"github.com/TrebuchetDynamics/research-forge/internal/filetxn"
+	"github.com/TrebuchetDynamics/research-forge/internal/provenance"
 )
 
 // litSession stores one topic dir's data for synthesis.
@@ -360,15 +363,11 @@ func executeLit(args []string, stdout, stderr io.Writer, opts globalOptions) int
 	if err := os.MkdirAll(outDir, 0o755); err != nil {
 		return writeError(stdout, stderr, opts, 1, "lit_write_failed", err.Error())
 	}
-	if err := os.WriteFile(outPath, []byte(lit), 0o644); err != nil {
-		return writeError(stdout, stderr, opts, 1, "lit_write_failed", err.Error())
-	}
-
-	// Write provenance
+	// Write synthesis and provenance as one all-or-rollback operation.
 	prov := map[string]any{
 		"schema_version": "1",
 		"command":        "rforge lit",
-		"research_dir":   researchDir,
+		"research_dir":   filepath.Base(filepath.Clean(researchDir)),
 		"topics":         len(sessions),
 		"total_papers":   totalPapers,
 		"unique_dois":    len(totalUniqueDOIs),
@@ -379,9 +378,19 @@ func executeLit(args []string, stdout, stderr io.Writer, opts globalOptions) int
 		"has_screening":  hasScreening,
 		"timestamp":      time.Now().UTC().Format(time.RFC3339),
 	}
-	provData, _ := json.MarshalIndent(prov, "", "  ")
 	provPath := filepath.Join(outDir, "LIT.provenance.json")
-	os.WriteFile(provPath, provData, 0o644)
+	var run provenance.Validation
+	err = filetxn.ReplaceAllThen([]filetxn.Output{{Path: outPath, Data: []byte(lit), Mode: 0644}}, func() error {
+		var err error
+		run, err = recordEngineRun(outDir, "lit", prov, []string{outPath}, provPath)
+		return err
+	})
+	if err != nil {
+		return writeError(stdout, stderr, opts, 1, "lit_write_failed", err.Error())
+	}
+	prov["schema_version"] = "2"
+	prov["run_id"] = run.RunID
+	prov["provenance_level"] = run.Level
 
 	if opts.JSON {
 		return writeJSON(stdout, 0, prov)

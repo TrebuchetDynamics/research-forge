@@ -7,8 +7,10 @@ import "strings"
 type Actor string
 
 const (
-	ActorAgent Actor = "agent"
-	ActorHuman Actor = "human"
+	// ActorEngine identifies deterministic engine operations, not agent judgments.
+	ActorEngine Actor = "engine"
+	ActorAgent  Actor = "agent"
+	ActorHuman  Actor = "human"
 )
 
 // DecisionClass classifies whether an LLM/automation agent may execute a step

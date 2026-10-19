@@ -223,11 +223,16 @@ func executeBenchmark(args []string, stdout, stderr io.Writer, opts globalOption
 		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge benchmark cross-tool --out <report.json>")
 	}
 	report := benchmarks.BuildCrossToolBenchmarkReport(benchmarks.DefaultCrossToolBenchmarkInput())
-	if err := writeJSONFile(out, report); err != nil {
+	var run provenance.Validation
+	if err := writeJSONFileThen(out, report, func() error {
+		var err error
+		run, err = recordEngineRun(filepath.Dir(out), "benchmark.cross-tool", nil, []string{out}, "")
+		return err
+	}); err != nil {
 		return writeError(stdout, stderr, opts, 1, "benchmark_write_failed", err.Error())
 	}
 	if opts.JSON {
-		return writeJSON(stdout, 0, map[string]any{"benchmark": "cross-tool", "report": report, "out": out})
+		return writeJSON(stdout, 0, map[string]any{"run_id": run.RunID, "provenance_level": run.Level, "benchmark": "cross-tool", "report": report, "out": out})
 	}
 	fmt.Fprintf(stdout, "wrote cross-tool benchmark report to %s\n", out)
 	return 0
@@ -1369,7 +1374,7 @@ func executeReport(args []string, stdout, stderr io.Writer, opts globalOptions) 
 	if err != nil {
 		return writeError(stdout, stderr, opts, 1, "project_inspect_failed", err.Error())
 	}
-	data := report.Data{Title: proj.Title, Provenance: []string{"manifest", "lockfile", "provenance"}}
+	data := report.Data{ProjectPath: opts.Project, Title: proj.Title, Provenance: []string{"manifest", "lockfile", "provenance"}}
 	switch args[0] {
 	case "claim-panel":
 		tracePath, outPath, ok := parseReportClaimPanel(args[1:])
