@@ -143,7 +143,24 @@ func utc(s string) bool {
 	return e == nil && strings.HasSuffix(s, "Z")
 }
 
+// ValidateCandidateSet checks unapproved, snapshot-free pilot input without
+// executing it or changing its lifecycle. allowAPFallback is an explicit curator
+// opt-in for the owner's documented AP exception; it relaxes only AP presence.
+// Callers must separately establish the source-list evidence for that fallback.
+func ValidateCandidateSet(dir string, allowAPFallback bool) error {
+	_, err := loadSetWithPolicy(dir, setValidationPolicy{candidate: true, allowAPFallback: allowAPFallback})
+	return err
+}
+
+type setValidationPolicy struct {
+	record, candidate, allowAPFallback bool
+}
+
 func loadSet(dir string, record bool) (Set, error) {
+	return loadSetWithPolicy(dir, setValidationPolicy{record: record})
+}
+
+func loadSetWithPolicy(dir string, policy setValidationPolicy) (Set, error) {
 	var s Set
 	b, e := readSetFile(dir, "set.json")
 	if e != nil {
@@ -166,7 +183,11 @@ func loadSet(dir string, record bool) (Set, error) {
 	if s.SchemaVersion != 1 || !slugRE.MatchString(s.SetID) || !hashRE.MatchString(s.SetChecksum) || !hashRE.MatchString(s.ReviewSheetSHA256) || len(s.K) == 0 || len(s.Questions) == 0 {
 		return s, invalid("invalid_set")
 	}
-	if (record && (s.State != "approved" || s.SnapshotsSHA256 != nil)) || (!record && (s.State != "locked" || s.SnapshotsSHA256 == nil)) || s.Approval == nil || strings.TrimSpace(s.Approval.Approver) == "" || !utc(s.Approval.ApprovedAt) {
+	if policy.candidate {
+		if s.State != "candidate" || s.Approval != nil || s.SnapshotsSHA256 != nil {
+			return s, invalid("invalid_set")
+		}
+	} else if (policy.record && (s.State != "approved" || s.SnapshotsSHA256 != nil)) || (!policy.record && (s.State != "locked" || s.SnapshotsSHA256 == nil)) || s.Approval == nil || strings.TrimSpace(s.Approval.Approver) == "" || !utc(s.Approval.ApprovedAt) {
 		return s, invalid("invalid_set")
 	}
 	if s.SnapshotsSHA256 != nil && !hashRE.MatchString(*s.SnapshotsSHA256) {
@@ -280,8 +301,10 @@ func loadSet(dir string, record bool) (Set, error) {
 			return s, invalid("invalid_set")
 		}
 	}
-	if !strings.HasPrefix(s.SetID, "fixture-") && (held < 8 || dev < 4 || len(domains) < 3 || !domains["artificial-photosynthesis"]) {
-		return s, invalid("invalid_set")
+	if policy.candidate || !strings.HasPrefix(s.SetID, "fixture-") {
+		if held < 8 || dev < 4 || len(domains) < 3 || (!domains["artificial-photosynthesis"] && !(policy.candidate && policy.allowAPFallback)) {
+			return s, invalid("invalid_set")
+		}
 	}
 	return s, nil
 }
