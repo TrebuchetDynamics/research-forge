@@ -1,5 +1,30 @@
 # Candidate pool A — owner review sheet
 
+## Search-plan revision (2026-10-19)
+
+**Current lifecycle: `candidate`, `approval: null`; owner re-approval required at V-B4-lock.** The earlier approval banner and curation notes below are retained as historical evidence; this section supersedes their approval status and two-call plan description. The owner-approved gold, questions, review identities, splits and dates are unchanged. Only search plans, lifecycle and integrity checksums have changed.
+
+Per the owner's 2026-10-19 decision, benchmark retrieval must not depend on OpenAlex. Each of the two problem-based query terms already authored for a question is now searched unchanged on every provider listed below, in term-major order. No term was added, removed or chosen using retrieval outcomes. Provider selection follows the question's domain, not observed hits or scores: Europe PMC plus Crossref for clinical medicine; Semantic Scholar plus Crossref for education, social policy and performing arts. Europe PMC is also included for q-d and q-g because their questions concern health-professions education. There are no OpenAlex calls; existing OpenAlex bibliographic identifiers and date evidence are not search dependencies and remain untouched.
+
+| Question | Old providers / calls | New providers / calls | Inclusive publication-date cap |
+| --- | --- | --- | --- |
+| q-b | OpenAlex × 2 | Europe PMC × 2; Crossref × 2 | 2024-04-01 |
+| q-c | OpenAlex × 2 | Europe PMC × 2; Crossref × 2 | 2023-09-15 |
+| q-d | OpenAlex × 2 | Semantic Scholar × 2; Crossref × 2; Europe PMC × 2 | 2023-07-01 |
+| q-e | OpenAlex × 2 | Semantic Scholar × 2; Crossref × 2 | 2023-11-28 |
+| q-f | OpenAlex × 2 | Europe PMC × 2; Crossref × 2 | 2023-11-30 |
+| q-g | OpenAlex × 2 | Semantic Scholar × 2; Crossref × 2; Europe PMC × 2 | 2024-09-20 |
+| q-h | OpenAlex × 2 | Semantic Scholar × 2; Crossref × 2 | 2023-10-13 |
+| q-i | OpenAlex × 2 | Europe PMC × 2; Crossref × 2 | 2023-06-20 |
+| q-j | OpenAlex × 2 | Europe PMC × 2; Crossref × 2 | 2024-02-12 |
+| q-k | OpenAlex × 2 | Europe PMC × 2; Crossref × 2 | 2023-09-22 |
+| q-l | OpenAlex × 2 | Europe PMC × 2; Crossref × 2 | 2024-01-29 |
+| q-m | OpenAlex × 2 | Europe PMC × 2; Crossref × 2 | 2024-05-20 |
+
+Each call still requests 50 records with an empty initial cursor. All twelve questions retain equal budgets of 100 HTTP requests and 600,000 ms, the same review `search_date` caps and K=10/20/50. The 52 planned calls replace 24 OpenAlex-only calls: each question has four calls (six for q-d/q-g), with no provider responsible for more than half. Provider-native caps follow [the benchmark specification](../../../docs/benchmark/spec.md#24-qualified-recording-sources): `filters.filter` is `FIRST_PDATE:[* TO YYYY-MM-DD]` for Europe PMC and `until-pub-date:YYYY-MM-DD` for Crossref; Semantic Scholar uses `filters.publicationDateOrYear: ":YYYY-MM-DD"`. Independent record-level date and leakage guards remain required. The unchanged terms retain the prior leakage review; candidate validation checks the revised plans against the same review titles and identifiers.
+
+This is a metadata-only revision, not a benchmark execution or a new source-list audit. No searches or snapshots were recorded for this revision; `snapshots_sha256` remains null. Validate with `ValidateCandidateSet(dir, true)` for the previously authorized AP fallback. Because plans are inside the approved checksum, the prior approval does not authorize capture of this revision: at V-B4-lock the owner must re-approve this search-plan change, retain the `ap_domain_absent` waiver if the fallback is still accepted, and review provider capture rights and rate limits before recording. No retrieval-quality improvement is claimed.
+
 **APPROVED BY THE OWNER 2026-10-19 (16:06 UTC) WITH WAIVER `ap_domain_absent`; NOT YET LOCKED.** This pool has eight independent held-out families, four separate dev families and 113 included-paper records across four held-out domains. **Artificial photosynthesis (AP) is absent** under the owner-authorized fallback recorded below and in the [V-B4 task](../../../TODO.md); no topic was relabelled and no synthetic gold was substituted. Snapshots are recorded at V-B4-lock; until `state` is `locked`, this is not a runnable baseline.
 
 

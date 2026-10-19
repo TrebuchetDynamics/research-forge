@@ -1,11 +1,5 @@
 {
-  "approval": {
-    "approved_at": "2026-10-19T16:06:30Z",
-    "approver": "xel (repository owner)",
-    "waivers": [
-      "ap_domain_absent"
-    ]
-  },
+  "approval": null,
   "http_policy": {
     "algorithm": "source-http-v1",
     "max_redirects": 10,
@@ -203,20 +197,38 @@
       "search_plan": [
         {
           "filters": {
-            "filter": "to_publication_date:2024-04-01"
+            "filter": "FIRST_PDATE:[* TO 2024-04-01]"
           },
           "limit": 50,
           "page_cursor": "",
-          "source": "openalex",
+          "source": "europepmc",
           "terms": "farletuzumab solid tumor clinical trial"
         },
         {
           "filters": {
-            "filter": "to_publication_date:2024-04-01"
+            "filter": "until-pub-date:2024-04-01"
           },
           "limit": 50,
           "page_cursor": "",
-          "source": "openalex",
+          "source": "crossref",
+          "terms": "farletuzumab solid tumor clinical trial"
+        },
+        {
+          "filters": {
+            "filter": "FIRST_PDATE:[* TO 2024-04-01]"
+          },
+          "limit": 50,
+          "page_cursor": "",
+          "source": "europepmc",
+          "terms": "MORAb-202 eribulin folate receptor cancer"
+        },
+        {
+          "filters": {
+            "filter": "until-pub-date:2024-04-01"
+          },
+          "limit": 50,
+          "page_cursor": "",
+          "source": "crossref",
           "terms": "MORAb-202 eribulin folate receptor cancer"
         }
       ],
@@ -380,20 +392,38 @@
       "search_plan": [
         {
           "filters": {
-            "filter": "to_publication_date:2023-09-15"
+            "filter": "FIRST_PDATE:[* TO 2023-09-15]"
           },
           "limit": 50,
           "page_cursor": "",
-          "source": "openalex",
+          "source": "europepmc",
           "terms": "haemorrhoid surgery metronidazole randomized topical"
         },
         {
           "filters": {
-            "filter": "to_publication_date:2023-09-15"
+            "filter": "until-pub-date:2023-09-15"
           },
           "limit": 50,
           "page_cursor": "",
-          "source": "openalex",
+          "source": "crossref",
+          "terms": "haemorrhoid surgery metronidazole randomized topical"
+        },
+        {
+          "filters": {
+            "filter": "FIRST_PDATE:[* TO 2023-09-15]"
+          },
+          "limit": 50,
+          "page_cursor": "",
+          "source": "europepmc",
+          "terms": "hemorrhoidectomy local oral antibiotic pain trial"
+        },
+        {
+          "filters": {
+            "filter": "until-pub-date:2023-09-15"
+          },
+          "limit": 50,
+          "page_cursor": "",
+          "source": "crossref",
           "terms": "hemorrhoidectomy local oral antibiotic pain trial"
         }
       ],
@@ -533,20 +563,56 @@
       "search_plan": [
         {
           "filters": {
-            "filter": "to_publication_date:2023-07-01"
+            "publicationDateOrYear": ":2023-07-01"
           },
           "limit": 50,
           "page_cursor": "",
-          "source": "openalex",
+          "source": "semantic-scholar",
           "terms": "orthopaedic training game simulation learning"
         },
         {
           "filters": {
-            "filter": "to_publication_date:2023-07-01"
+            "filter": "until-pub-date:2023-07-01"
           },
           "limit": 50,
           "page_cursor": "",
-          "source": "openalex",
+          "source": "crossref",
+          "terms": "orthopaedic training game simulation learning"
+        },
+        {
+          "filters": {
+            "filter": "FIRST_PDATE:[* TO 2023-07-01]"
+          },
+          "limit": 50,
+          "page_cursor": "",
+          "source": "europepmc",
+          "terms": "orthopaedic training game simulation learning"
+        },
+        {
+          "filters": {
+            "publicationDateOrYear": ":2023-07-01"
+          },
+          "limit": 50,
+          "page_cursor": "",
+          "source": "semantic-scholar",
+          "terms": "orthopedic resident competitive simulation video game"
+        },
+        {
+          "filters": {
+            "filter": "until-pub-date:2023-07-01"
+          },
+          "limit": 50,
+          "page_cursor": "",
+          "source": "crossref",
+          "terms": "orthopedic resident competitive simulation video game"
+        },
+        {
+          "filters": {
+            "filter": "FIRST_PDATE:[* TO 2023-07-01]"
+          },
+          "limit": 50,
+          "page_cursor": "",
+          "source": "europepmc",
           "terms": "orthopedic resident competitive simulation video game"
         }
       ],
@@ -782,20 +848,38 @@
       "search_plan": [
         {
           "filters": {
-            "filter": "to_publication_date:2023-11-28"
+            "publicationDateOrYear": ":2023-11-28"
           },
           "limit": 50,
           "page_cursor": "",
-          "source": "openalex",
+          "source": "semantic-scholar",
           "terms": "NEET youth employment education intervention controlled"
         },
         {
           "filters": {
-            "filter": "to_publication_date:2023-11-28"
+            "filter": "until-pub-date:2023-11-28"
           },
           "limit": 50,
           "page_cursor": "",
-          "source": "openalex",
+          "source": "crossref",
+          "terms": "NEET youth employment education intervention controlled"
+        },
+        {
+          "filters": {
+            "publicationDateOrYear": ":2023-11-28"
+          },
+          "limit": 50,
+          "page_cursor": "",
+          "source": "semantic-scholar",
+          "terms": "disadvantaged young people reengagement training employment program"
+        },
+        {
+          "filters": {
+            "filter": "until-pub-date:2023-11-28"
+          },
+          "limit": 50,
+          "page_cursor": "",
+          "source": "crossref",
           "terms": "disadvantaged young people reengagement training employment program"
         }
       ],
@@ -1027,20 +1111,38 @@
       "search_plan": [
         {
           "filters": {
-            "filter": "to_publication_date:2023-11-30"
+            "filter": "FIRST_PDATE:[* TO 2023-11-30]"
           },
           "limit": 50,
           "page_cursor": "",
-          "source": "openalex",
+          "source": "europepmc",
           "terms": "gallium 68 PSMA hepatocellular carcinoma imaging"
         },
         {
           "filters": {
-            "filter": "to_publication_date:2023-11-30"
+            "filter": "until-pub-date:2023-11-30"
           },
           "limit": 50,
           "page_cursor": "",
-          "source": "openalex",
+          "source": "crossref",
+          "terms": "gallium 68 PSMA hepatocellular carcinoma imaging"
+        },
+        {
+          "filters": {
+            "filter": "FIRST_PDATE:[* TO 2023-11-30]"
+          },
+          "limit": 50,
+          "page_cursor": "",
+          "source": "europepmc",
+          "terms": "liver cancer PSMA PET diagnosis"
+        },
+        {
+          "filters": {
+            "filter": "until-pub-date:2023-11-30"
+          },
+          "limit": 50,
+          "page_cursor": "",
+          "source": "crossref",
           "terms": "liver cancer PSMA PET diagnosis"
         }
       ],
@@ -1368,20 +1470,56 @@
       "search_plan": [
         {
           "filters": {
-            "filter": "to_publication_date:2024-09-20"
+            "publicationDateOrYear": ":2024-09-20"
           },
           "limit": 50,
           "page_cursor": "",
-          "source": "openalex",
+          "source": "semantic-scholar",
           "terms": "pharmacy students collaborative health professions learning comparison"
         },
         {
           "filters": {
-            "filter": "to_publication_date:2024-09-20"
+            "filter": "until-pub-date:2024-09-20"
           },
           "limit": 50,
           "page_cursor": "",
-          "source": "openalex",
+          "source": "crossref",
+          "terms": "pharmacy students collaborative health professions learning comparison"
+        },
+        {
+          "filters": {
+            "filter": "FIRST_PDATE:[* TO 2024-09-20]"
+          },
+          "limit": 50,
+          "page_cursor": "",
+          "source": "europepmc",
+          "terms": "pharmacy students collaborative health professions learning comparison"
+        },
+        {
+          "filters": {
+            "publicationDateOrYear": ":2024-09-20"
+          },
+          "limit": 50,
+          "page_cursor": "",
+          "source": "semantic-scholar",
+          "terms": "pharmacy interprofessional education lecture controlled cohort"
+        },
+        {
+          "filters": {
+            "filter": "until-pub-date:2024-09-20"
+          },
+          "limit": 50,
+          "page_cursor": "",
+          "source": "crossref",
+          "terms": "pharmacy interprofessional education lecture controlled cohort"
+        },
+        {
+          "filters": {
+            "filter": "FIRST_PDATE:[* TO 2024-09-20]"
+          },
+          "limit": 50,
+          "page_cursor": "",
+          "source": "europepmc",
           "terms": "pharmacy interprofessional education lecture controlled cohort"
         }
       ],
@@ -1509,20 +1647,38 @@
       "search_plan": [
         {
           "filters": {
-            "filter": "to_publication_date:2023-10-13"
+            "publicationDateOrYear": ":2023-10-13"
           },
           "limit": 50,
           "page_cursor": "",
-          "source": "openalex",
+          "source": "semantic-scholar",
           "terms": "dancer somatic imagery developmental movement training"
         },
         {
           "filters": {
-            "filter": "to_publication_date:2023-10-13"
+            "filter": "until-pub-date:2023-10-13"
           },
           "limit": 50,
           "page_cursor": "",
-          "source": "openalex",
+          "source": "crossref",
+          "terms": "dancer somatic imagery developmental movement training"
+        },
+        {
+          "filters": {
+            "publicationDateOrYear": ":2023-10-13"
+          },
+          "limit": 50,
+          "page_cursor": "",
+          "source": "semantic-scholar",
+          "terms": "dance body awareness movement pattern education"
+        },
+        {
+          "filters": {
+            "filter": "until-pub-date:2023-10-13"
+          },
+          "limit": 50,
+          "page_cursor": "",
+          "source": "crossref",
           "terms": "dance body awareness movement pattern education"
         }
       ],
@@ -1730,20 +1886,38 @@
       "search_plan": [
         {
           "filters": {
-            "filter": "to_publication_date:2023-06-20"
+            "filter": "FIRST_PDATE:[* TO 2023-06-20]"
           },
           "limit": 50,
           "page_cursor": "",
-          "source": "openalex",
+          "source": "europepmc",
           "terms": "surgical ward vital signs escalation protocol outcomes"
         },
         {
           "filters": {
-            "filter": "to_publication_date:2023-06-20"
+            "filter": "until-pub-date:2023-06-20"
           },
           "limit": 50,
           "page_cursor": "",
-          "source": "openalex",
+          "source": "crossref",
+          "terms": "surgical ward vital signs escalation protocol outcomes"
+        },
+        {
+          "filters": {
+            "filter": "FIRST_PDATE:[* TO 2023-06-20]"
+          },
+          "limit": 50,
+          "page_cursor": "",
+          "source": "europepmc",
+          "terms": "surgical patient early warning score implementation trial"
+        },
+        {
+          "filters": {
+            "filter": "until-pub-date:2023-06-20"
+          },
+          "limit": 50,
+          "page_cursor": "",
+          "source": "crossref",
           "terms": "surgical patient early warning score implementation trial"
         }
       ],
@@ -2003,20 +2177,38 @@
       "search_plan": [
         {
           "filters": {
-            "filter": "to_publication_date:2024-02-12"
+            "filter": "FIRST_PDATE:[* TO 2024-02-12]"
           },
           "limit": 50,
           "page_cursor": "",
-          "source": "openalex",
+          "source": "europepmc",
           "terms": "injectable poly L lactic acid facial volume randomized"
         },
         {
           "filters": {
-            "filter": "to_publication_date:2024-02-12"
+            "filter": "until-pub-date:2024-02-12"
           },
           "limit": 50,
           "page_cursor": "",
-          "source": "openalex",
+          "source": "crossref",
+          "terms": "injectable poly L lactic acid facial volume randomized"
+        },
+        {
+          "filters": {
+            "filter": "FIRST_PDATE:[* TO 2024-02-12]"
+          },
+          "limit": 50,
+          "page_cursor": "",
+          "source": "europepmc",
+          "terms": "facial lipoatrophy PLLA filler controlled trial"
+        },
+        {
+          "filters": {
+            "filter": "until-pub-date:2024-02-12"
+          },
+          "limit": 50,
+          "page_cursor": "",
+          "source": "crossref",
           "terms": "facial lipoatrophy PLLA filler controlled trial"
         }
       ],
@@ -2316,20 +2508,38 @@
       "search_plan": [
         {
           "filters": {
-            "filter": "to_publication_date:2023-09-22"
+            "filter": "FIRST_PDATE:[* TO 2023-09-22]"
           },
           "limit": 50,
           "page_cursor": "",
-          "source": "openalex",
+          "source": "europepmc",
           "terms": "juvenile idiopathic arthritis pain non drug randomized"
         },
         {
           "filters": {
-            "filter": "to_publication_date:2023-09-22"
+            "filter": "until-pub-date:2023-09-22"
           },
           "limit": 50,
           "page_cursor": "",
-          "source": "openalex",
+          "source": "crossref",
+          "terms": "juvenile idiopathic arthritis pain non drug randomized"
+        },
+        {
+          "filters": {
+            "filter": "FIRST_PDATE:[* TO 2023-09-22]"
+          },
+          "limit": 50,
+          "page_cursor": "",
+          "source": "europepmc",
+          "terms": "juvenile arthritis exercise hydrotherapy orthosis self management pain"
+        },
+        {
+          "filters": {
+            "filter": "until-pub-date:2023-09-22"
+          },
+          "limit": 50,
+          "page_cursor": "",
+          "source": "crossref",
           "terms": "juvenile arthritis exercise hydrotherapy orthosis self management pain"
         }
       ],
@@ -2757,20 +2967,38 @@
       "search_plan": [
         {
           "filters": {
-            "filter": "to_publication_date:2024-01-29"
+            "filter": "FIRST_PDATE:[* TO 2024-01-29]"
           },
           "limit": 50,
           "page_cursor": "",
-          "source": "openalex",
+          "source": "europepmc",
           "terms": "hemophilia digital application artificial intelligence human study"
         },
         {
           "filters": {
-            "filter": "to_publication_date:2024-01-29"
+            "filter": "until-pub-date:2024-01-29"
           },
           "limit": 50,
           "page_cursor": "",
-          "source": "openalex",
+          "source": "crossref",
+          "terms": "hemophilia digital application artificial intelligence human study"
+        },
+        {
+          "filters": {
+            "filter": "FIRST_PDATE:[* TO 2024-01-29]"
+          },
+          "limit": 50,
+          "page_cursor": "",
+          "source": "europepmc",
+          "terms": "hereditary coagulation disorder telemedicine software"
+        },
+        {
+          "filters": {
+            "filter": "until-pub-date:2024-01-29"
+          },
+          "limit": 50,
+          "page_cursor": "",
+          "source": "crossref",
           "terms": "hereditary coagulation disorder telemedicine software"
         }
       ],
@@ -2930,30 +3158,48 @@
       "search_plan": [
         {
           "filters": {
-            "filter": "to_publication_date:2024-05-20"
+            "filter": "FIRST_PDATE:[* TO 2024-05-20]"
           },
           "limit": 50,
           "page_cursor": "",
-          "source": "openalex",
+          "source": "europepmc",
           "terms": "sickle cell acute pain ketamine comparative"
         },
         {
           "filters": {
-            "filter": "to_publication_date:2024-05-20"
+            "filter": "until-pub-date:2024-05-20"
           },
           "limit": 50,
           "page_cursor": "",
-          "source": "openalex",
+          "source": "crossref",
+          "terms": "sickle cell acute pain ketamine comparative"
+        },
+        {
+          "filters": {
+            "filter": "FIRST_PDATE:[* TO 2024-05-20]"
+          },
+          "limit": 50,
+          "page_cursor": "",
+          "source": "europepmc",
+          "terms": "vaso occlusive episode ketamine morphine study"
+        },
+        {
+          "filters": {
+            "filter": "until-pub-date:2024-05-20"
+          },
+          "limit": 50,
+          "page_cursor": "",
+          "source": "crossref",
           "terms": "vaso occlusive episode ketamine morphine study"
         }
       ],
       "split": "held_out"
     }
   ],
-  "review_sheet_sha256": "57a041fd9a5fe2769cafd859ac1b9648bf1ed7148c0d86796bbb06f3ea6f50a4",
+  "review_sheet_sha256": "d0eebb65456e9e5f663508a44426d22f01d424334dd0339a218e3f50eb6f9254",
   "schema_version": 1,
-  "set_checksum": "6be0c95303674599c2fd49be68abf3cdba84314af621a412f30fa88765a4db71",
+  "set_checksum": "ea907d6b0b1a63b6ddcc0a938b3d19ffdae24a062cad80e9f2bbb7e5ceed7191",
   "set_id": "pool-a",
   "snapshots_sha256": null,
-  "state": "approved"
+  "state": "candidate"
 }
