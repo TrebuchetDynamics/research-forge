@@ -21,6 +21,7 @@ import (
 	"github.com/TrebuchetDynamics/research-forge/internal/documents"
 	"github.com/TrebuchetDynamics/research-forge/internal/evidence"
 	"github.com/TrebuchetDynamics/research-forge/internal/filetxn"
+	"github.com/TrebuchetDynamics/research-forge/internal/jobs"
 	"github.com/TrebuchetDynamics/research-forge/internal/library"
 	"github.com/TrebuchetDynamics/research-forge/internal/parsing"
 	"github.com/TrebuchetDynamics/research-forge/internal/provenance"
@@ -1232,6 +1233,10 @@ func executeSearchBatch(args []string, stdout, stderr io.Writer, opts globalOpti
 		queries = append(queries, fileQueries...)
 	}
 	queries = uniqueNonEmptyStrings(queries)
+	return executeSearchBatchPrepared(batch, queries, stdout, stderr, opts, "")
+}
+
+func executeSearchBatchPrepared(batch searchBatchOptions, queries []string, stdout, stderr io.Writer, opts globalOptions, jobID string) int {
 	if len(queries) == 0 || len(batch.Sources) == 0 || strings.TrimSpace(batch.OutDir) == "" {
 		return writeError(stdout, stderr, opts, 2, "usage", usageSearchBatch)
 	}
@@ -1250,6 +1255,10 @@ func executeSearchBatch(args []string, stdout, stderr io.Writer, opts globalOpti
 			}
 		}
 	}
+	return runSearchBatchJob(batch, queries, configurationErrors, stdout, stderr, opts, jobID)
+}
+
+func executeSearchBatchRun(batch searchBatchOptions, queries []string, configurationErrors map[string]string, stdout, stderr io.Writer, opts globalOptions, job *jobs.Run) int {
 	priorState, stateExists, stateErr := readSearchBatchState(batch.OutDir)
 	if stateErr != nil {
 		return writeError(stdout, stderr, opts, 1, "search_batch_state_read_failed", stateErr.Error())
@@ -1286,6 +1295,7 @@ func executeSearchBatch(args []string, stdout, stderr io.Writer, opts globalOpti
 		state.Resume(queries, batch.Sources, batch.Limit)
 		failures = append(failures, state.Failures...)
 	}
+	state.JobID = job.Job().ID
 	state.Budget = budget
 	resultCount := len(allPapers)
 	state.ResultCount = &resultCount
@@ -1307,6 +1317,19 @@ func executeSearchBatch(args []string, stdout, stderr io.Writer, opts globalOpti
 			if err := preserveSearchBatchUsage(batch.OutDir, priorState, state); err != nil {
 				message += "; preserve request accounting: " + err.Error()
 			}
+		}
+		// A failed publication rolls back committed pairs as well as artifacts.
+		// Keep the job's visible progress aligned with that restored checkpoint.
+		restored, exists, readErr := readSearchBatchState(batch.OutDir)
+		if readErr != nil {
+			message += "; read restored progress: " + readErr.Error()
+		}
+		if !exists {
+			restored = searchBatchState{}
+		}
+		restored.Queries, restored.Sources = queries, batch.Sources
+		if err := job.Checkpoint(search.BatchJobProgress(&restored), "error_threshold"); err != nil {
+			message += "; save failed job progress: " + err.Error()
 		}
 		if err := restoreFileSnapshots(projectSnapshots...); err != nil {
 			return writeError(stdout, stderr, opts, 1, kind+"_rollback_failed", message+"; "+err.Error())
@@ -1379,6 +1402,7 @@ func executeSearchBatch(args []string, stdout, stderr io.Writer, opts globalOpti
 		return nil
 	}
 	resumedPairs, runErr := search.RunBatch(ctx, &state, allPapers, configurationErrors, batch.ContinueOnError, search.BatchHooks{
+		Job: job,
 		Search: func(ctx context.Context, source, query string) ([]library.PaperRecord, error) {
 			connector, _ := searchConnector(source)
 			response, err := connector.Search(ctx, sources.SourceQuery{Terms: query, Limit: batch.Limit, Filters: map[string]string{}})
@@ -1501,12 +1525,13 @@ func executeSearchBatch(args []string, stdout, stderr io.Writer, opts globalOpti
 		}
 	}
 	if opts.JSON {
-		payload := map[string]any{"run_id": run.RunID, "provenance_level": run.Level, "out": batch.OutDir, "results": len(allPapers), "deduped": len(deduped), "failures": failureCount, "skippedSources": skippedCount, "manifest": filepath.Join(batch.OutDir, "manifest.json"), "imported": imported, "skippedDuplicate": skippedDuplicate, "skippedNoIdentifier": skippedNoIdentifier, "fetched": len(fetchResult.assets), "fetchFailed": len(fetchResult.failures), "fetchSkipped": fetchResult.skipped, "resumed": resuming, "resumedPairs": resumedPairs, "interrupted": interrupted, "pending": pending, "stop_reason": state.StopReason, "requests_used": state.RequestsUsed, "coverage": state.Coverage, "budget": state.Budget}
+		payload := map[string]any{"job_id": job.Job().ID, "run_id": run.RunID, "provenance_level": run.Level, "out": batch.OutDir, "results": len(allPapers), "deduped": len(deduped), "failures": failureCount, "skippedSources": skippedCount, "manifest": filepath.Join(batch.OutDir, "manifest.json"), "imported": imported, "skippedDuplicate": skippedDuplicate, "skippedNoIdentifier": skippedNoIdentifier, "fetched": len(fetchResult.assets), "fetchFailed": len(fetchResult.failures), "fetchSkipped": fetchResult.skipped, "resumed": resuming, "resumedPairs": resumedPairs, "interrupted": interrupted, "pending": pending, "stop_reason": state.StopReason, "requests_used": state.RequestsUsed, "coverage": state.Coverage, "budget": state.Budget}
 		if interrupted {
 			payload["resumeCommand"] = searchBatchResumeHint(batch.OutDir, batch)
 		}
 		return writeJSON(stdout, exitCode, payload)
 	}
+	fmt.Fprintf(stdout, "job: %s\n", job.Job().ID)
 	fmt.Fprintf(stdout, "searched %d querie(s) across %d source(s): %d records, %d deduped, %d failure(s), %d skipped source(s)\n", len(queries), len(batch.Sources), len(allPapers), len(deduped), failureCount, skippedCount)
 	if resuming {
 		fmt.Fprintf(stdout, "resumed from checkpoint: skipped %d completed pair(s), retried failed pair(s)\n", resumedPairs)
@@ -1533,20 +1558,15 @@ func executeSearchBatch(args []string, stdout, stderr io.Writer, opts globalOpti
 // failed run's rollback leaves linked artifacts untouched. With truncate
 // false, priorData is rewritten first so appends continue the accumulation.
 func openSearchBatchIncremental(path string, priorData []byte, truncate bool) (*os.File, error) {
-	if err := os.Remove(path); err != nil && !os.IsNotExist(err) {
+	if truncate {
+		priorData = nil
+	}
+	// Resume may trim an uncommitted tail, but must never remove the committed
+	// prefix while doing so: another kill must still leave it recoverable.
+	if err := filetxn.Replace(path, priorData, 0o644); err != nil {
 		return nil, err
 	}
-	file, err := os.OpenFile(path, os.O_CREATE|os.O_WRONLY, 0o644)
-	if err != nil {
-		return nil, err
-	}
-	if !truncate && len(priorData) > 0 {
-		if _, err := file.Write(priorData); err != nil {
-			_ = file.Close()
-			return nil, err
-		}
-	}
-	return file, nil
+	return os.OpenFile(path, os.O_WRONLY|os.O_APPEND, 0o644)
 }
 
 // newSearchBatchSignalContext returns a context that is canceled when the
@@ -1832,6 +1852,13 @@ func executeSearchResume(args []string, stdout, stderr io.Writer, opts globalOpt
 	if failuresFile == "" || outDir == "" {
 		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge search resume --failures <failures.jsonl> --out <dir> [--dry-run]")
 	}
+	if !dryRun {
+		lease, err := jobs.NewStore(outDir).Acquire()
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "search_resume_busy", err.Error())
+		}
+		defer lease.Close()
+	}
 	pending := readSearchBatchFailures(failuresFile)
 	if len(pending) == 0 {
 		if opts.JSON {
@@ -2058,6 +2085,13 @@ func executeSearchRefresh(args []string, stdout, stderr io.Writer, opts globalOp
 	}
 	if topicDir == "" {
 		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge search refresh --dir <topic-dir> [--dry-run]")
+	}
+	if !dryRun {
+		lease, err := jobs.NewStore(topicDir).Acquire()
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "search_refresh_busy", err.Error())
+		}
+		defer lease.Close()
 	}
 	manifestPath := filepath.Join(topicDir, "manifest.json")
 	manifestData, err := os.ReadFile(manifestPath)
