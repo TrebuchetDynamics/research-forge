@@ -774,17 +774,6 @@ Owner answers (2026-10-19):
 
 ## Next
 
-- [ ] V-B11 — Provider-independent live agent comparison
-- Status: open
-- Goal: RF-BENCH — Measure research quality against held-out ground truth.
-- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan); [benchmark spec](docs/benchmark/spec.md); [agent-tier protocol](benchmarks/agent-tier/README.md); Owner decision 2026-10-19: the benchmark must not depend on OpenAlex. Pool A's plans used OpenAlex for 24 of 24 calls, the engine qualified only OpenAlex and Crossref, and OpenAlex now meters anonymous use per IP (the first pool A capture got HTTP 429 on 18 of 24 calls).
-- Scope: before V-B6-run, make the live comparison robust to any single provider being throttled. The with-rforge condition uses a provider mix without OpenAlex by default (`search batch` with `--continue-on-error` records per-provider failures and stop reasons); a throttled provider is skipped and logged, not retried until the run budget is gone. The protocol logs provider failures and rate-limit responses for both conditions and reports runs where either condition lost a provider, so results are never silently biased by an outage.
-- Acceptance: a stub-agent run with one provider returning 429 completes, logs the failure in both conditions' records, and the scored report flags the affected runs.
-- Checks: make check
-- Dependencies: None.
-- Ownership: ResearchForge maintainer; Autowork runner may execute.
-- Touches: benchmarks/agent-tier, docs/benchmark
-
 - [ ] V-B12 — Optional OpenAlex API key, never required
 - Status: open
 - Goal: RF-BENCH — Measure research quality against held-out ground truth.
@@ -945,6 +934,14 @@ Owner answers (2026-10-19):
   - Per-release Claude Code, Codex, Pi and Hermes install/upgrade/reload/removal session qualification, including Hermes' user-added MCP config. Offline tests exercise the shared launcher; native host lifecycle qualification was not run.
   Checks: Live qualification by an authorized person; offline evidence does not count.
   Dependencies: V-E3.
+  Status: open
+
+- [ ] V-B11-LIVE — Live checks for V-B11
+  Scope: Run the live checks the offline work for V-B11 left pending.
+  Acceptance: Each check passes on the real target:
+  - Before V-B6-run, qualify actual Pi/Codex gateways with injected provider 429 responses in both conditions: intercept before connector/native retries or waits, quarantine across queries/pages/fetches, continue other qualified providers, reconcile every HTTP attempt, and retain outage flags in the frozen-score report. The offline utility and canned fixture do not launch or qualify live agents.
+  Checks: Live qualification by an authorized person; offline evidence does not count.
+  Dependencies: V-B11.
   Status: open
 
 ## Backlog (not ready)

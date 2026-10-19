@@ -582,3 +582,21 @@ Source section: Now
 - Ownership: ResearchForge maintainer; Autowork runner may execute.
 - Touches: internal/sources/europepmc.go, internal/sources/europepmc_test.go, internal/benchmarks/engine.go, internal/benchmarks/validate.go, internal/benchmarks/transport.go, internal/benchmarks/europepmc_record_test.go, docs/benchmark/spec.md
 - Resources: benchmark-engine — shared `internal/benchmarks/engine.go`, `internal/benchmarks/validate.go` and `docs/benchmark/spec.md`; tasks holding it run one at a time
+
+
+<!-- archived from TODO.md -->
+
+Source section: Next
+
+<a id="v-b11"></a>
+
+- [x] V-B11 — Provider-independent live agent comparison
+- Status: done
+- Goal: RF-BENCH — Measure research quality against held-out ground truth.
+- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan); [benchmark spec](docs/benchmark/spec.md); [agent-tier protocol](benchmarks/agent-tier/README.md); Owner decision 2026-10-19: the benchmark must not depend on OpenAlex. Pool A's plans used OpenAlex for 24 of 24 calls, the engine qualified only OpenAlex and Crossref, and OpenAlex now meters anonymous use per IP (the first pool A capture got HTTP 429 on 18 of 24 calls).
+- Scope: before V-B6-run, make the live comparison robust to any single provider being throttled. The with-rforge condition uses a provider mix without OpenAlex by default (`search batch` with `--continue-on-error` records per-provider failures and stop reasons); a throttled provider is skipped and logged, not retried until the run budget is gone. The protocol logs provider failures and rate-limit responses for both conditions and reports runs where either condition lost a provider, so results are never silently biased by an outage.
+- Acceptance: a stub-agent run with one provider returning 429 completes, logs the failure in both conditions' records, and the scored report flags the affected runs.
+- Checks: make check
+- Dependencies: None.
+- Ownership: ResearchForge maintainer; Autowork runner may execute.
+- Touches: benchmarks/agent-tier, docs/benchmark

@@ -93,6 +93,7 @@
         "V-B1",
         "V-B10",
         "V-B11",
+        "V-B11-LIVE",
         "V-B12",
         "V-B2",
         "V-B3",
@@ -209,10 +210,8 @@
   "priority_order": {
     "schema": 1,
     "tasks": [
-      "V-B8",
       "V-B9",
       "V-B10",
-      "V-B11",
       "V-B12",
       "V-B5",
       "V-E4",
@@ -227,7 +226,8 @@
       "V-B6-LIVE",
       "V-B4-LIVE",
       "V-C2-LIVE",
-      "V-E3-LIVE"
+      "V-E3-LIVE",
+      "V-B11-LIVE"
     ]
   },
   "tasks": [
@@ -249,14 +249,6 @@
       "section": "Now",
       "status": "open",
       "title": "Semantic Scholar as a date-capped recording source"
-    },
-    {
-      "depends_on": [],
-      "goal": "RF-BENCH",
-      "id": "V-B11",
-      "section": "Next",
-      "status": "open",
-      "title": "Provider-independent live agent comparison"
     },
     {
       "depends_on": [],
@@ -297,6 +289,16 @@
       "section": "Next",
       "status": "open",
       "title": "Per-host lifecycle qualification runbook"
+    },
+    {
+      "depends_on": [
+        "V-B11"
+      ],
+      "goal": "RF-BENCH",
+      "id": "V-B11-LIVE",
+      "section": "Needs decision",
+      "status": "open",
+      "title": "Live checks for V-B11"
     },
     {
       "depends_on": [
@@ -473,6 +475,14 @@
       "section": "Done",
       "status": "done",
       "title": "Research-quality benchmark specification"
+    },
+    {
+      "depends_on": [],
+      "goal": "RF-BENCH",
+      "id": "V-B11",
+      "section": "Done",
+      "status": "done",
+      "title": "Provider-independent live agent comparison"
     },
     {
       "depends_on": [],
