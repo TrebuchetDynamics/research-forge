@@ -749,29 +749,7 @@ Owner answers (2026-10-19):
 
 ## Now
 
-- [ ] V-E0 — Capability report for compatibility checks
-- Status: open
-- Goal: RF-PACK — Ship passive native plugins for Claude Code, Codex, Pi and Hermes over the same engine.
-- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan) (Workstream E, Versions).
-- Scope: add `rforge capabilities --json`: build version, a contract version per command/tool family (`search`, `paper`, `brief`, `compare`, `provenance`, later `mcp`, `claims`) and stable error codes. Compatibility rule used by the skill, plugins and adapters: a release build passes if its version is at least `min_rforge_version` and it reports the required capabilities; a `dev` build passes only on the capability check, never on its version string; a missing or older capability fails with a structured error naming the gap and `install.sh`.
-- Acceptance: tests for release-pass, dev-with-capabilities-pass, dev-missing-capability-fail and old-version-fail; `rforge help --json` lists the command.
-- Checks: go test ./internal/cli; make check
-- Dependencies: None.
-- Ownership: ResearchForge maintainer; Autowork runner may execute.
-- Touches: internal/cli/capabilities_command.go, internal/cli/capabilities_test.go, internal/cli/cli.go, docs/cli.md
-
 ## Next
-
-- [ ] V-A2 — Search budgets and structured stop reasons
-- Status: open
-- Goal: RF-AGENT — Make the agent contract correct: install docs, search depth and provenance levels.
-- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan) (Owner decision 2; Planner's calls: coverage signal).
-- Scope: move batch state and resume out of `internal/cli` into `internal/search`, then add `--depth quick|standard|comprehensive` presets (query-variant and source caps), `--max-requests`, marginal-yield coverage (new unique deduped records per query; saturation after N consecutive low-yield queries, thresholds in the preset) and a structured `stop_reason` (`completed`, `budget_exhausted`, `coverage_saturated`, `interrupted`, `error_threshold`) with requests used and coverage in `manifest.json` and `batch-state.json`. Default depth is standard. Reuse `sources.GraphExpansionBudget` naming and replace the ad-hoc `budget_stopped` raw-ref suffix in `citations expand` with the same stop-reason type.
-- Acceptance: offline tests reach each stop reason; resume preserves budget accounting; existing batch/resume tests pass unchanged.
-- Checks: go test ./internal/search ./internal/cli ./internal/sources; make check
-- Dependencies: V0-1.
-- Ownership: ResearchForge maintainer; Autowork runner may execute.
-- Touches: internal/search, internal/cli/source_commands.go, internal/cli/search_batch_state.go, internal/sources/graph_budget.go, docs/cli.md
 
 - [ ] V-A3 — Skill depth rewrite: Standard by default
 - Status: open
@@ -783,6 +761,7 @@ Owner answers (2026-10-19):
 - Dependencies: V-A2, V0-1.
 - Ownership: ResearchForge maintainer; Autowork runner may execute.
 - Touches: skills/research-forge/SKILL.md, SKILLS.md
+- Resources: agent-docs — shared `skills/research-forge/SKILL.md`, `README.md` and `docs/agent-install.md`; tasks holding it run one at a time
 
 - [ ] V-A4 — Provenance levels computed by the validator
 - Status: open
@@ -805,6 +784,7 @@ Owner answers (2026-10-19):
 - Dependencies: V-B1, V-A2.
 - Ownership: ResearchForge maintainer; Autowork runner may execute.
 - Touches: internal/benchmarks, internal/sources, internal/cli/cli.go, docs/cli.md
+- Resources: cli-surface — shared `internal/cli/cli.go` command table/help and `docs/cli.md`; tasks holding it run one at a time (2026-10-19: parallel edits there held V-A2 and V-E0)
 
 - [ ] V-B4 — Draft candidate gold sets
 - Status: open
@@ -849,6 +829,7 @@ Owner answers (2026-10-19):
 - Dependencies: V0-2, V-A2.
 - Ownership: ResearchForge maintainer; Autowork runner may execute.
 - Touches: internal/research, internal/cli/rank_command.go, internal/cli/brief_command.go, internal/cli/compare_command.go, internal/cli/lit_command.go, internal/cli/history_replicate.go
+- Resources: cli-surface — shared `internal/cli/cli.go` command table/help and `docs/cli.md`; tasks holding it run one at a time (2026-10-19: parallel edits there held V-A2 and V-E0)
 
 - [ ] V-C2 — Persistent job service
 - Status: open
@@ -860,6 +841,7 @@ Owner answers (2026-10-19):
 - Dependencies: V-A2.
 - Ownership: ResearchForge maintainer; Autowork runner may execute.
 - Touches: internal/jobs, internal/search, internal/cli
+- Resources: cli-surface — shared `internal/cli/cli.go` command table/help and `docs/cli.md`; tasks holding it run one at a time (2026-10-19: parallel edits there held V-A2 and V-E0)
 
 - [ ] V-C3 — `rforge mcp serve` over stdio
 - Status: open
@@ -871,6 +853,7 @@ Owner answers (2026-10-19):
 - Dependencies: V-C1, V-C2.
 - Ownership: ResearchForge maintainer; Autowork runner may execute.
 - Touches: internal/mcp, cmd/rforge, internal/cli/cli.go, go.mod, go.sum, docs/cli.md
+- Resources: cli-surface — shared `internal/cli/cli.go` command table/help and `docs/cli.md`; tasks holding it run one at a time (2026-10-19: parallel edits there held V-A2 and V-E0)
 
 - [ ] V-C4 — Standalone MCP documentation
 - Status: open
@@ -882,6 +865,7 @@ Owner answers (2026-10-19):
 - Dependencies: V-C3.
 - Ownership: ResearchForge maintainer; Autowork runner may execute.
 - Touches: README.md, skills/research-forge/SKILL.md, docs/cli.md
+- Resources: cli-surface, agent-docs — shared `internal/cli/cli.go`, `docs/cli.md`, `skills/research-forge/SKILL.md` and `README.md`; tasks holding either run one at a time
 
 - [ ] V-D2 — Claim store and CLI
 - Status: open
@@ -893,6 +877,7 @@ Owner answers (2026-10-19):
 - Dependencies: V-B2, V-D1.
 - Ownership: ResearchForge maintainer; Autowork runner may execute.
 - Touches: internal/claims, internal/cli
+- Resources: cli-surface — shared `internal/cli/cli.go` command table/help and `docs/cli.md`; tasks holding it run one at a time (2026-10-19: parallel edits there held V-A2 and V-E0)
 
 - [ ] V-D3 — `rforge claim check` deterministic facets
 - Status: open
@@ -926,6 +911,7 @@ Owner answers (2026-10-19):
 - Dependencies: V-A1, V-E0.
 - Ownership: ResearchForge maintainer; Autowork runner may execute.
 - Touches: .claude-plugin, .codex-plugin, .agents/plugins, package.json, adapters, plugin.yaml, internal/docs, docs/agent-install.md, docs/release.md, README.md, skills/research-forge/SKILL.md
+- Resources: agent-docs — shared `skills/research-forge/SKILL.md`, `README.md` and `docs/agent-install.md`; tasks holding it run one at a time
 
 - [ ] V-E2 — Explicit workflow commands
 - Status: open
@@ -937,6 +923,7 @@ Owner answers (2026-10-19):
 - Dependencies: V-E1, V0-2.
 - Ownership: ResearchForge maintainer; Autowork runner may execute.
 - Touches: adapters, internal/docs, docs/agent-install.md
+- Resources: agent-docs — shared `skills/research-forge/SKILL.md`, `README.md` and `docs/agent-install.md`; tasks holding it run one at a time
 
 - [ ] V-E3 — Typed engine tools per host
 - Status: open
@@ -948,6 +935,7 @@ Owner answers (2026-10-19):
 - Dependencies: V-E1, V-E0, V-C3, V-C1.
 - Ownership: ResearchForge maintainer; Autowork runner may execute.
 - Touches: .claude-plugin, .codex-plugin, plugin.yaml, adapters, internal/docs, docs/agent-install.md
+- Resources: agent-docs — shared `skills/research-forge/SKILL.md`, `README.md` and `docs/agent-install.md`; tasks holding it run one at a time
 
 - [ ] V-E4 — Cross-surface behavior parity suite
 - Status: open
@@ -1048,12 +1036,12 @@ Generated from `goals.json` by `goals.py render`. `met` requires an executed, pa
 
 | Goal | Status | Evidence | Task |
 | --- | --- | --- | --- |
-| RF-V0: Land and harden the in-progress research commands | met | Merged workflow and provenance fixes pass the full offline check ([V0-2](TODO.archive.md#v0-2)) | — |
-| RF-AGENT: Make the agent contract correct: install docs, search depth and provenance levels | unmet | — | V-A2, V-A3, V-A4 |
-| RF-BENCH: Measure research quality against held-out ground truth | unmet | — | V-B1, V-B2, V-B3, V-B4, V-B4-lock, V-B5, V-B6, V-B6-run |
+| RF-V0: Land and harden the in-progress research commands | met | Executed check: pass ([V0-7](TODO.archive.md#v0-7)) | — |
+| RF-AGENT: Make the agent contract correct: install docs, search depth and provenance levels | unmet | — | V-A3, V-A4 |
+| RF-BENCH: Measure research quality against held-out ground truth | unmet | — | V-B3, V-B4, V-B4-lock, V-B5, V-B6, V-B6-run |
 | RF-MCP: Expose the engine through a thin MCP adapter over shared services | unmet | — | V-C1, V-C2, V-C3, V-C4 |
-| RF-CLAIMS: Verify claims against stored evidence with separate facets | unmet | — | V-D1, V-D2, V-D3, V-D4 |
-| RF-PACK: Ship passive native plugins for Claude Code, Codex, Pi and Hermes over the same engine | unmet | — | V-E0, V-E1, V-E2, V-E3, V-E4, V-E5, V-E5-run |
+| RF-CLAIMS: Verify claims against stored evidence with separate facets | unmet | — | V-D2, V-D3, V-D4 |
+| RF-PACK: Ship passive native plugins for Claude Code, Codex, Pi and Hermes over the same engine | unmet | Executed check: pass ([V-E0](TODO.archive.md#v-e0)) | V-E1, V-E2, V-E3, V-E4, V-E5, V-E5-run |
 | RF-RELEASE: Release ResearchForge 2.0 only on measured improvement and cross-host parity | unmet | — | V-R1, V-R2 |
 
 <!-- goals:coverage:end -->

@@ -184,3 +184,60 @@ Source section: Next
 - Dependencies: V-B2.
 - Ownership: ResearchForge maintainer; Autowork runner may execute.
 - Touches: internal/parsing, internal/documents
+
+
+<!-- archived from TODO.md -->
+
+Source section: Now
+
+<a id="v0-7"></a>
+
+- [x] V0-7 — Redact local paths in the packaged provenance ledger
+- Status: done
+- Goal: RF-V0 — Land and harden the in-progress research commands.
+- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan); regression from V0-3 (`f67dade`): packages began copying the real `provenance/events.jsonl`, whose events record absolute project paths, so `package audit` failed `content_privacy` for any project under a home directory. Found 2026-10-19 while hand-integrating V-A2: `TestExecutePackageAuditAndReplay`, `TestExecutePackageArchiveRestoreCompatibility` and `TestExecuteForgePackageFixtureCompletesSpineToDone` fail on `main` with a home-directory `TMPDIR` and pass with `TMPDIR=/tmp`, which is why the runner's checks stayed green.
+- Scope: when packaging, rewrite the copied event ledger: values inside the project become `project/...`, other values flagged by `security.DetectShareabilityLeak` become placeholders, and the redaction report records the rewrite.
+- Acceptance: a regression test with explicit home and Windows paths fails before and passes after, regardless of `TMPDIR`; the three CLI package tests pass with a home-directory `TMPDIR`.
+- Checks: go test ./internal/reviewpkg ./internal/cli; make check
+- Evidence: fixed in `61b065c`; red then green on `TestCreateRedactsLocalPathsInPackagedProvenance`; the three CLI tests and full `make check` passed with `TMPDIR=/home/xel/.cache/tmp`.
+- Dependencies: None.
+- Ownership: ResearchForge maintainer.
+- Touches: internal/reviewpkg/package.go, internal/reviewpkg/provenance_redaction_test.go
+
+
+<!-- archived from TODO.md -->
+
+Source section: Now
+
+<a id="v-e0"></a>
+
+- [x] V-E0 — Capability report for compatibility checks
+- Status: done
+- Evidence: hand-integrated 2026-10-19 as `79606f1` (cherry-pick of `0bd588a`) after the runner held it (TrebuchetDynamics/autowork#7); conflicts in `docs/cli.md` and `internal/cli/cli.go` resolved additively; `go test ./internal/cli ./internal/docs`, `rforge capabilities --json` smoke run and the pre-commit `make check` passed.
+- Goal: RF-PACK — Ship passive native plugins for Claude Code, Codex, Pi and Hermes over the same engine.
+- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan) (Workstream E, Versions).
+- Scope: add `rforge capabilities --json`: build version, a contract version per command/tool family (`search`, `paper`, `brief`, `compare`, `provenance`, later `mcp`, `claims`) and stable error codes. Compatibility rule used by the skill, plugins and adapters: a release build passes if its version is at least `min_rforge_version` and it reports the required capabilities; a `dev` build passes only on the capability check, never on its version string; a missing or older capability fails with a structured error naming the gap and `install.sh`.
+- Acceptance: tests for release-pass, dev-with-capabilities-pass, dev-missing-capability-fail and old-version-fail; `rforge help --json` lists the command.
+- Checks: go test ./internal/cli; make check
+- Dependencies: None.
+- Ownership: ResearchForge maintainer; Autowork runner may execute.
+- Touches: internal/cli/capabilities_command.go, internal/cli/capabilities_test.go, internal/cli/cli.go, docs/cli.md
+
+
+<!-- archived from TODO.md -->
+
+Source section: Next
+
+<a id="v-a2"></a>
+
+- [x] V-A2 — Search budgets and structured stop reasons
+- Status: done
+- Evidence: hand-integrated 2026-10-19 as `f71bf8a` (cherry-pick of `7a1f00c`) after the runner held it (TrebuchetDynamics/autowork#7); `docs/cli.md` conflict resolved by keeping both sections; `go test ./internal/search ./internal/sources ./internal/cli ./internal/docs` and the pre-commit `make check` passed (TMPDIR=/tmp; the only failures under a home TMPDIR were the V0-7 regression, which also fails on main without this commit).
+- Goal: RF-AGENT — Make the agent contract correct: install docs, search depth and provenance levels.
+- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan) (Owner decision 2; Planner's calls: coverage signal).
+- Scope: move batch state and resume out of `internal/cli` into `internal/search`, then add `--depth quick|standard|comprehensive` presets (query-variant and source caps), `--max-requests`, marginal-yield coverage (new unique deduped records per query; saturation after N consecutive low-yield queries, thresholds in the preset) and a structured `stop_reason` (`completed`, `budget_exhausted`, `coverage_saturated`, `interrupted`, `error_threshold`) with requests used and coverage in `manifest.json` and `batch-state.json`. Default depth is standard. Reuse `sources.GraphExpansionBudget` naming and replace the ad-hoc `budget_stopped` raw-ref suffix in `citations expand` with the same stop-reason type.
+- Acceptance: offline tests reach each stop reason; resume preserves budget accounting; existing batch/resume tests pass unchanged.
+- Checks: go test ./internal/search ./internal/cli ./internal/sources; make check
+- Dependencies: V0-1.
+- Ownership: ResearchForge maintainer; Autowork runner may execute.
+- Touches: internal/search, internal/cli/source_commands.go, internal/cli/search_batch_state.go, internal/sources/graph_budget.go, docs/cli.md

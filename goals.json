@@ -13,9 +13,18 @@
           "task": "V0-4"
         },
         {
-          "anchor": "v0-2",
+          "anchor": "v0-7",
           "archive": "TODO.archive.md",
           "coverage_current": true,
+          "kind": "executed",
+          "ref": "61b065c: TestCreateRedactsLocalPathsInPackagedProvenance red then green; package CLI tests and make check pass with home TMPDIR",
+          "result": "pass",
+          "summary": "Executed check: pass",
+          "task": "V0-7"
+        },
+        {
+          "anchor": "v0-2",
+          "archive": "TODO.archive.md",
           "kind": "executed",
           "ref": "env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE make check (revision e4787cfa703191db2ed892c59b63aa79f2aeab78; Go 1.26.6 linux/amd64; TODO.archive.md#rf-v0-aggregate-proof)",
           "result": "pass",
@@ -33,7 +42,8 @@
         "V0-3",
         "V0-4",
         "V0-5",
-        "V0-6"
+        "V0-6",
+        "V0-7"
       ],
       "title": "Land and harden the in-progress research commands"
     },
@@ -103,7 +113,18 @@
     },
     {
       "depends_on": [],
-      "evidence": [],
+      "evidence": [
+        {
+          "anchor": "v-e0",
+          "archive": "TODO.archive.md",
+          "coverage_current": true,
+          "kind": "executed",
+          "ref": "79606f1: go test ./internal/cli ./internal/docs; rforge capabilities --json smoke; make check via pre-commit",
+          "result": "pass",
+          "summary": "Executed check: pass",
+          "task": "V-E0"
+        }
+      ],
       "id": "RF-PACK",
       "priority": 60,
       "source": "docs/verifiable-engine-plan.md#verifiable-research-engine-plan",
@@ -170,24 +191,6 @@
     ]
   },
   "tasks": [
-    {
-      "depends_on": [],
-      "goal": "RF-PACK",
-      "id": "V-E0",
-      "section": "Now",
-      "status": "open",
-      "title": "Capability report for compatibility checks"
-    },
-    {
-      "depends_on": [
-        "V0-1"
-      ],
-      "goal": "RF-AGENT",
-      "id": "V-A2",
-      "section": "Next",
-      "status": "open",
-      "title": "Search budgets and structured stop reasons"
-    },
     {
       "depends_on": [
         "V-A2",
@@ -449,6 +452,16 @@
       "title": "Docs parity check for Go version and skill commands"
     },
     {
+      "depends_on": [
+        "V0-1"
+      ],
+      "goal": "RF-AGENT",
+      "id": "V-A2",
+      "section": "Done",
+      "status": "done",
+      "title": "Search budgets and structured stop reasons"
+    },
+    {
       "depends_on": [],
       "goal": "RF-BENCH",
       "id": "V-B1",
@@ -473,6 +486,14 @@
       "section": "Done",
       "status": "done",
       "title": "Content integrity and stable passage identity"
+    },
+    {
+      "depends_on": [],
+      "goal": "RF-PACK",
+      "id": "V-E0",
+      "section": "Done",
+      "status": "done",
+      "title": "Capability report for compatibility checks"
     },
     {
       "depends_on": [],
@@ -526,6 +547,14 @@
       "section": "Done",
       "status": "done",
       "title": "Restart the runner after verifying its repository setup"
+    },
+    {
+      "depends_on": [],
+      "goal": "RF-V0",
+      "id": "V0-7",
+      "section": "Done",
+      "status": "done",
+      "title": "Redact local paths in the packaged provenance ledger"
     }
   ],
   "version": 1
