@@ -245,14 +245,6 @@
     {
       "depends_on": [],
       "goal": "RF-BENCH",
-      "id": "V-B8",
-      "section": "Now",
-      "status": "open",
-      "title": "Europe PMC as a date-capped recording source"
-    },
-    {
-      "depends_on": [],
-      "goal": "RF-BENCH",
       "id": "V-B9",
       "section": "Now",
       "status": "open",
@@ -523,6 +515,14 @@
       "section": "Done",
       "status": "done",
       "title": "Agent-tier protocol and scripts"
+    },
+    {
+      "depends_on": [],
+      "goal": "RF-BENCH",
+      "id": "V-B8",
+      "section": "Done",
+      "status": "done",
+      "title": "Europe PMC as a date-capped recording source"
     },
     {
       "depends_on": [

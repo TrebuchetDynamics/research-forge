@@ -749,18 +749,6 @@ Owner answers (2026-10-19):
 
 ## Now
 
-- [ ] V-B8 — Europe PMC as a date-capped recording source
-- Status: open
-- Goal: RF-BENCH — Measure research quality against held-out ground truth.
-- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan); [benchmark spec](docs/benchmark/spec.md); Owner decision 2026-10-19: the benchmark must not depend on OpenAlex. Pool A's plans used OpenAlex for 24 of 24 calls, the engine qualified only OpenAlex and Crossref, and OpenAlex now meters anonymous use per IP (the first pool A capture got HTTP 429 on 18 of 24 calls).
-- Scope: make `europepmc` a qualified benchmark source. The connector (`internal/sources/europepmc.go`) sends only query/pageSize/format: add a publication-date cap applied in the provider query (Europe PMC search syntax, first-publication-date range ending at the cap), cursor paging (`cursorMark`), and raw date metadata (`firstPublicationDate`, electronic and print dates) in `Metadata["publication_dates"]` so record-level date enforcement (`dateReason`) works. In the engine, add the source to the per-call dispatch and to `dateCapped` with the exact cap syntax it accepts. Keep identifiers (PMID, PMCID, DOI) for gold matching. No API key; respect Europe PMC's published rate guidance via the existing HTTP policy.
-- Acceptance: offline record-then-replay test through an injected transport (as in `record_test.go`) for a Europe PMC plan: capped query sent, out-of-cap records excluded with reason, replay byte-identical; a Europe PMC plan without the cap fails `date_cap_unenforceable`; spec lists the source and its cap syntax.
-- Checks: go test ./internal/sources ./internal/benchmarks; make check
-- Dependencies: None.
-- Ownership: ResearchForge maintainer; Autowork runner may execute.
-- Touches: internal/sources/europepmc.go, internal/sources/europepmc_test.go, internal/benchmarks/engine.go, internal/benchmarks/validate.go, internal/benchmarks/transport.go, internal/benchmarks/europepmc_record_test.go, docs/benchmark/spec.md
-- Resources: benchmark-engine — shared `internal/benchmarks/engine.go`, `internal/benchmarks/validate.go` and `docs/benchmark/spec.md`; tasks holding it run one at a time
-
 - [ ] V-B9 — Semantic Scholar as a date-capped recording source
 - Status: open
 - Goal: RF-BENCH — Measure research quality against held-out ground truth.
