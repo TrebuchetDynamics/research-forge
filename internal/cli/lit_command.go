@@ -57,7 +57,7 @@ type keywordCount struct {
 
 const litStopwords = "the a an is in of to and that for on with as by at from are this these those their its our was be not we or also we have has been"
 
-// executeLit produces a deterministic literature review: consensus themes, open questions, screening status.
+// executeLit produces a literature review: consensus themes, open questions, screening status.
 func executeLit(args []string, stdout, stderr io.Writer, opts globalOptions) int {
 	researchDir := ""
 	outDir := ""

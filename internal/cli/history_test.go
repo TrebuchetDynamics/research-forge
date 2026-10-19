@@ -62,12 +62,22 @@ func TestExecuteHistoryRequiresCommand(t *testing.T) {
 }
 
 func TestReplicatePlanStructureOffline(t *testing.T) {
-	// Can't hit the network in tests; verify the plan-writing logic via a tiny
-	// code path by checking the references exist and the CLI wires correctly.
+	workflowFixtureServer(t)
+	path := filepath.Join(t.TempDir(), "plan.md")
 	var out, errBuf bytes.Buffer
-	code := executeReplicate([]string{"--help"}, &out, &errBuf, globalOptions{})
-	_ = code
-	_ = out.String()
-	_ = errBuf.String()
-	_ = os.Stat
+	if code := Execute([]string{"replicate", "10.1000/example", "--out", path}, &out, &errBuf); code != 0 {
+		t.Fatalf("replicate exit %d: %s %s", code, &out, &errBuf)
+	}
+	plan, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, want := range []string{"# Replication Plan", "Scaling Study", "10.1000/example", "github.com/example/scaling", "## Method Summary", "_Abstract not available from source._", "## Replication Checklist", "cc-by"} {
+		if !bytes.Contains(plan, []byte(want)) {
+			t.Errorf("plan missing %q: %s", want, plan)
+		}
+	}
+	if !bytes.Equal(plan, out.Bytes()) {
+		t.Error("saved plan differs from stdout")
+	}
 }

@@ -223,10 +223,10 @@ func truncateString(s string, maxLen int) string {
 	return s[:maxLen-1] + "…"
 }
 
-// executeReplicate generates a deterministic replication plan from a resolved paper ID.
+// executeReplicate generates a replication plan from a resolved paper ID.
 func executeReplicate(args []string, stdout, stderr io.Writer, opts globalOptions) int {
 	if len(args) == 0 || args[0] == "--help" || args[0] == "-h" {
-		fmt.Fprintln(stdout, `Generate a deterministic replication plan from a resolved paper.
+		fmt.Fprintln(stdout, `Generate a replication plan from a resolved paper.
 
 Usage:
   rforge replicate <doi|arxiv-id> [--out <plan.md>] [--depth quick|standard|comprehensive]

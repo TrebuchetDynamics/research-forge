@@ -3,6 +3,7 @@ package sources
 import (
 	"context"
 	"fmt"
+	"os"
 	"sort"
 	"strings"
 
@@ -101,10 +102,22 @@ func ResolvePaper(ctx context.Context, httpClient HTTPClient, input string) (Pap
 		Resolved: false,
 	}
 
-	oa := NewOpenAlexConnector(httpClient)
-	cr := NewCrossrefConnector(httpClient)
-	ar := NewArXivConnector(httpClient)
-	ss := NewSemanticScholarConnector(httpClient)
+	// Keep explicitly injected clients intact; otherwise route each connector to
+	// its configured endpoint instead of sending requests with an empty base URL.
+	clientFor := func(env, fallback string) HTTPClient {
+		client := httpClient
+		if client.baseURL == "" {
+			client.baseURL = strings.TrimRight(strings.TrimSpace(os.Getenv(env)), "/")
+			if client.baseURL == "" {
+				client.baseURL = fallback
+			}
+		}
+		return client
+	}
+	oa := NewOpenAlexConnector(clientFor("RFORGE_OPENALEX_URL", "https://api.openalex.org"))
+	cr := NewCrossrefConnector(clientFor("RFORGE_CROSSREF_URL", "https://api.crossref.org"))
+	ar := NewArXivConnector(clientFor("RFORGE_ARXIV_URL", "https://export.arxiv.org"))
+	ss := NewSemanticScholarConnector(clientFor("RFORGE_SEMANTIC_SCHOLAR_URL", "https://api.semanticscholar.org"))
 
 	type lookupResult struct {
 		record  SourceRecord
@@ -131,7 +144,7 @@ func ResolvePaper(ctx context.Context, httpClient HTTPClient, input string) (Pap
 			lookups = append(lookups, lookupResult{record, ref, "crossref", "doi"})
 		}
 		// Unpaywall OA check
-		upw := NewUnpaywallConnector(httpClient, "rforge-resolver@local")
+		upw := NewUnpaywallConnector(clientFor("RFORGE_UNPAYWALL_URL", "https://api.unpaywall.org"), os.Getenv("RFORGE_UNPAYWALL_EMAIL"))
 		oaRec, oaErr := upw.LookupDOI(ctx, doi)
 		if oaErr == nil {
 			result.OA = &OAResult{

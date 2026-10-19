@@ -157,24 +157,8 @@ func Execute(args []string, stdout, stderr io.Writer) int {
 		return executeVault(remaining[1:], stdout, stderr, opts)
 	case "obsidian":
 		return executeObsidian(remaining[1:], stdout, stderr, opts)
-	case "paper":
-		return executePaper(remaining[1:], stdout, stderr, opts)
-	case "rank":
-		return executeRank(remaining[1:], stdout, stderr, opts)
-	case "brief":
-		return executeBrief(remaining[1:], stdout, stderr, opts)
-	case "compare":
-		return executeCompare(remaining[1:], stdout, stderr, opts)
-	case "lit":
-		return executeLit(remaining[1:], stdout, stderr, opts)
-	case "note":
-		return executeNote(remaining[1:], stdout, stderr, opts)
-	case "history":
-		return executeHistory(remaining[1:], stdout, stderr, opts)
-	case "replicate":
-		return executeReplicate(remaining[1:], stdout, stderr, opts)
-	case "draft":
-		return executeDraft(remaining[1:], stdout, stderr, opts)
+	case "paper", "rank", "brief", "compare", "lit", "note", "history", "replicate", "draft":
+		return executeWorkflowCommand(remaining[0], remaining[1:], stdout, stderr, opts)
 	default:
 		return writeError(stdout, stderr, opts, 2, "unknown_command", fmt.Sprintf("unknown command %q", remaining[0]))
 	}
@@ -4016,7 +4000,7 @@ func helpSections() []helpSection {
 				},
 				{
 					Usage:       "rforge lit --research-dir <dir> [--out <dir>]",
-					Description: "Deterministic cross-topic literature synthesis: consensus themes, cross-topic papers, open questions, screening status. Writes LIT.md + provenance.",
+					Description: "Cross-topic literature synthesis: consensus themes, cross-topic papers, open questions, screening status. Writes LIT.md + provenance.",
 				},
 				{
 					Usage:       "rforge paper <id> [<id>...] [--file <ids.txt>] [--out <file>]",
@@ -4040,7 +4024,7 @@ func helpSections() []helpSection {
 				},
 				{
 					Usage:       "rforge replicate <doi|arxiv-id> [--out <plan.md>]",
-					Description: "Generate a deterministic replication plan from a resolved paper: OA status, code repos, method summary, checklist.",
+					Description: "Generate a replication plan from a resolved paper: OA status, code repos, method summary, checklist.",
 				},
 				{
 					Usage:       "rforge note add|list|clear --project <path> [--paper <id>]",
