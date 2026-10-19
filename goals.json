@@ -172,14 +172,6 @@
   "tasks": [
     {
       "depends_on": [],
-      "goal": "RF-BENCH",
-      "id": "V-B1",
-      "section": "Now",
-      "status": "open",
-      "title": "Research-quality benchmark specification"
-    },
-    {
-      "depends_on": [],
       "goal": "RF-PACK",
       "id": "V-E0",
       "section": "Now",
@@ -465,6 +457,14 @@
       "section": "Done",
       "status": "done",
       "title": "Docs parity check for Go version and skill commands"
+    },
+    {
+      "depends_on": [],
+      "goal": "RF-BENCH",
+      "id": "V-B1",
+      "section": "Done",
+      "status": "done",
+      "title": "Research-quality benchmark specification"
     },
     {
       "depends_on": [],

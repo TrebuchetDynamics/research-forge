@@ -148,3 +148,21 @@ Source section: Now
 - Dependencies: None.
 - Ownership: ResearchForge maintainer; Autowork runner may execute.
 - Touches: internal/claims, docs/claim-evidence-schema.md
+
+
+<!-- archived from TODO.md -->
+
+Source section: Now
+
+<a id="v-b1"></a>
+
+- [x] V-B1 — Research-quality benchmark specification
+- Status: done
+- Goal: RF-BENCH — Measure research quality against held-out ground truth.
+- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan) (Planner's calls: two benchmark tiers; Owner answers: gold sets and agent tier).
+- Scope: write `docs/benchmark/spec.md`: question-set schema (question, domain, gold identifiers, gold source review identifier and search date, split `dev`/`held_out`, set checksum); leakage controls (reference review and its identifiers excluded from results and citation-expansion seeds, searches date-capped at the review's search date, question wording never quotes the review title, agents never see the review); HTTP snapshot format for offline replay; metrics (recall@K and overall recall vs gold, precision@K, dedupe true/false merges, requests, wall-clock latency, citation correctness once V-D3 lands); report JSON schema; agent-tier protocol (same model, budgets and questions per pair, N repetitions, paired differences with 95% CIs over questions, blind scoring).
+- Acceptance: a builder can implement V-B3 and V-B4 from the spec without further decisions; the term "Research-quality benchmark" from CONTEXT.md is used.
+- Checks: make check
+- Dependencies: None.
+- Ownership: ResearchForge maintainer; Autowork runner may execute.
+- Touches: docs/benchmark/spec.md
