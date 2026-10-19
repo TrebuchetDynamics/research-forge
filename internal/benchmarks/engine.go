@@ -18,7 +18,7 @@ import (
 
 // ProtocolSHA256 is the exact-byte digest of docs/benchmark/spec.md v1.
 // Changes to that contract require regenerating this fingerprint.
-const ProtocolSHA256 = "839ac4aba6dc263d8aa2bfdea4dcf189c616b4c497f49e0e4cc873852d3fcbbf"
+const ProtocolSHA256 = "67d128f87b5f9d912b321080f8a3b47448aa93bf9df2a6594e265344cf0eca31"
 
 type EngineOptions struct {
 	SetDir, Split, Version, Revision string
@@ -210,6 +210,10 @@ func executeQuestion(ctx context.Context, s *session, ks []int, reviews []Review
 			if len(via) > s.policy.MaxRedirects {
 				return fmt.Errorf("redirect limit")
 			}
+			// Go does not classify x-api-key as a sensitive redirect header.
+			if len(via) > 0 && (req.URL.Scheme != "https" || !strings.EqualFold(req.URL.Host, via[0].URL.Host)) {
+				req.Header.Del("x-api-key")
+			}
 			return nil
 		}}
 		// Replay deadlines are enforced on the virtual clock, never by a real
@@ -225,6 +229,14 @@ func executeQuestion(ctx context.Context, s *session, ks []int, reviews []Review
 		case "crossref":
 			opts.BaseURL = "https://api.crossref.org"
 			conn = sources.NewCrossrefConnector(sources.NewHTTPClient(opts))
+		case "semantic-scholar":
+			opts.BaseURL = "https://api.semanticscholar.org"
+			if s.record {
+				if key := strings.TrimSpace(os.Getenv("RFORGE_SEMANTIC_SCHOLAR_API_KEY")); key != "" {
+					opts.Headers = map[string]string{"x-api-key": key}
+				}
+			}
+			conn = sources.NewSemanticScholarConnector(sources.NewHTTPClient(opts))
 		case "europepmc":
 			opts.BaseURL = "https://www.ebi.ac.uk/europepmc"
 			conn = sources.NewEuropePMCConnector(sources.NewHTTPClient(opts))
@@ -235,9 +247,21 @@ func executeQuestion(ctx context.Context, s *session, ks []int, reviews []Review
 			break
 		}
 		s.calls++
+		exchangeStart := s.exchangeIndex
 		response, e := conn.Search(ctx, sources.SourceQuery{Terms: call.Terms, Limit: call.Limit, PageCursor: call.PageCursor, Filters: call.Filters})
-		if e != nil && !s.stopped && s.failure == nil {
-			add("source_error")
+		if e != nil && s.failure == nil {
+			// A budget stop before any attempt is not a source error. But a
+			// failed attempt remains one if its retry cannot fit the budget.
+			failedAttempt := false
+			for _, ex := range s.snap.Exchanges[exchangeStart:s.exchangeIndex] {
+				if ex.TransportError != nil || ex.Response != nil && ex.Response.Status >= 400 {
+					failedAttempt = true
+					break
+				}
+			}
+			if !s.stopped || failedAttempt {
+				add("source_error")
+			}
 		}
 		for _, raw := range response.Records {
 			qa.Raw = append(qa.Raw, raw)

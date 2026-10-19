@@ -1,11 +1,16 @@
 package filetxn
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"os"
 	"path/filepath"
 )
+
+// ErrReadChanged means two regular-file identities differed during open.
+// Callers reading atomic checkpoints may retry, but must revalidate the path.
+var ErrReadChanged = errors.New("read target changed while opening")
 
 // OpenRegular opens path for reading only when both the preflight target and
 // opened file are the same regular file. The caller owns the returned file.
@@ -29,9 +34,13 @@ func OpenRegular(path string) (*os.File, error) {
 		_ = file.Close()
 		return nil, err
 	}
-	if !openedInfo.Mode().IsRegular() || !os.SameFile(info, openedInfo) {
+	if !openedInfo.Mode().IsRegular() {
 		_ = file.Close()
-		return nil, fmt.Errorf("read target changed while opening: %s", path)
+		return nil, fmt.Errorf("read target is not a regular file: %s", path)
+	}
+	if !os.SameFile(info, openedInfo) {
+		_ = file.Close()
+		return nil, fmt.Errorf("%w: %s", ErrReadChanged, path)
 	}
 	return file, nil
 }

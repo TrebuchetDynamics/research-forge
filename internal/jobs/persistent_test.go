@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"reflect"
+	"sync"
 	"testing"
 	"time"
 )
@@ -32,6 +33,58 @@ func TestStoreListsJobsChronologically(t *testing.T) {
 	all, err := store.List()
 	if err != nil || len(all) != 2 || all[0].ID != ids[1] || all[1].ID != ids[0] {
 		t.Fatalf("jobs not in creation order: %+v, %v", all, err)
+	}
+}
+
+// Atomic checkpoints must remain readable to CLI/MCP status pollers, including
+// while the worker is publishing its failed output-snapshot result.
+func TestStoreStatusDuringCheckpoints(t *testing.T) {
+	store := NewStore(t.TempDir())
+	job, err := store.Create("fixture", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	started, done := make(chan struct{}), make(chan error, 1)
+	failure := errors.New("output snapshot failed")
+	go func() {
+		_, err := store.Run(context.Background(), job.ID, func(_ context.Context, run *Run) error {
+			close(started)
+			for i := 0; i < 1000; i++ {
+				if err := run.Checkpoint(Progress{Completed: i, Total: 1000}, ""); err != nil {
+					return err
+				}
+			}
+			if err := run.SetResult([]byte(`{"ok":false,"error":{"code":"search_batch_output_snapshot_failed"}}`)); err != nil {
+				return err
+			}
+			return failure
+		})
+		done <- err
+	}()
+	select {
+	case <-started:
+	case err := <-done:
+		t.Fatalf("worker did not start: %v", err)
+	}
+	var readers sync.WaitGroup
+	for range 4 {
+		readers.Go(func() {
+			for range 1000 {
+				status, err := store.Status(job.ID)
+				if err != nil || status.ID != job.ID {
+					t.Errorf("checkpoint hid the job: %+v; %v", status, err)
+					return
+				}
+			}
+		})
+	}
+	readers.Wait()
+	if err := <-done; !errors.Is(err, failure) {
+		t.Fatalf("worker error: %v", err)
+	}
+	status, err := store.Status(job.ID)
+	if err != nil || status.Status != Failed || status.StopReason != "error_threshold" || len(status.Result) == 0 {
+		t.Fatalf("failed job lost its status/result: %+v; %v", status, err)
 	}
 }
 

@@ -72,7 +72,16 @@ func (s Store) read(id string) (Job, error) {
 	if err != nil {
 		return Job{}, err
 	}
-	data, err := filetxn.ReadRegular(path)
+	var data []byte
+	// A live worker atomically replaces checkpoints. Retry only an identity
+	// change during open, with fresh regular-file checks on every attempt.
+	// Bound contention; corruption, missing files and unsafe paths still fail.
+	for range 8 {
+		data, err = filetxn.ReadRegular(path)
+		if !errors.Is(err, filetxn.ErrReadChanged) {
+			break
+		}
+	}
 	if err != nil {
 		return Job{}, err
 	}

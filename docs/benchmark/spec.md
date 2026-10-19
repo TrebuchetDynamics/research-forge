@@ -294,13 +294,15 @@ Additional validation, mandatory even if the schema library ignores `format`:
 ### 2.4 Qualified recording sources
 
 The engine supports these date-capped sources; other adapters fail
-`date_cap_unenforceable`. Each call supplies the cap in `filters.filter`:
+`date_cap_unenforceable`. Each call supplies the cap in `filters.filter` unless
+another filter key is specified below:
 
 | Source | Accepted cap syntax (inclusive) |
 | --- | --- |
 | `openalex` | `to_publication_date:YYYY-MM-DD` (in its comma-separated filter) |
 | `crossref` | `until-pub-date:YYYY-MM-DD` (in its comma-separated filter) |
 | `europepmc` | Exactly `FIRST_PDATE:[* TO YYYY-MM-DD]` |
+| `semantic-scholar` | `filters.publicationDateOrYear` exactly `:YYYY-MM-DD` |
 
 The Europe PMC range must contain a valid day no later than `search_date`;
 missing caps, duplicate ranges or additional expressions in the filter are
@@ -318,6 +320,26 @@ Europe PMC uses the shared, locked HTTP policy in section 4.3, including
 per-attempt `request_delay_ms`, 429/5xx retries and `Retry-After` handling, with no
 adapter-specific retry loop. Curators must set the delay for live captures to
 respect the provider's current [service guidance](https://europepmc.org/RestfulWebService).
+
+Semantic Scholar uses `/graph/v1/paper/search` with the open-start inclusive
+`publicationDateOrYear=:YYYY-MM-DD` range. The end must be a valid day no later
+than `search_date`; missing, year-only, malformed or additional ranges fail
+`date_cap_unenforceable`. The connector requests `publicationDate` alongside
+`year`, exposes the raw date in `Metadata["publication_dates"]`, and preserves
+`next`/`offset` pagination with each page an explicit capped plan call. The
+independent date guard uses the raw publication date when present, otherwise the
+end of the returned year; unknown dates are excluded. Snapshots retain paper IDs,
+external identifiers, titles, public dates and pagination, but omit abstracts.
+Recording optionally reads `RFORGE_SEMANTIC_SCHOLAR_API_KEY` into the `x-api-key`
+header; neither that header nor credentials in echoed URLs are stored in
+`snapshots/`, and replay requires no key. Redirects retain the key only on the
+original HTTPS host and port. Anonymous HTTP 429 responses follow the shared
+locked retry policy and remain source errors even when a budget prevents their
+retry, never successful empty results; a capture ending in any source error
+fails `capture_incomplete` and publishes nothing. Curators must configure the
+locked delay/retry policy for Semantic Scholar's current
+[API limits](https://api.semanticscholar.org/api-docs/graph); benchmark recording
+does not depend on OpenAlex.
 
 ## 3. Leakage controls and access separation
 
@@ -439,8 +461,8 @@ identifier. Entity labels are private scorer data, not connector inputs.
   keep escaped path, sort decoded query `(key, value)` pairs bytewise and encode
   with RFC 3986 percent encoding (space `%20`, not `+`). Repeated pairs remain.
   Do not normalize query text, cursors, date caps or other behavioral values.
-- Replace credential/contact query values (`api_key`, `key`, `token`, `email`,
-  `mailto`) with literal `REDACTED`; redact the corresponding JSON body fields.
+- Replace credential/contact query values (`api_key`, `x-api-key`, `key`, `token`,
+  `email`, `mailto`) with literal `REDACTED`; redact the corresponding JSON body fields.
   Use dummy credentials in replay. Never store original credentials or their
   hashes. Sanitize echoed URLs/credentials in response bodies too, recording the
   transformation. Hash bodies **after** sanitation.
