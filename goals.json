@@ -91,6 +91,9 @@
       "status": "unmet",
       "tasks": [
         "V-B1",
+        "V-B10",
+        "V-B11",
+        "V-B12",
         "V-B2",
         "V-B3",
         "V-B3-LIVE",
@@ -100,7 +103,9 @@
         "V-B5",
         "V-B6",
         "V-B6-LIVE",
-        "V-B6-run"
+        "V-B6-run",
+        "V-B8",
+        "V-B9"
       ],
       "title": "Measure research quality against held-out ground truth"
     },
@@ -210,6 +215,49 @@
     ]
   },
   "tasks": [
+    {
+      "depends_on": [
+        "V-B8",
+        "V-B9"
+      ],
+      "goal": "RF-BENCH",
+      "id": "V-B10",
+      "section": "Now",
+      "status": "open",
+      "title": "Re-plan pool A searches without OpenAlex dependence"
+    },
+    {
+      "depends_on": [],
+      "goal": "RF-BENCH",
+      "id": "V-B8",
+      "section": "Now",
+      "status": "open",
+      "title": "Europe PMC as a date-capped recording source"
+    },
+    {
+      "depends_on": [],
+      "goal": "RF-BENCH",
+      "id": "V-B9",
+      "section": "Now",
+      "status": "open",
+      "title": "Semantic Scholar as a date-capped recording source"
+    },
+    {
+      "depends_on": [],
+      "goal": "RF-BENCH",
+      "id": "V-B11",
+      "section": "Next",
+      "status": "open",
+      "title": "Provider-independent live agent comparison"
+    },
+    {
+      "depends_on": [],
+      "goal": "RF-BENCH",
+      "id": "V-B12",
+      "section": "Next",
+      "status": "open",
+      "title": "Optional OpenAlex API key, never required"
+    },
     {
       "depends_on": [
         "V-B3",

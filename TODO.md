@@ -749,7 +749,65 @@ Owner answers (2026-10-19):
 
 ## Now
 
+- [ ] V-B8 — Europe PMC as a date-capped recording source
+- Status: open
+- Goal: RF-BENCH — Measure research quality against held-out ground truth.
+- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan); [benchmark spec](docs/benchmark/spec.md); Owner decision 2026-10-19: the benchmark must not depend on OpenAlex. Pool A's plans used OpenAlex for 24 of 24 calls, the engine qualified only OpenAlex and Crossref, and OpenAlex now meters anonymous use per IP (the first pool A capture got HTTP 429 on 18 of 24 calls).
+- Scope: make `europepmc` a qualified benchmark source. The connector (`internal/sources/europepmc.go`) sends only query/pageSize/format: add a publication-date cap applied in the provider query (Europe PMC search syntax, first-publication-date range ending at the cap), cursor paging (`cursorMark`), and raw date metadata (`firstPublicationDate`, electronic and print dates) in `Metadata["publication_dates"]` so record-level date enforcement (`dateReason`) works. In the engine, add the source to the per-call dispatch and to `dateCapped` with the exact cap syntax it accepts. Keep identifiers (PMID, PMCID, DOI) for gold matching. No API key; respect Europe PMC's published rate guidance via the existing HTTP policy.
+- Acceptance: offline record-then-replay test through an injected transport (as in `record_test.go`) for a Europe PMC plan: capped query sent, out-of-cap records excluded with reason, replay byte-identical; a Europe PMC plan without the cap fails `date_cap_unenforceable`; spec lists the source and its cap syntax.
+- Checks: go test ./internal/sources ./internal/benchmarks; make check
+- Dependencies: None.
+- Ownership: ResearchForge maintainer; Autowork runner may execute.
+- Touches: internal/sources/europepmc.go, internal/sources/europepmc_test.go, internal/benchmarks/engine.go, internal/benchmarks/validate.go, internal/benchmarks/transport.go, internal/benchmarks/europepmc_record_test.go, docs/benchmark/spec.md
+- Resources: benchmark-engine — shared `internal/benchmarks/engine.go`, `internal/benchmarks/validate.go` and `docs/benchmark/spec.md`; tasks holding it run one at a time
+
+- [ ] V-B9 — Semantic Scholar as a date-capped recording source
+- Status: open
+- Goal: RF-BENCH — Measure research quality against held-out ground truth.
+- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan); [benchmark spec](docs/benchmark/spec.md); Owner decision 2026-10-19: the benchmark must not depend on OpenAlex. Pool A's plans used OpenAlex for 24 of 24 calls, the engine qualified only OpenAlex and Crossref, and OpenAlex now meters anonymous use per IP (the first pool A capture got HTTP 429 on 18 of 24 calls).
+- Scope: make `semantic-scholar` a qualified benchmark source, mainly for the non-clinical questions. The connector (`internal/sources/semantic_scholar.go`) requests `year` only and sends no date filter: add the provider publication-date filter ending at the cap, request `publicationDate`, and expose raw dates in `Metadata["publication_dates"]`. Add the source to engine dispatch and `dateCapped`. Treat Semantic Scholar's anonymous rate limit as a source error, never as a pass; an optional API key may come from the environment and must never be written to snapshots (headers and URLs are already redacted; add a test).
+- Acceptance: offline record-then-replay test with an injected transport; uncapped plan fails `date_cap_unenforceable`; a configured key never appears in `snapshots/`; spec lists the source and its cap syntax.
+- Checks: go test ./internal/sources ./internal/benchmarks; make check
+- Dependencies: None.
+- Ownership: ResearchForge maintainer; Autowork runner may execute.
+- Touches: internal/sources/semantic_scholar.go, internal/sources/semantic_scholar_test.go, internal/benchmarks/engine.go, internal/benchmarks/validate.go, internal/benchmarks/transport.go, internal/benchmarks/semantic_scholar_record_test.go, docs/benchmark/spec.md
+- Resources: benchmark-engine — shared `internal/benchmarks/engine.go`, `internal/benchmarks/validate.go` and `docs/benchmark/spec.md`; tasks holding it run one at a time
+
+- [ ] V-B10 — Re-plan pool A searches without OpenAlex dependence
+- Status: open
+- Goal: RF-BENCH — Measure research quality against held-out ground truth.
+- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan); [benchmark spec](docs/benchmark/spec.md); [pool A review sheet](benchmarks/sets/pool-a/review.md); Owner decision 2026-10-19: the benchmark must not depend on OpenAlex. Pool A's plans used OpenAlex for 24 of 24 calls, the engine qualified only OpenAlex and Crossref, and OpenAlex now meters anonymous use per IP (the first pool A capture got HTTP 429 on 18 of 24 calls).
+- Scope: rewrite only the `search_plan` of each pool A question so that no question depends on a single provider: clinical questions use Europe PMC plus Crossref; education, social-policy and performing-arts questions use Semantic Scholar plus Crossref (Europe PMC too where relevant); OpenAlex may appear only as an additional, never sole, provider. Keep two problem-based query terms per question as authored, equal budgets and caps at each review's `search_date`; terms must still pass the leakage rules and must not be chosen using any retrieval outcome. Gold, questions, splits, dates and review identities stay byte-identical in meaning. Because `search_plan` is inside the approved checksum, return the set to `state: candidate` with `approval: null`, and add a "Search-plan revision (2026-10-19)" section to `review.md` listing old and new providers per question, so the owner re-approves only this change at V-B4-lock. Do not record snapshots.
+- Acceptance: `ValidateCandidateSet` passes with the AP fallback; every question has at least two providers and at most half of its calls on any one provider; a diff shows only `search_plan`, `state`, `approval`, checksums and the review-sheet section changed.
+- Checks: go test ./internal/benchmarks; make check
+- Dependencies: V-B8, V-B9.
+- Ownership: ResearchForge maintainer; Autowork runner may execute; owner re-approves at V-B4-lock.
+- Touches: benchmarks/sets/pool-a/set.json, benchmarks/sets/pool-a/review.md
+
 ## Next
+
+- [ ] V-B11 — Provider-independent live agent comparison
+- Status: open
+- Goal: RF-BENCH — Measure research quality against held-out ground truth.
+- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan); [benchmark spec](docs/benchmark/spec.md); [agent-tier protocol](benchmarks/agent-tier); Owner decision 2026-10-19: the benchmark must not depend on OpenAlex. Pool A's plans used OpenAlex for 24 of 24 calls, the engine qualified only OpenAlex and Crossref, and OpenAlex now meters anonymous use per IP (the first pool A capture got HTTP 429 on 18 of 24 calls).
+- Scope: before V-B6-run, make the live comparison robust to any single provider being throttled. The with-rforge condition uses a provider mix without OpenAlex by default (`search batch` with `--continue-on-error` records per-provider failures and stop reasons); a throttled provider is skipped and logged, not retried until the run budget is gone. The protocol logs provider failures and rate-limit responses for both conditions and reports runs where either condition lost a provider, so results are never silently biased by an outage.
+- Acceptance: a stub-agent run with one provider returning 429 completes, logs the failure in both conditions' records, and the scored report flags the affected runs.
+- Checks: make check
+- Dependencies: None.
+- Ownership: ResearchForge maintainer; Autowork runner may execute.
+- Touches: benchmarks/agent-tier, docs/benchmark
+
+- [ ] V-B12 — Optional OpenAlex API key, never required
+- Status: open
+- Goal: RF-BENCH — Measure research quality against held-out ground truth.
+- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan); [benchmark spec](docs/benchmark/spec.md); Owner decision 2026-10-19: the benchmark must not depend on OpenAlex. Pool A's plans used OpenAlex for 24 of 24 calls, the engine qualified only OpenAlex and Crossref, and OpenAlex now meters anonymous use per IP (the first pool A capture got HTTP 429 on 18 of 24 calls).
+- Scope: let the OpenAlex connector send an API key from the environment (`RFORGE_OPENALEX_API_KEY`) when set, for users who have one. Nothing in the benchmark, tests or skill may require it. The key must never appear in snapshots, provenance, reports or logs (extend the existing credential redaction and add a test).
+- Acceptance: with the key set, requests carry it and recorded snapshots contain no trace of it; with it unset, behavior is unchanged.
+- Checks: go test ./internal/sources ./internal/benchmarks; make check
+- Dependencies: None.
+- Ownership: ResearchForge maintainer; Autowork runner may execute.
+- Touches: internal/sources/openalex.go, internal/sources/openalex_test.go, internal/benchmarks/transport.go, internal/benchmarks/openalex_key_test.go
+- Resources: benchmark-engine — shared `internal/benchmarks/engine.go`, `internal/benchmarks/validate.go` and `docs/benchmark/spec.md`; tasks holding it run one at a time
 
 - [ ] V-B5 — Engine-tier baseline
 - Status: open
@@ -803,7 +861,7 @@ Owner answers (2026-10-19):
 - Progress: 2026-10-19 owner approval recorded (`93c00f2`): pool A moved to `benchmarks/sets/pool-a/`, state `approved`, approver xel, `approval.waivers: ["ap_domain_absent"]` (`78c1ff2`), independent spot audit of q-d, q-h and q-m in the review sheet (dates and membership match PMC sources). Lock not done: the first `--record` capture got HTTP 429 on 18 of 24 OpenAlex calls (free daily budget for this machine's IP exhausted, shared with the other runners; resets 00:00 UTC) and was discarded; recording now refuses incomplete captures with `capture_incomplete` (`8c3ec21`). Next: rerun `rforge benchmark run --set benchmarks/sets/pool-a --record` soon after 00:00 UTC, or with an OpenAlex API key if the owner provides one (needs connector support for the key).
 - Goal: RF-BENCH — Measure research quality against held-out ground truth.
 - Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan) (Owner answers: gold sets).
-- Scope: the owner reviews each V-B4 candidate set; approved sets move to `benchmarks/sets/`, their snapshots are recorded with `--record`, and the held-out split is locked by checksum. Rejected sets are dropped or redrafted.
+- Scope: Precondition (owner decision 2026-10-19, not expressible as a ledger dependency because this task predates it): do this only after V-B10 has re-planned pool A without OpenAlex dependence; the owner then re-approves the search-plan change (the earlier approval of gold and waiver stands) and the capture is recorded. the owner reviews each V-B4 candidate set; approved sets move to `benchmarks/sets/`, their snapshots are recorded with `--record`, and the held-out split is locked by checksum. Rejected sets are dropped or redrafted.
 - Acceptance: a locked held-out set with at least 8 approved questions and a recorded checksum; the approval date and approver are noted in the set metadata.
 - Checks: make check
 - Dependencies: V-B4, V-B3.
@@ -814,7 +872,7 @@ Owner answers (2026-10-19):
 - Status: open
 - Goal: RF-BENCH — Measure research quality against held-out ground truth.
 - Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan) (Owner answers: agent tier).
-- Scope: run the 48-run Pi pilot (8 questions × with/without rforge × 3 repetitions) with the V-B6 scripts, then Codex; record spend; commit the blinded report and effect-size estimates that size the expanded run.
+- Scope: Precondition (owner decision 2026-10-19): do this only after V-B11 makes the live comparison provider-independent. run the 48-run Pi pilot (8 questions × with/without rforge × 3 repetitions) with the V-B6 scripts, then Codex; record spend; commit the blinded report and effect-size estimates that size the expanded run.
 - Acceptance: a committed pilot report with paired differences and 95% CIs per metric.
 - Checks: make check
 - Dependencies: V-B6, V-B4-lock.
@@ -921,9 +979,9 @@ Generated from `goals.json` by `goals.py render`. `met` requires an executed, pa
 | --- | --- | --- | --- |
 | RF-V0: Land and harden the in-progress research commands | met | Executed check: pass ([V0-7](TODO.archive.md#v0-7)) | — |
 | RF-AGENT: Make the agent contract correct: install docs, search depth and provenance levels | met | Executed check: pass ([V-A4](TODO.archive.md#v-a4)) | — |
-| RF-BENCH: Measure research quality against held-out ground truth | unmet | — | V-B3-LIVE, V-B4-LIVE, V-B4-lock, V-B5, V-B6-LIVE, V-B6-run |
+| RF-BENCH: Measure research quality against held-out ground truth | unmet | — | V-B10, V-B11, V-B12, V-B3-LIVE, V-B4-LIVE, V-B4-lock, V-B5, V-B6-LIVE, V-B6-run, V-B8, V-B9 |
 | RF-MCP: Expose the engine through a thin MCP adapter over shared services | unmet | — | V-C2-LIVE |
-| RF-CLAIMS: Verify claims against stored evidence with separate facets | unmet | — | CLAIMS-001-82 |
+| RF-CLAIMS: Verify claims against stored evidence with separate facets | unmet | — | — |
 | RF-PACK: Ship passive native plugins for Claude Code, Codex, Pi and Hermes over the same engine | unmet | Executed check: pass ([V-E2](TODO.archive.md#v-e2)) | V-E1-LIVE, V-E3, V-E4, V-E5, V-E5-run |
 | RF-RELEASE: Release ResearchForge 2.0 only on measured improvement and cross-host parity | unmet | — | V-R1, V-R2 |
 
