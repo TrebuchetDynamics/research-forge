@@ -11,7 +11,7 @@
 - Since: 2026-10-19T13:08:59Z
 - Answer: Decide it: record the decision in the dependent tasks' `Dependencies:` lines, or move the task that owns it into Now or Next.
 
-### Q-LEDGER — USER_DECISION — effort investigate — unblocks 23
+### Q-LEDGER — USER_DECISION — effort investigate — unblocks 28
 
 - Task: LEDGER — goals.json validation
 - Needs: invalid goals.json: RF-CLAIMS: unmet goal has no open task
