@@ -130,10 +130,12 @@ type CitationEdge struct {
 
 // CitationGraphExpansion is a normalized Semantic Scholar graph neighborhood.
 type CitationGraphExpansion struct {
-	SeedID  string
-	Edges   []CitationEdge
-	Records map[string]SourceRecord
-	RawRef  string
+	StopReason   StopReason `json:"stop_reason"`
+	RequestsUsed int        `json:"requests_used"`
+	SeedID       string
+	Edges        []CitationEdge
+	Records      map[string]SourceRecord
+	RawRef       string
 }
 
 // ExpandCitationGraph fetches references, citations, or both around one Semantic Scholar paper.

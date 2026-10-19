@@ -2,6 +2,17 @@ package sources
 
 import "fmt"
 
+// StopReason is shared by search sweeps and citation expansion.
+type StopReason string
+
+const (
+	StopCompleted         StopReason = "completed"
+	StopBudgetExhausted   StopReason = "budget_exhausted"
+	StopCoverageSaturated StopReason = "coverage_saturated"
+	StopInterrupted       StopReason = "interrupted"
+	StopErrorThreshold    StopReason = "error_threshold"
+)
+
 type GraphExpansionBudget struct {
 	MaxDepth     int    `json:"maxDepth"`
 	MaxNodes     int    `json:"maxNodes"`
