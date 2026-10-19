@@ -153,8 +153,6 @@
       "V-E3",
       "V-E4",
       "V-E5",
-      "V0-5",
-      "V0-6",
       "V-B4-lock",
       "V-B6-run",
       "V-E5-run",
@@ -488,25 +486,6 @@
     {
       "depends_on": [],
       "goal": "RF-V0",
-      "id": "V0-5",
-      "section": "Needs decision",
-      "status": "open",
-      "title": "Decide whether the runner may push main to origin"
-    },
-    {
-      "depends_on": [
-        "V0-4",
-        "V0-5"
-      ],
-      "goal": "RF-V0",
-      "id": "V0-6",
-      "section": "Needs decision",
-      "status": "open",
-      "title": "Restart the runner after verifying its repository setup"
-    },
-    {
-      "depends_on": [],
-      "goal": "RF-V0",
       "id": "V0-1",
       "section": "Done",
       "status": "done",
@@ -519,6 +498,25 @@
       "section": "Done",
       "status": "done",
       "title": "Isolate git subprocesses from inherited hook environment"
+    },
+    {
+      "depends_on": [],
+      "goal": "RF-V0",
+      "id": "V0-5",
+      "section": "Done",
+      "status": "done",
+      "title": "Decide whether the runner may push main to origin"
+    },
+    {
+      "depends_on": [
+        "V0-4",
+        "V0-5"
+      ],
+      "goal": "RF-V0",
+      "id": "V0-6",
+      "section": "Done",
+      "status": "done",
+      "title": "Restart the runner after verifying its repository setup"
     }
   ],
   "version": 1

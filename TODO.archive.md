@@ -30,3 +30,41 @@ Source section: Now
 - Dependencies: None.
 - Ownership: ResearchForge maintainer.
 - Touches: internal/oss/clone.go, internal/oss/clone_test.go, internal/oss/git_env_test.go, internal/cli/cli_test.go, .githooks/pre-commit
+
+
+<!-- archived from TODO.md -->
+
+Source section: Needs decision
+
+<a id="v0-5"></a>
+
+- [x] V0-5 — Decide whether the runner may push main to origin
+- Status: done
+- Evidence: owner decision 2026-10-19: no push for now. `PI_AUTOWORK_PUSH=0` is in `~/.config/pi-autowork/research-forge.env` and in the live runner's environment (`/proc/<pid>/environ`, PID 3061231). Before that, the runner pushed `fb27574` to `origin/main`, including `d5231d6` (the owner's previously uncommitted OSS-inventory edits and the `rforge-release` skill deletion); its handling is the owner's call. Upstream: TrebuchetDynamics/autowork#3 and #4.
+- Goal: RF-V0 — Land and harden the in-progress research commands.
+- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan); runner log 2026-10-19 06:27:44 "Pushed main to origin/main" (published `d8a3fda`..`934f928`); `PI_AUTOWORK_PUSH` defaults to `1` in the Autowork toolset (`coordinator.py`), so every runner merge into `main` is pushed.
+- Scope: the owner chooses: keep pushing (runner merges are published as they land) or set `PI_AUTOWORK_PUSH=0` for this repository's service so merged `main` stays local until the owner pushes. Planner's recommendation: `PI_AUTOWORK_PUSH=0` until the first runner batch has been reviewed, because this cycle's commits change provenance semantics and public plugin names.
+- Acceptance: the chosen setting is recorded here and visible in `autowork status .` or the service environment.
+- Checks: systemctl --user show 'pi-autowork@research-forge.service' -p Environment
+- Dependencies: None.
+- Ownership: ResearchForge owner (publication authority).
+- Touches: none
+
+
+<!-- archived from TODO.md -->
+
+Source section: Needs decision
+
+<a id="v0-6"></a>
+
+- [x] V0-6 — Restart the runner after verifying its repository setup
+- Status: done
+- Evidence: 2026-10-19 07:10 restart after fast-forwarding the session to `10e8000` (fixed hook and tests) and removing its generated untracked `.gitattributes`; the runner re-registered the merge drivers and merged its `.gitattributes` commit; `AGENTS.md` (`87d9fa3`) answers its full-check question; `core.bare=false` and `user.email` stay the owner's after its commits. Dispatch currently waits on the host resource gate (load from other runners). Upstream: TrebuchetDynamics/autowork#5 and #6.
+- Goal: RF-V0 — Land and harden the in-progress research commands.
+- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan); runner state `~/.local/state/pi-autowork/d0648c07b9fe8e30`; `.git/config` merge drivers `docs-sync-goals`/`docs-sync-todo`/`docs-sync-archive` point at release `062d8bc`, which the 06:29 self-update removed; the session worktree holds the runner's `.gitattributes` untracked after the repair; the service restarted every minute against a broken repository with no backoff limit (restart counter above 23).
+- Scope: confirm the runner re-registers merge drivers against an existing release on start (or re-run its setup), let it re-commit `.gitattributes` in its session, then `autowork start .` and watch the first dispatch. Report the Autowork-side defects upstream (merge-driver paths not refreshed on self-update; unbounded crash-loop restarts; default push) if the owner wants them filed.
+- Acceptance: `autowork status .` shows workers running on Now tasks; `git config core.bare` stays `false` and `git config user.email` stays the owner's after the first worker commit.
+- Checks: autowork status .; git config core.bare; git config user.email
+- Dependencies: V0-4, V0-5.
+- Ownership: ResearchForge owner (runner operation).
+- Touches: none
