@@ -58,6 +58,21 @@ If a change affects user-visible research workflow, it should preserve or add pr
 - What exact source supports each extracted claim?
 - What tool versions, parameters, and outputs reproduce the result?
 
+## Research-quality improvement claims
+
+Improvement claims must cite the [engine-tier baseline](./docs/benchmark/baseline-2026-10-19.md)
+and its [canonical JSON](./docs/benchmark/baseline-2026-10-19.json), with signed
+measured deltas (new minus baseline), metric/K and macro/micro aggregation. Include
+both engine versions/revisions, set checksums, snapshot digests and protocol
+hashes. Compare implementations on identical locked inputs; changed inputs need
+a newly approved set and baseline, not an implementation-win claim.
+
+Tune on `dev`, not held-out outcomes. If detailed held-out results guide a change,
+mark that set version exposed and obtain a newly approved held-out set for fresh
+claims. Unavailable metrics remain null; captured replay timing is not evidence
+of faster code. See the baseline's reproduction commands and the
+[benchmark specification](./docs/benchmark/spec.md) for scoring and limitations.
+
 ## Decision-gated TODOs
 
 Some `TODO.md` items require explicit owner/build decisions before implementation. The remaining known blocker is project licensing; future scope changes may add more decision-gated items. Before changing those items:
