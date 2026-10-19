@@ -114,6 +114,7 @@
       "tasks": [
         "V-C1",
         "V-C2",
+        "V-C2-LIVE",
         "V-C3",
         "V-C4"
       ],
@@ -191,7 +192,6 @@
     "schema": 1,
     "tasks": [
       "V-B5",
-      "V-C2",
       "V-C3",
       "V-C4",
       "V-D4",
@@ -206,7 +206,8 @@
       "V-B3-LIVE",
       "V-E1-LIVE",
       "V-B6-LIVE",
-      "V-B4-LIVE"
+      "V-B4-LIVE",
+      "V-C2-LIVE"
     ]
   },
   "tasks": [
@@ -220,16 +221,6 @@
       "section": "Next",
       "status": "open",
       "title": "Engine-tier baseline"
-    },
-    {
-      "depends_on": [
-        "V-A2"
-      ],
-      "goal": "RF-MCP",
-      "id": "V-C2",
-      "section": "Next",
-      "status": "open",
-      "title": "Persistent job service"
     },
     {
       "depends_on": [
@@ -348,6 +339,16 @@
       "section": "Needs decision",
       "status": "open",
       "title": "Live agent-tier pilot"
+    },
+    {
+      "depends_on": [
+        "V-C2"
+      ],
+      "goal": "RF-MCP",
+      "id": "V-C2-LIVE",
+      "section": "Needs decision",
+      "status": "open",
+      "title": "Live checks for V-C2"
     },
     {
       "depends_on": [
@@ -492,6 +493,16 @@
       "section": "Done",
       "status": "done",
       "title": "Extract research services from the CLI"
+    },
+    {
+      "depends_on": [
+        "V-A2"
+      ],
+      "goal": "RF-MCP",
+      "id": "V-C2",
+      "section": "Done",
+      "status": "done",
+      "title": "Persistent job service"
     },
     {
       "depends_on": [

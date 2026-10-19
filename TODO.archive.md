@@ -448,3 +448,22 @@ Source section: Next
 - Dependencies: V-B1.
 - Ownership: ResearchForge maintainer; Autowork runner may draft; the owner approves sets (V-B4-lock).
 - Touches: benchmarks/sets/candidates
+
+
+<!-- archived from TODO.md -->
+
+Source section: Next
+
+<a id="v-c2"></a>
+
+- [x] V-C2 — Persistent job service
+- Status: done
+- Goal: RF-MCP — Expose the engine through a thin MCP adapter over shared services.
+- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan).
+- Scope: replace the `internal/jobs` stub with persistent jobs (ID, kind, status, progress, `stop_reason`, resume) stored in the research directory and used by search batch; CLI `rforge jobs list|status|resume`. v1 jobs run in-process (CLI or MCP server) and persist after each step, so a job whose host exits is marked `interrupted` and resumes via `jobs resume` from either surface; no detached daemon.
+- Acceptance: a killed job is reported `interrupted` and resumes to the same final state as an uninterrupted run.
+- Checks: go test ./internal/jobs ./internal/search ./internal/cli; make check
+- Dependencies: V-A2.
+- Ownership: ResearchForge maintainer; Autowork runner may execute.
+- Touches: internal/jobs, internal/search, internal/cli
+- Resources: cli-surface — shared `internal/cli/cli.go` command table/help and `docs/cli.md`; tasks holding it run one at a time (2026-10-19: parallel edits there held V-A2 and V-E0)

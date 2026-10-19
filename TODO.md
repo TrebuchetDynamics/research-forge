@@ -762,18 +762,6 @@ Owner answers (2026-10-19):
 - Ownership: ResearchForge maintainer; Autowork runner may execute.
 - Touches: docs/benchmark, CONTRIBUTING.md, .github/PULL_REQUEST_TEMPLATE.md
 
-- [ ] V-C2 — Persistent job service
-- Status: open
-- Goal: RF-MCP — Expose the engine through a thin MCP adapter over shared services.
-- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan).
-- Scope: replace the `internal/jobs` stub with persistent jobs (ID, kind, status, progress, `stop_reason`, resume) stored in the research directory and used by search batch; CLI `rforge jobs list|status|resume`. v1 jobs run in-process (CLI or MCP server) and persist after each step, so a job whose host exits is marked `interrupted` and resumes via `jobs resume` from either surface; no detached daemon.
-- Acceptance: a killed job is reported `interrupted` and resumes to the same final state as an uninterrupted run.
-- Checks: go test ./internal/jobs ./internal/search ./internal/cli; make check
-- Dependencies: V-A2.
-- Ownership: ResearchForge maintainer; Autowork runner may execute.
-- Touches: internal/jobs, internal/search, internal/cli
-- Resources: cli-surface — shared `internal/cli/cli.go` command table/help and `docs/cli.md`; tasks holding it run one at a time (2026-10-19: parallel edits there held V-A2 and V-E0)
-
 - [ ] V-C3 — `rforge mcp serve` over stdio
 - Status: open
 - Goal: RF-MCP — Expose the engine through a thin MCP adapter over shared services.
@@ -935,6 +923,14 @@ Owner answers (2026-10-19):
   - V-B4-lock: owner reviews the recorded AP fallback, source membership/wording/family/rights notes, Heller's provisional early-publication metadata, Lubega's day-level conflict, partial-date precision and Palm's unresolved DOI registration despite verified PMID identity; approval and any later recording authorization remain separate. The unchanged engine AP capture policy must be reconciled at that gate if the AP-free fallback is retained.
   Checks: Live qualification by an authorized person; offline evidence does not count.
   Dependencies: V-B4.
+  Status: open
+
+- [ ] V-C2-LIVE — Live checks for V-C2
+  Scope: Run the live checks the offline work for V-C2 left pending.
+  Acceptance: Each check passes on the real target:
+  - Windows/macOS runtime process-kill and lease validation requires those hosts; cross-compilation passed on this Linux host.
+  Checks: Live qualification by an authorized person; offline evidence does not count.
+  Dependencies: V-C2.
   Status: open
 
 ## Backlog (not ready)
