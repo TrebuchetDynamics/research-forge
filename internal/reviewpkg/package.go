@@ -17,6 +17,7 @@ import (
 	"github.com/TrebuchetDynamics/research-forge/internal/filetxn"
 	"github.com/TrebuchetDynamics/research-forge/internal/library"
 	"github.com/TrebuchetDynamics/research-forge/internal/provenance"
+	"github.com/TrebuchetDynamics/research-forge/internal/security"
 )
 
 type Options struct {
@@ -125,6 +126,11 @@ func Create(projectPath, packagePath string, opts Options) (Package, error) {
 	}
 	if err := sanitizePackagedForgeState(packagePath); err != nil {
 		return Package{}, err
+	}
+	if rewritten, err := sanitizePackagedProvenance(projectPath, packagePath, provenancePath); err != nil {
+		return Package{}, err
+	} else if rewritten {
+		redaction.Items = append(redaction.Items, RedactionItem{Path: "project/" + provenancePath, Action: "rewritten", Reason: "absolute project paths made package-relative; other private local paths and credentials replaced with placeholders"})
 	}
 	globPlans := []struct {
 		pattern string
@@ -471,6 +477,83 @@ func copyIfExists(projectPath, packagePath, rel string) error {
 		return err
 	}
 	return copyAndClose(out, in)
+}
+
+// sanitizePackagedProvenance rewrites the packaged event ledger so it carries no
+// absolute local paths: values inside the project become package-relative
+// ("project/..."), and any other value the shareability scan flags is replaced
+// by a placeholder. It reports whether any value changed.
+func sanitizePackagedProvenance(projectPath, packagePath, rel string) (bool, error) {
+	path := filepath.Join(packagePath, "project", filepath.FromSlash(rel))
+	data, err := os.ReadFile(path)
+	if os.IsNotExist(err) {
+		return false, nil
+	}
+	if err != nil {
+		return false, fmt.Errorf("read packaged provenance: %w", err)
+	}
+	roots := []string{filepath.Clean(projectPath)}
+	if resolved, err := filepath.EvalSymlinks(projectPath); err == nil && resolved != roots[0] {
+		roots = append(roots, resolved)
+	}
+	changed := false
+	var out strings.Builder
+	for _, line := range strings.Split(string(data), "\n") {
+		if strings.TrimSpace(line) == "" {
+			continue
+		}
+		var event any
+		if err := json.Unmarshal([]byte(line), &event); err != nil {
+			return false, fmt.Errorf("parse packaged provenance: %w", err)
+		}
+		event = sanitizeProvenanceValue(event, roots, &changed)
+		encoded, err := json.Marshal(event)
+		if err != nil {
+			return false, fmt.Errorf("encode packaged provenance: %w", err)
+		}
+		out.Write(encoded)
+		out.WriteByte('\n')
+	}
+	if !changed {
+		return false, nil
+	}
+	if err := os.WriteFile(path, []byte(out.String()), 0o644); err != nil {
+		return false, fmt.Errorf("sanitize packaged provenance: %w", err)
+	}
+	return true, nil
+}
+
+func sanitizeProvenanceValue(value any, roots []string, changed *bool) any {
+	switch v := value.(type) {
+	case map[string]any:
+		for key, item := range v {
+			v[key] = sanitizeProvenanceValue(item, roots, changed)
+		}
+		return v
+	case []any:
+		for i, item := range v {
+			v[i] = sanitizeProvenanceValue(item, roots, changed)
+		}
+		return v
+	case string:
+		for _, root := range roots {
+			if v == root {
+				*changed = true
+				return "project"
+			}
+			if inside, err := filepath.Rel(root, v); err == nil && filepath.IsAbs(v) && inside != ".." && !strings.HasPrefix(inside, ".."+string(filepath.Separator)) {
+				*changed = true
+				return "project/" + filepath.ToSlash(inside)
+			}
+		}
+		if kind, found := security.DetectShareabilityLeak(v); found {
+			*changed = true
+			return "[redacted " + kind + "]"
+		}
+		return v
+	default:
+		return value
+	}
 }
 
 func sanitizePackagedForgeState(packagePath string) error {
