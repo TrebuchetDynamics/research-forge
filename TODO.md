@@ -797,17 +797,6 @@ Owner answers (2026-10-19):
 - Ownership: ResearchForge maintainer; Autowork runner may execute.
 - Touches: docs/benchmark, CONTRIBUTING.md, .github/PULL_REQUEST_TEMPLATE.md
 
-- [ ] V-E5 — Per-host lifecycle qualification runbook
-- Status: open
-- Goal: RF-PACK — Ship passive native plugins for Claude Code, Codex, Pi and Hermes over the same engine.
-- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan) (Owner requirements: release acceptance).
-- Scope: write `docs/qualification/hosts.md` and a receipt template covering, for Claude Code, Codex, Pi and Hermes: install from a local checkout and from the published Git source; upgrade between two versions; remove (host config left clean, approval/permission/schedule settings unchanged before and after, a leftover curl-installed skill detected and reported); recovery (rforge missing, wrong version, MCP server crash, interrupted job resume). Live runs are V-E5-run.
-- Acceptance: each host section lists exact commands and the observations a receipt must record.
-- Checks: make check
-- Dependencies: V-E3.
-- Ownership: ResearchForge maintainer; Autowork runner may execute.
-- Touches: docs/qualification
-
 ## Needs decision
 
 - [ ] V-B4-lock — Owner approves and locks the gold sets
@@ -931,6 +920,17 @@ Owner answers (2026-10-19):
   - Before V-B6-run, qualify actual Pi/Codex gateways with injected provider 429 responses in both conditions: intercept before connector/native retries or waits, quarantine across queries/pages/fetches, continue other qualified providers, reconcile every HTTP attempt, and retain outage flags in the frozen-score report. The offline utility and canned fixture do not launch or qualify live agents.
   Checks: Live qualification by an authorized person; offline evidence does not count.
   Dependencies: V-B11.
+  Status: open
+
+- [ ] V-E5-LIVE — Live checks for V-E5
+  Scope: Run the live checks the offline work for V-E5 left pending.
+  Acceptance: Each check passes on the real target:
+  - V-E5-run: execute the Claude Code local/published Git lifecycle, distinct-version upgrade, policy/schedule invariance, leftover-skill survival/detection and R1-R4 recovery cases with a completed receipt.
+  - V-E5-run: execute the Codex local/published Git lifecycle, explicitly recorded replacement upgrade, policy/schedule invariance, leftover-skill survival/detection and R1-R4 recovery cases with a completed receipt.
+  - V-E5-run: execute the Pi local/published Git lifecycle, distinct-version upgrade, native session MCP checks, policy/schedule invariance, leftover-skill survival/detection and R1-R4 recovery cases with a completed receipt.
+  - V-E5-run: execute the Hermes dedicated-profile local/published Git lifecycle, pinned-commit upgrade, operator-owned MCP add/remove, policy/schedule invariance, leftover-skill survival/detection and R1-R4 recovery cases with a completed receipt.
+  Checks: Live qualification by an authorized person; offline evidence does not count.
+  Dependencies: V-E5.
   Status: open
 
 ## Backlog (not ready)

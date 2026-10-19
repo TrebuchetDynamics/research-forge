@@ -189,6 +189,7 @@
         "V-E3-LIVE",
         "V-E4",
         "V-E5",
+        "V-E5-LIVE",
         "V-E5-run"
       ],
       "title": "Ship passive native plugins for Claude Code, Codex, Pi and Hermes over the same engine"
@@ -214,8 +215,6 @@
       "V-B10",
       "V-B12",
       "V-B5",
-      "V-E4",
-      "V-E5",
       "V-B4-lock",
       "V-B6-run",
       "V-E5-run",
@@ -227,7 +226,8 @@
       "V-B4-LIVE",
       "V-C2-LIVE",
       "V-E3-LIVE",
-      "V-B11-LIVE"
+      "V-B11-LIVE",
+      "V-E5-LIVE"
     ]
   },
   "tasks": [
@@ -268,16 +268,6 @@
       "section": "Next",
       "status": "open",
       "title": "Engine-tier baseline"
-    },
-    {
-      "depends_on": [
-        "V-E3"
-      ],
-      "goal": "RF-PACK",
-      "id": "V-E5",
-      "section": "Next",
-      "status": "open",
-      "title": "Per-host lifecycle qualification runbook"
     },
     {
       "depends_on": [
@@ -370,6 +360,16 @@
       "section": "Needs decision",
       "status": "open",
       "title": "Live checks for V-E3"
+    },
+    {
+      "depends_on": [
+        "V-E5"
+      ],
+      "goal": "RF-PACK",
+      "id": "V-E5-LIVE",
+      "section": "Needs decision",
+      "status": "open",
+      "title": "Live checks for V-E5"
     },
     {
       "depends_on": [
@@ -660,6 +660,16 @@
       "section": "Done",
       "status": "done",
       "title": "Cross-surface behavior parity suite"
+    },
+    {
+      "depends_on": [
+        "V-E3"
+      ],
+      "goal": "RF-PACK",
+      "id": "V-E5",
+      "section": "Done",
+      "status": "done",
+      "title": "Per-host lifecycle qualification runbook"
     },
     {
       "depends_on": [],

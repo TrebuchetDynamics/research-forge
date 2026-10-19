@@ -618,3 +618,21 @@ Source section: Next
 - Dependencies: V-E3, V-C3.
 - Ownership: ResearchForge maintainer; Autowork runner may execute.
 - Touches: internal/mcp, adapters/test, Makefile, .github/workflows
+
+
+<!-- archived from TODO.md -->
+
+Source section: Next
+
+<a id="v-e5"></a>
+
+- [x] V-E5 — Per-host lifecycle qualification runbook
+- Status: done
+- Goal: RF-PACK — Ship passive native plugins for Claude Code, Codex, Pi and Hermes over the same engine.
+- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan) (Owner requirements: release acceptance).
+- Scope: write `docs/qualification/hosts.md` and a receipt template covering, for Claude Code, Codex, Pi and Hermes: install from a local checkout and from the published Git source; upgrade between two versions; remove (host config left clean, approval/permission/schedule settings unchanged before and after, a leftover curl-installed skill detected and reported); recovery (rforge missing, wrong version, MCP server crash, interrupted job resume). Live runs are V-E5-run.
+- Acceptance: each host section lists exact commands and the observations a receipt must record.
+- Checks: make check
+- Dependencies: V-E3.
+- Ownership: ResearchForge maintainer; Autowork runner may execute.
+- Touches: docs/qualification
