@@ -237,17 +237,6 @@
     },
     {
       "depends_on": [
-        "V-A2",
-        "V0-2"
-      ],
-      "goal": "RF-MCP",
-      "id": "V-C1",
-      "section": "Next",
-      "status": "open",
-      "title": "Extract research services from the CLI"
-    },
-    {
-      "depends_on": [
         "V-A2"
       ],
       "goal": "RF-MCP",
@@ -474,6 +463,17 @@
       "section": "Done",
       "status": "done",
       "title": "Engine-tier benchmark harness with offline replay"
+    },
+    {
+      "depends_on": [
+        "V-A2",
+        "V0-2"
+      ],
+      "goal": "RF-MCP",
+      "id": "V-C1",
+      "section": "Done",
+      "status": "done",
+      "title": "Extract research services from the CLI"
     },
     {
       "depends_on": [

@@ -373,3 +373,22 @@ Source section: Next
 - Ownership: ResearchForge maintainer; Autowork runner may execute.
 - Touches: .claude-plugin, .codex-plugin, .agents/plugins, package.json, adapters, plugin.yaml, internal/docs, docs/agent-install.md, docs/release.md, README.md, skills/research-forge/SKILL.md
 - Resources: agent-docs — shared `skills/research-forge/SKILL.md`, `README.md` and `docs/agent-install.md`; tasks holding it run one at a time
+
+
+<!-- archived from TODO.md -->
+
+Source section: Next
+
+<a id="v-c1"></a>
+
+- [x] V-C1 — Extract research services from the CLI
+- Status: done
+- Goal: RF-MCP — Expose the engine through a thin MCP adapter over shared services.
+- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan) (Owner decision 8).
+- Scope: move `rank`, `brief`, `compare`, `lit` and `history` logic from `internal/cli` into service packages that return typed results; the CLI keeps flag parsing and rendering only.
+- Acceptance: existing CLI tests pass unchanged; new service tests cover each moved function; `internal/cli` no longer holds the moved logic.
+- Checks: go test ./...; make check
+- Dependencies: V0-2, V-A2.
+- Ownership: ResearchForge maintainer; Autowork runner may execute.
+- Touches: internal/research, internal/cli/rank_command.go, internal/cli/brief_command.go, internal/cli/compare_command.go, internal/cli/lit_command.go, internal/cli/history_replicate.go
+- Resources: cli-surface — shared `internal/cli/cli.go` command table/help and `docs/cli.md`; tasks holding it run one at a time (2026-10-19: parallel edits there held V-A2 and V-E0)
