@@ -820,18 +820,6 @@ Owner answers (2026-10-19):
 - Ownership: ResearchForge maintainer; Autowork runner may execute.
 - Touches: docs/benchmark, CONTRIBUTING.md, .github/PULL_REQUEST_TEMPLATE.md
 
-- [ ] V-E3 — Typed engine tools per host
-- Status: open
-- Goal: RF-PACK — Ship passive native plugins for Claude Code, Codex, Pi and Hermes over the same engine.
-- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan) (Workstream E, typed tools per host).
-- Scope: Claude Code, Codex and Hermes plugins register `rforge mcp serve` as their MCP server; if Hermes can only register MCP by editing the user's config, the plugin does not edit it and `docs/agent-install.md` gives the line for the user to add. Pi: first verify whether Pi has an MCP client; if not, `adapters/pi.mjs` registers tools mirroring the MCP v1 set that spawn `rforge <cmd> --json` via `execFile` (no shell) with timeouts and return parsed JSON. Every adapter runs the V-E0 compatibility check before its first tool call; a missing or incompatible `rforge` returns a structured error naming `install.sh`. Approval and export operations are not exposed.
-- Acceptance: node tests for the Pi adapter with the built binary; the conformance test allows exactly these registrations.
-- Checks: go test ./internal/docs; node --test adapters/test; make check
-- Dependencies: V-E1, V-E0, V-C3, V-C1.
-- Ownership: ResearchForge maintainer; Autowork runner may execute.
-- Touches: .claude-plugin, .codex-plugin, plugin.yaml, adapters, internal/docs, docs/agent-install.md, package.json
-- Resources: agent-docs — shared `skills/research-forge/SKILL.md`, `README.md` and `docs/agent-install.md`; tasks holding it run one at a time
-
 - [ ] V-E4 — Cross-surface behavior parity suite
 - Status: open
 - Goal: RF-PACK — Ship passive native plugins for Claude Code, Codex, Pi and Hermes over the same engine.
@@ -961,6 +949,14 @@ Owner answers (2026-10-19):
   - Windows/macOS runtime process-kill and lease validation requires those hosts; cross-compilation passed on this Linux host.
   Checks: Live qualification by an authorized person; offline evidence does not count.
   Dependencies: V-C2.
+  Status: open
+
+- [ ] V-E3-LIVE — Live checks for V-E3
+  Scope: Run the live checks the offline work for V-E3 left pending.
+  Acceptance: Each check passes on the real target:
+  - Per-release Claude Code, Codex, Pi and Hermes install/upgrade/reload/removal session qualification, including Hermes' user-added MCP config. Offline tests exercise the shared launcher; native host lifecycle qualification was not run.
+  Checks: Live qualification by an authorized person; offline evidence does not count.
+  Dependencies: V-E3.
   Status: open
 
 ## Backlog (not ready)

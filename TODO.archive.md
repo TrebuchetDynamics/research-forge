@@ -544,3 +544,22 @@ Source section: Next
 - Ownership: ResearchForge maintainer; Autowork runner may execute.
 - Touches: docs/tasks/rf-claims-proof.md
 - Next action: verify revision-bound aggregate results, run any missing Checks, and commit the proof document; leave RF-CLAIMS unqualified until executed passing evidence is recorded through `goals.py evidence`.
+
+
+<!-- archived from TODO.md -->
+
+Source section: Next
+
+<a id="v-e3"></a>
+
+- [x] V-E3 — Typed engine tools per host
+- Status: done
+- Goal: RF-PACK — Ship passive native plugins for Claude Code, Codex, Pi and Hermes over the same engine.
+- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan) (Workstream E, typed tools per host).
+- Scope: Claude Code, Codex and Hermes plugins register `rforge mcp serve` as their MCP server; if Hermes can only register MCP by editing the user's config, the plugin does not edit it and `docs/agent-install.md` gives the line for the user to add. Pi: first verify whether Pi has an MCP client; if not, `adapters/pi.mjs` registers tools mirroring the MCP v1 set that spawn `rforge <cmd> --json` via `execFile` (no shell) with timeouts and return parsed JSON. Every adapter runs the V-E0 compatibility check before its first tool call; a missing or incompatible `rforge` returns a structured error naming `install.sh`. Approval and export operations are not exposed.
+- Acceptance: node tests for the Pi adapter with the built binary; the conformance test allows exactly these registrations.
+- Checks: go test ./internal/docs; node --test adapters/test; make check
+- Dependencies: V-E1, V-E0, V-C3, V-C1.
+- Ownership: ResearchForge maintainer; Autowork runner may execute.
+- Touches: .claude-plugin, .codex-plugin, plugin.yaml, adapters, internal/docs, docs/agent-install.md, package.json
+- Resources: agent-docs — shared `skills/research-forge/SKILL.md`, `README.md` and `docs/agent-install.md`; tasks holding it run one at a time
