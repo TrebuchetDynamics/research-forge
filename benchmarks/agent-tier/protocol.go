@@ -44,23 +44,29 @@ type Prompts struct {
 	With    string `json:"with_rforge"`
 	Without string `json:"without_rforge"`
 }
+type ProviderPolicy struct {
+	WithSources     []string `json:"with_sources"`
+	ContinueOnError bool     `json:"continue_on_error"`
+	RateLimitAction string   `json:"rate_limit_action"`
+}
 type Protocol struct {
-	Version         int      `json:"schema_version"`
-	Host            Host     `json:"host"`
-	Model           Model    `json:"model"`
-	Sampling        Sampling `json:"sampling"`
-	Prompts         Prompts  `json:"prompts"`
-	RforgeVersion   string   `json:"rforge_version"`
-	Revision        string   `json:"revision"`
-	SetChecksum     string   `json:"set_checksum"`
-	QuestionIDs     []string `json:"question_ids"`
-	Repetitions     int      `json:"repetitions"`
-	Caps            Caps     `json:"caps"`
-	RunOrderSeed    int64    `json:"run_order_seed"`
-	ScorerVersion   string   `json:"scorer_version"`
-	CitationVersion string   `json:"citation_metric_version"`
-	Primary         []string `json:"primary_metrics"`
-	Secondary       []string `json:"secondary_metrics"`
+	Version         int            `json:"schema_version"`
+	Host            Host           `json:"host"`
+	Model           Model          `json:"model"`
+	Sampling        Sampling       `json:"sampling"`
+	Prompts         Prompts        `json:"prompts"`
+	RforgeVersion   string         `json:"rforge_version"`
+	Revision        string         `json:"revision"`
+	SetChecksum     string         `json:"set_checksum"`
+	QuestionIDs     []string       `json:"question_ids"`
+	Repetitions     int            `json:"repetitions"`
+	Caps            Caps           `json:"caps"`
+	RunOrderSeed    int64          `json:"run_order_seed"`
+	ScorerVersion   string         `json:"scorer_version"`
+	CitationVersion string         `json:"citation_metric_version"`
+	Primary         []string       `json:"primary_metrics"`
+	Secondary       []string       `json:"secondary_metrics"`
+	ProviderPolicy  ProviderPolicy `json:"provider_policy"`
 }
 type Slot struct {
 	QuestionID string `json:"question_id"`
@@ -95,17 +101,30 @@ type Gate struct {
 	BudgetChecked       bool  `json:"budget_checked"`
 	DateExcluded        int64 `json:"date_excluded"`
 }
+
+// ProviderEvent is an ordered gateway receipt, never agent-authored answer data.
+// Status zero denotes no HTTP response (transport failure or a local skip).
+type ProviderEvent struct {
+	Provider   string `json:"provider"`
+	Query      string `json:"query"`
+	Action     string `json:"action"`
+	HTTPStatus int    `json:"http_status"`
+	RetryAfter string `json:"retry_after"`
+	Error      string `json:"error"`
+	StopReason string `json:"stop_reason"`
+}
 type RawRun struct {
-	Slot       Slot     `json:"slot"`
-	Model      Model    `json:"model"`
-	Caps       Caps     `json:"caps"`
-	RunID      string   `json:"run_id"`
-	Transcript string   `json:"transcript"`
-	Artifacts  []string `json:"workspace_artifacts"`
-	StopReason string   `json:"stop_reason"`
-	Usage      Usage    `json:"usage"`
-	Gate       Gate     `json:"gate"`
-	Answer     Answer   `json:"answer"`
+	Slot           Slot            `json:"slot"`
+	Model          Model           `json:"model"`
+	Caps           Caps            `json:"caps"`
+	RunID          string          `json:"run_id"`
+	Transcript     string          `json:"transcript"`
+	Artifacts      []string        `json:"workspace_artifacts"`
+	StopReason     string          `json:"stop_reason"`
+	Usage          Usage           `json:"usage"`
+	Gate           Gate            `json:"gate"`
+	Answer         Answer          `json:"answer"`
+	ProviderEvents []ProviderEvent `json:"provider_events"`
 }
 type Experiment struct {
 	ProtocolSHA256 string   `json:"protocol_sha256"`
@@ -169,13 +188,16 @@ func schedule(p Protocol) []Slot {
 	return out
 }
 func validateProtocol(p Protocol, s b.Set) error {
+	if err := validateProviderPolicy(p.ProviderPolicy); err != nil {
+		return err
+	}
 	ids := []string{}
 	for _, q := range s.Questions {
 		if q.Split == "held_out" {
 			ids = append(ids, q.QuestionID)
 		}
 	}
-	if p.Version != 1 || (p.Host.Name != "pi" && p.Host.Name != "codex") || p.SetChecksum != s.SetChecksum || !reflect.DeepEqual(ids, p.QuestionIDs) || p.Repetitions < 1 || p.Repetitions > 100 || p.ScorerVersion != scorerVersion || p.CitationVersion != "not_implemented" || !reflect.DeepEqual(p.Primary, []string{"recall"}) {
+	if p.Version != 2 || (p.Host.Name != "pi" && p.Host.Name != "codex") || p.SetChecksum != s.SetChecksum || !reflect.DeepEqual(ids, p.QuestionIDs) || p.Repetitions < 1 || p.Repetitions > 100 || p.ScorerVersion != scorerVersion || p.CitationVersion != "not_implemented" || !reflect.DeepEqual(p.Primary, []string{"recall"}) {
 		return fmt.Errorf("protocol_violation: incompatible protocol")
 	}
 	secondary := []string{}
@@ -209,6 +231,9 @@ func loadPrivate(dir string) (Protocol, Experiment, error) {
 	if err := b.ReadAgentArtifact(dir+"/experiment.json", &e); err != nil {
 		return p, e, err
 	}
+	if err := validateProviderPolicy(p.ProviderPolicy); err != nil {
+		return p, e, err
+	}
 	if e.ProtocolSHA256 != hash(p) || !reflect.DeepEqual(e.Schedule, schedule(p)) || len(e.Runs) != len(e.Schedule) {
 		return p, e, fmt.Errorf("protocol_violation: protocol/schedule/matrix mismatch")
 	}
@@ -231,10 +256,11 @@ func loadPrivate(dir string) (Protocol, Experiment, error) {
 				return p, e, fmt.Errorf("protocol_violation: unreported budget overrun")
 			}
 		}
-		switch r.StopReason {
-		case "completed", "budget_exhausted", "coverage_saturated", "interrupted", "error_threshold":
-		default:
+		if !validStop(r.StopReason) {
 			return p, e, fmt.Errorf("protocol_violation: invalid stop")
+		}
+		if err := validateProviderEvents(r, p.ProviderPolicy); err != nil {
+			return p, e, err
 		}
 	}
 	return p, e, nil

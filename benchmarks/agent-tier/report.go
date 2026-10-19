@@ -25,7 +25,7 @@ func report(setDir, private, blindDir, scoreFile, out string) (resultErr error) 
 	}
 	defer func() {
 		if resultErr != nil {
-			invalid := reportHeader(s, p)
+			invalid := AgentReport{EngineReport: reportHeader(s, p), ProviderAvailability: []ProviderAvailability{}}
 			invalid.Status = "invalid"
 			invalid.Errors = []b.RunError{{Code: errorCode(resultErr)}}
 			for _, q := range s.Questions {
@@ -117,7 +117,7 @@ func report(setDir, private, blindDir, scoreFile, out string) (resultErr error) 
 		return a.Repetition < c.Repetition
 	})
 	aggregates, paired := summaries(runs, s.K, p.Repetitions)
-	result := reportHeader(s, p)
+	result := AgentReport{EngineReport: reportHeader(s, p), ProviderAvailability: availability(e.Runs)}
 	result.Runs, result.Aggregates, result.Paired = runs, aggregates, paired
 	// Publish the complete report last: missing audit must not leave an
 	// apparently successful standalone report behind.

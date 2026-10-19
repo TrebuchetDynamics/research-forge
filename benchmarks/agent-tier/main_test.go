@@ -50,7 +50,7 @@ func TestStubProducesBlindScoredReport(t *testing.T) {
 		t.Fatalf("scorer mount contains non-answer files: %v", entries)
 	}
 	raw, _ := os.ReadFile(filepath.Join(blind, "answers.json"))
-	for _, marker := range []string{"with_rforge", "without_rforge", "provenance", "run_id", "rforge ", "pi", "input_tokens", "condition"} {
+	for _, marker := range []string{"with_rforge", "without_rforge", "provenance", "run_id", "rforge ", "pi", "input_tokens", "condition", "provider_events", "provider_policy", "retry_after"} {
 		if strings.Contains(string(raw), marker) {
 			t.Fatalf("blind leak: %s", marker)
 		}

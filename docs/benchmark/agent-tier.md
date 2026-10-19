@@ -34,6 +34,22 @@ measured research quality**. Reports explicitly say `purpose: fixture` and
 `mode: replay`; this offline agent-fixture exception is not a live evaluation.
 With Q=1, contrast means exist but confidence bounds are null.
 
+To exercise provider loss offline, replace the `stub` invocation above with:
+
+```sh
+"$work/agent-tier" stub --set "$setdir" --rate-limit-provider crossref \
+  --out "$work/private-outage"
+```
+
+Use that private directory with fresh blind/score/report output paths. This is
+still canned, offline fixture data: one Crossref 429 (`Retry-After: 3600`) and
+one subsequent local skip per observation; the other two providers complete both
+queries. Both conditions retain the failure and complete without spending the
+run budget on retries. The provider acceptance case additionally checks a pair
+with an outage in only one condition and an unaffected pair. The scored report
+flags both members of an affected pair without dropping their measured outputs.
+This fixture does **not** qualify a real gateway or demonstrate live resilience.
+
 The acceptance test exercises all four command boundaries, checks scorer input
 for condition/host/counter/provenance leakage, checks rank credit and paired Q/N,
 and rejects attribution injected into the scorer envelope. Numerical tests cover
@@ -53,7 +69,7 @@ define the machine-readable contract:
 
 | Pin | Required content |
 | --- | --- |
-| `schema_version` | 1 |
+| `schema_version` | 2 (provider receipts required; v1 registrations must be re-authored before new execution) |
 | `host` | `name`: `pi` or `codex`; exact installed `version` |
 | `model` | exact `provider` and model `version`, not an auto-routing alias |
 | `sampling` | temperature, top-p, whether paired seeds are supported |
@@ -67,6 +83,7 @@ define the machine-readable contract:
 | `citation_metric_version` | `not_implemented` for this pipeline |
 | `primary_metrics` | `["recall"]` |
 | `secondary_metrics` | all other metrics, in the example's fixed order; never select after scoring |
+| `provider_policy` | `with_sources`: at least two distinct canonical provider names; `continue_on_error: true`; `rate_limit_action: "skip_for_run"` |
 
 Default caps per run: **32,000 total input+output tokens** (cached input included),
 **20 search pages**, **60 host tool calls**, **100 HTTP attempts**, **600,000 ms**.
@@ -132,6 +149,50 @@ receipts**. The utility can validate receipt consistency, not independently
 prove an external host executed its promised restrictions. If Pi or Codex cannot
 interpose the gate or measure usage, do not run an unmatched comparison.
 
+### Provider-independent search and outage qualification
+
+The [v2 protocol](../../benchmarks/agent-tier/protocol.go) locks the provider
+policy into its hash and each prepared input. The default with-tools mix is
+**Crossref, Semantic Scholar and arXiv**, without OpenAlex. Author the exact
+condition prompt to use the registered mix through the date/leakage gateway:
+
+```sh
+rforge search batch --query "$question" --sources crossref,semantic-scholar,arxiv \
+  --continue-on-error --out "$run_dir/search"
+```
+
+The gateway must enforce the date cap and remaining budgets for this command;
+the command alone is not a qualified benchmark gateway. Qualify at least two
+independent providers with the same leakage/date/accounting controls. OpenAlex
+is optional only when explicitly registered, never a required fallback. Do not
+use a preset such as `all` that silently reintroduces it. Changing the mix or
+prompt after registration requires a new registration, not a retry.
+
+**`--continue-on-error` is necessary but insufficient:** current batch search
+continues to later query/provider pairs, and connectors may retry HTTP internally.
+The trusted gateway must intercept the **first** 429 before any retry/backoff,
+quarantine that canonical provider across all queries, pages, expansions and
+fetches for the rest of this observation, and locally skip later calls. Do not
+sleep until `Retry-After`, resume failed pairs, switch aliases/endpoints to evade
+the quarantine, or spend the remaining budget retrying the same provider.
+Continue with remaining qualified providers and keep the observed partial answer
+if none remain. Reset quarantine only for the next scheduled observation.
+
+Apply the same policy to native search in the without-tools condition, logging
+its actual provider names (not invented rforge sources). If the host hides
+provider identity/status, retries or HTTP accounting, it is not qualified. Keep
+`failures.jsonl`, `manifest.json`, `batch-state.json`, native gateway receipts and
+redacted HTTP traces privately. Record every failure, HTTP status, raw sanitized
+`Retry-After` value, operation stop reason and local skip; a 429 is not a zero-hit
+successful search. Each HTTP attempt counts against usage; skips do not count as
+HTTP attempts, though a host tool invocation still counts as a tool.
+
+Before V-B6-run, inject a deterministic 429 into **each condition's real gateway**
+and verify only one HTTP attempt reaches that provider, no retry wait occurs,
+other providers proceed, and complete receipts reach the frozen-score report.
+The offline stub tests import/scoring, not this external enforcement. A gateway
+that cannot pass this probe is unqualified; do not substitute an unmatched run.
+
 ## 4. Import observations; retain failures
 
 The live adapter/operator writes `experiment.json` in the prepared private
@@ -139,7 +200,38 @@ directory, following [the RawRun/Experiment structs](../../benchmarks/agent-tier
 and the stub's field-complete example. It contains the protocol hash, exact
 schedule, and one run **in schedule order** per slot. Each run records model/caps,
 private run ID/transcript/artifact locations, stop reason, measured usage, trusted
-gateway receipts and structured answer. `answer` has only:
+gateway receipts and structured answer. The required `provider_events` array
+contains ordered trusted-gateway receipts for every HTTP attempt counted in
+`usage.http_requests` (including retries, redirects, expansions and fetches) and
+local quarantine skip in **both** conditions. For non-search traffic, `query`
+identifies the operation or sanitized locator. Use canonical lowercase provider
+names consistently across endpoints. Each event has exactly:
+
+```json
+{"provider":"crossref","query":"synthetic energy","action":"failed","http_status":429,"retry_after":"3600","error":"rate limited","stop_reason":"error_threshold"}
+```
+
+`action` is `completed`, `failed`, or `skipped`; `http_status` is the actual status
+or 0 for transport failure/local skip. `retry_after` is the sanitized raw header
+(or empty string); never retain credentials in errors/queries/headers. Failure
+and skip errors are nonempty; successful errors are empty. A malformed HTTP 200
+response is still a failed operation with status 200 and the parsing error.
+`stop_reason` uses the run's five-value vocabulary but describes the provider operation; the
+observation can still end `completed`. A skipped event has status 0, empty
+`retry_after`, and `stop_reason: error_threshold`. Only a previous 429 permits
+a quarantine skip. Any attempted retry of that provider after 429 invalidates
+import, including a retry that later succeeded. Log non-429 failures too.
+
+An empty event array is permitted only when no search or HTTP calls occurred
+(e.g. a pre-search refusal). [Validation](../../benchmarks/agent-tier/providers.go)
+rejects missing receipts for search/network usage, hidden failure statuses,
+illegal skips, unregistered with-tools providers and any mismatch between
+non-skip receipt count and HTTP usage. Fetches/redirects must not be left as
+unexplained extra HTTP counts that could conceal an omitted 429. It checks
+receipt consistency, not the honesty/completeness of an external recorder;
+qualification and retained HTTP traces remain essential.
+
+`answer` has only:
 
 ```json
 {"bibliography":[{"identifiers":[{"scheme":"doi","value":"10.9999/p1"}]}],"claims":[{"text":"Claim text","quote":"Exact source text","locator":"https://example.org/source"}]}
@@ -194,8 +286,17 @@ new directory for a corrected attempt, retaining the invalid artifacts.
    guesses or new relevance labels. Freeze any blind extraction adjudications
    before this command. It writes `scores.json` and a create-only
    `scores.json.freeze.json` digest receipt **before** joining conditions.
-4. **Custodian**, after freeze, runs `report` as in the offline example. It
-   verifies the protocol, schedule/full matrix and checksum links for original
+4. **Custodian**, after freeze, runs `report` as in the offline example. Its
+   `provider_availability` array has one entry per scheduled run: `slot`,
+   `provider_lost` (any failed provider attempt), `pair_provider_lost` (either
+   member failed), and the ordered `events`. It flags transient failures too,
+   conservatively; it does not imply the provider was unavailable all run.
+   Availability is joined only after freeze and is never sent to scorers.
+   Reports retain affected rows and their primary/secondary metrics; no automatic
+   exclusion, selective retry or unregistered outage-adjusted contrast is allowed.
+   Discuss affected pair IDs and provider failures alongside all live conclusions.
+   An invalid report has an empty availability array, not invented clean receipts.
+   It verifies the protocol, schedule/full matrix and checksum links for original
    answers, mapping, frozen scores and freeze receipt. Only now does it join
    conditions and operational counters. Preserve the report and its separate
    `.audit.json` checksum links together with all private artifacts. Hashes guard
