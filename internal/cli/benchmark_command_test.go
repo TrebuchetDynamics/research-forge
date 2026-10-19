@@ -25,6 +25,7 @@ func TestExecuteBenchmarkCrossToolWritesReport(t *testing.T) {
 		t.Fatalf("read out: %v", err)
 	}
 	var report struct {
+		Purpose string `json:"purpose"`
 		Metrics []struct {
 			ID    string  `json:"id"`
 			Score float64 `json:"score"`
@@ -32,6 +33,9 @@ func TestExecuteBenchmarkCrossToolWritesReport(t *testing.T) {
 	}
 	if err := json.Unmarshal(data, &report); err != nil {
 		t.Fatalf("report json: %v", err)
+	}
+	if report.Purpose != "demo" {
+		t.Fatalf("hardcoded numbers must be labeled demo: %s", data)
 	}
 	if len(report.Metrics) != 7 {
 		t.Fatalf("metrics = %#v", report.Metrics)

@@ -18,6 +18,7 @@ type CrossToolBenchmarkInput struct {
 }
 
 type CrossToolBenchmarkReport struct {
+	Purpose       string             `json:"purpose"`
 	SchemaVersion string             `json:"schemaVersion"`
 	Fixtures      []BenchmarkFixture `json:"fixtures"`
 	Metrics       []BenchmarkMetric  `json:"metrics"`
@@ -39,12 +40,14 @@ type BenchmarkMetric struct {
 	Interpretation string  `json:"interpretation"`
 }
 
+// DefaultCrossToolBenchmarkInput contains DEMO constants, not measured results.
+// It is never an input to the research-quality engine benchmark.
 func DefaultCrossToolBenchmarkInput() CrossToolBenchmarkInput {
 	return CrossToolBenchmarkInput{18, 20, 9, 10, 45, 50, 27, 30, 16, 20, 100, 40, 5, 5, 4, 5}
 }
 
 func BuildCrossToolBenchmarkReport(input CrossToolBenchmarkInput) CrossToolBenchmarkReport {
-	report := CrossToolBenchmarkReport{SchemaVersion: "1"}
+	report := CrossToolBenchmarkReport{SchemaVersion: "1", Purpose: "demo"}
 	report.Fixtures = []BenchmarkFixture{
 		{ID: "discovery", Description: "deterministic source-query fixture with known relevant seed records", Tools: []string{"openalex", "semantic-scholar"}},
 		{ID: "dedupe", Description: "identity-cluster fixture with known true merges and false positives", Tools: []string{"openalex", "semantic-scholar"}},
@@ -109,7 +112,7 @@ func effortSavings(baseline, model int) float64 {
 }
 func crossToolMarkdown(report CrossToolBenchmarkReport) string {
 	var b strings.Builder
-	b.WriteString("# Cross-tool benchmark report\n\n| Metric | Score | Evidence | Interpretation |\n| --- | ---: | --- | --- |\n")
+	b.WriteString("# Cross-tool benchmark report (demo)\n\nIllustrative constants, not a measured research-quality baseline.\n\n| Metric | Score | Evidence | Interpretation |\n| --- | ---: | --- | --- |\n")
 	for _, m := range report.Metrics {
 		fmt.Fprintf(&b, "| %s | %.3f | %d/%d | %s |\n", m.Label, m.Score, m.Numerator, m.Denominator, m.Interpretation)
 	}
