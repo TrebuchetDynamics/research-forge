@@ -2,12 +2,14 @@
 
 Core commands:
 
+- `rforge capabilities --json [--min-rforge-version <version>] [--require <family>=<contract-version>]...` reports build metadata and command contracts, and optionally checks engine compatibility for skills, plugins, and adapters (see [compatibility checks](#capability-report-and-compatibility-checks))
+
 - `rforge automation policy [--action <action>]` prints the hybrid agent/human decision policy: LLM agents may decide reversible assists such as batch retrieval/dedupe, screening queues, extraction suggestions, analysis preparation, and claim-trace audits, while humans must approve inclusion/exclusion, full-text acquisition, extraction acceptance, analysis method selection, final claims, and package export
 - `rforge project create [path] --title <title>`
 - `rforge project inspect <path>`
 - `rforge forge init --project <path> --question <text> [--sources openalex,semantic-scholar --tools grobid,qdrant]`, `rforge forge status --project <path>`, `rforge forge next --project <path>`, `rforge forge approve --project <path> --gate <gate> [--note <text>]`, `rforge forge reopen --project <path> --state <state> --reason <text>`, and `rforge forge run-dag --project <path> --question <text> [--max-steps N]` run the guided Meta-analysis spine workflow and resumable discovery→report DAG, persisting `data/forge-state.json`, source/tool choices, privacy/legal previews, `data/forge-workflow/*` checkpoints, transition provenance, next safe actions, and reviewer gates for irreversible scientific/data-sharing decisions
 - `rforge search --source openalex|arxiv|crossref|semantic-scholar|europepmc|pubmed --query <query> [--category arxiv-category] [--filter source-filter] [--preset systematic-review|open-access-review|recent-domain-map] [--from-year YYYY] [--to-year YYYY] [--type article] [--open-access true|false] [--concept C41008148] [--entity authors|institutions|concepts]`; OpenAlex entity searches include disambiguation review queues when people, institutions, or concepts are ambiguous
-- `rforge search batch --queries <queries.txt> --sources all|scholarly-fast|biomedical|preprints|datasets|open|oa|openalex,crossref,... --out <dir> [--query <query>] [--limit N] [--dedupe doi,title] [--continue-on-error] [--stats] [--resume]` runs multi-query/multi-source sweeps, writes raw per-source files plus `results.jsonl`, DOI/title `results-deduped.jsonl`, `results.md`, `manifest.json`, optional `search-stats.txt`, `failures.jsonl`, and an incremental `batch-state.json` checkpoint so agents do not need shell loops for resumable literature scouting. The checkpoint records every completed (query, source) pair after each network call; an interrupted sweep (SIGINT/SIGTERM/timeout — exit 130/143) keeps its partial results in the topic dir, and re-running the same command with `--resume` skips completed pairs, retries failed ones, and completes never-run ones. `rforge search stats --dir <dir>` reports checkpoint progress (`completed/failed/pending`) and prints the exact resume command when work remains
+- `rforge search batch --queries <queries.txt> --sources all|scholarly-fast|biomedical|preprints|datasets|open|oa|openalex,crossref,... --out <dir> [--query <query>] [--limit N] [--depth quick|standard|comprehensive] [--max-requests N] [--dedupe doi,title] [--continue-on-error] [--stats] [--resume]` runs bounded multi-query/multi-source sweeps (see [search budgets](#search-budgets-and-stop-reasons)), writes raw per-source files plus `results.jsonl`, DOI/title `results-deduped.jsonl`, `results.md`, `manifest.json`, optional `search-stats.txt`, `failures.jsonl`, and an incremental `batch-state.json` checkpoint so agents do not need shell loops for resumable literature scouting. The checkpoint records every completed (query, source) pair after each network call; an interrupted sweep (SIGINT/SIGTERM/timeout — exit 130/143) keeps its partial results in the topic dir, and re-running the same command with `--resume` skips completed pairs, retries failed ones, and completes never-run ones. `rforge search stats --dir <dir>` reports checkpoint progress (`completed/failed/pending`) and prints the exact resume command when work remains
 - `rforge search import --source openalex --query <query> --pages N [--limit N] [--filter source-filter] [--preset systematic-review|open-access-review|recent-domain-map] [--from-year YYYY] [--to-year YYYY] [--type article] [--open-access true|false] [--concept C41008148] [--resume-state state.json]`
 - `rforge search related --source openalex --paper <work-id> [--limit N]`
 - `rforge citations expand --source semantic-scholar|openalex|crossref --paper <id> --direction references|citations|both --depth N [--max-records N --max-api-calls N --retry-budget N --resume-cursor <cursor> --dry-run] --out <file> [--run-state <semantic-run.json>] [--import-library]` expands citation graphs; dry-run emits a budget estimate before live expansion, and Semantic Scholar run-state files record quota/resume fields, API field restrictions, and graph budget controls
@@ -105,3 +107,93 @@ Workflow configuration and provenance:
 - Successful `paper`, `rank`, `brief`, `compare`, `lit`, `note`, `history search`, `replicate`, and `draft` runs with the global prefix `rforge --project <path> ...` append a `cli.command` event to `provenance/events.jsonl`; append failures return nonzero instead of reporting success ([dispatch](../internal/cli/workflow_command.go)).
 - `lit` and `replicate` outputs include generation timestamps; remote metadata may also change between runs, so their outputs are not promised to be byte-reproducible.
 - Validate rank sidecars with `rforge provenance validate <file>.provenance.json` ([rank output](../internal/cli/rank_command.go), [validator](../internal/cli/provenance_command.go)).
+
+## Search budgets and stop reasons
+
+`search batch` defaults to **standard**. Presets bound the first query variants and sources in the supplied order; they do not generate queries or automatically escalate depth.
+
+| `--depth` | Query variants | Sources | Requests | Low yield: new unique records/query | Consecutive low-yield queries | Consecutive errors |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| `quick` | 3 | 2 | 6 | < 1 | 2 | 3 |
+| `standard` (default) | 10 | 5 | 50 | < 2 | 3 | 5 |
+| `comprehensive` | 30 | 20 | 600 | < 1 | 5 | 10 |
+
+`--max-requests N` overrides the preset's total request cap (positive integer). A request is one connector search invocation, including a failed or interrupted attempt; connector-internal HTTP retries and multi-endpoint lookups are not separate budget units. `--limit` still bounds records requested per invocation.
+
+Both `manifest.json` and `batch-state.json`, plus `--json` output, expose:
+
+- `budget`: effective depth, query/source/request caps and thresholds (`max_api_calls` uses the graph budget's `MaxAPICalls` naming).
+- `requests_used`: cumulative dispatched attempts, checkpointed **before** each call.
+- `coverage`: `unique_records`, per-query `new_unique`/`complete`, and `consecutive_low_yield`. Yield counts newly added records under the same DOI/title dedupe policy as aggregate output, across all selected sources for a query. Failed/incomplete queries cannot signal saturation. This measures retrieval yield, not relevance or proof of exhaustive coverage.
+- `stop_reason`: `completed` (selected sweep attempted, possibly with failures under `--continue-on-error`), `budget_exhausted` (query, source or request cap), `coverage_saturated`, `interrupted`, or `error_threshold` (consecutive failed attempts reach the preset threshold). Graceful SIGINT/SIGTERM retains exit 130/143; normal structured stops return 0. Without `--continue-on-error`, the first error remains fail-fast/nonzero.
+
+Re-run the same command with `--resume` to skip completed pairs and retry failed/pending ones. Omitting budget flags preserves the checkpoint's budget; it never replenishes requests. An explicit `--depth` selects that preset, and an explicit `--max-requests` sets a new **total**, not additional allowance. Raise it to continue a capped run, or explicitly choose comprehensive when warranted. Changed query/source lists reconcile the coverage signal without resetting request usage. Failures remain recorded until actually retried successfully. Error streaks reset on resume.
+
+The checkpoint's `result_count` identifies the committed prefix of `results.jsonl`; resume discards uncheckpointed or torn trailing appends before recomputing yield. Legacy checkpoints without this field retain their full results and infer minimum request usage from recorded completed/failed pairs. A fresh fail-fast run still rolls back all batch artifacts; a failed resume restores prior results but retains consumed request usage. `search resume --failures ...` retries only listed failures through the same budget service when a batch checkpoint exists; it cannot bypass its cap.
+
+`citations expand --json` uses the same typed `stop_reason` and reports `requests_used`; Semantic Scholar recursive expansion no longer encodes `budget_stopped` in `rawRef`. Its `--max-api-calls` counts references and citations separately for `--direction both`.
+
+Implementation: [search service](../internal/search/batch.go), [checkpoint/resume](../internal/search/batch_state.go), and [shared stop reasons](../internal/sources/graph_budget.go). Update this section when preset values, checkpoint accounting, or stop semantics change.
+
+## Capability report and compatibility checks
+
+`rforge capabilities --json` is an offline, read-only engine compatibility report.
+It needs no project, credentials, network, or external tools. The usual JSON envelope
+is `{"ok":true,"data":{...}}`; `data` contains:
+
+- `name`, `version`, `commit`, `date`: the same build metadata as `rforge version`.
+- `capabilities`: a map of family names to positive integer contract versions.
+  Currently `search`, `paper`, `brief`, `compare`, and `provenance` each report `1`.
+  `mcp` and `claims` are absent until implemented; absence never implies support.
+- `error_codes`: the stable codes for this command, listed below (not a catalog of
+  every error emitted by other commands).
+
+Contract versions are minimum-compatible and monotonically increasing. Consumers
+must check every required family, not infer support from the release number or
+ignore unknown/missing entries. A reported version must be at least the required
+contract version. Without `--json`, the command prints a human-readable report.
+
+For a consumer with `min_rforge_version: "1.0.0"` and required contracts
+`search: 1`, `paper: 1`, invoke:
+
+```sh
+rforge capabilities --json --min-rforge-version 1.0.0 --require search=1 --require paper=1
+```
+
+`--require` is repeatable; all requirements must pass. `--json` also works before
+`capabilities`. No check flags means report-only mode. When checks are supplied:
+
+- **Release:** the build version must be at least `--min-rforge-version` (when
+  supplied), and all required capabilities must be present and sufficiently new.
+- **Exact `dev` build:** skip the release-version comparison, but still verify all
+  required capabilities. Never order the string `dev` against a release number.
+- **Version syntax:** semantic `MAJOR.MINOR.PATCH` with an optional `v` prefix,
+  prerelease, and build metadata. Use SemVer precedence, not lexical comparison;
+  prereleases precede their release, and build metadata does not affect ordering.
+  Non-SemVer build strings fail closed when a version minimum is requested.
+
+Success exits `0`. Compatibility failures exit `1` with `ok:false` and an `error`
+object containing `code`, `message`, `actual`, `required`, and `install` (always
+`"install.sh"`); capability gaps also include `capability`. Values of `actual` and
+`required` are strings; a missing capability uses `actual:"missing"`. The message
+names the gap and points to `install.sh`. The command never installs anything or
+changes host settings.
+
+| Code | Meaning |
+| --- | --- |
+| `version_invalid` | Installed build version cannot be compared to the requested minimum. |
+| `version_too_old` | Release version is below the requested minimum. |
+| `capability_missing` | A required family is not reported. |
+| `capability_too_old` | A reported family has an older contract than required. |
+| `usage` | Invalid flags, minimum version, or contract requirement; exits `2`. |
+
+Checks report the first failure: build version first, then required capabilities
+in argument order. Usage errors use the standard `error.code`/`error.message`
+envelope. A binary too old to implement `capabilities` (or a missing executable)
+cannot pass a consumer's compatibility check; the consumer must name that gap and
+point users to [`install.sh`](../install.sh), never silently fall back to a version
+string. `rforge help --json` includes the capability command.
+
+Behavior source: [command implementation](../internal/cli/capabilities_command.go)
+and [public CLI tests](../internal/cli/capabilities_test.go). Update this section
+when capability contracts or compatibility/error semantics change.

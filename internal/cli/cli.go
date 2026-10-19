@@ -40,7 +40,7 @@ var (
 	Date    = "unknown"
 )
 
-var topLevelCommands = []string{"help", "vault", "version", "decisions", "benchmark", "automation", "completion", "forge", "project", "doctor", "service", "library", "search", "citations", "oa", "duplicate", "import", "export", "oss", "pdf", "parse", "index", "knowledge", "graph", "retrieve", "research", "protocol", "screen", "prisma", "extraction", "extract", "evidence", "claim", "analysis", "report", "package", "archive", "ui", "watch", "inbox", "fetch", "provenance", "journal", "goal", "meta", "paper", "rank", "brief", "compare", "lit", "note", "history", "replicate", "draft"}
+var topLevelCommands = []string{"help", "vault", "version", "capabilities", "decisions", "benchmark", "automation", "completion", "forge", "project", "doctor", "service", "library", "search", "citations", "oa", "duplicate", "import", "export", "oss", "pdf", "parse", "index", "knowledge", "graph", "retrieve", "research", "protocol", "screen", "prisma", "extraction", "extract", "evidence", "claim", "analysis", "report", "package", "archive", "ui", "watch", "inbox", "fetch", "provenance", "journal", "goal", "meta", "paper", "rank", "brief", "compare", "lit", "note", "history", "replicate", "draft"}
 
 type globalOptions struct {
 	JSON     bool
@@ -56,6 +56,11 @@ func Execute(args []string, stdout, stderr io.Writer) int {
 		return writeError(stdout, stderr, opts, 2, "invalid_global_flag", "invalid global flag usage")
 	}
 	if len(remaining) == 0 || remaining[0] == "--help" || remaining[0] == "-h" || remaining[0] == "help" {
+		for _, arg := range remaining {
+			if arg == "--json" {
+				opts.JSON = true
+			}
+		}
 		if opts.JSON {
 			return writeJSON(stdout, 0, buildHelpJSON())
 		}
@@ -71,6 +76,8 @@ func Execute(args []string, stdout, stderr io.Writer) int {
 		}
 		fmt.Fprintf(stdout, "rforge %s (%s, %s)\n", Version, Commit, Date)
 		return 0
+	case "capabilities":
+		return executeCapabilities(remaining[1:], stdout, stderr, opts)
 	case "decisions":
 		return executeDecisions(remaining[1:], stdout, stderr, opts)
 	case "benchmark":
@@ -4175,6 +4182,10 @@ func helpSections() []helpSection {
 				{
 					Usage:       "rforge version",
 					Description: "Print rforge version, commit, and build date.",
+				},
+				{
+					Usage:       "rforge capabilities [--json] [--min-rforge-version <version>] [--require <family>=<contract-version>]...",
+					Description: "Report build and command contracts; check adapter compatibility. Dev builds are checked by capabilities, not their version string.",
 				},
 				{
 					Usage:       "rforge doctor",

@@ -286,13 +286,17 @@ func (c OpenAlexConnector) ExpandCitationGraph(ctx context.Context, query OpenAl
 		cachedWork = &work
 	}
 
-	expansion := CitationGraphExpansion{SeedID: workID, Records: map[string]SourceRecord{}, RawRef: rawOpenAlexGraphRef(workID, direction, limit)}
+	expansion := CitationGraphExpansion{StopReason: StopCompleted, SeedID: workID, Records: map[string]SourceRecord{}, RawRef: rawOpenAlexGraphRef(workID, direction, limit)}
+	if cachedWork != nil {
+		expansion.RequestsUsed++
+	}
 	if direction == SemanticScholarDirectionReferences || direction == SemanticScholarDirectionBoth {
 		var work openAlexWork
 		var err error
 		if cachedWork != nil {
 			work = *cachedWork
 		} else {
+			expansion.RequestsUsed++
 			work, err = c.fetchWork(ctx, workID)
 			if err != nil {
 				return CitationGraphExpansion{}, err
@@ -307,6 +311,7 @@ func (c OpenAlexConnector) ExpandCitationGraph(ctx context.Context, query OpenAl
 		}
 	}
 	if direction == SemanticScholarDirectionCitations || direction == SemanticScholarDirectionBoth {
+		expansion.RequestsUsed++
 		response, err := c.Search(ctx, SourceQuery{Terms: "", Limit: limit, Filters: map[string]string{"filter": "cites:" + workID}})
 		if err != nil {
 			return CitationGraphExpansion{}, err

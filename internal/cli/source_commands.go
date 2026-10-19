@@ -24,6 +24,7 @@ import (
 	"github.com/TrebuchetDynamics/research-forge/internal/library"
 	"github.com/TrebuchetDynamics/research-forge/internal/parsing"
 	"github.com/TrebuchetDynamics/research-forge/internal/provenance"
+	"github.com/TrebuchetDynamics/research-forge/internal/search"
 	"github.com/TrebuchetDynamics/research-forge/internal/sources"
 )
 
@@ -415,6 +416,9 @@ func executeCitations(args []string, stdout, stderr io.Writer, opts globalOption
 	if err != nil {
 		return writeError(stdout, stderr, opts, 1, "citation_expand_failed", fmt.Sprintf("expand citations: %v", err))
 	}
+	if expansion.StopReason == "" {
+		expansion.StopReason = sources.StopCompleted
+	}
 	graph := citations.NewGraph()
 	for _, edge := range expansion.Edges {
 		graph.AddCitation(edge.SourceID, edge.TargetID)
@@ -508,11 +512,13 @@ func executeCitations(args []string, stdout, stderr io.Writer, opts globalOption
 				"resumeCursor": budget.ResumeCursor,
 			},
 			Outputs: map[string]any{
-				"path":     out,
-				"edges":    len(expansion.Edges),
-				"records":  len(expansion.Records),
-				"imported": imported,
-				"rawRef":   expansion.RawRef,
+				"path":          out,
+				"edges":         len(expansion.Edges),
+				"records":       len(expansion.Records),
+				"imported":      imported,
+				"rawRef":        expansion.RawRef,
+				"stop_reason":   expansion.StopReason,
+				"requests_used": expansion.RequestsUsed,
 			},
 			Warnings: []string{},
 		}); err != nil {
@@ -520,7 +526,7 @@ func executeCitations(args []string, stdout, stderr io.Writer, opts globalOption
 		}
 	}
 	if opts.JSON {
-		return writeJSON(stdout, 0, map[string]any{"path": out, "runState": runStatePath, "edges": len(expansion.Edges), "rawRef": expansion.RawRef, "imported": imported, "depth": budget.MaxDepth, "maxRecords": budget.MaxNodes, "budgetEstimate": budgetEstimate})
+		return writeJSON(stdout, 0, map[string]any{"path": out, "runState": runStatePath, "edges": len(expansion.Edges), "rawRef": expansion.RawRef, "imported": imported, "depth": budget.MaxDepth, "maxRecords": budget.MaxNodes, "budgetEstimate": budgetEstimate, "stop_reason": expansion.StopReason, "requests_used": expansion.RequestsUsed})
 	}
 	fmt.Fprintf(stdout, "wrote citation graph with %d edges to %s\n", len(expansion.Edges), out)
 	return 0
@@ -536,7 +542,7 @@ func expandCrossrefReferences(ctx context.Context, doi string) (sources.Citation
 		return sources.CitationGraphExpansion{}, err
 	}
 	seed := strings.ToLower(strings.TrimSpace(doi))
-	expansion := sources.CitationGraphExpansion{SeedID: seed, Records: map[string]sources.SourceRecord{}, RawRef: response.RawRef}
+	expansion := sources.CitationGraphExpansion{StopReason: sources.StopCompleted, RequestsUsed: 1, SeedID: seed, Records: map[string]sources.SourceRecord{}, RawRef: response.RawRef}
 	for _, record := range response.Records {
 		refID := strings.TrimSpace(record.Identifiers.DOI)
 		if refID == "" {
@@ -555,11 +561,14 @@ func expandSemanticScholarRecursive(ctx context.Context, connector sources.Seman
 	if depth <= 0 {
 		depth = 1
 	}
-	aggregate := sources.CitationGraphExpansion{SeedID: seedID, Records: map[string]sources.SourceRecord{}, RawRef: fmt.Sprintf("semantic-scholar:/recursive?seed=%s&direction=%s&limit=%d&depth=%d&max_records=%d", seedID, direction, limit, depth, maxRecords)}
+	aggregate := sources.CitationGraphExpansion{StopReason: sources.StopCompleted, SeedID: seedID, Records: map[string]sources.SourceRecord{}, RawRef: fmt.Sprintf("semantic-scholar:/recursive?seed=%s&direction=%s&limit=%d&depth=%d&max_records=%d", seedID, direction, limit, depth, maxRecords)}
 	visited := map[string]bool{}
 	seenEdges := map[string]bool{}
 	frontier := []string{seedID}
-	apiCalls := 0
+	directions := []sources.SemanticScholarGraphDirection{direction}
+	if direction == sources.SemanticScholarDirectionBoth {
+		directions = []sources.SemanticScholarGraphDirection{sources.SemanticScholarDirectionReferences, sources.SemanticScholarDirectionCitations}
+	}
 	for level := 0; level < depth && len(frontier) > 0; level++ {
 		nextSet := map[string]bool{}
 		for _, paperID := range frontier {
@@ -567,33 +576,36 @@ func expandSemanticScholarRecursive(ctx context.Context, connector sources.Seman
 				continue
 			}
 			visited[paperID] = true
-			if maxAPICalls > 0 && apiCalls >= maxAPICalls {
-				aggregate.RawRef += "&budget_stopped=max_api_calls"
-				return aggregate, nil
-			}
-			apiCalls++
-			expansion, err := connector.ExpandCitationGraph(ctx, sources.SemanticScholarGraphQuery{PaperID: paperID, Direction: direction, Limit: limit})
-			if err != nil {
-				return sources.CitationGraphExpansion{}, err
-			}
-			for _, edge := range expansion.Edges {
-				neighbors := recursiveNeighbors(edge, paperID, direction)
-				if maxRecords > 0 && !canIncludeEdgeRecords(aggregate.Records, expansion.Records, edge, maxRecords) {
-					continue
+			for _, relation := range directions {
+				if maxAPICalls > 0 && aggregate.RequestsUsed >= maxAPICalls {
+					aggregate.StopReason = sources.StopBudgetExhausted
+					return aggregate, nil
 				}
-				for _, id := range []string{edge.SourceID, edge.TargetID} {
-					if record, ok := expansion.Records[id]; ok {
-						aggregate.Records[id] = record
+				aggregate.RequestsUsed++
+				expansion, err := connector.ExpandCitationGraph(ctx, sources.SemanticScholarGraphQuery{PaperID: paperID, Direction: relation, Limit: limit})
+				if err != nil {
+					return sources.CitationGraphExpansion{}, err
+				}
+				for _, edge := range expansion.Edges {
+					neighbors := recursiveNeighbors(edge, paperID, direction)
+					if maxRecords > 0 && !canIncludeEdgeRecords(aggregate.Records, expansion.Records, edge, maxRecords) {
+						aggregate.StopReason = sources.StopBudgetExhausted
+						continue
 					}
-				}
-				key := edge.SourceID + "\x00" + edge.TargetID
-				if !seenEdges[key] {
-					seenEdges[key] = true
-					aggregate.Edges = append(aggregate.Edges, edge)
-				}
-				for _, neighbor := range neighbors {
-					if !visited[neighbor] {
-						nextSet[neighbor] = true
+					for _, id := range []string{edge.SourceID, edge.TargetID} {
+						if record, ok := expansion.Records[id]; ok {
+							aggregate.Records[id] = record
+						}
+					}
+					key := edge.SourceID + "\x00" + edge.TargetID
+					if !seenEdges[key] {
+						seenEdges[key] = true
+						aggregate.Edges = append(aggregate.Edges, edge)
+					}
+					for _, neighbor := range neighbors {
+						if !visited[neighbor] {
+							nextSet[neighbor] = true
+						}
 					}
 				}
 			}
@@ -1158,16 +1170,14 @@ type searchBatchOptions struct {
 	WriteStats      bool
 	FetchPDFs       bool
 	Resume          bool
+	Depth           string
+	MaxRequests     int
 }
 
-type searchBatchFailure struct {
-	Source  string `json:"source"`
-	Query   string `json:"query"`
-	Error   string `json:"error"`
-	Skipped bool   `json:"skipped,omitempty"`
-}
+type searchBatchFailure = search.BatchFailure
 
 type searchBatchManifest struct {
+	search.BatchProgress
 	SchemaVersion string   `json:"schemaVersion"`
 	CreatedAt     string   `json:"createdAt"`
 	Queries       []string `json:"queries"`
@@ -1183,7 +1193,7 @@ type searchBatchManifest struct {
 	Pending       int      `json:"pending,omitempty"`
 }
 
-const usageSearchBatch = "usage: rforge search batch --queries <file> --sources all|scholarly-fast|biomedical|preprints|datasets|open|oa|openalex,crossref --out <dir> [--query <query>] [--limit N] [--continue-on-error] [--stats] [--fetch-pdfs] [--resume]"
+const usageSearchBatch = "usage: rforge search batch --queries <file> --sources all|scholarly-fast|biomedical|preprints|datasets|open|oa|openalex,crossref --out <dir> [--query <query>] [--limit N] [--depth quick|standard|comprehensive] [--max-requests N] [--continue-on-error] [--stats] [--fetch-pdfs] [--resume]"
 
 func executeSearchBatch(args []string, stdout, stderr io.Writer, opts globalOptions) int {
 	batch, ok := parseSearchBatch(args)
@@ -1222,6 +1232,13 @@ func executeSearchBatch(args []string, stdout, stderr io.Writer, opts globalOpti
 		return writeError(stdout, stderr, opts, 1, "search_batch_state_read_failed", stateErr.Error())
 	}
 	resuming := batch.Resume && stateExists
+	budget, _ := search.DepthBudget(batch.Depth)
+	if resuming && priorState.Budget.Depth != "" && batch.Depth == "" {
+		budget = priorState.Budget
+	}
+	if batch.MaxRequests > 0 {
+		budget.MaxAPICalls = batch.MaxRequests
+	}
 	now := time.Now().UTC().Format(time.RFC3339)
 	state := searchBatchState{
 		SchemaVersion: "1",
@@ -1235,39 +1252,20 @@ func executeSearchBatch(args []string, stdout, stderr io.Writer, opts globalOpti
 	}
 	allPapers := []library.PaperRecord{}
 	failures := []searchBatchFailure{}
-	keptFailureCount := 0
 	if resuming {
-		priorPapers, loadErr := loadSearchBatchResults(filepath.Join(batch.OutDir, "results.jsonl"))
+		priorPapers, loadErr := search.LoadCheckpointResults(filepath.Join(batch.OutDir, "results.jsonl"), priorState.ResultCount)
 		if loadErr != nil {
 			return writeError(stdout, stderr, opts, 1, "search_batch_results_read_failed", loadErr.Error())
 		}
 		allPapers = priorPapers
 		state = priorState
 		state.UpdatedAt = now
-		state.Queries = queries
-		state.Sources = batch.Sources
-		state.Limit = batch.Limit
-		state.Interrupted = false
-		currentPairs := map[string]bool{}
-		for _, query := range queries {
-			for _, source := range batch.Sources {
-				currentPairs[searchBatchPairKey(source, query)] = true
-			}
-		}
-		kept := state.Failures[:0]
-		for _, failure := range priorState.Failures {
-			if failure.Query == "" {
-				continue // source-level skips are recomputed on every run
-			}
-			if currentPairs[searchBatchPairKey(failure.Source, failure.Query)] {
-				continue // in-sweep failures are retried below
-			}
-			kept = append(kept, failure)
-		}
-		state.Failures = kept
-		failures = append(failures, kept...)
-		keptFailureCount = len(kept)
+		state.Resume(queries, batch.Sources, batch.Limit)
+		failures = append(failures, state.Failures...)
 	}
+	state.Budget = budget
+	resultCount := len(allPapers)
+	state.ResultCount = &resultCount
 	output, err := beginSearchBatchOutputTransaction(batch.OutDir, queries, batch.Sources, batch.WriteStats)
 	if err != nil {
 		return writeError(stdout, stderr, opts, 1, "search_batch_output_snapshot_failed", err.Error())
@@ -1280,6 +1278,12 @@ func executeSearchBatch(args []string, stdout, stderr io.Writer, opts globalOpti
 	// resumable checkpoint instead of orphaning results in a temp dir.
 	failBatch := func(kind, message string) int {
 		_ = output.rollback(errors.New(kind + ": " + message))
+		// Roll back results, not consumed network work, when extending an existing run.
+		if resuming && state.RequestsUsed > priorState.RequestsUsed {
+			if err := preserveSearchBatchUsage(batch.OutDir, priorState, state); err != nil {
+				message += "; preserve request accounting: " + err.Error()
+			}
+		}
 		return writeError(stdout, stderr, opts, 1, kind, message)
 	}
 	rawDir := filepath.Join(batch.OutDir, "raw")
@@ -1288,10 +1292,13 @@ func executeSearchBatch(args []string, stdout, stderr io.Writer, opts globalOpti
 	}
 	var priorResultsData []byte
 	if resuming {
-		priorResultsData, err = os.ReadFile(filepath.Join(batch.OutDir, "results.jsonl"))
-		if err != nil && !os.IsNotExist(err) {
-			return failBatch("search_batch_results_read_failed", err.Error())
+		var b strings.Builder
+		for _, paper := range allPapers {
+			if err := writeJSONLine(&b, paper); err != nil {
+				return failBatch("search_batch_results_read_failed", err.Error())
+			}
 		}
+		priorResultsData = []byte(b.String())
 	}
 	resultsFile, err := openSearchBatchIncremental(filepath.Join(batch.OutDir, "results.jsonl"), priorResultsData, !resuming)
 	if err != nil {
@@ -1319,7 +1326,7 @@ func executeSearchBatch(args []string, stdout, stderr io.Writer, opts globalOpti
 			failures = append(failures, failure)
 			skippedCount++
 			_ = writeJSONLine(failuresFile, failure)
-			state.recordFailure(failure)
+			state.RecordFailure(failure)
 		}
 	}
 	if err := writeSearchBatchState(batch.OutDir, state); err != nil {
@@ -1328,16 +1335,12 @@ func executeSearchBatch(args []string, stdout, stderr io.Writer, opts globalOpti
 
 	ctx, interruptSignal, stopSignals := newSearchBatchSignalContext()
 	defer stopSignals()
-	interrupted := false
-	resumedPairs := 0
 	recordFailure := func(source, query string, failureErr error) error {
 		failure := searchBatchFailure{Source: source, Query: query, Error: failureErr.Error()}
 		failures = append(failures, failure)
 		failureCount++
 		_ = writeJSONLine(failuresFile, failure)
-		state.recordFailure(failure)
-		state.UpdatedAt = time.Now().UTC().Format(time.RFC3339)
-		return writeSearchBatchState(batch.OutDir, state)
+		return nil
 	}
 	recordCompleted := func(source, query, rawName string, papers []library.PaperRecord) error {
 		for _, paper := range papers {
@@ -1346,62 +1349,52 @@ func executeSearchBatch(args []string, stdout, stderr io.Writer, opts globalOpti
 				return err
 			}
 		}
-		state.recordCompleted(searchBatchStatePair{Source: source, Query: query, RawFile: filepath.Join("raw", rawName), Records: len(papers)})
-		state.clearFailure(source, query)
-		state.UpdatedAt = time.Now().UTC().Format(time.RFC3339)
-		return writeSearchBatchState(batch.OutDir, state)
+		return nil
 	}
-	for qi, query := range queries {
-		if ctx.Err() != nil {
-			interrupted = true
-			break
-		}
-		for _, source := range batch.Sources {
-			if configurationErrors[source] != "" {
-				continue
-			}
-			if state.hasCompleted(source, query) {
-				resumedPairs++
-				continue
-			}
-			if ctx.Err() != nil {
-				interrupted = true
-				break
-			}
+	resumedPairs, runErr := search.RunBatch(ctx, &state, allPapers, configurationErrors, batch.ContinueOnError, search.BatchHooks{
+		Search: func(ctx context.Context, source, query string) ([]library.PaperRecord, error) {
 			connector, _ := searchConnector(source)
 			response, err := connector.Search(ctx, sources.SourceQuery{Terms: query, Limit: batch.Limit, Filters: map[string]string{}})
 			if err != nil {
-				if ctx.Err() != nil {
-					// The pair was cut off mid-flight; leave it pending so a
-					// later --resume picks it up.
-					interrupted = true
-					break
-				}
-				if stateErr := recordFailure(source, query, err); stateErr != nil {
-					return failBatch("search_batch_state_write_failed", stateErr.Error())
-				}
-				if !batch.ContinueOnError {
-					return failBatch("search_batch_failed", fmt.Sprintf("%s %q: %v", source, query, err))
-				}
-				continue
+				return nil, err
 			}
-			papers, err := sources.PaperRecords(response)
-			if err != nil {
-				if stateErr := recordFailure(source, query, err); stateErr != nil {
-					return failBatch("search_batch_state_write_failed", stateErr.Error())
-				}
-				if !batch.ContinueOnError {
-					return failBatch("search_batch_normalize_failed", fmt.Sprintf("%s %q: %v", source, query, err))
-				}
-				continue
-			}
+			return sources.PaperRecords(response)
+		},
+		Checkpoint: func() error {
+			state.UpdatedAt = time.Now().UTC().Format(time.RFC3339)
+			return writeSearchBatchState(batch.OutDir, state)
+		},
+		Failed: recordFailure,
+		Completed: func(source, query string, qi int, papers []library.PaperRecord) (string, error) {
 			rawName := fmt.Sprintf("search-%s-%03d-%s.txt", source, qi+1, slugifySearchBatch(query))
 			if err := writeSearchBatchRaw(filepath.Join(rawDir, rawName), papers); err != nil {
-				return failBatch("search_batch_write_failed", err.Error())
+				return "", err
 			}
-			if err := recordCompleted(source, query, rawName, papers); err != nil {
-				return failBatch("search_batch_state_write_failed", err.Error())
-			}
+			return filepath.Join("raw", rawName), recordCompleted(source, query, rawName, papers)
+		},
+	})
+	if runErr != nil {
+		return failBatch("search_batch_failed", runErr.Error())
+	}
+	interrupted := state.Interrupted
+	// Rewrite the authoritative remaining failures, retaining unattempted retries
+	// but removing stale errors for pairs that have now succeeded.
+	failures = append([]searchBatchFailure{}, state.Failures...)
+	failureCount, skippedCount = 0, 0
+	if err := failuresFile.Truncate(0); err != nil {
+		return failBatch("search_batch_write_failed", err.Error())
+	}
+	if _, err := failuresFile.Seek(0, io.SeekStart); err != nil {
+		return failBatch("search_batch_write_failed", err.Error())
+	}
+	for _, failure := range failures {
+		if failure.Skipped {
+			skippedCount++
+		} else {
+			failureCount++
+		}
+		if err := writeJSONLine(failuresFile, failure); err != nil {
+			return failBatch("search_batch_write_failed", err.Error())
 		}
 	}
 	if err := resultsFile.Close(); err != nil {
@@ -1423,7 +1416,7 @@ func executeSearchBatch(args []string, stdout, stderr io.Writer, opts globalOpti
 		return failBatch("search_batch_write_failed", err.Error())
 	}
 	pending := searchBatchPendingPairs(&state, queries, batch.Sources, configurationErrors)
-	manifest := searchBatchManifest{SchemaVersion: "1", CreatedAt: time.Now().UTC().Format(time.RFC3339), Queries: queries, Sources: batch.Sources, Limit: batch.Limit, Results: len(allPapers), Deduped: len(deduped), Failures: failureCount + keptFailureCount, Skipped: skippedCount, Resumed: resuming, ResumedPairs: resumedPairs, Interrupted: interrupted, Pending: pending}
+	manifest := searchBatchManifest{BatchProgress: state.BatchProgress, SchemaVersion: "1", CreatedAt: time.Now().UTC().Format(time.RFC3339), Queries: queries, Sources: batch.Sources, Limit: batch.Limit, Results: len(allPapers), Deduped: len(deduped), Failures: failureCount, Skipped: skippedCount, Resumed: resuming, ResumedPairs: resumedPairs, Interrupted: interrupted, Pending: pending}
 	if err := writeJSONFile(filepath.Join(workOutDir, "manifest.json"), manifest); err != nil {
 		return failBatch("search_batch_write_failed", err.Error())
 	}
@@ -1449,7 +1442,7 @@ func executeSearchBatch(args []string, stdout, stderr io.Writer, opts globalOpti
 		fetchResult = fetchProjectPDFs(context.Background(), opts.Project, deduped)
 	}
 	if err := output.commit(); err != nil {
-		return writeError(stdout, stderr, opts, 1, "search_batch_output_commit_failed", err.Error())
+		return failBatch("search_batch_output_commit_failed", err.Error())
 	}
 	exitCode := 0
 	if interrupted {
@@ -1460,13 +1453,13 @@ func executeSearchBatch(args []string, stdout, stderr io.Writer, opts globalOpti
 		}
 	}
 	if opts.JSON {
-		payload := map[string]any{"out": batch.OutDir, "results": len(allPapers), "deduped": len(deduped), "failures": failureCount + keptFailureCount, "skippedSources": skippedCount, "manifest": filepath.Join(batch.OutDir, "manifest.json"), "imported": imported, "skippedDuplicate": skippedDuplicate, "skippedNoIdentifier": skippedNoIdentifier, "fetched": len(fetchResult.assets), "fetchFailed": len(fetchResult.failures), "fetchSkipped": fetchResult.skipped, "resumed": resuming, "resumedPairs": resumedPairs, "interrupted": interrupted, "pending": pending}
+		payload := map[string]any{"out": batch.OutDir, "results": len(allPapers), "deduped": len(deduped), "failures": failureCount, "skippedSources": skippedCount, "manifest": filepath.Join(batch.OutDir, "manifest.json"), "imported": imported, "skippedDuplicate": skippedDuplicate, "skippedNoIdentifier": skippedNoIdentifier, "fetched": len(fetchResult.assets), "fetchFailed": len(fetchResult.failures), "fetchSkipped": fetchResult.skipped, "resumed": resuming, "resumedPairs": resumedPairs, "interrupted": interrupted, "pending": pending, "stop_reason": state.StopReason, "requests_used": state.RequestsUsed, "coverage": state.Coverage, "budget": state.Budget}
 		if interrupted {
 			payload["resumeCommand"] = searchBatchResumeHint(batch.OutDir, batch)
 		}
 		return writeJSON(stdout, exitCode, payload)
 	}
-	fmt.Fprintf(stdout, "searched %d querie(s) across %d source(s): %d records, %d deduped, %d failure(s), %d skipped source(s)\n", len(queries), len(batch.Sources), len(allPapers), len(deduped), failureCount+keptFailureCount, skippedCount)
+	fmt.Fprintf(stdout, "searched %d querie(s) across %d source(s): %d records, %d deduped, %d failure(s), %d skipped source(s)\n", len(queries), len(batch.Sources), len(allPapers), len(deduped), failureCount, skippedCount)
 	if resuming {
 		fmt.Fprintf(stdout, "resumed from checkpoint: skipped %d completed pair(s), retried failed pair(s)\n", resumedPairs)
 	}
@@ -1480,6 +1473,7 @@ func executeSearchBatch(args []string, stdout, stderr io.Writer, opts globalOpti
 		fmt.Fprintf(stdout, "interrupted: %d pair(s) pending; checkpoint saved to %s\n", pending, filepath.Join(batch.OutDir, searchBatchStateFile))
 		fmt.Fprintf(stdout, "resume with: %s\n", searchBatchResumeHint(batch.OutDir, batch))
 	} else {
+		fmt.Fprintf(stdout, "stop: %s; requests used: %d/%d; unique records: %d\n", state.StopReason, state.RequestsUsed, state.Budget.MaxAPICalls, state.Coverage.UniqueRecords)
 		fmt.Fprintf(stdout, "wrote %s\n", batch.OutDir)
 	}
 	return exitCode
@@ -1544,6 +1538,12 @@ func searchBatchResumeHint(outDir string, batch searchBatchOptions) string {
 		}
 	}
 	parts = append(parts, "--sources", strings.Join(batch.Sources, ","), "--out", outDir, "--limit", strconv.Itoa(batch.Limit), "--continue-on-error", "--resume")
+	if batch.Depth != "" {
+		parts = append(parts, "--depth", batch.Depth)
+	}
+	if batch.MaxRequests > 0 {
+		parts = append(parts, "--max-requests", strconv.Itoa(batch.MaxRequests))
+	}
 	return strings.Join(parts, " ")
 }
 
@@ -1805,7 +1805,11 @@ func executeSearchResume(args []string, stdout, stderr io.Writer, opts globalOpt
 	// Prior results must survive a same-dir resume: seed the staged
 	// results.jsonl with what the topic dir already holds and append the
 	// retried records, instead of replacing the accumulation.
-	priorPapers, err := loadSearchBatchResults(filepath.Join(outDir, "results.jsonl"))
+	state, stateExists, stateErr := readSearchBatchState(outDir)
+	if stateErr != nil {
+		return writeError(stdout, stderr, opts, 1, "search_resume_state_read_failed", stateErr.Error())
+	}
+	priorPapers, err := search.LoadCheckpointResults(filepath.Join(outDir, "results.jsonl"), state.ResultCount)
 	if err != nil {
 		return writeError(stdout, stderr, opts, 1, "search_resume_results_read_failed", err.Error())
 	}
@@ -1816,12 +1820,13 @@ func executeSearchResume(args []string, stdout, stderr io.Writer, opts globalOpt
 		rawNames[qi] = searchResumeRawName(rawDir, failure.Source, failure.Query, qi+1)
 	}
 	relativePaths := []string{"results.jsonl", "failures.jsonl"}
-	state, stateExists, stateErr := readSearchBatchState(outDir)
-	if stateErr != nil {
-		return writeError(stdout, stderr, opts, 1, "search_resume_state_read_failed", stateErr.Error())
-	}
 	if stateExists {
 		relativePaths = append(relativePaths, searchBatchStateFile)
+	}
+	var manifest searchBatchManifest
+	manifestExists := readJSONFile(filepath.Join(outDir, "manifest.json"), &manifest) == nil && manifest.SchemaVersion == "1"
+	if manifestExists {
+		relativePaths = append(relativePaths, "manifest.json")
 	}
 	for _, rawName := range rawNames {
 		relativePaths = append(relativePaths, filepath.Join("raw", rawName))
@@ -1853,64 +1858,71 @@ func executeSearchResume(args []string, stdout, stderr io.Writer, opts globalOpt
 		}
 	}
 
-	results := 0
-	newFailures := 0
-	for qi, f := range pending {
-		connector, ok := searchConnector(f.Source)
-		if !ok {
-			newFailures++
-			failure := searchBatchFailure{Source: f.Source, Query: f.Query, Error: "unknown source"}
-			if err := writeJSONLine(newFailuresFile, failure); err != nil {
-				return writeError(stdout, stderr, opts, 1, "search_resume_write_failed", err.Error())
+	results, newFailures := 0, 0
+	originalState := state
+	names := map[string]string{}
+	for i, f := range pending {
+		names[search.PairKey(f.Source, f.Query)] = rawNames[i]
+		state.RecordFailure(f)
+	}
+	state.Limit = limit
+	_, runErr := search.RetryBatch(context.Background(), &state, priorPapers, pending, search.BatchHooks{
+		Search: func(ctx context.Context, source, query string) ([]library.PaperRecord, error) {
+			connector, ok := searchConnector(source)
+			if !ok {
+				return nil, fmt.Errorf("unknown source")
 			}
-			if stateExists {
-				state.recordFailure(failure)
+			response, err := connector.Search(ctx, sources.SourceQuery{Terms: query, Limit: limit, Filters: map[string]string{}})
+			if err != nil {
+				return nil, err
 			}
-			continue
+			return sources.PaperRecords(response)
+		},
+		Checkpoint: func() error {
+			if !stateExists {
+				return nil
+			}
+			state.UpdatedAt = time.Now().UTC().Format(time.RFC3339)
+			// Staged results and pair completion commit together; only usage is
+			// durable before that commit, so a killed retry cannot lose its budget.
+			usage := originalState
+			usage.RequestsUsed = state.RequestsUsed
+			usage.Budget = state.Budget
+			usage.StopReason = state.StopReason
+			usage.UpdatedAt = state.UpdatedAt
+			if err := writeSearchBatchState(outDir, usage); err != nil {
+				return err
+			}
+			return writeSearchBatchState(workOutDir, state)
+		},
+		Failed: func(string, string, error) error { return nil },
+		Completed: func(source, query string, _ int, papers []library.PaperRecord) (string, error) {
+			rawName := names[search.PairKey(source, query)]
+			if err := writeSearchBatchRaw(filepath.Join(workOutDir, "raw", rawName), papers); err != nil {
+				return "", err
+			}
+			for _, paper := range papers {
+				if err := writeJSONLine(resultsFile, paper); err != nil {
+					return "", err
+				}
+				results++
+			}
+			return filepath.Join("raw", rawName), nil
+		},
+	})
+	if runErr != nil {
+		if stateExists {
+			if err := preserveSearchBatchUsage(outDir, originalState, state); err != nil {
+				runErr = fmt.Errorf("%w; preserve accounting: %v", runErr, err)
+			}
 		}
-		response, searchErr := connector.Search(context.Background(), sources.SourceQuery{Terms: f.Query, Limit: limit, Filters: map[string]string{}})
-		if searchErr != nil {
-			newFailures++
-			failure := searchBatchFailure{Source: f.Source, Query: f.Query, Error: searchErr.Error()}
-			if err := writeJSONLine(newFailuresFile, failure); err != nil {
-				return writeError(stdout, stderr, opts, 1, "search_resume_write_failed", err.Error())
-			}
-			if stateExists {
-				state.recordFailure(failure)
-			}
-			continue
-		}
-		papers, normErr := sources.PaperRecords(response)
-		if normErr != nil {
-			newFailures++
-			failure := searchBatchFailure{Source: f.Source, Query: f.Query, Error: normErr.Error()}
-			if err := writeJSONLine(newFailuresFile, failure); err != nil {
-				return writeError(stdout, stderr, opts, 1, "search_resume_write_failed", err.Error())
-			}
-			if stateExists {
-				state.recordFailure(failure)
-			}
-			continue
-		}
-		if err := writeSearchBatchRaw(filepath.Join(workOutDir, "raw", rawNames[qi]), papers); err != nil {
+		return writeError(stdout, stderr, opts, 1, "search_resume_failed", runErr.Error())
+	}
+	for _, failure := range state.Failures {
+		if err := writeJSONLine(newFailuresFile, failure); err != nil {
 			return writeError(stdout, stderr, opts, 1, "search_resume_write_failed", err.Error())
 		}
-		for _, paper := range papers {
-			results++
-			if err := writeJSONLine(resultsFile, paper); err != nil {
-				return writeError(stdout, stderr, opts, 1, "search_resume_write_failed", err.Error())
-			}
-		}
-		if stateExists {
-			state.recordCompleted(searchBatchStatePair{Source: f.Source, Query: f.Query, RawFile: filepath.Join("raw", rawNames[qi]), Records: len(papers)})
-			state.clearFailure(f.Source, f.Query)
-		}
-	}
-	if stateExists {
-		state.UpdatedAt = time.Now().UTC().Format(time.RFC3339)
-		if err := writeSearchBatchState(outDir, state); err != nil {
-			return writeError(stdout, stderr, opts, 1, "search_resume_state_write_failed", err.Error())
-		}
+		newFailures++
 	}
 	if err := resultsFile.Close(); err != nil {
 		return writeError(stdout, stderr, opts, 1, "search_resume_write_failed", err.Error())
@@ -1918,11 +1930,28 @@ func executeSearchResume(args []string, stdout, stderr io.Writer, opts globalOpt
 	if err := newFailuresFile.Close(); err != nil {
 		return writeError(stdout, stderr, opts, 1, "search_resume_write_failed", err.Error())
 	}
+	if manifestExists {
+		manifest.BatchProgress = state.BatchProgress
+		manifest.Results = len(priorPapers) + results
+		manifest.Deduped = state.Coverage.UniqueRecords
+		manifest.Failures = newFailures
+		manifest.Resumed = true
+		manifest.Interrupted = state.Interrupted
+		manifest.Pending = search.PendingPairs(&state, state.Queries, state.Sources, nil)
+		if err := writeJSONFile(filepath.Join(workOutDir, "manifest.json"), manifest); err != nil {
+			return writeError(stdout, stderr, opts, 1, "search_resume_write_failed", err.Error())
+		}
+	}
 	if err := output.commit(); err != nil {
+		if stateExists {
+			if usageErr := preserveSearchBatchUsage(outDir, originalState, state); usageErr != nil {
+				err = fmt.Errorf("%w; preserve accounting: %v", err, usageErr)
+			}
+		}
 		return writeError(stdout, stderr, opts, 1, "search_resume_output_commit_failed", err.Error())
 	}
 	if opts.JSON {
-		return writeJSON(stdout, 0, map[string]any{"resumed": len(pending), "results": results, "newFailures": newFailures, "totalResults": len(priorPapers) + results})
+		return writeJSON(stdout, 0, map[string]any{"resumed": len(pending), "results": results, "newFailures": newFailures, "totalResults": len(priorPapers) + results, "stop_reason": state.StopReason, "requests_used": state.RequestsUsed, "budget": state.Budget, "coverage": state.Coverage})
 	}
 	fmt.Fprintf(stdout, "resumed %d failed quer(ies): %d records, %d still failed\n", len(pending), results, newFailures)
 	fmt.Fprintln(stdout, "tip: for interrupted sweeps, `rforge search batch --resume --out <dir>` also completes never-run queries from the checkpoint")
@@ -3033,6 +3062,25 @@ func parseSearchBatch(args []string) (searchBatchOptions, bool) {
 	batch := searchBatchOptions{Limit: 25}
 	for i := 0; i < len(args); i++ {
 		switch args[i] {
+		case "--depth":
+			if i+1 >= len(args) {
+				return searchBatchOptions{}, false
+			}
+			if _, err := search.DepthBudget(args[i+1]); err != nil || args[i+1] == "" {
+				return searchBatchOptions{}, false
+			}
+			batch.Depth = args[i+1]
+			i++
+		case "--max-requests":
+			if i+1 >= len(args) {
+				return searchBatchOptions{}, false
+			}
+			n, err := strconv.Atoi(args[i+1])
+			if err != nil || n <= 0 {
+				return searchBatchOptions{}, false
+			}
+			batch.MaxRequests = n
+			i++
 		case "--queries", "--queries-file":
 			if i+1 >= len(args) {
 				return searchBatchOptions{}, false
@@ -3185,24 +3233,7 @@ func writeSearchBatchJSONL(path string, papers []library.PaperRecord) error {
 }
 
 func dedupeSearchBatchPapers(papers []library.PaperRecord) []library.PaperRecord {
-	seen := map[string]int{}
-	out := []library.PaperRecord{}
-	for _, paper := range papers {
-		key := strings.ToLower(strings.TrimSpace(paper.Identifiers.DOI))
-		if key == "" {
-			key = strings.ToLower(strings.Join(strings.Fields(paper.Title), " "))
-		}
-		if key == "" {
-			key = fmt.Sprintf("record-%d", len(out))
-		}
-		if existing, ok := seen[key]; ok {
-			out[existing] = library.MergeDuplicate(out[existing], paper)
-			continue
-		}
-		seen[key] = len(out)
-		out = append(out, paper)
-	}
-	return out
+	return search.DedupePapers(papers)
 }
 
 func writeSearchBatchMarkdown(path string, papers []library.PaperRecord, failures []searchBatchFailure) error {
