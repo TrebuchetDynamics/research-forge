@@ -20,6 +20,9 @@ func TestSourceAPIDriftDashboardCoversCoreConnectorsShapeChangesAndProvenance(t 
 		}
 	}
 	openalex, _ := dashboard.Entry("openalex")
+	if openalex.ProvenanceRef != "provenance/events.jsonl#connector=openalex" {
+		t.Fatalf("default provenance ref = %q", openalex.ProvenanceRef)
+	}
 	if !entryHasAlert(openalex, "response_shape_changed") {
 		t.Fatalf("missing shape-change alert: %#v", openalex.Alerts)
 	}

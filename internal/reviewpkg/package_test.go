@@ -115,6 +115,25 @@ func TestCreateSkipsSymlinkedProjectFiles(t *testing.T) {
 	}
 }
 
+func TestCreateRejectsProvenanceThroughSymlinkedParent(t *testing.T) {
+	project := t.TempDir()
+	write(t, filepath.Join(project, "rforge.project.toml"), "title='Review'\n")
+	write(t, filepath.Join(project, "rforge.lock.json"), `{"version":"1"}`)
+	outside := t.TempDir()
+	write(t, filepath.Join(outside, "events.jsonl"), `{"action":"private"}`)
+	if err := os.Symlink(outside, filepath.Join(project, "provenance")); err != nil {
+		t.Skipf("symlink unsupported: %v", err)
+	}
+	out := filepath.Join(t.TempDir(), "review.rforgepkg")
+
+	if _, err := Create(project, out, Options{}); err == nil {
+		t.Fatal("Create accepted a provenance directory symlink escaping the project")
+	}
+	if _, err := os.Stat(out); !os.IsNotExist(err) {
+		t.Fatalf("failed Create left package output behind: %v", err)
+	}
+}
+
 func TestCreateRejectsNonRegularNamedProjectArtifact(t *testing.T) {
 	project := t.TempDir()
 	if err := os.Mkdir(filepath.Join(project, "rforge.project.toml"), 0o755); err != nil {

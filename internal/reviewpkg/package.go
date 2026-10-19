@@ -14,7 +14,9 @@ import (
 	"time"
 
 	"github.com/TrebuchetDynamics/research-forge/internal/documents"
+	"github.com/TrebuchetDynamics/research-forge/internal/filetxn"
 	"github.com/TrebuchetDynamics/research-forge/internal/library"
+	"github.com/TrebuchetDynamics/research-forge/internal/provenance"
 )
 
 type Options struct {
@@ -114,7 +116,8 @@ func Create(projectPath, packagePath string, opts Options) (Package, error) {
 	now := clock().UTC()
 	manifest := Manifest{SchemaVersion: packageSchemaVersion, PackageID: "rforgepkg-" + now.Format("20060102T150405Z"), CreatedAt: now.Format(time.RFC3339), CreatedBy: strings.TrimSpace(opts.CreatedBy), ResearchForgeVersion: "dev", Question: strings.TrimSpace(opts.Question), MetaAnalysisSpineVersion: metaAnalysisSpineVersion, PackageRole: metaAnalysisPackageRole, ProjectManifestRef: "project/rforge.project.toml", LockfileRef: "project/rforge.lock.json", LockfileRefs: []string{"project/rforge.lock.json"}, RedactionReportRef: "redaction-report.json", ChecksumManifestRef: "checksums.sha256", ReplayCommand: packageReplayCommand, AuditCommand: packageAuditCommand}
 	redaction := RedactionReport{SchemaVersion: "1", Policy: "exclude private local paths, credentials, restricted documents, reviewer-private notes, caches"}
-	copyPlan := []string{"rforge.project.toml", "rforge.lock.json", "data/provenance.jsonl", "data/forge-state.json", "data/connector-capabilities.json", "data/library.json", "data/privacy-licensing-review.json", "data/legal-acquisition-queue.json", "data/document-assets.json", "data/identity-decisions.jsonl", "data/screening.events.json", "data/screening-audit.jsonl", "data/evidence.schemas.json", "data/evidence.items.json", "data/claim-trace.json"}
+	provenancePath := provenance.ReadRelativePath(projectPath)
+	copyPlan := []string{"rforge.project.toml", "rforge.lock.json", provenancePath, "data/forge-state.json", "data/connector-capabilities.json", "data/library.json", "data/privacy-licensing-review.json", "data/legal-acquisition-queue.json", "data/document-assets.json", "data/identity-decisions.jsonl", "data/screening.events.json", "data/screening-audit.jsonl", "data/evidence.schemas.json", "data/evidence.items.json", "data/claim-trace.json"}
 	for _, rel := range copyPlan {
 		if err := copyIfExists(projectPath, packagePath, rel); err != nil {
 			return Package{}, fmt.Errorf("copy project artifact %s: %w", rel, err)
@@ -148,8 +151,8 @@ func Create(projectPath, packagePath string, opts Options) (Package, error) {
 			return Package{}, fmt.Errorf("copy project directory %s: %w", dir, err)
 		}
 	}
-	if exists(filepath.Join(packagePath, "project", "data", "provenance.jsonl")) {
-		manifest.ProvenanceRef = "project/data/provenance.jsonl"
+	if exists(filepath.Join(packagePath, "project", filepath.FromSlash(provenancePath))) {
+		manifest.ProvenanceRef = "project/" + provenancePath
 	}
 	if exists(filepath.Join(packagePath, "project", "data", "identity-decisions.jsonl")) {
 		manifest.DedupeDecisionRef = "project/data/identity-decisions.jsonl"
@@ -458,7 +461,7 @@ func copyIfExists(projectPath, packagePath, rel string) error {
 	if err := os.MkdirAll(filepath.Dir(dst), 0o755); err != nil {
 		return err
 	}
-	in, err := os.Open(src)
+	in, err := filetxn.OpenRegularInRoot(projectPath, filepath.FromSlash(rel))
 	if err != nil {
 		return err
 	}

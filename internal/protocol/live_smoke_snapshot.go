@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/TrebuchetDynamics/research-forge/internal/filetxn"
+	"github.com/TrebuchetDynamics/research-forge/internal/provenance"
 )
 
 const (
@@ -144,7 +145,7 @@ func BuildSourceAPIDriftDashboard(registry ConnectorCapabilityRegistry, current 
 		}
 		entry := SourceAPIDriftDashboardEntry{ConnectorID: connector.ID, Label: connector.Label, Status: result.Status, CheckedAt: result.CheckedAt, EndpointFingerprint: result.EndpointFingerprint, ObservedFields: append([]string{}, result.ObservedFields...), ProvenanceRef: provenanceRefs[connector.ID]}
 		if entry.ProvenanceRef == "" {
-			entry.ProvenanceRef = "data/provenance.jsonl#connector=" + connector.ID
+			entry.ProvenanceRef = provenance.EventsRelativePath + "#connector=" + connector.ID
 		}
 		for _, alert := range baseAlerts {
 			if alert.ConnectorID == connector.ID {
