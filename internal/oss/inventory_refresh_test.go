@@ -8,6 +8,28 @@ import (
 	"testing"
 )
 
+func TestRefreshInventoryGitHubMetadataPreservesReviewedLicenseOnNoAssertion(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		_, _ = w.Write([]byte(`{"stargazers_count":123,"license":{"spdx_id":"NOASSERTION"}}`))
+	}))
+	defer server.Close()
+
+	path := filepath.Join(t.TempDir(), "manifest.json")
+	if err := os.WriteFile(path, []byte(`{"schemaVersion":"1","entries":[{"id":"tool","name":"Tool","repository":"owner/tool","area":"test","disposition":"pattern-reference","licensePolicy":"reviewed","licenseSPDX":"BSD-2-Clause","note":"tool.md","risk":"none","nextSlice":"refresh"}]}`), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := RefreshInventoryGitHubMetadata(path, GitHubMetadataOptions{BaseURL: server.URL, Client: server.Client()}); err != nil {
+		t.Fatal(err)
+	}
+	manifest, err := LoadInventoryManifest(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := manifest.Entries[0].LicenseSPDX; got != "BSD-2-Clause" {
+		t.Fatalf("LicenseSPDX = %q, want reviewed value preserved", got)
+	}
+}
+
 func TestRefreshInventoryGitHubMetadataUpdatesRepositoryEntries(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != "/repos/zotero/zotero" {
