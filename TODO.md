@@ -1037,28 +1037,6 @@ Owner answers (2026-10-19):
 
 ## Needs decision
 
-- [ ] V0-5 — Decide whether the runner may push main to origin
-- Status: open
-- Goal: RF-V0 — Land and harden the in-progress research commands.
-- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan); runner log 2026-10-19 06:27:44 "Pushed main to origin/main" (published `d8a3fda`..`934f928`); `PI_AUTOWORK_PUSH` defaults to `1` in the Autowork toolset (`coordinator.py`), so every runner merge into `main` is pushed.
-- Scope: the owner chooses: keep pushing (runner merges are published as they land) or set `PI_AUTOWORK_PUSH=0` for this repository's service so merged `main` stays local until the owner pushes. Planner's recommendation: `PI_AUTOWORK_PUSH=0` until the first runner batch has been reviewed, because this cycle's commits change provenance semantics and public plugin names.
-- Acceptance: the chosen setting is recorded here and visible in `autowork status .` or the service environment.
-- Checks: systemctl --user show 'pi-autowork@research-forge.service' -p Environment
-- Dependencies: None.
-- Ownership: ResearchForge owner (publication authority).
-- Touches: none
-
-- [ ] V0-6 — Restart the runner after verifying its repository setup
-- Status: open
-- Goal: RF-V0 — Land and harden the in-progress research commands.
-- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan); runner state `~/.local/state/pi-autowork/d0648c07b9fe8e30`; `.git/config` merge drivers `docs-sync-goals`/`docs-sync-todo`/`docs-sync-archive` point at release `062d8bc`, which the 06:29 self-update removed; the session worktree holds the runner's `.gitattributes` untracked after the repair; the service restarted every minute against a broken repository with no backoff limit (restart counter above 23).
-- Scope: confirm the runner re-registers merge drivers against an existing release on start (or re-run its setup), let it re-commit `.gitattributes` in its session, then `autowork start .` and watch the first dispatch. Report the Autowork-side defects upstream (merge-driver paths not refreshed on self-update; unbounded crash-loop restarts; default push) if the owner wants them filed.
-- Acceptance: `autowork status .` shows workers running on Now tasks; `git config core.bare` stays `false` and `git config user.email` stays the owner's after the first worker commit.
-- Checks: autowork status .; git config core.bare; git config user.email
-- Dependencies: V0-4, V0-5.
-- Ownership: ResearchForge owner (runner operation).
-- Touches: none
-
 - [ ] V-B4-lock — Owner approves and locks the gold sets
 - Status: open
 - Goal: RF-BENCH — Measure research quality against held-out ground truth.
@@ -1134,7 +1112,7 @@ Generated from `goals.json` by `goals.py render`. `met` requires an executed, pa
 
 | Goal | Status | Evidence | Task |
 | --- | --- | --- | --- |
-| RF-V0: Land and harden the in-progress research commands | partial | Executed check: pass ([V0-4](TODO.archive.md#v0-4)) | V0-2, V0-3, V0-5, V0-6 |
+| RF-V0: Land and harden the in-progress research commands | partial | Executed check: pass ([V0-4](TODO.archive.md#v0-4)) | V0-2, V0-3 |
 | RF-AGENT: Make the agent contract correct: install docs, search depth and provenance levels | unmet | — | V-A1, V-A2, V-A3, V-A4 |
 | RF-BENCH: Measure research quality against held-out ground truth | unmet | — | V-B1, V-B2, V-B3, V-B4, V-B4-lock, V-B5, V-B6, V-B6-run |
 | RF-MCP: Expose the engine through a thin MCP adapter over shared services | unmet | — | V-C1, V-C2, V-C3, V-C4 |
