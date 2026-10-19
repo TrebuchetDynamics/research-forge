@@ -37,13 +37,25 @@ Each `EvidenceReference` contains:
 - `contentHash` (optional): `sha256:<64 lowercase hexadecimal digits>` over the
   complete stored passage's UTF-8 text, not the quote, PDF bytes or identifier.
   No extra quote normalization is applied before hashing; parser normalization
-  is part of the versioned stored text. The same digest must be used by V-D1.
+  is part of the versioned stored text. `parsing.Passage.ContentHash` stores this
+  digest. `EnrichParsedDocumentModel` recomputes it without changing parser-assigned
+  passage IDs, so unchanged reparses retain their identity and hash. IDs alone do
+  not detect edits or guarantee identity across paragraph insertions/reordering.
 - `offsets` (optional): `{start, end, parserName, parserVersion}`. A half-open,
   zero-based UTF-8 byte range `[start, end)` in the parser's document text stream,
   locating the cited passage (not the quote). Require `0 <= start <= end`.
   The parser version identifies the offset convention; these are not PDF byte
   offsets or Unicode character indices. A passage hash accompanies reusable
   offsets. Do not transplant offsets between parser versions or changed content.
+
+[`parsing.ParsedDocument.ContentHash`](../internal/parsing/parsing.go) uses the
+same prefixed SHA-256 format over its normalized UTF-8 document text stream:
+title, abstract, each section heading and its passages, then each reference's
+display text (first nonblank title, raw text or DOI, trimmed). Fields, including
+empty ones, are separated by one newline, with no trailing newline. This is the
+text stream used by parser offsets; IDs, parser versions, warnings, confidence
+and annotations are excluded. Legacy parsed JSON without hashes remains readable,
+but missing hashes do not establish content integrity.
 
 The identity tuple is source identifier + passage ID + passage content hash.
 Offsets are versioned location hints, not passage identity. Re-parsing unchanged

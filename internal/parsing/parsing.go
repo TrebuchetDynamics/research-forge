@@ -2,6 +2,8 @@ package parsing
 
 import (
 	"context"
+	"crypto/sha256"
+	"fmt"
 	"regexp"
 	"strings"
 )
@@ -34,6 +36,11 @@ type ParsedDocument struct {
 	LayeredAnnotations    []LayeredAnnotation
 	CitationSpans         []CitationSpan
 	ReconciliationOutputs []ParserReconciliationOutput
+	// ContentHash is sha256:<hex> of the UTF-8 text stream used by offsets:
+	// title, abstract, section headings/passages, then reference display text,
+	// separated by one newline (including empty fields), with no trailing newline.
+	// Parser metadata, IDs, annotations and confidence are not text content.
+	ContentHash string
 }
 
 // ParsedAuthor is a TEI-normalized author.
@@ -61,6 +68,9 @@ type Passage struct {
 	ParserConfidence   float64
 	LayeredAnnotations []LayeredAnnotation
 	CitationSpans      []CitationSpan
+	// ContentHash is sha256:<hex> of Text's exact stored UTF-8 bytes, without
+	// further normalization. IDs remain parser-assigned for compatibility.
+	ContentHash string
 }
 
 // Reference is one parsed bibliography reference.
@@ -109,9 +119,11 @@ type ParserReconciliationAlt struct {
 	Warnings   []string   `json:"warnings,omitempty"`
 }
 
-// EnrichParsedDocumentModel fills deterministic local offsets, layer annotations, citation spans, and parser confidence.
+// EnrichParsedDocumentModel fills deterministic content hashes, local offsets,
+// layer annotations, citation spans, and parser confidence, preserving passage IDs.
 func EnrichParsedDocumentModel(doc ParsedDocument) ParsedDocument {
 	cursor := 0
+	textParts := []string{doc.Title, doc.Abstract}
 	doc.TitleOffset = nextOffset(&cursor, doc.Title)
 	doc.AbstractOffset = nextOffset(&cursor, doc.Abstract)
 	doc.ParserConfidence = parserConfidence(doc.Warnings, doc.Title, doc.Abstract)
@@ -120,6 +132,7 @@ func EnrichParsedDocumentModel(doc ParsedDocument) ParsedDocument {
 	for i := range doc.Sections {
 		section := &doc.Sections[i]
 		section.Offset = nextOffset(&cursor, section.Title)
+		textParts = append(textParts, section.Title)
 		section.ParserConfidence = doc.ParserConfidence
 		if strings.TrimSpace(section.Title) != "" {
 			doc.LayeredAnnotations = append(doc.LayeredAnnotations, LayeredAnnotation{ID: section.ID + "-section", Layer: "section", Label: section.Title, Text: section.Title, Offset: section.Offset, ParserName: doc.ParserName, Confidence: section.ParserConfidence})
@@ -127,6 +140,8 @@ func EnrichParsedDocumentModel(doc ParsedDocument) ParsedDocument {
 		for j := range section.Passages {
 			passage := &section.Passages[j]
 			passage.Offset = nextOffset(&cursor, passage.Text)
+			passage.ContentHash = textContentHash(passage.Text)
+			textParts = append(textParts, passage.Text)
 			passage.ParserConfidence = doc.ParserConfidence
 			annotation := LayeredAnnotation{ID: passage.ID + "-paragraph", Layer: "paragraph", Text: passage.Text, Offset: passage.Offset, ParserName: doc.ParserName, Confidence: passage.ParserConfidence}
 			passage.LayeredAnnotations = appendUniqueAnnotation(passage.LayeredAnnotations, annotation)
@@ -139,11 +154,17 @@ func EnrichParsedDocumentModel(doc ParsedDocument) ParsedDocument {
 	for i := range doc.References {
 		text := firstNonEmptyParsing(doc.References[i].Title, doc.References[i].Raw, doc.References[i].DOI)
 		doc.References[i].Offset = nextOffset(&cursor, text)
+		textParts = append(textParts, text)
 		if doc.References[i].Confidence == 0 {
 			doc.References[i].Confidence = doc.ParserConfidence
 		}
 	}
+	doc.ContentHash = textContentHash(strings.Join(textParts, "\n"))
 	return doc
+}
+
+func textContentHash(text string) string {
+	return fmt.Sprintf("sha256:%x", sha256.Sum256([]byte(text)))
 }
 
 func nextOffset(cursor *int, text string) TextOffset {
