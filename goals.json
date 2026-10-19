@@ -128,6 +128,7 @@
       "source": "docs/verifiable-engine-plan.md#verifiable-research-engine-plan",
       "status": "unmet",
       "tasks": [
+        "CLAIMS-001-82",
         "V-D1",
         "V-D2",
         "V-D3",
@@ -192,12 +193,10 @@
     "schema": 1,
     "tasks": [
       "V-B5",
-      "V-C3",
-      "V-C4",
-      "V-D4",
       "V-E3",
       "V-E4",
       "V-E5",
+      "CLAIMS-001-82",
       "V-B4-lock",
       "V-B6-run",
       "V-E5-run",
@@ -211,6 +210,19 @@
     ]
   },
   "tasks": [
+    {
+      "depends_on": [
+        "V-D1",
+        "V-D2",
+        "V-D3",
+        "V-D4"
+      ],
+      "goal": "RF-CLAIMS",
+      "id": "CLAIMS-001-82",
+      "section": "Next",
+      "status": "open",
+      "title": "Aggregate offline proof for stored-evidence claim facets"
+    },
     {
       "depends_on": [
         "V-B3",

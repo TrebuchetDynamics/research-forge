@@ -796,6 +796,20 @@ Owner answers (2026-10-19):
 - Ownership: ResearchForge maintainer; Autowork runner may execute.
 - Touches: docs/qualification
 
+- [ ] CLAIMS-001-82 — Aggregate offline proof for stored-evidence claim facets
+- Status: open
+- Goal: RF-CLAIMS
+- Payoff: qualify the completed V-D1 through V-D4 work together without treating task closure as goal-level proof.
+- Sources: [accepted plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan) (Acceptance: five separate claim facets and facet-based export guards); [ADR 0009](docs/adr/0009-verification-facets-and-provenance-levels.md); [schema](docs/claim-evidence-schema.md#deterministic-checks); [completed V-D1 through V-D4 contracts](TODO.archive.md).
+- Evidence: V-D1 (`7a5430a`), V-D2 (`20ab2da`), V-D3 (`43f3faf`) and V-D4 (`cc97226`) worker reports under `.git/autowork-execution/slot-data/<task>/attempt-1/report.json` record passing focused offline checks and no pending live checks. V-D4 was integrated at `68292c5` and closed at `874992b`; RF-CLAIMS still has no goal evidence, and `goals.py validate .` reports `RF-CLAIMS: unmet goal has no open task`. These reports do not themselves record the aggregate full check.
+- Scope: record the remaining aggregate offline proof in `docs/tasks/rf-claims-proof.md`, bound to the tested revision, exact commands, exit results and existing test cases covering the original V-D1 through V-D4 contracts. Reuse an existing aggregate result only if its revision and commands can be verified; otherwise run Checks. Do not reimplement completed work, add product scope, run live services or claim scientific truth. Return executed results for normal goal-evidence closeout; no new coordinator receipt or registry is required.
+- Acceptance: the recorded proof covers stable unchanged passage IDs/hashes and changed-text hash locality; rejection of engine-attributed semantic support and unnamed human approval; separate facets where a missing quote fails passage match while source identity can pass; facet-based export blocking, package audit and MCP/CLI fixture parity without an approval tool. All listed offline Checks pass on the recorded revision; missing or failed checks remain unqualified, not fabricated passes.
+- Checks: `env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE go test ./internal/parsing ./internal/documents ./internal/claims ./internal/cli ./internal/evidence ./internal/report ./internal/benchmarks ./internal/reviewpkg ./internal/mcp`; `env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE make check`.
+- Dependencies: V-D1, V-D2, V-D3, V-D4.
+- Ownership: ResearchForge maintainer; Autowork runner may execute.
+- Touches: docs/tasks/rf-claims-proof.md
+- Next action: verify revision-bound aggregate results, run any missing Checks, and commit the proof document; leave RF-CLAIMS unqualified until executed passing evidence is recorded through `goals.py evidence`.
+
 ## Needs decision
 
 - [ ] V-B4-lock — Owner approves and locks the gold sets
@@ -921,9 +935,9 @@ Generated from `goals.json` by `goals.py render`. `met` requires an executed, pa
 | --- | --- | --- | --- |
 | RF-V0: Land and harden the in-progress research commands | met | Executed check: pass ([V0-7](TODO.archive.md#v0-7)) | — |
 | RF-AGENT: Make the agent contract correct: install docs, search depth and provenance levels | met | Executed check: pass ([V-A4](TODO.archive.md#v-a4)) | — |
-| RF-BENCH: Measure research quality against held-out ground truth | unmet | — | V-B3-LIVE, V-B4, V-B4-lock, V-B5, V-B6-LIVE, V-B6-run |
-| RF-MCP: Expose the engine through a thin MCP adapter over shared services | unmet | — | V-C2, V-C3, V-C4 |
-| RF-CLAIMS: Verify claims against stored evidence with separate facets | unmet | — | V-D4 |
+| RF-BENCH: Measure research quality against held-out ground truth | unmet | — | V-B3-LIVE, V-B4-LIVE, V-B4-lock, V-B5, V-B6-LIVE, V-B6-run |
+| RF-MCP: Expose the engine through a thin MCP adapter over shared services | unmet | — | V-C2-LIVE |
+| RF-CLAIMS: Verify claims against stored evidence with separate facets | unmet | — | CLAIMS-001-82 |
 | RF-PACK: Ship passive native plugins for Claude Code, Codex, Pi and Hermes over the same engine | unmet | Executed check: pass ([V-E2](TODO.archive.md#v-e2)) | V-E1-LIVE, V-E3, V-E4, V-E5, V-E5-run |
 | RF-RELEASE: Release ResearchForge 2.0 only on measured improvement and cross-host parity | unmet | — | V-R1, V-R2 |
 
