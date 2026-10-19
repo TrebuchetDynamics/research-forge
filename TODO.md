@@ -774,18 +774,6 @@ Owner answers (2026-10-19):
 
 ## Next
 
-- [ ] V-B12 — Optional OpenAlex API key, never required
-- Status: open
-- Goal: RF-BENCH — Measure research quality against held-out ground truth.
-- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan); [benchmark spec](docs/benchmark/spec.md); Owner decision 2026-10-19: the benchmark must not depend on OpenAlex. Pool A's plans used OpenAlex for 24 of 24 calls, the engine qualified only OpenAlex and Crossref, and OpenAlex now meters anonymous use per IP (the first pool A capture got HTTP 429 on 18 of 24 calls).
-- Scope: let the OpenAlex connector send an API key from the environment (`RFORGE_OPENALEX_API_KEY`) when set, for users who have one. Nothing in the benchmark, tests or skill may require it. The key must never appear in snapshots, provenance, reports or logs (extend the existing credential redaction and add a test).
-- Acceptance: with the key set, requests carry it and recorded snapshots contain no trace of it; with it unset, behavior is unchanged.
-- Checks: go test ./internal/sources ./internal/benchmarks; make check
-- Dependencies: None.
-- Ownership: ResearchForge maintainer; Autowork runner may execute.
-- Touches: internal/sources/openalex.go, internal/sources/openalex_test.go, internal/benchmarks/transport.go, internal/benchmarks/openalex_key_test.go
-- Resources: benchmark-engine — shared `internal/benchmarks/engine.go`, `internal/benchmarks/validate.go` and `docs/benchmark/spec.md`; tasks holding it run one at a time
-
 - [ ] V-B5 — Engine-tier baseline
 - Status: open
 - Goal: RF-BENCH — Measure research quality against held-out ground truth.
