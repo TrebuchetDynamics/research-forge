@@ -13,7 +13,7 @@
     "max_retries": 2,
     "max_retry_after_ms": 30000,
     "request_delay_ms": 0,
-    "timeout_ms": 10000
+    "timeout_ms": 30000
   },
   "k": [
     10,
@@ -3166,9 +3166,9 @@
       "split": "held_out"
     }
   ],
-  "review_sheet_sha256": "bd0ca502d4cb9287b47670d1476a23e908035ccab3a1517aa8c330f092e9ad8c",
+  "review_sheet_sha256": "653670fcda1a169eef5a1c3822e4a978180ad7b07018cd4985fd083d3b1206ae",
   "schema_version": 1,
-  "set_checksum": "0b34f5815f123d41477ae0763cf2aa3155262cdba20b6ff09a7a1c675896b02f",
+  "set_checksum": "4aa57d20bcde466d2bbe8a5bb7abe44d8cfdf49437fa359cd028384a09287ae6",
   "set_id": "pool-a",
   "snapshots_sha256": null,
   "state": "approved"

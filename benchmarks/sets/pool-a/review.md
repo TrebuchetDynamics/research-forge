@@ -11,6 +11,8 @@ Owner instruction 2026-10-19 ("do it keyless"): record without any provider API 
 | q-g | Crossref × 2; Europe PMC × 2; Semantic Scholar × 2 | Crossref × 2; Europe PMC × 2 | 2024-09-20 |
 | q-h | Crossref × 2; Semantic Scholar × 2 | Crossref × 2; Europe PMC × 2 | 2023-10-13 |
 
+Capture policy, same revision: the first two keyless captures failed only on Crossref calls whose 200 responses streamed past the 10-second per-request timeout even after both retries (q-k and q-m, then q-e; the same queries answered in under 1 s minutes later). `http_policy.timeout_ms` is raised from 10000 to 30000; per-question budgets (100 requests, 600000 ms), retries and all other policy fields are unchanged. This affects only how patiently responses are read, not what is searched or scored.
+
 ## Search-plan revision (2026-10-19)
 
 **Re-approved by the owner 2026-10-19T19:22:09Z (xel) for keyless recording: search-plan revision 2 below replaces Semantic Scholar with Europe PMC; everything else keeps its earlier approval (gold, questions, splits, dates, waiver `ap_domain_absent`, revision 1). State `approved`; snapshots are recorded at V-B4-lock.**
