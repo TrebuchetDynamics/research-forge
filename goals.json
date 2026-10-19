@@ -96,6 +96,7 @@
         "V-B11",
         "V-B11-LIVE",
         "V-B12",
+        "V-B13",
         "V-B2",
         "V-B3",
         "V-B3-LIVE",
@@ -212,6 +213,7 @@
   "priority_order": {
     "schema": 1,
     "tasks": [
+      "V-B13",
       "V-B5",
       "V-B4-lock",
       "V-B6-run",
@@ -230,6 +232,14 @@
     ]
   },
   "tasks": [
+    {
+      "depends_on": [],
+      "goal": "RF-BENCH",
+      "id": "V-B13",
+      "section": "Now",
+      "status": "open",
+      "title": "Make live capture robust to odd provider records"
+    },
     {
       "depends_on": [
         "V-B3",
