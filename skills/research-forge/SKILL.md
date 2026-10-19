@@ -82,7 +82,7 @@ go install github.com/TrebuchetDynamics/research-forge/cmd/rforge@latest
 
 If Go is not installed, tell the user:
 
-> rforge requires Go 1.22+. Install from https://go.dev/dl/ then run the above command.
+> rforge requires Go 1.26+. Install from https://go.dev/dl/ then run the above command.
 
 ---
 

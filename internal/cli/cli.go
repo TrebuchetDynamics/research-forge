@@ -40,7 +40,7 @@ var (
 	Date    = "unknown"
 )
 
-var topLevelCommands = []string{"version", "decisions", "benchmark", "automation", "completion", "forge", "project", "doctor", "service", "library", "search", "citations", "oa", "duplicate", "import", "export", "oss", "pdf", "parse", "index", "knowledge", "graph", "retrieve", "research", "protocol", "screen", "prisma", "extraction", "extract", "evidence", "analysis", "report", "package", "archive", "ui", "watch", "inbox", "fetch", "provenance", "journal", "goal", "meta", "paper", "rank", "brief", "compare", "lit", "note", "history", "replicate", "draft"}
+var topLevelCommands = []string{"help", "vault", "version", "decisions", "benchmark", "automation", "completion", "forge", "project", "doctor", "service", "library", "search", "citations", "oa", "duplicate", "import", "export", "oss", "pdf", "parse", "index", "knowledge", "graph", "retrieve", "research", "protocol", "screen", "prisma", "extraction", "extract", "evidence", "analysis", "report", "package", "archive", "ui", "watch", "inbox", "fetch", "provenance", "journal", "goal", "meta", "paper", "rank", "brief", "compare", "lit", "note", "history", "replicate", "draft"}
 
 type globalOptions struct {
 	JSON     bool
