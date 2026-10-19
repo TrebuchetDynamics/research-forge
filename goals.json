@@ -196,14 +196,6 @@
       "title": "Harden the new workflow commands"
     },
     {
-      "depends_on": [],
-      "goal": "RF-V0",
-      "id": "V0-3",
-      "section": "Now",
-      "status": "open",
-      "title": "Fix the provenance event path mismatch"
-    },
-    {
       "depends_on": [
         "V0-1"
       ],
@@ -490,6 +482,14 @@
       "section": "Done",
       "status": "done",
       "title": "Land the in-progress workflow commands"
+    },
+    {
+      "depends_on": [],
+      "goal": "RF-V0",
+      "id": "V0-3",
+      "section": "Done",
+      "status": "done",
+      "title": "Fix the provenance event path mismatch"
     },
     {
       "depends_on": [],

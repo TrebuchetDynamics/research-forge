@@ -86,3 +86,21 @@ Source section: Now
 - Dependencies: V0-1.
 - Ownership: ResearchForge maintainer; Autowork runner may execute.
 - Touches: internal/docs, skills/research-forge/SKILL.md, README.md, install.sh, docs/install.md, docs/developer-setup.md
+
+
+<!-- archived from TODO.md -->
+
+Source section: Now
+
+<a id="v0-3"></a>
+
+- [x] V0-3 — Fix the provenance event path mismatch
+- Status: done
+- Goal: RF-V0 — Land and harden the in-progress research commands.
+- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan) (Evidence: provenance path mismatch).
+- Scope: writers use `provenance/events.jsonl` while `internal/reviewpkg/package.go` (around lines 117 and 151), `internal/webui/builders.go` (around line 137) and `internal/protocol/live_smoke_snapshot.go` (around line 147) read `data/provenance.jsonl`. Make the writer path canonical through one exported constant in `internal/provenance`, migrate readers, and keep reading the legacy path as a fallback.
+- Acceptance: a test appends a project event and sees it in the review package and the web UI view model; a project holding only the legacy file still loads.
+- Checks: go test ./internal/provenance ./internal/reviewpkg ./internal/webui ./internal/protocol; make check
+- Dependencies: None.
+- Ownership: ResearchForge maintainer; Autowork runner may execute.
+- Touches: internal/provenance, internal/reviewpkg, internal/webui/builders.go, internal/protocol/live_smoke_snapshot.go
