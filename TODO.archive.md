@@ -130,3 +130,21 @@ Source section: Now
 - Implementation evidence: V0-2 worker report `.git/autowork-execution/slot-data/V0-2/attempt-1/report.json` records offline workflow regression and resolver tests passing at `7eaa47ba354f8d3f5815d45dc7fa1518e5817fdc`; V0-3 report at `.git/autowork-execution/slot-data/V0-3/attempt-1/report.json` records canonical/legacy event-path and export regressions passing at `f67dade4b850972e13f513d6725e3bd5fb366517`. Both commits are ancestors of the checked revision. These Git-common-directory reports are local operational evidence, not portable repository links.
 - Executed aggregate check: `env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE make check`, exit 0, at `e4787cfa703191db2ed892c59b63aa79f2aeab78`, using Go 1.26.6 on linux/amd64. Formatting, module tidy diff, all 30 tested Go packages, vet, TODO completion audit, inventory check (23 entries) and whitespace check passed; the CLI entry package has no tests. Normal tests stayed offline; live opt-in qualifications are not claimed.
 - Retained history: V0-1 landing, V0-4 Git-environment isolation, V0-5 no-push decision and V0-6 runner recovery retain their original evidence above. This pass does not rerun owner-only operations, authorize publication, or qualify RF-AGENT, RF-BENCH, RF-MCP, RF-CLAIMS, RF-PACK or RF-RELEASE.
+
+
+<!-- archived from TODO.md -->
+
+Source section: Now
+
+<a id="v-b2"></a>
+
+- [x] V-B2 — Claim-evidence schema v0 design
+- Status: done
+- Goal: RF-BENCH — Measure research quality against held-out ground truth.
+- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan); [ADR 0009](docs/adr/0009-verification-facets-and-provenance-levels.md).
+- Scope: `docs/claim-evidence-schema.md` plus Go types (no storage yet) in a new `internal/claims` package: claim record, evidence references (identifier, passage ID, content hash, offsets with parser version), five verification facets (source identity, content integrity, passage match, semantic support, human approval) each with state, checker identity and timestamp. Map existing `CitationLockedSuggestion`, `report.ClaimTraceView` and knowledge-graph `report_claim` nodes onto it. Benchmark citation scoring uses these types so later storage (V-D2) is additive.
+- Acceptance: JSON round-trip tests for the types; semantic support cannot be constructed with an engine checker; no facet or combination is named or documented as "verified claim".
+- Checks: go test ./internal/claims; make check
+- Dependencies: None.
+- Ownership: ResearchForge maintainer; Autowork runner may execute.
+- Touches: internal/claims, docs/claim-evidence-schema.md

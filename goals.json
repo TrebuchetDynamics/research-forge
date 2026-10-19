@@ -180,14 +180,6 @@
     },
     {
       "depends_on": [],
-      "goal": "RF-BENCH",
-      "id": "V-B2",
-      "section": "Now",
-      "status": "open",
-      "title": "Claim-evidence schema v0 design"
-    },
-    {
-      "depends_on": [],
       "goal": "RF-PACK",
       "id": "V-E0",
       "section": "Now",
@@ -473,6 +465,14 @@
       "section": "Done",
       "status": "done",
       "title": "Docs parity check for Go version and skill commands"
+    },
+    {
+      "depends_on": [],
+      "goal": "RF-BENCH",
+      "id": "V-B2",
+      "section": "Done",
+      "status": "done",
+      "title": "Claim-evidence schema v0 design"
     },
     {
       "depends_on": [],

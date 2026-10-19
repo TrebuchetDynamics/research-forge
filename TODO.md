@@ -760,17 +760,6 @@ Owner answers (2026-10-19):
 - Ownership: ResearchForge maintainer; Autowork runner may execute.
 - Touches: docs/benchmark/spec.md
 
-- [ ] V-B2 — Claim-evidence schema v0 design
-- Status: open
-- Goal: RF-BENCH — Measure research quality against held-out ground truth.
-- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan); [ADR 0009](docs/adr/0009-verification-facets-and-provenance-levels.md).
-- Scope: `docs/claim-evidence-schema.md` plus Go types (no storage yet) in a new `internal/claims` package: claim record, evidence references (identifier, passage ID, content hash, offsets with parser version), five verification facets (source identity, content integrity, passage match, semantic support, human approval) each with state, checker identity and timestamp. Map existing `CitationLockedSuggestion`, `report.ClaimTraceView` and knowledge-graph `report_claim` nodes onto it. Benchmark citation scoring uses these types so later storage (V-D2) is additive.
-- Acceptance: JSON round-trip tests for the types; semantic support cannot be constructed with an engine checker; no facet or combination is named or documented as "verified claim".
-- Checks: go test ./internal/claims; make check
-- Dependencies: None.
-- Ownership: ResearchForge maintainer; Autowork runner may execute.
-- Touches: internal/claims, docs/claim-evidence-schema.md
-
 - [ ] V-E0 — Capability report for compatibility checks
 - Status: open
 - Goal: RF-PACK — Ship passive native plugins for Claude Code, Codex, Pi and Hermes over the same engine.
