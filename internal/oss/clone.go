@@ -5,7 +5,38 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"strings"
 )
+
+// repositoryLocatingGitEnv are the variables Git exports to hooks and that
+// redirect a git subprocess to another repository, work tree or index.
+var repositoryLocatingGitEnv = []string{
+	"GIT_DIR", "GIT_WORK_TREE", "GIT_INDEX_FILE", "GIT_COMMON_DIR",
+	"GIT_OBJECT_DIRECTORY", "GIT_ALTERNATE_OBJECT_DIRECTORIES",
+	"GIT_NAMESPACE", "GIT_PREFIX",
+}
+
+// IsolatedGitEnv returns the current environment without the variables that
+// would make a git subprocess act on the caller's repository (for example when
+// rforge runs inside a Git hook of a linked worktree).
+func IsolatedGitEnv() []string {
+	env := os.Environ()
+	kept := env[:0:0]
+	for _, entry := range env {
+		name, _, _ := strings.Cut(entry, "=")
+		drop := false
+		for _, blocked := range repositoryLocatingGitEnv {
+			if name == blocked {
+				drop = true
+				break
+			}
+		}
+		if !drop {
+			kept = append(kept, entry)
+		}
+	}
+	return kept
+}
 
 // CloneRequest describes a deterministic shallow repository clone operation.
 type CloneRequest struct {
@@ -36,6 +67,7 @@ type GitCloneRunner struct{}
 // Clone executes git clone for the request.
 func (GitCloneRunner) Clone(ctx context.Context, request CloneRequest) error {
 	cmd := exec.CommandContext(ctx, "git", request.Args()...)
+	cmd.Env = IsolatedGitEnv()
 	cmd.Stdout = nil
 	cmd.Stderr = nil
 	return cmd.Run()

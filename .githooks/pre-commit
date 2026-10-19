@@ -1,4 +1,10 @@
 #!/bin/sh
 set -eu
-make check
+# Git exports GIT_DIR, GIT_INDEX_FILE and friends to hooks (absolute paths in
+# linked worktrees). Tests that create fixture repositories must not inherit
+# them, or their git commands rewrite this repository. Git rediscovers the
+# repository from the hook's working directory without them.
+env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE -u GIT_COMMON_DIR \
+  -u GIT_OBJECT_DIRECTORY -u GIT_ALTERNATE_OBJECT_DIRECTORIES -u GIT_PREFIX \
+  make check
 git diff --cached --check
