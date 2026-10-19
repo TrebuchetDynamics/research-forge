@@ -335,3 +335,22 @@ Source section: Next
 - Dependencies: V-D2.
 - Ownership: ResearchForge maintainer; Autowork runner may execute.
 - Touches: internal/claims, internal/evidence, internal/report, internal/benchmarks
+
+
+<!-- archived from TODO.md -->
+
+Source section: Next
+
+<a id="v-b3"></a>
+
+- [x] V-B3 — Engine-tier benchmark harness with offline replay
+- Status: done
+- Goal: RF-BENCH — Measure research quality against held-out ground truth.
+- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan); `docs/benchmark/spec.md` from V-B1.
+- Scope: `rforge benchmark run --set <dir> [--replay|--record]` replays recorded snapshots through the real connectors and dedupe, enforces each set's leakage controls (fail the run if the reference review appears), scores against gold and emits the spec's report JSON with set checksum and rforge version. `--record` is opt-in live. Retire the hardcoded `DefaultCrossToolBenchmarkInput` numbers (remove them or label them `demo`).
+- Acceptance: a deterministic replay test on a tiny legal fixture set produces byte-identical reports twice; a leaked reference review fails the run.
+- Checks: go test ./internal/benchmarks ./internal/sources ./internal/cli; make check
+- Dependencies: V-B1, V-A2.
+- Ownership: ResearchForge maintainer; Autowork runner may execute.
+- Touches: internal/benchmarks, internal/sources, internal/cli/cli.go, docs/cli.md
+- Resources: cli-surface — shared `internal/cli/cli.go` command table/help and `docs/cli.md`; tasks holding it run one at a time (2026-10-19: parallel edits there held V-A2 and V-E0)
