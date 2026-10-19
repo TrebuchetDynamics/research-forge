@@ -2,7 +2,7 @@
 
 ## Search-plan revision (2026-10-19)
 
-**Current lifecycle: `candidate`, `approval: null`; owner re-approval required at V-B4-lock.** The earlier approval banner and curation notes below are retained as historical evidence; this section supersedes their approval status and two-call plan description. The owner-approved gold, questions, review identities, splits and dates are unchanged. Only search plans, lifecycle and integrity checksums have changed.
+**Re-approved by the owner 2026-10-19T18:06:38Z (xel): the search-plan revision below is accepted; the earlier approval of gold, questions, splits, dates and waiver `ap_domain_absent` stands. State `approved`; snapshots are recorded at V-B4-lock.** Verified before re-approval: relative to the approved commit `93c00f2`, only `search_plan` changed in every question; all 24 query terms are unchanged; every call is capped at its review's `search_date`.
 
 Per the owner's 2026-10-19 decision, benchmark retrieval must not depend on OpenAlex. Each of the two problem-based query terms already authored for a question is now searched unchanged on every provider listed below, in term-major order. No term was added, removed or chosen using retrieval outcomes. Provider selection follows the question's domain, not observed hits or scores: Europe PMC plus Crossref for clinical medicine; Semantic Scholar plus Crossref for education, social policy and performing arts. Europe PMC is also included for q-d and q-g because their questions concern health-professions education. There are no OpenAlex calls; existing OpenAlex bibliographic identifiers and date evidence are not search dependencies and remain untouched.
 

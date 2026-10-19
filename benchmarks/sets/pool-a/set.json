@@ -1,5 +1,11 @@
 {
-  "approval": null,
+  "approval": {
+    "approved_at": "2026-10-19T18:06:38Z",
+    "approver": "xel (repository owner)",
+    "waivers": [
+      "ap_domain_absent"
+    ]
+  },
   "http_policy": {
     "algorithm": "source-http-v1",
     "max_redirects": 10,
@@ -3196,10 +3202,10 @@
       "split": "held_out"
     }
   ],
-  "review_sheet_sha256": "d0eebb65456e9e5f663508a44426d22f01d424334dd0339a218e3f50eb6f9254",
+  "review_sheet_sha256": "5ed7e4189c3f2ef6e12464cc3d87de56d2573d4bc5ee9d79387502fe23346dd3",
   "schema_version": 1,
-  "set_checksum": "ea907d6b0b1a63b6ddcc0a938b3d19ffdae24a062cad80e9f2bbb7e5ceed7191",
+  "set_checksum": "7ba105107ed908009725b5e52cd6799626f43eeaffeece9d018f1b49ffdb6932",
   "set_id": "pool-a",
   "snapshots_sha256": null,
-  "state": "candidate"
+  "state": "approved"
 }
