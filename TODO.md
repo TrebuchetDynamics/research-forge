@@ -764,18 +764,6 @@ Owner answers (2026-10-19):
 
 ## Needs decision
 
-- [ ] V-B4-lock — Owner approves and locks the gold sets
-- Status: open
-- Progress: 2026-10-19 owner approval recorded (`93c00f2`): pool A moved to `benchmarks/sets/pool-a/`, state `approved`, approver xel, `approval.waivers: ["ap_domain_absent"]` (`78c1ff2`), independent spot audit of q-d, q-h and q-m in the review sheet (dates and membership match PMC sources). Lock not done: the first `--record` capture got HTTP 429 on 18 of 24 OpenAlex calls (free daily budget for this machine's IP exhausted, shared with the other runners; resets 00:00 UTC) and was discarded; recording now refuses incomplete captures with `capture_incomplete` (`8c3ec21`). Next: rerun `rforge benchmark run --set benchmarks/sets/pool-a --record` soon after 00:00 UTC, or with an OpenAlex API key if the owner provides one (needs connector support for the key). Second capture 2026-10-19 18:07 UTC after re-approval (`cc6869e`) failed safely (set stays `approved`): Semantic Scholar answered HTTP 429 to anonymous requests (q-d, q-e, q-g, q-h) and engine/connector defects caused `protocol_violation` (q-c) and a recording-time `snapshot_mismatch` (q-d), now V-B13. Owner decision 2026-10-19: the owner obtains a free Semantic Scholar API key; record with `RFORGE_SEMANTIC_SCHOLAR_API_KEY` set only in the recording shell (redacted from snapshots; never required by the benchmark). Next: after V-B13 is done and the key is available, run `rforge benchmark run --set benchmarks/sets/pool-a --record` once.
-- Goal: RF-BENCH — Measure research quality against held-out ground truth.
-- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan) (Owner answers: gold sets).
-- Scope: Precondition (owner decision 2026-10-19, not expressible as a ledger dependency because this task predates it): do this only after V-B10 has re-planned pool A without OpenAlex dependence; the owner then re-approves the search-plan change (the earlier approval of gold and waiver stands) and the capture is recorded. the owner reviews each V-B4 candidate set; approved sets move to `benchmarks/sets/`, their snapshots are recorded with `--record`, and the held-out split is locked by checksum. Rejected sets are dropped or redrafted.
-- Acceptance: a locked held-out set with at least 8 approved questions and a recorded checksum; the approval date and approver are noted in the set metadata.
-- Checks: make check
-- Dependencies: V-B4, V-B3.
-- Ownership: ResearchForge owner (approval); the runner may record snapshots only after approval.
-- Touches: benchmarks/sets
-
 - [ ] V-B6-run — Live agent-tier pilot
 - Status: open
 - Goal: RF-BENCH — Measure research quality against held-out ground truth.
@@ -944,7 +932,7 @@ Generated from `goals.json` by `goals.py render`. `met` requires an executed, pa
 | --- | --- | --- | --- |
 | RF-V0: Land and harden the in-progress research commands | met | Executed check: pass ([V0-7](TODO.archive.md#v0-7)) | — |
 | RF-AGENT: Make the agent contract correct: install docs, search depth and provenance levels | met | Executed check: pass ([V-A4](TODO.archive.md#v-a4)) | — |
-| RF-BENCH: Measure research quality against held-out ground truth | unmet | — | V-B10-LIVE, V-B11-LIVE, V-B13, V-B3-LIVE, V-B4-LIVE, V-B4-lock, V-B5, V-B6-LIVE, V-B6-run |
+| RF-BENCH: Measure research quality against held-out ground truth | unmet | Executed check: pass ([V-B4-lock](TODO.archive.md#v-b4-lock)) | V-B10-LIVE, V-B11-LIVE, V-B13-LIVE, V-B3-LIVE, V-B4-LIVE, V-B5, V-B6-LIVE, V-B6-run |
 | RF-MCP: Expose the engine through a thin MCP adapter over shared services | unmet | — | V-C2-LIVE |
 | RF-CLAIMS: Verify claims against stored evidence with separate facets | met | Executed check: pass ([V-D4](TODO.archive.md#v-d4)) | — |
 | RF-PACK: Ship passive native plugins for Claude Code, Codex, Pi and Hermes over the same engine | unmet | Executed check: pass ([V-E2](TODO.archive.md#v-e2)) | V-E1-LIVE, V-E3-LIVE, V-E5-LIVE, V-E5-run |

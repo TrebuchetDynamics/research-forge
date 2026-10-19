@@ -84,7 +84,18 @@
     },
     {
       "depends_on": [],
-      "evidence": [],
+      "evidence": [
+        {
+          "anchor": "v-b4-lock",
+          "archive": "TODO.archive.md",
+          "coverage_current": true,
+          "kind": "executed",
+          "ref": "500a3ac: rforge benchmark run --set benchmarks/sets/pool-a --record (complete, no errors); --replay --split dev and held_out complete and deterministic",
+          "result": "pass",
+          "summary": "Executed check: pass",
+          "task": "V-B4-lock"
+        }
+      ],
       "id": "RF-BENCH",
       "priority": 30,
       "source": "docs/verifiable-engine-plan.md#verifiable-research-engine-plan",
@@ -293,17 +304,6 @@
       "section": "Needs decision",
       "status": "open",
       "title": "Live checks for V-B4"
-    },
-    {
-      "depends_on": [
-        "V-B3",
-        "V-B4"
-      ],
-      "goal": "RF-BENCH",
-      "id": "V-B4-lock",
-      "section": "Needs decision",
-      "status": "open",
-      "title": "Owner approves and locks the gold sets"
     },
     {
       "depends_on": [
@@ -523,6 +523,17 @@
       "section": "Done",
       "status": "done",
       "title": "Draft candidate gold sets"
+    },
+    {
+      "depends_on": [
+        "V-B3",
+        "V-B4"
+      ],
+      "goal": "RF-BENCH",
+      "id": "V-B4-lock",
+      "section": "Done",
+      "status": "done",
+      "title": "Owner approves and locks the gold sets"
     },
     {
       "depends_on": [

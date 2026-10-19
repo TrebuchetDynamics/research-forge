@@ -714,3 +714,23 @@ Source section: Now
 - Ownership: ResearchForge maintainer; Autowork runner may execute.
 - Touches: internal/benchmarks/engine.go, internal/benchmarks/transport.go, internal/benchmarks/validate.go, internal/benchmarks/record_robustness_test.go, internal/sources/europepmc.go, internal/sources/europepmc_test.go, internal/cli/benchmark_engine.go, docs/benchmark/spec.md
 - Resources: benchmark-engine — shared `internal/benchmarks/engine.go`, `internal/benchmarks/validate.go` and `docs/benchmark/spec.md`; tasks holding it run one at a time
+
+
+<!-- archived from TODO.md -->
+
+Source section: Needs decision
+
+<a id="v-b4-lock"></a>
+
+- [x] V-B4-lock — Owner approves and locks the gold sets
+- Status: done
+- Evidence: locked 2026-10-19 in `500a3ac` after owner re-approvals (`cc6869e` OpenAlex-free plans; `f7cc960` keyless Europe PMC replacing Semantic Scholar per owner instruction; `400b563` capture timeout 30 s). Keyless capture: 49 exchanges (Europe PMC 24, Crossref 25), status complete, no errors, snapshots_sha256 cc810691a5e7…; offline replay of dev (4) and held_out (8) complete and byte-identical across runs; snapshots hold only content-type headers and no keys, contact data, local paths or abstracts (1.1 MB). Held-out scores not inspected. Earlier failed captures (OpenAlex 429, Semantic Scholar 429, Crossref slow bodies) published nothing.
+- Progress: 2026-10-19 owner approval recorded (`93c00f2`): pool A moved to `benchmarks/sets/pool-a/`, state `approved`, approver xel, `approval.waivers: ["ap_domain_absent"]` (`78c1ff2`), independent spot audit of q-d, q-h and q-m in the review sheet (dates and membership match PMC sources). Lock not done: the first `--record` capture got HTTP 429 on 18 of 24 OpenAlex calls (free daily budget for this machine's IP exhausted, shared with the other runners; resets 00:00 UTC) and was discarded; recording now refuses incomplete captures with `capture_incomplete` (`8c3ec21`). Next: rerun `rforge benchmark run --set benchmarks/sets/pool-a --record` soon after 00:00 UTC, or with an OpenAlex API key if the owner provides one (needs connector support for the key). Second capture 2026-10-19 18:07 UTC after re-approval (`cc6869e`) failed safely (set stays `approved`): Semantic Scholar answered HTTP 429 to anonymous requests (q-d, q-e, q-g, q-h) and engine/connector defects caused `protocol_violation` (q-c) and a recording-time `snapshot_mismatch` (q-d), now V-B13. Owner decision 2026-10-19: the owner obtains a free Semantic Scholar API key; record with `RFORGE_SEMANTIC_SCHOLAR_API_KEY` set only in the recording shell (redacted from snapshots; never required by the benchmark). Next: after V-B13 is done and the key is available, run `rforge benchmark run --set benchmarks/sets/pool-a --record` once.
+- Goal: RF-BENCH — Measure research quality against held-out ground truth.
+- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan) (Owner answers: gold sets).
+- Scope: Precondition (owner decision 2026-10-19, not expressible as a ledger dependency because this task predates it): do this only after V-B10 has re-planned pool A without OpenAlex dependence; the owner then re-approves the search-plan change (the earlier approval of gold and waiver stands) and the capture is recorded. the owner reviews each V-B4 candidate set; approved sets move to `benchmarks/sets/`, their snapshots are recorded with `--record`, and the held-out split is locked by checksum. Rejected sets are dropped or redrafted.
+- Acceptance: a locked held-out set with at least 8 approved questions and a recorded checksum; the approval date and approver are noted in the set metadata.
+- Checks: make check
+- Dependencies: V-B4, V-B3.
+- Ownership: ResearchForge owner (approval); the runner may record snapshots only after approval.
+- Touches: benchmarks/sets
