@@ -2,11 +2,54 @@ package sources
 
 import (
 	"context"
+	"io"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 	"time"
 )
+
+type openAlexKeyTransport func(*http.Request) (*http.Response, error)
+
+func (f openAlexKeyTransport) RoundTrip(r *http.Request) (*http.Response, error) { return f(r) }
+
+func TestOpenAlexConnectorOptionalAPIKey(t *testing.T) {
+	for _, tc := range []struct{ name, key, authorization string }{
+		{"anonymous", "", ""},
+		{"keyed", " test-openalex-secret ", "Bearer test-openalex-secret"},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			t.Setenv("RFORGE_OPENALEX_API_KEY", tc.key)
+			var requests []*http.Request
+			client := NewHTTPClient(HTTPClientOptions{
+				BaseURL: "https://api.openalex.org",
+				Headers: map[string]string{"X-Client": "retained"},
+				Transport: openAlexKeyTransport(func(r *http.Request) (*http.Response, error) {
+					requests = append(requests, r)
+					return &http.Response{StatusCode: 200, Header: http.Header{}, Body: io.NopCloser(strings.NewReader(`{"results":[]}`))}, nil
+				}),
+			})
+			response, err := NewOpenAlexConnector(client).Search(t.Context(), SourceQuery{Terms: "energy", Limit: 1})
+			if err != nil {
+				t.Fatal(err)
+			}
+			if len(requests) != 1 || requests[0].Header.Get("Authorization") != tc.authorization || requests[0].Header.Get("X-Client") != "retained" {
+				t.Fatal("optional authentication or existing headers not sent correctly")
+			}
+			if requests[0].URL.String() != "https://api.openalex.org/works?per-page=1&search=energy" || response.RawRef != "openalex:/works?per-page=1&search=energy" {
+				t.Fatal("authentication changed request URL or provenance")
+			}
+			// The caller may reuse its HTTP client for a different source.
+			if _, err := client.Get(t.Context(), "/works", nil); err != nil {
+				t.Fatal(err)
+			}
+			if len(requests) != 2 || requests[1].Header.Get("Authorization") != "" {
+				t.Fatal("OpenAlex credentials leaked into the caller's HTTP client")
+			}
+		})
+	}
+}
 
 func TestOpenAlexConnectorExpandsCitationGraph(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

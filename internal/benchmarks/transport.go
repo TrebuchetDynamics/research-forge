@@ -8,6 +8,7 @@ import (
 	"net"
 	"net/http"
 	"net/url"
+	"os"
 	"regexp"
 	"sort"
 	"strings"
@@ -67,7 +68,7 @@ func cleanHeaders(h http.Header, response bool) map[string][]string {
 			continue
 		}
 		for _, v := range vs {
-			v = strings.TrimSpace(v)
+			v = sanitizeText(strings.TrimSpace(v))
 			if k == "location" {
 				v = sanitizeLinkURL(v)
 			}
@@ -84,6 +85,12 @@ var linkTarget = regexp.MustCompile(`<[^>]+>`)
 var embeddedURL = regexp.MustCompile(`https?://[^\s<>"']+`)
 
 func sanitizeText(value string) string {
+	// APIs may echo bearer credentials as plain text, not just api_key URLs.
+	if key := strings.TrimSpace(os.Getenv("RFORGE_OPENALEX_API_KEY")); key != "" {
+		for _, secret := range []string{url.QueryEscape(key), url.PathEscape(key), key} {
+			value = strings.ReplaceAll(value, secret, "REDACTED")
+		}
+	}
 	return embeddedURL.ReplaceAllStringFunc(value, sanitizeLinkURL)
 }
 
@@ -248,7 +255,7 @@ func (s *session) RoundTrip(r *http.Request) (*http.Response, error) {
 		s.newAttempt = false
 	}
 	s.requests++
-	u, e := normalizedURL(r.URL.String())
+	u, e := normalizedURL(sanitizeText(r.URL.String()))
 	if e != nil {
 		return nil, s.fail(e)
 	}
