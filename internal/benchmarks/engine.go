@@ -18,7 +18,7 @@ import (
 
 // ProtocolSHA256 is the exact-byte digest of docs/benchmark/spec.md v1.
 // Changes to that contract require regenerating this fingerprint.
-const ProtocolSHA256 = "a14f0e137a310243c19461c3a8d4e5af60505bd58ed334afd8f7d288053b6020"
+const ProtocolSHA256 = "839ac4aba6dc263d8aa2bfdea4dcf189c616b4c497f49e0e4cc873852d3fcbbf"
 
 type EngineOptions struct {
 	SetDir, Split, Version, Revision string
@@ -225,6 +225,9 @@ func executeQuestion(ctx context.Context, s *session, ks []int, reviews []Review
 		case "crossref":
 			opts.BaseURL = "https://api.crossref.org"
 			conn = sources.NewCrossrefConnector(sources.NewHTTPClient(opts))
+		case "europepmc":
+			opts.BaseURL = "https://www.ebi.ac.uk/europepmc"
+			conn = sources.NewEuropePMCConnector(sources.NewHTTPClient(opts))
 		default:
 			s.fail(invalid("date_cap_unenforceable"))
 		}

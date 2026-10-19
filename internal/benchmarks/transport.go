@@ -390,7 +390,10 @@ func projectBody(b []byte) ([]byte, error) {
 		// retry/redirect path. A 2xx non-JSON body remains a visible parse error.
 		return []byte{}, nil
 	}
-	allowed := map[string]bool{"results": true, "meta": true, "next_cursor": true, "id": true, "doi": true, "title": true, "publication_year": true, "publication_date": true, "ids": true, "pmid": true, "pmcid": true, "primary_location": true, "landing_page_url": true, "license": true, "open_access": true, "is_oa": true, "oa_status": true, "type": true, "message": true, "items": true, "DOI": true, "published-print": true, "published-online": true, "issued": true, "date-parts": true, "URL": true, "container-title": true, "publisher": true, "next-cursor": true, "status": true, "error": true}
+	allowed := map[string]bool{"results": true, "meta": true, "next_cursor": true, "id": true, "doi": true, "title": true, "publication_year": true, "publication_date": true, "ids": true, "pmid": true, "pmcid": true, "primary_location": true, "landing_page_url": true, "license": true, "open_access": true, "is_oa": true, "oa_status": true, "type": true, "message": true, "items": true, "DOI": true, "published-print": true, "published-online": true, "issued": true, "date-parts": true, "URL": true, "container-title": true, "publisher": true, "next-cursor": true, "status": true, "error": true,
+		"resultList": true, "result": true, "nextCursorMark": true, "pubYear": true,
+		"firstPublicationDate": true, "electronicPublicationDate": true, "journalInfo": true, "printPublicationDate": true,
+	}
 	var walk func(any) any
 	walk = func(x any) any {
 		switch m := x.(type) {

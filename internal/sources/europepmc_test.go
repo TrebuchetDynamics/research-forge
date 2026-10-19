@@ -16,25 +16,28 @@ func TestEuropePMCSearchNormalizesBiomedicalRecords(t *testing.T) {
 		if r.URL.Query().Get("query") != "LightGBM crypto" {
 			t.Fatalf("query = %q", r.URL.Query().Get("query"))
 		}
-		if r.URL.Query().Get("pageSize") != "2" || r.URL.Query().Get("format") != "json" {
+		if r.URL.Query().Get("pageSize") != "2" || r.URL.Query().Get("format") != "json" || r.URL.Query().Get("resultType") != "core" || r.URL.Query().Get("cursorMark") != "page-one" {
 			t.Fatalf("query params = %s", r.URL.RawQuery)
 		}
-		_, _ = w.Write([]byte(`{"resultList":{"result":[{"id":"123456","pmid":"123456","pmcid":"PMC1234567","doi":"10.1000/pmc","title":"Machine learning in biomedical finance","authorString":"Smith J, Doe A","journalTitle":"Biomedical ML","pubYear":"2026","abstractText":"Fixture abstract.","isOpenAccess":"Y","license":"cc by","fullTextUrlList":{"fullTextUrl":[{"url":"https://europepmc.org/articles/PMC1234567"},{"url":"https://example.org/fulltext.pdf"}]},"meshHeadingList":{"meshHeading":[{"descriptorName":"Machine Learning"},{"descriptorName":"Biomedical Research"}]}}]}}`))
+		_, _ = w.Write([]byte(`{"nextCursorMark":"page-two","resultList":{"result":[{"id":"123456","pmid":"123456","pmcid":"PMC1234567","doi":"10.1000/pmc","title":"Machine learning in biomedical finance","authorString":"Smith J, Doe A","journalInfo":{"journal":{"title":"Biomedical ML"}},"pubYear":"2026","abstractText":"Fixture abstract.","isOpenAccess":"Y","license":"cc by","fullTextUrlList":{"fullTextUrl":[{"url":"https://europepmc.org/articles/PMC1234567"},{"url":"https://example.org/fulltext.pdf"}]},"meshHeadingList":{"meshHeading":[{"descriptorName":"Machine Learning"},{"descriptorName":"Biomedical Research"}]}}]}}`))
 	}))
 	defer server.Close()
 	connector := NewEuropePMCConnector(NewHTTPClient(HTTPClientOptions{BaseURL: server.URL, Timeout: time.Second}))
-	response, err := connector.Search(context.Background(), SourceQuery{Terms: "LightGBM crypto", Limit: 2})
+	response, err := connector.Search(context.Background(), SourceQuery{Terms: "LightGBM crypto", Limit: 2, PageCursor: "page-one"})
 	if err != nil {
 		t.Fatalf("Search returned error: %v", err)
 	}
-	if response.RawRef != "europepmc:/webservices/rest/search?format=json&pageSize=2&query=LightGBM+crypto" {
+	if response.RawRef != "europepmc:/webservices/rest/search?cursorMark=page-one&format=json&pageSize=2&query=LightGBM+crypto&resultType=core" {
 		t.Fatalf("RawRef = %q", response.RawRef)
+	}
+	if response.NextPageCursor != "page-two" {
+		t.Fatalf("NextPageCursor = %q", response.NextPageCursor)
 	}
 	if len(response.Records) != 1 {
 		t.Fatalf("records = %d, want 1", len(response.Records))
 	}
 	record := response.Records[0]
-	if record.Source != "europepmc" || record.Identifiers.PMID != "123456" || record.Identifiers.PMCID != "PMC1234567" || record.Identifiers.DOI != "10.1000/pmc" || record.Metadata["mesh_terms"] != "Machine Learning; Biomedical Research" || record.License != "cc by" || len(record.URLs) != 2 {
+	if record.Source != "europepmc" || record.Venue != "Biomedical ML" || record.Identifiers.PMID != "123456" || record.Identifiers.PMCID != "PMC1234567" || record.Identifiers.DOI != "10.1000/pmc" || record.Metadata["mesh_terms"] != "Machine Learning; Biomedical Research" || record.License != "cc by" || len(record.URLs) != 2 {
 		t.Fatalf("record = %#v", record)
 	}
 	papers, err := PaperRecords(response)
