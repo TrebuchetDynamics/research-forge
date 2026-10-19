@@ -11,6 +11,13 @@
 - Since: 2026-10-19T13:08:59Z
 - Answer: Decide it: record the decision in the dependent tasks' `Dependencies:` lines, or move the task that owns it into Now or Next.
 
+### Q-V-E2 — USER_INPUT — effort input — unblocks 0
+
+- Task: V-E2 — Explicit workflow commands
+- Needs: protected files need serial admission in the original task contract: ['package.json']
+- Since: 2026-10-19T14:56:53Z
+- Answer: Answer in V-E2's TODO.md entry: widen `Touches:`, supply the input, narrow the acceptance, or add a dated `Owner decision:` line. The runner reruns it when the entry changes.
+
 ### Q-V-B4 — USER_DECISION — effort investigate — unblocks 0
 
 - Task: V-B4 — Draft candidate gold sets
