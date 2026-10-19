@@ -8,9 +8,15 @@ type Identifier struct {
 	Value  string `json:"value"`
 }
 type Approval struct {
-	Approver   string `json:"approver"`
-	ApprovedAt string `json:"approved_at"`
+	Approver   string   `json:"approver"`
+	ApprovedAt string   `json:"approved_at"`
+	Waivers    []string `json:"waivers,omitempty"`
 }
+
+// WaiverAPDomainAbsent is the owner's recorded acceptance that a pilot set has no
+// artificial-photosynthesis held-out question (spec section 2; owner, 2026-10-19).
+const WaiverAPDomainAbsent = "ap_domain_absent"
+
 type Review struct {
 	Identifiers         []Identifier `json:"identifiers"`
 	Title               string       `json:"title"`

@@ -301,8 +301,19 @@ func loadSetWithPolicy(dir string, policy setValidationPolicy) (Set, error) {
 			return s, invalid("invalid_set")
 		}
 	}
+	waivedAP := false
+	if s.Approval != nil {
+		seen := map[string]bool{}
+		for _, w := range s.Approval.Waivers {
+			if w != WaiverAPDomainAbsent || seen[w] {
+				return s, invalid("invalid_set")
+			}
+			seen[w] = true
+		}
+		waivedAP = seen[WaiverAPDomainAbsent]
+	}
 	if policy.candidate || !strings.HasPrefix(s.SetID, "fixture-") {
-		if held < 8 || dev < 4 || len(domains) < 3 || (!domains["artificial-photosynthesis"] && !(policy.candidate && policy.allowAPFallback)) {
+		if held < 8 || dev < 4 || len(domains) < 3 || (!domains["artificial-photosynthesis"] && !(policy.candidate && policy.allowAPFallback) && !waivedAP) {
 			return s, invalid("invalid_set")
 		}
 	}

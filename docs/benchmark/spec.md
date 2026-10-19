@@ -161,7 +161,8 @@ committed candidate data or executable schema migrations.
       "required": ["approver", "approved_at"],
       "properties": {
         "approver": {"$ref": "#/$defs/text"},
-        "approved_at": {"type": "string", "format": "date-time"}
+        "approved_at": {"type": "string", "format": "date-time"},
+        "waivers": {"type": "array", "uniqueItems": true, "items": {"enum": ["ap_domain_absent"]}}
       }
     },
     "review": {
@@ -241,6 +242,11 @@ Additional validation, mandatory even if the schema library ignores `format`:
 
 - `candidate`: approval and snapshot digest null; `approved`: approval non-null,
   snapshot digest null; `locked`: both non-null. Whitespace-only text is invalid.
+- `approval.waivers` is optional and records owner-accepted exceptions inside the
+  checksummed set. The only value is `ap_domain_absent`: the owner accepts a
+  pilot set with no `artificial-photosynthesis` held-out question after the
+  documented fallback (owner decision 2026-10-19, V-B4). Unknown or duplicate
+  waivers are invalid. Every other composition rule still applies.
 - `k` is ascending, default authoring choice `[10, 20, 50]`; never silently alter
   it during scoring. Questions are stored in question-ID order, gold in paper-ID
   order and identifier lists in `(scheme, value)` order. Search-plan order is
