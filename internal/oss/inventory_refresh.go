@@ -57,9 +57,7 @@ func RefreshInventoryGitHubMetadata(path string, opts GitHubMetadataOptions) (In
 		manifest.Entries[i].Forks = metadata.ForksCount
 		manifest.Entries[i].Archived = metadata.Archived
 		manifest.Entries[i].PushedAt = strings.TrimSpace(metadata.PushedAt)
-		if spdx := strings.TrimSpace(metadata.License.SPDXID); spdx != "" && !strings.EqualFold(spdx, "NOASSERTION") && !strings.EqualFold(spdx, "unknown") {
-			manifest.Entries[i].LicenseSPDX = spdx
-		}
+		manifest.Entries[i].LicenseSPDX = strings.TrimSpace(metadata.License.SPDXID)
 		manifest.Entries[i].MetadataRefreshedAt = now().UTC().Format(time.RFC3339)
 		result.Refreshed++
 	}
