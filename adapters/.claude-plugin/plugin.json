@@ -5,5 +5,8 @@
   "author": {"name": "TrebuchetDynamics"},
   "license": "MIT",
   "repository": "https://github.com/TrebuchetDynamics/research-forge",
+  "mcpServers": {
+    "rforge": {"command": "node", "args": ["${CLAUDE_PLUGIN_ROOT}/mcp.mjs"]}
+  },
   "skills": ["./skills/research-forge", "./skills/brief", "./skills/compare", "./skills/lit", "./skills/paper", "./skills/replicate"]
 }

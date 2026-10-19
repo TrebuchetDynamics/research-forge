@@ -1,7 +1,7 @@
 {
   "name": "research-forge",
   "version": "0.1.22",
-  "description": "Passive research methodology and explicit workflows for the Pi coding agent",
+  "description": "Passive research methodology, explicit workflows and typed engine MCP tools for Pi",
   "license": "MIT",
   "type": "module",
   "keywords": ["pi-package"],
@@ -11,6 +11,7 @@
   },
   "files": [
     "adapters/pi.mjs",
+    "adapters/mcp.mjs",
     "skills/research-forge/",
     "LICENSE",
     "docs/agent-install.md",
