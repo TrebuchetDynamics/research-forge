@@ -1,7 +1,7 @@
 {
   "name": "research-forge",
   "version": "0.1.22",
-  "description": "Passive research methodology skill for the Pi coding agent",
+  "description": "Passive research methodology and explicit workflows for the Pi coding agent",
   "license": "MIT",
   "type": "module",
   "keywords": ["pi-package"],
@@ -13,10 +13,15 @@
     "adapters/pi.mjs",
     "skills/research-forge/",
     "LICENSE",
-    "docs/agent-install.md"
+    "docs/agent-install.md",
+    "adapters/skills/brief/",
+    "adapters/skills/compare/",
+    "adapters/skills/lit/",
+    "adapters/skills/paper/",
+    "adapters/skills/replicate/"
   ],
   "pi": {
-    "skills": ["./skills/research-forge"],
+    "skills": ["./skills/research-forge", "./adapters/skills/brief", "./adapters/skills/compare", "./adapters/skills/lit", "./adapters/skills/paper", "./adapters/skills/replicate"],
     "extensions": ["./adapters/pi.mjs"]
   },
   "engines": {"node": ">=22"}

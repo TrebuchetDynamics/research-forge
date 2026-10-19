@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"reflect"
 	"regexp"
@@ -13,8 +14,8 @@ import (
 	"github.com/TrebuchetDynamics/research-forge/internal/cli"
 )
 
-// The packaging boundary is passive and exposes the methodology skill, never
-// the repository's developer skills. Keep this offline and dependency-free.
+// The packaging boundary is passive: methodology plus explicit-only workflows,
+// never the repository's developer skills. Keep this offline.
 func TestPassivePluginConformance(t *testing.T) {
 	root := filepath.Join("..", "..")
 	read := func(path string) string { return readContractFile(t, root, path) }
@@ -65,9 +66,17 @@ func TestPassivePluginConformance(t *testing.T) {
 	if tag := os.Getenv("RFORGE_RELEASE_VERSION"); tag != "" && strings.TrimPrefix(tag, "v") != version {
 		t.Errorf("manifest version %s differs from release %s", version, tag)
 	}
+	workflows := []string{"brief", "compare", "lit", "paper", "replicate"}
 	wantSkills := []any{"./skills/research-forge"}
-	if !reflect.DeepEqual(claude["skills"], wantSkills) || codex["skills"] != "./skills/research-forge" {
-		t.Fatal("Claude and Codex must expose only the public skill")
+	piSkills := []any{"./skills/research-forge"}
+	packageFiles := []any{"adapters/pi.mjs", "skills/research-forge/", "LICENSE", "docs/agent-install.md"}
+	for _, name := range workflows {
+		wantSkills = append(wantSkills, "./skills/"+name)
+		piSkills = append(piSkills, "./adapters/skills/"+name)
+		packageFiles = append(packageFiles, "adapters/skills/"+name+"/")
+	}
+	if !reflect.DeepEqual(claude["skills"], wantSkills) || codex["skills"] != "./skills/" {
+		t.Fatal("Claude and Codex must expose only methodology and explicit workflows")
 	}
 	for _, host := range []string{"claude", "codex"} {
 		path := ".claude-plugin/marketplace.json"
@@ -93,11 +102,11 @@ func TestPassivePluginConformance(t *testing.T) {
 	}
 	resources, _ := pi["pi"].(map[string]any)
 	if !reflect.DeepEqual(resources, map[string]any{
-		"skills": []any{"./skills/research-forge"}, "extensions": []any{"./adapters/pi.mjs"},
+		"skills": piSkills, "extensions": []any{"./adapters/pi.mjs"},
 	}) {
-		t.Fatal("Pi resources must expose only the public skill and passive extension")
+		t.Fatal("Pi resources must expose only public skills and the passive command extension")
 	}
-	if !reflect.DeepEqual(pi["files"], []any{"adapters/pi.mjs", "skills/research-forge/", "LICENSE", "docs/agent-install.md"}) {
+	if !reflect.DeepEqual(pi["files"], packageFiles) {
 		t.Fatal("npm package must not ship developer skills or unrelated adapters")
 	}
 	if hermes["kind"] != "standalone" {
@@ -109,8 +118,32 @@ func TestPassivePluginConformance(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(entries) != 1 || entries[0].Name() != "research-forge" || !entries[0].IsDir() {
-		t.Fatal("isolated plugin root must contain exactly the public skill")
+	allowed := map[string]bool{"research-forge": true}
+	for _, name := range workflows {
+		allowed[name] = true
+	}
+	if len(entries) != len(allowed) {
+		t.Fatal("isolated plugin root must contain exactly methodology and five explicit workflows")
+	}
+	for _, entry := range entries {
+		if !entry.IsDir() || !allowed[entry.Name()] {
+			t.Errorf("unexpected skill surface %s", entry.Name())
+		}
+	}
+	for _, name := range workflows {
+		path := "adapters/skills/" + name + "/"
+		header := strings.SplitN(read(path+"SKILL.md"), "---", 3)
+		if len(header) != 3 || header[0] != "" ||
+			!regexp.MustCompile(`(?m)^disable-model-invocation: true$`).MatchString(header[1]) {
+			t.Fatalf("%s must disable model invocation in frontmatter", name)
+		}
+		var policy map[string]any
+		if err := json.Unmarshal([]byte(read(path+"agents/openai.yaml")), &policy); err != nil {
+			t.Fatalf("%s: parse Codex policy (JSON subset of YAML): %v", name, err)
+		}
+		if !reflect.DeepEqual(policy, map[string]any{"policy": map[string]any{"allow_implicit_invocation": false}}) {
+			t.Fatalf("%s must disallow Codex implicit invocation", name)
+		}
 	}
 	skill := read("skills/research-forge/SKILL.md")
 	if read("adapters/skills/research-forge/SKILL.md") != skill {
@@ -145,5 +178,10 @@ func TestPassivePluginConformance(t *testing.T) {
 	}
 	if strings.Contains(read("adapters/pi.mjs"), "child_process") {
 		t.Fatal("Pi must not spawn subprocesses before typed-tool integration")
+	}
+	cmd := exec.Command("node", "--test", "adapters/test_pi.mjs")
+	cmd.Dir = root
+	if out, err := cmd.CombinedOutput(); err != nil {
+		t.Fatalf("Pi command contract: %v\n%s", err, out)
 	}
 }

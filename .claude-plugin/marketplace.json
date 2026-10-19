@@ -7,7 +7,7 @@
       "name": "research-forge",
       "source": "./adapters",
       "description": "Retrieval-first research methodology with rforge provenance and human review gates.",
-      "skills": ["./skills/research-forge"]
+      "skills": ["./skills/research-forge", "./skills/brief", "./skills/compare", "./skills/lit", "./skills/paper", "./skills/replicate"]
     }
   ]
 }
