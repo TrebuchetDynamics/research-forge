@@ -2,7 +2,18 @@
   "goals": [
     {
       "depends_on": [],
-      "evidence": [],
+      "evidence": [
+        {
+          "anchor": "v0-4",
+          "archive": "TODO.archive.md",
+          "coverage_current": true,
+          "kind": "executed",
+          "ref": "4b926d7: TestGitCommandsIgnoreInheritedRepositoryEnvironment red then green; decoy-env replay of go test ./internal/oss ./internal/cli left decoy unchanged; make check via pre-commit passed",
+          "result": "pass",
+          "summary": "Executed check: pass",
+          "task": "V0-4"
+        }
+      ],
       "id": "RF-V0",
       "priority": 10,
       "source": "docs/verifiable-engine-plan.md#verifiable-research-engine-plan",
@@ -10,7 +21,10 @@
       "tasks": [
         "V0-1",
         "V0-2",
-        "V0-3"
+        "V0-3",
+        "V0-4",
+        "V0-5",
+        "V0-6"
       ],
       "title": "Land and harden the in-progress research commands"
     },
@@ -139,6 +153,8 @@
       "V-E3",
       "V-E4",
       "V-E5",
+      "V0-5",
+      "V0-6",
       "V-B4-lock",
       "V-B6-run",
       "V-E5-run",
@@ -472,10 +488,37 @@
     {
       "depends_on": [],
       "goal": "RF-V0",
+      "id": "V0-5",
+      "section": "Needs decision",
+      "status": "open",
+      "title": "Decide whether the runner may push main to origin"
+    },
+    {
+      "depends_on": [
+        "V0-4",
+        "V0-5"
+      ],
+      "goal": "RF-V0",
+      "id": "V0-6",
+      "section": "Needs decision",
+      "status": "open",
+      "title": "Restart the runner after verifying its repository setup"
+    },
+    {
+      "depends_on": [],
+      "goal": "RF-V0",
       "id": "V0-1",
       "section": "Done",
       "status": "done",
       "title": "Land the in-progress workflow commands"
+    },
+    {
+      "depends_on": [],
+      "goal": "RF-V0",
+      "id": "V0-4",
+      "section": "Done",
+      "status": "done",
+      "title": "Isolate git subprocesses from inherited hook environment"
     }
   ],
   "version": 1
