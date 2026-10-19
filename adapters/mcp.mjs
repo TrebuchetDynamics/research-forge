@@ -39,7 +39,7 @@ async function compatibility() {
     try {
       const result = JSON.parse(error.stdout);
       if (result.ok === false && typeof result.error?.code === 'string' && typeof result.error.message === 'string') {
-        return recovery(result.error.code, result.error.message, result.error);
+        return result; // Engine diagnostics are authoritative, including recovery guidance.
       }
     } catch { /* Missing/old engines may have no JSON capability response. */ }
     if (error.code === 'ENOENT') return recovery('rforge_missing', 'rforge was not found on PATH');
