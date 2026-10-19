@@ -5,6 +5,7 @@ Core commands:
 - `rforge capabilities --json [--min-rforge-version <version>] [--require <family>=<contract-version>]...` reports build metadata and command contracts, and optionally checks engine compatibility for skills, plugins, and adapters (see [compatibility checks](#capability-report-and-compatibility-checks))
 
 - `rforge automation policy [--action <action>]` prints the hybrid agent/human decision policy: LLM agents may decide reversible assists such as batch retrieval/dedupe, screening queues, extraction suggestions, analysis preparation, and claim-trace audits, while humans must approve inclusion/exclusion, full-text acquisition, extraction acceptance, analysis method selection, final claims, and package export
+- `rforge [--project <path>] mcp serve` serves the six read/run tools over stdio using the official Go MCP SDK (see [MCP stdio server](#mcp-stdio-server)); stdout is exclusively JSON-RPC
 - `rforge project create [path] --title <title>`
 - `rforge project inspect <path>`
 - `rforge forge init --project <path> --question <text> [--sources openalex,semantic-scholar --tools grobid,qdrant]`, `rforge forge status --project <path>`, `rforge forge next --project <path>`, `rforge forge approve --project <path> --gate <gate> [--note <text>]`, `rforge forge reopen --project <path> --state <state> --reason <text>`, and `rforge forge run-dag --project <path> --question <text> [--max-steps N]` run the guided Meta-analysis spine workflow and resumable discovery→report DAG, persisting `data/forge-state.json`, source/tool choices, privacy/legal previews, `data/forge-workflow/*` checkpoints, transition provenance, next safe actions, and reviewer gates for irreversible scientific/data-sharing decisions
@@ -154,7 +155,9 @@ rforge jobs resume <id> --dir ./research/topic
 `progress.completed`, `progress.total`, and `stop_reason`. Progress counts
 committed pairs in the selected worklist; budget or saturation stops can finish
 before total progress is reached. Statuses are `queued`, `running`, `completed`,
-`interrupted`, and `failed`.
+`interrupted`, and `failed`. Published search results are saved in `data.job.result`
+as the same `{"ok":...,"data":...}` envelope printed by `search batch --json`,
+including manifest and output file references; older jobs may lack `result`.
 
 Jobs run in the invoking process, never a detached daemon. A process-held lease
 allows only one job writer per research directory. Inspecting a live job does
@@ -171,6 +174,57 @@ Implementation: [job service](../internal/jobs/persistent.go),
 [CLI adapter](../internal/cli/jobs_command.go). Update this section when job
 lifecycle, request persistence, or command flags change.
 
+## MCP stdio server
+
+```sh
+rforge mcp serve
+# Default project for library imports during search and evidence retrieval:
+rforge --project ./review mcp serve
+```
+
+Configure an MCP client's command as `rforge`, with arguments
+`["--project", "./review", "mcp", "serve"]` (omit the project pair when unused).
+Use an absolute project path if the client's working directory differs. No HTTP
+listener, startup search, index opening, or project creation occurs. Stdout carries
+only newline-delimited MCP JSON-RPC; server diagnostics go to stderr.
+
+| Tool | Arguments | Equivalent CLI JSON operation |
+| --- | --- | --- |
+| `search` | `dir`, `queries` array, `sources` array; optional `limit` (25), `depth` (standard), `max_requests`, `continue_on_error`, `stats` | `search batch --out <dir> --query ... --sources ... --json`, asynchronously |
+| `job_status` | `dir`, `id` | `jobs status <id> --dir <dir> --json` |
+| `source_get` | `id` (identifier, URL, or title) | `paper <id> --json`, using `sources.ResolvePaper` |
+| `research_status` | `dir`; optional `out` | `brief <dir> [--out <file>] --json` |
+| `compare` | `dirs` array; optional `labels` array, `out` | `compare <dirs...> [--labels <csv>] [--out <file>] --json` |
+| `evidence_retrieve` | `query`; optional `project`, `backend` (sqlite) | `--project <path> retrieve --query <query> [--backend sqlite\|opensearch\|qdrant\|hybrid] --json` |
+
+Successful results preserve the CLI `{"ok":true,"data":...}` envelope in MCP
+`structuredContent` and JSON text content. Results contain compact summaries,
+metadata, bounded evidence passages, and artifact references, not full documents.
+Invalid arguments or engine errors are MCP tool errors. Connector credentials,
+endpoints, rate limits, and retrieval-backend privacy policy remain the CLI's.
+
+For example, call `search` with
+`{"dir":"./research/topic","queries":["battery recycling"],"sources":["scholarly-fast"],"depth":"quick"}`.
+It returns `data.job_id` immediately. Poll `job_status` with that ID and the same
+`dir`; a completed job's `data.job.result` contains the `search batch --json`
+response, including its `manifest` path. Identity and timestamps differ between
+separate executions; the shared engine publishes the same fixture results and
+manifest fields. Search inherits the server's project for library imports.
+
+Jobs run in the server process, not in the tool-call context or a detached daemon.
+Searches sharing the configured project are serialized within the server to
+protect library import/rollback, even with different output directories.
+Disconnect or SIGINT/SIGTERM cancels active search work and paper resolution,
+saves resumable search checkpoints, and joins the workers before exit. A queued
+job waiting for a busy directory remains resumable. Use `rforge jobs resume <id> --dir <dir>` to continue
+an interrupted or queued job. No approval, claim-acceptance, full-text acquisition,
+or export tools are registered.
+
+Implementation: [MCP adapter](../internal/mcp/server.go),
+[CLI host wiring](../internal/cli/mcp_command.go), and
+[offline parity/lifecycle tests](../internal/mcp/server_test.go).
+Update this section when the tool allowlist, schemas, or lifecycle changes.
+
 ## Capability report and compatibility checks
 
 `rforge capabilities --json` is an offline, read-only engine compatibility report.
@@ -179,8 +233,8 @@ is `{"ok":true,"data":{...}}`; `data` contains:
 
 - `name`, `version`, `commit`, `date`: the same build metadata as `rforge version`.
 - `capabilities`: a map of family names to positive integer contract versions.
-  Currently `search`, `paper`, `brief`, `compare`, and `provenance` each report `1`.
-  `mcp` and `claims` are absent until implemented; absence never implies support.
+  Currently `search`, `paper`, `brief`, `compare`, `provenance`, and `mcp` each report `1`.
+  `claims` is absent until implemented; absence never implies support.
 - `error_codes`: the stable codes for this command, listed below (not a catalog of
   every error emitted by other commands).
 

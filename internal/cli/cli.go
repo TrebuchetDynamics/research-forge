@@ -40,7 +40,7 @@ var (
 	Date    = "unknown"
 )
 
-var topLevelCommands = []string{"help", "vault", "version", "capabilities", "decisions", "benchmark", "automation", "completion", "forge", "project", "doctor", "service", "library", "search", "jobs", "citations", "oa", "duplicate", "import", "export", "oss", "pdf", "parse", "index", "knowledge", "graph", "retrieve", "research", "protocol", "screen", "prisma", "extraction", "extract", "evidence", "claim", "analysis", "report", "package", "archive", "ui", "watch", "inbox", "fetch", "provenance", "journal", "goal", "meta", "paper", "rank", "brief", "compare", "lit", "note", "history", "replicate", "draft"}
+var topLevelCommands = []string{"help", "vault", "version", "capabilities", "decisions", "benchmark", "automation", "completion", "forge", "project", "doctor", "service", "library", "search", "jobs", "mcp", "citations", "oa", "duplicate", "import", "export", "oss", "pdf", "parse", "index", "knowledge", "graph", "retrieve", "research", "protocol", "screen", "prisma", "extraction", "extract", "evidence", "claim", "analysis", "report", "package", "archive", "ui", "watch", "inbox", "fetch", "provenance", "journal", "goal", "meta", "paper", "rank", "brief", "compare", "lit", "note", "history", "replicate", "draft"}
 
 type globalOptions struct {
 	JSON     bool
@@ -51,6 +51,11 @@ type globalOptions struct {
 
 // Execute runs the rforge CLI and returns a process-style exit code.
 func Execute(args []string, stdout, stderr io.Writer) int {
+	return ExecuteWithInput(args, os.Stdin, stdout, stderr)
+}
+
+// ExecuteWithInput runs the CLI with an explicit stdin (notably for MCP stdio).
+func ExecuteWithInput(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 	opts, remaining, ok := parseGlobalOptions(args)
 	if !ok {
 		return writeError(stdout, stderr, opts, 2, "invalid_global_flag", "invalid global flag usage")
@@ -100,6 +105,8 @@ func Execute(args []string, stdout, stderr io.Writer) int {
 		return executeSearch(remaining[1:], stdout, stderr, opts)
 	case "jobs":
 		return executeJobs(remaining[1:], stdout, stderr, opts)
+	case "mcp":
+		return executeMCP(remaining[1:], stdin, stdout, stderr, opts)
 	case "citations":
 		return executeCitations(remaining[1:], stdout, stderr, opts)
 	case "oa":
@@ -3968,6 +3975,11 @@ func helpSections() []helpSection {
 					Description: "Single-source search (openalex, arxiv, crossref, semantic-scholar, europepmc, pubmed, and 38 more).",
 				},
 			},
+		},
+		{
+			Name:        "mcp",
+			Description: "Thin MCP adapter over the shared research engine.",
+			Commands:    []helpCommand{{Usage: "rforge [--project <path>] mcp serve", Description: "Serve six read/run tools over stdio. No work occurs until a tool is called; disconnect checkpoints active searches."}},
 		},
 		{
 			Name:        "jobs",

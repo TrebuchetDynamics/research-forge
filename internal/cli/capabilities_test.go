@@ -30,7 +30,7 @@ func TestExecuteCapabilitiesReport(t *testing.T) {
 		if err := json.Unmarshal(out.Bytes(), &result); err != nil {
 			t.Fatal(err)
 		}
-		want := map[string]int{"search": 1, "paper": 1, "brief": 1, "compare": 1, "provenance": 1}
+		want := map[string]int{"search": 1, "paper": 1, "brief": 1, "compare": 1, "provenance": 1, "mcp": 1}
 		if !result.OK || result.Data.Version != "v2.3.4" || !reflect.DeepEqual(result.Data.Capabilities, want) {
 			t.Fatalf("unexpected report: %s", out.String())
 		}
@@ -52,8 +52,8 @@ func TestExecuteCapabilitiesCompatibility(t *testing.T) {
 		name, version, minimum, requirement, wantCode, gap string
 	}{
 		{"release pass", "v1.10.0", "1.9.0", "search=1", "", ""},
-		{"dev with capabilities pass", "dev", "999.0.0", "paper=1", "", ""},
-		{"dev missing capability fail", "dev", "1.0.0", "mcp=1", "capability_missing", "mcp"},
+		{"dev with capabilities pass", "dev", "999.0.0", "mcp=1", "", ""},
+		{"dev missing capability fail", "dev", "1.0.0", "claims=1", "capability_missing", "claims"},
 		{"older capability fail", "dev", "1.0.0", "search=2", "capability_too_old", "search"},
 		{"release missing capability fail", "v2.0.0", "1.0.0", "claims=1", "capability_missing", "claims"},
 		{"old version fail", "1.9.0", "v1.10.0", "mcp=1", "version_too_old", "1.10.0"},
