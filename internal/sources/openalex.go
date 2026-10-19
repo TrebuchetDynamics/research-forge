@@ -65,6 +65,8 @@ func (c OpenAlexConnector) Search(ctx context.Context, query SourceQuery) (Sourc
 			Identifiers: Identifiers{
 				DOI:        normalizeSourceDOI(work.DOI),
 				OpenAlexID: openAlexID,
+				PMID:       strings.TrimPrefix(work.IDs.PMID, "https://pubmed.ncbi.nlm.nih.gov/"),
+				PMCID:      strings.TrimPrefix(work.IDs.PMCID, "https://www.ncbi.nlm.nih.gov/pmc/articles/"),
 			},
 			Year:       work.PublicationYear,
 			URLs:       nonEmptyStrings(work.PrimaryLocation.LandingPageURL),
@@ -138,10 +140,15 @@ type openAlexMeta struct {
 }
 
 type openAlexWork struct {
+	IDs struct {
+		PMID  string `json:"pmid"`
+		PMCID string `json:"pmcid"`
+	} `json:"ids"`
 	ID              string                  `json:"id"`
 	DOI             string                  `json:"doi"`
 	Title           string                  `json:"title"`
 	PublicationYear int                     `json:"publication_year"`
+	PublicationDate string                  `json:"publication_date"`
 	Type            string                  `json:"type"`
 	OpenAccess      openAlexOpenAccess      `json:"open_access"`
 	PrimaryLocation openAlexPrimaryLocation `json:"primary_location"`
@@ -180,6 +187,7 @@ type openAlexTopicBucket struct {
 
 func openAlexWorkMetadata(work openAlexWork) map[string]string {
 	metadata := map[string]string{
+		"publication_date":     strings.TrimSpace(work.PublicationDate),
 		"type":                 strings.TrimSpace(work.Type),
 		"oa_status":            strings.TrimSpace(work.OpenAccess.OAStatus),
 		"concepts":             strings.Join(openAlexConcepts(work.Concepts), "; "),

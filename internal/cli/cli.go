@@ -215,6 +215,9 @@ func executeAutomation(args []string, stdout, stderr io.Writer, opts globalOptio
 }
 
 func executeBenchmark(args []string, stdout, stderr io.Writer, opts globalOptions) int {
+	if len(args) > 0 && args[0] == "run" {
+		return executeBenchmarkEngine(args[1:], stdout, stderr)
+	}
 	if len(args) == 0 || args[0] != "cross-tool" {
 		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge benchmark cross-tool --out <report.json>")
 	}
@@ -4184,6 +4187,14 @@ func helpSections() []helpSection {
 			Name:        "utilities",
 			Description: "Diagnostics, governance, version, and environment checks.",
 			Commands: []helpCommand{
+				{
+					Usage:       "rforge benchmark run --set <dir> [--replay|--record] [--split dev|held_out] [--out <report.json>]",
+					Description: "Score checksum-locked HTTP snapshots through real connectors and dedupe; --record explicitly opts into live capture of an approved set.",
+				},
+				{
+					Usage:       "rforge benchmark cross-tool --out <report.json>",
+					Description: "Write demo constants, not a measured research-quality baseline.",
+				},
 				{
 					Usage:       "rforge version",
 					Description: "Print rforge version, commit, and build date.",

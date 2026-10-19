@@ -77,6 +77,9 @@ func (c CrossrefConnector) Search(ctx context.Context, query SourceQuery) (Sourc
 	if filter := translateCrossrefFilter(query.Filters["filter"]); filter != "" {
 		params["filter"] = filter
 	}
+	if query.PageCursor != "" {
+		params["cursor"] = query.PageCursor
+	}
 	body, err := c.http.Get(ctx, "/works", params)
 	if err != nil {
 		return SourceResponse{}, err
@@ -171,14 +174,36 @@ func sourceRecordFromCrossrefWork(work crossrefWork) SourceRecord {
 		License:    firstCrossrefLicenseURL(work.License),
 		OpenAccess: len(work.License) > 0,
 		Metadata: map[string]string{
-			"type":            strings.TrimSpace(work.Type),
-			"reference_count": strconv.Itoa(work.ReferenceCount),
-			"reference_dois":  strings.Join(crossrefReferenceDOIs(work.Reference), "; "),
-			"funders":         strings.Join(crossrefFunders(work.Funder), "; "),
-			"funder_awards":   strings.Join(crossrefFunderAwards(work.Funder), "; "),
-			"relations":       strings.Join(crossrefRelations(work.Relation), "; "),
+			"publication_dates": crossrefPublicationDates(work),
+			"type":              strings.TrimSpace(work.Type),
+			"reference_count":   strconv.Itoa(work.ReferenceCount),
+			"reference_dois":    strings.Join(crossrefReferenceDOIs(work.Reference), "; "),
+			"funders":           strings.Join(crossrefFunders(work.Funder), "; "),
+			"funder_awards":     strings.Join(crossrefFunderAwards(work.Funder), "; "),
+			"relations":         strings.Join(crossrefRelations(work.Relation), "; "),
 		},
 	}
+}
+
+// Preserve the precision of each public date; the benchmark's independent
+// guard uses the earliest documented date, never a gold-provided date.
+func crossrefPublicationDates(work crossrefWork) string {
+	dates := []string{}
+	for _, d := range []crossrefDateParts{work.PublishedOnline, work.PublishedPrint, work.Issued} {
+		if len(d.DateParts) == 0 || len(d.DateParts[0]) == 0 {
+			continue
+		}
+		parts := d.DateParts[0]
+		s := fmt.Sprintf("%04d", parts[0])
+		if len(parts) > 1 {
+			s += fmt.Sprintf("-%02d", parts[1])
+		}
+		if len(parts) > 2 {
+			s += fmt.Sprintf("-%02d", parts[2])
+		}
+		dates = append(dates, s)
+	}
+	return strings.Join(dates, ";")
 }
 
 func firstCrossrefLicenseURL(licenses []crossrefLicense) string {
