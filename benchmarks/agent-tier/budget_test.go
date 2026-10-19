@@ -15,7 +15,10 @@ func TestPairedUsageAndCaps(t *testing.T) {
 		mutate func(map[string]any)
 		valid  bool
 	}{
-		{"nested-pages", func(r map[string]any) { u := r["usage"].(map[string]any); u["search_calls"] = 3; u["tool_calls"] = 1 }, true},
+		{"nested-pages", func(r map[string]any) {
+			u := r["usage"].(map[string]any)
+			u["search_calls"], u["tool_calls"] = 6, 1
+		}, true},
 		{"unmatched-model", func(r map[string]any) { r["model"].(map[string]any)["version"] = "other" }, false},
 		{"unmatched-caps", func(r map[string]any) { r["caps"].(map[string]any)["tokens"] = 64000 }, false},
 		{"unreported-overrun", func(r map[string]any) { r["usage"].(map[string]any)["input_tokens"] = 32001 }, false},

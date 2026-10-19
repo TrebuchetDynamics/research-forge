@@ -665,9 +665,43 @@ or SHA-256 of the exact bytes of this specification for engine v1).
     "runs": {"type": "array", "items": {"$ref": "#/$defs/run"}},
     "aggregates": {"oneOf": [{"type": "null"}, {"type": "array", "items": {"$ref": "#/$defs/aggregate"}}]},
     "paired": {"type": "array", "items": {"$ref": "#/$defs/paired"}},
-    "errors": {"type": "array", "items": {"$ref": "#/$defs/error"}}
+    "errors": {"type": "array", "items": {"$ref": "#/$defs/error"}},
+    "provider_availability": {"type": "array", "items": {"$ref": "#/$defs/provider_availability"}}
   },
+  "if": {"properties": {"tier": {"const": "agent"}}},
+  "then": {"required": ["provider_availability"]},
   "$defs": {
+    "provider_event": {
+      "type": "object", "additionalProperties": false,
+      "required": ["provider", "query", "action", "http_status", "retry_after", "error", "stop_reason"],
+      "properties": {
+        "provider": {"type": "string", "minLength": 1},
+        "query": {"type": "string", "minLength": 1},
+        "action": {"enum": ["completed", "failed", "skipped"]},
+        "http_status": {"type": "integer", "minimum": 0, "maximum": 599},
+        "retry_after": {"type": "string"},
+        "error": {"type": "string"},
+        "stop_reason": {"enum": ["completed", "budget_exhausted", "coverage_saturated", "interrupted", "error_threshold"]}
+      }
+    },
+    "provider_availability": {
+      "type": "object", "additionalProperties": false,
+      "required": ["slot", "provider_lost", "pair_provider_lost", "events"],
+      "properties": {
+        "slot": {
+          "type": "object", "additionalProperties": false,
+          "required": ["question_id", "repetition", "condition"],
+          "properties": {
+            "question_id": {"type": "string", "minLength": 1},
+            "repetition": {"type": "integer", "minimum": 1},
+            "condition": {"enum": ["with_rforge", "without_rforge"]}
+          }
+        },
+        "provider_lost": {"type": "boolean"},
+        "pair_provider_lost": {"type": "boolean"},
+        "events": {"type": "array", "items": {"$ref": "#/$defs/provider_event"}}
+      }
+    },
     "hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
     "count": {"type": ["integer", "null"], "minimum": 0},
     "number": {"type": ["number", "null"], "minimum": 0},
@@ -803,7 +837,12 @@ its JCS bytes into `protocol_sha256`. It MUST pin: host/version, model provider
 and exact model/version, sampling settings, shared system/task prompt bytes,
 condition-specific tool/skill instructions, rforge version/revision, set checksum,
 ordered question IDs, N, all caps, run-order seed, scorer version, enabled citation
-metric version, and the list of primary/secondary metrics. Missing model identity
+metric version, the list of primary/secondary metrics, and provider policy.
+Protocol `schema_version: 2` requires `provider_policy` with `with_sources`
+(at least two distinct canonical provider names), `continue_on_error: true` and
+`rate_limit_action: "skip_for_run"`. Prepared inputs carry the same policy.
+Previous v1 registrations lack outage receipts: re-author and register before
+new execution, never silently retrofit old observations. Missing model identity
 or opaque tool accounting disqualifies a host rather than making an unmatched
 comparison. Live execution requires separate owner authorization and spend cap.
 
@@ -842,6 +881,57 @@ For each `(question, repetition)` pair:
   it, rerun **both** members of that pair under the same protocol and retain the
   superseded attempt in the private audit. A leakage/protocol failure invalidates
   the experiment until resolved, never just the worse condition's row.
+
+#### Provider loss (V-B11)
+
+The default with-tools mix is `crossref,semantic-scholar,arxiv`, used through
+`search batch --continue-on-error` and the trusted gateway. OpenAlex is not a
+dependency; including it requires an explicit registered source list. Qualify
+at least two independent providers before running. Native search remains native,
+with its actual provider identities and equivalent gateway controls.
+
+On the first HTTP 429 in either condition, the gateway quarantines that provider
+for the remainder of the observation: no HTTP retry, backoff, failed-pair resume,
+or alias/endpoint workaround. Skip and log subsequent calls, continue other
+qualified providers within the same budget, and retain partial output. Reset
+quarantine per observation. `--continue-on-error` alone does not implement this:
+connectors can retry internally and later queries can reselect a failed source.
+The live operator must qualify interception before those retries in both hosts;
+opaque providers/retries/accounting disqualify native search as well.
+
+Every raw observation requires ordered `provider_events` with `provider`, `query`,
+`action` (`completed`, `failed`, `skipped`), `http_status`, `retry_after`, `error`
+and `stop_reason`. Record every HTTP attempt and local quarantine skip. Provider
+names are canonical lowercase identities across endpoints. Status 0 means no
+response/local skip; completed statuses are 200–399. Failed events preserve the
+actual status (100–599) or 0 for transport errors; even HTTP 200 can fail during
+response parsing. Errors are nonempty on failures/skips, empty on success. Preserve sanitized raw Retry-After (empty if absent), including on 429;
+never retain credentials. A skip has status 0, empty Retry-After and
+`error_threshold` stop reason, and must follow that provider's 429. Provider
+operation stop reasons use the run vocabulary; an observation may still complete
+when a provider operation failed. An empty event list is legal only without
+search/HTTP usage. Non-skip event count MUST equal recorded HTTP usage, including
+redirects, expansions and fetches; use an operation label or sanitized locator in
+`query` for non-search traffic. Unexplained extra HTTP counts could conceal an
+omitted outage. Import rejects accounting mismatches, post-429 retries, illegal
+skips and unregistered with-tools providers.
+
+Keep rforge `failures.jsonl`, manifest/checkpoint stop reasons and native HTTP
+receipts private. These are operational records, never answer/scorer fields.
+Only after scores freeze, the agent report adds `provider_availability` in
+schedule order: one `{slot, provider_lost, pair_provider_lost, events}` per run.
+`provider_lost` conservatively means any failed attempt, even a transient error;
+`pair_provider_lost` flags **both** members when either condition failed. Report
+all affected pairs and providers with conclusions; keep their scored rows and
+registered contrasts without post-hoc exclusion or selective reruns. Invalid
+reports have an empty availability array, not fabricated successful receipts.
+Engine reports do not require this agent-only field; the shared report version
+and retrieval scorer remain v1 because scoring is unchanged.
+
+Offline acceptance uses the canned `stub --rate-limit-provider crossref` pipeline
+through blind/score/report. Live qualification separately injects a 429 into each
+real gateway and verifies no retry/wait and continued remaining-provider work.
+See the [runbook](agent-tier.md#provider-independent-search-and-outage-qualification).
 
 ### 8.2 Blind scoring
 

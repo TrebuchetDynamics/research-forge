@@ -21,17 +21,18 @@ func makeNewDir(path string) error {
 }
 
 type AgentInput struct {
-	QuestionID string   `json:"question_id"`
-	Question   string   `json:"question"`
-	Domain     string   `json:"domain"`
-	DateCap    string   `json:"date_cap"`
-	Caps       Caps     `json:"caps"`
-	System     string   `json:"system"`
-	Task       string   `json:"task"`
-	Tools      string   `json:"tool_instructions"`
-	Sampling   Sampling `json:"sampling"`
-	Model      Model    `json:"model"`
-	Seed       *int64   `json:"seed"`
+	QuestionID     string         `json:"question_id"`
+	Question       string         `json:"question"`
+	Domain         string         `json:"domain"`
+	DateCap        string         `json:"date_cap"`
+	Caps           Caps           `json:"caps"`
+	System         string         `json:"system"`
+	Task           string         `json:"task"`
+	Tools          string         `json:"tool_instructions"`
+	Sampling       Sampling       `json:"sampling"`
+	Model          Model          `json:"model"`
+	Seed           *int64         `json:"seed"`
+	ProviderPolicy ProviderPolicy `json:"provider_policy"`
 }
 
 func prepare(setDir, protocolFile, out string) error {
@@ -78,14 +79,14 @@ func prepareFiles(s b.Set, p Protocol, out string) error {
 			v := p.RunOrderSeed + int64(slot.Repetition)
 			seed = &v
 		}
-		input := AgentInput{q.QuestionID, q.Question, q.Domain, q.Review.SearchDate, p.Caps, p.Prompts.System, p.Prompts.Task, tools, p.Sampling, p.Model, seed}
+		input := AgentInput{q.QuestionID, q.Question, q.Domain, q.Review.SearchDate, p.Caps, p.Prompts.System, p.Prompts.Task, tools, p.Sampling, p.Model, seed, p.ProviderPolicy}
 		if err := save(filepath.Join(inputs, fmt.Sprintf("%04d.json", i)), input); err != nil {
 			return err
 		}
 	}
 	return nil
 }
-func stub(setDir, out string) error {
+func stub(setDir, out, rateLimitProvider string) error {
 	s, err := b.LoadAgentSet(setDir)
 	if err != nil {
 		return err
@@ -105,11 +106,14 @@ func stub(setDir, out string) error {
 			ids = append(ids, q.QuestionID)
 		}
 	}
-	p := Protocol{Version: 1, Host: Host{"pi", "stub-no-host-execution"}, Model: Model{"stub", "canned-v1"}, Sampling: Sampling{0, 1, true}, Prompts: Prompts{
-		System: "Research using only the qualified, date-capped gateway. Do not access other files or previous runs.",
+	p := Protocol{Version: 2, Host: Host{"pi", "stub-no-host-execution"}, Model: Model{"stub", "canned-v1"}, Sampling: Sampling{0, 1, true}, Prompts: Prompts{
+		System: "Research using only the qualified, date-capped gateway. Do not access other files or previous runs. Log provider failures, HTTP status, Retry-After and stop reasons. After a 429 skip that provider for the remainder of this observation; do not retry or wait. Continue with remaining qualified providers within the same budget.",
 		Task:   "Answer the supplied question. Return JSON with an ordered bibliography of identifier arrays and claims containing text, quote and locator. Preserve duplicate bibliography ranks; return partial output at budget stops.",
-		With:   "Use the ResearchForge skill and tools through the trusted gateway.", Without: "Use only the host native search through the trusted gateway; no ResearchForge binary, plugin, skill or saved outputs.",
-	}, RforgeVersion: "fixture", Revision: "canned-v1", SetChecksum: s.SetChecksum, QuestionIDs: ids, Repetitions: 3, Caps: Caps{32000, 20, 60, 100, 600000}, RunOrderSeed: 20261019, ScorerVersion: scorerVersion, CitationVersion: "not_implemented", Primary: []string{"recall"}, Secondary: secondary}
+		With:   "Use the ResearchForge skill and tools through the trusted gateway. Use search batch --sources crossref,semantic-scholar,arxiv --continue-on-error. The gateway must skip throttled providers across all queries and nested HTTP calls; never resume failed pairs during this observation. Retain failures.jsonl, manifest.json and batch-state.json stop reasons. Do not use OpenAlex unless explicitly pre-registered.", Without: "Use only the host native search through the trusted gateway; no ResearchForge binary, plugin, skill or saved outputs. The gateway logs native provider failures and skips any provider after its first 429 for the remainder of this observation.",
+	}, RforgeVersion: "fixture", Revision: "canned-v1", SetChecksum: s.SetChecksum, QuestionIDs: ids, Repetitions: 3, Caps: Caps{32000, 20, 60, 100, 600000}, RunOrderSeed: 20261019, ScorerVersion: scorerVersion, CitationVersion: "not_implemented", Primary: []string{"recall"}, Secondary: secondary, ProviderPolicy: ProviderPolicy{[]string{"crossref", "semantic-scholar", "arxiv"}, true, "skip_for_run"}}
+	if rateLimitProvider != "" && !containsProvider(p.ProviderPolicy.WithSources, rateLimitProvider) {
+		return fmt.Errorf("protocol_violation: stub rate-limit provider is not in the registered mix")
+	}
 	if err = validateProtocol(p, s); err != nil {
 		return err
 	}
@@ -125,6 +129,14 @@ func stub(setDir, out string) error {
 			papers = append(papers, Paper{[]b.Identifier{{Scheme: "doi", Value: "10.9999/p2"}}})
 		}
 		r := RawRun{Slot: slot, Model: p.Model, Caps: p.Caps, RunID: "private-run-" + strconv.Itoa(i), Transcript: "rforge search; native_search; provenance/events.jsonl; condition=" + slot.Condition, Artifacts: []string{"provenance.json"}, StopReason: "completed", Usage: Usage{100, 50, .001, 1, 2, 2, 100}, Gate: Gate{false, true, true, true, 0}, Answer: Answer{papers, []Claim{{"Synthetic energy conversion has several reported routes.", "synthetic excerpt", "https://example.org/source"}}}}
+		r.ProviderEvents = stubProviderEvents(p.ProviderPolicy.WithSources, rateLimitProvider)
+		r.Usage.SearchCalls, r.Usage.HTTPRequests = 0, 0
+		for _, event := range r.ProviderEvents {
+			if event.Action != "skipped" {
+				r.Usage.SearchCalls++
+				r.Usage.HTTPRequests++
+			}
+		}
 		e.Runs = append(e.Runs, r)
 	}
 	return save(filepath.Join(out, "experiment.json"), e)
@@ -140,15 +152,19 @@ func run(args []string) error {
 	blinded := flags.String("blind", "", "scorer-only answer directory")
 	scores := flags.String("scores", "", "frozen scores JSON")
 	out := flags.String("out", "", "new output directory/file")
+	rateLimit := flags.String("rate-limit-provider", "", "stub only: simulate one provider returning HTTP 429")
 	if err := flags.Parse(args[1:]); err != nil {
 		return err
 	}
 	if flags.NArg() != 0 || *out == "" {
 		return fmt.Errorf("usage: --out required, no positional arguments")
 	}
+	if *rateLimit != "" && args[0] != "stub" {
+		return fmt.Errorf("--rate-limit-provider is restricted to the offline stub")
+	}
 	switch args[0] {
 	case "stub":
-		return stub(*set, *out)
+		return stub(*set, *out, *rateLimit)
 	case "prepare":
 		return prepare(*set, *protocol, *out)
 	case "blind":
