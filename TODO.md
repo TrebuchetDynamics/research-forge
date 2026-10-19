@@ -1,5 +1,8 @@
 # ResearchForge TODO
 
+[Completed tasks](TODO.archive.md)
+
+
 This is the end-to-end implementation checklist for ResearchForge. All production-code tasks must be developed with TDD: write the failing test first, make it pass, then refactor.
 
 See also:
@@ -731,79 +734,390 @@ These tasks come from the expanded OSS inventory and deepen ResearchForge into a
 
 ## 12. Verifiable research engine cycle
 
-Plan, decisions and evidence: [docs/verifiable-engine-plan.md](docs/verifiable-engine-plan.md); terms: [ADR 0009](docs/adr/0009-verification-facets-and-provenance-levels.md), CONTEXT.md. Order A → B → C → D, with E (cross-host packaging) scaffolded early in parallel; the claim schema (V-B2) is designed during B. Every task follows red-green-refactor and keeps normal tests offline.
+Plan, decisions and evidence: [docs/verifiable-engine-plan.md](docs/verifiable-engine-plan.md); terms: [ADR 0009](docs/adr/0009-verification-facets-and-provenance-levels.md), CONTEXT.md. Order A → B → C → D, with E (cross-host packaging) scaffolded early in parallel; the claim schema (V-B2) is designed during B. Every task follows red-green-refactor and keeps normal tests offline. Executable tasks are in `## Now` and `## Next` below; tasks needing live spend, owner approval or a release decision are in `## Needs decision`.
 
-### Owner questions (block only the tasks named)
+Owner answers (2026-10-19):
 
-- [x] **Q1 — Gold sets.** _(Owner 2026-10-19: use included-study lists of published systematic reviews; prevent leakage of the reference review into retrieval.)_ Claude drafts candidate sets; owner approves each before lock.
-- [x] **Q2 — Agent-tier runs.** _(Owner 2026-10-19: primary Pi, secondary Codex; same model within each paired comparison; pilot 8 questions × 2 conditions (with/without rforge) × 3 repetitions = 48 Pi runs, expand after pilot; equal token and search budgets per condition; blind scoring against held-out references.)_
-- [x] **Q4 — Public plugin names.** _(Owner 2026-10-19: plugin/marketplace `research-forge`; `rforge` stays the executable name and the Pi command prefix `rforge_`.)_
-- [x] **Q3 — `engine_verified` threat model.** _(Owner 2026-10-19: guard against accidental mislabeling only — checksum recompute + run-ID match; no signing. Signed log is deferred.)_
+- Gold sets: included-study lists of published systematic reviews; the reference review must not leak into retrieval. Claude drafts candidate sets; the owner approves each before lock.
+- Agent-tier runs: Pi primary, Codex secondary; same model within each pair; pilot 8 questions × with/without rforge × 3 repetitions = 48 Pi runs, expanded after the pilot; equal token and search budgets; blind scoring.
+- `engine_verified` threat model: guard against accidental mislabeling only (checksum recompute + run-ID match); no signing.
+- Public names: plugin/marketplace `research-forge`; executable and Pi command prefix `rforge` (`rforge_`).
+- Packaging principles, binding on every E task: one engine, many interfaces (CLI, MCP, Pi tools and plugins call the same Go services; no adapter-side research logic); passive until invoked (no hooks, background work, autonomous loops, permission/approval changes or hidden agent-config edits; an MCP server does no work until a tool is called); test behavior, not just JSON (evidence identity, provenance, resumability, errors, normalizing only timestamps and nondeterministic IDs).
+- Compatibility is capability-based: a `dev` build never passes a minimum-version check on its version string alone (V-E0).
 
-### V0 — Land in-progress work
+## Now
 
-- [x] **V0.1 Land the in-progress workflow commands.** _(Done 2026-10-19 in `d8a3fda`; staged-tree `go build`, `go vet`, `gofmt -l`, full `go test ./...` and the pre-commit gate passed. Deviation: `README.md` was included because every hunk documents these commands; OSS-inventory edits and the deleted `.claude/skills/rforge-release/` stay uncommitted.)_ _(Owner 2026-10-19: builder commits them.)_ Selectively commit the new commands and their tests (`internal/cli/{paper,rank,brief,compare,lit,note,draft}_command.go`, `history_replicate.go`, `search_batch_state.go`, their `_test.go` files, `internal/sources/paper_resolver*.go`, and the matching hunks in `internal/cli/cli.go`, `internal/cli/source_commands.go`, `internal/sources/arxiv.go`, `docs/cli.md`, `skills/research-forge/SKILL.md`). Planning docs (this §12, `docs/verifiable-engine-plan.md`, ADR 0009, `CONTEXT.md`, `docs/adr/README.md`) go in a separate commit. Leave unrelated pending changes (`internal/oss/inventory_*`, `opensource/inventory/*`, `README.md`, deleted `.claude/skills/rforge-release/`) uncommitted unless the owner says otherwise; if a hunk is ambiguous, stop and ask. Check before commit: `go build ./... && go test ./internal/cli ./internal/sources` on the staged tree (`git stash --keep-index` or a clean worktree). Gates every task that touches `internal/cli` command files or `skills/research-forge/SKILL.md`. Touches: listed files, git index.
-- [ ] **V0.2 Harden the new commands.** Depends: V0.1. `rank --out` writes the full ranked list and never overwrites `provenance.json` (write rank provenance as a validator-passing record or a provenance event, and surface write errors); Unpaywall contact comes from config/env instead of `rforge-resolver@local`; drop "deterministic" from `replicate`/`lit` help unless timestamps are injectable and outputs reproducible; new commands record `recordCLICommand` events; add CLI tests for `rank`, `draft`, `paper` and a real offline `replicate` test (httptest server). Check: `go test ./internal/cli ./internal/sources`. Touches: `internal/cli/{rank,draft,paper,lit}_command.go`, `internal/cli/history_replicate.go`, `internal/sources/paper_resolver.go`, tests.
-- [ ] **V0.3 Fix provenance event path mismatch.** Writers use `provenance/events.jsonl`; `internal/reviewpkg/package.go:117,151`, `internal/webui/builders.go:137`, `internal/protocol/live_smoke_snapshot.go:147` read `data/provenance.jsonl`. Pick the writer path as canonical (`provenance.EventLogPath`), migrate readers, keep reading the legacy path as fallback; add a test that a project event appears in the package and web UI. Independent. Touches: `internal/provenance`, `internal/reviewpkg`, `internal/webui/builders.go`, `internal/protocol/live_smoke_snapshot.go`, `internal/reviewpkg/fixture.go`.
+- [ ] V0-2 — Harden the new workflow commands
+- Status: open
+- Goal: RF-V0 — Land and harden the in-progress research commands.
+- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan) (Evidence: in-progress command findings).
+- Scope: `rank --out` writes the full ranked list and never overwrites an existing `provenance.json` (write rank provenance as a validator-passing record or a provenance event; surface write errors instead of discarding them); the Unpaywall contact comes from config/env instead of the hard-coded `rforge-resolver@local`; drop "deterministic" from `replicate`/`lit` help unless timestamps are injectable and outputs reproducible; the new commands record `recordCLICommand` events when run with `--project`; add CLI tests for `rank`, `draft` and `paper` and a real offline `replicate` test using an `httptest` server.
+- Acceptance: a rank run into a directory that already holds `provenance.json` leaves it byte-identical and writes all ranked records to `--out`; `rforge provenance validate` passes on any provenance file `rank` writes; the resolver sends the configured contact; new tests fail before the fix and pass after.
+- Checks: go test ./internal/cli ./internal/sources; make check
+- Dependencies: V0-1.
+- Ownership: ResearchForge maintainer; Autowork runner may execute.
+- Touches: internal/cli/rank_command.go, internal/cli/draft_command.go, internal/cli/paper_command.go, internal/cli/lit_command.go, internal/cli/history_replicate.go, internal/sources/paper_resolver.go, internal/cli/rank_draft_paper_test.go, internal/cli/history_test.go, internal/sources/paper_resolver_test.go, docs/cli.md
 
-### A — Agent contract
+- [ ] V0-3 — Fix the provenance event path mismatch
+- Status: open
+- Goal: RF-V0 — Land and harden the in-progress research commands.
+- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan) (Evidence: provenance path mismatch).
+- Scope: writers use `provenance/events.jsonl` while `internal/reviewpkg/package.go` (around lines 117 and 151), `internal/webui/builders.go` (around line 137) and `internal/protocol/live_smoke_snapshot.go` (around line 147) read `data/provenance.jsonl`. Make the writer path canonical through one exported constant in `internal/provenance`, migrate readers, and keep reading the legacy path as a fallback.
+- Acceptance: a test appends a project event and sees it in the review package and the web UI view model; a project holding only the legacy file still loads.
+- Checks: go test ./internal/provenance ./internal/reviewpkg ./internal/webui ./internal/protocol; make check
+- Dependencies: None.
+- Ownership: ResearchForge maintainer; Autowork runner may execute.
+- Touches: internal/provenance, internal/reviewpkg, internal/webui/builders.go, internal/protocol/live_smoke_snapshot.go
 
-- [ ] **V-A1 Docs parity check.** Depends: V0.1. A Go test (run by `make test` and CI) reads the `go` directive from `go.mod` and fails when SKILL.md, README.md, install.sh, docs/install.md or docs/developer-setup.md state a different minimum Go version; fix SKILL.md:85 to 1.26. Also assert every `rforge <cmd>` named in SKILL.md exists in `topLevelCommands`. Touches: new `internal/docs_parity_test.go` (or `internal/cli`), `skills/research-forge/SKILL.md`, install docs.
-- [ ] **V-A2 Search budgets and stop reasons.** Depends: V0.1. Move batch state/resume out of `internal/cli` into a service package (`internal/search`), then add: `--depth quick|standard|comprehensive` presets (query-variant and source caps), `--max-requests`, marginal-yield coverage (new unique deduped records per query; saturation after N consecutive low-yield queries, thresholds in the preset), and a structured `stop_reason` (`completed`, `budget_exhausted`, `coverage_saturated`, `interrupted`, `error_threshold`) plus requests used and coverage in `manifest.json` and `batch-state.json`. Default depth is standard. Reuse `sources.GraphExpansionBudget` naming and replace the ad-hoc `budget_stopped` raw-ref suffix in `citations expand` with the same stop-reason type. Check: offline tests for each stop reason; resume preserves budget accounting. Touches: `internal/search` (new), `internal/cli/source_commands.go`, `internal/cli/search_batch_state.go`, `internal/sources/graph_budget.go`, docs/cli.md.
-- [ ] **V-A3 Skill depth rewrite.** Depends: V-A2, V0.1. SKILL.md defaults to Standard; escalation to Comprehensive is driven by `stop_reason`/coverage (escalate when a standard run ends `budget_exhausted` without saturation, or the user asks); remove "Comprehensive default" wording; document stop reasons. Touches: `skills/research-forge/SKILL.md`, SKILLS.md.
-- [ ] **V-A4 Provenance levels.** Depends: V0.1 (for skill), V0.2 (rank writer). `provenance.json` schema v2 adds `provenance_level`, `run_id`, and `outputs` with sha256. `rforge provenance validate` computes the level: `engine_verified` only if every output checksum recomputes and `run_id` matches an engine provenance event; a declared `engine_verified` that fails is an error; v1 files read as `unverified` with a warning. One engine writer in `internal/provenance` used by all commands that emit run records. Planner's call on layout: every engine run (`search batch`, `citations expand`, `rank`, `lit`, benchmark) writes an immutable per-run record `provenance/runs/<run_id>.json` plus an event in `provenance/events.jsonl` *inside its output dir*, so project-less research dirs work; the skill's topic-level `provenance.json` becomes an agent-maintained index that lists `run_id`s, and its computed level is the lowest level among referenced runs and its own entries (agent edits to the index never touch run checksums). Threat model per Q3: guard against accidental mislabeling (checksum recompute + run-ID match); no signing; docs must say a deliberate forger with file access is out of scope. Reports, packages and web UI display the computed level, never the declared one. SKILL.md manual fallback must write `agent_reported`. Event `actor` gains a kind (`engine`/`agent`/`human`), reusing `automation.ActorAgent`/`ActorHuman`. Check: tests for hand-typed `engine_verified` rejection, tampered output, v1 downgrade. Touches: `internal/provenance`, `internal/cli/provenance_command.go`, `internal/reviewpkg`, `internal/report`, `internal/webui`, SKILL.md.
+- [ ] V-A1 — Docs parity check for Go version and skill commands
+- Status: open
+- Goal: RF-AGENT — Make the agent contract correct: install docs, search depth and provenance levels.
+- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan) (Evidence: Go 1.22+ in the skill vs Go 1.26 in `go.mod`).
+- Scope: a Go test run by `make test` reads the `go` directive from `go.mod` and fails when `skills/research-forge/SKILL.md`, `README.md`, `install.sh`, `docs/install.md` or `docs/developer-setup.md` state a different minimum Go version; it also asserts every `rforge <cmd>` named in the skill exists in `topLevelCommands`. Fix the skill's "Go 1.22+".
+- Acceptance: the test fails on the current skill text and passes after the fix; introducing a wrong version in any listed file fails it.
+- Checks: go test ./internal/docs; make check
+- Dependencies: V0-1.
+- Ownership: ResearchForge maintainer; Autowork runner may execute.
+- Touches: internal/docs, skills/research-forge/SKILL.md, README.md, install.sh, docs/install.md, docs/developer-setup.md
 
-### B — Research-quality benchmark (+ claim schema design)
+- [ ] V-B1 — Research-quality benchmark specification
+- Status: open
+- Goal: RF-BENCH — Measure research quality against held-out ground truth.
+- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan) (Planner's calls: two benchmark tiers; Owner answers: gold sets and agent tier).
+- Scope: write `docs/benchmark/spec.md`: question-set schema (question, domain, gold identifiers, gold source review identifier and search date, split `dev`/`held_out`, set checksum); leakage controls (reference review and its identifiers excluded from results and citation-expansion seeds, searches date-capped at the review's search date, question wording never quotes the review title, agents never see the review); HTTP snapshot format for offline replay; metrics (recall@K and overall recall vs gold, precision@K, dedupe true/false merges, requests, wall-clock latency, citation correctness once V-D3 lands); report JSON schema; agent-tier protocol (same model, budgets and questions per pair, N repetitions, paired differences with 95% CIs over questions, blind scoring).
+- Acceptance: a builder can implement V-B3 and V-B4 from the spec without further decisions; the term "Research-quality benchmark" from CONTEXT.md is used.
+- Checks: make check
+- Dependencies: None.
+- Ownership: ResearchForge maintainer; Autowork runner may execute.
+- Touches: docs/benchmark/spec.md
 
-- [ ] **V-B1 Benchmark spec.** Write `docs/benchmark/spec.md`: question-set schema (question, domain, gold identifiers, gold provenance/source review, split `dev`/`held_out`, set checksum), snapshot (HTTP cassette) format for offline replay, metrics (recall@K and overall recall vs gold, ranking precision@K, dedupe true/false merges, requests, wall-clock latency, citation correctness once V-D3 lands), report JSON schema, and the agent-tier protocol (same model, budgets, questions; N repetitions; confidence intervals). Independent. Touches: `docs/benchmark/` (new).
-- [ ] **V-B2 Claim-evidence schema v0 (design).** Depends: ADR 0009. `docs/claim-evidence-schema.md` plus Go types (no storage yet) in `internal/claims`: claim record, evidence refs (identifier, passage ID, content hash, offsets with parser version), five facet states with checker identity and timestamps. Benchmark run outputs and agent-tier citation scoring use these types so later storage (V-D2) is additive. Map existing `CitationLockedSuggestion`, `ClaimTraceView` and `knowledge` `report_claim` nodes onto it. Touches: `internal/claims` (new), docs.
-- [ ] **V-B3 Engine-tier harness.** Depends: V-B1, V-A2. `rforge benchmark run --set <dir> [--replay|--record]`: replays recorded snapshots through the real connectors and dedupe, scores against gold, emits the report JSON with set checksum and rforge version. `--record` is opt-in live. Enforce each set's leakage controls (exclude the reference review's identifiers from results and expansion seeds; date-cap queries at the review's search date) and fail the run if the reference review appears. Retire `DefaultCrossToolBenchmarkInput` hardcoded numbers (remove or label `demo`). Check: deterministic replay test on a tiny legal fixture set. Touches: `internal/benchmarks`, `internal/sources` (transport hook), `internal/cli` benchmark command, docs/cli.md.
-- [ ] **V-B4 Gold sets.** Depends: V-B1. Pilot: 8 held-out questions plus ≥ 4 separate dev questions for tuning, across ≥ 3 domains; expand held-out after the pilot. Each gold set is the included-study list of a published systematic review, recorded with the review's identifier and search date. Leakage controls (also enforced by V-B3): the reference review and its own identifiers are excluded from retrieval results and citation-expansion seeds; searches are date-capped at the review's search date; question wording must not quote the review's title; agents are never given the review. Owner approves each set before checksum lock; record snapshots; lock held-out by checksum. Fixture policy (docs/fixture-policy.md) applies: metadata only, no copyrighted full text. Touches: `benchmarks/sets/` (new).
-- [ ] **V-B5 Engine baseline.** Depends: V-B3, V-B4. Run on current main; commit `docs/benchmark/baseline-<date>.md` + JSON. From here, any improvement claim in docs/PRs cites a delta against this baseline (add to CONTRIBUTING.md and PR template). Touches: `docs/benchmark/`, CONTRIBUTING.md, `.github/PULL_REQUEST_TEMPLATE.md`.
-- [ ] **V-B6 Agent-tier protocol and pilot.** Depends: V-B1, V-B4, V-A3, V-A4. Runbook/scripts under `benchmarks/agent-tier/` per Q2: Pi primary (pilot 48 runs = 8 questions × with/without rforge × 3 reps, same model per pair), Codex second after the pilot. Equal caps per condition on tokens and search/tool calls (the without-rforge condition uses the agent's native search). Blind scoring: strip condition markers (rforge commands, provenance files, run IDs) from outputs and randomize labels before scoring against held-out references with V-B3 metrics. Report per-metric paired differences with 95% CIs over questions; the pilot estimates effect size and variance to size the expanded run. First run after A lands; rerun after C and D. Touches: `benchmarks/agent-tier/` (new), `docs/benchmark/`.
+- [ ] V-B2 — Claim-evidence schema v0 design
+- Status: open
+- Goal: RF-BENCH — Measure research quality against held-out ground truth.
+- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan); [ADR 0009](docs/adr/0009-verification-facets-and-provenance-levels.md).
+- Scope: `docs/claim-evidence-schema.md` plus Go types (no storage yet) in a new `internal/claims` package: claim record, evidence references (identifier, passage ID, content hash, offsets with parser version), five verification facets (source identity, content integrity, passage match, semantic support, human approval) each with state, checker identity and timestamp. Map existing `CitationLockedSuggestion`, `report.ClaimTraceView` and knowledge-graph `report_claim` nodes onto it. Benchmark citation scoring uses these types so later storage (V-D2) is additive.
+- Acceptance: JSON round-trip tests for the types; semantic support cannot be constructed with an engine checker; no facet or combination is named or documented as "verified claim".
+- Checks: go test ./internal/claims; make check
+- Dependencies: None.
+- Ownership: ResearchForge maintainer; Autowork runner may execute.
+- Touches: internal/claims, docs/claim-evidence-schema.md
 
-### C — MCP as a thin adapter
+- [ ] V-E0 — Capability report for compatibility checks
+- Status: open
+- Goal: RF-PACK — Ship passive native plugins for Claude Code, Codex, Pi and Hermes over the same engine.
+- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan) (Workstream E, Versions).
+- Scope: add `rforge capabilities --json`: build version, a contract version per command/tool family (`search`, `paper`, `brief`, `compare`, `provenance`, later `mcp`, `claims`) and stable error codes. Compatibility rule used by the skill, plugins and adapters: a release build passes if its version is at least `min_rforge_version` and it reports the required capabilities; a `dev` build passes only on the capability check, never on its version string; a missing or older capability fails with a structured error naming the gap and `install.sh`.
+- Acceptance: tests for release-pass, dev-with-capabilities-pass, dev-missing-capability-fail and old-version-fail; `rforge help --json` lists the command.
+- Checks: go test ./internal/cli; make check
+- Dependencies: None.
+- Ownership: ResearchForge maintainer; Autowork runner may execute.
+- Touches: internal/cli/capabilities_command.go, internal/cli/capabilities_test.go, internal/cli/cli.go, docs/cli.md
 
-- [ ] **V-C1 Extract research services.** Depends: V0.2, V-A2. Move `rank`, `brief`, `compare`, `lit`, `history` logic from `internal/cli` into service packages returning typed results; CLI keeps flag parsing and rendering only. Check: existing CLI tests pass unchanged; new service tests. Touches: `internal/research` (new), `internal/cli/{rank,brief,compare,lit}_command.go`, `internal/cli/history_replicate.go`.
-- [ ] **V-C2 Job service.** Depends: V-A2. Replace the `internal/jobs` stub with persistent jobs (ID, kind, status, progress, `stop_reason`, resume) stored in the research dir, used by search batch; CLI `rforge jobs list|status|resume`. Planner's call: v1 jobs run in-process (CLI or MCP server); state persists after each step, so a job whose host exits is marked `interrupted` and resumes via `jobs resume` from either surface. No detached daemon. Touches: `internal/jobs`, `internal/search`, `internal/cli`.
-- [ ] **V-C3 `rforge mcp serve` (stdio).** Depends: V-C1, V-C2. Official Go MCP SDK. v1 tools: `search` (job-backed, returns job ID), `job_status`, `source_get` (`sources.ResolvePaper`), `research_status` (brief), `compare`, `evidence_retrieve` (existing retrieve service). No approval, claim-acceptance or export tools. Responses are concise structured JSON with file references, not raw documents. Check: parity test per tool asserting MCP result equals CLI `--json` output on the same fixture; for `search`, parity is the completed job's result/manifest versus `search batch --json` on the same snapshot fixture. Touches: `internal/mcp` (new), `cmd/rforge`, go.mod, docs/cli.md.
-- [ ] **V-C4 Docs for MCP.** Depends: V-C3. Standalone `rforge mcp serve` setup for any MCP client (plugin-managed registration is V-E3); SKILL.md says MCP and CLI are equivalent and when to use which. Touches: README.md, SKILL.md, docs/cli.md.
+## Next
 
-### D — Claim-evidence verification
+- [ ] V-A2 — Search budgets and structured stop reasons
+- Status: open
+- Goal: RF-AGENT — Make the agent contract correct: install docs, search depth and provenance levels.
+- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan) (Owner decision 2; Planner's calls: coverage signal).
+- Scope: move batch state and resume out of `internal/cli` into `internal/search`, then add `--depth quick|standard|comprehensive` presets (query-variant and source caps), `--max-requests`, marginal-yield coverage (new unique deduped records per query; saturation after N consecutive low-yield queries, thresholds in the preset) and a structured `stop_reason` (`completed`, `budget_exhausted`, `coverage_saturated`, `interrupted`, `error_threshold`) with requests used and coverage in `manifest.json` and `batch-state.json`. Default depth is standard. Reuse `sources.GraphExpansionBudget` naming and replace the ad-hoc `budget_stopped` raw-ref suffix in `citations expand` with the same stop-reason type.
+- Acceptance: offline tests reach each stop reason; resume preserves budget accounting; existing batch/resume tests pass unchanged.
+- Checks: go test ./internal/search ./internal/cli ./internal/sources; make check
+- Dependencies: V0-1.
+- Ownership: ResearchForge maintainer; Autowork runner may execute.
+- Touches: internal/search, internal/cli/source_commands.go, internal/cli/search_batch_state.go, internal/sources/graph_budget.go, docs/cli.md
 
-- [ ] **V-D1 Content integrity and stable passages.** Depends: V-B2. SHA-256 of normalized parsed text per parsed document; per-passage content hash; passage identity stable across re-parse when content is unchanged. Touches: `internal/parsing`, `internal/documents`.
-- [ ] **V-D2 Claim store and CLI.** Depends: V-B2, V-D1. `data/claims.jsonl` (append-only, filetxn) with `rforge claim add|list|show`; semantic-support entries require agent/model identity and are always `agent_reported`; human approval requires a reviewer. Touches: `internal/claims`, `internal/cli`.
-- [ ] **V-D3 `rforge claim check`.** Depends: V-D2. Deterministic facets: source identity (identifier resolves, metadata matches), content integrity (hash recomputes), passage match (exact then whitespace/Unicode-normalized match of quoted text against stored passage, with offsets). Wire `CitationLockedSuggestion.ExactText` and `report.BuildCitationEvidenceTraceView` to use passage match. Add citation-correctness metric to the benchmark. Touches: `internal/claims`, `internal/evidence`, `internal/report`, `internal/benchmarks`.
-- [ ] **V-D4 Guards and MCP.** Depends: V-D3, V-C3. Report export guard and package audit read facets (wording never implies truth); MCP `claim_check` tool (runs deterministic facets, accepts agent-reported semantic support; no approval). Touches: `internal/report`, `internal/reviewpkg`, `internal/mcp`.
+- [ ] V-A3 — Skill depth rewrite: Standard by default
+- Status: open
+- Goal: RF-AGENT — Make the agent contract correct: install docs, search depth and provenance levels.
+- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan) (Owner decision 2).
+- Scope: the skill defaults to Standard; escalation to Comprehensive is driven by `stop_reason` and coverage (escalate when a standard run ends `budget_exhausted` without saturation, or the user asks); remove the "Comprehensive default" wording; document stop reasons.
+- Acceptance: the V-A1 parity test still passes; no sentence in the skill makes Comprehensive the default.
+- Checks: go test ./internal/docs; make check
+- Dependencies: V-A2, V0-1.
+- Ownership: ResearchForge maintainer; Autowork runner may execute.
+- Touches: skills/research-forge/SKILL.md, SKILLS.md
 
-### E — Cross-host packaging (Claude Code, Codex, Pi, Hermes)
+- [ ] V-A4 — Provenance levels computed by the validator
+- Status: open
+- Goal: RF-AGENT — Make the agent contract correct: install docs, search depth and provenance levels.
+- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan); [ADR 0009](docs/adr/0009-verification-facets-and-provenance-levels.md).
+- Scope: `provenance.json` schema v2 adds `provenance_level`, `run_id` and `outputs` with sha256. Every engine run (`search batch`, `citations expand`, `rank`, `lit`, benchmark) writes an immutable `provenance/runs/<run_id>.json` plus an event in `provenance/events.jsonl` inside its output directory, so project-less research directories work. The skill's topic-level `provenance.json` becomes an agent-maintained index of `run_id`s whose computed level is the lowest among its runs and its own entries. `rforge provenance validate` computes the level: `engine_verified` only if every output checksum recomputes and the `run_id` matches an engine event; a declared `engine_verified` that fails is an error; v1 files read as `unverified` with a warning. Event `actor` gains a kind (`engine`/`agent`/`human`), reusing `automation.ActorAgent`/`ActorHuman`. Reports, packages and the web UI display the computed level. The skill's manual fallback writes `agent_reported`. Docs state that a deliberate forger with file access is out of scope.
+- Acceptance: tests reject a hand-typed `engine_verified`, detect a tampered output, downgrade v1 and compute the index level as the minimum.
+- Checks: go test ./internal/provenance ./internal/cli ./internal/reviewpkg ./internal/report ./internal/webui; make check
+- Dependencies: V0-1, V0-2.
+- Ownership: ResearchForge maintainer; Autowork runner may execute.
+- Touches: internal/provenance, internal/automation, internal/cli/provenance_command.go, internal/reviewpkg, internal/report, internal/webui, skills/research-forge/SKILL.md
 
-Owner principles (2026-10-19), binding on every E task: **one engine, many interfaces** — CLI, MCP, Pi tools and plugins call the same Go services, no adapter-side research logic; **passive until invoked** — no hooks, background work, autonomous loops, permission/approval changes or hidden agent-config edits, and an MCP server does no work until a tool is called; **test behavior, not just JSON** — parity covers evidence identity, provenance, resumability and errors, after normalizing timestamps and nondeterministic IDs.
+- [ ] V-B3 — Engine-tier benchmark harness with offline replay
+- Status: open
+- Goal: RF-BENCH — Measure research quality against held-out ground truth.
+- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan); `docs/benchmark/spec.md` from V-B1.
+- Scope: `rforge benchmark run --set <dir> [--replay|--record]` replays recorded snapshots through the real connectors and dedupe, enforces each set's leakage controls (fail the run if the reference review appears), scores against gold and emits the spec's report JSON with set checksum and rforge version. `--record` is opt-in live. Retire the hardcoded `DefaultCrossToolBenchmarkInput` numbers (remove them or label them `demo`).
+- Acceptance: a deterministic replay test on a tiny legal fixture set produces byte-identical reports twice; a leaked reference review fails the run.
+- Checks: go test ./internal/benchmarks ./internal/sources ./internal/cli; make check
+- Dependencies: V-B1, V-A2.
+- Ownership: ResearchForge maintainer; Autowork runner may execute.
+- Touches: internal/benchmarks, internal/sources, internal/cli/cli.go, docs/cli.md
 
-Work order: V0.2, V0.3, V-A1, V-B1, V-B2 first; E tasks unlock by their dependencies.
+- [ ] V-B4 — Draft candidate gold sets
+- Status: open
+- Goal: RF-BENCH — Measure research quality against held-out ground truth.
+- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan) (Owner answers: gold sets).
+- Scope: draft candidate sets for the pilot, 8 held-out questions plus at least 4 separate dev questions, across at least 3 domains including artificial photosynthesis. Each gold set is the included-study list of a published systematic review, recorded with the review identifier and search date; question wording follows the spec's leakage rules. Save as unlocked candidates under `benchmarks/sets/candidates/` with a review sheet for the owner. Metadata only, per docs/fixture-policy.md. Do not lock or record snapshots.
+- Acceptance: every candidate validates against the V-B1 schema; the review sheet lists each set's source review and any leakage risk.
+- Checks: make check
+- Dependencies: V-B1.
+- Ownership: ResearchForge maintainer; Autowork runner may draft; the owner approves sets (V-B4-lock).
+- Touches: benchmarks/sets/candidates
 
-Reference: Autowork's `.claude-plugin/`, `.codex-plugin/`, `.agents/plugins/marketplace.json`, `package.json` + `adapters/pi.mjs`, `plugin.yaml` and `docs/cross-host.md` (https://github.com/TrebuchetDynamics/autowork) — copy the structure, never its Hermes `plugins/defaults.json` runtime defaults. Plan: docs/verifiable-engine-plan.md "Workstream E".
+- [ ] V-B5 — Engine-tier baseline
+- Status: open
+- Goal: RF-BENCH — Measure research quality against held-out ground truth.
+- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan) (Owner decision 6).
+- Scope: run `rforge benchmark run --replay` on the locked held-out set at current `main`; commit `docs/benchmark/baseline-<date>.md` and its JSON. Add to CONTRIBUTING.md and the PR template that improvement claims cite a delta against this baseline.
+- Acceptance: the baseline reproduces byte-identically from the committed snapshots.
+- Checks: make check
+- Dependencies: V-B3, V-B4-lock.
+- Ownership: ResearchForge maintainer; Autowork runner may execute.
+- Touches: docs/benchmark, CONTRIBUTING.md, .github/PULL_REQUEST_TEMPLATE.md
 
-- [ ] **V-E0 Capability report.** _(Owner 2026-10-19: a dev build must not automatically satisfy minimum-version checks.)_ Add `rforge capabilities --json`: build version, a contract version per command/tool family (`search`, `paper`, `brief`, `compare`, `provenance`, later `mcp`, `claims`), and stable error codes. Compatibility rule used by the skill, plugins and adapters: a release build passes if its version ≥ `min_rforge_version` **and** it reports the required capabilities; a `dev` build passes **only** on the capability check, never on its version string; a missing or older capability fails with a structured error naming the gap and `install.sh`. Check: tests for release-pass, dev-with-capabilities-pass, dev-missing-capability-fail, old-version-fail. Independent. Touches: `internal/cli` (new `capabilities_command.go`), `cli.go` dispatch/help, docs/cli.md.
-- [ ] **V-E1 Skill-only plugin scaffolding.** Depends: V-A1, V-E0. Add Claude Code plugin + marketplace (`.claude-plugin/plugin.json`, `marketplace.json` listing explicit skill paths), Codex plugin + marketplace (`.codex-plugin/plugin.json`, `.agents/plugins/marketplace.json`), Pi package (`package.json` with `pi.skills`/`pi.extensions`, `adapters/pi.mjs` registering no tools yet), and a Hermes `plugin.yaml` (`kind: standalone`, no `requires_plugins`, no defaults file; a minimal Python entry point mirroring Autowork's `__init__.py` is allowed if Hermes needs one to load the skill, with a Python test). Names (planner's default, owner question Q4): plugin and marketplace `research-forge` (`/research-forge:lit`, `research-forge@research-forge`); Pi commands prefixed `rforge_` (`/rforge_lit`) to avoid clashes. Expose only `skills/research-forge` (verify Claude/Codex accept a single-skill path; otherwise expose it via `adapters/skills/research-forge` as a relative symlink or a generated copy checked by the parity test). Add an offline conformance test (Go, run by `make test`): manifests parse; manifest versions all agree with each other (planner's call: manifests are bumped by the release flow; docs/release.md and its release check gain a step asserting they equal the tag being released, so no `VERSION` file and no ldflags change); the skill frontmatter declares `min_rforge_version` and the capabilities it needs (compatibility rule in V-E0); exposed skills are exactly the allowed set (no `*-tdd`); no hooks, agents, settings, permission/approval keys, schedulers, autostart/background entries or install scripts in any manifest; `adapters/pi.mjs` contains no `child_process` use until V-E3. Write `docs/agent-install.md` with install/upgrade/remove per host and replace README's curl-only section with it (keep the curl path as the generic fallback). Migration (planner's call): docs tell curl-install users to delete `~/.claude/skills/research-forge` or `~/.agents/skills/research-forge` before installing the plugin, since the duplicate skill name would shadow it; no automated migration. Touches: `.claude-plugin/`, `.codex-plugin/`, `.agents/plugins/`, `package.json`, `adapters/`, `plugin.yaml`, `internal/docs` (conformance test), `docs/agent-install.md`, README.md.
-- [ ] **V-E2 Explicit workflow commands.** Depends: V-E1, V0.2. Thin explicit-only skills under `adapters/skills/` for `lit`, `paper`, `brief`, `compare`, `replicate` (`disable-model-invocation: true`; Codex `agents/openai.yaml` with `allow_implicit_invocation: false`); Pi `registerCommand` entries that load them, Autowork-style. Each states the CLI/MCP call to make and defers methodology to `research-forge`; no research logic in adapters. Extend the conformance test to the new allowed set. Touches: `adapters/skills/`, `adapters/pi.mjs`, conformance test, `docs/agent-install.md`.
-- [ ] **V-E3 Typed engine tools per host.** Depends: V-E1, V-E0, V-C3 (MCP hosts); V-C1 (Pi offline tools). Every adapter runs the V-E0 compatibility check before its first tool call. Claude Code, Codex and Hermes plugins register `rforge mcp serve` as their MCP server. If Hermes can only register MCP by editing the user's Hermes config, the plugin does not edit it; `docs/agent-install.md` gives the line for the user to add. Pi: first verify whether Pi has an MCP client; if not, `adapters/pi.mjs` registers tools mirroring the MCP v1 set that spawn `rforge <cmd> --json` via argv (`execFile`, no shell), with timeouts, and return parsed JSON; missing or too-old `rforge` returns a structured error naming `install.sh`. Approval/export operations are not exposed (same as V-C3). Update the conformance test to allow exactly these registrations. Touches: `.claude-plugin/`, `.codex-plugin/`, `plugin.yaml`, `adapters/pi.mjs`, `adapters/test/` (node test), conformance test, docs.
-- [ ] **V-E4 Cross-surface parity suite.** Depends: V-E3, V-C3. Offline CI test of behavior, not only output shape, across CLI `--json`, MCP and the Pi adapter (node test with the built binary and offline fixture dirs): (1) **evidence identity** — same record identifiers (DOI/arXiv/OpenAlex), dedupe clusters and content hashes; (2) **provenance** — same computed level and output checksums; (3) **resumability** — interrupt a job through each surface and resume it through a different one, reaching the same final state; (4) **errors** — invalid input, missing/incompatible rforge (V-E0), budget exhaustion and connector failure yield the same error codes and stop reasons. Comparison normalizes only fields on an explicit allowlist (timestamps, run/job IDs, durations); any other difference fails. Touches: `internal/mcp` tests, `adapters/test/`, Makefile, CI workflow.
-- [ ] **V-E5 Per-host lifecycle qualification.** Depends: V-E3. Runbook `docs/qualification/hosts.md` plus a receipt template: for Claude Code, Codex, Pi and Hermes — install from local checkout and published Git source, upgrade between two versions, remove (host config left clean; a leftover curl-installed skill is detected and reported, no approval/permission/schedule settings changed before or after), and recovery (rforge missing, wrong version, MCP server crash, interrupted job resume). Live and opt-in; receipts stored as `docs/qualification/<version>-<host>.md`. Touches: `docs/qualification/` (new).
+- [ ] V-B6 — Agent-tier protocol and scripts
+- Status: open
+- Goal: RF-BENCH — Measure research quality against held-out ground truth.
+- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan) (Owner answers: agent tier).
+- Scope: runbook and scripts under `benchmarks/agent-tier/` per the owner answers: Pi primary, Codex second; same model per pair; equal caps on tokens and search/tool calls (the without-rforge condition uses the agent's native search); blind scoring that strips condition markers (rforge commands, provenance files, run IDs) and randomizes labels before scoring against held-out references with the V-B3 metrics; paired differences with 95% CIs over questions. Verify offline with a stub agent that emits canned outputs. Do not run live agents here (V-B6-run).
+- Acceptance: the stub run produces a scored, blinded report; the scorer cannot see condition labels.
+- Checks: make check
+- Dependencies: V-B1, V-B3, V-A3, V-A4.
+- Ownership: ResearchForge maintainer; Autowork runner may execute.
+- Touches: benchmarks/agent-tier, docs/benchmark
 
-### Proposals (not ready)
+- [ ] V-C1 — Extract research services from the CLI
+- Status: open
+- Goal: RF-MCP — Expose the engine through a thin MCP adapter over shared services.
+- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan) (Owner decision 8).
+- Scope: move `rank`, `brief`, `compare`, `lit` and `history` logic from `internal/cli` into service packages that return typed results; the CLI keeps flag parsing and rendering only.
+- Acceptance: existing CLI tests pass unchanged; new service tests cover each moved function; `internal/cli` no longer holds the moved logic.
+- Checks: go test ./...; make check
+- Dependencies: V0-2, V-A2.
+- Ownership: ResearchForge maintainer; Autowork runner may execute.
+- Touches: internal/research, internal/cli/rank_command.go, internal/cli/brief_command.go, internal/cli/compare_command.go, internal/cli/lit_command.go, internal/cli/history_replicate.go
 
-- [ ] **V-B7 Autowork-integration benchmark (proposal).** After the V-B6 pilot: measure whether Autowork-driven development tasks that need research produce better decisions/artifacts with ResearchForge installed. Needs its own task set, scoring rubric and owner approval before it becomes ready. Not part of the 2.0 gate.
+- [ ] V-C2 — Persistent job service
+- Status: open
+- Goal: RF-MCP — Expose the engine through a thin MCP adapter over shared services.
+- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan).
+- Scope: replace the `internal/jobs` stub with persistent jobs (ID, kind, status, progress, `stop_reason`, resume) stored in the research directory and used by search batch; CLI `rforge jobs list|status|resume`. v1 jobs run in-process (CLI or MCP server) and persist after each step, so a job whose host exits is marked `interrupted` and resumes via `jobs resume` from either surface; no detached daemon.
+- Acceptance: a killed job is reported `interrupted` and resumes to the same final state as an uninterrupted run.
+- Checks: go test ./internal/jobs ./internal/search ./internal/cli; make check
+- Dependencies: V-A2.
+- Ownership: ResearchForge maintainer; Autowork runner may execute.
+- Touches: internal/jobs, internal/search, internal/cli
 
-### Release gate
+- [ ] V-C3 — `rforge mcp serve` over stdio
+- Status: open
+- Goal: RF-MCP — Expose the engine through a thin MCP adapter over shared services.
+- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan) (Planner's calls: MCP v1).
+- Scope: official Go MCP SDK (`github.com/modelcontextprotocol/go-sdk`). v1 tools: `search` (job-backed, returns a job ID), `job_status`, `source_get` (`sources.ResolvePaper`), `research_status` (brief), `compare`, `evidence_retrieve` (existing retrieve service). No approval, claim-acceptance or export tools. Responses are concise structured JSON with file references, not raw documents. The server does no work until a tool is called.
+- Acceptance: a parity test per tool asserts the MCP result equals the CLI `--json` output on the same fixture; for `search`, the completed job's result and manifest equal `search batch --json` on the same snapshot fixture.
+- Checks: go test ./internal/mcp ./internal/cli; make check
+- Dependencies: V-C1, V-C2.
+- Ownership: ResearchForge maintainer; Autowork runner may execute.
+- Touches: internal/mcp, cmd/rforge, internal/cli/cli.go, go.mod, go.sum, docs/cli.md
 
-- [ ] **V-R1 ResearchForge 2.0 release gate.** _(Owner 2026-10-19.)_ 2.0 ships only if the agent-tier benchmark on the expanded held-out set shows the same agent with rforge demonstrably beats itself without rforge on evidence quality (citation correctness), retrieval effectiveness (recall) or research efficiency (tokens/requests/time at equal-or-better quality). Planner's operationalization: the paired 95% CI excludes zero in rforge's favor on at least one of those primary metrics, and no other primary metric is worse beyond its CI. Checked on Pi; Codex result reported alongside. Autowork treats this as the cycle's objective: tasks that do not move a gate metric are lower priority than those that do. Depends: V-B6 expanded run. Touches: `docs/benchmark/`, docs/release.md.
-- [ ] **V-R2 Cross-host release gate.** _(Owner 2026-10-19.)_ 2.0 also requires: V-E4 parity green on the release commit, and V-E5 receipts for all four hosts on the release version. Skill-only plugin releases before 2.0 need V-E1 conformance only. Depends: V-E4, V-E5. Touches: docs/release.md.
+- [ ] V-C4 — Standalone MCP documentation
+- Status: open
+- Goal: RF-MCP — Expose the engine through a thin MCP adapter over shared services.
+- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan).
+- Scope: document standalone `rforge mcp serve` setup for any MCP client (plugin-managed registration is V-E3); the skill says MCP and CLI are equivalent and when to use which.
+- Acceptance: the documented config starts the server in a smoke test.
+- Checks: make check
+- Dependencies: V-C3.
+- Ownership: ResearchForge maintainer; Autowork runner may execute.
+- Touches: README.md, skills/research-forge/SKILL.md, docs/cli.md
 
-### Deferred backlog (owner decision 5)
+- [ ] V-D1 — Content integrity and stable passage identity
+- Status: open
+- Goal: RF-CLAIMS — Verify claims against stored evidence with separate facets.
+- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan); [ADR 0009](docs/adr/0009-verification-facets-and-provenance-levels.md).
+- Scope: SHA-256 of normalized parsed text per parsed document; a content hash per passage; passage identity stays stable across re-parse when content is unchanged.
+- Acceptance: re-parsing unchanged content keeps passage IDs and hashes; a one-character change alters only the affected passage hash.
+- Checks: go test ./internal/parsing ./internal/documents; make check
+- Dependencies: V-B2.
+- Ownership: ResearchForge maintainer; Autowork runner may execute.
+- Touches: internal/parsing, internal/documents
 
-- [ ] Semantic paper ranking (add a query-relevance term to `rank`; measure on V-B sets first).
-- [ ] Learned source routing evaluated on held-out questions.
-- [ ] Persistent cross-run research memory with freshness checks.
-- [ ] GitHub repository description, website and topics (owner chore).
-- [ ] Signed/keyed provenance event log against deliberate forgery (owner Q3 deferral).
+- [ ] V-D2 — Claim store and CLI
+- Status: open
+- Goal: RF-CLAIMS — Verify claims against stored evidence with separate facets.
+- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan).
+- Scope: append-only `data/claims.jsonl` (via `filetxn`) with `rforge claim add|list|show`; semantic-support entries require agent/model identity and are always `agent_reported`; human approval requires a named reviewer.
+- Acceptance: tests refuse engine-attributed semantic support and approval without a reviewer.
+- Checks: go test ./internal/claims ./internal/cli; make check
+- Dependencies: V-B2, V-D1.
+- Ownership: ResearchForge maintainer; Autowork runner may execute.
+- Touches: internal/claims, internal/cli
+
+- [ ] V-D3 — `rforge claim check` deterministic facets
+- Status: open
+- Goal: RF-CLAIMS — Verify claims against stored evidence with separate facets.
+- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan).
+- Scope: source identity (identifier resolves and metadata matches), content integrity (hash recomputes), passage match (exact, then whitespace/Unicode-normalized match of quoted text against the stored passage, with offsets). Wire `CitationLockedSuggestion.ExactText` and `report.BuildCitationEvidenceTraceView` to passage match. Add the citation-correctness metric to the benchmark.
+- Acceptance: a quote absent from the stored passage fails passage match while source identity can still pass; facets are reported separately.
+- Checks: go test ./internal/claims ./internal/evidence ./internal/report ./internal/benchmarks; make check
+- Dependencies: V-D2.
+- Ownership: ResearchForge maintainer; Autowork runner may execute.
+- Touches: internal/claims, internal/evidence, internal/report, internal/benchmarks
+
+- [ ] V-D4 — Facet-based guards and MCP claim check
+- Status: open
+- Goal: RF-CLAIMS — Verify claims against stored evidence with separate facets.
+- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan).
+- Scope: the report export guard and package audit read facets, with wording that never implies truth; MCP `claim_check` runs deterministic facets and accepts agent-reported semantic support; no approval tool.
+- Acceptance: export blocks on a failed passage match; MCP and CLI claim checks agree on a fixture.
+- Checks: go test ./internal/report ./internal/reviewpkg ./internal/mcp; make check
+- Dependencies: V-D3, V-C3.
+- Ownership: ResearchForge maintainer; Autowork runner may execute.
+- Touches: internal/report, internal/reviewpkg, internal/mcp
+
+- [ ] V-E1 — Skill-only plugin scaffolding
+- Status: open
+- Goal: RF-PACK — Ship passive native plugins for Claude Code, Codex, Pi and Hermes over the same engine.
+- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan) (Workstream E). Reference structure: Autowork's `.claude-plugin/`, `.codex-plugin/`, `.agents/plugins/marketplace.json`, `package.json` with `adapters/pi.mjs`, `plugin.yaml` and `docs/cross-host.md` at https://github.com/TrebuchetDynamics/autowork; never copy its Hermes `plugins/defaults.json` runtime defaults.
+- Scope: Claude Code plugin and marketplace listing explicit skill paths; Codex plugin and marketplace; Pi package (`package.json` with `pi.skills`/`pi.extensions`, `adapters/pi.mjs` registering no tools yet); Hermes `plugin.yaml` (`kind: standalone`, no `requires_plugins`, no defaults file; a minimal Python entry point mirroring Autowork's `__init__.py` is allowed if Hermes needs one, with a Python test). Names: plugin and marketplace `research-forge`; Pi commands prefixed `rforge_`. Expose only `skills/research-forge` (verify hosts accept a single-skill path; otherwise expose it via `adapters/skills/research-forge` as a relative symlink or a generated copy checked by the test). Manifest versions agree with each other; docs/release.md gains a step asserting they equal the release tag; the skill frontmatter declares `min_rforge_version` and its required capabilities (rule in V-E0). Write `docs/agent-install.md` with install/upgrade/remove per host; README points to it and keeps the curl path as the generic fallback; curl-install users are told to delete the old skill copy before installing the plugin.
+- Acceptance: an offline conformance test (Go, run by `make test`) checks that manifests parse, versions agree, exposed skills are exactly the allowed set (no `*-tdd`), and no manifest contains hooks, agents, settings, permission/approval keys, schedulers, autostart/background entries or install scripts; `adapters/pi.mjs` uses no `child_process` until V-E3.
+- Checks: go test ./internal/docs; make check
+- Dependencies: V-A1, V-E0.
+- Ownership: ResearchForge maintainer; Autowork runner may execute.
+- Touches: .claude-plugin, .codex-plugin, .agents/plugins, package.json, adapters, plugin.yaml, internal/docs, docs/agent-install.md, docs/release.md, README.md, skills/research-forge/SKILL.md
+
+- [ ] V-E2 — Explicit workflow commands
+- Status: open
+- Goal: RF-PACK — Ship passive native plugins for Claude Code, Codex, Pi and Hermes over the same engine.
+- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan) (Workstream E).
+- Scope: thin explicit-only skills under `adapters/skills/` for `lit`, `paper`, `brief`, `compare` and `replicate` (`disable-model-invocation: true`; Codex `agents/openai.yaml` with `allow_implicit_invocation: false`); Pi `registerCommand` entries (`rforge_lit` and so on) that load them, Autowork-style. Each states the CLI/MCP call to make and defers methodology to `research-forge`; no research logic in adapters.
+- Acceptance: the conformance test covers the new allowed set and fails if any workflow skill is model-invocable.
+- Checks: go test ./internal/docs; make check
+- Dependencies: V-E1, V0-2.
+- Ownership: ResearchForge maintainer; Autowork runner may execute.
+- Touches: adapters, internal/docs, docs/agent-install.md
+
+- [ ] V-E3 — Typed engine tools per host
+- Status: open
+- Goal: RF-PACK — Ship passive native plugins for Claude Code, Codex, Pi and Hermes over the same engine.
+- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan) (Workstream E, typed tools per host).
+- Scope: Claude Code, Codex and Hermes plugins register `rforge mcp serve` as their MCP server; if Hermes can only register MCP by editing the user's config, the plugin does not edit it and `docs/agent-install.md` gives the line for the user to add. Pi: first verify whether Pi has an MCP client; if not, `adapters/pi.mjs` registers tools mirroring the MCP v1 set that spawn `rforge <cmd> --json` via `execFile` (no shell) with timeouts and return parsed JSON. Every adapter runs the V-E0 compatibility check before its first tool call; a missing or incompatible `rforge` returns a structured error naming `install.sh`. Approval and export operations are not exposed.
+- Acceptance: node tests for the Pi adapter with the built binary; the conformance test allows exactly these registrations.
+- Checks: go test ./internal/docs; node --test adapters/test; make check
+- Dependencies: V-E1, V-E0, V-C3, V-C1.
+- Ownership: ResearchForge maintainer; Autowork runner may execute.
+- Touches: .claude-plugin, .codex-plugin, plugin.yaml, adapters, internal/docs, docs/agent-install.md
+
+- [ ] V-E4 — Cross-surface behavior parity suite
+- Status: open
+- Goal: RF-PACK — Ship passive native plugins for Claude Code, Codex, Pi and Hermes over the same engine.
+- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan) (Owner principles: test behavior).
+- Scope: offline CI test across CLI `--json`, MCP and the Pi adapter using the built binary and offline fixture directories: (1) evidence identity, meaning the same record identifiers, dedupe clusters and content hashes; (2) provenance, meaning the same computed level and output checksums; (3) resumability, meaning a job interrupted through one surface and resumed through another reaches the same final state; (4) errors, meaning invalid input, incompatible rforge, budget exhaustion and connector failure yield the same error codes and stop reasons. Comparison normalizes only an explicit allowlist (timestamps, run/job IDs, durations); any other difference fails.
+- Acceptance: the suite runs in CI and fails when an injected adapter-only difference is introduced.
+- Checks: go test ./internal/mcp; node --test adapters/test; make check
+- Dependencies: V-E3, V-C3.
+- Ownership: ResearchForge maintainer; Autowork runner may execute.
+- Touches: internal/mcp, adapters/test, Makefile, .github/workflows
+
+- [ ] V-E5 — Per-host lifecycle qualification runbook
+- Status: open
+- Goal: RF-PACK — Ship passive native plugins for Claude Code, Codex, Pi and Hermes over the same engine.
+- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan) (Owner requirements: release acceptance).
+- Scope: write `docs/qualification/hosts.md` and a receipt template covering, for Claude Code, Codex, Pi and Hermes: install from a local checkout and from the published Git source; upgrade between two versions; remove (host config left clean, approval/permission/schedule settings unchanged before and after, a leftover curl-installed skill detected and reported); recovery (rforge missing, wrong version, MCP server crash, interrupted job resume). Live runs are V-E5-run.
+- Acceptance: each host section lists exact commands and the observations a receipt must record.
+- Checks: make check
+- Dependencies: V-E3.
+- Ownership: ResearchForge maintainer; Autowork runner may execute.
+- Touches: docs/qualification
+
+## Needs decision
+
+- [ ] V-B4-lock — Owner approves and locks the gold sets
+- Status: open
+- Goal: RF-BENCH — Measure research quality against held-out ground truth.
+- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan) (Owner answers: gold sets).
+- Scope: the owner reviews each V-B4 candidate set; approved sets move to `benchmarks/sets/`, their snapshots are recorded with `--record`, and the held-out split is locked by checksum. Rejected sets are dropped or redrafted.
+- Acceptance: a locked held-out set with at least 8 approved questions and a recorded checksum; the approval date and approver are noted in the set metadata.
+- Checks: make check
+- Dependencies: V-B4, V-B3.
+- Ownership: ResearchForge owner (approval); the runner may record snapshots only after approval.
+- Touches: benchmarks/sets
+
+- [ ] V-B6-run — Live agent-tier pilot
+- Status: open
+- Goal: RF-BENCH — Measure research quality against held-out ground truth.
+- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan) (Owner answers: agent tier).
+- Scope: run the 48-run Pi pilot (8 questions × with/without rforge × 3 repetitions) with the V-B6 scripts, then Codex; record spend; commit the blinded report and effect-size estimates that size the expanded run.
+- Acceptance: a committed pilot report with paired differences and 95% CIs per metric.
+- Checks: make check
+- Dependencies: V-B6, V-B4-lock.
+- Ownership: ResearchForge owner (live spend authorization required before any run).
+- Touches: benchmarks/agent-tier, docs/benchmark
+
+- [ ] V-E5-run — Live host qualification receipts
+- Status: open
+- Goal: RF-PACK — Ship passive native plugins for Claude Code, Codex, Pi and Hermes over the same engine.
+- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan) (Owner requirements: release acceptance).
+- Scope: execute the V-E5 runbook on each host for the release version and store receipts as `docs/qualification/<version>-<host>.md`.
+- Acceptance: four receipts for the same version, each with every runbook observation recorded.
+- Checks: make check
+- Dependencies: V-E5.
+- Ownership: ResearchForge owner (live host environments).
+- Touches: docs/qualification
+
+- [ ] V-R1 — ResearchForge 2.0 research-quality release gate
+- Status: open
+- Goal: RF-RELEASE — Release ResearchForge 2.0 only on measured improvement and cross-host parity.
+- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan) (Release gate).
+- Scope: run the expanded agent-tier benchmark. 2.0 ships only if the same agent with rforge demonstrably beats itself without rforge on evidence quality (citation correctness), retrieval effectiveness (recall) or research efficiency (tokens/requests/time at equal-or-better quality). Planner's operationalization: the paired 95% CI excludes zero in rforge's favor on at least one of those primary metrics, and no other primary metric is worse beyond its CI. Checked on Pi; the Codex result is reported alongside. Work that moves a gate metric takes priority over work that does not.
+- Acceptance: a committed gate report referenced from docs/release.md.
+- Checks: make check
+- Dependencies: V-B6-run.
+- Ownership: ResearchForge owner (release decision and live spend).
+- Touches: docs/benchmark, docs/release.md
+
+- [ ] V-R2 — Cross-host release gate
+- Status: open
+- Goal: RF-RELEASE — Release ResearchForge 2.0 only on measured improvement and cross-host parity.
+- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan) (Owner requirements: release acceptance).
+- Scope: 2.0 also requires V-E4 parity green on the release commit and V-E5-run receipts for all four hosts on the release version. Skill-only plugin releases before 2.0 need only the V-E1 conformance test.
+- Acceptance: docs/release.md lists both checks with links to the evidence.
+- Checks: make check
+- Dependencies: V-E4, V-E5-run.
+- Ownership: ResearchForge owner (release decision).
+- Touches: docs/release.md
+
+## Backlog (not ready)
+
+Proposals and deferred items; none is executable until planned and accepted.
+
+- V-B7 (proposal): after the V-B6-run pilot, measure whether Autowork-driven development tasks that need research produce better decisions and artifacts with ResearchForge installed. Needs its own task set, scoring rubric and owner approval. Not part of the 2.0 gate.
+- Semantic paper ranking: add a query-relevance term to `rank`; measure on the V-B sets first.
+- Learned source routing evaluated on held-out questions.
+- Persistent cross-run research memory with freshness checks.
+- Signed or keyed provenance event log against deliberate forgery (owner deferral).
+- GitHub repository description, website and topics (owner chore).
+
+
+## Goal coverage
+
+<!-- goals:coverage:begin -->
+
+Generated from `goals.json` by `goals.py render`. `met` requires an executed, passing check.
+
+| Goal | Status | Evidence | Task |
+| --- | --- | --- | --- |
+| RF-V0: Land and harden the in-progress research commands | partial | — | V0-2, V0-3 |
+| RF-AGENT: Make the agent contract correct: install docs, search depth and provenance levels | unmet | — | V-A1, V-A2, V-A3, V-A4 |
+| RF-BENCH: Measure research quality against held-out ground truth | unmet | — | V-B1, V-B2, V-B3, V-B4, V-B4-lock, V-B5, V-B6, V-B6-run |
+| RF-MCP: Expose the engine through a thin MCP adapter over shared services | unmet | — | V-C1, V-C2, V-C3, V-C4 |
+| RF-CLAIMS: Verify claims against stored evidence with separate facets | unmet | — | V-D1, V-D2, V-D3, V-D4 |
+| RF-PACK: Ship passive native plugins for Claude Code, Codex, Pi and Hermes over the same engine | unmet | — | V-E0, V-E1, V-E2, V-E3, V-E4, V-E5, V-E5-run |
+| RF-RELEASE: Release ResearchForge 2.0 only on measured improvement and cross-host parity | unmet | — | V-R1, V-R2 |
+
+<!-- goals:coverage:end -->

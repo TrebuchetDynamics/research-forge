@@ -1,6 +1,8 @@
 # Verifiable research engine plan
 
-Status: accepted direction, 2026-10-19. Tasks live in [TODO.md §12](../TODO.md#12-verifiable-research-engine-cycle).
+Status: Accepted
+
+Accepted 2026-10-19 by the owner. Tasks live in [TODO.md §12](../TODO.md#12-verifiable-research-engine-cycle).
 Origin: competitive review of Feynman (Companion-Inc) and related research agents, refined in a
 plan-with-me session with the owner.
 

@@ -1,0 +1,482 @@
+{
+  "goals": [
+    {
+      "depends_on": [],
+      "evidence": [],
+      "id": "RF-V0",
+      "priority": 10,
+      "source": "docs/verifiable-engine-plan.md#verifiable-research-engine-plan",
+      "status": "partial",
+      "tasks": [
+        "V0-1",
+        "V0-2",
+        "V0-3"
+      ],
+      "title": "Land and harden the in-progress research commands"
+    },
+    {
+      "depends_on": [],
+      "evidence": [],
+      "id": "RF-AGENT",
+      "priority": 20,
+      "source": "docs/verifiable-engine-plan.md#verifiable-research-engine-plan",
+      "status": "unmet",
+      "tasks": [
+        "V-A1",
+        "V-A2",
+        "V-A3",
+        "V-A4"
+      ],
+      "title": "Make the agent contract correct: install docs, search depth and provenance levels"
+    },
+    {
+      "depends_on": [],
+      "evidence": [],
+      "id": "RF-BENCH",
+      "priority": 30,
+      "source": "docs/verifiable-engine-plan.md#verifiable-research-engine-plan",
+      "status": "unmet",
+      "tasks": [
+        "V-B1",
+        "V-B2",
+        "V-B3",
+        "V-B4",
+        "V-B4-lock",
+        "V-B5",
+        "V-B6",
+        "V-B6-run"
+      ],
+      "title": "Measure research quality against held-out ground truth"
+    },
+    {
+      "depends_on": [],
+      "evidence": [],
+      "id": "RF-MCP",
+      "priority": 40,
+      "source": "docs/verifiable-engine-plan.md#verifiable-research-engine-plan",
+      "status": "unmet",
+      "tasks": [
+        "V-C1",
+        "V-C2",
+        "V-C3",
+        "V-C4"
+      ],
+      "title": "Expose the engine through a thin MCP adapter over shared services"
+    },
+    {
+      "depends_on": [],
+      "evidence": [],
+      "id": "RF-CLAIMS",
+      "priority": 50,
+      "source": "docs/verifiable-engine-plan.md#verifiable-research-engine-plan",
+      "status": "unmet",
+      "tasks": [
+        "V-D1",
+        "V-D2",
+        "V-D3",
+        "V-D4"
+      ],
+      "title": "Verify claims against stored evidence with separate facets"
+    },
+    {
+      "depends_on": [],
+      "evidence": [],
+      "id": "RF-PACK",
+      "priority": 60,
+      "source": "docs/verifiable-engine-plan.md#verifiable-research-engine-plan",
+      "status": "unmet",
+      "tasks": [
+        "V-E0",
+        "V-E1",
+        "V-E2",
+        "V-E3",
+        "V-E4",
+        "V-E5",
+        "V-E5-run"
+      ],
+      "title": "Ship passive native plugins for Claude Code, Codex, Pi and Hermes over the same engine"
+    },
+    {
+      "depends_on": [],
+      "evidence": [],
+      "id": "RF-RELEASE",
+      "priority": 70,
+      "source": "docs/verifiable-engine-plan.md#verifiable-research-engine-plan",
+      "status": "unmet",
+      "tasks": [
+        "V-R1",
+        "V-R2"
+      ],
+      "title": "Release ResearchForge 2.0 only on measured improvement and cross-host parity"
+    }
+  ],
+  "priority_order": {
+    "schema": 1,
+    "tasks": [
+      "V0-2",
+      "V0-3",
+      "V-A1",
+      "V-B1",
+      "V-B2",
+      "V-E0",
+      "V-A2",
+      "V-A3",
+      "V-A4",
+      "V-B3",
+      "V-B4",
+      "V-B5",
+      "V-B6",
+      "V-C1",
+      "V-C2",
+      "V-C3",
+      "V-C4",
+      "V-D1",
+      "V-D2",
+      "V-D3",
+      "V-D4",
+      "V-E1",
+      "V-E2",
+      "V-E3",
+      "V-E4",
+      "V-E5",
+      "V-B4-lock",
+      "V-B6-run",
+      "V-E5-run",
+      "V-R1",
+      "V-R2"
+    ]
+  },
+  "tasks": [
+    {
+      "depends_on": [
+        "V0-1"
+      ],
+      "goal": "RF-AGENT",
+      "id": "V-A1",
+      "section": "Now",
+      "status": "open",
+      "title": "Docs parity check for Go version and skill commands"
+    },
+    {
+      "depends_on": [],
+      "goal": "RF-BENCH",
+      "id": "V-B1",
+      "section": "Now",
+      "status": "open",
+      "title": "Research-quality benchmark specification"
+    },
+    {
+      "depends_on": [],
+      "goal": "RF-BENCH",
+      "id": "V-B2",
+      "section": "Now",
+      "status": "open",
+      "title": "Claim-evidence schema v0 design"
+    },
+    {
+      "depends_on": [],
+      "goal": "RF-PACK",
+      "id": "V-E0",
+      "section": "Now",
+      "status": "open",
+      "title": "Capability report for compatibility checks"
+    },
+    {
+      "depends_on": [
+        "V0-1"
+      ],
+      "goal": "RF-V0",
+      "id": "V0-2",
+      "section": "Now",
+      "status": "open",
+      "title": "Harden the new workflow commands"
+    },
+    {
+      "depends_on": [],
+      "goal": "RF-V0",
+      "id": "V0-3",
+      "section": "Now",
+      "status": "open",
+      "title": "Fix the provenance event path mismatch"
+    },
+    {
+      "depends_on": [
+        "V0-1"
+      ],
+      "goal": "RF-AGENT",
+      "id": "V-A2",
+      "section": "Next",
+      "status": "open",
+      "title": "Search budgets and structured stop reasons"
+    },
+    {
+      "depends_on": [
+        "V-A2",
+        "V0-1"
+      ],
+      "goal": "RF-AGENT",
+      "id": "V-A3",
+      "section": "Next",
+      "status": "open",
+      "title": "Skill depth rewrite: Standard by default"
+    },
+    {
+      "depends_on": [
+        "V0-1",
+        "V0-2"
+      ],
+      "goal": "RF-AGENT",
+      "id": "V-A4",
+      "section": "Next",
+      "status": "open",
+      "title": "Provenance levels computed by the validator"
+    },
+    {
+      "depends_on": [
+        "V-A2",
+        "V-B1"
+      ],
+      "goal": "RF-BENCH",
+      "id": "V-B3",
+      "section": "Next",
+      "status": "open",
+      "title": "Engine-tier benchmark harness with offline replay"
+    },
+    {
+      "depends_on": [
+        "V-B1"
+      ],
+      "goal": "RF-BENCH",
+      "id": "V-B4",
+      "section": "Next",
+      "status": "open",
+      "title": "Draft candidate gold sets"
+    },
+    {
+      "depends_on": [
+        "V-B3",
+        "V-B4-lock"
+      ],
+      "goal": "RF-BENCH",
+      "id": "V-B5",
+      "section": "Next",
+      "status": "open",
+      "title": "Engine-tier baseline"
+    },
+    {
+      "depends_on": [
+        "V-A3",
+        "V-A4",
+        "V-B1",
+        "V-B3"
+      ],
+      "goal": "RF-BENCH",
+      "id": "V-B6",
+      "section": "Next",
+      "status": "open",
+      "title": "Agent-tier protocol and scripts"
+    },
+    {
+      "depends_on": [
+        "V-A2",
+        "V0-2"
+      ],
+      "goal": "RF-MCP",
+      "id": "V-C1",
+      "section": "Next",
+      "status": "open",
+      "title": "Extract research services from the CLI"
+    },
+    {
+      "depends_on": [
+        "V-A2"
+      ],
+      "goal": "RF-MCP",
+      "id": "V-C2",
+      "section": "Next",
+      "status": "open",
+      "title": "Persistent job service"
+    },
+    {
+      "depends_on": [
+        "V-C1",
+        "V-C2"
+      ],
+      "goal": "RF-MCP",
+      "id": "V-C3",
+      "section": "Next",
+      "status": "open",
+      "title": "`rforge mcp serve` over stdio"
+    },
+    {
+      "depends_on": [
+        "V-C3"
+      ],
+      "goal": "RF-MCP",
+      "id": "V-C4",
+      "section": "Next",
+      "status": "open",
+      "title": "Standalone MCP documentation"
+    },
+    {
+      "depends_on": [
+        "V-B2"
+      ],
+      "goal": "RF-CLAIMS",
+      "id": "V-D1",
+      "section": "Next",
+      "status": "open",
+      "title": "Content integrity and stable passage identity"
+    },
+    {
+      "depends_on": [
+        "V-B2",
+        "V-D1"
+      ],
+      "goal": "RF-CLAIMS",
+      "id": "V-D2",
+      "section": "Next",
+      "status": "open",
+      "title": "Claim store and CLI"
+    },
+    {
+      "depends_on": [
+        "V-D2"
+      ],
+      "goal": "RF-CLAIMS",
+      "id": "V-D3",
+      "section": "Next",
+      "status": "open",
+      "title": "`rforge claim check` deterministic facets"
+    },
+    {
+      "depends_on": [
+        "V-C3",
+        "V-D3"
+      ],
+      "goal": "RF-CLAIMS",
+      "id": "V-D4",
+      "section": "Next",
+      "status": "open",
+      "title": "Facet-based guards and MCP claim check"
+    },
+    {
+      "depends_on": [
+        "V-A1",
+        "V-E0"
+      ],
+      "goal": "RF-PACK",
+      "id": "V-E1",
+      "section": "Next",
+      "status": "open",
+      "title": "Skill-only plugin scaffolding"
+    },
+    {
+      "depends_on": [
+        "V-E1",
+        "V0-2"
+      ],
+      "goal": "RF-PACK",
+      "id": "V-E2",
+      "section": "Next",
+      "status": "open",
+      "title": "Explicit workflow commands"
+    },
+    {
+      "depends_on": [
+        "V-C1",
+        "V-C3",
+        "V-E0",
+        "V-E1"
+      ],
+      "goal": "RF-PACK",
+      "id": "V-E3",
+      "section": "Next",
+      "status": "open",
+      "title": "Typed engine tools per host"
+    },
+    {
+      "depends_on": [
+        "V-C3",
+        "V-E3"
+      ],
+      "goal": "RF-PACK",
+      "id": "V-E4",
+      "section": "Next",
+      "status": "open",
+      "title": "Cross-surface behavior parity suite"
+    },
+    {
+      "depends_on": [
+        "V-E3"
+      ],
+      "goal": "RF-PACK",
+      "id": "V-E5",
+      "section": "Next",
+      "status": "open",
+      "title": "Per-host lifecycle qualification runbook"
+    },
+    {
+      "depends_on": [
+        "V-B3",
+        "V-B4"
+      ],
+      "goal": "RF-BENCH",
+      "id": "V-B4-lock",
+      "section": "Needs decision",
+      "status": "open",
+      "title": "Owner approves and locks the gold sets"
+    },
+    {
+      "depends_on": [
+        "V-B4-lock",
+        "V-B6"
+      ],
+      "goal": "RF-BENCH",
+      "id": "V-B6-run",
+      "section": "Needs decision",
+      "status": "open",
+      "title": "Live agent-tier pilot"
+    },
+    {
+      "depends_on": [
+        "V-E5"
+      ],
+      "goal": "RF-PACK",
+      "id": "V-E5-run",
+      "section": "Needs decision",
+      "status": "open",
+      "title": "Live host qualification receipts"
+    },
+    {
+      "depends_on": [
+        "V-B6-run"
+      ],
+      "goal": "RF-RELEASE",
+      "id": "V-R1",
+      "section": "Needs decision",
+      "status": "open",
+      "title": "ResearchForge 2.0 research-quality release gate"
+    },
+    {
+      "depends_on": [
+        "V-E4",
+        "V-E5-run"
+      ],
+      "goal": "RF-RELEASE",
+      "id": "V-R2",
+      "section": "Needs decision",
+      "status": "open",
+      "title": "Cross-host release gate"
+    },
+    {
+      "depends_on": [],
+      "goal": "RF-V0",
+      "id": "V0-1",
+      "section": "Done",
+      "status": "done",
+      "title": "Land the in-progress workflow commands"
+    }
+  ],
+  "version": 1
+}
