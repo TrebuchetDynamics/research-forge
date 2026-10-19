@@ -1,11 +1,47 @@
 package report
 
 import (
+	"encoding/json"
+	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/TrebuchetDynamics/research-forge/internal/analysis"
 	"github.com/TrebuchetDynamics/research-forge/internal/evidence"
 )
+
+// Ignoring a recorded negative facet must never permit final export.
+func TestFinalExportReadsSeparateFacets(t *testing.T) {
+	for _, facet := range []string{"sourceIdentity", "contentIntegrity", "passageMatch", "semanticSupport", "humanApproval"} {
+		for _, state := range []string{"passed", "failed", "inconclusive"} {
+			t.Run(facet+"/"+state, func(t *testing.T) {
+				kind := "engine"
+				if facet == "semanticSupport" {
+					kind = "agent"
+				} else if facet == "humanApproval" {
+					kind = "human"
+				}
+				var trace ClaimTraceView
+				data := fmt.Sprintf(`{"claimId":"c1","claimText":"Claim","claimStatus":"accepted","acceptedEvidence":[{}],"passages":[{}],"effectSizeRows":[{}],"facets":{%q:{"state":%q,"checker":{"kind":%q,"id":"checker","model":"fixture"},"timestamp":"2026-10-19T12:00:00Z"}}}`, facet, state, kind)
+				if err := json.Unmarshal([]byte(data), &trace); err != nil {
+					t.Fatal(err)
+				}
+				panel := BuildClaimTraceabilityPanel(CitationEvidenceTraceView{Claims: []ClaimTraceView{trace}})
+				err := GuardFinalReportExport(panel)
+				blocked := state != "passed"
+				if (err != nil) != blocked || (blocked && !strings.Contains(strings.Join(panel.Blockers, " "), facet)) {
+					t.Fatalf("export ignored %s: panel=%+v err=%v", facet, panel, err)
+				}
+				// The guard also reads facets when handed a prebuilt ready panel.
+				panel.BlockFinalExport = false
+				panel.Rows[0].Status = ClaimTraceReady
+				if err := GuardFinalReportExport(panel); (err != nil) != blocked {
+					t.Fatalf("ready status overrode %s: %v", facet, err)
+				}
+			})
+		}
+	}
+}
 
 func TestClaimTraceabilityPanelBlocksUnresolvedWeakGeneratedOutputs(t *testing.T) {
 	panel := BuildClaimTraceabilityPanel(CitationEvidenceTraceView{SchemaVersion: "1", Claims: []ClaimTraceView{

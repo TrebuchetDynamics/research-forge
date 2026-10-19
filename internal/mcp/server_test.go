@@ -17,8 +17,10 @@ import (
 	"testing"
 	"time"
 
+	"github.com/TrebuchetDynamics/research-forge/internal/claims"
 	"github.com/TrebuchetDynamics/research-forge/internal/cli"
 	"github.com/TrebuchetDynamics/research-forge/internal/jobs"
+	"github.com/TrebuchetDynamics/research-forge/internal/library"
 	"github.com/TrebuchetDynamics/research-forge/internal/parsing"
 	"github.com/TrebuchetDynamics/research-forge/internal/research"
 	"github.com/TrebuchetDynamics/research-forge/internal/retrieval"
@@ -53,7 +55,7 @@ func TestToolCLIParity(t *testing.T) {
 		names = append(names, tool.Name)
 	}
 	sort.Strings(names)
-	if !reflect.DeepEqual(names, []string{"compare", "evidence_retrieve", "job_status", "research_status", "search", "source_get"}) {
+	if !reflect.DeepEqual(names, []string{"claim_check", "compare", "evidence_retrieve", "job_status", "research_status", "search", "source_get"}) {
 		t.Fatalf("tools: %v", names)
 	}
 	if requests.Load() != 0 {
@@ -96,6 +98,69 @@ func TestToolCLIParity(t *testing.T) {
 			equalJSON(t, got, want)
 		})
 	}
+	t.Run("claim_check", func(t *testing.T) {
+		if err := os.MkdirAll(filepath.Join(project, "parsed"), 0755); err != nil {
+			t.Fatal(err)
+		}
+		doc := parsing.EnrichParsedDocumentModel(parsing.ParsedDocument{PaperID: "10.1/study", Title: "Study", Sections: []parsing.Section{{Passages: []parsing.Passage{{ID: "p1", Text: "Observed result."}}}}})
+		data, _ := json.Marshal(doc)
+		write(t, filepath.Join(project, "parsed", "study.json"), string(data))
+		data, _ = json.Marshal([]library.PaperRecord{{Title: "Study", Identifiers: library.Identifiers{DOI: "10.1/study"}}})
+		write(t, filepath.Join(project, "data", "library.json"), string(data))
+		record := claims.Claim{SchemaVersion: claims.SchemaVersion, ID: "c1", Text: "Claim", Evidence: []claims.EvidenceReference{{Identifier: claims.Identifier{Scheme: "doi", Value: "10.1/study"}, PassageID: "p1", ExactText: "Invented result.", ContentHash: doc.Sections[0].Passages[0].ContentHash, Relation: claims.RelationSupports}}}
+		if err := claims.Append(project, record); err != nil {
+			t.Fatal(err)
+		}
+		semantic := map[string]any{"state": "passed", "checker": map[string]any{"kind": "agent", "id": "pi", "model": "fixture"}, "timestamp": "2026-10-19T12:00:00Z"}
+		got := call(t, ctx, session, "claim_check", map[string]any{"id": "c1", "semantic_support": semantic})
+		var result struct {
+			Data struct {
+				Claim struct {
+					claims.Claim
+					Level string `json:"semanticSupportLevel"`
+				}
+			}
+		}
+		if err := json.Unmarshal(got, &result); err != nil {
+			t.Fatal(err)
+		}
+		f := result.Data.Claim.Facets
+		if f.SourceIdentity == nil || f.ContentIntegrity == nil || f.PassageMatch == nil || f.SourceIdentity.State != claims.StatePassed || f.ContentIntegrity.State != claims.StatePassed || f.PassageMatch.State != claims.StateFailed || f.SemanticSupport == nil || f.SemanticSupport.Assessment().Checker.Model != "fixture" || f.HumanApproval != nil || result.Data.Claim.Level != "agent_reported" {
+			t.Fatalf("claim check lost facet separation/attribution: %s", got)
+		}
+		want := runCLI(t, "--project", project, "claim", "check", "--id", "c1")
+		// Only engine assessment times differ between these two runs.
+		normalize := func(data []byte) []byte {
+			var m map[string]any
+			if err := json.Unmarshal(data, &m); err != nil {
+				t.Fatal(err)
+			}
+			facets := m["data"].(map[string]any)["claim"].(map[string]any)["facets"].(map[string]any)
+			for _, name := range []string{"sourceIdentity", "contentIntegrity", "passageMatch"} {
+				delete(facets[name].(map[string]any), "timestamp")
+			}
+			out, err := json.Marshal(m)
+			if err != nil {
+				t.Fatal(err)
+			}
+			return out
+		}
+		equalJSON(t, normalize(got), normalize(want))
+		before := read(t, filepath.Join(project, claims.RelativePath))
+		for _, args := range []map[string]any{
+			{"id": "c1", "semantic_support": map[string]any{"state": "passed", "checker": map[string]any{"kind": "engine", "id": "rforge", "model": "fixture"}, "timestamp": "2026-10-19T12:00:00Z"}},
+			{"id": "c1", "semantic_support": map[string]any{"state": "passed", "checker": map[string]any{"kind": "agent", "id": "pi"}, "timestamp": "2026-10-19T12:00:00Z"}},
+			{"id": "c1", "human_approval": semantic},
+		} {
+			result, err := session.CallTool(ctx, &sdk.CallToolParams{Name: "claim_check", Arguments: args})
+			if err == nil && !result.IsError {
+				t.Fatalf("accepted unauthorized assessment: %+v", args)
+			}
+			if !bytes.Equal(before, read(t, filepath.Join(project, claims.RelativePath))) {
+				t.Fatal("rejected assessment appended a snapshot")
+			}
+		}
+	})
 	t.Run("search", func(t *testing.T) {
 		session, stopServer := startServer(t, ctx, "")
 		dir := filepath.Join(t.TempDir(), "search")

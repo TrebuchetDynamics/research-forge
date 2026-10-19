@@ -1458,7 +1458,10 @@ func executeReport(args []string, stdout, stderr io.Writer, opts globalOptions) 
 		if err != nil {
 			return writeError(stdout, stderr, opts, 1, "report_trace_parsed_read_failed", err.Error())
 		}
-		view := report.BuildCitationEvidenceTraceView(report.CitationEvidenceTraceInput{Claims: queue.Suggestions, EvidenceItems: items, AnalysisRun: run, ParsedDocuments: parsedDocs, LibraryRecords: records, PDFBaseURL: "/papers"})
+		view, err := report.BuildProjectCitationEvidenceTraceView(opts.Project, report.CitationEvidenceTraceInput{Claims: queue.Suggestions, EvidenceItems: items, AnalysisRun: run, ParsedDocuments: parsedDocs, LibraryRecords: records, PDFBaseURL: "/papers"})
+		if err != nil {
+			return writeError(stdout, stderr, opts, 1, "report_trace_claims_read_failed", err.Error())
+		}
 		if err := writeJSONFile(outPath, view); err != nil {
 			return writeError(stdout, stderr, opts, 1, "report_trace_write_failed", err.Error())
 		}
