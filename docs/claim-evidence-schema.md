@@ -8,11 +8,12 @@ Research-quality benchmark and, later, the claim store. Start with
 [ADR 0009](adr/0009-verification-facets-and-provenance-levels.md) and the
 [verifiable research engine plan](verifiable-engine-plan.md).
 
-V0 supplies Go types, JSON encoding and guarded assessment construction. It does
-not implement storage, migrations, identifier resolution, hashing, quote matching,
-LLM calls, citation scoring or export guards. V-D1 supplies stable passage hashes;
-V-D2 adds persistence; V-D3 performs mechanical checks and adds citation scoring.
-The existing report and graph formats are unchanged.
+V0 supplies Go types, JSON encoding and guarded assessment construction. The
+append-only claim ledger and CLI live in `internal/claims` and
+`internal/cli/claim_command.go`. V-D1 supplies stable passage hashes; V-D3 adds
+[offline mechanical checks](../internal/claims/check.go), quoted-text results in
+citation trace views, and [citation scoring](../internal/benchmarks/citation_correctness.go).
+No LLM calls or export guards are implemented here.
 
 ## Record and evidence
 
@@ -30,6 +31,9 @@ Each `EvidenceReference` contains:
 - `identifier: {scheme, value}`: source identity, e.g. `doi`, `arxiv`, `pmid`,
   `openalex` or `local`. Preserve the source's normalized identifier. A local ID
   is project-scoped; do not infer its scheme from its spelling.
+- `sourceMetadata` (optional): expected bibliographic `{title, year}`. Nonempty
+  values are compared with the resolved library record; missing comparison data
+  is inconclusive, not a match. Parsed-document titles also provide comparisons.
 - `passageId` (optional): identity of the cited passage, not its ordinal position.
 - `relation`: `supports`, `contradicts` or `context`. This is a supplied
   characterization of the citation, not an engine judgment.
@@ -173,6 +177,42 @@ source library record establishes the identifier scheme. Preserve missing data a
 missing; do not invent a check time from import time. An accepted legacy claim can
 therefore legitimately have five unchecked facets.
 
+## Deterministic checks
+
+`rforge claim check --project <path> --id <id> [--json]` loads the latest claim,
+`data/library.json` and `parsed/*.json` offline. It appends a new claim snapshot
+and returns the five separate facets plus ordered per-reference check details.
+A completed check exits successfully even when a facet fails; consumers must
+inspect the facet states. Read/parse/write errors fail the command.
+
+Source identifiers resolve only within the supplied library, including `local`
+identifiers matching `PaperRecord.RecordID`. At least one comparable expected or
+parsed title/year is required to pass identity; any disagreement fails it.
+Content integrity recomputes SHA-256 from the complete stored passage bytes and
+compares both the reference and stored passage hashes. Missing hashes or
+ambiguous/unavailable passages are inconclusive, not success.
+
+[Passage matching](../internal/claims/passage_match.go) first selects the first
+exact quote occurrence. Failing that, it uses Unicode 15.0 canonical NFD
+normalization and collapsed/trimmed Unicode whitespace, without case folding,
+compatibility folding or accent removal. Generated Unicode tables keep this
+offline and dependency-free. A match cannot split an original character's
+canonical decomposition. Results include half-open original passage UTF-8 byte
+ranges and, when parser metadata/ranges are available, absolute document quote
+`offsets`. These **returned quote offsets** differ from the reference's **input
+passage offsets**. Supplied passage offsets must match the stored parser/range.
+
+Each deterministic facet passes only if all references pass; failure dominates
+inconclusive. Empty evidence is inconclusive. Semantic support and human approval
+are preserved without inference. The Go check/scoring services require an explicit
+check timestamp; the CLI supplies the current time.
+
+`CitationLockedSuggestion.CheckCitationLocks` compares each `ExactText` to its
+stored passage (plain passage ID or `paperId:passageId`), and
+`BuildCitationEvidenceTraceView` exposes these ordered results as
+`citationMatches`. Existing passage links and review status remain navigation and
+workflow data, not proof of quote matching or semantic support.
+
 ## Research-quality benchmark contract
 
 Citation artifacts use `[]claims.Claim` directly (including `EvidenceReference`,
@@ -182,18 +222,23 @@ question/set IDs, set checksum, engine version and metric counts. It must not
 rename facets, inject fake engine assessments or replace missing assessments with
 passing values.
 
-The baseline [`internal/benchmarks/cross_tool.go`](../internal/benchmarks/cross_tool.go)
-has no citation scorer. V-B3's harness and V-D3's citation metric consume this
-record contract; this task does not retrofit a synthetic citation metric into the
-old demo. At V-D3, score citation properties against held-out ground truth using
-individual facets, with an explicit eligible-reference denominator and separate
-missing/inconclusive counts. Mechanical citation correctness and agent-reported
-semantic support remain distinct measurements; neither is a truth score.
+[`benchmarks.ScoreCitations`](../internal/benchmarks/citation_correctness.go)
+consumes these records and the caller's locked evidence corpus, recomputing the
+three deterministic facets for **every citation occurrence**, including duplicate
+citations and missing/uncheckable references. Supplied facet states are not trusted.
+The numerator counts occurrences passing all three mechanical checks; the
+explicit denominator includes every occurrence. Per-facet passed/failed/inconclusive
+counts and the subset missing required reference fields are reported separately,
+with each checked occurrence retained in a private audit. `citation_status` is
+`measured` for nonempty citations, or `no_citations` with 0/0 and a null value.
+Semantic support and human approval remain separate and are never inferred.
+The old [`cross_tool.go`](../internal/benchmarks/cross_tool.go) demo is unchanged;
+this service is the citation-scoring seam for the research-quality harness, not
+synthetic evidence or a new improvement claim.
 
-V-D2 can append the same JSON records using the future claim store without
-renaming fields or migrating benchmark evidence. Store sequence/run linkage and
-per-reference check detail can be additive. Until then there is no claim JSONL
-file, command, storage interface or automatic legacy conversion.
+The claim store appends the same records at `data/claims.jsonl` without renaming
+fields or migrating benchmark evidence. Store sequence/run linkage can be
+additive; there is no automatic legacy conversion.
 
 ## Validation and update triggers
 

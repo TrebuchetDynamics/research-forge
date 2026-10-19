@@ -6,12 +6,13 @@ import (
 	"fmt"
 	"io"
 	"strings"
+	"time"
 
 	"github.com/TrebuchetDynamics/research-forge/internal/claims"
 	"github.com/TrebuchetDynamics/research-forge/internal/filetxn"
 )
 
-const claimUsage = "usage: rforge claim add --file <claim.json> | list | show --id <id> --project <path> [--json]"
+const claimUsage = "usage: rforge claim add --file <claim.json> | list | show --id <id> | check --id <id> --project <path> [--json]"
 
 // claimView adds computed attribution without changing the shared Claim schema
 // or accepting a caller-supplied provenance level. It is not a truth judgment.
@@ -111,7 +112,7 @@ func executeClaim(args []string, stdout, stderr io.Writer, opts globalOptions) i
 			fmt.Fprintf(stdout, "%s\t%s\n", record.ID, record.Text)
 		}
 		return 0
-	case "show":
+	case "show", "check":
 		if id == "" || file != "" {
 			return writeError(stdout, stderr, opts, 2, "usage", claimUsage)
 		}
@@ -121,6 +122,33 @@ func executeClaim(args []string, stdout, stderr io.Writer, opts globalOptions) i
 		}
 		if err != nil {
 			return writeError(stdout, stderr, opts, 1, "claim_read_failed", err.Error())
+		}
+		if subcommand == "check" {
+			records, err := loadOptionalLibraryRecords(opts.Project)
+			if err != nil {
+				return writeError(stdout, stderr, opts, 1, "claim_library_read_failed", err.Error())
+			}
+			docs, err := loadOptionalParsedDocuments(opts.Project)
+			if err != nil {
+				return writeError(stdout, stderr, opts, 1, "claim_parsed_read_failed", err.Error())
+			}
+			result, err := claims.Check(record, claims.CheckInput{LibraryRecords: records, ParsedDocuments: docs, Timestamp: time.Now().UTC()})
+			if err != nil {
+				return writeError(stdout, stderr, opts, 1, "claim_check_failed", err.Error())
+			}
+			if err := claims.Append(opts.Project, result.Claim); err != nil {
+				return writeError(stdout, stderr, opts, 1, "claim_check_failed", err.Error())
+			}
+			output := map[string]any{"claim": viewClaim(result.Claim), "evidence": result.Evidence}
+			if opts.JSON {
+				return writeJSON(stdout, 0, output)
+			}
+			data, err := json.MarshalIndent(output, "", "  ")
+			if err != nil {
+				return writeError(stdout, stderr, opts, 1, "claim_check_failed", err.Error())
+			}
+			fmt.Fprintln(stdout, string(data))
+			return 0
 		}
 		if opts.JSON {
 			return writeJSON(stdout, 0, map[string]any{"claim": viewClaim(record)})
