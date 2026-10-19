@@ -1,6 +1,6 @@
 {
   "approval": {
-    "approved_at": "2026-10-19T18:06:38Z",
+    "approved_at": "2026-10-19T19:22:09Z",
     "approver": "xel (repository owner)",
     "waivers": [
       "ap_domain_absent"
@@ -569,15 +569,6 @@
       "search_plan": [
         {
           "filters": {
-            "publicationDateOrYear": ":2023-07-01"
-          },
-          "limit": 50,
-          "page_cursor": "",
-          "source": "semantic-scholar",
-          "terms": "orthopaedic training game simulation learning"
-        },
-        {
-          "filters": {
             "filter": "until-pub-date:2023-07-01"
           },
           "limit": 50,
@@ -593,15 +584,6 @@
           "page_cursor": "",
           "source": "europepmc",
           "terms": "orthopaedic training game simulation learning"
-        },
-        {
-          "filters": {
-            "publicationDateOrYear": ":2023-07-01"
-          },
-          "limit": 50,
-          "page_cursor": "",
-          "source": "semantic-scholar",
-          "terms": "orthopedic resident competitive simulation video game"
         },
         {
           "filters": {
@@ -854,11 +836,11 @@
       "search_plan": [
         {
           "filters": {
-            "publicationDateOrYear": ":2023-11-28"
+            "filter": "FIRST_PDATE:[* TO 2023-11-28]"
           },
           "limit": 50,
           "page_cursor": "",
-          "source": "semantic-scholar",
+          "source": "europepmc",
           "terms": "NEET youth employment education intervention controlled"
         },
         {
@@ -872,11 +854,11 @@
         },
         {
           "filters": {
-            "publicationDateOrYear": ":2023-11-28"
+            "filter": "FIRST_PDATE:[* TO 2023-11-28]"
           },
           "limit": 50,
           "page_cursor": "",
-          "source": "semantic-scholar",
+          "source": "europepmc",
           "terms": "disadvantaged young people reengagement training employment program"
         },
         {
@@ -1476,15 +1458,6 @@
       "search_plan": [
         {
           "filters": {
-            "publicationDateOrYear": ":2024-09-20"
-          },
-          "limit": 50,
-          "page_cursor": "",
-          "source": "semantic-scholar",
-          "terms": "pharmacy students collaborative health professions learning comparison"
-        },
-        {
-          "filters": {
             "filter": "until-pub-date:2024-09-20"
           },
           "limit": 50,
@@ -1500,15 +1473,6 @@
           "page_cursor": "",
           "source": "europepmc",
           "terms": "pharmacy students collaborative health professions learning comparison"
-        },
-        {
-          "filters": {
-            "publicationDateOrYear": ":2024-09-20"
-          },
-          "limit": 50,
-          "page_cursor": "",
-          "source": "semantic-scholar",
-          "terms": "pharmacy interprofessional education lecture controlled cohort"
         },
         {
           "filters": {
@@ -1653,11 +1617,11 @@
       "search_plan": [
         {
           "filters": {
-            "publicationDateOrYear": ":2023-10-13"
+            "filter": "FIRST_PDATE:[* TO 2023-10-13]"
           },
           "limit": 50,
           "page_cursor": "",
-          "source": "semantic-scholar",
+          "source": "europepmc",
           "terms": "dancer somatic imagery developmental movement training"
         },
         {
@@ -1671,11 +1635,11 @@
         },
         {
           "filters": {
-            "publicationDateOrYear": ":2023-10-13"
+            "filter": "FIRST_PDATE:[* TO 2023-10-13]"
           },
           "limit": 50,
           "page_cursor": "",
-          "source": "semantic-scholar",
+          "source": "europepmc",
           "terms": "dance body awareness movement pattern education"
         },
         {
@@ -3202,9 +3166,9 @@
       "split": "held_out"
     }
   ],
-  "review_sheet_sha256": "5ed7e4189c3f2ef6e12464cc3d87de56d2573d4bc5ee9d79387502fe23346dd3",
+  "review_sheet_sha256": "bd0ca502d4cb9287b47670d1476a23e908035ccab3a1517aa8c330f092e9ad8c",
   "schema_version": 1,
-  "set_checksum": "7ba105107ed908009725b5e52cd6799626f43eeaffeece9d018f1b49ffdb6932",
+  "set_checksum": "0b34f5815f123d41477ae0763cf2aa3155262cdba20b6ff09a7a1c675896b02f",
   "set_id": "pool-a",
   "snapshots_sha256": null,
   "state": "approved"

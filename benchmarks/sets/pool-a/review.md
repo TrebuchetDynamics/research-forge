@@ -1,8 +1,19 @@
 # Candidate pool A — owner review sheet
 
+## Search-plan revision 2: keyless (2026-10-19)
+
+Owner instruction 2026-10-19 ("do it keyless"): record without any provider API key. Semantic Scholar refused anonymous requests from this host (HTTP 429 on every probe) and OpenAlex's anonymous budget for this IP was exhausted, so Semantic Scholar calls are removed. Where a question already searched Europe PMC, its Semantic Scholar calls are dropped; otherwise each is replaced in place by a Europe PMC call with the same terms, limit, cursor and the review's `search_date` cap. Query terms, gold, questions, splits, dates and the waiver are unchanged. Europe PMC is expected to cover the economics (q-e) and dance (q-h) literature less well than biomedicine; that is a measured retrieval limit, not a set defect.
+
+| Question | Before | After | Cap |
+| --- | --- | --- | --- |
+| q-d | Crossref × 2; Europe PMC × 2; Semantic Scholar × 2 | Crossref × 2; Europe PMC × 2 | 2023-07-01 |
+| q-e | Crossref × 2; Semantic Scholar × 2 | Crossref × 2; Europe PMC × 2 | 2023-11-28 |
+| q-g | Crossref × 2; Europe PMC × 2; Semantic Scholar × 2 | Crossref × 2; Europe PMC × 2 | 2024-09-20 |
+| q-h | Crossref × 2; Semantic Scholar × 2 | Crossref × 2; Europe PMC × 2 | 2023-10-13 |
+
 ## Search-plan revision (2026-10-19)
 
-**Re-approved by the owner 2026-10-19T18:06:38Z (xel): the search-plan revision below is accepted; the earlier approval of gold, questions, splits, dates and waiver `ap_domain_absent` stands. State `approved`; snapshots are recorded at V-B4-lock.** Verified before re-approval: relative to the approved commit `93c00f2`, only `search_plan` changed in every question; all 24 query terms are unchanged; every call is capped at its review's `search_date`.
+**Re-approved by the owner 2026-10-19T19:22:09Z (xel) for keyless recording: search-plan revision 2 below replaces Semantic Scholar with Europe PMC; everything else keeps its earlier approval (gold, questions, splits, dates, waiver `ap_domain_absent`, revision 1). State `approved`; snapshots are recorded at V-B4-lock.**
 
 Per the owner's 2026-10-19 decision, benchmark retrieval must not depend on OpenAlex. Each of the two problem-based query terms already authored for a question is now searched unchanged on every provider listed below, in term-major order. No term was added, removed or chosen using retrieval outcomes. Provider selection follows the question's domain, not observed hits or scores: Europe PMC plus Crossref for clinical medicine; Semantic Scholar plus Crossref for education, social policy and performing arts. Europe PMC is also included for q-d and q-g because their questions concern health-professions education. There are no OpenAlex calls; existing OpenAlex bibliographic identifiers and date evidence are not search dependencies and remain untouched.
 
