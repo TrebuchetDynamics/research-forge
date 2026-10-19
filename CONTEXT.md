@@ -171,3 +171,33 @@ A meta-analysis mode that requires paired arm data (experimental vs. control) to
 ### Retrieval-first, provenance-first, statistics-first, LLM-assisted
 
 The core ResearchForge principle: retrieve and cite source material first, preserve provenance, use auditable statistical methods, and allow LLMs only as assistants for tasks such as query expansion or extraction suggestions.
+
+### Provenance level
+
+The computed trust level of a research run record: `engine_verified` (rforge produced the outputs and their checksums recompute against an engine provenance event), `agent_reported` (written by a host agent or human), or `unverified`. A record cannot raise its own level. See ADR 0009.
+
+_Avoid:_ "verified provenance" without a level.
+
+### Verification facet
+
+One independently recorded property of a [[claim record]]: **source identity**, **content integrity**, **passage match**, **semantic support** (always agent-reported) or **human approval**. Facets are never collapsed into one status, and none asserts that a conclusion is true.
+
+### Claim record
+
+A stored assertion with its supporting and contradicting evidence references (paper, passage or table, content hash) and its [[verification facet]] states.
+
+_Avoid:_ "verified claim" (implies truth).
+
+### Research-quality benchmark
+
+Measurement of how well rforge (engine tier) or an rforge-equipped agent (agent tier) finds and cites evidence, scored against a checksum-locked [[held-out question set]]: retrieval recall, citation correctness, dedupe accuracy, requests and latency. Distinct from [[scientific benchmarking meta-analysis]].
+
+_Avoid:_ "benchmark" alone where the meta-analysis mode could be meant.
+
+### Held-out question set
+
+Research questions with gold relevant-record sets derived from independent ground truth, locked by checksum and never used for tuning.
+
+### Stop reason
+
+The structured reason a search run ended: completed, budget exhausted, coverage saturated, interrupted, or error threshold.
