@@ -3,6 +3,7 @@ package docs
 import (
 	"bytes"
 	"encoding/json"
+	"maps"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -14,8 +15,8 @@ import (
 	"github.com/TrebuchetDynamics/research-forge/internal/cli"
 )
 
-// The packaging boundary is passive: methodology plus explicit-only workflows,
-// never the repository's developer skills. Keep this offline.
+// The packaging boundary is passive: public skills, explicit workflows and one
+// compatibility-checked engine MCP server. No developer skills or runtime policy.
 func TestPassivePluginConformance(t *testing.T) {
 	root := filepath.Join("..", "..")
 	read := func(path string) string { return readContractFile(t, root, path) }
@@ -26,6 +27,20 @@ func TestPassivePluginConformance(t *testing.T) {
 		// manifest is readable by Hermes and Go's standard library.
 		if err := json.Unmarshal([]byte(read(path)), &value); err != nil {
 			t.Fatalf("parse %s: %v", path, err)
+		}
+		scan := maps.Clone(value)
+		// Exempt only the exact host-owned registration, never arbitrary MCP,
+		// command or tool keys elsewhere in the manifests.
+		switch path {
+		case "adapters/.claude-plugin/plugin.json", "adapters/.codex-plugin/plugin.json":
+			server := map[string]any{"command": "node", "args": []any{"${CLAUDE_PLUGIN_ROOT}/mcp.mjs"}}
+			if strings.Contains(path, ".codex-plugin") {
+				server = map[string]any{"command": "node", "args": []any{"mcp.mjs"}, "cwd": "."}
+			}
+			if !reflect.DeepEqual(value["mcpServers"], map[string]any{"rforge": server}) {
+				t.Fatalf("%s must register only the checked rforge MCP launcher", path)
+			}
+			delete(scan, "mcpServers")
 		}
 		forbidden := regexp.MustCompile(`(?i)hook|agent|setting|permission|approval|schedul|autostart|background|scripts?$|^install$|^preinstall$|^postinstall$|requires_plugins|command|tool|mcp|cron|default`)
 		var check func(any)
@@ -44,7 +59,7 @@ func TestPassivePluginConformance(t *testing.T) {
 				}
 			}
 		}
-		check(value)
+		check(scan)
 		if value["name"] != "research-forge" {
 			t.Errorf("%s: unexpected name %v", path, value["name"])
 		}
@@ -69,7 +84,7 @@ func TestPassivePluginConformance(t *testing.T) {
 	workflows := []string{"brief", "compare", "lit", "paper", "replicate"}
 	wantSkills := []any{"./skills/research-forge"}
 	piSkills := []any{"./skills/research-forge"}
-	packageFiles := []any{"adapters/pi.mjs", "skills/research-forge/", "LICENSE", "docs/agent-install.md"}
+	packageFiles := []any{"adapters/pi.mjs", "adapters/mcp.mjs", "skills/research-forge/", "LICENSE", "docs/agent-install.md"}
 	for _, name := range workflows {
 		wantSkills = append(wantSkills, "./skills/"+name)
 		piSkills = append(piSkills, "./adapters/skills/"+name)
@@ -176,12 +191,9 @@ func TestPassivePluginConformance(t *testing.T) {
 			}
 		}
 	}
-	if strings.Contains(read("adapters/pi.mjs"), "child_process") {
-		t.Fatal("Pi must not spawn subprocesses before typed-tool integration")
-	}
-	cmd := exec.Command("node", "--test", "adapters/test_pi.mjs")
+	cmd := exec.Command("node", "--test", "adapters/test")
 	cmd.Dir = root
 	if out, err := cmd.CombinedOutput(); err != nil {
-		t.Fatalf("Pi command contract: %v\n%s", err, out)
+		t.Fatalf("Pi workflow and engine MCP contract: %v\n%s", err, out)
 	}
 }

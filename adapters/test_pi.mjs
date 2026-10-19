@@ -1,12 +1,15 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
+import { fileURLToPath } from 'node:url';
 import register from './pi.mjs';
 
 test('Pi remains passive until an explicit workflow command loads its skill', async () => {
   const commands = new Map();
   const messages = [];
+  const servers = [];
   register({
+    registerMcpServer: (name, config) => servers.push({ name, ...config }),
     registerCommand(name, command) {
       assert.equal(commands.has(name), false, `duplicate command ${name}`);
       commands.set(name, command);
@@ -14,6 +17,9 @@ test('Pi remains passive until an explicit workflow command loads its skill', as
     sendUserMessage: (...args) => messages.push(args),
   });
   assert.equal(messages.length, 0, 'registration must not start an agent turn');
+  assert.deepEqual(servers, [{ name: 'rforge', command: process.execPath,
+    args: [fileURLToPath(new URL('./mcp.mjs', import.meta.url))],
+  }], 'register only the compatibility-checked engine server');
   assert.deepEqual([...commands.keys()].sort(), [
     'rforge_brief', 'rforge_compare', 'rforge_lit', 'rforge_paper', 'rforge_replicate',
   ]);

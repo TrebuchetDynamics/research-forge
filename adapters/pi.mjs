@@ -9,8 +9,12 @@ const workflows = {
   replicate: 'Generate a paper replication plan',
 };
 
-// Register explicit commands only: no tools, hooks, subprocesses or startup work.
+// Pi's native MCP client owns typed tools; registration itself starts no work.
 export default function researchForge(pi) {
+  pi.registerMcpServer('rforge', {
+    command: process.execPath,
+    args: [fileURLToPath(new URL('./mcp.mjs', import.meta.url))],
+  });
   for (const [name, description] of Object.entries(workflows)) {
     pi.registerCommand(`rforge_${name}`, {
       description,

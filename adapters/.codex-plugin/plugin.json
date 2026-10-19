@@ -3,5 +3,8 @@
   "version": "0.1.22",
   "description": "Retrieval-first research methodology with rforge provenance and human review gates.",
   "license": "MIT",
+  "mcpServers": {
+    "rforge": {"command": "node", "args": ["mcp.mjs"], "cwd": "."}
+  },
   "skills": "./skills/"
 }
