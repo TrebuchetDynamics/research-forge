@@ -239,3 +239,28 @@ func TestExportJSONWritesGoldenPaperRecords(t *testing.T) {
 		t.Fatalf("export mismatch:\n%s", string(data))
 	}
 }
+
+// Spreadsheet round-trips (export CSV → edit in Excel/Numbers → import CSV)
+// prepend a UTF-8 BOM. Without stripping it the first header cell never matches
+// and every row is silently skipped as "without identifiers".
+func TestImportCSVAcceptsUTF8BOMHeader(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "papers.csv")
+	fixture := "\ufefftitle,doi,year\nArtificial photosynthesis BOM import,10.1000/csv-bom,2026\n"
+	if err := os.WriteFile(path, []byte(fixture), 0o644); err != nil {
+		t.Fatalf("write fixture: %v", err)
+	}
+
+	records, skipped, err := ImportCSV(path)
+	if err != nil {
+		t.Fatalf("ImportCSV returned error: %v", err)
+	}
+	if skipped != 0 {
+		t.Errorf("skipped = %d, want 0", skipped)
+	}
+	if len(records) != 1 {
+		t.Fatalf("records = %#v, want 1 record from a BOM'd header", records)
+	}
+	if records[0].Title != "Artificial photosynthesis BOM import" || records[0].Identifiers.DOI != "10.1000/csv-bom" {
+		t.Fatalf("records = %#v", records)
+	}
+}
