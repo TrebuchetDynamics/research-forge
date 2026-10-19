@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"sort"
 	"strings"
 )
 
@@ -34,7 +35,15 @@ func (p S2ORCJSONParser) Parse(ctx context.Context, data []byte, options ParseOp
 		}
 		doc.Sections = append(doc.Sections, section)
 	}
-	for _, bib := range payload.BibEntries {
+	// JSON object iteration is unordered; reference order is part of the
+	// normalized text stream and must be reproducible across reparses.
+	bibIDs := make([]string, 0, len(payload.BibEntries))
+	for id := range payload.BibEntries {
+		bibIDs = append(bibIDs, id)
+	}
+	sort.Strings(bibIDs)
+	for _, id := range bibIDs {
+		bib := payload.BibEntries[id]
 		title := compactText(bib.Title)
 		doi := normalizeReferenceDOI(bib.DOI)
 		if title == "" && doi == "" {

@@ -10,7 +10,11 @@ func TestS2ORCJSONParserAdaptsDocument(t *testing.T) {
 		"title":"S2ORC Fixture",
 		"abstract":"Structured abstract.",
 		"body_text":[{"section":"Introduction","text":"Intro passage."},{"section":"Methods","text":"Methods passage."}],
-		"bib_entries":{"BIBREF0":{"title":"Referenced Work","doi":"https://doi.org/10.1000/REF","raw_text":"Referenced Work raw"}}
+		"bib_entries":{
+			"BIBREF2":{"title":"Third work"},
+			"BIBREF1":{"title":"Second work"},
+			"BIBREF0":{"title":"Referenced Work","doi":"https://doi.org/10.1000/REF","raw_text":"Referenced Work raw"}
+		}
 	}`)
 
 	doc, err := (S2ORCJSONParser{Version: "fixture"}).Parse(context.Background(), fixture, ParseOptions{PaperID: "paper-1"})
@@ -23,7 +27,7 @@ func TestS2ORCJSONParserAdaptsDocument(t *testing.T) {
 	if len(doc.Sections) != 2 || doc.Sections[0].Title != "Introduction" || doc.Sections[0].Passages[0].Text != "Intro passage." {
 		t.Fatalf("sections = %#v", doc.Sections)
 	}
-	if len(doc.References) != 1 || doc.References[0].DOI != "10.1000/ref" || doc.References[0].Raw != "Referenced Work raw" {
+	if len(doc.References) != 3 || doc.References[0].DOI != "10.1000/ref" || doc.References[0].Raw != "Referenced Work raw" || doc.References[1].Title != "Second work" || doc.References[2].Title != "Third work" {
 		t.Fatalf("references = %#v", doc.References)
 	}
 }
