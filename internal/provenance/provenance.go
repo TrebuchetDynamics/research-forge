@@ -14,7 +14,21 @@ import (
 	"github.com/TrebuchetDynamics/research-forge/internal/filetxn"
 )
 
-const eventsRelativePath = "provenance/events.jsonl"
+// EventsRelativePath is the project-relative path of the append-only event ledger.
+const EventsRelativePath = "provenance/events.jsonl"
+
+// ReadRelativePath selects the canonical ledger, falling back to the legacy path
+// only when the canonical ledger is absent. Invalid canonical files are not hidden
+// by a legacy ledger. Callers must still validate the selected file before reading.
+func ReadRelativePath(projectPath string) string {
+	if _, err := os.Lstat(filepath.Join(projectPath, EventsRelativePath)); os.IsNotExist(err) {
+		const legacyPath = "data/provenance.jsonl"
+		if _, err := os.Lstat(filepath.Join(projectPath, legacyPath)); err == nil {
+			return legacyPath
+		}
+	}
+	return EventsRelativePath
+}
 
 // Event is one append-only Provenance record in a ResearchForge project.
 type Event struct {
@@ -63,10 +77,11 @@ func Append(projectPath string, event Event) error {
 		return err
 	}
 	eventBytes = append(eventBytes, '\n')
-	if err := os.MkdirAll(filepath.Join(projectPath, "provenance"), 0o755); err != nil {
+	path := filepath.Join(projectPath, EventsRelativePath)
+	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
 		return err
 	}
-	return filetxn.Append(filepath.Join(projectPath, eventsRelativePath), eventBytes, 0o644)
+	return filetxn.Append(path, eventBytes, 0o644)
 }
 
 func validateEvent(event Event) error {
@@ -103,7 +118,7 @@ func validateEvent(event Event) error {
 
 // Read returns all Provenance events from the project JSONL ledger.
 func Read(projectPath string) ([]Event, error) {
-	file, err := filetxn.OpenRegular(filepath.Join(projectPath, eventsRelativePath))
+	file, err := filetxn.OpenRegular(filepath.Join(projectPath, ReadRelativePath(projectPath)))
 	if err != nil {
 		return nil, err
 	}

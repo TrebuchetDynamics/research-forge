@@ -134,7 +134,7 @@ func BuildPackageExportCenterState(projectPath string) PackageExportCenterState 
 	if strings.TrimSpace(projectPath) == "" {
 		return state
 	}
-	for _, rel := range []string{"rforge.project.toml", "rforge.lock.json", "data/provenance.jsonl", "data/forge-state.json", "data/connector-capabilities.json", "data/evidence.schemas.json", "data/evidence.items.json", "data/claim-trace.json"} {
+	for _, rel := range []string{"rforge.project.toml", "rforge.lock.json", provenance.ReadRelativePath(projectPath), "data/forge-state.json", "data/connector-capabilities.json", "data/evidence.schemas.json", "data/evidence.items.json", "data/claim-trace.json"} {
 		file, err := filetxn.OpenRegularInRoot(projectPath, filepath.FromSlash(rel))
 		if err != nil {
 			continue
