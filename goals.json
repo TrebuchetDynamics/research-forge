@@ -95,6 +95,7 @@
         "V-B3",
         "V-B3-LIVE",
         "V-B4",
+        "V-B4-LIVE",
         "V-B4-lock",
         "V-B5",
         "V-B6",
@@ -189,7 +190,6 @@
   "priority_order": {
     "schema": 1,
     "tasks": [
-      "V-B4",
       "V-B5",
       "V-C2",
       "V-C3",
@@ -205,20 +205,11 @@
       "V-R2",
       "V-B3-LIVE",
       "V-E1-LIVE",
-      "V-B6-LIVE"
+      "V-B6-LIVE",
+      "V-B4-LIVE"
     ]
   },
   "tasks": [
-    {
-      "depends_on": [
-        "V-B1"
-      ],
-      "goal": "RF-BENCH",
-      "id": "V-B4",
-      "section": "Next",
-      "status": "open",
-      "title": "Draft candidate gold sets"
-    },
     {
       "depends_on": [
         "V-B3",
@@ -315,6 +306,16 @@
       "section": "Needs decision",
       "status": "open",
       "title": "Live checks for V-B3"
+    },
+    {
+      "depends_on": [
+        "V-B4"
+      ],
+      "goal": "RF-BENCH",
+      "id": "V-B4-LIVE",
+      "section": "Needs decision",
+      "status": "open",
+      "title": "Live checks for V-B4"
     },
     {
       "depends_on": [
@@ -457,6 +458,16 @@
       "section": "Done",
       "status": "done",
       "title": "Engine-tier benchmark harness with offline replay"
+    },
+    {
+      "depends_on": [
+        "V-B1"
+      ],
+      "goal": "RF-BENCH",
+      "id": "V-B4",
+      "section": "Done",
+      "status": "done",
+      "title": "Draft candidate gold sets"
     },
     {
       "depends_on": [

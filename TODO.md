@@ -751,17 +751,6 @@ Owner answers (2026-10-19):
 
 ## Next
 
-- [ ] V-B4 — Draft candidate gold sets
-- Status: open
-- Goal: RF-BENCH — Measure research quality against held-out ground truth.
-- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan) (Owner answers: gold sets).
-- Scope: draft candidate sets for the pilot, 8 held-out questions plus at least 4 separate dev questions, across at least 3 domains. Each gold set is the included-study list of a published systematic review, recorded with the review identifier and final search date; question wording follows the spec's leakage rules. Save as unlocked candidates under `benchmarks/sets/candidates/` with a review sheet for the owner. Metadata only, per docs/fixture-policy.md. Do not lock or record snapshots. Build on attempt 2 (branch `autowork/V-B4-r2`, commit `5a78a4e`): its `pool-a` (8 held-out, 4 dev, 113 gold records, all machine checks passing) and `discovery.md` artificial-photosynthesis leads. Owner decision 2026-10-19 on artificial photosynthesis (AP): (1) include at least one AP held-out question using a review whose final search is known only to the month, under `search_date_precision: "month"` (spec §2, `b74d761`): cap at the month's first day, cap every search plan there, drop gold published after the cap and list it under "Dropped gold" in `review.md`; the strongest candidate is the 14-paper TiO2 nanotube review (DOI 10.1007/978-3-030-86822-2_10, final search April 2021), whose complete included-paper list must still be verified from public sources; (2) fallback: if no AP review yields a verifiable complete included list, ship the pilot without AP and record in `review.md` and `discovery.md` which AP reviews were checked and why each failed. Never invent dates or list members.
-- Acceptance: every candidate validates against the V-B1 schema and `internal/benchmarks` set validation; the review sheet lists each set's source review, date precision, dropped gold and any leakage risk; the pool has at least one AP held-out question or a recorded fallback explaining its absence; the pilot-composition check passes under that rule.
-- Checks: make check
-- Dependencies: V-B1.
-- Ownership: ResearchForge maintainer; Autowork runner may draft; the owner approves sets (V-B4-lock).
-- Touches: benchmarks/sets/candidates
-
 - [ ] V-B5 — Engine-tier baseline
 - Status: open
 - Goal: RF-BENCH — Measure research quality against held-out ground truth.
@@ -938,6 +927,14 @@ Owner answers (2026-10-19):
   - Live qualification must verify actual host/model/sampling identities, trusted reference-review/date gates for both native and rforge search, complete measured nested accounting, fresh isolated sessions, and OS-level separation of scorer from custodian. Offline receipts cannot independently establish these host properties.
   Checks: Live qualification by an authorized person; offline evidence does not count.
   Dependencies: V-B6.
+  Status: open
+
+- [ ] V-B4-LIVE — Live checks for V-B4
+  Scope: Run the live checks the offline work for V-B4 left pending.
+  Acceptance: Each check passes on the real target:
+  - V-B4-lock: owner reviews the recorded AP fallback, source membership/wording/family/rights notes, Heller's provisional early-publication metadata, Lubega's day-level conflict, partial-date precision and Palm's unresolved DOI registration despite verified PMID identity; approval and any later recording authorization remain separate. The unchanged engine AP capture policy must be reconciled at that gate if the AP-free fallback is retained.
+  Checks: Live qualification by an authorized person; offline evidence does not count.
+  Dependencies: V-B4.
   Status: open
 
 ## Backlog (not ready)
