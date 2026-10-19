@@ -505,3 +505,21 @@ Source section: Next
 - Ownership: ResearchForge maintainer; Autowork runner may execute.
 - Touches: README.md, skills/research-forge/SKILL.md, docs/cli.md
 - Resources: cli-surface, agent-docs — shared `internal/cli/cli.go`, `docs/cli.md`, `skills/research-forge/SKILL.md` and `README.md`; tasks holding either run one at a time
+
+
+<!-- archived from TODO.md -->
+
+Source section: Next
+
+<a id="v-d4"></a>
+
+- [x] V-D4 — Facet-based guards and MCP claim check
+- Status: done
+- Goal: RF-CLAIMS — Verify claims against stored evidence with separate facets.
+- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan).
+- Scope: the report export guard and package audit read facets, with wording that never implies truth; MCP `claim_check` runs deterministic facets and accepts agent-reported semantic support; no approval tool.
+- Acceptance: export blocks on a failed passage match; MCP and CLI claim checks agree on a fixture.
+- Checks: go test ./internal/report ./internal/reviewpkg ./internal/mcp; make check
+- Dependencies: V-D3, V-C3.
+- Ownership: ResearchForge maintainer; Autowork runner may execute.
+- Touches: internal/report, internal/reviewpkg, internal/mcp

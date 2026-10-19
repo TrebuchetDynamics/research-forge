@@ -224,17 +224,6 @@
     },
     {
       "depends_on": [
-        "V-C3",
-        "V-D3"
-      ],
-      "goal": "RF-CLAIMS",
-      "id": "V-D4",
-      "section": "Next",
-      "status": "open",
-      "title": "Facet-based guards and MCP claim check"
-    },
-    {
-      "depends_on": [
         "V-C1",
         "V-C3",
         "V-E0",
@@ -534,6 +523,17 @@
       "section": "Done",
       "status": "done",
       "title": "`rforge claim check` deterministic facets"
+    },
+    {
+      "depends_on": [
+        "V-C3",
+        "V-D3"
+      ],
+      "goal": "RF-CLAIMS",
+      "id": "V-D4",
+      "section": "Done",
+      "status": "done",
+      "title": "Facet-based guards and MCP claim check"
     },
     {
       "depends_on": [],

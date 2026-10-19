@@ -762,17 +762,6 @@ Owner answers (2026-10-19):
 - Ownership: ResearchForge maintainer; Autowork runner may execute.
 - Touches: docs/benchmark, CONTRIBUTING.md, .github/PULL_REQUEST_TEMPLATE.md
 
-- [ ] V-D4 — Facet-based guards and MCP claim check
-- Status: open
-- Goal: RF-CLAIMS — Verify claims against stored evidence with separate facets.
-- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan).
-- Scope: the report export guard and package audit read facets, with wording that never implies truth; MCP `claim_check` runs deterministic facets and accepts agent-reported semantic support; no approval tool.
-- Acceptance: export blocks on a failed passage match; MCP and CLI claim checks agree on a fixture.
-- Checks: go test ./internal/report ./internal/reviewpkg ./internal/mcp; make check
-- Dependencies: V-D3, V-C3.
-- Ownership: ResearchForge maintainer; Autowork runner may execute.
-- Touches: internal/report, internal/reviewpkg, internal/mcp
-
 - [ ] V-E3 — Typed engine tools per host
 - Status: open
 - Goal: RF-PACK — Ship passive native plugins for Claude Code, Codex, Pi and Hermes over the same engine.
