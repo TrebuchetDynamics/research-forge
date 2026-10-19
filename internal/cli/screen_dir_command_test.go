@@ -619,3 +619,109 @@ func TestScreenDirProgressJSONOutput(t *testing.T) {
 		t.Errorf("unexpected counts: %v", data)
 	}
 }
+
+// Reviewers commonly fill the queue CSV in Excel/Numbers, which prefixes the
+// header with a UTF-8 BOM and writes CRLF endings. The BOM must not hide the
+// doi column: dropping it silently loses decisions for DOI-only papers.
+func TestScreenDirImportAcceptsBOMAndCRLFHeader(t *testing.T) {
+	dir := makeScreenDirTopicDir(t, []map[string]any{
+		{"Title": "Paper Alpha", "Identifiers": map[string]any{"DOI": "10.1/alpha", "ArXivID": "2301.00001"}},
+		{"Title": "Paper Beta", "Identifiers": map[string]any{"DOI": "10.1/beta"}},
+	})
+	csvPath := filepath.Join(dir, "queue.csv")
+	body := "\ufeffdoi,arxiv_id,title,authors,year,abstract,source,decision,reason\r\n" +
+		"10.1/alpha,2301.00001,Paper Alpha,,,,,include,\r\n" +
+		"10.1/beta,,Paper Beta,,,,,exclude,out of scope\r\n"
+	if err := os.WriteFile(csvPath, []byte(body), 0o644); err != nil {
+		t.Fatalf("write queue csv: %v", err)
+	}
+
+	stdout := new(bytes.Buffer)
+	if code := Execute([]string{"screen", "import", "--dir", dir, "--csv", csvPath}, stdout, new(bytes.Buffer)); code != 0 {
+		t.Fatalf("exit code = %d; stdout = %s", code, stdout.String())
+	}
+	if !strings.Contains(stdout.String(), "imported 2 decisions") {
+		t.Errorf("expected 2 imported decisions, got: %s", stdout.String())
+	}
+
+	// Decisions must be keyed by DOI so queue/progress agree with the papers.
+	progress := new(bytes.Buffer)
+	if code := Execute([]string{"--json", "screen", "progress", "--dir", dir}, progress, new(bytes.Buffer)); code != 0 {
+		t.Fatalf("progress exit code = %d", code)
+	}
+	var envelope map[string]any
+	if err := json.Unmarshal(progress.Bytes(), &envelope); err != nil {
+		t.Fatalf("progress not JSON: %v\n%s", err, progress.String())
+	}
+	data, _ := envelope["data"].(map[string]any)
+	if got, ok := data["decided"].(float64); !ok || int(got) != 2 {
+		t.Errorf("decided = %v, want 2", data["decided"])
+	}
+	if got, ok := data["pending"].(float64); !ok || int(got) != 0 {
+		t.Errorf("pending = %v, want 0", data["pending"])
+	}
+
+	queue := new(bytes.Buffer)
+	if code := Execute([]string{"screen", "queue", "--dir", dir, "--out", filepath.Join(dir, "again.csv")}, queue, new(bytes.Buffer)); code != 0 {
+		t.Fatalf("queue exit code = %d", code)
+	}
+	if !strings.Contains(queue.String(), "(0 pending records)") {
+		t.Errorf("queue still lists decided papers as pending: %s", queue.String())
+	}
+}
+
+// A typo'd decision must not be persisted: screen progress never counts it and
+// screen queue treats it as decided, so the paper silently leaves the queue.
+// The project workflow (screen decide) already rejects unknown decisions.
+func TestScreenDirImportRejectsUnknownDecision(t *testing.T) {
+	dir := makeScreenDirTopicDir(t, samplePapers)
+	csvPath := filepath.Join(dir, "queue.csv")
+	body := "doi,arxiv_id,title,authors,year,abstract,source,decision,reason\n" +
+		"10.1/alpha,,Paper Alpha,,,,,Maybe,unsure\n"
+	if err := os.WriteFile(csvPath, []byte(body), 0o644); err != nil {
+		t.Fatalf("write queue csv: %v", err)
+	}
+
+	stdout, stderr := new(bytes.Buffer), new(bytes.Buffer)
+	code := Execute([]string{"screen", "import", "--dir", dir, "--csv", csvPath}, stdout, stderr)
+	if code == 0 {
+		t.Fatalf("unknown decision accepted; stdout = %s", stdout.String())
+	}
+	combined := stdout.String() + stderr.String()
+	if !strings.Contains(combined, `unknown decision "Maybe"`) || !strings.Contains(combined, "row 2") {
+		t.Errorf("error does not identify the bad row and value: %s", combined)
+	}
+	if _, err := os.Stat(filepath.Join(dir, "screening.jsonl")); !os.IsNotExist(err) {
+		t.Errorf("rejected import still wrote screening.jsonl")
+	}
+}
+
+// Spreadsheet users type "Include"; accept it case-insensitively and store the
+// canonical lowercase value that progress and queue compare against.
+func TestScreenDirImportNormalizesDecisionCase(t *testing.T) {
+	dir := makeScreenDirTopicDir(t, []map[string]any{
+		{"Title": "Paper Alpha", "Identifiers": map[string]any{"DOI": "10.1/alpha"}},
+	})
+	csvPath := filepath.Join(dir, "queue.csv")
+	body := "doi,arxiv_id,title,authors,year,abstract,source,decision,reason\n" +
+		"10.1/alpha,,Paper Alpha,,,,,Include,\n"
+	if err := os.WriteFile(csvPath, []byte(body), 0o644); err != nil {
+		t.Fatalf("write queue csv: %v", err)
+	}
+
+	stdout := new(bytes.Buffer)
+	if code := Execute([]string{"screen", "import", "--dir", dir, "--csv", csvPath}, stdout, new(bytes.Buffer)); code != 0 {
+		t.Fatalf("exit code = %d; stdout = %s", code, stdout.String())
+	}
+	data, err := os.ReadFile(filepath.Join(dir, "screening.jsonl"))
+	if err != nil {
+		t.Fatalf("screening.jsonl not written: %v", err)
+	}
+	var entry map[string]any
+	if err := json.Unmarshal([]byte(strings.TrimSpace(string(data))), &entry); err != nil {
+		t.Fatalf("entry not JSON: %v\n%s", err, string(data))
+	}
+	if entry["decision"] != "include" {
+		t.Errorf("decision = %v, want canonical %q", entry["decision"], "include")
+	}
+}
