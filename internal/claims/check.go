@@ -216,6 +216,18 @@ func identifierMatches(record library.PaperRecord, id Identifier) bool {
 	return false
 }
 
+// ReferenceTargetsPaper binds a citation to a stored source without treating
+// identity alone as a passed verification facet. All identifier aliases use the
+// same matching rules as the deterministic checker.
+func ReferenceTargetsPaper(ref EvidenceReference, paperID string, records []library.PaperRecord) bool {
+	for _, record := range records {
+		if identifierMatches(record, ref.Identifier) && paperMatches(record, paperID) {
+			return true
+		}
+	}
+	return false
+}
+
 func paperMatches(record library.PaperRecord, id string) bool {
 	if id == "" {
 		return false

@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/TrebuchetDynamics/research-forge/internal/analysis"
+	"github.com/TrebuchetDynamics/research-forge/internal/claims"
 	"github.com/TrebuchetDynamics/research-forge/internal/evidence"
 	"github.com/TrebuchetDynamics/research-forge/internal/library"
 	"github.com/TrebuchetDynamics/research-forge/internal/parsing"
@@ -21,7 +22,7 @@ func TestExecuteReportTraceWritesCitationEvidenceTraceView(t *testing.T) {
 	}
 	writeJSONForCLITest(t, filepath.Join(project, "data", "evidence.items.json"), []evidence.EvidenceItem{{PaperID: "paper-1", Support: evidence.Support{Kind: evidence.SupportPassage, Ref: "passage-1"}, Status: evidence.StatusAccepted}})
 	claimsPath := filepath.Join(project, "data", "claims.json")
-	writeJSONForCLITest(t, claimsPath, evidence.CitationLockedSuggestionQueue{SchemaVersion: "1", PaperID: "paper-1", Suggestions: []evidence.CitationLockedSuggestion{{ID: "claim-1", PaperID: "paper-1", Status: evidence.StatusAccepted, CitationLocks: []evidence.CitationLockedSupport{{Ref: "passage-1", ExactText: "quoted"}}}}})
+	writeJSONForCLITest(t, claimsPath, evidence.CitationLockedSuggestionQueue{SchemaVersion: "1", PaperID: "paper-1", Suggestions: []evidence.CitationLockedSuggestion{{ID: "claim-1", PaperID: "paper-1", SuggestedText: "Claim.", Status: evidence.StatusAccepted, CitationLocks: []evidence.CitationLockedSupport{{Ref: "passage-1", ExactText: "quoted"}}}}})
 	analysisPath := filepath.Join(project, "analysis", "run1.json")
 	if err := os.MkdirAll(filepath.Dir(analysisPath), 0o755); err != nil {
 		t.Fatalf("mkdir analysis: %v", err)
@@ -38,6 +39,13 @@ func TestExecuteReportTraceWritesCitationEvidenceTraceView(t *testing.T) {
 	if err := store.Create(library.PaperRecord{Title: "Paper", Identifiers: library.Identifiers{DOI: "paper-1", ZoteroItemKey: "ZOT-1"}}); err != nil {
 		t.Fatalf("seed library: %v", err)
 	}
+	record := claims.Claim{SchemaVersion: claims.SchemaVersion, ID: "claim-1", Text: "Claim.", Evidence: []claims.EvidenceReference{{Identifier: claims.Identifier{Scheme: "doi", Value: "paper-1"}, PassageID: "passage-1", ExactText: "quoted", ContentHash: "sha256:" + strings.Repeat("0", 64), Relation: claims.RelationSupports}}}
+	if err := claims.Append(project, record); err != nil {
+		t.Fatal(err)
+	}
+	if code := Execute([]string{"--project", project, "claim", "check", "--id", "claim-1"}, ioDiscard{}, ioDiscard{}); code != 0 {
+		t.Fatalf("claim check: %d", code)
+	}
 	out := filepath.Join(project, "data", "trace.json")
 	var stdout, stderr bytes.Buffer
 	code := Execute([]string{"--json", "--project", project, "report", "trace", "--claims", claimsPath, "--analysis", analysisPath, "--out", out}, &stdout, &stderr)
@@ -48,8 +56,34 @@ func TestExecuteReportTraceWritesCitationEvidenceTraceView(t *testing.T) {
 	if err := readJSONFile(out, &view); err != nil {
 		t.Fatalf("read trace: %v", err)
 	}
+	if len(view.Claims) != 1 || view.Claims[0].Facets.ContentIntegrity == nil || view.Claims[0].Facets.ContentIntegrity.State != claims.StateFailed {
+		t.Fatalf("report ignored checked ledger facet: %+v", view)
+	}
+	if err := report.GuardFinalReportExport(report.BuildClaimTraceabilityPanel(view)); err == nil {
+		t.Fatal("export ignored failed ledger integrity")
+	}
 	if len(view.Claims) != 1 || len(view.Claims[0].EffectSizeRows) != 1 || len(view.Claims[0].AcceptedEvidence) != 1 || len(view.Claims[0].Passages) != 1 || view.Claims[0].Passages[0].ParserName != "grobid" || view.Claims[0].ReferenceManagerItems[0] != "zotero:ZOT-1" {
 		t.Fatalf("view = %#v", view)
+	}
+	// Reusing the ID after editing text, quote, or source must not reuse facets.
+	for _, field := range []string{"text", "quote", "source"} {
+		changed := record
+		changed.Evidence = append([]claims.EvidenceReference(nil), record.Evidence...)
+		switch field {
+		case "text":
+			changed.Text = "Changed assertion."
+		case "quote":
+			changed.Evidence[0].ExactText = "Changed quote."
+		case "source":
+			changed.Evidence[0].Identifier.Value = "different-paper"
+		}
+		if err := claims.Append(project, changed); err != nil {
+			t.Fatal(err)
+		}
+		stdout.Reset()
+		if code := Execute([]string{"--json", "--project", project, "report", "trace", "--claims", claimsPath, "--analysis", analysisPath, "--out", out}, &stdout, &stderr); code == 0 || !strings.Contains(stdout.String(), "reassessment required") {
+			t.Fatalf("reused facets after %s change: code=%d %s", field, code, &stdout)
+		}
 	}
 }
 

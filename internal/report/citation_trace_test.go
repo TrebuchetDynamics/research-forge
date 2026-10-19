@@ -27,6 +27,9 @@ func TestBuildCitationEvidenceTraceViewLinksClaimsToFullProvenanceChain(t *testi
 	if len(row.CitationMatches) != 2 || row.CitationMatches[0].Match.State != claims.StatePassed || row.CitationMatches[1].Match.State != claims.StateFailed || row.CitationMatches[0].Match.Offsets == nil {
 		t.Fatalf("citation matches = %+v", row.CitationMatches)
 	}
+	if err := GuardFinalReportExport(BuildClaimTraceabilityPanel(view)); err == nil {
+		t.Fatal("export accepted a mismatched quote despite complete trace links")
+	}
 	if len(row.ReferenceManagerItems) != 1 || row.ReferenceManagerItems[0] != "zotero:ZOT-1" || len(row.SourceAPIRecords) != 1 || row.RawRequestResponse["request"] == "" {
 		t.Fatalf("row source chain = %#v", row)
 	}

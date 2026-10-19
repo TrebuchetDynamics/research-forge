@@ -219,38 +219,32 @@ func TestCreatePackagesProductionScreeningEventsForConflictAudit(t *testing.T) {
 }
 
 func TestAuditRejectsUnsupportedIncludedReportClaim(t *testing.T) {
-	pkgDir := createBasicAuditablePackage(t)
-	write(t, filepath.Join(pkgDir, "project", "data", "claim-trace.json"), `{
-  "schemaVersion":"1",
-  "claims":[
-    {
-      "claimId":"claim-1",
-      "paperId":"p1",
-      "claimText":"An unsupported report claim.",
-      "claimStatus":"suggested",
-      "effectSizeRows":[],
-      "acceptedEvidence":[],
-      "passages":[]
-    }
-  ]
-}`)
-	if err := writeChecksums(pkgDir); err != nil {
-		t.Fatalf("refresh checksums: %v", err)
+	for _, tc := range []struct{ name, claim string }{
+		{"unreviewed", `{"claimId":"claim-1","paperId":"p1","claimText":"Unreviewed claim.","claimStatus":"suggested"}`},
+		{"failed passage facet", `{"claimId":"claim-1","paperId":"p1","claimText":"Claim.","claimStatus":"accepted","effectSizeRows":[{}],"acceptedEvidence":[{}],"passages":[{}],"facets":{"passageMatch":{"state":"failed","checker":{"kind":"engine","id":"rforge.claim.check"},"timestamp":"2026-10-19T12:00:00Z"}}}`},
+		{"mismatched quote", `{"claimId":"claim-1","paperId":"p1","claimText":"Claim.","claimStatus":"accepted","effectSizeRows":[{}],"acceptedEvidence":[{}],"passages":[{}],"citationMatches":[{"ref":"p1","match":{"state":"failed"}}]}`},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			pkgDir := createBasicAuditablePackage(t)
+			write(t, filepath.Join(pkgDir, "project", "data", "claim-trace.json"), `{"schemaVersion":"1","claims":[`+tc.claim+`]}`)
+			if err := writeChecksums(pkgDir); err != nil {
+				t.Fatalf("refresh checksums: %v", err)
+			}
+			report, err := Audit(pkgDir)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if report.OK {
+				t.Fatalf("Audit accepted unsupported claim: %#v", report)
+			}
+			for _, check := range report.Checks {
+				if check.Code == "report_claims" && !check.OK {
+					return
+				}
+			}
+			t.Fatalf("missing failed report_claims result: %#v", report.Checks)
+		})
 	}
-
-	report, err := Audit(pkgDir)
-	if err != nil {
-		t.Fatalf("Audit: %v", err)
-	}
-	if report.OK {
-		t.Fatalf("Audit accepted unsupported included report claim: %#v", report)
-	}
-	for _, check := range report.Checks {
-		if check.Code == "report_claims" && !check.OK {
-			return
-		}
-	}
-	t.Fatalf("Audit checks missing failed report_claims result: %#v", report.Checks)
 }
 
 func TestAuditRejectsNamedCredentialInIncludedTextArtifact(t *testing.T) {

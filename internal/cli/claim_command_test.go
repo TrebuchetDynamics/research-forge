@@ -91,7 +91,9 @@ func TestClaimCheckPersistsSeparateFacets(t *testing.T) {
 	doc := parsing.EnrichParsedDocumentModel(parsing.ParsedDocument{PaperID: "10.1/test", Title: "Study", ParserName: "fixture", ParserVersion: "1", Sections: []parsing.Section{{Passages: []parsing.Passage{{ID: "p1", Text: "Observed result."}}}}})
 	writeJSONForCLITest(t, filepath.Join(project, "parsed", "paper.json"), doc)
 	writeJSONForCLITest(t, filepath.Join(project, "data", "library.json"), []library.PaperRecord{{Title: "Study", Identifiers: library.Identifiers{DOI: "10.1/test"}}})
-	record := claims.Claim{SchemaVersion: claims.SchemaVersion, ID: "c1", Text: "Claim", Evidence: []claims.EvidenceReference{{Identifier: claims.Identifier{Scheme: "doi", Value: "10.1/test"}, PassageID: "p1", ExactText: "Invented result.", ContentHash: doc.Sections[0].Passages[0].ContentHash, Relation: claims.RelationSupports}}}
+	// The library fixture is legacy (no RecordID); check must retain canonical
+	// library loading, which assigns this stable local identity before matching.
+	record := claims.Claim{SchemaVersion: claims.SchemaVersion, ID: "c1", Text: "Claim", Evidence: []claims.EvidenceReference{{Identifier: claims.Identifier{Scheme: "local", Value: "rec_d94aa7ead978c2c5aac46af4b57825ab"}, PassageID: "p1", ExactText: "Invented result.", ContentHash: doc.Sections[0].Passages[0].ContentHash, Relation: claims.RelationSupports}}}
 	if err := claims.Append(project, record); err != nil {
 		t.Fatal(err)
 	}

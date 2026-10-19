@@ -526,7 +526,7 @@ func auditReportClaims(packagePath string) (bool, string) {
 	if err := reportmodel.GuardFinalReportExport(panel); err != nil {
 		return false, err.Error()
 	}
-	return true, fmt.Sprintf("%d included report claim(s) have complete traceability", len(trace.Claims))
+	return true, fmt.Sprintf("%d included report claim(s) satisfy the trace export guard; unchecked facets remain unchecked; no truth judgment", len(trace.Claims))
 }
 
 func auditManifestFields(manifest Manifest) (bool, string) {

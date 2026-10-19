@@ -9,6 +9,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/TrebuchetDynamics/research-forge/internal/claims"
 	"github.com/TrebuchetDynamics/research-forge/internal/jobs"
 	"github.com/TrebuchetDynamics/research-forge/internal/research"
 	"github.com/TrebuchetDynamics/research-forge/internal/retrieval"
@@ -53,6 +54,12 @@ type compareInput struct {
 	Labels []string `json:"labels,omitempty"`
 	Out    string   `json:"out,omitempty"`
 }
+type claimCheckInput struct {
+	ID              string             `json:"id" jsonschema:"stored claim ID"`
+	Project         string             `json:"project,omitempty"`
+	SemanticSupport *claims.Assessment `json:"semantic_support,omitempty" jsonschema:"agent-reported assessment with agent and model identity; never an engine or human decision"`
+}
+
 type retrieveInput struct {
 	Query   string `json:"query"`
 	Backend string `json:"backend,omitempty"`
@@ -180,6 +187,20 @@ func Serve(ctx context.Context, transport sdk.Transport, cfg Config) error {
 		defer index.Close()
 		results, err := index.Retrieve(in.Query)
 		return map[string]any{"results": results, "backend": in.Backend}, err
+	})
+	addTool(server, "claim_check", "Check source identity, content integrity and passage match against stored offline evidence, equivalent to claim check --json. Optional semantic_support is agent_reported. Preserves but cannot set human approval; no facet asserts truth.", func(_ context.Context, in claimCheckInput) (any, error) {
+		if in.Project == "" {
+			in.Project = cfg.Project
+		}
+		var semantic *claims.SemanticSupport
+		if in.SemanticSupport != nil {
+			value, err := claims.NewSemanticSupport(*in.SemanticSupport)
+			if err != nil {
+				return nil, err
+			}
+			semantic = &value
+		}
+		return claims.CheckProject(claims.ProjectCheckOptions{Project: in.Project, ID: in.ID, Timestamp: time.Now().UTC(), SemanticSupport: semantic})
 	})
 	return server.Run(ctx, transport)
 }

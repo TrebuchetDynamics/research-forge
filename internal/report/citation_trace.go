@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/TrebuchetDynamics/research-forge/internal/analysis"
+	"github.com/TrebuchetDynamics/research-forge/internal/claims"
 	"github.com/TrebuchetDynamics/research-forge/internal/evidence"
 	"github.com/TrebuchetDynamics/research-forge/internal/library"
 	"github.com/TrebuchetDynamics/research-forge/internal/parsing"
@@ -28,6 +29,7 @@ type ClaimTraceView struct {
 	PaperID               string                       `json:"paperId"`
 	ClaimText             string                       `json:"claimText"`
 	ClaimStatus           evidence.Status              `json:"claimStatus"`
+	Facets                claims.VerificationFacets    `json:"facets"`
 	EffectSizeRows        []analysis.InputRow          `json:"effectSizeRows"`
 	AcceptedEvidence      []evidence.EvidenceItem      `json:"acceptedEvidence"`
 	Passages              []TracePassage               `json:"passages"`
