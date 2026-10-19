@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/url"
+	"os"
 	"strconv"
 	"strings"
 )
@@ -25,6 +26,18 @@ type OpenAlexEntity struct {
 
 // NewOpenAlexConnector creates an OpenAlex source connector.
 func NewOpenAlexConnector(httpClient HTTPClient) OpenAlexConnector {
+	if key := strings.TrimSpace(os.Getenv("RFORGE_OPENALEX_API_KEY")); key != "" {
+		// Bearer authentication keeps credentials out of URLs and provenance.
+		// Copy headers so a client reused for another source stays unchanged.
+		headers := map[string]string{}
+		for name, value := range httpClient.headers {
+			if !strings.EqualFold(name, "Authorization") {
+				headers[name] = value
+			}
+		}
+		headers["Authorization"] = "Bearer " + key
+		httpClient.headers = headers
+	}
 	return OpenAlexConnector{http: httpClient}
 }
 
