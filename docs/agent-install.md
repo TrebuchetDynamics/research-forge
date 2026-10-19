@@ -22,12 +22,33 @@ There are no hooks, schedules, approval/permission changes or runtime defaults.
 Approval, claim acceptance and package export remain CLI/human-gated, not tools.
 All MCP hosts require Node 22+ and `rforge` on the host process's `PATH`.
 
-## Install the engine separately
+## Install everything with one command
 
-Plugins do **not** download or install the binary. Install or upgrade it yourself:
+`install.sh` is the primary entry point. It installs the engine, the public
+skills and every native integration for the current user:
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/TrebuchetDynamics/research-forge/main/install.sh | bash
+./install.sh --list                          # components and availability here
+./install.sh --only binary,skills            # engine and generic skills only
+./install.sh --only hermes --hermes-profile <name>
+./install.sh update                          # upgrade what is installed
+```
+
+It never uses `sudo` or edits host configuration, keeps components independent
+(one failure does not stop the rest), and moves a legacy standalone skill copy to
+`<name>.bak` when it installs a plugin for the same host. The per-host commands
+in the sections below are exactly what its components run, and remain the manual
+path when you prefer to run them yourself. See
+[installation](install.md) for component keys, `--menu`, `--dry-run`, PATH and
+removal.
+
+## Verify the engine
+
+Plugins do **not** download or install the binary; the installer's `binary`
+component does. Verify it:
+
+```sh
 rforge version
 rforge capabilities --json --min-rforge-version 0.1.22 \
   --require search=1 --require paper=1 --require brief=1 \
@@ -48,8 +69,10 @@ See [engine installation](install.md) for platforms and installer options.
 
 ## Migrate a curl-installed skill first
 
-Before installing a plugin, **delete the old standalone `research-forge` skill
-copy** from the host's user and project skill directories. Common locations are
+Before installing a plugin by hand, **delete the old standalone `research-forge`
+skill copy** from the host's user and project skill directories. The unified
+installer does this for the hosts it installs, keeping a `.bak` copy. Common
+locations are
 `~/.agents/skills/research-forge`, `~/.claude/skills/research-forge`,
 `~/.codex/skills/research-forge`, `~/.pi/agent/skills/research-forge` and
 `~/.hermes/skills/research-forge` (or the selected Hermes profile's `skills/`).
@@ -264,9 +287,13 @@ is part of `make test`; it requires Node 22+ and checks manifests, versions, the
 allowed skill set, explicit-only workflow policies, passive Pi command loading,
 exact MCP registrations and prohibited runtime surfaces. The Pi adapter tests
 build the real Go engine, check its current read/run tool set and CLI JSON parity,
-and exercise missing/incompatible engines, preflight timeout and shutdown. Run:
+and exercise missing/incompatible engines, preflight timeout and shutdown. The
+unified installer's component, selection, update, dry-run and failure-isolation
+contract is covered offline against mocked host CLIs in an isolated `HOME`. Run:
 
 ```sh
+go test ./internal/docs
+go test ./internal/installer
 node --test adapters/test
 ```
 

@@ -257,12 +257,15 @@ func ExportRIS(path string, records []PaperRecord) error {
 // skips rows that cannot be normalized into a storable PaperRecord and returns
 // how many were skipped.
 func ImportCSV(path string) ([]PaperRecord, int, error) {
-	file, err := os.Open(path)
+	body, err := os.ReadFile(path)
 	if err != nil {
 		return nil, 0, err
 	}
-	defer file.Close()
-	rows, err := csv.NewReader(file).ReadAll()
+	// Spreadsheet exports (Excel/Numbers "CSV UTF-8") start with a BOM. Left in
+	// place it becomes part of the first header cell, so the title column is
+	// never found and every row is skipped as missing an identifier.
+	body = bytes.TrimPrefix(body, []byte("\xef\xbb\xbf"))
+	rows, err := csv.NewReader(bytes.NewReader(body)).ReadAll()
 	if err != nil {
 		return nil, 0, err
 	}
@@ -271,7 +274,8 @@ func ImportCSV(path string) ([]PaperRecord, int, error) {
 	}
 	header := map[string]int{}
 	for i, name := range rows[0] {
-		header[name] = i
+		// Tolerate stray whitespace/BOM on header cells from spreadsheet edits.
+		header[strings.TrimSpace(strings.TrimPrefix(name, "\ufeff"))] = i
 	}
 	records := []PaperRecord{}
 	skipped := 0

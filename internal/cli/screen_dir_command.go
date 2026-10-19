@@ -129,12 +129,15 @@ func executeScreenDirImport(args []string, stdout, stderr io.Writer, opts global
 		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge screen import --dir <dir> --csv <queue.csv> [--reviewer <name>]")
 	}
 
-	f, err := os.Open(csvPath)
+	body, err := os.ReadFile(csvPath)
 	if err != nil {
 		return writeError(stdout, stderr, opts, 1, "csv_open_failed", err.Error())
 	}
-	defer f.Close()
-	rows, err := csv.NewReader(f).ReadAll()
+	// Spreadsheet exports (Excel/Numbers, CSV UTF-8) prefix the file with a BOM.
+	// Left in place it becomes part of the first header cell, so the doi column is
+	// never found and DOI decisions are silently dropped on import.
+	body = bytes.TrimPrefix(body, []byte("\xef\xbb\xbf"))
+	rows, err := csv.NewReader(bytes.NewReader(body)).ReadAll()
 	if err != nil {
 		return writeError(stdout, stderr, opts, 1, "csv_parse_failed", err.Error())
 	}
@@ -146,7 +149,8 @@ func executeScreenDirImport(args []string, stdout, stderr io.Writer, opts global
 	header := rows[0]
 	colIdx := func(col string) int {
 		for i, h := range header {
-			if h == col {
+			// Tolerate stray whitespace/BOM on header cells from spreadsheet edits.
+			if strings.TrimSpace(strings.TrimPrefix(h, "\ufeff")) == col {
 				return i
 			}
 		}
@@ -175,7 +179,7 @@ func executeScreenDirImport(args []string, stdout, stderr io.Writer, opts global
 
 	imported := 0
 	now := time.Now().UTC().Format(time.RFC3339)
-	for _, row := range rows[1:] {
+	for rowIndex, row := range rows[1:] {
 		if decIdx < 0 || decIdx >= len(row) {
 			continue
 		}
@@ -183,6 +187,15 @@ func executeScreenDirImport(args []string, stdout, stderr io.Writer, opts global
 		if decision == "" {
 			continue
 		}
+		// Reject unknown decisions instead of persisting them: progress would
+		// never count them while queue would treat the paper as decided, so the
+		// paper would silently leave the review queue for good.
+		canonical, ok := canonicalScreenDirDecision(decision)
+		if !ok {
+			return writeError(stdout, stderr, opts, 1, "csv_invalid_decision",
+				fmt.Sprintf("csv row %d: unknown decision %q (want include, exclude, or uncertain)", rowIndex+2, decision))
+		}
+		decision = canonical
 		doi, arxivID := "", ""
 		if doiIdx >= 0 && doiIdx < len(row) {
 			doi = strings.TrimSpace(row[doiIdx])
@@ -310,6 +323,16 @@ func screenDirLoadEntries(dir string) ([]screenDirEntry, error) {
 		entries = append(entries, e)
 	}
 	return entries, nil
+}
+
+// canonicalScreenDirDecision reports whether value is a decision this workflow
+// understands and returns its canonical lowercase form.
+func canonicalScreenDirDecision(value string) (string, bool) {
+	switch lowered := strings.ToLower(strings.TrimSpace(value)); lowered {
+	case "include", "exclude", "uncertain":
+		return lowered, true
+	}
+	return "", false
 }
 
 func screenDirLoadDecided(dir string) (map[string]bool, error) {
