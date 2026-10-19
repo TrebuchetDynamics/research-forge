@@ -852,7 +852,7 @@ Owner answers (2026-10-19):
 - Checks: go test ./internal/docs; make check
 - Dependencies: V-E1, V0-2.
 - Ownership: ResearchForge maintainer; Autowork runner may execute.
-- Touches: adapters, internal/docs, docs/agent-install.md
+- Touches: adapters, internal/docs, docs/agent-install.md, package.json
 - Resources: agent-docs — shared `skills/research-forge/SKILL.md`, `README.md` and `docs/agent-install.md`; tasks holding it run one at a time
 
 - [ ] V-E3 — Typed engine tools per host
@@ -864,7 +864,7 @@ Owner answers (2026-10-19):
 - Checks: go test ./internal/docs; node --test adapters/test; make check
 - Dependencies: V-E1, V-E0, V-C3, V-C1.
 - Ownership: ResearchForge maintainer; Autowork runner may execute.
-- Touches: .claude-plugin, .codex-plugin, plugin.yaml, adapters, internal/docs, docs/agent-install.md
+- Touches: .claude-plugin, .codex-plugin, plugin.yaml, adapters, internal/docs, docs/agent-install.md, package.json
 - Resources: agent-docs — shared `skills/research-forge/SKILL.md`, `README.md` and `docs/agent-install.md`; tasks holding it run one at a time
 
 - [ ] V-E4 — Cross-surface behavior parity suite
