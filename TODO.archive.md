@@ -247,7 +247,6 @@ Source section: Next
 - Ownership: ResearchForge maintainer; Autowork runner may execute.
 - Touches: internal/search, internal/cli/source_commands.go, internal/cli/search_batch_state.go, internal/sources/graph_budget.go, docs/cli.md
 
-
 <!-- archived from TODO.md -->
 
 Source section: Next
@@ -265,3 +264,21 @@ Source section: Next
 - Ownership: ResearchForge maintainer; Autowork runner may execute.
 - Touches: skills/research-forge/SKILL.md, SKILLS.md
 - Resources: agent-docs — shared `skills/research-forge/SKILL.md`, `README.md` and `docs/agent-install.md`; tasks holding it run one at a time
+
+<!-- archived from TODO.md -->
+
+Source section: Next
+
+<a id="v-a4"></a>
+
+- [x] V-A4 — Provenance levels computed by the validator
+- Status: done
+- Evidence: hand-integrated 2026-10-19 as `8b6408e` (cherry-pick of `3ae5cbe`) after the runner held it on a merge conflict; `internal/cli/source_commands.go` resolved against V-A2 (both sets of JSON fields, request-accounting preservation then snapshot rollback, single `output.commit()`); `internal/reviewpkg/package.go` merged cleanly with V0-7 redaction, which leaves the run-matching fields intact; `go test ./internal/provenance ./internal/reviewpkg ./internal/cli` and the pre-commit `make check` passed with a home-directory `TMPDIR`.
+- Goal: RF-AGENT — Make the agent contract correct: install docs, search depth and provenance levels.
+- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan); [ADR 0009](docs/adr/0009-verification-facets-and-provenance-levels.md).
+- Scope: `provenance.json` schema v2 adds `provenance_level`, `run_id` and `outputs` with sha256. Every engine run (`search batch`, `citations expand`, `rank`, `lit`, benchmark) writes an immutable `provenance/runs/<run_id>.json` plus an event in `provenance/events.jsonl` inside its output directory, so project-less research directories work. The skill's topic-level `provenance.json` becomes an agent-maintained index of `run_id`s whose computed level is the lowest among its runs and its own entries. `rforge provenance validate` computes the level: `engine_verified` only if every output checksum recomputes and the `run_id` matches an engine event; a declared `engine_verified` that fails is an error; v1 files read as `unverified` with a warning. Event `actor` gains a kind (`engine`/`agent`/`human`), reusing `automation.ActorAgent`/`ActorHuman`. Reports, packages and the web UI display the computed level. The skill's manual fallback writes `agent_reported`. Docs state that a deliberate forger with file access is out of scope.
+- Acceptance: tests reject a hand-typed `engine_verified`, detect a tampered output, downgrade v1 and compute the index level as the minimum.
+- Checks: go test ./internal/provenance ./internal/cli ./internal/reviewpkg ./internal/report ./internal/webui; make check
+- Dependencies: V0-1, V0-2.
+- Ownership: ResearchForge maintainer; Autowork runner may execute.
+- Touches: internal/provenance, internal/automation, internal/cli/provenance_command.go, internal/reviewpkg, internal/report, internal/webui, skills/research-forge/SKILL.md

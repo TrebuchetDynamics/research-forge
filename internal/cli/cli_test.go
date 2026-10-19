@@ -1183,6 +1183,7 @@ func TestExecuteCitationsExpandSemanticScholarRecursiveWithProvenance(t *testing
 	if code != 0 {
 		t.Fatalf("exit code = %d, stderr = %s", code, stderr.String())
 	}
+	assertEngineReceipt(t, filepath.Dir(out), filepath.Base(out))
 	data, err := os.ReadFile(out)
 	if err != nil {
 		t.Fatalf("read graph: %v", err)

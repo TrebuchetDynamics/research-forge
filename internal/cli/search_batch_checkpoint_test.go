@@ -10,6 +10,8 @@ import (
 	"strings"
 	"sync/atomic"
 	"testing"
+
+	"github.com/TrebuchetDynamics/research-forge/internal/provenance"
 )
 
 // openAlexBatchServer serves one record per request and counts requests so
@@ -57,6 +59,7 @@ func TestExecuteSearchBatchWritesCheckpoint(t *testing.T) {
 	if code != 0 {
 		t.Fatalf("exit code = %d, stderr = %s, stdout = %s", code, stderr, stdout)
 	}
+	assertEngineReceipt(t, out, "results-deduped.jsonl")
 	state := readBatchState(t, out)
 	if len(state.Completed) != 2 {
 		t.Fatalf("checkpoint completed pairs = %d, want 2 (%+v)", len(state.Completed), state.Completed)
@@ -113,6 +116,9 @@ func TestExecuteSearchBatchResumeSkipsCompletedPairs(t *testing.T) {
 	}
 	if got := atomic.LoadInt32(&requests); got != 2 {
 		t.Fatalf("resume repeated completed pairs: requests = %d, want 2", got)
+	}
+	if got := provenance.DirectoryLevel(out); got != provenance.EngineVerified {
+		t.Fatalf("successful resume provenance=%s", got)
 	}
 	resultsAfter, err := os.ReadFile(filepath.Join(out, "results.jsonl"))
 	if err != nil {

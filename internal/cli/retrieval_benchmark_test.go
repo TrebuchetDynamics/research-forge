@@ -18,6 +18,7 @@ func TestExecuteRetrieveBenchmarkWritesDeterministicReport(t *testing.T) {
 	if code != 0 {
 		t.Fatalf("code=%d stderr=%s stdout=%s", code, stderr.String(), stdout.String())
 	}
+	assertEngineReceipt(t, filepath.Dir(out), filepath.Base(out))
 	var report retrieval.RetrievalBenchmarkReport
 	data, err := os.ReadFile(out)
 	if err != nil {

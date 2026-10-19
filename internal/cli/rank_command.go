@@ -55,6 +55,11 @@ func executeRank(args []string, stdout, stderr io.Writer, opts globalOptions) in
 		}
 	}
 
+	// Even stdout-oriented runs retain checksummed output and a receipt.
+	// Keep default artifacts in a dedicated directory, not the topic index.
+	if outFile == "" {
+		outFile = filepath.Join(opts.Project, "rankings", "rankings.json")
+	}
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
@@ -202,10 +207,7 @@ func executeRank(args []string, stdout, stderr io.Writer, opts globalOptions) in
 		if filepath.Base(outFile) == "provenance.json" {
 			return writeError(stdout, stderr, opts, 1, "rank_write_failed", "rank output must not replace provenance.json; choose a rankings filename")
 		}
-		if err := writeJSONFile(outFile, data); err != nil {
-			return writeError(stdout, stderr, opts, 1, "rank_write_failed", err.Error())
-		}
-		if err := writeRankProvenance(outFile, topic, sourceNames, len(papers)); err != nil {
+		if err := writeJSONFileThen(outFile, data, func() error { return writeRankProvenance(outFile, topic, sourceNames, len(papers)) }); err != nil {
 			return writeError(stdout, stderr, opts, 1, "rank_write_failed", err.Error())
 		}
 	}
@@ -248,9 +250,7 @@ func writeRankProvenance(outFile, topic string, sourceNames []string, count int)
 	if outFile == "" {
 		return nil
 	}
-	provenancePath := outFile + ".provenance.json"
-	provenance := map[string]any{
-		"schema_version": "1",
+	metadata := map[string]any{
 		"question":       "rank: " + topic,
 		"depth":          "standard",
 		"timestamp":      time.Now().UTC().Format(time.RFC3339),
@@ -260,5 +260,6 @@ func writeRankProvenance(outFile, topic string, sourceNames []string, count int)
 		"errors":         []string{},
 		"rforge_version": map[string]string{"version": Version, "commit": Commit, "date": Date},
 	}
-	return writeJSONFile(provenancePath, provenance)
+	_, err := recordEngineRun(filepath.Dir(outFile), "rank", metadata, []string{outFile}, outFile+".provenance.json")
+	return err
 }

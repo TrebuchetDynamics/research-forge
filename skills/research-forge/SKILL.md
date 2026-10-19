@@ -152,7 +152,7 @@ Use any directory. Save all outputs there with consistent naming:
 <folder>/report.md
 ```
 
-When `rforge` is not available or not initialized, write outputs directly to these files and populate `provenance.json` manually before finishing.
+Engine runs work without an initialized project. When `rforge` is unavailable, write outputs directly to these files and populate `provenance.json` manually with `provenance_level: "agent_reported"` before finishing.
 
 ---
 
@@ -439,11 +439,14 @@ Or write directly without `rforge`:
 
 ## Provenance rules (always required)
 
-Every run must write or append `provenance.json` before finishing. Capture depth, exact queries, sources, coverage stats, citation expansion attempts, outputs, and failures/rate limits. Include the batch manifest and checkpoint in `outputs` when present so effective caps, requests used, and `stop_reason` remain auditable. If `search batch --stats` was used, include `search-stats.txt` or equivalent stats output. Depth must be exactly `quick`, `standard`, or `comprehensive`; the validator rejects free-form variants such as `standard-plus`. Run `rforge --json version` and copy its `data` object into `rforge_version` instead of pasting the human-readable version line.
+Maintain the topic's `provenance.json` as a schema-v2 index before finishing. Engine commands (`search batch`, `citations expand`, `rank`, `lit`, and benchmarks) write immutable `provenance/runs/<run_id>.json` receipts and an engine-kind event in `provenance/events.jsonl` in their output directory, including project-less research folders. Without `--out`, rank saves `rankings/rankings.json` under the project (or current directory). Keep receipts and events unchanged. Copy actual run IDs from command JSON or receipt filenames into the index's `runs` array; never invent IDs or copy an engine level onto manual work. Capture depth, exact queries, sources, coverage stats, citation expansion attempts, outputs, and failures/rate limits. Include the batch manifest and checkpoint in `outputs` when present so effective caps, requests used, and `stop_reason` remain auditable. If `search batch --stats` was used, include `search-stats.txt` or equivalent stats output. Depth must be exactly `quick`, `standard`, or `comprehensive`; the validator rejects free-form variants such as `standard-plus`. Run `rforge --json version` and copy its `data` object into `rforge_version` instead of pasting the human-readable version line.
 
 ```json
 {
-  "schema_version": "1",
+  "schema_version": "2",
+  "provenance_level": "agent_reported",
+  "runs": ["<actual local engine run_id; omit when unavailable>"],
+  "entries": [{"provenance_level": "agent_reported", "description": "Host-agent synthesis"}],
   "question": "<research question or task description>",
   "depth": "quick|standard|comprehensive",
   "sources": ["openalex", "arxiv"],
@@ -457,12 +460,14 @@ Every run must write or append `provenance.json` before finishing. Capture depth
   "search_stats": { "openalex": 0, "arxiv": 0, "total_unique_dois": 0 },
   "citation_expand_attempted": ["<paper id or DOI>"],
   "citation_expand_succeeded": ["<paper id or DOI>"],
-  "outputs": ["<relative paths to all saved files>"],
+  "outputs": [{"path": "report.md", "sha256": "<64 hexadecimal characters from sha256sum report.md>"}],
   "errors": ["<rate limit, API failure, missing source, or empty output notes>"]
 }
 ```
 
-If `rforge` is not available, write this file manually. A run without `provenance.json` is incomplete.
+For manual fallback, set `runs` to `[]`, keep `provenance_level: "agent_reported"`, and list all saved outputs with output-directory-relative paths and SHA-256 hashes (do not hash the index itself). Manual entries may be `agent_reported` or `unverified`, never `engine_verified`. An engine-only index may use empty `outputs` and `entries`; its level is the minimum of its referenced runs. With manual outputs/entries, the computed level cannot exceed those entries. If an old run's output was replaced by a later engine run, retain its immutable receipt for history but reference the current run in the index. Without an index, displays use current runs: a newer validated engine event supersedes an older run only when its whole output set is covered. Explicitly validating a historical receipt still checks its original checksums; referencing stale runs in an index fails rather than silently raising its level.
+
+`rforge provenance validate` computes the level rather than trusting the declaration. `engine_verified` requires recomputed output checksums and a matching engine event bound to the immutable run receipt; a false `engine_verified` declaration is an error. Schema v1 remains readable as `unverified` with a warning. Reports, packages and the Forge UI display computed levels; package privacy exclusions may lower the level. These are mechanical provenance checks, not scientific validation. They guard accidental mislabeling: a deliberate forger with file access is out of scope (no cryptographic signing). A run without `provenance.json` is incomplete.
 
 ---
 
@@ -475,7 +480,7 @@ Before declaring research complete, verify:
 - Source coverage stats were run and recorded, with depth, effective caps, requests used, and stop reason reported; any escalation is justified by unsaturated budget exhaustion or the user's request.
 - `report.md` or the requested output exists and cites exact papers, repositories, or artifacts.
 - `provenance.json` exists, is valid JSON, and lists all outputs.
-- `rforge provenance validate <folder>/provenance.json` passes (enum depth, string-only errors, required fields present); fix any reported field before finishing.
+- `rforge provenance validate <folder>/provenance.json` passes (computed level, checksums/run linkage, enum depth, string-only errors, required fields); fix failures and report legacy warnings without presenting them as verification.
 - Human-gated actions were surfaced rather than self-approved.
 
 ---

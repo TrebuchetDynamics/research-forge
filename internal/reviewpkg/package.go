@@ -32,37 +32,38 @@ type Package struct {
 }
 
 type Manifest struct {
-	SchemaVersion              string   `json:"schemaVersion"`
-	PackageID                  string   `json:"packageId"`
-	CreatedAt                  string   `json:"createdAt"`
-	CreatedBy                  string   `json:"createdBy"`
-	ResearchForgeVersion       string   `json:"researchForgeVersion"`
-	ProjectTitle               string   `json:"projectTitle,omitempty"`
-	Question                   string   `json:"question,omitempty"`
-	MetaAnalysisSpineVersion   string   `json:"metaAnalysisSpineVersion"`
-	PackageRole                string   `json:"packageRole"`
-	ProjectManifestRef         string   `json:"projectManifestRef"`
-	SourcePlanRefs             []string `json:"sourcePlanRefs,omitempty"`
-	LockfileRef                string   `json:"lockfileRef"`
-	LockfileRefs               []string `json:"lockfileRefs,omitempty"`
-	ProvenanceRef              string   `json:"provenanceRef,omitempty"`
-	DedupeDecisionRef          string   `json:"dedupeDecisionRef,omitempty"`
-	SourceRecordRefs           []string `json:"sourceRecordRefs,omitempty"`
-	ImportReceiptRefs          []string `json:"importReceiptRefs,omitempty"`
-	ReferenceManagerReportRefs []string `json:"referenceManagerReportRefs,omitempty"`
-	LegalAcquisitionRef        string   `json:"legalAcquisitionRef,omitempty"`
-	DocumentAssetRefs          []string `json:"documentAssetRefs,omitempty"`
-	ScreeningAuditRef          string   `json:"screeningAuditRef,omitempty"`
-	ExtractionSchemaRef        string   `json:"extractionSchemaRef,omitempty"`
-	AcceptedEvidenceRef        string   `json:"acceptedEvidenceRef,omitempty"`
-	ParserManifestRefs         []string `json:"parserManifestRefs,omitempty"`
-	AnalysisArtifactRefs       []string `json:"analysisArtifactRefs,omitempty"`
-	ReportRefs                 []string `json:"reportRefs,omitempty"`
-	RedactionReportRef         string   `json:"redactionReportRef"`
-	ChecksumManifestRef        string   `json:"checksumManifestRef"`
-	ReplayCommand              string   `json:"replayCommand"`
-	AuditCommand               string   `json:"auditCommand"`
-	Warnings                   []string `json:"warnings,omitempty"`
+	ProvenanceLevel            provenance.Level `json:"provenance_level"`
+	SchemaVersion              string           `json:"schemaVersion"`
+	PackageID                  string           `json:"packageId"`
+	CreatedAt                  string           `json:"createdAt"`
+	CreatedBy                  string           `json:"createdBy"`
+	ResearchForgeVersion       string           `json:"researchForgeVersion"`
+	ProjectTitle               string           `json:"projectTitle,omitempty"`
+	Question                   string           `json:"question,omitempty"`
+	MetaAnalysisSpineVersion   string           `json:"metaAnalysisSpineVersion"`
+	PackageRole                string           `json:"packageRole"`
+	ProjectManifestRef         string           `json:"projectManifestRef"`
+	SourcePlanRefs             []string         `json:"sourcePlanRefs,omitempty"`
+	LockfileRef                string           `json:"lockfileRef"`
+	LockfileRefs               []string         `json:"lockfileRefs,omitempty"`
+	ProvenanceRef              string           `json:"provenanceRef,omitempty"`
+	DedupeDecisionRef          string           `json:"dedupeDecisionRef,omitempty"`
+	SourceRecordRefs           []string         `json:"sourceRecordRefs,omitempty"`
+	ImportReceiptRefs          []string         `json:"importReceiptRefs,omitempty"`
+	ReferenceManagerReportRefs []string         `json:"referenceManagerReportRefs,omitempty"`
+	LegalAcquisitionRef        string           `json:"legalAcquisitionRef,omitempty"`
+	DocumentAssetRefs          []string         `json:"documentAssetRefs,omitempty"`
+	ScreeningAuditRef          string           `json:"screeningAuditRef,omitempty"`
+	ExtractionSchemaRef        string           `json:"extractionSchemaRef,omitempty"`
+	AcceptedEvidenceRef        string           `json:"acceptedEvidenceRef,omitempty"`
+	ParserManifestRefs         []string         `json:"parserManifestRefs,omitempty"`
+	AnalysisArtifactRefs       []string         `json:"analysisArtifactRefs,omitempty"`
+	ReportRefs                 []string         `json:"reportRefs,omitempty"`
+	RedactionReportRef         string           `json:"redactionReportRef"`
+	ChecksumManifestRef        string           `json:"checksumManifestRef"`
+	ReplayCommand              string           `json:"replayCommand"`
+	AuditCommand               string           `json:"auditCommand"`
+	Warnings                   []string         `json:"warnings,omitempty"`
 }
 
 type RedactionReport struct {
@@ -118,7 +119,7 @@ func Create(projectPath, packagePath string, opts Options) (Package, error) {
 	manifest := Manifest{SchemaVersion: packageSchemaVersion, PackageID: "rforgepkg-" + now.Format("20060102T150405Z"), CreatedAt: now.Format(time.RFC3339), CreatedBy: strings.TrimSpace(opts.CreatedBy), ResearchForgeVersion: "dev", Question: strings.TrimSpace(opts.Question), MetaAnalysisSpineVersion: metaAnalysisSpineVersion, PackageRole: metaAnalysisPackageRole, ProjectManifestRef: "project/rforge.project.toml", LockfileRef: "project/rforge.lock.json", LockfileRefs: []string{"project/rforge.lock.json"}, RedactionReportRef: "redaction-report.json", ChecksumManifestRef: "checksums.sha256", ReplayCommand: packageReplayCommand, AuditCommand: packageAuditCommand}
 	redaction := RedactionReport{SchemaVersion: "1", Policy: "exclude private local paths, credentials, restricted documents, reviewer-private notes, caches"}
 	provenancePath := provenance.ReadRelativePath(projectPath)
-	copyPlan := []string{"rforge.project.toml", "rforge.lock.json", provenancePath, "data/forge-state.json", "data/connector-capabilities.json", "data/library.json", "data/privacy-licensing-review.json", "data/legal-acquisition-queue.json", "data/document-assets.json", "data/identity-decisions.jsonl", "data/screening.events.json", "data/screening-audit.jsonl", "data/evidence.schemas.json", "data/evidence.items.json", "data/claim-trace.json"}
+	copyPlan := []string{"provenance.json", "rforge.project.toml", "rforge.lock.json", provenancePath, "data/forge-state.json", "data/connector-capabilities.json", "data/library.json", "data/privacy-licensing-review.json", "data/legal-acquisition-queue.json", "data/document-assets.json", "data/identity-decisions.jsonl", "data/screening.events.json", "data/screening-audit.jsonl", "data/evidence.schemas.json", "data/evidence.items.json", "data/claim-trace.json"}
 	for _, rel := range copyPlan {
 		if err := copyIfExists(projectPath, packagePath, rel); err != nil {
 			return Package{}, fmt.Errorf("copy project artifact %s: %w", rel, err)
@@ -152,7 +153,7 @@ func Create(projectPath, packagePath string, opts Options) (Package, error) {
 			return Package{}, fmt.Errorf("copy project artifacts matching %s: %w", plan.pattern, err)
 		}
 	}
-	for _, dir := range []string{"documents/open-access", "parsed"} {
+	for _, dir := range []string{"documents/open-access", "parsed", "provenance/runs"} {
 		if err := copyDirFiles(projectPath, packagePath, dir); err != nil {
 			return Package{}, fmt.Errorf("copy project directory %s: %w", dir, err)
 		}
@@ -187,6 +188,9 @@ func Create(projectPath, packagePath string, opts Options) (Package, error) {
 		manifest.AcceptedEvidenceRef = "project/data/evidence.items.json"
 	}
 	redaction.Items = append(redaction.Items, RedactionItem{Path: "documents/local/", Action: "excluded", Reason: "local/restricted document assets require separate shareability approval"}, RedactionItem{Path: "documents/open-access/", Action: "included-if-approved", Reason: "only approved open-access fixture/shareable assets are copied"}, RedactionItem{Path: "cache/", Action: "excluded", Reason: "cache files are local/private state"})
+	// Recompute after privacy filtering: excluded or sanitized outputs must
+	// never inherit the source directory's higher level.
+	manifest.ProvenanceLevel = provenance.DirectoryLevel(filepath.Join(packagePath, "project"))
 	pkg := Package{Manifest: manifest, RedactionReport: redaction}
 	if err := writeJSON(filepath.Join(packagePath, "redaction-report.json"), redaction); err != nil {
 		return Package{}, err

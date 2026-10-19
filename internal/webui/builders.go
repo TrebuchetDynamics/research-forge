@@ -26,7 +26,7 @@ import (
 // BuildForgeHomeState assembles the Forge home timeline from project-local
 // state, provenance, background jobs, blocked review gates, and next actions.
 func BuildForgeHomeState(projectPath string) (ForgeHomeState, error) {
-	state := ForgeHomeState{ActiveProject: projectPath, CurrentState: "question_draft"}
+	state := ForgeHomeState{ActiveProject: projectPath, CurrentState: "question_draft", ProvenanceLevel: provenance.Unverified}
 	if strings.TrimSpace(projectPath) == "" {
 		state.BlockedReviewGates = []ForgeGate{{Gate: "project", Reason: "open or create a project"}}
 		state.NextSafeActions = []ForgeNextAction{{Label: "Create project", CLI: "rforge project create <path> --title <title>"}}
@@ -47,6 +47,7 @@ func BuildForgeHomeState(projectPath string) (ForgeHomeState, error) {
 			state.CurrentState = stored.State
 		}
 	}
+	state.ProvenanceLevel = provenance.DirectoryLevel(projectPath)
 	if events, err := provenance.Read(projectPath); err == nil {
 		state.ProvenanceEvents = events
 	}

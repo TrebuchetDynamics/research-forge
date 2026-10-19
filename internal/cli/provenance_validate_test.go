@@ -31,6 +31,9 @@ func TestProvenanceValidateAcceptsConformingFile(t *testing.T) {
 	if code != 0 {
 		t.Fatalf("exit code = %d, stdout = %s", code, stdout.String())
 	}
+	if !strings.Contains(stdout.String(), "unverified") || !strings.Contains(stdout.String(), "warning") {
+		t.Fatalf("legacy provenance must be downgraded with a warning: %s", stdout)
+	}
 }
 
 // TestProvenanceValidateRejectsFreeFormDepth verifies the validator rejects a
@@ -134,7 +137,7 @@ func TestProvenanceValidateRejectsUnsupportedSchemaVersion(t *testing.T) {
 	dir := t.TempDir()
 	path := filepath.Join(dir, "provenance.json")
 	writeProvenanceFixture(t, path, map[string]any{
-		"schema_version": "2",
+		"schema_version": "3",
 		"question":       "test question",
 		"depth":          "standard",
 		"sources":        []string{"openalex"},
@@ -173,6 +176,43 @@ func TestProvenanceValidateRejectsFreeFormVersionString(t *testing.T) {
 	}
 	if !strings.Contains(stdout.String(), "rforge_version") {
 		t.Fatalf("error must name rforge_version; stdout = %s", stdout.String())
+	}
+}
+
+// assertEngineReceipt checks command output through the public validation CLI.
+func assertEngineReceipt(t *testing.T, dir string, output string) {
+	t.Helper()
+	paths, err := filepath.Glob(filepath.Join(dir, "provenance", "runs", "*.json"))
+	if err != nil || len(paths) != 1 {
+		t.Fatalf("expected one immutable run receipt, got %v (%v)", paths, err)
+	}
+	data, err := os.ReadFile(paths[0])
+	if err != nil {
+		t.Fatal(err)
+	}
+	var record struct {
+		Outputs []struct {
+			Path string `json:"path"`
+		} `json:"outputs"`
+	}
+	if err := json.Unmarshal(data, &record); err != nil {
+		t.Fatal(err)
+	}
+	found := false
+	for _, entry := range record.Outputs {
+		if entry.Path == output {
+			found = true
+		}
+	}
+	if !found {
+		t.Fatalf("receipt does not cover %s: %s", output, data)
+	}
+	var stdout, stderr bytes.Buffer
+	if code := Execute([]string{"--json", "provenance", "validate", paths[0]}, &stdout, &stderr); code != 0 {
+		t.Fatalf("receipt validation: %s %s", &stdout, &stderr)
+	}
+	if !strings.Contains(stdout.String(), `"provenance_level":"engine_verified"`) {
+		t.Fatalf("not engine verified: %s", &stdout)
 	}
 }
 

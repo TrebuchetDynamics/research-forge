@@ -2,6 +2,7 @@ package provenance
 
 import (
 	"bufio"
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -11,6 +12,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/TrebuchetDynamics/research-forge/internal/automation"
 	"github.com/TrebuchetDynamics/research-forge/internal/filetxn"
 )
 
@@ -32,15 +34,17 @@ func ReadRelativePath(projectPath string) string {
 
 // Event is one append-only Provenance record in a ResearchForge project.
 type Event struct {
-	SchemaVersion string         `json:"schemaVersion"`
-	ID            string         `json:"id"`
-	Timestamp     string         `json:"timestamp"`
-	Actor         string         `json:"actor"`
-	Action        string         `json:"action"`
-	Target        string         `json:"target"`
-	Inputs        map[string]any `json:"inputs"`
-	Outputs       map[string]any `json:"outputs"`
-	Warnings      []string       `json:"warnings"`
+	SchemaVersion string           `json:"schemaVersion"`
+	ID            string           `json:"id"`
+	Timestamp     string           `json:"timestamp"`
+	Actor         string           `json:"actor"`
+	ActorKind     automation.Actor `json:"actor_kind,omitempty"`
+	RunID         string           `json:"run_id,omitempty"`
+	Action        string           `json:"action"`
+	Target        string           `json:"target"`
+	Inputs        map[string]any   `json:"inputs"`
+	Outputs       map[string]any   `json:"outputs"`
+	Warnings      []string         `json:"warnings"`
 }
 
 // Note appends a researcher annotation event to the project provenance log.
@@ -59,6 +63,7 @@ func Note(projectPath, message, actorName string) error {
 		ID:            "evt_" + now.Format("20060102T150405Z") + "_note",
 		Timestamp:     now.Format(time.RFC3339),
 		Actor:         actorName,
+		ActorKind:     automation.ActorHuman,
 		Action:        "provenance.researcher.note",
 		Target:        projectPath,
 		Inputs:        map[string]any{"message": message},
@@ -69,6 +74,12 @@ func Note(projectPath, message, actorName string) error {
 
 // Append records one Provenance event in the project JSONL ledger.
 func Append(projectPath string, event Event) error {
+	if event.ActorKind == "" {
+		event.ActorKind = automation.ActorAgent
+		if event.Actor == "rforge" {
+			event.ActorKind = automation.ActorEngine
+		}
+	}
 	if err := validateEvent(event); err != nil {
 		return err
 	}
@@ -78,6 +89,17 @@ func Append(projectPath string, event Event) error {
 	}
 	eventBytes = append(eventBytes, '\n')
 	path := filepath.Join(projectPath, EventsRelativePath)
+	existing, err := filetxn.ReadRegular(path)
+	if err == nil {
+		if _, err := readEvents(bytes.NewReader(existing)); err != nil {
+			return fmt.Errorf("existing provenance ledger is unreadable: %w", err)
+		}
+		if len(existing) > 0 && existing[len(existing)-1] != '\n' {
+			eventBytes = append([]byte{'\n'}, eventBytes...)
+		}
+	} else if !os.IsNotExist(err) {
+		return err
+	}
 	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
 		return err
 	}
@@ -85,6 +107,9 @@ func Append(projectPath string, event Event) error {
 }
 
 func validateEvent(event Event) error {
+	if event.ActorKind != "" && event.ActorKind != automation.ActorEngine && event.ActorKind != automation.ActorAgent && event.ActorKind != automation.ActorHuman {
+		return fmt.Errorf("unsupported actor kind %q", event.ActorKind)
+	}
 	if event.SchemaVersion != "1" {
 		return fmt.Errorf("unsupported provenance schema version %q", event.SchemaVersion)
 	}
@@ -123,9 +148,12 @@ func Read(projectPath string) ([]Event, error) {
 		return nil, err
 	}
 	defer file.Close()
+	return readEvents(file)
+}
 
+func readEvents(source io.Reader) ([]Event, error) {
 	events := []Event{}
-	reader := bufio.NewReader(file)
+	reader := bufio.NewReader(source)
 	for {
 		text, readErr := reader.ReadString('\n')
 		line := strings.TrimSpace(text)

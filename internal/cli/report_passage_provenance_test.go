@@ -32,7 +32,7 @@ func TestExecuteReportBuildIncludesParsedPassageProvenance(t *testing.T) {
 		t.Fatalf("read report: %v", err)
 	}
 	body := string(data)
-	for _, want := range []string{"## Passage provenance", "grobid", "0.8", "parsed/paper-1.json#p1"} {
+	for _, want := range []string{"Computed provenance: unverified", "## Passage provenance", "grobid", "0.8", "parsed/paper-1.json#p1"} {
 		if !strings.Contains(body, want) {
 			t.Fatalf("report missing %q:\n%s", want, body)
 		}

@@ -97,6 +97,7 @@ func TestRankPersistsRankingsWithoutReplacingProvenance(t *testing.T) {
 			if len(result.Rankings) != 2 || result.Rankings[0].Title != "Scaling Study" || result.Rankings[1].Title != "Earlier Study" || result.Rankings[1].Rank != 2 || result.Rankings[0].Score <= result.Rankings[1].Score {
 				t.Errorf("incomplete or unordered rankings: %s", data)
 			}
+			assertEngineReceipt(t, dir, "rankings.json")
 			out.Reset()
 			if code := Execute([]string{"provenance", "validate", outPath + ".provenance.json"}, &out, &stderr); code != 0 {
 				t.Errorf("rank provenance invalid: %s %s", &out, &stderr)
@@ -110,6 +111,16 @@ func TestRankPersistsRankingsWithoutReplacingProvenance(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestRankDefaultOutputHasEngineReceipt(t *testing.T) {
+	workflowFixtureServer(t)
+	t.Chdir(t.TempDir())
+	var out, stderr bytes.Buffer
+	if code := Execute([]string{"--json", "rank", "scaling", "--sources", "openalex"}, &out, &stderr); code != 0 {
+		t.Fatalf("rank=%d: %s %s", code, &out, &stderr)
+	}
+	assertEngineReceipt(t, "rankings", "rankings.json")
 }
 
 func TestRankSurfacesWriteErrors(t *testing.T) {
@@ -127,6 +138,10 @@ func TestRankSurfacesWriteErrors(t *testing.T) {
 			var out, stderr bytes.Buffer
 			if code := Execute([]string{"--json", "rank", "scaling", "--sources", "openalex", "--out", outPath}, &out, &stderr); code == 0 || !strings.Contains(out.String(), "rank_write_failed") {
 				t.Fatalf("expected rank write failure, got %d: %s %s", code, &out, &stderr)
+			}
+			receipts, err := filepath.Glob(filepath.Join(filepath.Dir(outPath), "provenance", "runs", "*.json"))
+			if err != nil || len(receipts) != 0 {
+				t.Fatalf("failed rank left successful receipts: %v (%v)", receipts, err)
 			}
 		})
 	}

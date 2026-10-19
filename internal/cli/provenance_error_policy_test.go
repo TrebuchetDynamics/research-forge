@@ -14,6 +14,7 @@ import (
 
 	"github.com/TrebuchetDynamics/research-forge/internal/library"
 	"github.com/TrebuchetDynamics/research-forge/internal/parsing"
+	"github.com/TrebuchetDynamics/research-forge/internal/provenance"
 )
 
 func TestExecuteWatchRunReportsProvenanceFailure(t *testing.T) {
@@ -350,6 +351,7 @@ func TestCitationExpansionRestoresAllOutputsAfterProvenanceFailure(t *testing.T)
 		previousRun     []byte
 		previousLibrary []byte
 		hardLinkGraph   bool
+		localFailure    bool
 	}{
 		{
 			name:            "restores graph and library and removes run state",
@@ -357,6 +359,7 @@ func TestCitationExpansionRestoresAllOutputsAfterProvenanceFailure(t *testing.T)
 			previousLibrary: []byte("[]\n"),
 			hardLinkGraph:   true,
 		},
+		{name: "output-local ledger fails after project event", localFailure: true},
 		{
 			name:        "removes graph and library and restores run state",
 			previousRun: []byte("{\"sentinel\":\"run\"}\n"),
@@ -365,6 +368,9 @@ func TestCitationExpansionRestoresAllOutputsAfterProvenanceFailure(t *testing.T)
 		t.Run(tt.name, func(t *testing.T) {
 			project := t.TempDir()
 			graphPath := filepath.Join(project, "citation-graph.json")
+			if tt.localFailure {
+				graphPath = filepath.Join(t.TempDir(), "citation-graph.json")
+			}
 			runPath := filepath.Join(project, "semantic-run.json")
 			libraryPath := filepath.Join(project, "data", "library.json")
 			var outsideGraphPath string
@@ -403,7 +409,11 @@ func TestCitationExpansionRestoresAllOutputsAfterProvenanceFailure(t *testing.T)
 					t.Fatalf("write prior output %s: %v", path, err)
 				}
 			}
-			blockProvenance(t, project)
+			if tt.localFailure {
+				blockProvenance(t, filepath.Dir(graphPath))
+			} else {
+				blockProvenance(t, project)
+			}
 			var stdout, stderr bytes.Buffer
 
 			code := executeCitations([]string{
@@ -412,6 +422,12 @@ func TestCitationExpansionRestoresAllOutputsAfterProvenanceFailure(t *testing.T)
 			}, &stdout, &stderr, globalOptions{Project: project, JSON: true})
 			if code != 1 || !strings.Contains(stdout.String(), "citation_provenance_failed") {
 				t.Errorf("citation expand code = %d, stdout = %s, stderr = %s, want provenance failure", code, stdout.String(), stderr.String())
+			}
+			if tt.localFailure {
+				events, err := provenance.Read(project)
+				if err != nil || len(events) != 2 || events[1].Action != "citations.expand.rolled_back" || events[1].Outputs["restored"] != true {
+					t.Fatalf("missing compensating rollback event: %+v (%v)", events, err)
+				}
 			}
 			assertFileRestored(t, graphPath, tt.previousGraph)
 			assertFileRestored(t, runPath, tt.previousRun)

@@ -29,6 +29,7 @@ func TestExecuteLitWritesSynthesis(t *testing.T) {
 		t.Fatalf("executeLit exit %d: %s", code, errBuf.String())
 	}
 
+	assertEngineReceipt(t, root, "LIT.md")
 	// Check output paths
 	litPath := filepath.Join(root, "LIT.md")
 	provPath := filepath.Join(root, "LIT.provenance.json")
@@ -37,6 +38,13 @@ func TestExecuteLitWritesSynthesis(t *testing.T) {
 	}
 	if _, err := os.Stat(provPath); err != nil {
 		t.Fatalf("LIT.provenance.json not written: %v", err)
+	}
+	receipt, err := os.ReadFile(provPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if bytes.Contains(receipt, []byte(root)) {
+		t.Fatalf("exportable receipt exposes absolute research path: %s", receipt)
 	}
 
 	lit, _ := os.ReadFile(litPath)

@@ -751,8 +751,9 @@ Owner answers (2026-10-19):
 
 ## Next
 
-- [ ] V-A4 — Provenance levels computed by the validator
-- Status: open
+- [x] V-A4 — Provenance levels computed by the validator
+- Status: done
+- Evidence: [completed task record](TODO.archive.md#v-a4).
 - Goal: RF-AGENT — Make the agent contract correct: install docs, search depth and provenance levels.
 - Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan); [ADR 0009](docs/adr/0009-verification-facets-and-provenance-levels.md).
 - Scope: `provenance.json` schema v2 adds `provenance_level`, `run_id` and `outputs` with sha256. Every engine run (`search batch`, `citations expand`, `rank`, `lit`, benchmark) writes an immutable `provenance/runs/<run_id>.json` plus an event in `provenance/events.jsonl` inside its output directory, so project-less research directories work. The skill's topic-level `provenance.json` becomes an agent-maintained index of `run_id`s whose computed level is the lowest among its runs and its own entries. `rforge provenance validate` computes the level: `engine_verified` only if every output checksum recomputes and the `run_id` matches an engine event; a declared `engine_verified` that fails is an error; v1 files read as `unverified` with a warning. Event `actor` gains a kind (`engine`/`agent`/`human`), reusing `automation.ActorAgent`/`ActorHuman`. Reports, packages and the web UI display the computed level. The skill's manual fallback writes `agent_reported`. Docs state that a deliberate forger with file access is out of scope.
@@ -761,6 +762,19 @@ Owner answers (2026-10-19):
 - Dependencies: V0-1, V0-2.
 - Ownership: ResearchForge maintainer; Autowork runner may execute.
 - Touches: internal/provenance, internal/automation, internal/cli/provenance_command.go, internal/reviewpkg, internal/report, internal/webui, skills/research-forge/SKILL.md
+
+- [x] V-A3 — Skill depth rewrite: Standard by default
+- Status: done
+- Evidence: [completed task record](TODO.archive.md#v-a3).
+- Goal: RF-AGENT — Make the agent contract correct: install docs, search depth and provenance levels.
+- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan) (Owner decision 2).
+- Scope: the skill defaults to Standard; escalation to Comprehensive is driven by `stop_reason` and coverage (escalate when a standard run ends `budget_exhausted` without saturation, or the user asks); remove the "Comprehensive default" wording; document stop reasons.
+- Acceptance: the V-A1 parity test still passes; no sentence in the skill makes Comprehensive the default.
+- Checks: go test ./internal/docs; make check
+- Dependencies: V-A2, V0-1.
+- Ownership: ResearchForge maintainer; Autowork runner may execute.
+- Touches: skills/research-forge/SKILL.md, SKILLS.md
+- Resources: agent-docs — shared `skills/research-forge/SKILL.md`, `README.md` and `docs/agent-install.md`; tasks holding it run one at a time
 
 - [ ] V-B3 — Engine-tier benchmark harness with offline replay
 - Status: open
@@ -1013,7 +1027,7 @@ Generated from `goals.json` by `goals.py render`. `met` requires an executed, pa
 | Goal | Status | Evidence | Task |
 | --- | --- | --- | --- |
 | RF-V0: Land and harden the in-progress research commands | met | Executed check: pass ([V0-7](TODO.archive.md#v0-7)) | — |
-| RF-AGENT: Make the agent contract correct: install docs, search depth and provenance levels | unmet | — | V-A3, V-A4 |
+| RF-AGENT: Make the agent contract correct: install docs, search depth and provenance levels | met | Executed check: pass ([V-A4](TODO.archive.md#v-a4)) | — |
 | RF-BENCH: Measure research quality against held-out ground truth | unmet | — | V-B3, V-B4, V-B4-lock, V-B5, V-B6, V-B6-run |
 | RF-MCP: Expose the engine through a thin MCP adapter over shared services | unmet | — | V-C1, V-C2, V-C3, V-C4 |
 | RF-CLAIMS: Verify claims against stored evidence with separate facets | unmet | — | V-D3, V-D4 |

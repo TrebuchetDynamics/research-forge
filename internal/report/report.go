@@ -3,9 +3,12 @@ package report
 import (
 	"fmt"
 	"strings"
+
+	"github.com/TrebuchetDynamics/research-forge/internal/provenance"
 )
 
 type Data struct {
+	ProjectPath       string
 	Title             string
 	Citations         []Citation
 	EvidenceRows      []EvidenceRow
@@ -45,6 +48,11 @@ type AnalysisSummary struct {
 func BuildMarkdown(data Data) string {
 	var b strings.Builder
 	fmt.Fprintf(&b, "# %s\n\n", data.Title)
+	level := provenance.Unverified
+	if data.ProjectPath != "" {
+		level = provenance.DirectoryLevel(data.ProjectPath)
+	}
+	fmt.Fprintf(&b, "Computed provenance: %s (mechanical integrity, not scientific truth).\n\n", level)
 	b.WriteString("## Citations\n\n")
 	for _, c := range data.Citations {
 		fmt.Fprintf(&b, "- [%s] %s\n", c.ID, c.Title)
