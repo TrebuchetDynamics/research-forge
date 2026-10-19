@@ -769,17 +769,6 @@ Owner answers (2026-10-19):
 - Ownership: ResearchForge maintainer; Autowork runner may execute.
 - Touches: internal/provenance, internal/reviewpkg, internal/webui/builders.go, internal/protocol/live_smoke_snapshot.go
 
-- [ ] V-A1 — Docs parity check for Go version and skill commands
-- Status: open
-- Goal: RF-AGENT — Make the agent contract correct: install docs, search depth and provenance levels.
-- Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan) (Evidence: Go 1.22+ in the skill vs Go 1.26 in `go.mod`).
-- Scope: a Go test run by `make test` reads the `go` directive from `go.mod` and fails when `skills/research-forge/SKILL.md`, `README.md`, `install.sh`, `docs/install.md` or `docs/developer-setup.md` state a different minimum Go version; it also asserts every `rforge <cmd>` named in the skill exists in `topLevelCommands`. Fix the skill's "Go 1.22+".
-- Acceptance: the test fails on the current skill text and passes after the fix; introducing a wrong version in any listed file fails it.
-- Checks: go test ./internal/docs; make check
-- Dependencies: V0-1.
-- Ownership: ResearchForge maintainer; Autowork runner may execute.
-- Touches: internal/docs, skills/research-forge/SKILL.md, README.md, install.sh, docs/install.md, docs/developer-setup.md
-
 - [ ] V-B1 — Research-quality benchmark specification
 - Status: open
 - Goal: RF-BENCH — Measure research quality against held-out ground truth.

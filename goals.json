@@ -162,16 +162,6 @@
   },
   "tasks": [
     {
-      "depends_on": [
-        "V0-1"
-      ],
-      "goal": "RF-AGENT",
-      "id": "V-A1",
-      "section": "Now",
-      "status": "open",
-      "title": "Docs parity check for Go version and skill commands"
-    },
-    {
       "depends_on": [],
       "goal": "RF-BENCH",
       "id": "V-B1",
@@ -482,6 +472,16 @@
       "section": "Needs decision",
       "status": "open",
       "title": "Cross-host release gate"
+    },
+    {
+      "depends_on": [
+        "V0-1"
+      ],
+      "goal": "RF-AGENT",
+      "id": "V-A1",
+      "section": "Done",
+      "status": "done",
+      "title": "Docs parity check for Go version and skill commands"
     },
     {
       "depends_on": [],
