@@ -115,6 +115,8 @@ export async function terminal(client, dir, id) {
   const end = Date.now() + 10000;
   while (Date.now() < end) {
     const result = await client.tool('job_status', { dir, id });
+    assert.equal(result.ok, true, `job_status ${id} failed: ${JSON.stringify(result)}`);
+    assert.ok(result.data?.job, `job_status ${id} omitted its job: ${JSON.stringify(result)}`);
     if (['completed', 'failed', 'interrupted'].includes(result.data.job.status)) return result;
     await new Promise(resolve => setTimeout(resolve, 10));
   }
