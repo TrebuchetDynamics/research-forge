@@ -25,6 +25,7 @@ import (
 	"github.com/TrebuchetDynamics/research-forge/internal/library"
 	"github.com/TrebuchetDynamics/research-forge/internal/parsing"
 	"github.com/TrebuchetDynamics/research-forge/internal/provenance"
+	"github.com/TrebuchetDynamics/research-forge/internal/research"
 	"github.com/TrebuchetDynamics/research-forge/internal/search"
 	"github.com/TrebuchetDynamics/research-forge/internal/sources"
 )
@@ -1237,28 +1238,47 @@ func executeSearchBatch(args []string, stdout, stderr io.Writer, opts globalOpti
 }
 
 func executeSearchBatchPrepared(batch searchBatchOptions, queries []string, stdout, stderr io.Writer, opts globalOptions, jobID string) int {
-	if len(queries) == 0 || len(batch.Sources) == 0 || strings.TrimSpace(batch.OutDir) == "" {
-		return writeError(stdout, stderr, opts, 2, "usage", usageSearchBatch)
-	}
-	if batch.FetchPDFs && opts.Project == "" {
-		return writeError(stdout, stderr, opts, 2, "missing_project", "--project is required for search batch --fetch-pdfs")
-	}
-	configurationErrors := map[string]string{}
-	for _, source := range batch.Sources {
-		if _, ok := searchConnector(source); !ok {
-			return writeError(stdout, stderr, opts, 2, "unknown_source", fmt.Sprintf("unknown source %q", source))
-		}
-		if message := searchBatchSourceConfigurationError(source); message != "" {
-			configurationErrors[source] = message
-			if !batch.ContinueOnError {
-				return writeError(stdout, stderr, opts, 2, "missing_source_configuration", message)
-			}
-		}
+	configurationErrors, err := validateSearchBatch(batch, queries, opts)
+	if err != nil {
+		return writeResearchError(stdout, stderr, opts, err)
 	}
 	return runSearchBatchJob(batch, queries, configurationErrors, stdout, stderr, opts, jobID)
 }
 
+func validateSearchBatch(batch searchBatchOptions, queries []string, opts globalOptions) (map[string]string, error) {
+	invalid := func(code, message string) (map[string]string, error) {
+		return nil, &research.Error{Code: code, ExitCode: 2, Err: errors.New(message)}
+	}
+	if len(queries) == 0 || len(batch.Sources) == 0 || strings.TrimSpace(batch.OutDir) == "" {
+		return invalid("usage", usageSearchBatch)
+	}
+	if batch.FetchPDFs && opts.Project == "" {
+		return invalid("missing_project", "--project is required for search batch --fetch-pdfs")
+	}
+	configurationErrors := map[string]string{}
+	for _, source := range batch.Sources {
+		if _, ok := searchConnector(source); !ok {
+			return invalid("unknown_source", fmt.Sprintf("unknown source %q", source))
+		}
+		if message := searchBatchSourceConfigurationError(source); message != "" {
+			configurationErrors[source] = message
+			if !batch.ContinueOnError {
+				return invalid("missing_source_configuration", message)
+			}
+		}
+	}
+	return configurationErrors, nil
+}
+
 func executeSearchBatchRun(batch searchBatchOptions, queries []string, configurationErrors map[string]string, stdout, stderr io.Writer, opts globalOptions, job *jobs.Run) int {
+	ctx, interruptSignal, stopSignals := newSearchBatchSignalContext()
+	defer stopSignals()
+	return executeSearchBatchRunContext(ctx, interruptSignal, batch, queries, configurationErrors, stdout, stderr, opts, job)
+}
+
+// The CLI and MCP hosts share publication, provenance and checkpoint behavior;
+// only the host owns cancellation and the transport used to display the result.
+func executeSearchBatchRunContext(ctx context.Context, interruptSignal func() syscall.Signal, batch searchBatchOptions, queries []string, configurationErrors map[string]string, stdout, stderr io.Writer, opts globalOptions, job *jobs.Run) int {
 	priorState, stateExists, stateErr := readSearchBatchState(batch.OutDir)
 	if stateErr != nil {
 		return writeError(stdout, stderr, opts, 1, "search_batch_state_read_failed", stateErr.Error())
@@ -1383,8 +1403,6 @@ func executeSearchBatchRun(batch searchBatchOptions, queries []string, configura
 		return failBatch("search_batch_state_write_failed", err.Error())
 	}
 
-	ctx, interruptSignal, stopSignals := newSearchBatchSignalContext()
-	defer stopSignals()
 	recordFailure := func(source, query string, failureErr error) error {
 		failure := searchBatchFailure{Source: source, Query: query, Error: failureErr.Error()}
 		failures = append(failures, failure)
@@ -1524,11 +1542,18 @@ func executeSearchBatchRun(batch searchBatchOptions, queries []string, configura
 			exitCode = 1
 		}
 	}
+	payload := map[string]any{"job_id": job.Job().ID, "run_id": run.RunID, "provenance_level": run.Level, "out": batch.OutDir, "results": len(allPapers), "deduped": len(deduped), "failures": failureCount, "skippedSources": skippedCount, "manifest": filepath.Join(batch.OutDir, "manifest.json"), "imported": imported, "skippedDuplicate": skippedDuplicate, "skippedNoIdentifier": skippedNoIdentifier, "fetched": len(fetchResult.assets), "fetchFailed": len(fetchResult.failures), "fetchSkipped": fetchResult.skipped, "resumed": resuming, "resumedPairs": resumedPairs, "interrupted": interrupted, "pending": pending, "stop_reason": state.StopReason, "requests_used": state.RequestsUsed, "coverage": state.Coverage, "budget": state.Budget}
+	if interrupted {
+		payload["resumeCommand"] = searchBatchResumeHint(batch.OutDir, batch)
+	}
+	result, err := json.Marshal(map[string]any{"ok": exitCode == 0, "data": payload})
+	if err != nil {
+		return failBatch("job_result_failed", err.Error())
+	}
+	if err := job.SetResult(result); err != nil {
+		return failBatch("job_result_failed", err.Error())
+	}
 	if opts.JSON {
-		payload := map[string]any{"job_id": job.Job().ID, "run_id": run.RunID, "provenance_level": run.Level, "out": batch.OutDir, "results": len(allPapers), "deduped": len(deduped), "failures": failureCount, "skippedSources": skippedCount, "manifest": filepath.Join(batch.OutDir, "manifest.json"), "imported": imported, "skippedDuplicate": skippedDuplicate, "skippedNoIdentifier": skippedNoIdentifier, "fetched": len(fetchResult.assets), "fetchFailed": len(fetchResult.failures), "fetchSkipped": fetchResult.skipped, "resumed": resuming, "resumedPairs": resumedPairs, "interrupted": interrupted, "pending": pending, "stop_reason": state.StopReason, "requests_used": state.RequestsUsed, "coverage": state.Coverage, "budget": state.Budget}
-		if interrupted {
-			payload["resumeCommand"] = searchBatchResumeHint(batch.OutDir, batch)
-		}
 		return writeJSON(stdout, exitCode, payload)
 	}
 	fmt.Fprintf(stdout, "job: %s\n", job.Job().ID)

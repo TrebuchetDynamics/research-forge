@@ -46,6 +46,7 @@ type Job struct {
 	Progress   Progress        `json:"progress"`
 	StopReason string          `json:"stop_reason"`
 	Input      json.RawMessage `json:"input"`
+	Result     json.RawMessage `json:"result,omitempty"`
 	Error      string          `json:"error,omitempty"`
 	CreatedAt  time.Time       `json:"created_at"`
 	UpdatedAt  time.Time       `json:"updated_at"`
@@ -221,6 +222,15 @@ type Run struct {
 
 func (r *Run) Job() Job { return r.job }
 
+// SetResult saves the host-independent CLI JSON response before completion.
+func (r *Run) SetResult(result json.RawMessage) error {
+	if !json.Valid(result) {
+		return errors.New("invalid job result JSON")
+	}
+	r.job.Result = append(json.RawMessage(nil), result...)
+	return r.Checkpoint(r.job.Progress, r.job.StopReason)
+}
+
 // SetInput records a resolved request when a host explicitly changes a resumed
 // worklist. The new inputs are durable before any additional work starts.
 func (r *Run) SetInput(input any) error {
@@ -260,6 +270,7 @@ func (s Store) Run(ctx context.Context, id string, fn func(context.Context, *Run
 		return job, errors.New("job handler is required")
 	}
 	job.Status, job.Error, job.StopReason = Running, "", ""
+	job.Result = nil
 	run := &Run{store: s, job: job}
 	if err := run.Checkpoint(job.Progress, ""); err != nil {
 		return job, err

@@ -12,9 +12,9 @@ import (
 )
 
 // Contract versions are minimum-compatible, monotonically increasing integers.
-// Only implemented families belong here; mcp and claims are not yet available.
+// Only implemented families belong here; claims are not yet available.
 func commandCapabilities() map[string]int {
-	return map[string]int{"search": 1, "paper": 1, "brief": 1, "compare": 1, "provenance": 1}
+	return map[string]int{"search": 1, "paper": 1, "brief": 1, "compare": 1, "provenance": 1, "mcp": 1}
 }
 
 type capabilityRequirement struct {
