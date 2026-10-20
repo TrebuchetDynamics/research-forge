@@ -1,0 +1,10 @@
+	The Araucaria Project: Improving the cosmic distance scale
+10.21105/joss.05407	CoReCon: an open, community-powered collection of Reionization constraints
+10.1145/2491055.2491073	The Empirical Commit Frequency Distribution of Open Source Projects
+10.1109/icgsew.2013.8	Onboarding in Open Source Software Projects: A Preliminary Analysis
+	OMICtools: a community-driven search engine for biological data analysis
+	BotHawk: An Approach for Bots Detection in Open Source Software Projects
+	Use of Source Code Similarity Metrics in Software Defect Prediction
+	OSS PESTO: An Open Source Software Project Evaluation and Selection TOol
+	How to characterize the health of an Open Source Software project? A snowball literature review of an emerging practice
+	Docling: An Efficient Open-Source Toolkit for AI-driven Document Conversion

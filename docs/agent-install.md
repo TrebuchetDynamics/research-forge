@@ -29,8 +29,9 @@ skills and every native integration for the current user:
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/TrebuchetDynamics/research-forge/main/install.sh | bash
+./install.sh --for skills                    # skills only, no engine needed
+./install.sh --for mcp                       # engine plus typed MCP registration
 ./install.sh --list                          # components and availability here
-./install.sh --only binary,skills            # engine and generic skills only
 ./install.sh --only hermes --hermes-profile <name>
 ./install.sh update                          # upgrade what is installed
 ```

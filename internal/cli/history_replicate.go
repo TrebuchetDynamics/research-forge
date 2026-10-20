@@ -119,6 +119,12 @@ Examples:
 		return 0
 	}
 
+	// A flag where the identifier belongs is a usage error: resolving the literal
+	// "--out" would spend a network round trip and report a misleading cause.
+	if strings.HasPrefix(args[0], "-") || strings.TrimSpace(args[0]) == "" {
+		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge replicate <doi|arxiv-id> [--out <plan.md>] [--depth quick|standard|comprehensive]")
+	}
+
 	paperInput := args[0]
 	outFile := ""
 	for i := 1; i < len(args); i++ {

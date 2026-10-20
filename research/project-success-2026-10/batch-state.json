@@ -1,0 +1,329 @@
+{
+  "job_id": "job_62b9af0a0eb27262c0015f6b59aa78d2",
+  "schemaVersion": "1",
+  "createdAt": "2026-10-20T01:54:29Z",
+  "updatedAt": "2026-10-20T01:56:08Z",
+  "queries": [
+    "research software adoption success factors open source scientific tools",
+    "usability barriers research software scientists command line tools",
+    "sustainable research software funding maintenance open source",
+    "reproducibility tooling adoption systematic review automation",
+    "open source project success metrics community documentation onboarding",
+    "scientific software packaging distribution installation barriers",
+    "trust provenance transparency research data tools adoption",
+    "benchmark evaluation research tool comparison reproducibility",
+    "open source sustainability governance contributor retention",
+    "research software engineering best practices user centered design"
+  ],
+  "sources": [
+    "openalex",
+    "crossref",
+    "semantic-scholar",
+    "arxiv"
+  ],
+  "limit": 10,
+  "completed": [
+    {
+      "source": "openalex",
+      "query": "research software adoption success factors open source scientific tools",
+      "rawFile": "raw/search-openalex-001-research-software-adoption-success-factors-open-source-scientific-tools.txt",
+      "records": 10
+    },
+    {
+      "source": "crossref",
+      "query": "research software adoption success factors open source scientific tools",
+      "rawFile": "raw/search-crossref-001-research-software-adoption-success-factors-open-source-scientific-tools.txt",
+      "records": 10
+    },
+    {
+      "source": "semantic-scholar",
+      "query": "research software adoption success factors open source scientific tools",
+      "rawFile": "raw/search-semantic-scholar-001-research-software-adoption-success-factors-open-source-scientific-tools.txt",
+      "records": 10
+    },
+    {
+      "source": "arxiv",
+      "query": "research software adoption success factors open source scientific tools",
+      "rawFile": "raw/search-arxiv-001-research-software-adoption-success-factors-open-source-scientific-tools.txt",
+      "records": 10
+    },
+    {
+      "source": "openalex",
+      "query": "usability barriers research software scientists command line tools",
+      "rawFile": "raw/search-openalex-002-usability-barriers-research-software-scientists-command-line-tools.txt",
+      "records": 10
+    },
+    {
+      "source": "crossref",
+      "query": "usability barriers research software scientists command line tools",
+      "rawFile": "raw/search-crossref-002-usability-barriers-research-software-scientists-command-line-tools.txt",
+      "records": 10
+    },
+    {
+      "source": "arxiv",
+      "query": "usability barriers research software scientists command line tools",
+      "rawFile": "raw/search-arxiv-002-usability-barriers-research-software-scientists-command-line-tools.txt",
+      "records": 10
+    },
+    {
+      "source": "openalex",
+      "query": "sustainable research software funding maintenance open source",
+      "rawFile": "raw/search-openalex-003-sustainable-research-software-funding-maintenance-open-source.txt",
+      "records": 10
+    },
+    {
+      "source": "crossref",
+      "query": "sustainable research software funding maintenance open source",
+      "rawFile": "raw/search-crossref-003-sustainable-research-software-funding-maintenance-open-source.txt",
+      "records": 10
+    },
+    {
+      "source": "arxiv",
+      "query": "sustainable research software funding maintenance open source",
+      "rawFile": "raw/search-arxiv-003-sustainable-research-software-funding-maintenance-open-source.txt",
+      "records": 10
+    },
+    {
+      "source": "openalex",
+      "query": "reproducibility tooling adoption systematic review automation",
+      "rawFile": "raw/search-openalex-004-reproducibility-tooling-adoption-systematic-review-automation.txt",
+      "records": 10
+    },
+    {
+      "source": "crossref",
+      "query": "reproducibility tooling adoption systematic review automation",
+      "rawFile": "raw/search-crossref-004-reproducibility-tooling-adoption-systematic-review-automation.txt",
+      "records": 10
+    },
+    {
+      "source": "arxiv",
+      "query": "reproducibility tooling adoption systematic review automation",
+      "rawFile": "raw/search-arxiv-004-reproducibility-tooling-adoption-systematic-review-automation.txt",
+      "records": 10
+    },
+    {
+      "source": "openalex",
+      "query": "open source project success metrics community documentation onboarding",
+      "rawFile": "raw/search-openalex-005-open-source-project-success-metrics-community-documentation-onboarding.txt",
+      "records": 10
+    },
+    {
+      "source": "crossref",
+      "query": "open source project success metrics community documentation onboarding",
+      "rawFile": "raw/search-crossref-005-open-source-project-success-metrics-community-documentation-onboarding.txt",
+      "records": 10
+    },
+    {
+      "source": "arxiv",
+      "query": "open source project success metrics community documentation onboarding",
+      "rawFile": "raw/search-arxiv-005-open-source-project-success-metrics-community-documentation-onboarding.txt",
+      "records": 10
+    },
+    {
+      "source": "openalex",
+      "query": "scientific software packaging distribution installation barriers",
+      "rawFile": "raw/search-openalex-006-scientific-software-packaging-distribution-installation-barriers.txt",
+      "records": 10
+    },
+    {
+      "source": "crossref",
+      "query": "scientific software packaging distribution installation barriers",
+      "rawFile": "raw/search-crossref-006-scientific-software-packaging-distribution-installation-barriers.txt",
+      "records": 10
+    },
+    {
+      "source": "arxiv",
+      "query": "scientific software packaging distribution installation barriers",
+      "rawFile": "raw/search-arxiv-006-scientific-software-packaging-distribution-installation-barriers.txt",
+      "records": 10
+    },
+    {
+      "source": "openalex",
+      "query": "trust provenance transparency research data tools adoption",
+      "rawFile": "raw/search-openalex-007-trust-provenance-transparency-research-data-tools-adoption.txt",
+      "records": 10
+    },
+    {
+      "source": "crossref",
+      "query": "trust provenance transparency research data tools adoption",
+      "rawFile": "raw/search-crossref-007-trust-provenance-transparency-research-data-tools-adoption.txt",
+      "records": 10
+    },
+    {
+      "source": "arxiv",
+      "query": "trust provenance transparency research data tools adoption",
+      "rawFile": "raw/search-arxiv-007-trust-provenance-transparency-research-data-tools-adoption.txt",
+      "records": 10
+    },
+    {
+      "source": "openalex",
+      "query": "benchmark evaluation research tool comparison reproducibility",
+      "rawFile": "raw/search-openalex-008-benchmark-evaluation-research-tool-comparison-reproducibility.txt",
+      "records": 10
+    },
+    {
+      "source": "crossref",
+      "query": "benchmark evaluation research tool comparison reproducibility",
+      "rawFile": "raw/search-crossref-008-benchmark-evaluation-research-tool-comparison-reproducibility.txt",
+      "records": 10
+    },
+    {
+      "source": "arxiv",
+      "query": "benchmark evaluation research tool comparison reproducibility",
+      "rawFile": "raw/search-arxiv-008-benchmark-evaluation-research-tool-comparison-reproducibility.txt",
+      "records": 10
+    },
+    {
+      "source": "openalex",
+      "query": "open source sustainability governance contributor retention",
+      "rawFile": "raw/search-openalex-009-open-source-sustainability-governance-contributor-retention.txt",
+      "records": 10
+    },
+    {
+      "source": "crossref",
+      "query": "open source sustainability governance contributor retention",
+      "rawFile": "raw/search-crossref-009-open-source-sustainability-governance-contributor-retention.txt",
+      "records": 10
+    },
+    {
+      "source": "arxiv",
+      "query": "open source sustainability governance contributor retention",
+      "rawFile": "raw/search-arxiv-009-open-source-sustainability-governance-contributor-retention.txt",
+      "records": 10
+    },
+    {
+      "source": "openalex",
+      "query": "research software engineering best practices user centered design",
+      "rawFile": "raw/search-openalex-010-research-software-engineering-best-practices-user-centered-design.txt",
+      "records": 10
+    },
+    {
+      "source": "crossref",
+      "query": "research software engineering best practices user centered design",
+      "rawFile": "raw/search-crossref-010-research-software-engineering-best-practices-user-centered-design.txt",
+      "records": 10
+    },
+    {
+      "source": "arxiv",
+      "query": "research software engineering best practices user centered design",
+      "rawFile": "raw/search-arxiv-010-research-software-engineering-best-practices-user-centered-design.txt",
+      "records": 10
+    }
+  ],
+  "failures": [
+    {
+      "source": "semantic-scholar",
+      "query": "usability barriers research software scientists command line tools",
+      "error": "source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)"
+    },
+    {
+      "source": "semantic-scholar",
+      "query": "sustainable research software funding maintenance open source",
+      "error": "source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)"
+    },
+    {
+      "source": "semantic-scholar",
+      "query": "reproducibility tooling adoption systematic review automation",
+      "error": "source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)"
+    },
+    {
+      "source": "semantic-scholar",
+      "query": "open source project success metrics community documentation onboarding",
+      "error": "source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)"
+    },
+    {
+      "source": "semantic-scholar",
+      "query": "scientific software packaging distribution installation barriers",
+      "error": "source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)"
+    },
+    {
+      "source": "semantic-scholar",
+      "query": "trust provenance transparency research data tools adoption",
+      "error": "source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)"
+    },
+    {
+      "source": "semantic-scholar",
+      "query": "benchmark evaluation research tool comparison reproducibility",
+      "error": "source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)"
+    },
+    {
+      "source": "semantic-scholar",
+      "query": "open source sustainability governance contributor retention",
+      "error": "source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)"
+    },
+    {
+      "source": "semantic-scholar",
+      "query": "research software engineering best practices user centered design",
+      "error": "source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)"
+    }
+  ],
+  "result_count": 310,
+  "budget": {
+    "depth": "standard",
+    "max_query_variants": 10,
+    "max_sources": 5,
+    "max_api_calls": 50,
+    "low_yield_threshold": 2,
+    "saturation_queries": 3,
+    "max_consecutive_errors": 5
+  },
+  "stop_reason": "completed",
+  "requests_used": 40,
+  "coverage": {
+    "unique_records": 294,
+    "queries": [
+      {
+        "query": "research software adoption success factors open source scientific tools",
+        "new_unique": 40,
+        "complete": true
+      },
+      {
+        "query": "usability barriers research software scientists command line tools",
+        "new_unique": 28,
+        "complete": false
+      },
+      {
+        "query": "sustainable research software funding maintenance open source",
+        "new_unique": 27,
+        "complete": false
+      },
+      {
+        "query": "reproducibility tooling adoption systematic review automation",
+        "new_unique": 30,
+        "complete": false
+      },
+      {
+        "query": "open source project success metrics community documentation onboarding",
+        "new_unique": 27,
+        "complete": false
+      },
+      {
+        "query": "scientific software packaging distribution installation barriers",
+        "new_unique": 26,
+        "complete": false
+      },
+      {
+        "query": "trust provenance transparency research data tools adoption",
+        "new_unique": 30,
+        "complete": false
+      },
+      {
+        "query": "benchmark evaluation research tool comparison reproducibility",
+        "new_unique": 30,
+        "complete": false
+      },
+      {
+        "query": "open source sustainability governance contributor retention",
+        "new_unique": 29,
+        "complete": false
+      },
+      {
+        "query": "research software engineering best practices user centered design",
+        "new_unique": 27,
+        "complete": false
+      }
+    ],
+    "consecutive_low_yield": 0
+  },
+  "consecutive_errors": 0
+}

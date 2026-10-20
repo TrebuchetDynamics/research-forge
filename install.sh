@@ -37,6 +37,8 @@ DRY_RUN=0
 MENU=0
 SHOW_LIST=0
 ONLY=""
+ONLY_GIVEN=0
+PROFILE=""
 SKIP=""
 VERBOSE=1
 QUIET=0
@@ -96,6 +98,12 @@ Commands:
   install             install the selected components (default)
   update              upgrade the components that are already installed
 
+Profiles (what you want to use):
+  --for cli           just the rforge engine
+  --for skills        the public skills, delivered through each installed host
+  --for mcp           the engine plus typed MCP tool registration in each host
+  --for all           everything below (default)
+
 Components:
   binary              rforge engine in ~/.local/bin
   skills              public agent skills in ~/.agents/skills
@@ -114,7 +122,8 @@ Selection:
 Engine options:
   --version TAG       release tag to install (default: latest, or RFORGE_VERSION)
   --dir DIR           binary directory (default: ~/.local/bin, or RFORGE_INSTALL_DIR)
-  --from-source       build with Go instead of downloading a release
+  --from-source       build with Go instead of downloading a release (inside
+                      a checkout, builds that checkout; piped, uses go install)
 
 Hermes options:
   --hermes-profile NAME
@@ -147,7 +156,9 @@ while [ "$#" -gt 0 ]; do
     --all|--full)
       ONLY=""; shift ;;
     --only)
-      require_value "$@"; ONLY="$2"; shift 2 ;;
+      require_value "$@"; ONLY="$2"; ONLY_GIVEN=1; shift 2 ;;
+    --for)
+      require_value "$@"; PROFILE="$2"; shift 2 ;;
     --skip)
       require_value "$@"; SKIP="$2"; shift 2 ;;
     --menu)
@@ -208,6 +219,19 @@ validate_component_list() {
   done
 }
 
+if [ -n "$PROFILE" ]; then
+  if [ "$ONLY_GIVEN" = 1 ]; then
+    die "--for and --only select components in different ways; use one of them (--for still accepts --skip)"
+  fi
+  case "$PROFILE" in
+    cli) ONLY="binary" ;;
+    skills) ONLY="skills,claude,codex,pi,hermes" ;;
+    mcp) ONLY="binary,claude,codex,pi,hermes" ;;
+    all) ONLY="" ;;
+    *) die "unknown profile: $PROFILE (choose from: cli, skills, mcp, all)" ;;
+  esac
+fi
+
 validate_component_list "$ONLY" "--only"
 validate_component_list "$SKIP" "--skip"
 
@@ -247,6 +271,36 @@ run() {
     return "$status"
   fi
   "$@" || return $?
+}
+
+# run_in runs a mutating command inside dir, with the same dry-run and output
+# handling as run.
+run_in() {
+  local dir="$1"; shift
+  if [ "$DRY_RUN" = 1 ] || [ "$VERBOSE" = 1 ]; then
+    printf '  %s$ (cd %s && %s)%s\n' "$DIM" "$dir" "$(quote_args "$@")" "$RESET"
+  fi
+  if [ "$DRY_RUN" = 1 ]; then return 0; fi
+  if [ "$QUIET" = 1 ]; then
+    if ( cd "$dir" && "$@" ) >>"$LOG_FILE" 2>&1; then return 0; fi
+    local status=$?
+    err "command failed: $(quote_args "$@")"
+    tail -n 5 "$LOG_FILE" >&2 || true
+    return "$status"
+  fi
+  ( cd "$dir" && "$@" ) || return $?
+}
+
+# ensure_dir creates an install directory, reporting a clear cause instead of
+# leaking mkdir output when the path is (say) an existing file.
+ensure_dir() {
+  local dir="$1"
+  [ "$DRY_RUN" = 1 ] && return 0
+  if ! mkdir -p "$dir" 2>/dev/null; then
+    detail "cannot create directory: $dir"
+    return 1
+  fi
+  return 0
 }
 
 # capture runs a read-only probe (safe under --dry-run) and never fails the run.
@@ -444,6 +498,7 @@ detail() {
 record() { RESULTS="${RESULTS}$1"$'\t'"$2"$'\t'"$3"$'\n'; }
 
 selected_explicitly() {
+  [ "$ONLY_GIVEN" = 1 ] || return 1
   case ",$ONLY," in *",$1,"*) return 0 ;; esac
   return 1
 }
@@ -475,6 +530,25 @@ set_aside() {
 }
 
 # --- binary ---------------------------------------------------------------------
+
+# build_checkout compiles this checkout into <dir>/<name>, stamping the same
+# metadata the Makefile does so provenance records a real engine identity.
+build_checkout() {
+  local dir="$1" name="$2" source_version source_commit source_date source_ldflags exact_tag
+  ensure_dir "$dir" || return 1
+  source_version="dev"; source_commit="unknown"
+  if have git; then
+    # Only an exact tag is that release. A describe version such as
+    # v0.1.21-162-gabc would fail the capability gate's version compare even
+    # when the build has every capability, so anything else stays "dev".
+    exact_tag=$(cd "$SELF_DIR" && git describe --tags --exact-match 2>/dev/null || true)
+    if [ -n "$exact_tag" ]; then source_version="$exact_tag"; fi
+    source_commit=$(cd "$SELF_DIR" && git rev-parse --short HEAD 2>/dev/null || printf 'unknown')
+  fi
+  source_date=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+  source_ldflags="-X main.version=$source_version -X main.commit=$source_commit -X main.date=$source_date"
+  run_in "$SELF_DIR" go build -ldflags "$source_ldflags" -o "$dir/$name" ./cmd/rforge
+}
 
 verify_checksum() {
   local file="$1" asset="$2" expected actual
@@ -552,9 +626,16 @@ install_binary() {
       detail "Go not found; install Go or drop --from-source to use release binaries"
       return 1
     fi
-    step "Building rforge@${VERSION} with Go into $dir"
-    if [ "$DRY_RUN" = 0 ]; then mkdir -p "$dir"; fi
-    run env GOBIN="$dir" go install "github.com/${REPO_SLUG}/cmd/rforge@${VERSION}" || return 1
+    if [ -n "$SELF_DIR" ] && [ -d "$SELF_DIR/cmd/rforge" ] && [ "$VERSION" = latest ]; then
+      # A checkout builds the engine under development. That is also how a
+      # capability gate ahead of the next release is satisfied.
+      step "Building this checkout with Go into $dir"
+      build_checkout "$dir" "$name" || return 1
+    else
+      step "Building rforge@${VERSION} with Go into $dir"
+      ensure_dir "$dir" || return 1
+      run env GOBIN="$dir" go install "github.com/${REPO_SLUG}/cmd/rforge@${VERSION}" || return 1
+    fi
   else
     url=$(release_url)
     step "Installing release binary: $url"
@@ -569,18 +650,34 @@ install_binary() {
         return 1
       fi
       verify_checksum "$TMP_DIR/$asset" "$asset" || return 1
-      mkdir -p "$dir"
-      chmod +x "$TMP_DIR/$asset"
-      mv "$TMP_DIR/$asset" "$dir/$name"
+      ensure_dir "$dir" || return 1
+      if ! chmod +x "$TMP_DIR/$asset"; then
+        detail "cannot mark $asset executable"
+        return 1
+      fi
+      if ! mv "$TMP_DIR/$asset" "$dir/$name" 2>/dev/null; then
+        detail "cannot install into $dir (not a writable directory)"
+        return 1
+      fi
       ok "Binary → $dir/$name"
     fi
   fi
 
   if ! verify_binary "$dir/$name"; then
-    if [ -n "$SELF_DIR" ] && [ -d "$SELF_DIR/cmd/rforge" ]; then
+    if [ -n "$SELF_DIR" ] && [ -d "$SELF_DIR/cmd/rforge" ] && have go; then
+      # The published release can lag the capability gate the plugins require.
+      # A buildable checkout is a real fix, not a workaround: say so and build.
+      warn "release binary does not satisfy the capability gate; building this checkout instead"
+      # The release failure no longer describes what will be installed.
+      DETAIL=""
+      build_checkout "$dir" "$name" || return 1
+      if ! verify_binary "$dir/$name"; then
+        return 1
+      fi
+    else
       warn "this checkout builds an engine that satisfies the gate: run 'make install'"
+      return 1
     fi
-    return 1
   fi
   if [ "$DRY_RUN" = 0 ]; then
     detail "$("$dir/$name" version 2>/dev/null | head -n1) at $dir/$name"
@@ -938,7 +1035,8 @@ print_list() {
   if have hermes; then
     printf '\n  Hermes profiles: %s\n' "$(hermes_profile_names | tr '\n' ' ' | sed 's/ $//')"
   fi
-  printf '\n  Binary directory: %s\n' "$INSTALL_DIR"
+  printf '\n  Profiles: cli=binary | skills=skills,claude,codex,pi,hermes | mcp=binary,claude,codex,pi,hermes | all=everything\n'
+  printf '  Binary directory: %s\n' "$INSTALL_DIR"
   printf '  Public skills:    %s\n' "$PUBLIC_SKILLS"
 }
 

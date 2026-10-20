@@ -1,0 +1,10 @@
+10.1145/3786160.3788466	An Overview of Cyber Security Funding for Open Source Software
+10.48550/arxiv.2602.07071	Artificial Intelligence in Open Source Software Engineering: A Foundation for Sustainability
+10.1371/journal.pcbi.1002802	Ten Simple Rules for the Open Development of Scientific Software
+	Working towards sustainable software for science: on the creation, maintenance and evaluation of open-source software
+10.1371/journal.pone.0329833	Evolving funding strategies for research software: Insights from an international survey of research funders
+10.48550/arxiv.1902.08942	Sustaining Research Software: an SC18 Panel
+10.48550/arxiv.2308.14953	An Open Community-Driven Model For Sustainable Research Software: Sustainable Research Software Institute
+10.1016/j.jss.2017.12.026	Software sustainability: Research and practice from a software architecture viewpoint
+10.1371/journal.pcbi.1010627	Ten simple rules for funding scientific open source software
+10.1145/3674805.3686667	Sustaining Maintenance Labor for Healthy Open Source Software Projects through Human Infrastructure: A Maintainer Perspective

@@ -1,0 +1,10 @@
+10.1039/d6dd00121a/v1/review1	Review for "Scikit-package - software packaging standards and roadmap for sharing reproducible scientific software"
+10.1039/d6dd00121a/v2/review1	Review for "Scikit-package - software packaging standards and roadmap for sharing reproducible scientific software"
+10.1039/d6dd00121a/v1/review2	Review for "Scikit-package - software packaging standards and roadmap for sharing reproducible scientific software"
+10.1039/d6dd00121a/v1/decision1	Decision letter for "Scikit-package - software packaging standards and roadmap for sharing reproducible scientific software"
+10.1039/d6dd00121a/v2/decision1	Decision letter for "Scikit-package - software packaging standards and roadmap for sharing reproducible scientific software"
+10.1039/d6dd00121a/v3/decision1	Decision letter for "Scikit-package - software packaging standards and roadmap for sharing reproducible scientific software"
+10.3403/30135104u	Guidelines for the specification and installation of vehicle security barriers
+10.1166/asl.2013.4743	Identification of Barriers in Production Line Installation for Packaging Industry Using Delphi Method
+10.3403/30135104	Guidelines for the specification and installation of vehicle security barriers
+10.1109/ieeestd.1980.79294	IEEE Standard for Electrical Installation of Packaging Machinery and Associated Equipment

@@ -1,0 +1,10 @@
+10.64898/2026.06.02.729500	A Reproducible and Extensible Benchmark of Supervised Cell Type Annotation Tools for Cytometry Data
+10.1038/s41467-019-09406-4	Systematic benchmarking of omics computational tools
+10.1016/j.fsidi.2026.302055	AutoDFBench 1.0: A benchmarking framework for digital forensic tool testing and generated code evaluation
+10.48550/arxiv.2512.16965	AutoDFBench 1.0: A Benchmarking Framework for Digital Forensic Tool Testing and Generated Code Evaluation
+10.48550/arxiv.2508.06600	BrowseComp-Plus: A More Fair and Transparent Evaluation Benchmark of Deep-Research Agent
+10.1016/j.is.2022.102019	A reproducible POI recommendation framework: Works mapping and benchmark evaluation
+	AutoDFBench 1.0: A Benchmarking Framework for Digital Forensic Tool Testing and Generated Code Evaluation
+10.48550/arxiv.2605.21800	stable-worldmodel: A Platform for Reproducible World Modeling Research and Evaluation
+10.3144/expresspolymlett.2015.14	An evaluation of the reproducibility of capacitive sensor based in-plane permeability measurements: A benchmarking study
+10.1007/s10664-019-09762-1	A benchmark-based evaluation of search-based crash reproduction

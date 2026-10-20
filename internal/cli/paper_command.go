@@ -35,6 +35,9 @@ func executePaper(args []string, stdout, stderr io.Writer, opts globalOptions) i
 			if strings.HasPrefix(args[i], "-") {
 				return writeError(stdout, stderr, opts, 2, "invalid_flag", "unknown flag "+args[i])
 			}
+			if strings.TrimSpace(args[i]) == "" {
+				return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge paper <id> [<id>...] [--file <ids.txt>] [--out <file>]")
+			}
 			inputs = append(inputs, args[i])
 		}
 	}

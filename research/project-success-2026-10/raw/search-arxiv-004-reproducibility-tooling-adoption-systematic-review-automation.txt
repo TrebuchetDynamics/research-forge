@@ -1,0 +1,10 @@
+	A Systematic Literature Review of Automated Techniques for Functional GUI Testing of Mobile Applications
+10.1080/09669760.2022.2107491	A Systematic Review of Computational Thinking in Early Ages
+10.1017/s0269888923000097	Reformulation Techniques for Automated Planning: A Systematic Review
+	ProfOlaf: Semi-Automated Tool for Systematic Literature Reviews
+	Machine Learning Applications to Diffuse Reflectance Spectroscopy in Optical Diagnosis; A Systematic Review
+	Drivers' attention detection: a systematic literature review
+10.3390/electronics14081557	Trust and Trustworthiness from Human-Centered Perspective in HRI -- A Systematic Literature Review
+	Computational analysis of the language of pain: a systematic review
+	Prompt-Driven Code Summarization: A Systematic Literature Review
+	Non-invasive Techniques for Flow Rate Measurement in Water Pipes: Protocol for a Systematic Review

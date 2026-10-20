@@ -1,0 +1,10 @@
+10.1016/j.autcon.2026.107166	Digital transformation of construction quality management: Systematic review of adoption and governance
+10.2139/ssrn.7244698	When Automation Concentrates Judgment: A Systematic Review and Meta-analysis of Residual Decision Difficulty and Oversight Burden Following AI Adoption
+10.1016/j.jclinepi.2019.04.008	Reducing waste and increasing value through embedded replicability and reproducibility in systematic review process and automation
+10.21275/sr24418101747	Streamlining Data Wrangling Processes through Automation and Tooling
+10.37473/fic/10.2196/28961	Factors Influencing the Adoption of Contact Tracing Applications: Protocol for a Systematic Review
+10.37473/dac/10.2196/28961	Factors Influencing the Adoption of Contact Tracing Applications: Protocol for a Systematic Review
+10.1002/cesm.70096/v1/review1	Review for "Transparency without reproducibility? Open science practices in systematic reviews from 2014 to 2024: a cohort study of 300 systematic reviews"
+10.1002/cesm.70096/v1/review2	Review for "Transparency without reproducibility? Open science practices in systematic reviews from 2014 to 2024: a cohort study of 300 systematic reviews"
+10.1108/aa.2002.03322bad.011	Assembly tooling improvements
+10.2139/ssrn.7599162	Reliability of Delivery-delay Prediction on DataCo: A Systematic Review and Reproducibility Audit

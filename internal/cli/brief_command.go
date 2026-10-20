@@ -3,13 +3,16 @@ package cli
 import (
 	"fmt"
 	"io"
+	"strings"
 
 	"github.com/TrebuchetDynamics/research-forge/internal/research"
 )
 
 // executeBrief parses and displays a compact research brief.
 func executeBrief(args []string, stdout, stderr io.Writer, opts globalOptions) int {
-	if len(args) == 0 {
+	if len(args) == 0 || strings.HasPrefix(args[0], "-") || strings.TrimSpace(args[0]) == "" {
+		// A flag where the directory belongs is a usage error, not an attempt to
+		// open "<flag>/manifest.json".
 		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge brief <search-dir> [--out <brief.md>]")
 	}
 	request := research.BriefOptions{SearchDir: args[0]}

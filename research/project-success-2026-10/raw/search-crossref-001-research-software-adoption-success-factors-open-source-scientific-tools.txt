@@ -1,0 +1,10 @@
+10.4018/978-1-60566-060-8.ch099	Open Source Software Adoption
+10.4018/978-1-60960-513-1.ch001	Open Source Software Adoption
+10.4018/jossp.2009010101	Open Source Software Adoption
+10.22215/etd/2006-08297	Factors that contribute to open source software project success
+10.48009/2_iis_2009_157-164	CRITICAL SUCCESS FACTORS FOR OPEN-SOURCE INNOVATION: THE CASE OF OPEN SOURCE SOFTWARE DEVELOPMENT
+10.4018/978-1-4666-2937-0.ch002	Factors Affecting the Development of Absorptive Capacity in the Adoption of Open Source Software
+10.7551/mitpress/8413.003.0013	Defining Open-Source Software Success and Abandonment
+10.1007/978-1-4419-7719-9_14	Scientific Software
+10.1016/b978-1-84334-585-5.50010-2	Open source research tools
+10.7551/mitpress/9780262017251.003.0007	Defining Open-Source Software Success and Abandonment

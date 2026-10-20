@@ -632,7 +632,7 @@ func TestHelpAndListDescribeTheInstaller(t *testing.T) {
 	if code != 0 {
 		t.Fatalf("--help exit code = %d", code)
 	}
-	for _, want := range []string{"--menu", "--dry-run", "--only", "--all", "--verbose", "--quiet", "update", "--from-source", "--version", "--dir"} {
+	for _, want := range []string{"--menu", "--dry-run", "--only", "--for", "--all", "--verbose", "--quiet", "update", "--from-source", "--version", "--dir"} {
 		wantContains(t, help, want, "--help")
 	}
 	for _, component := range []string{"binary", "skills", "claude", "codex", "pi", "hermes"} {
@@ -742,4 +742,335 @@ func TestQuietHidesCommandsAndVerboseShowsThem(t *testing.T) {
 		t.Fatalf("verbose exit code = %d:\n%s", code, verbose)
 	}
 	wantContains(t, verbose, "$ cp", "verbose output")
+}
+
+// --- install profiles ---------------------------------------------------------------
+
+func TestProfileCLIInstallsOnlyTheEngine(t *testing.T) {
+	s := newSandbox(t, allHosts...)
+	out, code, log := s.run("--for", "cli")
+	if code != 0 {
+		t.Fatalf("exit code = %d; output:\n%s", code, out)
+	}
+	s.mustExist(".local", "bin", "rforge")
+	s.mustNotExist(".agents", "skills", "research-forge", "SKILL.md")
+	for _, host := range allHosts {
+		if state := s.stateOf(host); state != "" {
+			t.Errorf("--for cli installed %s: %s", host, state)
+		}
+	}
+	wantNotContains(t, out, "Claude Code plugin", "--for cli summary")
+	if strings.Contains(log, "plugins install") || strings.Contains(log, "plugin add") {
+		t.Errorf("--for cli ran host install commands:\n%s", log)
+	}
+}
+
+func TestProfileSkillsInstallsSkillSurfacesWithoutTheEngine(t *testing.T) {
+	s := newSandbox(t, allHosts...)
+	out, code, _ := s.run("--for", "skills")
+	if code != 0 {
+		t.Fatalf("exit code = %d; output:\n%s", code, out)
+	}
+	s.mustExist(".agents", "skills", "research-forge", "SKILL.md")
+	for _, host := range allHosts {
+		wantContains(t, s.stateOf(host), "research-forge", "--for skills installed "+host)
+	}
+	s.mustNotExist(".local", "bin", "rforge")
+	wantNotContains(t, out, "rforge engine binary", "--for skills summary")
+}
+
+func TestProfileMCPInstallsEngineAndHostRegistration(t *testing.T) {
+	s := newSandbox(t, allHosts...)
+	out, code, _ := s.run("--for", "mcp")
+	if code != 0 {
+		t.Fatalf("exit code = %d; output:\n%s", code, out)
+	}
+	s.mustExist(".local", "bin", "rforge")
+	for _, host := range allHosts {
+		wantContains(t, s.stateOf(host), "research-forge", "--for mcp registered "+host)
+	}
+	// The native plugins carry the skills, so no duplicate generic copy is needed.
+	s.mustNotExist(".agents", "skills", "research-forge", "SKILL.md")
+}
+
+func TestProfileAllMatchesTheDefault(t *testing.T) {
+	s := newSandbox(t, allHosts...)
+	out, code, _ := s.run("--for", "all")
+	if code != 0 {
+		t.Fatalf("exit code = %d; output:\n%s", code, out)
+	}
+	s.mustExist(".local", "bin", "rforge")
+	s.mustExist(".agents", "skills", "research-forge", "SKILL.md")
+	for _, host := range allHosts {
+		wantContains(t, s.stateOf(host), "research-forge", "--for all installed "+host)
+	}
+}
+
+func TestProfileRejectsUnknownValue(t *testing.T) {
+	s := newSandbox(t, "pi")
+	out, code, _ := s.run("--for", "everything")
+	if code == 0 {
+		t.Fatalf("expected failure for an unknown profile:\n%s", out)
+	}
+	wantContains(t, out, "everything", "error names the profile")
+	for _, want := range []string{"cli", "skills", "mcp"} {
+		wantContains(t, out, want, "error lists profiles")
+	}
+}
+
+func TestProfileConflictsWithOnly(t *testing.T) {
+	s := newSandbox(t, "pi")
+	out, code, _ := s.run("--for", "cli", "--only", "binary")
+	if code == 0 {
+		t.Fatalf("expected failure when --for and --only are combined:\n%s", out)
+	}
+	wantContains(t, out, "--only", "conflict message")
+}
+
+func TestProfileAllowsSkip(t *testing.T) {
+	s := newSandbox(t, allHosts...)
+	out, code, _ := s.run("--for", "mcp", "--skip", "codex")
+	if code != 0 {
+		t.Fatalf("exit code = %d; output:\n%s", code, out)
+	}
+	if state := s.stateOf("codex"); state != "" {
+		t.Errorf("--skip codex still installed codex: %s", state)
+	}
+	wantContains(t, s.stateOf("claude"), "research-forge", "--for mcp --skip codex kept claude")
+}
+
+// A profile is a convenience selection, not an explicit per-component demand: a
+// host that is missing must be skipped, exactly like the default suite.
+func TestProfileMissingHostIsSkippedNotFailed(t *testing.T) {
+	s := newSandbox(t, "pi")
+	out, code, _ := s.run("--for", "mcp")
+	if code != 0 {
+		t.Fatalf("exit code = %d; output:\n%s", code, out)
+	}
+	wantContains(t, out, "claude not found", "skip reason")
+}
+
+// --- source builds --------------------------------------------------------------
+
+const fakeGoScript = `#!/usr/bin/env bash
+[ -n "${SANDBOX_LOG:-}" ] && printf 'go %s cwd=%s\n' "$*" "$PWD" >> "$SANDBOX_LOG"
+out=""; prev=""
+for a in "$@"; do
+  if [ "$prev" = "-o" ]; then out="$a"; fi
+  prev="$a"
+done
+if [ -n "$out" ]; then
+  cp "$FIXTURES/rforge-dev" "$out" && chmod +x "$out"
+elif [ "${1:-}" = "install" ] && [ -n "${GOBIN:-}" ]; then
+  cp "$FIXTURES/rforge-dev" "$GOBIN/rforge" && chmod +x "$GOBIN/rforge"
+fi
+exit 0
+`
+
+// --from-source run inside a checkout must build that checkout (a dev engine
+// has the capabilities a release has not shipped yet), not fetch @latest from
+// the module proxy.
+func TestFromSourceBuildsTheLocalCheckout(t *testing.T) {
+	s := newSandbox(t)
+	s.writeScript(filepath.Join(s.bin, "go"), fakeGoScript)
+	s.writeScript(filepath.Join(s.fixtures, "rforge-dev"), fakeRforgeScript)
+	if err := os.MkdirAll(filepath.Join(s.repo, "cmd", "rforge"), 0o755); err != nil {
+		t.Fatalf("mkdir cmd/rforge: %v", err)
+	}
+	if err := os.WriteFile(filepath.Join(s.repo, "cmd", "rforge", "main.go"), []byte("package main\n"), 0o644); err != nil {
+		t.Fatalf("write checkout marker: %v", err)
+	}
+
+	out, code, log := s.run("--only", "binary", "--from-source")
+	if code != 0 {
+		t.Fatalf("exit code = %d; output:\n%s", code, out)
+	}
+	wantContains(t, log, "go build", "checkout build")
+	wantContains(t, log, "./cmd/rforge", "checkout package")
+	if strings.Contains(log, "go install") {
+		t.Errorf("checkout build used go install @latest instead of the checkout:\n%s", log)
+	}
+	if !strings.Contains(log, s.repo) {
+		t.Errorf("go build did not run in the checkout (%s):\n%s", s.repo, log)
+	}
+	// Provenance records the engine version, so a source build must carry it.
+	for _, want := range []string{"-ldflags", "-X main.commit=", "-X main.date="} {
+		wantContains(t, log, want, "source build metadata")
+	}
+	// An untagged checkout stays "dev": capabilities, not a version label, decide
+	// whether a dev engine is accepted.
+	wantContains(t, log, "-X main.version=dev", "untagged version")
+	s.mustExist(".local", "bin", "rforge")
+}
+
+// Outside a checkout (piped install) --from-source keeps the module install.
+func TestFromSourceWithoutCheckoutUsesGoInstall(t *testing.T) {
+	s := newSandbox(t)
+	s.writeScript(filepath.Join(s.bin, "go"), fakeGoScript)
+	s.writeScript(filepath.Join(s.fixtures, "rforge-dev"), fakeRforgeScript)
+
+	out, code, log := s.run("--only", "binary", "--from-source")
+	if code != 0 {
+		t.Fatalf("exit code = %d; output:\n%s", code, out)
+	}
+	wantContains(t, log, "go install", "module install")
+	wantContains(t, log, "@latest", "module install ref")
+}
+
+// A checkout that is exactly at a release tag is that release.
+func TestFromSourceStampsExactReleaseTag(t *testing.T) {
+	s := newSandbox(t)
+	s.writeScript(filepath.Join(s.bin, "go"), fakeGoScript)
+	s.writeScript(filepath.Join(s.fixtures, "rforge-dev"), fakeRforgeScript)
+	if err := os.MkdirAll(filepath.Join(s.repo, "cmd", "rforge"), 0o755); err != nil {
+		t.Fatalf("mkdir cmd/rforge: %v", err)
+	}
+	if err := os.WriteFile(filepath.Join(s.repo, "cmd", "rforge", "main.go"), []byte("package main\n"), 0o644); err != nil {
+		t.Fatalf("write checkout marker: %v", err)
+	}
+	runGit(t, s.repo, "init", "-q")
+	runGit(t, s.repo, "config", "user.email", "test@example.com")
+	runGit(t, s.repo, "config", "user.name", "Test")
+	runGit(t, s.repo, "add", ".")
+	runGit(t, s.repo, "commit", "-q", "-m", "checkout")
+	runGit(t, s.repo, "tag", "v9.9.9")
+
+	out, code, log := s.run("--only", "binary", "--from-source")
+	if code != 0 {
+		t.Fatalf("exit code = %d; output:\n%s", code, out)
+	}
+	wantContains(t, log, "-X main.version=v9.9.9", "tagged version")
+}
+
+// runGit runs git in dir without inheriting repository selectors from the test
+// process (the repository's own pre-commit hook may be running).
+func runGit(t *testing.T, dir string, args ...string) {
+	t.Helper()
+	cmd := exec.Command("git", args...)
+	cmd.Dir = dir
+	for _, entry := range os.Environ() {
+		switch {
+		case strings.HasPrefix(entry, "GIT_DIR="),
+			strings.HasPrefix(entry, "GIT_WORK_TREE="),
+			strings.HasPrefix(entry, "GIT_INDEX_FILE="),
+			strings.HasPrefix(entry, "GIT_COMMON_DIR="),
+			strings.HasPrefix(entry, "GIT_OBJECT_DIRECTORY="),
+			strings.HasPrefix(entry, "GIT_ALTERNATE_OBJECT_DIRECTORIES="):
+			continue
+		}
+		cmd.Env = append(cmd.Env, entry)
+	}
+	cmd.Env = append(cmd.Env, "GIT_CONFIG_GLOBAL=/dev/null", "GIT_CONFIG_SYSTEM=/dev/null")
+	if out, err := cmd.CombinedOutput(); err != nil {
+		t.Fatalf("git %v: %v\n%s", args, err, out)
+	}
+}
+
+// A checkout past a tag is not that release: git describe would yield a version
+// like v0.1.21-162-gabc that fails the capabilities gate on a version compare.
+// A dev build must say "dev" so the gate judges capabilities instead.
+func TestFromSourceStaysDevPastATag(t *testing.T) {
+	s := newSandbox(t)
+	s.writeScript(filepath.Join(s.bin, "go"), fakeGoScript)
+	s.writeScript(filepath.Join(s.fixtures, "rforge-dev"), fakeRforgeScript)
+	if err := os.MkdirAll(filepath.Join(s.repo, "cmd", "rforge"), 0o755); err != nil {
+		t.Fatalf("mkdir cmd/rforge: %v", err)
+	}
+	if err := os.WriteFile(filepath.Join(s.repo, "cmd", "rforge", "main.go"), []byte("package main\n"), 0o644); err != nil {
+		t.Fatalf("write checkout marker: %v", err)
+	}
+	runGit(t, s.repo, "init", "-q")
+	runGit(t, s.repo, "config", "user.email", "test@example.com")
+	runGit(t, s.repo, "config", "user.name", "Test")
+	runGit(t, s.repo, "add", ".")
+	runGit(t, s.repo, "commit", "-q", "-m", "checkout")
+	runGit(t, s.repo, "tag", "v0.1.21")
+	runGit(t, s.repo, "commit", "-q", "--allow-empty", "-m", "later work")
+
+	out, code, log := s.run("--only", "binary", "--from-source")
+	if code != 0 {
+		t.Fatalf("exit code = %d; output:\n%s", code, out)
+	}
+	wantContains(t, log, "-X main.version=dev", "version past a tag")
+	if strings.Contains(log, "-X main.version=v0.1.21-") {
+		t.Errorf("source build stamped a describe version that fails the gate:\n%s", log)
+	}
+}
+
+// Installing into a path that is a file must fail with the real cause and must
+// never print a success line for a binary that was not written.
+func TestBinaryInstallIntoFilePathFailsClearly(t *testing.T) {
+	s := newSandbox(t)
+	file := filepath.Join(s.root, "notadir")
+	if err := os.WriteFile(file, []byte("x"), 0o644); err != nil {
+		t.Fatalf("write file: %v", err)
+	}
+	out, code, _ := s.run("--only", "binary", "--dir", file)
+	if code == 0 {
+		t.Fatalf("expected failure installing into a file path:\n%s", out)
+	}
+	wantNotContains(t, out, "Binary →", "must not claim success")
+	wantContains(t, out, "cannot create directory", "clear cause")
+	wantNotContains(t, out, "installed binary does not run", "misleading cause")
+}
+
+// --- capability-gate recovery -----------------------------------------------
+
+const incompatibleRforgeScript = `#!/usr/bin/env bash
+case "${1:-}" in
+  version) printf 'rforge v0.1.21 (old, old)\n' ;;
+  capabilities) printf '{"ok":false,"error":{"code":"unknown_command"}}\n'; exit 1 ;;
+esac
+exit 0
+`
+
+// When the release binary fails the capability gate but this script runs from a
+// buildable checkout with Go, build the checkout instead of leaving the user
+// with a broken install and no path forward.
+func TestCapabilityGateFallsBackToCheckoutBuild(t *testing.T) {
+	s := newSandbox(t)
+	s.writeScript(filepath.Join(s.bin, "go"), fakeGoScript)
+	s.writeScript(filepath.Join(s.fixtures, "rforge-dev"), fakeRforgeScript)
+	// The release asset is the old engine that fails the gate.
+	s.writeScript(filepath.Join(s.fixtures, releaseAssetName()), incompatibleRforgeScript)
+	sum := sha256.Sum256([]byte(incompatibleRforgeScript))
+	if err := os.WriteFile(filepath.Join(s.fixtures, "checksums.txt"),
+		[]byte(hex.EncodeToString(sum[:])+"  dist/"+releaseAssetName()+"\n"), 0o644); err != nil {
+		t.Fatalf("write checksums: %v", err)
+	}
+	if err := os.MkdirAll(filepath.Join(s.repo, "cmd", "rforge"), 0o755); err != nil {
+		t.Fatalf("mkdir cmd/rforge: %v", err)
+	}
+	if err := os.WriteFile(filepath.Join(s.repo, "cmd", "rforge", "main.go"), []byte("package main\n"), 0o644); err != nil {
+		t.Fatalf("write checkout marker: %v", err)
+	}
+
+	out, code, log := s.run("--only", "binary")
+	if code != 0 {
+		t.Fatalf("exit code = %d; output:\n%s", code, out)
+	}
+	wantContains(t, out, "does not satisfy the capability gate", "fallback notice")
+	// The release failure no longer describes the installed engine.
+	wantNotContains(t, out, "does not meet the required rforge", "stale release failure")
+	wantContains(t, log, "go build", "checkout build")
+	wantContains(t, log, "-X main.version=dev", "checkout build metadata")
+	s.mustExist(".local", "bin", "rforge")
+}
+
+// Without a buildable checkout the gate still fails closed with guidance.
+func TestCapabilityGateWithoutCheckoutFailsClosed(t *testing.T) {
+	s := newSandbox(t)
+	s.writeScript(filepath.Join(s.bin, "go"), fakeGoScript)
+	s.writeScript(filepath.Join(s.fixtures, releaseAssetName()), incompatibleRforgeScript)
+	sum := sha256.Sum256([]byte(incompatibleRforgeScript))
+	if err := os.WriteFile(filepath.Join(s.fixtures, "checksums.txt"),
+		[]byte(hex.EncodeToString(sum[:])+"  dist/"+releaseAssetName()+"\n"), 0o644); err != nil {
+		t.Fatalf("write checksums: %v", err)
+	}
+
+	out, code, _ := s.run("--only", "binary")
+	if code == 0 {
+		t.Fatalf("expected the capability gate to fail closed:\n%s", out)
+	}
+	wantContains(t, out, "does not meet the required rforge", "gate failure")
 }

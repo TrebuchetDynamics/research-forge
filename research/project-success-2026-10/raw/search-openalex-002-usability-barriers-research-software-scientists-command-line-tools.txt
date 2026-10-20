@@ -1,0 +1,10 @@
+10.1093/gigascience/giz109	Bionitio: demonstrating and facilitating best practices for bioinformatics command-line software
+10.1038/s41597-022-01710-x	Introducing the FAIR Principles for research software
+10.48420/17313215	“Not everyone can use Git”: Research Software Engineers’ recommendations for scientist-centred software support (and what researchers really think of them)
+10.48550/arxiv.1404.3785	Reducing the Barrier to Entry of Complex Robotic Software: a MoveIt! Case Study
+10.2174/1875036202013010137	Extraordinary Command Line: Basic Data Editing Tools for Biologists Dealing with Sequence Data
+10.1021/acs.jproteome.4c00911	prolfquapp ─ A User-Friendly Command-Line Tool Simplifying Differential Expression Analysis in Quantitative Proteomics
+10.1145/3241743	The ABC of Software Engineering Research
+10.64898/2026.09.03.749148	bioq: a unified, agent-native command-line interface to a fleet of AI drug-discovery methods
+10.1371/journal.pcbi.1005412	Ten simple rules for making research software more robust
+10.5277/e-inf160105	Software Startups - A Research Agenda

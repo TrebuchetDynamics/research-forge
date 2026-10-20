@@ -1,0 +1,10 @@
+10.1145/3774748.3787757	Investigating How Governance Shapes the Health of Open Source Software Projects
+10.1109/icsme64153.2025.00067	Governance Matters: Lessons From Restructuring the Data.Table OSS Project
+10.1016/j.jss.2026.113030	Exploring disparities in open source contribution experiences through the diversity lens of race
+	Open-Source Software Development and Community Management : Benefits and Challenges, Community Management Strategies
+10.34961/3295	Retaining and managing episodic contributors in free/libre/open source software communities
+10.24251/hicss.2025.887	CROSS: A Contributor-Project Interaction Lifecycle Model for Open Source Software
+10.1007/978-3-030-67130-3_7	Governance of Urban Sustainability Transitions
+10.17705/1jais.00244	Sustainability of Free/Libre Open Source Projects: A Longitudinal Study
+10.48550/arxiv.2607.04003	"AI Slop is DDoSing Open Source": Understanding the Impact of AI-Generated Contributions on Open Source Sustainability
+10.3724/j.issn.1000-3045.20250812001	Transformation of open-source innovation governance of large models

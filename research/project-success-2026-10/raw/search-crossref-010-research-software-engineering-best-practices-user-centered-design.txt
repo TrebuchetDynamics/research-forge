@@ -1,0 +1,10 @@
+10.1017/9781009051811.004	User Requirements
+10.1109/9781118156629.ch4	Software User Documentation
+10.56726/irjmets49911	Usability and User Centered Design in Scientific Software Development
+10.4324/9780203763148-10	Questioning Design: Toward Methods for Supporting User-Centered Software Engineering
+10.61395/victec.v4i7.128	User Centered User Interface Design: Best Practices and Trends
+10.1017/9781009051811.007	Design and Architecture
+10.5121/ijsea.2019.10505	Best Practices for Improving User Interface Design
+10.1081/e-ese-120044204	User-Centered Design
+10.1007/1-4020-4113-6_15	Patterns of Integration: Bringing User Centered Design into the Software Development Lifecycle
+10.4018/978-1-61520-655-1.ch014	User-Centered Design of Mobile Geo-Applications

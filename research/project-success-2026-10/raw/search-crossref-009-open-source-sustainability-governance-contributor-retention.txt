@@ -1,0 +1,10 @@
+10.1109/mc.2026.3667269	Open Source Governance Practices: A Path to Improving Sustainability
+10.1093/oso/9780198862345.003.0004	Contributor Agreements
+10.26686/wgtn.17007352	Understanding contributor behaviour within Free/Libre/Open Source Software communities: A socialization perspective
+10.22215/timreview/644	Code Forking, Governance, and Sustainability in Open Source Software
+10.2139/ssrn.515282	The Determinants of Output Per Contributor in Open Source Projects: An Empirical Examination
+10.22215/timreview/649	Sustainability and Governance in Developing Open Source Projects as Processes of In-Becoming
+10.3390/su151813779	Synergy of Patent and Open-Source-Driven Sustainable Climate Governance under Green AI: A Case Study of TinyML
+10.1093/oso/9780198862345.003.0014	Sustainability and Open Source
+10.31235/osf.io/wmj3q	Common Pool Resource in Open-Source Software Projects: The Contributor Energy Framework
+10.22215/etd/2012-06996	Examining governance of open source software foundations

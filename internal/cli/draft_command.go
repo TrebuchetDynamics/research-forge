@@ -47,9 +47,12 @@ Examples:
 				i++
 			}
 		default:
-			if !strings.HasPrefix(args[i], "-") {
-				paperInput = args[i]
+			if strings.HasPrefix(args[i], "-") {
+				// Silently ignoring an unknown flag made its value the paper
+				// identifier: `draft --depth quick` drafted whatever "quick" matched.
+				return writeError(stdout, stderr, opts, 2, "usage", fmt.Sprintf("unknown flag %q; usage: rforge draft <doi|arxiv-id> [--out <draft.md>]", args[i]))
 			}
+			paperInput = args[i]
 		}
 	}
 

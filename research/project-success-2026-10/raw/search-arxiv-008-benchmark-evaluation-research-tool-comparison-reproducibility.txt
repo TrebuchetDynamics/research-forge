@@ -1,0 +1,10 @@
+10.3152/095820211x12941371876625	Normalization of peer-evaluation measures of group research quality across academic disciplines
+	AIRCC-Clim: a user-friendly tool for generating regional probabilistic climate change scenarios and risk measures
+	Retrieval Models Aren't Tool-Savvy: Benchmarking Tool Retrieval for Large Language Models
+	A Human-Grounded Evaluation Benchmark for Local Explanations of Machine Learning
+	CORE-Bench: Fostering the Credibility of Published Research Through a Computational Reproducibility Agent Benchmark
+	SECQUE: A Benchmark for Evaluating Real-World Financial Analysis Capabilities
+10.1093/reseval/rvw007	Concentration of research funding leads to decreasing marginal returns
+	XFeat Revisited: Reproducibility and Evaluation of a Lightweight Image Matcher
+	Hallucination-Free? Assessing the Reliability of Leading AI Legal Research Tools
+	Benchmark Radar: A Living Database and Search Engine for AI Benchmarks and Evaluation

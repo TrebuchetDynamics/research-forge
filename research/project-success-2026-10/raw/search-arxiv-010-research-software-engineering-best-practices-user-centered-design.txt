@@ -1,0 +1,10 @@
+10.1007/s10664-026-10926-z	Perspective of Software Engineering Researchers on Machine Learning Practices Regarding Research, Review, and Education
+10.1145/3709354	Morescient GAI for Software Engineering (Extended Version)
+	Nine Best Practices for Research Software Registries and Repositories: A Concise Guide
+10.1109/tse.2018.2877759	Cognitive Biases in Software Engineering: A Systematic Mapping Study
+10.1145/3715003	The Future of AI-Driven Software Engineering
+10.1109/icse-seis.2019.00013	Software Engineering in Civic Tech: A Case Study about Code for Ireland
+10.1007/s10664-021-10053-x	Developers Perception of Peer Code Review in Research Software Development
+10.1145/2897676.2897677	Nmag micromagnetic simulation tool - software engineering lessons learned
+	An RSE Group Model: Operational and Organizational Approaches From Princeton University's Central Research Software Engineering Group
+	What Does a Software Engineer Look Like? Exploring Societal Stereotypes in LLMs

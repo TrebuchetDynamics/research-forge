@@ -1,0 +1,10 @@
+10.22215/etd/2011-08906	Maintenance of hybrid software that combines open source and closed source components
+10.1109/icsm.2006.25	Empirical Software Engineering Research on Free/Libre/Open Source Software
+10.1145/1083258.1083265	Open source software maintenance process framework
+10.1109/icsea.2006.261308	Evaluation Framework for Open Source Software Maintenance
+10.1109/icsm.2000.883030	Evolution in open source software: a case study
+10.1109/icsm.2011.6080832	Sociotechnical coordination and collaboration in open source software
+10.1002/smr.335	Indirectly predicting the maintenance effort of open‐source software
+10.2174/1874107x01307010001	Fault-Proneness of Open Source Software: Exploring its Relations to Internal Software Quality and Maintenance Process
+10.1109/icsm.2007.4362652	The Economics of Open Source Software: An Empirical Analysis of Maintenance Costs
+10.1109/icsm.2004.1357790	Extracting facts from open source software

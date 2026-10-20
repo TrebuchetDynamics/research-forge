@@ -10,6 +10,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"sync/atomic"
 	"testing"
 
 	"github.com/TrebuchetDynamics/research-forge/internal/library"
@@ -267,4 +268,30 @@ func mustPaperRecord(t *testing.T, record SourceRecord) library.PaperRecord {
 		t.Fatalf("mustPaperRecord: %v", err)
 	}
 	return paper
+}
+
+// An empty or blank identifier must not start a title search: an empty query
+// matches an arbitrary first result.
+func TestResolvePaperRejectsBlankInput(t *testing.T) {
+	var hits int32
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		atomic.AddInt32(&hits, 1)
+		http.NotFound(w, r)
+	}))
+	defer server.Close()
+	for _, env := range []string{
+		"RFORGE_OPENALEX_URL", "RFORGE_CROSSREF_URL", "RFORGE_ARXIV_URL",
+		"RFORGE_SEMANTIC_SCHOLAR_URL", "RFORGE_UNPAYWALL_URL",
+	} {
+		t.Setenv(env, server.URL)
+	}
+
+	for _, input := range []string{"", "   ", "\t\n"} {
+		if _, err := ResolvePaper(context.Background(), NewHTTPClient(HTTPClientOptions{}), input); err == nil {
+			t.Errorf("ResolvePaper(%q) returned no error", input)
+		}
+	}
+	if got := atomic.LoadInt32(&hits); got != 0 {
+		t.Errorf("blank input made %d request(s)", got)
+	}
 }

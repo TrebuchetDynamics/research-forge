@@ -1,0 +1,10 @@
+10.5334/jors.ad	A Web-based modeling tool for the SEMAT Essence theory of Software Engineering
+10.1007/s10664-021-10053-x	Developers Perception of Peer Code Review in Research Software Development
+	No Free Lunch: Research Software Testing in Teaching
+	Enhancing Understandability and Transparency of Research Software: Tracing Research to Code
+	Testing Research Software: An In-Depth Survey of Practices, Methods, and Tools
+10.1109/ms.2021.3098116	Challenges for Inclusion in Software Engineering: The Case of the Emerging Papua New Guinean Society
+	AIBugHunter: A Practical Tool for Predicting, Classifying and Repairing Software Vulnerabilities
+10.1016/j.infsof.2025.107830	Research Artifacts in Secondary Studies: A Systematic Mapping in Software Engineering
+10.1016/j.jss.2019.110394	How does Object-Oriented Code Refactoring Influence Software Quality? Research Landscape and Challenges
+	Co-optimization of power line shutoff and restoration under high wildfire ignition risk

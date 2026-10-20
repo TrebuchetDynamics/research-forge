@@ -1,0 +1,10 @@
+10.5206/mt.v5i3.22904	Perceptions on the adoption of Free/Open Source Software policies by a Scientific Institution: The case study of the NIH
+10.1145/3732775.3733576	Toward More Usable, Reproducible, and Sustainable Scientific Software: The Impact of User-Centered Design in Research Software Development
+10.1002/appl.70005	Open‐Source Tools for Assessing Cytoskeleton Properties in Pathological Conditions From Microscopy Images: An Application Note
+10.1109/inciscos.2018.00054	Systematic Literature Review: Success, Failure, Risks, Benefits and Barriers Factors in the Adoption of Open Source Software
+10.5753/sbes.2024.3307	Challenges and Solutions of Free and Open Source Software Documentation: A Systematic Mapping Study
+10.5220/0010497008000807	Organizational Readiness Assessment for Open Source Software Adoption
+10.1371/journal.pcbi.1013248	LabOps: A flexible self-hosted workflow of open source tools for efficient collaboration within research laboratories
+10.1016/j.envsoft.2019.104579	How successfully is open-source research software adopted? Results and implications of surveying the users of a sensitivity analysis toolbox
+10.1145/3598469.3598489	The promises and perils of open source software release and usage by government – evidence from GitHub and literature
+10.69611/cahiers18-2-02	The role of public actors in the business models of open source collaborative projects (free software): a case study in Cameroon and France

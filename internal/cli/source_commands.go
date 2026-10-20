@@ -1730,7 +1730,12 @@ func executeSearchStats(args []string, stdout, stderr io.Writer, opts globalOpti
 	// Count library records from results.jsonl — the ground-truth accumulated store.
 	// Only lines that decode into a valid record count, so stats agrees with
 	// readResultsJSONL and does not report a truncated tail as a record.
-	libraryRecords, malformedRecords := countResultsJSONL(filepath.Join(dir, "results.jsonl"))
+	libraryRecords, malformedRecords, libraryErr := countResultsJSONL(filepath.Join(dir, "results.jsonl"))
+	if libraryErr != nil {
+		// A path that exists but is not a directory is a mistake, not an empty
+		// topic: fail the way every other results.jsonl consumer does.
+		return writeError(stdout, stderr, opts, 1, "results_read_failed", fmt.Sprintf("read results.jsonl: %v", libraryErr))
+	}
 
 	failures := readSearchBatchFailures(filepath.Join(dir, "failures.jsonl"))
 	// Surface the incremental sweep checkpoint so interrupted batches are
@@ -1842,10 +1847,22 @@ func normalizeStatsDOI(value string) string {
 // per-record checks as readResultsJSONL so search stats and every other
 // results.jsonl consumer report the same record count. A missing or unreadable
 // file counts as no records, matching readResultsJSONL's lenient not-exist case.
-func countResultsJSONL(path string) (records, malformed int) {
-	data, err := os.ReadFile(path)
-	if err != nil {
-		return 0, 0
+func countResultsJSONL(path string) (records, malformed int, err error) {
+	// Match readResultsJSONL: a missing file is an empty store, anything else
+	// (a non-directory parent, an unreadable file) is an error.
+	info, statErr := os.Lstat(path)
+	if statErr != nil {
+		if os.IsNotExist(statErr) {
+			return 0, 0, nil
+		}
+		return 0, 0, statErr
+	}
+	if !info.Mode().IsRegular() {
+		return 0, 0, fmt.Errorf("results.jsonl is not a regular file: %s", path)
+	}
+	data, readErr := os.ReadFile(path)
+	if readErr != nil {
+		return 0, 0, readErr
 	}
 	for _, line := range strings.Split(string(data), "\n") {
 		line = strings.TrimSpace(line)
@@ -1863,7 +1880,40 @@ func countResultsJSONL(path string) (records, malformed int) {
 		}
 		records++
 	}
-	return records, malformed
+	return records, malformed, nil
+}
+
+// readSearchBatchFailuresStrict reads a failures.jsonl for a command that acts
+// on it. A missing file means nothing to retry, but an unreadable file, a
+// non-regular path, or a malformed line must not be reported as "nothing to do".
+func readSearchBatchFailuresStrict(path string) ([]searchBatchFailure, error) {
+	info, err := os.Lstat(path)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return nil, nil
+		}
+		return nil, err
+	}
+	if !info.Mode().IsRegular() {
+		return nil, fmt.Errorf("failures file is not a regular file: %s", path)
+	}
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return nil, err
+	}
+	var failures []searchBatchFailure
+	for index, line := range strings.Split(string(data), "\n") {
+		line = strings.TrimSpace(line)
+		if line == "" {
+			continue
+		}
+		var failure searchBatchFailure
+		if err := json.Unmarshal([]byte(line), &failure); err != nil {
+			return nil, fmt.Errorf("decode failures.jsonl line %d: %w", index+1, err)
+		}
+		failures = append(failures, failure)
+	}
+	return failures, nil
 }
 
 func readSearchBatchFailures(path string) []searchBatchFailure {
@@ -1917,7 +1967,10 @@ func executeSearchResume(args []string, stdout, stderr io.Writer, opts globalOpt
 		}
 		defer lease.Close()
 	}
-	pending := readSearchBatchFailures(failuresFile)
+	pending, pendingErr := readSearchBatchFailuresStrict(failuresFile)
+	if pendingErr != nil {
+		return writeError(stdout, stderr, opts, 1, "search_resume_failures_read_failed", fmt.Sprintf("read failures.jsonl: %v", pendingErr))
+	}
 	if len(pending) == 0 {
 		if opts.JSON {
 			return writeJSON(stdout, 0, map[string]any{"resumed": 0, "results": 0, "newFailures": 0})

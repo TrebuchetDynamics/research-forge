@@ -1,0 +1,10 @@
+10.1201/9781003143482-6	Building Command-Line Tools with Python
+10.1007/979-8-8688-2157-8_2	The Command Line
+10.1007/978-1-4842-5293-2_5	Using the Command-Line Tools
+10.32614/cran.package.link2gi	link2GI: Linking Geographic Information Systems, Remote Sensing and Other Command Line Tools
+10.4324/9780080546018-25	UNIX Command Line Tools,
+10.36227/techrxiv.23251076.v1	Investigating Usability and User Experience of Software Testing Tools
+10.36227/techrxiv.23251076	Investigating Usability and User Experience of Software Testing Tools
+10.1007/978-1-4842-2559-2_9	Command Line Tools
+10.1007/978-1-4302-0018-5_5	PostgreSQL Command-Line and Graphical Tools
+10.7717/peerj.8111/supp-1	Supplemental Information 1: Survey questions on command-line tools and <i>bioGUI</i> .
