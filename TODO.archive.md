@@ -777,3 +777,23 @@ Source section: Now
 - Touches: docs/benchmark/frontier-science/cases.json, docs/benchmark/frontier-science/runbook.md, docs/benchmark/frontier-science/check.py, docs/benchmark/frontier-science/test_check.py
 - Ownership: Implementing agent; sole writer for the packet; no shared CLI/agent-docs surface edits.
 - Next action: Write `test_case_packet`, run it to observe failure on the missing case file, then add the smallest packet/checker implementation; use synthetic temporary-directory fixtures for the other checks.
+
+
+<!-- archived from TODO.md -->
+
+Source section: Needs decision
+
+<a id="v-fs1-live"></a>
+
+Disposition: Superseded; not completed
+Successors: V-FS2
+Reason: Owner approved the single bounded V-FS2 campaign; this generated follow-up names the same live work, not another run. Preserve history without claiming live completion.
+Original task and unchecked acceptance retained below.
+
+- [ ] V-FS1-LIVE — Live checks for V-FS1
+  Scope: Run the live checks the offline work for V-FS1 left pending.
+  Acceptance: Each check passes on the real target:
+  - V-FS2 live campaign remains separately gated on operator API-scope and agent/token/time/spend authorization; no live research, acquisition, scientific review or approval was performed.
+  Checks: Live qualification by an authorized person; offline evidence does not count.
+  Dependencies: V-FS1.
+  Status: open
