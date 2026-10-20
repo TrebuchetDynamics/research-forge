@@ -122,7 +122,8 @@
         "V-B8",
         "V-B9",
         "V-FS1",
-        "V-FS2"
+        "V-FS2",
+        "V-FS3"
       ],
       "title": "Measure research quality against held-out ground truth"
     },
@@ -228,6 +229,7 @@
     "schema": 1,
     "tasks": [
       "V-FS1",
+      "V-FS3",
       "V-FS2",
       "V-B6-run",
       "V-E5-run",
@@ -253,6 +255,17 @@
       "section": "Now",
       "status": "open",
       "title": "Prepare the two-topic frontier-science stress packet"
+    },
+    {
+      "depends_on": [
+        "V-FS1",
+        "V-FS2"
+      ],
+      "goal": "RF-BENCH",
+      "id": "V-FS3",
+      "section": "Next",
+      "status": "open",
+      "title": "Publish discoverable, audited scientific research examples"
     },
     {
       "depends_on": [
