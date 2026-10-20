@@ -749,9 +749,29 @@ Owner answers (2026-10-19):
 
 ## Now
 
+- [ ] V-FS2 — Run Majorana and nickelate stress dossiers and triage findings
+- Short: Research two public case studies
+- Status: open
+- Goal: RF-BENCH — Produce genuine public scientific case studies with supporting QC, not a substitute for held-out gold.
+- Sources: [public-examples handoff](docs/benchmark/frontier-science-plan.md#frontier-science-stress-test-plan); [benchmark boundary](docs/verifiable-engine-plan.md#verifiable-research-engine-plan).
+- Scope: After explicit live authorization and V-FS1/offline checks, execute one real Majorana/Comprehensive and one nickelates/Standard workflow on a recorded binary/agent snapshot. Main outputs: complete readable reports, precise source-backed citations, conditions/evidence tables, competing hypotheses, uncertainties and evidence-proportionate conclusions, plus per-topic citation-audit.json/reproduce.md. Keep bugs separately in findings.json. No synthetic/canned showcase, hidden adverse evidence, product fixes, automatic scientific approval, extra depth runs or 48-run benchmark changes.
+- Owner decision: Public research examples are primary; stress-testing is supporting quality control. The owner explicitly approved V-FS2 for both studies combined: at most USD 20 model spend, 200,000 total input/output tokens and two hours elapsed, stopping at the first limit, using existing API access only with no purchases/subscriptions. Majorana Comprehensive and nickelates Standard, once each; all existing acquisition/privacy/scientific-approval gates remain. Genuine rforge artifacts support attributed host synthesis; an evidence-insufficient conclusion can be exemplary.
+- Budget: One shared V-FS2 allowance, not per topic/session/retry: USD 20, 200,000 input/output tokens (including reported cached input), 7,200 seconds from actual campaign execution start. Account for research/synthesis/helpers and preserve consumed usage across retries/resumes. Unknown usage is not zero. Use supported host accounting/deadline controls; if a metered operation cannot be safely bounded/accounted for, stop it and report the concrete gap on this task rather than waiving a limit or changing global runner settings.
+- Acceptance:
+  1. Given two genuine topic runs and their reports, the V-FS1 contract proven by `test_check.py::test_complete_run` validates real command/artifact references; both topics must actually run and have the report/source-audit/reproduction contract in the plan. A valid partial/failed-before-search fixture is never task completion or a public example.
+  2. Given reports and machine-readable source audits, the contract proven by `test_check.py::test_rejects_unsafe_or_overclaimed_run` plus actual `rforge provenance validate` checks indexed output hashes/run linkage without elevating host judgments; the summary leads with research results and keeps traceable QC findings separate, including when none are found.
+- Checks: Run the V-FS1 checker tests and packet `check.py --cases docs/benchmark/frontier-science/cases.json --run <campaign-dir>` offline with Python 3; run actual `rforge provenance validate <topic-dir>/provenance.json` on each topic and retain real results; parse citation-audit.json as JSON and verify every declared report anchor/evidence-row/source reference; `git diff --check`. Record campaign-dir/binary path in run.json; do not assume PATH.
+- Dependencies: V-FS1.
+- Consumes: `docs/benchmark/frontier-science/cases.json` (schema_version=1, purpose=exploratory_not_gold, ordered cases); `python3 docs/benchmark/frontier-science/check.py --cases PATH [--run DIR]` (read-only, exit 0 structurally complete / 1 invalid); `docs/benchmark/frontier-science/runbook.md` (bounded commands and human-gate stops).
+- Produces: `research/frontier-science/<campaign-id>/` with `run.json` (campaign_id, started_at, complete real topic runs), both topic report.md/evidence.csv/provenance.json/citation-audit.json/reproduce.md, actual engine artifacts and separate findings.json; select the latest qualifying started_at, then campaign_id.
+- Touches: research/frontier-science/
+- Ownership: Owner/operator authorizes live budget and human gates; research agent is sole writer for the campaign, including source/report corrections before closeout.
+- Live checks: Campaign API scope and model/token/time ceilings are explicitly approved above; check actual runtime access/accounting without inventing credentials or zero usage. Full-text acquisition, privacy review, accepted claims and package export remain separately gated. Inspect accessible primary records/passages, remove or narrow unsupported material claims, preserve contrary evidence and access gaps, and never hide uncertainty to make the product look better.
+- Next action: Re-run the existing offline packet checks, record the approved shared ceilings and actual campaign start/accounting in authorization.md/run.json, then let the existing Autowork owner execute the same two-topic packet and report/audit contract. Stop at the first budget limit. Preserve unfinished/gated outcomes, consumed usage and checkpoint identity; do not fabricate research or reset budget to repeat the campaign.
+
 ## Next
 
-V-FS2 follows V-FS1 only after its live authorization is resolved. V-FS3 then makes the two genuine research reports discoverable; public examples are primary and bug findings are supporting QC. The existing 48-run benchmark is unchanged.
+V-FS2 is now authorized under the combined USD 20 / 200,000-token / two-hour ceilings in the accepted plan and follows completed V-FS1/offline checks. V-FS3 then makes the two genuine research reports discoverable; public examples remain primary and QC secondary. No extra depth-comparison campaign or change to the 48-run benchmark is authorized.
 
 - [ ] V-FS3 — Publish discoverable, audited scientific research examples
 - Short: Publish two genuine research examples
@@ -774,25 +794,6 @@ V-FS2 follows V-FS1 only after its live authorization is resolved. V-FS3 then ma
 - Next action: Write `TestFrontierExamplesDiscoverable` failing on missing discovery files, inspect the completed real V-FS2 campaign, then add the smallest linked index/manifest and offline guards. Do not fabricate a campaign if the prerequisite is unmet.
 
 ## Needs decision
-
-- [ ] V-FS2 — Run Majorana and nickelate stress dossiers and triage findings
-- Short: Research two public case studies
-- Status: open
-- Goal: RF-BENCH — Produce genuine public scientific case studies with supporting QC, not a substitute for held-out gold.
-- Sources: [public-examples handoff](docs/benchmark/frontier-science-plan.md#frontier-science-stress-test-plan); [benchmark boundary](docs/verifiable-engine-plan.md#verifiable-research-engine-plan).
-- Scope: After explicit live authorization and V-FS1/offline checks, execute one real Majorana/Comprehensive and one nickelates/Standard workflow on a recorded binary/agent snapshot. Main outputs: complete readable reports, precise source-backed citations, conditions/evidence tables, competing hypotheses, uncertainties and evidence-proportionate conclusions, plus per-topic citation-audit.json/reproduce.md. Keep bugs separately in findings.json. No synthetic/canned showcase, hidden adverse evidence, product fixes, automatic scientific approval, extra depth runs or 48-run benchmark changes.
-- Owner decision: Public research examples are primary; stress-testing is supporting quality control. Genuine rforge artifacts support explicitly attributed host-agent synthesis; an evidence-insufficient conclusion can be exemplary. The updated plan supersedes old bug-first/publication-ban runbook wording, not its safety gates or schema.
-- Acceptance:
-  1. Given two genuine topic runs and their reports, the V-FS1 contract proven by `test_check.py::test_complete_run` validates real command/artifact references; both topics must actually run and have the report/source-audit/reproduction contract in the plan. A valid partial/failed-before-search fixture is never task completion or a public example.
-  2. Given reports and machine-readable source audits, the contract proven by `test_check.py::test_rejects_unsafe_or_overclaimed_run` plus actual `rforge provenance validate` checks indexed output hashes/run linkage without elevating host judgments; the summary leads with research results and keeps traceable QC findings separate, including when none are found.
-- Checks: Run the V-FS1 checker tests and packet `check.py --cases docs/benchmark/frontier-science/cases.json --run <campaign-dir>` offline with Python 3; run actual `rforge provenance validate <topic-dir>/provenance.json` on each topic and retain real results; parse citation-audit.json as JSON and verify every declared report anchor/evidence-row/source reference; `git diff --check`. Record campaign-dir/binary path in run.json; do not assume PATH.
-- Dependencies: V-FS1.
-- Consumes: `docs/benchmark/frontier-science/cases.json` (schema_version=1, purpose=exploratory_not_gold, ordered cases); `python3 docs/benchmark/frontier-science/check.py --cases PATH [--run DIR]` (read-only, exit 0 structurally complete / 1 invalid); `docs/benchmark/frontier-science/runbook.md` (bounded commands and human-gate stops).
-- Produces: `research/frontier-science/<campaign-id>/` with `run.json` (campaign_id, started_at, complete real topic runs), both topic report.md/evidence.csv/provenance.json/citation-audit.json/reproduce.md, actual engine artifacts and separate findings.json; select the latest qualifying started_at, then campaign_id.
-- Touches: research/frontier-science/
-- Ownership: Owner/operator authorizes live budget and human gates; research agent is sole writer for the campaign, including source/report corrections before closeout.
-- Live checks: Keep in Needs decision until explicit API scope and bounded agent/token/time/spend authorization. Inspect accessible primary records and cited passages; all material claims must have inspectable evidence or be removed/narrowed to an honest limitation. Preserve contrary evidence and source-access gaps; never make the product look better by hiding uncertainty. Acquisition, privacy, accepted claims and package export retain separate gates. No new spend is authorized by this clarification.
-- Next action: After V-FS1/offline validations and explicit live authorization, follow the same packet with the updated report/audit contract. Keep a blocked/incomplete outcome open, never fill it with synthetic evidence or new unauthorized runs.
 
 - [ ] V-B6-run — Live agent-tier pilot
 - Status: open
@@ -942,14 +943,6 @@ V-FS2 follows V-FS1 only after its live authorization is resolved. V-FS3 then ma
   Dependencies: V-B13.
   Status: open
 
-- [ ] V-FS1-LIVE — Live checks for V-FS1
-  Scope: Run the live checks the offline work for V-FS1 left pending.
-  Acceptance: Each check passes on the real target:
-  - V-FS2 live campaign remains separately gated on operator API-scope and agent/token/time/spend authorization; no live research, acquisition, scientific review or approval was performed.
-  Checks: Live qualification by an authorized person; offline evidence does not count.
-  Dependencies: V-FS1.
-  Status: open
-
 ## Backlog (not ready)
 
 Proposals and deferred items; none is executable until planned and accepted.
@@ -972,7 +965,7 @@ Generated from `goals.json` by `goals.py render`. `met` requires an executed, pa
 | --- | --- | --- | --- |
 | RF-V0: Land and harden the in-progress research commands | met | Executed check: pass ([V0-7](TODO.archive.md#v0-7)) | — |
 | RF-AGENT: Make the agent contract correct: install docs, search depth and provenance levels | met | Executed check: pass ([V-A4](TODO.archive.md#v-a4)) | — |
-| RF-BENCH: Measure research quality against held-out ground truth | unmet | Executed check: pass ([V-B4-lock](TODO.archive.md#v-b4-lock)) | V-B10-LIVE, V-B11-LIVE, V-B13-LIVE, V-B3-LIVE, V-B4-LIVE, V-B6-LIVE, V-B6-run, V-FS1-LIVE, V-FS2, V-FS3 |
+| RF-BENCH: Measure research quality against held-out ground truth | unmet | Executed check: pass ([V-B4-lock](TODO.archive.md#v-b4-lock)) | V-B10-LIVE, V-B11-LIVE, V-B13-LIVE, V-B3-LIVE, V-B4-LIVE, V-B6-LIVE, V-B6-run, V-FS2, V-FS3 |
 | RF-MCP: Expose the engine through a thin MCP adapter over shared services | unmet | — | V-C2-LIVE |
 | RF-CLAIMS: Verify claims against stored evidence with separate facets | met | Executed check: pass ([V-D4](TODO.archive.md#v-d4)) | — |
 | RF-PACK: Ship passive native plugins for Claude Code, Codex, Pi and Hermes over the same engine | unmet | Executed check: pass ([V-E2](TODO.archive.md#v-e2)) | V-E1-LIVE, V-E3-LIVE, V-E5-LIVE, V-E5-run |

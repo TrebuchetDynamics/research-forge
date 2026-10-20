@@ -229,8 +229,8 @@
   "priority_order": {
     "schema": 1,
     "tasks": [
-      "V-FS3",
       "V-FS2",
+      "V-FS3",
       "V-B6-run",
       "V-E5-run",
       "V-R1",
@@ -244,11 +244,20 @@
       "V-B11-LIVE",
       "V-E5-LIVE",
       "V-B10-LIVE",
-      "V-B13-LIVE",
-      "V-FS1-LIVE"
+      "V-B13-LIVE"
     ]
   },
   "tasks": [
+    {
+      "depends_on": [
+        "V-FS1"
+      ],
+      "goal": "RF-BENCH",
+      "id": "V-FS2",
+      "section": "Now",
+      "status": "open",
+      "title": "Run Majorana and nickelate stress dossiers and triage findings"
+    },
     {
       "depends_on": [
         "V-FS1",
@@ -380,26 +389,6 @@
       "section": "Needs decision",
       "status": "open",
       "title": "Live host qualification receipts"
-    },
-    {
-      "depends_on": [
-        "V-FS1"
-      ],
-      "goal": "RF-BENCH",
-      "id": "V-FS1-LIVE",
-      "section": "Needs decision",
-      "status": "open",
-      "title": "Live checks for V-FS1"
-    },
-    {
-      "depends_on": [
-        "V-FS1"
-      ],
-      "goal": "RF-BENCH",
-      "id": "V-FS2",
-      "section": "Needs decision",
-      "status": "open",
-      "title": "Run Majorana and nickelate stress dossiers and triage findings"
     },
     {
       "depends_on": [
@@ -816,6 +805,20 @@
       "section": "Done",
       "status": "done",
       "title": "Redact local paths in the packaged provenance ledger"
+    },
+    {
+      "depends_on": [
+        "V-FS1"
+      ],
+      "goal": "RF-BENCH",
+      "id": "V-FS1-LIVE",
+      "section": "Superseded",
+      "status": "superseded",
+      "superseded_by": [
+        "V-FS2"
+      ],
+      "supersession_reason": "Owner approved the single bounded V-FS2 campaign; this generated follow-up names the same live work, not another run. Preserve history without claiming live completion.",
+      "title": "Live checks for V-FS1"
     }
   ],
   "version": 1
