@@ -752,3 +752,28 @@ Source section: Next
 - Dependencies: V-B3, V-B4-lock.
 - Ownership: ResearchForge maintainer; Autowork runner may execute.
 - Touches: docs/benchmark, CONTRIBUTING.md, .github/PULL_REQUEST_TEMPLATE.md
+
+
+<!-- archived from TODO.md -->
+
+Source section: Now
+
+<a id="v-fs1"></a>
+
+- [x] V-FS1 — Prepare the two-topic frontier-science stress packet
+- Short: Prepare frontier-science tests
+- Status: done
+- Goal: RF-BENCH — Support research-quality evaluation with explicitly non-gold exploratory cases.
+- Sources: [frontier plan](docs/benchmark/frontier-science-plan.md#frontier-science-stress-test-plan); [benchmark boundary](docs/verifiable-engine-plan.md#verifiable-research-engine-plan).
+- Scope: Implement only the four-file offline packet in the plan's V-FS1 section: Majorana and nickelates case cards, bounded CLI runbook, standard-library read-only artifact checker and synthetic unittest fixtures. No live research, general benchmark framework, product changes, approvals or fixes. Preserve unrelated dirty work; record any baseline failure separately rather than claiming it passed.
+- Decisions: Planner's calls and exact interfaces are in the frontier plan; do not reopen topic/depth/scoring choices. Read the repository research skill, not the stale installed default.
+- Acceptance:
+  1. Given the absent packet, `test_check.py::test_case_packet` first fails; when the packet is created, it checks both questions, ordered cases, explicit sources, query plans, caps and non-gold purpose offline.
+  2. Given synthetic complete or explicitly partial dossiers, `test_check.py::test_complete_run` and `test_check.py::test_partial_run` accept only the documented artifact/status contract without asserting scientific truth.
+  3. Given unsafe paths, omitted required evidence or overclaimed provenance, `test_check.py::test_rejects_unsafe_or_overclaimed_run` fails validation with precise errors; fixtures remain synthetic and offline.
+- Checks: `python3 -m unittest discover -s docs/benchmark/frontier-science -p test_check.py -v`; `python3 docs/benchmark/frontier-science/check.py --cases docs/benchmark/frontier-science/cases.json`; `env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE go test ./internal/cli -run 'TestSearchBatchBudgetStops|TestSearchBatchResumePreservesRequestBudget|TestExecuteSearchResumeDryRunListsPendingFailuresWithoutNetwork|TestProvenanceValidateAcceptsConformingFile' -count=1`; `git diff --check`.
+- Dependencies: None.
+- Produces: `docs/benchmark/frontier-science/cases.json` (schema_version=1, purpose=exploratory_not_gold, ordered cases); `python3 docs/benchmark/frontier-science/check.py --cases PATH [--run DIR]` (read-only, exit 0 structurally complete / 1 invalid); `docs/benchmark/frontier-science/runbook.md` (bounded commands and human-gate stops).
+- Touches: docs/benchmark/frontier-science/cases.json, docs/benchmark/frontier-science/runbook.md, docs/benchmark/frontier-science/check.py, docs/benchmark/frontier-science/test_check.py
+- Ownership: Implementing agent; sole writer for the packet; no shared CLI/agent-docs surface edits.
+- Next action: Write `test_case_packet`, run it to observe failure on the missing case file, then add the smallest packet/checker implementation; use synthetic temporary-directory fixtures for the other checks.
