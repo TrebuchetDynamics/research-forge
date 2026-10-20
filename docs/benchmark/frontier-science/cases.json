@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "purpose": "exploratory_not_gold",
+  "cases": [
+    {
+      "id": "majorana",
+      "question": "What experimental evidence is sufficient to establish topological Majorana zero modes in semiconductor–superconductor hybrid nanowires, and which published signatures can also arise from trivial Andreev bound states?",
+      "depth": "comprehensive",
+      "sources": ["openalex", "crossref", "semantic-scholar", "arxiv"],
+      "queries": [
+        "Majorana zero modes semiconductor superconductor nanowire experimental evidence",
+        "Majorana nanowire zero bias peak trivial Andreev bound states",
+        "Majorana nanowire quantized conductance replication",
+        "Majorana nanowire quantized conductance correction retraction",
+        "Majorana nanowire disorder induced zero bias peaks",
+        "Majorana nanowire smooth confinement Andreev states",
+        "Majorana nanowire nonlocal conductance",
+        "Majorana nanowire bulk gap closing reopening",
+        "Majorana nanowire topological gap protocol",
+        "Majorana nanowire topological gap protocol criticism",
+        "Majorana nanowire Coulomb blockade parity",
+        "Majorana nanowire parity lifetime poisoning",
+        "Majorana nanowire conductance temperature dependence",
+        "Majorana nanowire magnetic field angle dependence",
+        "Majorana nanowire length dependence energy splitting",
+        "Majorana nanowire Josephson fractional periodicity trivial explanation",
+        "Majorana nanowire braiding non Abelian experimental evidence",
+        "Majorana nanowire correlated end states",
+        "Majorana nanowire independent replication experimental signatures",
+        "Majorana nanowire review experimental limitations"
+      ],
+      "max_search_calls": 100,
+      "limit": 20,
+      "required_outputs": ["commands.jsonl", "coverage-stats.log", "evidence.csv", "report.md", "provenance.json", "predictions.json"],
+      "evidence_columns": ["claim_signature", "study_identifier", "version_status", "experimental_or_theoretical", "device_material", "field", "temperature", "measurement_conditions", "observed_result", "quote_location", "topological_interpretation", "trivial_alternative", "independent_replication", "uncertainty", "source_locator", "verification_facets"],
+      "evidence_requirements": ["contradictory_evidence_matrix", "signature_comparison", "uncertainty_assessment", "source_backed_agent_reported_draft", "corrections_retractions_version_links_or_gaps", "unknowns_require_reasons", "mechanical_provenance_not_scientific_approval", "five_proposed_falsifiable_prediction_slots", "refuting_observations_and_source_rationale_or_unsupported_slots", "independent_group_vs_shared_device_dataset_replication", "demonstrated_vs_model_dependent_vs_open"],
+      "evidence_notes": [
+        "Reproducible search record and contradictory-evidence matrix; preserve exact submitted queries and provider failures.",
+        "Compare signatures with trivial alternatives, distinguishing demonstrated results, model-dependent interpretation and open questions in an agent_reported draft verdict.",
+        "Exactly five proposed falsifiable prediction slots: observation that would refute each and source rationale, or an explicit unsupported slot with reason.",
+        "Assess uncertainty; distinguish independent-group replication from papers sharing one device or dataset.",
+        "Check corrections, retractions and preprint/journal version links from accessible primary records, otherwise record gaps.",
+        "Unavailable conditions, uncertainty, source text or replication remain unknown/null with a reason; mechanical provenance is not scientific approval."
+      ]
+    },
+    {
+      "id": "nickelates",
+      "question": "Which pairing mechanisms and structural conditions explain superconductivity across nickelate families, and which experimental results are genuinely comparable?",
+      "depth": "standard",
+      "sources": ["openalex", "crossref", "semantic-scholar", "arxiv"],
+      "queries": [
+        "nickelate superconductivity infinite layer thin film substrate oxygen stoichiometry",
+        "nickelate superconductivity bilayer high pressure transition temperature",
+        "nickelate superconductivity ambient pressure structural phase",
+        "nickelate superconductivity resistive onset zero resistance magnetic shielding",
+        "nickelate superconductivity independent replication pressure calibration",
+        "nickelate superconductivity pairing mechanism experimental constraints review"
+      ],
+      "max_search_calls": 50,
+      "limit": 20,
+      "required_outputs": ["commands.jsonl", "coverage-stats.log", "evidence.csv", "report.md", "provenance.json"],
+      "evidence_columns": ["study_identifier", "version_status", "family_composition", "structure_phase", "film_or_bulk", "substrate", "sample_preparation", "pressure_value", "pressure_unit", "pressure_calibration", "transition_temperature_value", "transition_temperature_unit", "transition_definition", "measurement_method", "uncertainty", "sample_dataset_group", "replication_status", "mechanism_claim", "direct_observation", "quote_location", "source_locator"],
+      "evidence_requirements": ["contradictory_evidence_matrix", "signature_comparison", "uncertainty_assessment", "source_backed_agent_reported_draft", "corrections_retractions_version_links_or_gaps", "unknowns_require_reasons", "mechanical_provenance_not_scientific_approval", "no_pooling_incompatible_measurements", "original_units_and_explicit_conversions", "transition_definitions_preserved", "no_inferred_pressure_uncertainty_shielding", "sample_dataset_group_provenance", "mechanism_claim_vs_direct_observation"],
+      "evidence_notes": [
+        "Reproducible search record, contradictory-evidence/conditions matrix, signature comparison, uncertainty assessment and source-backed agent_reported draft verdict.",
+        "No pooled transition-temperature estimate or mechanism selection from incompatible measurements.",
+        "Preserve original units alongside explicit conversions and distinguish onset, midpoint, zero resistance and magnetic transition definitions.",
+        "Never infer missing pressures, uncertainties or shielding fractions; use unknown/null with a reason.",
+        "Record sample/dataset/group provenance and independent replication; distinguish mechanism claims from direct observations.",
+        "Check corrections, retractions and preprint/journal version links from accessible primary records, otherwise record gaps."
+      ]
+    }
+  ]
+}
