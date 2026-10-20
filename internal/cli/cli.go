@@ -60,6 +60,10 @@ func ExecuteWithInput(args []string, stdin io.Reader, stdout, stderr io.Writer) 
 	if !ok {
 		return writeError(stdout, stderr, opts, 2, "invalid_global_flag", "invalid global flag usage")
 	}
+	// `rforge help` states that all commands accept --json. Strip it wherever it
+	// appears so a trailing flag is never taken as a positional value or rejected
+	// as an unknown flag.
+	remaining = stripJSONFlag(remaining, &opts.JSON)
 	if len(remaining) == 0 || remaining[0] == "--help" || remaining[0] == "-h" || remaining[0] == "help" {
 		for _, arg := range remaining {
 			if arg == "--json" {
@@ -3774,6 +3778,23 @@ func projectData(proj project.Project) map[string]any {
 		"storagePath":         proj.StoragePath,
 		"archiveMetadataPath": proj.ArchiveMetadataPath,
 	}
+}
+
+// stripJSONFlag removes --json from args and records it in json, so handlers only
+// have to read the parsed option.
+func stripJSONFlag(args []string, json *bool) []string {
+	if len(args) == 0 {
+		return args
+	}
+	kept := make([]string, 0, len(args))
+	for _, arg := range args {
+		if arg == "--json" {
+			*json = true
+			continue
+		}
+		kept = append(kept, arg)
+	}
+	return kept
 }
 
 func parseGlobalOptions(args []string) (globalOptions, []string, bool) {

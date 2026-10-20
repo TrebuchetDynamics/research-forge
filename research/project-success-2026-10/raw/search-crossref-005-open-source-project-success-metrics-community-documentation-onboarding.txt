@@ -1,0 +1,10 @@
+10.2139/ssrn.6864982	A Software Engineering Perspective on Documentation Quality: Modeling Its Impact on Newcomer Onboarding in Open-Source Projects
+10.25080/hxxk4957	Hello Project!
+10.22215/etd/2006-08297	Factors that contribute to open source software project success
+10.59350/w8zde-v9f20	Community Call - rOpenSci Software Review and Onboarding
+10.59350/fhn39-30r74	Community Call - rOpenSci Software Review and Onboarding
+10.7551/mitpress/8413.003.0009	Technological and Community Attributes
+10.25148/etd.fi08081525	Social Network Structure as a Critical Success Condition for Open Source Software Project Communities
+10.7551/mitpress/9780262017251.003.0004	Technological and Community Attributes
+10.17161/ci3t.59117	Setting up for success
+10.4018/978-1-7998-9158-1.ch012	The Impact of Project Initiators on Open Source Software Project Success

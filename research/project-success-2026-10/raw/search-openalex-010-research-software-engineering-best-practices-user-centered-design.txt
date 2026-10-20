@@ -1,0 +1,10 @@
+	User-Centered Design in Agile Software Development
+10.1007/978-3-319-32165-3_11	Integrating Both User-Centered Design and Creative Practices into Agile Development
+10.61395/victec.v4i7.128	User Centered User Interface Design: Best Practices and Trends
+10.14236/ewic/hci2007.17	Agile Human-Centered Software Engineering
+10.1038/s41579-019-0255-9	Common principles and best practices for engineering microbiomes
+10.1145/1925805.1925815	An examination of software engineering work practices
+10.1088/1742-6596/1453/1/012032	A Requirement Engineering Approach to User-Centered Design
+10.1080/1463922x.2023.2166623	Multi-user centered design: acceptance, user experience, user research and user testing
+10.71465/csb95	SOFTWARE ENGINEERING BEST PRACTICES: TRENDS AND CHALLENGES
+10.1145/1029997.1030003	Effective work practices for software engineering

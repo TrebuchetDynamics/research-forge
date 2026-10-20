@@ -39,6 +39,35 @@ After installing a host integration, open a new host session so it discovers the
 skills. Available components are installed by default; a host whose CLI is absent
 is reported as skipped and does not fail the run.
 
+## Choose by intent
+
+Most people want one of three things. A profile selects the components for that
+intent, so you do not have to know the component names first:
+
+| You want | Command | Installs |
+| --- | --- | --- |
+| `rforge` commands in your shell | `./install.sh --for cli` | the engine only |
+| the research skills in your agent | `./install.sh --for skills` | public skills plus each installed host's plugin |
+| typed MCP tools in your agent | `./install.sh --for mcp` | the engine plus host plugin/MCP registration |
+| everything | `./install.sh --for all` | both (this is the default) |
+
+Native plugins deliver skills and MCP registration together, so `skills` and
+`mcp` differ mainly in whether the engine is installed: the skill works without
+it, MCP tool calls need it. `--for mcp` also leaves the generic `~/.agents/skills`
+copy alone because the plugins already provide those skills. With no host CLI
+installed, `--for mcp` installs the engine for a manual stdio client entry; see
+[MCP setup](./cli.md#mcp-stdio-server).
+
+A profile is a convenience selection, not a per-component demand: a host whose
+CLI is absent is skipped rather than failing the run, exactly like the default
+suite. Combine a profile with `--skip` to drop a host, and use `--only` instead
+when you want to name components yourself.
+
+```sh
+./install.sh --for mcp --skip codex
+./install.sh --for cli --dry-run
+```
+
 ## Choose components
 
 ```sh
@@ -73,7 +102,10 @@ The engine is verified after installation: the installer runs `rforge version`,
 then `rforge capabilities --json --min-rforge-version <x> --require …` for the
 search, paper, brief, compare, provenance and mcp contracts. A download whose
 sha256 does not match `checksums.txt` is never installed. If verification fails,
-the component fails (non-zero exit) while the other components still run.
+the component fails (non-zero exit) while the other components still run —
+except for one recoverable case: when the downloaded release fails the gate and
+the installer runs from a buildable checkout with Go, it rebuilds that checkout
+(reporting the fallback) rather than leaving a broken engine behind.
 
 ### PATH
 
@@ -193,7 +225,7 @@ commands.
 
 | Symptom | Cause and fix |
 | --- | --- |
-| `binary` fails: `installed engine … does not meet the required rforge X` | The release you installed predates the capabilities the plugin needs. Install a release at or above that version, or build the current checkout with `make install`. |
+| `binary` fails: `installed engine … does not meet the required rforge X` | The release predates the capabilities the plugins need. From a buildable checkout with Go, the installer rebuilds the checkout automatically and says so; otherwise install a release at or above that version, or run `make install`. |
 | `binary` fails: `checksum mismatch` | The download was corrupted or the release is inconsistent; rerun, then report it if it persists. Nothing was installed. |
 | `--dry-run` reports a host `not found` | That host's CLI is not on `PATH`; install it or select other components with `--only`. |
 | A host component fails while others install | Components are independent; rerun the failed one with `--only`, or `./install.sh update`. |

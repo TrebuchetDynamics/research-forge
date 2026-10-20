@@ -1,0 +1,188 @@
+{
+  "depth": "standard",
+  "errors": [],
+  "interrupted": false,
+  "limit": 10,
+  "outputs": [
+    {
+      "path": "results.jsonl",
+      "sha256": "d81b0e4edb26563028476c9fa02d289d09c2b4caed19122a935404a1064166f9"
+    },
+    {
+      "path": "results-deduped.jsonl",
+      "sha256": "493afffd035e2c532cfaab09b25482f680ebbf42a26610b5c2048816c6222152"
+    },
+    {
+      "path": "results.md",
+      "sha256": "2b014d59e54bb4b2cb2337070157f81a72c5418b372e98d1caa99eb8fca304bb"
+    },
+    {
+      "path": "failures.jsonl",
+      "sha256": "71eddae01374a080865c4d162b0aa0709cb4d9648458e75926da413bc32ff1f8"
+    },
+    {
+      "path": "manifest.json",
+      "sha256": "94975e467522db7dec915506f8e49638afc68ece74b841e8658d8fec5b7276ef"
+    },
+    {
+      "path": "batch-state.json",
+      "sha256": "ca8a844a1b7f8b938e43c9ad6e9e9d6501b456edeb483ffcda4e5ddb1ae26a20"
+    },
+    {
+      "path": "search-stats.txt",
+      "sha256": "643e2d5e02c88d992c1e3bd1e81a6e6c5195c20856fbb8c2b0ea26574a52fd04"
+    },
+    {
+      "path": "raw/search-openalex-001-research-software-adoption-success-factors-open-source-scientific-tools.txt",
+      "sha256": "37d9cd9f70ca55dd4fd81122b2e7df144874718515e93030fb91df9ca00b7f10"
+    },
+    {
+      "path": "raw/search-crossref-001-research-software-adoption-success-factors-open-source-scientific-tools.txt",
+      "sha256": "e4ad52e0b8c900b21bf05a519beea431245d8fcb845848fd895c1f97871aeb08"
+    },
+    {
+      "path": "raw/search-semantic-scholar-001-research-software-adoption-success-factors-open-source-scientific-tools.txt",
+      "sha256": "4c5d14f47718fe53a3cd0ade0a302a4e7c7c02d6d76d5f8a1770af96a4ddacb8"
+    },
+    {
+      "path": "raw/search-arxiv-001-research-software-adoption-success-factors-open-source-scientific-tools.txt",
+      "sha256": "0ffc6743c0aa6b895398d17addcde53fab1e48c168fcd22485b8e644e8383993"
+    },
+    {
+      "path": "raw/search-openalex-002-usability-barriers-research-software-scientists-command-line-tools.txt",
+      "sha256": "0ccb28855b1b4d8d4e51f7f58a0c10652abf71134f3b29b94b9fb06568b77b1c"
+    },
+    {
+      "path": "raw/search-crossref-002-usability-barriers-research-software-scientists-command-line-tools.txt",
+      "sha256": "8812e6430eebb95d989488dc94838fcf78976e8bd51cc3915a5fb18541305c63"
+    },
+    {
+      "path": "raw/search-arxiv-002-usability-barriers-research-software-scientists-command-line-tools.txt",
+      "sha256": "5117c0390865675f65efcaafbc1339c8202433bbdd6df1dea6747aca951aec7b"
+    },
+    {
+      "path": "raw/search-openalex-003-sustainable-research-software-funding-maintenance-open-source.txt",
+      "sha256": "0451dbd0be80f625b0369e8c6ffd9b741ba9a26c0a6335341183070925936627"
+    },
+    {
+      "path": "raw/search-crossref-003-sustainable-research-software-funding-maintenance-open-source.txt",
+      "sha256": "7f5137d3d323026f99d207ae1047092517a698576120f5ad7ce252d414a86770"
+    },
+    {
+      "path": "raw/search-arxiv-003-sustainable-research-software-funding-maintenance-open-source.txt",
+      "sha256": "0b266448d458c73b208c359d16e6032387af374d6146ee92faa8d1f90e5ac266"
+    },
+    {
+      "path": "raw/search-openalex-004-reproducibility-tooling-adoption-systematic-review-automation.txt",
+      "sha256": "dfabee3ccd63b4d19159c11f5be65341f37290d76c80960e1c67e6200c9dd5b2"
+    },
+    {
+      "path": "raw/search-crossref-004-reproducibility-tooling-adoption-systematic-review-automation.txt",
+      "sha256": "54477057c8c049a6747ad6353048cada1f3af38472695877976d46b9761624ca"
+    },
+    {
+      "path": "raw/search-arxiv-004-reproducibility-tooling-adoption-systematic-review-automation.txt",
+      "sha256": "f17d2c2a6e6b76a5e7661efc7be9f1a19f7c6667430f5fce3bff6488eaaac721"
+    },
+    {
+      "path": "raw/search-openalex-005-open-source-project-success-metrics-community-documentation-onboarding.txt",
+      "sha256": "47942e2559f591d1d074f54edc30e6ed1fb44af20d426ad987e4a866b37bbd45"
+    },
+    {
+      "path": "raw/search-crossref-005-open-source-project-success-metrics-community-documentation-onboarding.txt",
+      "sha256": "3ee626b3ba48da0f4f2652a2b7ce93a1e726473359ba8bce3decdfa99bb1726d"
+    },
+    {
+      "path": "raw/search-arxiv-005-open-source-project-success-metrics-community-documentation-onboarding.txt",
+      "sha256": "e89d0b2ebe442a108d9e8656b8ced8c4c6bb251c99d85d6cdfcc81da0f2b87bf"
+    },
+    {
+      "path": "raw/search-openalex-006-scientific-software-packaging-distribution-installation-barriers.txt",
+      "sha256": "076838bd8841450485846fc8567477debcc61132a0816b102428445c55555e3d"
+    },
+    {
+      "path": "raw/search-crossref-006-scientific-software-packaging-distribution-installation-barriers.txt",
+      "sha256": "2844f91572ca4e370a0c73af8ffd91f4a4d9e2a28ee20b137a7925b97cefec31"
+    },
+    {
+      "path": "raw/search-arxiv-006-scientific-software-packaging-distribution-installation-barriers.txt",
+      "sha256": "a3f892d24612c6081dd9e1934739fa7134abe183107c548d5c0ff8828cfa2f71"
+    },
+    {
+      "path": "raw/search-openalex-007-trust-provenance-transparency-research-data-tools-adoption.txt",
+      "sha256": "d4ab8f04951c84c9af691b435d7abf46a2dc29f995956165fbd1b54479053633"
+    },
+    {
+      "path": "raw/search-crossref-007-trust-provenance-transparency-research-data-tools-adoption.txt",
+      "sha256": "a7cd781e44b17a721f8d987d325b9ca576175e3ec64c2aeb215bbdaf4ff70081"
+    },
+    {
+      "path": "raw/search-arxiv-007-trust-provenance-transparency-research-data-tools-adoption.txt",
+      "sha256": "1621b33ae2f578d806348bb03ce48b805bf8c58251df0f95e990cc629b0b227d"
+    },
+    {
+      "path": "raw/search-openalex-008-benchmark-evaluation-research-tool-comparison-reproducibility.txt",
+      "sha256": "5e821cb32c074519568aa2c40a41f19fcab2b78b3a25c3de798d0455fb847833"
+    },
+    {
+      "path": "raw/search-crossref-008-benchmark-evaluation-research-tool-comparison-reproducibility.txt",
+      "sha256": "cc70e0e1ce71fe4afddf002b937052f45b867e24299cec27f901d4c277bbc1fe"
+    },
+    {
+      "path": "raw/search-arxiv-008-benchmark-evaluation-research-tool-comparison-reproducibility.txt",
+      "sha256": "85080bfcf162536817388244664a077e3c5696a366e0a5b03f2f0c0d0f63652f"
+    },
+    {
+      "path": "raw/search-openalex-009-open-source-sustainability-governance-contributor-retention.txt",
+      "sha256": "28a50a34b038b1773ad154e64d986fbf2055bceaeb95475ef16b1b233275f7f5"
+    },
+    {
+      "path": "raw/search-crossref-009-open-source-sustainability-governance-contributor-retention.txt",
+      "sha256": "6acd375996b8ee9383f428be0d2b319704a69efb698d80d832e9b318efa496b8"
+    },
+    {
+      "path": "raw/search-arxiv-009-open-source-sustainability-governance-contributor-retention.txt",
+      "sha256": "2ac6edf47eeca79a7b66e1615f9160f997081472858cd23ea2e31f3c1e1d4166"
+    },
+    {
+      "path": "raw/search-openalex-010-research-software-engineering-best-practices-user-centered-design.txt",
+      "sha256": "d23f9f8a748d47c9d2a24b65ba324217ea58aada9f17c17904fda09b09396616"
+    },
+    {
+      "path": "raw/search-crossref-010-research-software-engineering-best-practices-user-centered-design.txt",
+      "sha256": "47d0c42ad3afb073430ea3911cc530fb4f3964783de8ac0a91f2566758f5ce69"
+    },
+    {
+      "path": "raw/search-arxiv-010-research-software-engineering-best-practices-user-centered-design.txt",
+      "sha256": "98e7afa07e44f2ccf7cda80e725a6e02e662bcb207b3f84afa8dbcea75e55261"
+    }
+  ],
+  "provenance_level": "engine_verified",
+  "queries": [
+    "research software adoption success factors open source scientific tools",
+    "usability barriers research software scientists command line tools",
+    "sustainable research software funding maintenance open source",
+    "reproducibility tooling adoption systematic review automation",
+    "open source project success metrics community documentation onboarding",
+    "scientific software packaging distribution installation barriers",
+    "trust provenance transparency research data tools adoption",
+    "benchmark evaluation research tool comparison reproducibility",
+    "open source sustainability governance contributor retention",
+    "research software engineering best practices user centered design"
+  ],
+  "question": "research software adoption success factors open source scientific tools; usability barriers research software scientists command line tools; sustainable research software funding maintenance open source; reproducibility tooling adoption systematic review automation; open source project success metrics community documentation onboarding; scientific software packaging distribution installation barriers; trust provenance transparency research data tools adoption; benchmark evaluation research tool comparison reproducibility; open source sustainability governance contributor retention; research software engineering best practices user centered design",
+  "rforge_version": {
+    "commit": "a743265",
+    "date": "2026-10-20T01:16:43Z",
+    "version": "dev"
+  },
+  "run_id": "79a9b1cc84274981ef785b91dbc71d39",
+  "schema_version": "2",
+  "sources": [
+    "openalex",
+    "crossref",
+    "semantic-scholar",
+    "arxiv"
+  ],
+  "timestamp": "2026-10-20T01:56:08.869543083Z"
+}

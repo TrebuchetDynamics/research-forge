@@ -216,3 +216,67 @@ func TestPaperAndDraftResolveOffline(t *testing.T) {
 		})
 	}
 }
+
+// A flag where the topic belongs must be a usage error. It used to rank the
+// literal string "--limit", exit 0, and present the result as a real ranking.
+func TestRankRejectsFlagAsTopic(t *testing.T) {
+	workflowFixtureServer(t)
+
+	stdout, stderr := new(bytes.Buffer), new(bytes.Buffer)
+	code := Execute([]string{"rank", "--limit", "5"}, stdout, stderr)
+	if code != 2 {
+		t.Fatalf("exit code = %d, want 2 (usage); stdout = %s", code, stdout.String())
+	}
+	if !strings.Contains(stdout.String()+stderr.String(), "usage: rforge rank <topic>") {
+		t.Errorf("error does not show usage: %s", stdout.String()+stderr.String())
+	}
+	if strings.Contains(stdout.String(), "PaperRank: --limit") {
+		t.Errorf("ranked the literal flag as a topic: %s", stdout.String())
+	}
+}
+
+// An unknown flag must be rejected, not have its value treated as the paper.
+// `draft --depth quick` used to draft the paper matching "quick" and exit 0.
+func TestDraftRejectsUnknownFlagValueAsPaper(t *testing.T) {
+	workflowFixtureServer(t)
+
+	stdout, stderr := new(bytes.Buffer), new(bytes.Buffer)
+	code := Execute([]string{"draft", "--depth", "quick"}, stdout, stderr)
+	if code != 2 {
+		t.Fatalf("exit code = %d, want 2 (usage); stdout = %s", code, stdout.String())
+	}
+	combined := stdout.String() + stderr.String()
+	if !strings.Contains(combined, "--depth") {
+		t.Errorf("error does not name the unknown flag: %s", combined)
+	}
+	if strings.Contains(stdout.String(), "# Research Note") {
+		t.Errorf("drafted a paper from a flag value: %s", stdout.String())
+	}
+}
+
+// An empty identifier must not resolve to an arbitrary paper.
+func TestPaperRejectsEmptyIdentifier(t *testing.T) {
+	workflowFixtureServer(t)
+
+	stdout, stderr := new(bytes.Buffer), new(bytes.Buffer)
+	code := Execute([]string{"paper", ""}, stdout, stderr)
+	if code != 2 {
+		t.Fatalf("exit code = %d, want 2 (usage); stdout = %s", code, stdout.String())
+	}
+	if strings.Contains(stdout.String(), "✓") {
+		t.Errorf("resolved a paper from an empty identifier: %s", stdout.String())
+	}
+}
+
+func TestReplicateRejectsEmptyIdentifier(t *testing.T) {
+	workflowFixtureServer(t)
+
+	stdout, stderr := new(bytes.Buffer), new(bytes.Buffer)
+	code := Execute([]string{"replicate", ""}, stdout, stderr)
+	if code != 2 {
+		t.Fatalf("exit code = %d, want 2 (usage); stdout = %s", code, stdout.String())
+	}
+	if strings.Contains(stdout.String(), "# Replication Plan") {
+		t.Errorf("replicated a paper from an empty identifier: %s", stdout.String())
+	}
+}

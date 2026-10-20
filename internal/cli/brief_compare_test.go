@@ -160,3 +160,32 @@ func TestExecuteCompareLabels(t *testing.T) {
 		t.Error("compare labels not applied")
 	}
 }
+
+// A flag where the search directory belongs must be a usage error, not a
+// confusing attempt to open "<flag>/manifest.json".
+func TestBriefRejectsFlagAsSearchDir(t *testing.T) {
+	stdout, stderr := new(bytes.Buffer), new(bytes.Buffer)
+	code := Execute([]string{"brief", "--out", "brief.md"}, stdout, stderr)
+	if code != 2 {
+		t.Fatalf("exit code = %d, want 2 (usage); stdout = %s stderr = %s", code, stdout.String(), stderr.String())
+	}
+	combined := stdout.String() + stderr.String()
+	if !strings.Contains(combined, "usage: rforge brief <search-dir>") {
+		t.Errorf("error does not show usage: %s", combined)
+	}
+	if strings.Contains(combined, "--out/manifest.json") {
+		t.Errorf("treated the flag as a directory: %s", combined)
+	}
+}
+
+// An empty search directory is a usage error, like every sibling command.
+func TestBriefRejectsEmptySearchDir(t *testing.T) {
+	stdout, stderr := new(bytes.Buffer), new(bytes.Buffer)
+	code := Execute([]string{"brief", ""}, stdout, stderr)
+	if code != 2 {
+		t.Fatalf("exit code = %d, want 2 (usage); stdout = %s stderr = %s", code, stdout.String(), stderr.String())
+	}
+	if !strings.Contains(stdout.String()+stderr.String(), "usage: rforge brief <search-dir>") {
+		t.Errorf("error does not show usage: %s", stdout.String()+stderr.String())
+	}
+}

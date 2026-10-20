@@ -1,0 +1,310 @@
+# Search batch results
+
+Deduped records: 294
+
+- Adoption of open source software in software-intensive organizations – A systematic literature review — DOI: `10.1016/j.infsof.2010.05.008`
+- Critical Success Factors for the Adoption of Decision Tools in IPM — DOI: `10.3390/agronomy9110710`
+- Success factors of commercial open source software projects
+- Investigating the Adoption of Research Software: From Success Factors to Challenges Faced by Brazilian Academic Researchers — DOI: `10.5753/jserd.2025.3696`
+- OPEN SOURCE SOFTWARE ADOPTION MODEL OSSAM
+- An open-source tool to assess the carbon footprint of research — DOI: `10.1088/2634-4505/ac84a4`
+- Open source Software ADOPTION: an academic perspective — DOI: `10.47893/ijcct.2014.1219`
+- The Future Is Open: Open-Source Tools for Behavioral Neuroscience Research — DOI: `10.1523/eneuro.0223-19.2019`
+- The Need for Open Source Software in Machine Learning
+- Identifying Business Barriers and Enablers for the Adoption of Open Source Software
+- Open Source Software Adoption — DOI: `10.4018/978-1-60566-060-8.ch099`
+- Open Source Software Adoption — DOI: `10.4018/978-1-60960-513-1.ch001`
+- Open Source Software Adoption — DOI: `10.4018/jossp.2009010101`
+- Factors that contribute to open source software project success — DOI: `10.22215/etd/2006-08297`
+- CRITICAL SUCCESS FACTORS FOR OPEN-SOURCE INNOVATION: THE CASE OF OPEN SOURCE SOFTWARE DEVELOPMENT — DOI: `10.48009/2_iis_2009_157-164`
+- Factors Affecting the Development of Absorptive Capacity in the Adoption of Open Source Software — DOI: `10.4018/978-1-4666-2937-0.ch002`
+- Defining Open-Source Software Success and Abandonment — DOI: `10.7551/mitpress/8413.003.0013`
+- Scientific Software — DOI: `10.1007/978-1-4419-7719-9_14`
+- Open source research tools — DOI: `10.1016/b978-1-84334-585-5.50010-2`
+- Defining Open-Source Software Success and Abandonment — DOI: `10.7551/mitpress/9780262017251.003.0007`
+- Perceptions on the adoption of Free/Open Source Software policies by a Scientific Institution: The case study of the NIH — DOI: `10.5206/mt.v5i3.22904`
+- Toward More Usable, Reproducible, and Sustainable Scientific Software: The Impact of User-Centered Design in Research Software Development — DOI: `10.1145/3732775.3733576`
+- Open‐Source Tools for Assessing Cytoskeleton Properties in Pathological Conditions From Microscopy Images: An Application Note — DOI: `10.1002/appl.70005`
+- Systematic Literature Review: Success, Failure, Risks, Benefits and Barriers Factors in the Adoption of Open Source Software — DOI: `10.1109/inciscos.2018.00054`
+- Challenges and Solutions of Free and Open Source Software Documentation: A Systematic Mapping Study — DOI: `10.5753/sbes.2024.3307`
+- Organizational Readiness Assessment for Open Source Software Adoption — DOI: `10.5220/0010497008000807`
+- LabOps: A flexible self-hosted workflow of open source tools for efficient collaboration within research laboratories — DOI: `10.1371/journal.pcbi.1013248`
+- How successfully is open-source research software adopted? Results and implications of surveying the users of a sensitivity analysis toolbox — DOI: `10.1016/j.envsoft.2019.104579`
+- The promises and perils of open source software release and usage by government – evidence from GitHub and literature — DOI: `10.1145/3598469.3598489`
+- The role of public actors in the business models of open source collaborative projects (free software): a case study in Cameroon and France — DOI: `10.69611/cahiers18-2-02`
+- A Web-based modeling tool for the SEMAT Essence theory of Software Engineering — DOI: `10.5334/jors.ad`
+- BotHawk: An Approach for Bots Detection in Open Source Software Projects
+- Adoption of free and open source software using alternative educational framework in college of applied sciences
+- SpecpolFlow: a new software package for spectropolarimetry using Python — DOI: `10.21105/joss.07891`
+- Treat societally impactful scientific insights as open-source software artifacts — DOI: `10.1109/icse-seis58686.2023.00020`
+- PyRDM: A Python-based library for automating the management and online publication of scientific software and data — DOI: `10.5334/jors.bj`
+- OSS PESTO: An Open Source Software Project Evaluation and Selection TOol
+- No Free Lunch: Research Software Testing in Teaching
+- IPPOG : Bridging the gap between science education at school and modern scientific research
+- Dependency Update Adoption Patterns in the Maven Software Ecosystem
+- Bionitio: demonstrating and facilitating best practices for bioinformatics command-line software — DOI: `10.1093/gigascience/giz109`
+- Introducing the FAIR Principles for research software — DOI: `10.1038/s41597-022-01710-x`
+- “Not everyone can use Git”: Research Software Engineers’ recommendations for scientist-centred software support (and what researchers really think of them) — DOI: `10.48420/17313215`
+- Reducing the Barrier to Entry of Complex Robotic Software: a MoveIt! Case Study — DOI: `10.48550/arxiv.1404.3785`
+- Extraordinary Command Line: Basic Data Editing Tools for Biologists Dealing with Sequence Data — DOI: `10.2174/1875036202013010137`
+- prolfquapp ─ A User-Friendly Command-Line Tool Simplifying Differential Expression Analysis in Quantitative Proteomics — DOI: `10.1021/acs.jproteome.4c00911`
+- The ABC of Software Engineering Research — DOI: `10.1145/3241743`
+- bioq: a unified, agent-native command-line interface to a fleet of AI drug-discovery methods — DOI: `10.64898/2026.09.03.749148`
+- Ten simple rules for making research software more robust — DOI: `10.1371/journal.pcbi.1005412`
+- Software Startups - A Research Agenda — DOI: `10.5277/e-inf160105`
+- Building Command-Line Tools with Python — DOI: `10.1201/9781003143482-6`
+- The Command Line — DOI: `10.1007/979-8-8688-2157-8_2`
+- Using the Command-Line Tools — DOI: `10.1007/978-1-4842-5293-2_5`
+- link2GI: Linking Geographic Information Systems, Remote Sensing and Other Command Line Tools — DOI: `10.32614/cran.package.link2gi`
+- UNIX Command Line Tools, — DOI: `10.4324/9780080546018-25`
+- Investigating Usability and User Experience of Software Testing Tools — DOI: `10.36227/techrxiv.23251076.v1`
+- Investigating Usability and User Experience of Software Testing Tools — DOI: `10.36227/techrxiv.23251076`
+- Command Line Tools — DOI: `10.1007/978-1-4842-2559-2_9`
+- PostgreSQL Command-Line and Graphical Tools — DOI: `10.1007/978-1-4302-0018-5_5`
+- Supplemental Information 1: Survey questions on command-line tools and <i>bioGUI</i> . — DOI: `10.7717/peerj.8111/supp-1`
+- Developers Perception of Peer Code Review in Research Software Development — DOI: `10.1007/s10664-021-10053-x`
+- Enhancing Understandability and Transparency of Research Software: Tracing Research to Code
+- Testing Research Software: An In-Depth Survey of Practices, Methods, and Tools
+- Challenges for Inclusion in Software Engineering: The Case of the Emerging Papua New Guinean Society — DOI: `10.1109/ms.2021.3098116`
+- AIBugHunter: A Practical Tool for Predicting, Classifying and Repairing Software Vulnerabilities
+- Research Artifacts in Secondary Studies: A Systematic Mapping in Software Engineering — DOI: `10.1016/j.infsof.2025.107830`
+- How does Object-Oriented Code Refactoring Influence Software Quality? Research Landscape and Challenges — DOI: `10.1016/j.jss.2019.110394`
+- Co-optimization of power line shutoff and restoration under high wildfire ignition risk
+- An Overview of Cyber Security Funding for Open Source Software — DOI: `10.1145/3786160.3788466`
+- Artificial Intelligence in Open Source Software Engineering: A Foundation for Sustainability — DOI: `10.48550/arxiv.2602.07071`
+- Ten Simple Rules for the Open Development of Scientific Software — DOI: `10.1371/journal.pcbi.1002802`
+- Working towards sustainable software for science: on the creation, maintenance and evaluation of open-source software
+- Evolving funding strategies for research software: Insights from an international survey of research funders — DOI: `10.1371/journal.pone.0329833`
+- Sustaining Research Software: an SC18 Panel — DOI: `10.48550/arxiv.1902.08942`
+- An Open Community-Driven Model For Sustainable Research Software: Sustainable Research Software Institute — DOI: `10.48550/arxiv.2308.14953`
+- Software sustainability: Research and practice from a software architecture viewpoint — DOI: `10.1016/j.jss.2017.12.026`
+- Ten simple rules for funding scientific open source software — DOI: `10.1371/journal.pcbi.1010627`
+- Sustaining Maintenance Labor for Healthy Open Source Software Projects through Human Infrastructure: A Maintainer Perspective — DOI: `10.1145/3674805.3686667`
+- Maintenance of hybrid software that combines open source and closed source components — DOI: `10.22215/etd/2011-08906`
+- Empirical Software Engineering Research on Free/Libre/Open Source Software — DOI: `10.1109/icsm.2006.25`
+- Open source software maintenance process framework — DOI: `10.1145/1083258.1083265`
+- Evaluation Framework for Open Source Software Maintenance — DOI: `10.1109/icsea.2006.261308`
+- Evolution in open source software: a case study — DOI: `10.1109/icsm.2000.883030`
+- Sociotechnical coordination and collaboration in open source software — DOI: `10.1109/icsm.2011.6080832`
+- Indirectly predicting the maintenance effort of open‐source software — DOI: `10.1002/smr.335`
+- Fault-Proneness of Open Source Software: Exploring its Relations to Internal Software Quality and Maintenance Process — DOI: `10.2174/1874107x01307010001`
+- The Economics of Open Source Software: An Empirical Analysis of Maintenance Costs — DOI: `10.1109/icsm.2007.4362652`
+- Extracting facts from open source software — DOI: `10.1109/icsm.2004.1357790`
+- Sustainable Software Ecosystems for Open Science — DOI: `10.6084/m9.figshare.790756`
+- Sustaining Maintenance Labor for Healthy Open Source Software Projects through Human Infrastructure: A Maintainer Perspective
+- A Proposal for the Measurement and Documentation of Research Software Sustainability in Interactive Metadata Repositories
+- Building a Sustainable Structure for Research Software Engineering Activities — DOI: `10.1109/escience.2018.00015`
+- An Environment for Sustainable Research Software in Germany and Beyond: Current State, Open Challenges, and Call for Action — DOI: `10.12688/f1000research.23224.1`
+- Mapping the research software sustainability space — DOI: `10.1109/escience.2018.00014`
+- Sustainable Research Software Hand-Over — DOI: `10.5334/jors.307`
+- A question of trust: can we build an evidence base to gain trust in systematic review automation technologies? — DOI: `10.1186/s13643-019-1062-0`
+- Data extraction methods for systematic review (semi)automation: A living systematic review — DOI: `10.12688/f1000research.51117.1`
+- A full systematic review was completed in 2 weeks using automation tools: a case study — DOI: `10.1016/j.jclinepi.2020.01.008`
+- Systematic review automation methods — DOI: `10.70675/044ffa34z5c9bz433az99c8z64697dcd28a2`
+- Still moving toward automation of the systematic review process: a summary of discussions at the third meeting of the International Collaboration for Automation of Systematic Reviews (ICASR) — DOI: `10.1186/s13643-019-0975-y`
+- Automation of systematic reviews of biomedical literature: a scoping review of studies indexed in PubMed — DOI: `10.1186/s13643-024-02592-3`
+- Data extraction methods for systematic review (semi)automation: Update of a living systematic review — DOI: `10.12688/f1000research.51117.3`
+- Moving toward the automation of the systematic review process: a summary of discussions at the second meeting of International Collaboration for the Automation of Systematic Reviews (ICASR) — DOI: `10.1186/s13643-017-0667-4`
+- Automation of systematic reviews of biomedical literature: a systematic review of studies indexed in PubMed — DOI: `10.21203/rs.3.rs-3425312/v1`
+- Trustworthiness of Systematic Review Automation An interview at Coventry University — DOI: `10.1101/2023.12.14.23299933`
+- Digital transformation of construction quality management: Systematic review of adoption and governance — DOI: `10.1016/j.autcon.2026.107166`
+- When Automation Concentrates Judgment: A Systematic Review and Meta-analysis of Residual Decision Difficulty and Oversight Burden Following AI Adoption — DOI: `10.2139/ssrn.7244698`
+- Reducing waste and increasing value through embedded replicability and reproducibility in systematic review process and automation — DOI: `10.1016/j.jclinepi.2019.04.008`
+- Streamlining Data Wrangling Processes through Automation and Tooling — DOI: `10.21275/sr24418101747`
+- Factors Influencing the Adoption of Contact Tracing Applications: Protocol for a Systematic Review — DOI: `10.37473/fic/10.2196/28961`
+- Factors Influencing the Adoption of Contact Tracing Applications: Protocol for a Systematic Review — DOI: `10.37473/dac/10.2196/28961`
+- Review for "Transparency without reproducibility? Open science practices in systematic reviews from 2014 to 2024: a cohort study of 300 systematic reviews" — DOI: `10.1002/cesm.70096/v1/review1`
+- Review for "Transparency without reproducibility? Open science practices in systematic reviews from 2014 to 2024: a cohort study of 300 systematic reviews" — DOI: `10.1002/cesm.70096/v1/review2`
+- Assembly tooling improvements — DOI: `10.1108/aa.2002.03322bad.011`
+- Reliability of Delivery-delay Prediction on DataCo: A Systematic Review and Reproducibility Audit — DOI: `10.2139/ssrn.7599162`
+- A Systematic Literature Review of Automated Techniques for Functional GUI Testing of Mobile Applications
+- A Systematic Review of Computational Thinking in Early Ages — DOI: `10.1080/09669760.2022.2107491`
+- Reformulation Techniques for Automated Planning: A Systematic Review — DOI: `10.1017/s0269888923000097`
+- ProfOlaf: Semi-Automated Tool for Systematic Literature Reviews
+- Machine Learning Applications to Diffuse Reflectance Spectroscopy in Optical Diagnosis; A Systematic Review
+- Drivers' attention detection: a systematic literature review
+- Trust and Trustworthiness from Human-Centered Perspective in HRI -- A Systematic Literature Review — DOI: `10.3390/electronics14081557`
+- Computational analysis of the language of pain: a systematic review
+- Prompt-Driven Code Summarization: A Systematic Literature Review
+- Non-invasive Techniques for Flow Rate Measurement in Water Pipes: Protocol for a Systematic Review
+- Exploring onboarding success, organizational fit, and turnover intention of software professionals — DOI: `10.1016/j.jss.2019.110442`
+- Understanding Newcomer Activities Prior to Onboarding Open Source Software (OSS) Projects on GitHub — DOI: `10.34413/dr.02037`
+- An LLM Assistant for Software Project Onboarding — DOI: `10.1145/3696630.3728719`
+- ONBOARDING XMOOC PROJECT TEAMS
+- Analysis of the Role of GitHub Discussions as a Tool for Onboarding Newcomers in Open Source Software — DOI: `10.5753/jserd.2025.6090`
+- Understanding community participation and engagement in open source software Projects: A systematic mapping study — DOI: `10.1016/j.jksuci.2020.10.020`
+- Being a Mentor in open source projects — DOI: `10.1186/s13174-021-00140-z`
+- Documentation for FY2003 GPRA Metrics — DOI: `10.2172/1216523`
+- Free open source communities sustainability: Does it make a difference in software quality? — DOI: `10.1007/s10664-024-10529-6`
+- Personalized First Issue Recommender for Newcomers in Open Source Projects — DOI: `10.1109/ase56229.2023.00158`
+- A Software Engineering Perspective on Documentation Quality: Modeling Its Impact on Newcomer Onboarding in Open-Source Projects — DOI: `10.2139/ssrn.6864982`
+- Hello Project! — DOI: `10.25080/hxxk4957`
+- Community Call - rOpenSci Software Review and Onboarding — DOI: `10.59350/w8zde-v9f20`
+- Community Call - rOpenSci Software Review and Onboarding — DOI: `10.59350/fhn39-30r74`
+- Technological and Community Attributes — DOI: `10.7551/mitpress/8413.003.0009`
+- Social Network Structure as a Critical Success Condition for Open Source Software Project Communities — DOI: `10.25148/etd.fi08081525`
+- Technological and Community Attributes — DOI: `10.7551/mitpress/9780262017251.003.0004`
+- Setting up for success — DOI: `10.17161/ci3t.59117`
+- The Impact of Project Initiators on Open Source Software Project Success — DOI: `10.4018/978-1-7998-9158-1.ch012`
+- The Araucaria Project: Improving the cosmic distance scale
+- CoReCon: an open, community-powered collection of Reionization constraints — DOI: `10.21105/joss.05407`
+- The Empirical Commit Frequency Distribution of Open Source Projects — DOI: `10.1145/2491055.2491073`
+- Onboarding in Open Source Software Projects: A Preliminary Analysis — DOI: `10.1109/icgsew.2013.8`
+- OMICtools: a community-driven search engine for biological data analysis
+- Use of Source Code Similarity Metrics in Software Defect Prediction
+- How to characterize the health of an Open Source Software project? A snowball literature review of an emerging practice
+- Docling: An Efficient Open-Source Toolkit for AI-driven Document Conversion
+- Bioconda: sustainable and comprehensive software distribution for the life sciences — DOI: `10.1038/s41592-018-0046-7`
+- R package DCchoice for dichotomous choice contingent valuation: a contribution to open scientific software and its impact — DOI: `10.1007/s42081-022-00171-1`
+- Introduction to software packages — DOI: `10.6028/nbs.sp.500-114`
+- Short communication: Landlab v2.0: a software package for Earth surface dynamics — DOI: `10.5194/esurf-8-379-2020`
+- CYTools: A Software Package for Analyzing Calabi-Yau Manifolds — DOI: `10.48550/arxiv.2211.03823`
+- Software to support expert elicitation : An exploratory study of existing software packages
+- The major barriers in global software product development for Finnish companies
+- Barriers to Adopting Advanced Work Packaging (AWP) in Construction — DOI: `10.3390/buildings14041032`
+- Component Technology for High-Performance Scientific Simulation Software — DOI: `10.1007/978-0-387-35407-1_5`
+- A Tiered Approach to Scientific Software Quality Practices.
+- Review for "Scikit-package - software packaging standards and roadmap for sharing reproducible scientific software" — DOI: `10.1039/d6dd00121a/v1/review1`
+- Review for "Scikit-package - software packaging standards and roadmap for sharing reproducible scientific software" — DOI: `10.1039/d6dd00121a/v2/review1`
+- Review for "Scikit-package - software packaging standards and roadmap for sharing reproducible scientific software" — DOI: `10.1039/d6dd00121a/v1/review2`
+- Decision letter for "Scikit-package - software packaging standards and roadmap for sharing reproducible scientific software" — DOI: `10.1039/d6dd00121a/v1/decision1`
+- Decision letter for "Scikit-package - software packaging standards and roadmap for sharing reproducible scientific software" — DOI: `10.1039/d6dd00121a/v2/decision1`
+- Decision letter for "Scikit-package - software packaging standards and roadmap for sharing reproducible scientific software" — DOI: `10.1039/d6dd00121a/v3/decision1`
+- Guidelines for the specification and installation of vehicle security barriers — DOI: `10.3403/30135104u`
+- Identification of Barriers in Production Line Installation for Packaging Industry Using Delphi Method — DOI: `10.1166/asl.2013.4743`
+- Guidelines for the specification and installation of vehicle security barriers — DOI: `10.3403/30135104`
+- IEEE Standard for Electrical Installation of Packaging Machinery and Associated Equipment — DOI: `10.1109/ieeestd.1980.79294`
+- On the Diversity of Software Package Popularity Metrics: An Empirical Study of npm
+- LLMoxie: Exploring Agentic AI for Scientific Software Development
+- Software Engineering Practices for Scientific Software Development: A Systematic Mapping Study
+- Adapting Installation Instructions in Rapidly Evolving Software Ecosystems
+- Morescient GAI for Software Engineering (Extended Version) — DOI: `10.1145/3709354`
+- The Present and Future of Bots in Software Engineering — DOI: `10.1109/ms.2022.3176864`
+- Embedding data provenance into the Learning Health System to facilitate reproducible research — DOI: `10.1002/lrh2.10019`
+- Templates as a method for implementing data provenance in decision support systems — DOI: `10.1016/j.jbi.2016.10.022`
+- “If they don’t tell us what they do with it, why would we trust them?” Trust, transparency and benefit-sharing in Smart Farming — DOI: `10.1016/j.njas.2018.11.002`
+- It’s real, trust me! Establishing supply chain provenance using blockchain — DOI: `10.1016/j.bushor.2019.01.008`
+- A Review of Blockchain-Based Expert Systems for Enhancing Data Integrity, Transparency, and Trust in Healthcare Systems — DOI: `10.65752/49jx4409`
+- Data Provenance in Biomedical Research: Scoping Review — DOI: `10.2196/42289`
+- Blockchain Adoption in Marketing Analytics: Enhancing Transparency, Data Integrity, and Operational Efficiency
+- Global Adoption and Impact of Blockchain Technology in Government: Enhancing Transparency, Efficiency, and Trust in Public Services — DOI: `10.3390/info17030235`
+- Transparency, Trust, and Security Needs for the Design of Digital News Authentication Tools — DOI: `10.1145/3579534`
+- Trust, Privacy and Transparency with Blockhain Technology in Logistics.
+- Trust, Transparency, and the ML Adoption Gap in Geoscience A Case for Earned Skepticism and Better-Designed Tools — DOI: `10.2139/ssrn.6938138`
+- User Adoption of Decentralized Parametric Insurance: An Extended UTAUT2 Model with Trust and Transparency — DOI: `10.2139/ssrn.7419898`
+- A fuzzy model for calculating workflow trust using provenance data — DOI: `10.1145/1341811.1341823`
+- FROM TRANSPARENCY TO TRUST: MITIGATING PERCEIVED AI BIAS TO DRIVE ADOPTION — DOI: `10.48009/2_iis_2026_136`
+- E-Government Services Adoption — DOI: `10.4018/ijegr.2018070102`
+- Decoding Trust: The Influence of Types of Explanations in Explainable Artificial Intelligence Adoption on Public Perceptions of Transparency, Efficiency, and Trust — DOI: `10.2139/ssrn.6589389`
+- Transparency, provenance and collections as data — DOI: `10.18352/lq.10371`
+- WILL STUDENTS TRUST AI WITH THEIR MONEY? Examining Youth Trust, Adoption Intentions, and Perceptions of AI-Based Financial Tools — DOI: `10.2139/ssrn.7456499`
+- Data Provenance and Trust — DOI: `10.2481/dsj.grdi-010`
+- Trust, Privacy, and Acceptance Across Data-Provenance Conditions in AI-Generated Health Recommendations: Formative Within-Participant Study (Preprint) — DOI: `10.2196/preprints.113791`
+- Data Encoding for Byzantine-Resilient Distributed Optimization
+- Byzantine-Resilient SGD in High Dimensions on Heterogeneous Data
+- Trust and Reliance in XAI -- Distinguishing Between Attitudinal and Behavioral Measures
+- Constraints on dark energy from H II starburst galaxy apparent magnitude versus redshift data — DOI: `10.1016/j.physletb.2012.07.011`
+- TerraGen: A Unified Multi-Task Layout Generation Framework for Remote Sensing Data Augmentation
+- How Researchers Navigate Accountability, Transparency, and Trust When Using AI Tools in Early-Stage Research: A Think-Aloud Study
+- Analytic Provenance Datasets: A Data Repository of Human Analysis Activity and Interaction Logs
+- AeroGen: Enhancing Remote Sensing Object Detection with Diffusion-Driven Data Generation
+- Small Data Explainer -- The impact of small data methods in everyday life
+- ZIRCON: Zero-watermarking-based approach for data integrity and secure provenance in IoT networks
+- A Reproducible and Extensible Benchmark of Supervised Cell Type Annotation Tools for Cytometry Data — DOI: `10.64898/2026.06.02.729500`
+- Systematic benchmarking of omics computational tools — DOI: `10.1038/s41467-019-09406-4`
+- AutoDFBench 1.0: A benchmarking framework for digital forensic tool testing and generated code evaluation — DOI: `10.1016/j.fsidi.2026.302055`
+- AutoDFBench 1.0: A Benchmarking Framework for Digital Forensic Tool Testing and Generated Code Evaluation — DOI: `10.48550/arxiv.2512.16965`
+- BrowseComp-Plus: A More Fair and Transparent Evaluation Benchmark of Deep-Research Agent — DOI: `10.48550/arxiv.2508.06600`
+- A reproducible POI recommendation framework: Works mapping and benchmark evaluation — DOI: `10.1016/j.is.2022.102019`
+- AutoDFBench 1.0: A Benchmarking Framework for Digital Forensic Tool Testing and Generated Code Evaluation
+- stable-worldmodel: A Platform for Reproducible World Modeling Research and Evaluation — DOI: `10.48550/arxiv.2605.21800`
+- An evaluation of the reproducibility of capacitive sensor based in-plane permeability measurements: A benchmarking study — DOI: `10.3144/expresspolymlett.2015.14`
+- A benchmark-based evaluation of search-based crash reproduction — DOI: `10.1007/s10664-019-09762-1`
+- Benchmark Responses — DOI: `10.1306/13211295a23414`
+- AIGVE-Tool: AI-Generated Video Evaluation Toolkit with Multifaceted Benchmark — DOI: `10.5220/0014252500004084`
+- CompToolBench: A Compositional Benchmark for Fine-Grained Tool-Use Evaluation of Large Language Models — DOI: `10.2139/ssrn.6369558`
+- Table 4: Performance evaluation of the proposed DL models in comparison with ML methods and benchmark. — DOI: `10.7717/peerjcs.515/table-4`
+- Mutual Fund Performance Evaluation: A Comparison of Benchmarks and Benchmark Comparisons — DOI: `10.3386/w1721`
+- Table 4: Performance comparison of the ComputeStack, the Evaluation Tree and the C++ implementations of Benchmark 1 model. — DOI: `10.7717/peerj-cs.160/table-4`
+- RunMyCode.org: A Research-Reproducibility Tool for Computational Sciences — DOI: `10.1201/9781315373461-14`
+- UKRN Statement on Responsible Research Evaluation — DOI: `10.31219/osf.io/4pqwv`
+- Nontargeted Analysis Study Reporting Tool: A Framework to Improve Research Transparency and Reproducibility — DOI: `10.1021/acs.analchem.1c02621.s003`
+- A comparison of different algorithms for cylindricity evaluation — DOI: `10.1016/0020-7357(82)90006-3`
+- Normalization of peer-evaluation measures of group research quality across academic disciplines — DOI: `10.3152/095820211x12941371876625`
+- AIRCC-Clim: a user-friendly tool for generating regional probabilistic climate change scenarios and risk measures
+- Retrieval Models Aren't Tool-Savvy: Benchmarking Tool Retrieval for Large Language Models
+- A Human-Grounded Evaluation Benchmark for Local Explanations of Machine Learning
+- CORE-Bench: Fostering the Credibility of Published Research Through a Computational Reproducibility Agent Benchmark
+- SECQUE: A Benchmark for Evaluating Real-World Financial Analysis Capabilities
+- Concentration of research funding leads to decreasing marginal returns — DOI: `10.1093/reseval/rvw007`
+- XFeat Revisited: Reproducibility and Evaluation of a Lightweight Image Matcher
+- Hallucination-Free? Assessing the Reliability of Leading AI Legal Research Tools
+- Benchmark Radar: A Living Database and Search Engine for AI Benchmarks and Evaluation
+- Investigating How Governance Shapes the Health of Open Source Software Projects — DOI: `10.1145/3774748.3787757`
+- Governance Matters: Lessons From Restructuring the Data.Table OSS Project — DOI: `10.1109/icsme64153.2025.00067`
+- Exploring disparities in open source contribution experiences through the diversity lens of race — DOI: `10.1016/j.jss.2026.113030`
+- Open-Source Software Development and Community Management : Benefits and Challenges, Community Management Strategies
+- Retaining and managing episodic contributors in free/libre/open source software communities — DOI: `10.34961/3295`
+- CROSS: A Contributor-Project Interaction Lifecycle Model for Open Source Software — DOI: `10.24251/hicss.2025.887`
+- Governance of Urban Sustainability Transitions — DOI: `10.1007/978-3-030-67130-3_7`
+- Sustainability of Free/Libre Open Source Projects: A Longitudinal Study — DOI: `10.17705/1jais.00244`
+- "AI Slop is DDoSing Open Source": Understanding the Impact of AI-Generated Contributions on Open Source Sustainability — DOI: `10.48550/arxiv.2607.04003`
+- Transformation of open-source innovation governance of large models — DOI: `10.3724/j.issn.1000-3045.20250812001`
+- Open Source Governance Practices: A Path to Improving Sustainability — DOI: `10.1109/mc.2026.3667269`
+- Contributor Agreements — DOI: `10.1093/oso/9780198862345.003.0004`
+- Understanding contributor behaviour within Free/Libre/Open Source Software communities: A socialization perspective — DOI: `10.26686/wgtn.17007352`
+- Code Forking, Governance, and Sustainability in Open Source Software — DOI: `10.22215/timreview/644`
+- The Determinants of Output Per Contributor in Open Source Projects: An Empirical Examination — DOI: `10.2139/ssrn.515282`
+- Sustainability and Governance in Developing Open Source Projects as Processes of In-Becoming — DOI: `10.22215/timreview/649`
+- Synergy of Patent and Open-Source-Driven Sustainable Climate Governance under Green AI: A Case Study of TinyML — DOI: `10.3390/su151813779`
+- Sustainability and Open Source — DOI: `10.1093/oso/9780198862345.003.0014`
+- Common Pool Resource in Open-Source Software Projects: The Contributor Energy Framework — DOI: `10.31235/osf.io/wmj3q`
+- Examining governance of open source software foundations — DOI: `10.22215/etd/2012-06996`
+- Bio-inspired Synthetic Ivory as a Sustainable Material for Piano Keys — DOI: `10.3390/su11236538`
+- AI Governance and Ethics Framework for Sustainable AI and Sustainability
+- Addressing OSS Community Managers' Challenges in Contributor Retention
+- Open Source and Sustainability: the Role of Universities
+- New Era of Artificial Intelligence in Education: Towards a Sustainable Multifaceted Revolution
+- Regulating the Machine Contributor: Governance and Policy Alignment in Open Source
+- Advanced Drone Swarm Security by Using Blockchain Governance Game — DOI: `10.3390/math10183338`
+- CROSS: A Contributor-Project Interaction Lifecycle Model for Open Source Software
+- Cost-Aware Logging: Measuring the Financial Impact of Excessive Log Retention in Small-Scale Cloud Deployments
+- User-Centered Design in Agile Software Development
+- Integrating Both User-Centered Design and Creative Practices into Agile Development — DOI: `10.1007/978-3-319-32165-3_11`
+- User Centered User Interface Design: Best Practices and Trends — DOI: `10.61395/victec.v4i7.128`
+- Agile Human-Centered Software Engineering — DOI: `10.14236/ewic/hci2007.17`
+- Common principles and best practices for engineering microbiomes — DOI: `10.1038/s41579-019-0255-9`
+- An examination of software engineering work practices — DOI: `10.1145/1925805.1925815`
+- A Requirement Engineering Approach to User-Centered Design — DOI: `10.1088/1742-6596/1453/1/012032`
+- Multi-user centered design: acceptance, user experience, user research and user testing — DOI: `10.1080/1463922x.2023.2166623`
+- SOFTWARE ENGINEERING BEST PRACTICES: TRENDS AND CHALLENGES — DOI: `10.71465/csb95`
+- Effective work practices for software engineering — DOI: `10.1145/1029997.1030003`
+- User Requirements — DOI: `10.1017/9781009051811.004`
+- Software User Documentation — DOI: `10.1109/9781118156629.ch4`
+- Usability and User Centered Design in Scientific Software Development — DOI: `10.56726/irjmets49911`
+- Questioning Design: Toward Methods for Supporting User-Centered Software Engineering — DOI: `10.4324/9780203763148-10`
+- Design and Architecture — DOI: `10.1017/9781009051811.007`
+- Best Practices for Improving User Interface Design — DOI: `10.5121/ijsea.2019.10505`
+- User-Centered Design — DOI: `10.1081/e-ese-120044204`
+- Patterns of Integration: Bringing User Centered Design into the Software Development Lifecycle — DOI: `10.1007/1-4020-4113-6_15`
+- User-Centered Design of Mobile Geo-Applications — DOI: `10.4018/978-1-61520-655-1.ch014`
+- Perspective of Software Engineering Researchers on Machine Learning Practices Regarding Research, Review, and Education — DOI: `10.1007/s10664-026-10926-z`
+- Nine Best Practices for Research Software Registries and Repositories: A Concise Guide
+- Cognitive Biases in Software Engineering: A Systematic Mapping Study — DOI: `10.1109/tse.2018.2877759`
+- The Future of AI-Driven Software Engineering — DOI: `10.1145/3715003`
+- Software Engineering in Civic Tech: A Case Study about Code for Ireland — DOI: `10.1109/icse-seis.2019.00013`
+- Nmag micromagnetic simulation tool - software engineering lessons learned — DOI: `10.1145/2897676.2897677`
+- An RSE Group Model: Operational and Organizational Approaches From Princeton University's Central Research Software Engineering Group
+- What Does a Software Engineer Look Like? Exploring Societal Stereotypes in LLMs
+
+## Failures
+
+- semantic-scholar / "usability barriers research software scientists command line tools": source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)
+- semantic-scholar / "sustainable research software funding maintenance open source": source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)
+- semantic-scholar / "reproducibility tooling adoption systematic review automation": source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)
+- semantic-scholar / "open source project success metrics community documentation onboarding": source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)
+- semantic-scholar / "scientific software packaging distribution installation barriers": source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)
+- semantic-scholar / "trust provenance transparency research data tools adoption": source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)
+- semantic-scholar / "benchmark evaluation research tool comparison reproducibility": source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)
+- semantic-scholar / "open source sustainability governance contributor retention": source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)
+- semantic-scholar / "research software engineering best practices user centered design": source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)

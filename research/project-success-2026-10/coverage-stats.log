@@ -1,0 +1,21 @@
+Source coverage for research/project-success-2026-10
+  arxiv                    100 records (10 files)
+  crossref                 100 records (10 files)
+  openalex                 100 records (10 files)
+  semantic-scholar         10 records (1 files)
+
+Total unique DOIs: 225
+Library (results.jsonl): 310 records
+
+Failed queries (9):
+  [semantic-scholar] "usability barriers research software scientists command line tools" — source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)
+  [semantic-scholar] "sustainable research software funding maintenance open source" — source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)
+  [semantic-scholar] "reproducibility tooling adoption systematic review automation" — source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)
+  [semantic-scholar] "open source project success metrics community documentation onboarding" — source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)
+  [semantic-scholar] "scientific software packaging distribution installation barriers" — source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)
+  [semantic-scholar] "trust provenance transparency research data tools adoption" — source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)
+  [semantic-scholar] "benchmark evaluation research tool comparison reproducibility" — source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)
+  [semantic-scholar] "open source sustainability governance contributor retention" — source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)
+  [semantic-scholar] "research software engineering best practices user centered design" — source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)
+
+Batch checkpoint: 31 completed, 9 failed, 0 pending pair(s)

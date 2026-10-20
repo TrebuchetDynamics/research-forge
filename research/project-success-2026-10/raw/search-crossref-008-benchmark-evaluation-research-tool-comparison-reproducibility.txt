@@ -1,0 +1,10 @@
+10.1306/13211295a23414	Benchmark Responses
+10.5220/0014252500004084	AIGVE-Tool: AI-Generated Video Evaluation Toolkit with Multifaceted Benchmark
+10.2139/ssrn.6369558	CompToolBench: A Compositional Benchmark for Fine-Grained Tool-Use Evaluation of Large Language Models
+10.7717/peerjcs.515/table-4	Table 4: Performance evaluation of the proposed DL models in comparison with ML methods and benchmark.
+10.3386/w1721	Mutual Fund Performance Evaluation: A Comparison of Benchmarks and Benchmark Comparisons
+10.7717/peerj-cs.160/table-4	Table 4: Performance comparison of the ComputeStack, the Evaluation Tree and the C++ implementations of Benchmark 1 model.
+10.1201/9781315373461-14	RunMyCode.org: A Research-Reproducibility Tool for Computational Sciences
+10.31219/osf.io/4pqwv	UKRN Statement on Responsible Research Evaluation
+10.1021/acs.analchem.1c02621.s003	Nontargeted Analysis Study Reporting Tool: A Framework to Improve Research Transparency and Reproducibility
+10.1016/0020-7357(82)90006-3	A comparison of different algorithms for cylindricity evaluation

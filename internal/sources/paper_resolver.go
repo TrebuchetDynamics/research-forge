@@ -101,6 +101,11 @@ func ResolvePaper(ctx context.Context, httpClient HTTPClient, input string) (Pap
 		Sources:  []ResolutionSource{},
 		Resolved: false,
 	}
+	// A blank query matches an arbitrary first result, so refuse it before any
+	// connector is called.
+	if input == "" {
+		return result, fmt.Errorf("paper identifier is required")
+	}
 
 	// Keep explicitly injected clients intact; otherwise route each connector to
 	// its configured endpoint instead of sending requests with an empty base URL.

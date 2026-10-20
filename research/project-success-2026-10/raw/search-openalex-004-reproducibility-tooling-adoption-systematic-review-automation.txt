@@ -1,0 +1,10 @@
+10.1186/s13643-019-1062-0	A question of trust: can we build an evidence base to gain trust in systematic review automation technologies?
+10.12688/f1000research.51117.1	Data extraction methods for systematic review (semi)automation: A living systematic review
+10.1016/j.jclinepi.2020.01.008	A full systematic review was completed in 2 weeks using automation tools: a case study
+10.70675/044ffa34z5c9bz433az99c8z64697dcd28a2	Systematic review automation methods
+10.1186/s13643-019-0975-y	Still moving toward automation of the systematic review process: a summary of discussions at the third meeting of the International Collaboration for Automation of Systematic Reviews (ICASR)
+10.1186/s13643-024-02592-3	Automation of systematic reviews of biomedical literature: a scoping review of studies indexed in PubMed
+10.12688/f1000research.51117.3	Data extraction methods for systematic review (semi)automation: Update of a living systematic review
+10.1186/s13643-017-0667-4	Moving toward the automation of the systematic review process: a summary of discussions at the second meeting of International Collaboration for the Automation of Systematic Reviews (ICASR)
+10.21203/rs.3.rs-3425312/v1	Automation of systematic reviews of biomedical literature: a systematic review of studies indexed in PubMed
+10.1101/2023.12.14.23299933	Trustworthiness of Systematic Review Automation An interview at Coventry University

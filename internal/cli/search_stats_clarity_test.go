@@ -230,3 +230,37 @@ func TestSearchStatsJSONReportsMalformedRecords(t *testing.T) {
 		t.Errorf("malformedRecords = %v, want 2", data["malformedRecords"])
 	}
 }
+
+// A path that exists but is not a directory must fail like every other
+// results.jsonl consumer, not produce a plausible zero-coverage report.
+func TestSearchStatsRejectsNonDirectoryPath(t *testing.T) {
+	file := filepath.Join(t.TempDir(), "notadir")
+	if err := os.WriteFile(file, []byte("x"), 0o644); err != nil {
+		t.Fatalf("write file: %v", err)
+	}
+
+	stdout, stderr := new(bytes.Buffer), new(bytes.Buffer)
+	code := Execute([]string{"search", "stats", "--dir", file}, stdout, stderr)
+	if code != 1 {
+		t.Fatalf("exit code = %d, want 1; stdout = %s", code, stdout.String())
+	}
+	combined := stdout.String() + stderr.String()
+	if !strings.Contains(combined, "not a directory") {
+		t.Errorf("error does not explain the path: %s", combined)
+	}
+}
+
+// A directory that does not exist stays a lenient zero report: it is how a
+// mistyped or not-yet-created topic dir is inspected.
+func TestSearchStatsKeepsMissingDirectoryLenient(t *testing.T) {
+	dir := filepath.Join(t.TempDir(), "missing")
+
+	stdout, stderr := new(bytes.Buffer), new(bytes.Buffer)
+	code := Execute([]string{"search", "stats", "--dir", dir}, stdout, stderr)
+	if code != 0 {
+		t.Fatalf("exit code = %d, want 0; stdout = %s stderr = %s", code, stdout.String(), stderr.String())
+	}
+	if !strings.Contains(stdout.String(), "Library (results.jsonl): 0 records") {
+		t.Errorf("missing dir should report zero records: %s", stdout.String())
+	}
+}

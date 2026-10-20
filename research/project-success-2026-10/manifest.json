@@ -1,0 +1,94 @@
+{
+  "budget": {
+    "depth": "standard",
+    "max_query_variants": 10,
+    "max_sources": 5,
+    "max_api_calls": 50,
+    "low_yield_threshold": 2,
+    "saturation_queries": 3,
+    "max_consecutive_errors": 5
+  },
+  "stop_reason": "completed",
+  "requests_used": 40,
+  "coverage": {
+    "unique_records": 294,
+    "queries": [
+      {
+        "query": "research software adoption success factors open source scientific tools",
+        "new_unique": 40,
+        "complete": true
+      },
+      {
+        "query": "usability barriers research software scientists command line tools",
+        "new_unique": 28,
+        "complete": false
+      },
+      {
+        "query": "sustainable research software funding maintenance open source",
+        "new_unique": 27,
+        "complete": false
+      },
+      {
+        "query": "reproducibility tooling adoption systematic review automation",
+        "new_unique": 30,
+        "complete": false
+      },
+      {
+        "query": "open source project success metrics community documentation onboarding",
+        "new_unique": 27,
+        "complete": false
+      },
+      {
+        "query": "scientific software packaging distribution installation barriers",
+        "new_unique": 26,
+        "complete": false
+      },
+      {
+        "query": "trust provenance transparency research data tools adoption",
+        "new_unique": 30,
+        "complete": false
+      },
+      {
+        "query": "benchmark evaluation research tool comparison reproducibility",
+        "new_unique": 30,
+        "complete": false
+      },
+      {
+        "query": "open source sustainability governance contributor retention",
+        "new_unique": 29,
+        "complete": false
+      },
+      {
+        "query": "research software engineering best practices user centered design",
+        "new_unique": 27,
+        "complete": false
+      }
+    ],
+    "consecutive_low_yield": 0
+  },
+  "consecutive_errors": 0,
+  "schemaVersion": "1",
+  "createdAt": "2026-10-20T01:56:08Z",
+  "queries": [
+    "research software adoption success factors open source scientific tools",
+    "usability barriers research software scientists command line tools",
+    "sustainable research software funding maintenance open source",
+    "reproducibility tooling adoption systematic review automation",
+    "open source project success metrics community documentation onboarding",
+    "scientific software packaging distribution installation barriers",
+    "trust provenance transparency research data tools adoption",
+    "benchmark evaluation research tool comparison reproducibility",
+    "open source sustainability governance contributor retention",
+    "research software engineering best practices user centered design"
+  ],
+  "sources": [
+    "openalex",
+    "crossref",
+    "semantic-scholar",
+    "arxiv"
+  ],
+  "limit": 10,
+  "results": 310,
+  "deduped": 294,
+  "failures": 9
+}

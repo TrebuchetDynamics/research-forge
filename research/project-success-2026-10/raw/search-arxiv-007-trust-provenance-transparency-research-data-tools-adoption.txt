@@ -1,0 +1,10 @@
+	Data Encoding for Byzantine-Resilient Distributed Optimization
+	Byzantine-Resilient SGD in High Dimensions on Heterogeneous Data
+	Trust and Reliance in XAI -- Distinguishing Between Attitudinal and Behavioral Measures
+10.1016/j.physletb.2012.07.011	Constraints on dark energy from H II starburst galaxy apparent magnitude versus redshift data
+	TerraGen: A Unified Multi-Task Layout Generation Framework for Remote Sensing Data Augmentation
+	How Researchers Navigate Accountability, Transparency, and Trust When Using AI Tools in Early-Stage Research: A Think-Aloud Study
+	Analytic Provenance Datasets: A Data Repository of Human Analysis Activity and Interaction Logs
+	AeroGen: Enhancing Remote Sensing Object Detection with Diffusion-Driven Data Generation
+	Small Data Explainer -- The impact of small data methods in everyday life
+	ZIRCON: Zero-watermarking-based approach for data integrity and secure provenance in IoT networks

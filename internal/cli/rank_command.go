@@ -12,7 +12,9 @@ import (
 )
 
 func executeRank(args []string, stdout, stderr io.Writer, opts globalOptions) int {
-	if len(args) == 0 {
+	if len(args) == 0 || strings.HasPrefix(args[0], "-") {
+		// A flag where the topic belongs is a usage error: ranking the literal
+		// "--limit" would present a garbage result as a real ranking.
 		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge rank <topic> [--sources openalex,crossref,semantic-scholar] [--limit N] [--out <file>] [--graph <graph.json>]")
 	}
 	request := research.RankOptions{Topic: args[0], Limit: 20, Project: opts.Project}

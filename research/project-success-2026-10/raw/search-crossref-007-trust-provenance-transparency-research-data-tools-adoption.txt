@@ -1,0 +1,10 @@
+10.2139/ssrn.6938138	Trust, Transparency, and the ML Adoption Gap in Geoscience A Case for Earned Skepticism and Better-Designed Tools
+10.2139/ssrn.7419898	User Adoption of Decentralized Parametric Insurance: An Extended UTAUT2 Model with Trust and Transparency
+10.1145/1341811.1341823	A fuzzy model for calculating workflow trust using provenance data
+10.48009/2_iis_2026_136	FROM TRANSPARENCY TO TRUST: MITIGATING PERCEIVED AI BIAS TO DRIVE ADOPTION
+10.4018/ijegr.2018070102	E-Government Services Adoption
+10.2139/ssrn.6589389	Decoding Trust: The Influence of Types of Explanations in Explainable Artificial Intelligence Adoption on Public Perceptions of Transparency, Efficiency, and Trust
+10.18352/lq.10371	Transparency, provenance and collections as data
+10.2139/ssrn.7456499	WILL STUDENTS TRUST AI WITH THEIR MONEY? Examining Youth Trust, Adoption Intentions, and Perceptions of AI-Based Financial Tools
+10.2481/dsj.grdi-010	Data Provenance and Trust
+10.2196/preprints.113791	Trust, Privacy, and Acceptance Across Data-Provenance Conditions in AI-Generated Health Recommendations: Formative Within-Participant Study (Preprint)

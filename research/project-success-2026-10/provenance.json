@@ -1,0 +1,86 @@
+{
+  "schema_version": "2",
+  "question": "How can ResearchForge become a better and more widely adopted research tool?",
+  "rforge_version": {
+    "version": "dev",
+    "commit": "a743265",
+    "date": "2026-10-20T01:16:43Z"
+  },
+  "timestamp": "2026-10-20T01:58:29.805995+00:00",
+  "depth": "standard",
+  "queries": [
+    "research software adoption success factors open source scientific tools",
+    "usability barriers research software scientists command line tools",
+    "sustainable research software funding maintenance open source",
+    "reproducibility tooling adoption systematic review automation",
+    "open source project success metrics community documentation onboarding",
+    "scientific software packaging distribution installation barriers",
+    "trust provenance transparency research data tools adoption",
+    "benchmark evaluation research tool comparison reproducibility",
+    "open source sustainability governance contributor retention",
+    "research software engineering best practices user centered design"
+  ],
+  "sources": [
+    "openalex",
+    "arxiv",
+    "crossref",
+    "semantic-scholar"
+  ],
+  "search_stats": {
+    "openalex": 100,
+    "arxiv": 100,
+    "crossref": 100,
+    "semantic-scholar": 10,
+    "total_unique_dois": 225
+  },
+  "citation_expand_attempted": [
+    "10.2139/ssrn.6864982",
+    "10.1145/3774748.3787757"
+  ],
+  "citation_expand_succeeded": [
+    "10.2139/ssrn.6864982",
+    "10.1145/3774748.3787757"
+  ],
+  "outputs": [
+    {
+      "path": "report.md",
+      "sha256": "04395aa4e36b4680c645dfed44bbca41ef75c144965aa7150ae6a89a72ce0cbe"
+    },
+    {
+      "path": "queries.txt",
+      "sha256": "e08e920ee7977ba6c4ae2828d65186a9113daf290774b3bf1528c95faa31ec9b"
+    },
+    {
+      "path": "coverage-stats.log",
+      "sha256": "ac87ea7ac7891da3eb03c21fb8d4735d29210a2d0e41573af5dbf7d9fc00ffde"
+    },
+    {
+      "path": "citation-graph-10.2139_ssrn.6864982.json",
+      "sha256": "54c0f75ec9445ba224c247f3696cb937383e27af84d78be1e56743b71bacd928"
+    },
+    {
+      "path": "citation-graph-10.1145_3774748.3787757.json",
+      "sha256": "26e754878143b70fc016a8ab48fab8e36e53774243849d6cf4974f59544cdd56"
+    },
+    {
+      "path": "results.jsonl",
+      "sha256": "d81b0e4edb26563028476c9fa02d289d09c2b4caed19122a935404a1064166f9"
+    },
+    {
+      "path": "results-deduped.jsonl",
+      "sha256": "493afffd035e2c532cfaab09b25482f680ebbf42a26610b5c2048816c6222152"
+    },
+    {
+      "path": "failures.jsonl",
+      "sha256": "71eddae01374a080865c4d162b0aa0709cb4d9648458e75926da413bc32ff1f8"
+    },
+    {
+      "path": "manifest.json",
+      "sha256": "94975e467522db7dec915506f8e49638afc68ece74b841e8658d8fec5b7276ef"
+    }
+  ],
+  "errors": [
+    "semantic-scholar: 9 of 10 queries returned HTTP 429 rate limit; OpenAlex, arXiv and Crossref carried the evidence"
+  ],
+  "provenance_level": "agent_reported"
+}

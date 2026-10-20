@@ -1,0 +1,10 @@
+10.1038/s41592-018-0046-7	Bioconda: sustainable and comprehensive software distribution for the life sciences
+10.1007/s42081-022-00171-1	R package DCchoice for dichotomous choice contingent valuation: a contribution to open scientific software and its impact
+10.6028/nbs.sp.500-114	Introduction to software packages
+10.5194/esurf-8-379-2020	Short communication: Landlab v2.0: a software package for Earth surface dynamics
+10.48550/arxiv.2211.03823	CYTools: A Software Package for Analyzing Calabi-Yau Manifolds
+	Software to support expert elicitation : An exploratory study of existing software packages
+	The major barriers in global software product development for Finnish companies
+10.3390/buildings14041032	Barriers to Adopting Advanced Work Packaging (AWP) in Construction
+10.1007/978-0-387-35407-1_5	Component Technology for High-Performance Scientific Simulation Software
+	A Tiered Approach to Scientific Software Quality Practices.

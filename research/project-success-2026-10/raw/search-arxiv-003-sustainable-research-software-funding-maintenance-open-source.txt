@@ -1,0 +1,10 @@
+10.6084/m9.figshare.790756	Sustainable Software Ecosystems for Open Science
+	BotHawk: An Approach for Bots Detection in Open Source Software Projects
+	Sustaining Maintenance Labor for Healthy Open Source Software Projects through Human Infrastructure: A Maintainer Perspective
+	A Proposal for the Measurement and Documentation of Research Software Sustainability in Interactive Metadata Repositories
+10.1109/escience.2018.00015	Building a Sustainable Structure for Research Software Engineering Activities
+10.12688/f1000research.23224.1	An Environment for Sustainable Research Software in Germany and Beyond: Current State, Open Challenges, and Call for Action
+10.1109/escience.2018.00014	Mapping the research software sustainability space
+10.21105/joss.07891	SpecpolFlow: a new software package for spectropolarimetry using Python
+10.5334/jors.307	Sustainable Research Software Hand-Over
+	No Free Lunch: Research Software Testing in Teaching

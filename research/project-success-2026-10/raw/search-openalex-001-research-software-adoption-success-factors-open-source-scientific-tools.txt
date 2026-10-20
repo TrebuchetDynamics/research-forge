@@ -1,0 +1,10 @@
+10.1016/j.infsof.2010.05.008	Adoption of open source software in software-intensive organizations – A systematic literature review
+10.3390/agronomy9110710	Critical Success Factors for the Adoption of Decision Tools in IPM
+	Success factors of commercial open source software projects
+10.5753/jserd.2025.3696	Investigating the Adoption of Research Software: From Success Factors to Challenges Faced by Brazilian Academic Researchers
+	OPEN SOURCE SOFTWARE ADOPTION MODEL OSSAM
+10.1088/2634-4505/ac84a4	An open-source tool to assess the carbon footprint of research
+10.47893/ijcct.2014.1219	Open source Software ADOPTION: an academic perspective
+10.1523/eneuro.0223-19.2019	The Future Is Open: Open-Source Tools for Behavioral Neuroscience Research
+	The Need for Open Source Software in Machine Learning
+	Identifying Business Barriers and Enablers for the Adoption of Open Source Software

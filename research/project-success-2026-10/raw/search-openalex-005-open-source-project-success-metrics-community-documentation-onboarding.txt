@@ -1,0 +1,10 @@
+10.1016/j.jss.2019.110442	Exploring onboarding success, organizational fit, and turnover intention of software professionals
+10.34413/dr.02037	Understanding Newcomer Activities Prior to Onboarding Open Source Software (OSS) Projects on GitHub
+10.1145/3696630.3728719	An LLM Assistant for Software Project Onboarding
+	ONBOARDING XMOOC PROJECT TEAMS
+10.5753/jserd.2025.6090	Analysis of the Role of GitHub Discussions as a Tool for Onboarding Newcomers in Open Source Software
+10.1016/j.jksuci.2020.10.020	Understanding community participation and engagement in open source software Projects: A systematic mapping study
+10.1186/s13174-021-00140-z	Being a Mentor in open source projects
+10.2172/1216523	Documentation for FY2003 GPRA Metrics
+10.1007/s10664-024-10529-6	Free open source communities sustainability: Does it make a difference in software quality?
+10.1109/ase56229.2023.00158	Personalized First Issue Recommender for Newcomers in Open Source Projects

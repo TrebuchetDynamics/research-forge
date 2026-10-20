@@ -1,0 +1,10 @@
+10.3390/su11236538	Bio-inspired Synthetic Ivory as a Sustainable Material for Piano Keys
+	AI Governance and Ethics Framework for Sustainable AI and Sustainability
+	Addressing OSS Community Managers' Challenges in Contributor Retention
+	Open Source and Sustainability: the Role of Universities
+	New Era of Artificial Intelligence in Education: Towards a Sustainable Multifaceted Revolution
+	Regulating the Machine Contributor: Governance and Policy Alignment in Open Source
+10.3390/math10183338	Advanced Drone Swarm Security by Using Blockchain Governance Game
+	CROSS: A Contributor-Project Interaction Lifecycle Model for Open Source Software
+	Cost-Aware Logging: Measuring the Financial Impact of Excessive Log Retention in Small-Scale Cloud Deployments
+10.21105/joss.05407	CoReCon: an open, community-powered collection of Reionization constraints

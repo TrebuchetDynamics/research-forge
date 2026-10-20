@@ -1,0 +1,10 @@
+10.1002/lrh2.10019	Embedding data provenance into the Learning Health System to facilitate reproducible research
+10.1016/j.jbi.2016.10.022	Templates as a method for implementing data provenance in decision support systems
+10.1016/j.njas.2018.11.002	“If they don’t tell us what they do with it, why would we trust them?” Trust, transparency and benefit-sharing in Smart Farming
+10.1016/j.bushor.2019.01.008	It’s real, trust me! Establishing supply chain provenance using blockchain
+10.65752/49jx4409	A Review of Blockchain-Based Expert Systems for Enhancing Data Integrity, Transparency, and Trust in Healthcare Systems
+10.2196/42289	Data Provenance in Biomedical Research: Scoping Review
+	Blockchain Adoption in Marketing Analytics: Enhancing Transparency, Data Integrity, and Operational Efficiency
+10.3390/info17030235	Global Adoption and Impact of Blockchain Technology in Government: Enhancing Transparency, Efficiency, and Trust in Public Services
+10.1145/3579534	Transparency, Trust, and Security Needs for the Design of Digital News Authentication Tools
+	Trust, Privacy and Transparency with Blockhain Technology in Logistics.

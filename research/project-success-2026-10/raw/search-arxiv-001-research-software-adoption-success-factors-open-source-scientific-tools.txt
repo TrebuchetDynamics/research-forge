@@ -1,0 +1,10 @@
+10.5334/jors.ad	A Web-based modeling tool for the SEMAT Essence theory of Software Engineering
+	BotHawk: An Approach for Bots Detection in Open Source Software Projects
+	Adoption of free and open source software using alternative educational framework in college of applied sciences
+10.21105/joss.07891	SpecpolFlow: a new software package for spectropolarimetry using Python
+10.1109/icse-seis58686.2023.00020	Treat societally impactful scientific insights as open-source software artifacts
+10.5334/jors.bj	PyRDM: A Python-based library for automating the management and online publication of scientific software and data
+	OSS PESTO: An Open Source Software Project Evaluation and Selection TOol
+	No Free Lunch: Research Software Testing in Teaching
+	IPPOG : Bridging the gap between science education at school and modern scientific research
+	Dependency Update Adoption Patterns in the Maven Software Ecosystem

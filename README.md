@@ -1,3 +1,5 @@
+# ResearchForge
+
 <p align="center">
   <img src="./assets/readme/hero.svg" width="100%" alt="ResearchForge turns scholarly searches into traceable records, visible failures, citations, and replayable review packages">
 </p>
@@ -53,10 +55,20 @@ curl -fsSL \
 
 One command installs the engine, the public agent skills and the native Claude
 Code, Codex, Pi and Hermes integrations for your user account — no `sudo` and no
-system-wide changes. Select components with `--menu` or `--only binary,skills`,
-preview with `--dry-run`, and upgrade with `./install.sh update`. See
-[installation](./docs/install.md) for components, PATH handling, Hermes profiles
-and removal.
+system-wide changes. Install for the way you work: `--for cli` (just the engine),
+`--for skills` (the research skills in your agent), or `--for mcp` (engine plus
+typed MCP tools). Select components directly with `--menu` or
+`--only binary,skills`, preview with `--dry-run`, and upgrade with
+`./install.sh update`. See [installation](./docs/install.md) for components, PATH
+handling, Hermes profiles and removal.
+
+Verify the smoke check from any directory, then optionally inspect optional service
+setup with `rforge doctor`:
+
+```sh
+rforge version
+rforge doctor
+```
 
 Prebuilt binaries support Linux, macOS, and Windows. To build from source (Go 1.26+):
 
@@ -167,32 +179,53 @@ rforge package replay ./review.rforgepkg
 
 See the [reproducible review package specification](./docs/reproducible-review-package.md) for required files and human gates.
 
-## Resolve and rank papers
+## Resolve, rank, and synthesize
 
-Instead of reading search results top-to-bottom, resolve a specific paper or ask which papers to read first:
+These commands work on what a search already found: they resolve individual papers, decide reading order, and turn one or more topic directories into a brief, an overlap comparison, or a synthesis.
+
+Resolve a specific paper by DOI, arXiv ID, OpenAlex ID, URL, or title. Metadata is merged from OpenAlex, Crossref, arXiv, Semantic Scholar, and Unpaywall, so one lookup returns the OpenAlex ID, arXiv ID, license, and OA status together:
 
 ```sh
-# Resolve one paper by DOI, arXiv ID, OpenAlex ID, URL, or title
-rforge paper 10.7717/peerj.4375
-rforge paper 2301.99999
-rforge paper W123456789
+rforge paper 10.7717/peerj.4375      # DOI
+rforge paper 2301.99999              # arXiv ID
+rforge paper W123456789              # OpenAlex ID
 rforge paper "transformer scaling laws"
 rforge paper https://arxiv.org/abs/2301.99999
 
-# Resolve several papers at once (batch)
+# Resolve several at once
 rforge paper 10.7717/peerj.4375 10.1038/nature14539 "attention is all you need"
+rforge paper --file papers.txt --out resolved.json
 ```
 
-`rforge paper` merges metadata from OpenAlex, Crossref, arXiv, Semantic Scholar, and Unpaywall, so a DOI lookup returns the OpenAlex ID, arXiv ID, license, and OA status in one shot — the same resolver Feynman's `paper` command provides.
-
-Decide what to read first with `rforge rank` — a citation-weighted, recency-aware, OA-aware score across sources:
+Decide what to read first with `rforge rank`: a citation-weighted, recency-aware, OA-aware score across sources. The score blends log-scaled citation count, recency (1/(1+age)), and an open-access bonus, then prints a numbered list with DOIs and arXiv IDs. Re-rank the same papers through citation-graph prestige when a graph exists:
 
 ```sh
 rforge rank "mechanistic interpretability sparse autoencoders" \
   --sources openalex,crossref,semantic-scholar --limit 20 --out rank.json
+
+rforge citations expand --source openalex --paper W123456789 --direction both --out graph.json
+rforge rank "sparse autoencoders" --graph graph.json
 ```
 
-The rank score blends log-scaled citation count, recency (1/(1+age)), and an open-access bonus, then prints a numbered list with DOIs and arXiv IDs for follow-up.
+Summarize the evidence instead of reading every record. Each output is a Markdown artifact with provenance, so a reviewer can re-run the command and compare:
+
+```sh
+# One-page brief from a search directory: summary, top papers, gaps, next steps
+rforge brief research/my-topic --out brief.md
+
+# Overlap matrix across two or more search directories
+rforge compare research/topic-a research/topic-b --labels "A,B" --out comparison.md
+
+# Cross-topic synthesis: consensus themes, cross-topic papers, open questions
+rforge lit --research-dir research --out synthesis/
+
+# Annotations persisted in a project, and recall across past sessions
+rforge note add --project <path> --paper <doi> --note "Key result"
+rforge history search "PRISMA 2020" --research-dir research --limit 5
+
+# Deterministic replication plan from a resolved paper
+rforge replicate 10.1136/bmj.n160 --out replan.md
+```
 
 ## Source coverage
 
@@ -224,8 +257,12 @@ Install `rforge` using the [quick start](#quick-start), then check server suppor
 rforge capabilities --json --require mcp=1
 ```
 
-Register a local stdio server in your MCP client's configuration; for clients using
-`mcpServers`, merge this entry into the existing configuration:
+Register a local stdio server in your MCP client's configuration:
+
+<details>
+<summary>Manual <code>mcpServers</code> entry</summary>
+
+Merge this into the existing configuration rather than replacing it:
 
 ```json
 {
@@ -238,48 +275,28 @@ Register a local stdio server in your MCP client's configuration; for clients us
 }
 ```
 
+</details>
+
 Use an absolute executable path if the client cannot find `rforge` on its `PATH`.
 No plugin or project is required. MCP and CLI use the same engine and artifacts:
 use MCP for registered typed tools, and CLI for scripts or operations outside the
 six-tool MCP surface. See [MCP setup, project paths, and offline smoke verification](./docs/cli.md#mcp-stdio-server).
 This is manual registration, independent of plugin-managed setup.
 
-### Quick commands: resolve, rank, brief, compare
+### What the host skill can invoke
 
-```sh
-# Resolve one paper by DOI, arXiv ID, OpenAlex ID, or title (merges 5 sources)
-rforge paper 10.7717/peerj.4375
-rforge paper --file papers.txt --out resolved.json
+The five explicit-only workflows name these engine commands. The skill passes your request through; it never interprets it as shell arguments. Engine operations are documented once in [Resolve, rank, and synthesize](#resolve-rank-and-synthesize).
 
-# Decide what to read first: citation-weighted, recency-aware rank
-rforge rank "mechanistic interpretability" --sources openalex,crossref,semantic-scholar --limit 20
+| Workflow | Command the skill names |
+| --- | --- |
+| `lit` | `rforge lit --research-dir <dir> --out <dir>` |
+| `paper` | `rforge paper <identifier-or-title>` |
+| `brief` | `rforge brief <search-dir> --out <brief.md>` |
+| `compare` | `rforge compare <dir-a> <dir-b> --out <comparison.md>` |
+| `replicate` | `rforge replicate <doi-or-arxiv-id> --out <plan.md>` |
 
-# Boost rank scores by citation graph prestige (from `citations expand`)
-rforge citations expand --source openalex --paper W123456789 --direction both --out graph.json
-rforge rank "sparse autoencoders" --graph graph.json
-
-# Generate a one-page research brief from a search dir
-rforge brief research/my-topic --out brief.md
-
-# Compare two or more search dirs for overlap and gaps
-rforge compare research/topic-a research/topic-b --labels "A,B" --out comparison.md
-
-# Cross-topic literature synthesis (Feynman `lit` analog): consensus themes,
-# cross-topic papers, open questions, screening status
-rforge lit --research-dir research --out <dir>
-
-# Per-paper annotations (Feynman `alpha annotate` analog), persisted in project
-rforge note add --project <path> --paper <doi> --note "Key result"
-rforge note list --project <path>
-
-# Recall across past sessions: search every topic dir (Feynman session-search)
-rforge history search "PRISMA 2020" --research-dir research --limit 5
-
-# Generate a deterministic replication plan from a resolved paper
-rforge replicate 10.1136/bmj.n160 --out replan.md
-```
-
-**Generic fallback — DeepSeek Harness and other shared-agent consumers without native plugins:**
+<details>
+<summary>Generic fallback — DeepSeek Harness and other shared-agent consumers without native plugins</summary>
 
 ```sh
 mkdir -p ~/.agents/skills/research-forge
@@ -289,6 +306,8 @@ curl -fsSL \
 ```
 
 Use your host's documented skill directory if it does not read `~/.agents/skills`. Upgrade the fallback by repeating the download; remove it by deleting only that skill copy. Do not keep it alongside the native plugin in the same host.
+
+</details>
 
 Then ask: **“Use the research-forge skill to research: `<your question>`.”** The skill uses the standalone `rforge` engine through CLI or registered MCP tools; no product fork is required.
 

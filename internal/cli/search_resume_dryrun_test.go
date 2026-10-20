@@ -139,3 +139,55 @@ func TestExecuteSearchResumeClearsRecoveredFailures(t *testing.T) {
 		t.Fatalf("recovered query must write its record to results.jsonl; got %s", results)
 	}
 }
+
+// An unreadable failures file must not be reported as "nothing to retry": that
+// silently skips work the user asked for.
+func TestSearchResumeRejectsMalformedFailures(t *testing.T) {
+	dir := t.TempDir()
+	failures := filepath.Join(dir, "failures.jsonl")
+	if err := os.WriteFile(failures, []byte("garbage\n"), 0o644); err != nil {
+		t.Fatalf("write failures: %v", err)
+	}
+
+	stdout, stderr := new(bytes.Buffer), new(bytes.Buffer)
+	code := Execute([]string{"search", "resume", "--failures", failures, "--out", dir, "--dry-run"}, stdout, stderr)
+	if code != 1 {
+		t.Fatalf("exit code = %d, want 1; stdout = %s", code, stdout.String())
+	}
+	combined := stdout.String() + stderr.String()
+	if !strings.Contains(combined, "decode failures.jsonl line 1") {
+		t.Errorf("error does not name the bad line: %s", combined)
+	}
+}
+
+func TestSearchResumeRejectsDirectoryFailures(t *testing.T) {
+	dir := t.TempDir()
+	failuresDir := filepath.Join(dir, "failures.jsonl")
+	if err := os.MkdirAll(failuresDir, 0o755); err != nil {
+		t.Fatalf("mkdir failures: %v", err)
+	}
+
+	stdout, stderr := new(bytes.Buffer), new(bytes.Buffer)
+	code := Execute([]string{"search", "resume", "--failures", failuresDir, "--out", dir, "--dry-run"}, stdout, stderr)
+	if code != 1 {
+		t.Fatalf("exit code = %d, want 1; stdout = %s", code, stdout.String())
+	}
+	if !strings.Contains(stdout.String()+stderr.String(), "not a regular file") {
+		t.Errorf("error does not explain the path: %s", stdout.String()+stderr.String())
+	}
+}
+
+// A failures file that does not exist still means there is nothing to retry.
+func TestSearchResumeKeepsMissingFailuresLenient(t *testing.T) {
+	dir := t.TempDir()
+	missing := filepath.Join(dir, "failures.jsonl")
+
+	stdout, stderr := new(bytes.Buffer), new(bytes.Buffer)
+	code := Execute([]string{"search", "resume", "--failures", missing, "--out", dir, "--dry-run"}, stdout, stderr)
+	if code != 0 {
+		t.Fatalf("exit code = %d, want 0; stderr = %s", code, stderr.String())
+	}
+	if !strings.Contains(stdout.String(), "no failures to resume") {
+		t.Errorf("missing file should report nothing to resume: %s", stdout.String())
+	}
+}

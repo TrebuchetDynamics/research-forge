@@ -1,0 +1,10 @@
+10.1109/ms.2021.3098116	Challenges for Inclusion in Software Engineering: The Case of the Emerging Papua New Guinean Society
+	On the Diversity of Software Package Popularity Metrics: An Empirical Study of npm
+	IPPOG : Bridging the gap between science education at school and modern scientific research
+10.1007/s10664-021-10053-x	Developers Perception of Peer Code Review in Research Software Development
+	LLMoxie: Exploring Agentic AI for Scientific Software Development
+	Software Engineering Practices for Scientific Software Development: A Systematic Mapping Study
+	Adapting Installation Instructions in Rapidly Evolving Software Ecosystems
+10.5334/jors.bj	PyRDM: A Python-based library for automating the management and online publication of scientific software and data
+10.1145/3709354	Morescient GAI for Software Engineering (Extended Version)
+10.1109/ms.2022.3176864	The Present and Future of Bots in Software Engineering
