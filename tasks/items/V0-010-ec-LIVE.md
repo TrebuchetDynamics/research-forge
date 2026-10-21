@@ -6,7 +6,7 @@ short = "Live checks for V0-010-ec"
 status = "open"
 goal = "RF-PACK"
 section = "Needs decision"
-rank = 2001
+rank = 19000
 depends_on = ["V0-010-ec"]
 touches = ["hermes-plugin/", "adapters/", "internal/docs/", "docs/agent-install.md", "docs/install.md", "README.md"]
 resources = []
@@ -17,3 +17,4 @@ acceptance = ["Owner-run Hermes subdirectory install/enable, skill discovery, an
 checks = ["Live qualification by an authorized person"]
 exclusions = ["Offline evidence does not count"]
 +++
+- Owner decision: 2026-10-21: deferred to the release gates (V-R1/V-R2); kept as their live-check checklist

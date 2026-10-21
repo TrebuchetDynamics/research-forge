@@ -6,7 +6,7 @@ short = "Live checks for V-FS2"
 status = "open"
 goal = "RF-BENCH"
 section = "Needs decision"
-rank = 1001
+rank = 18000
 depends_on = ["V-FS2"]
 touches = ["research/frontier-science/"]
 resources = []
@@ -17,3 +17,4 @@ acceptance = ["Scientific/claim acceptance, full-text acquisition, privacy revie
 checks = ["Live qualification by an authorized person"]
 exclusions = ["Offline evidence does not count"]
 +++
+- Owner decision: 2026-10-21: deferred to the release gates (V-R1/V-R2); kept as their live-check checklist
