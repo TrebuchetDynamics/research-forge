@@ -6,7 +6,7 @@ short = "ResearchForge 2.0 research-quality release gate"
 status = "open"
 goal = "RF-RELEASE"
 section = "Needs decision"
-rank = 5000
+rank = 31000
 depends_on = ["V-B6-run"]
 touches = ["docs/benchmark", "docs/release.md"]
 resources = []
@@ -20,3 +20,4 @@ exclusions = []
 
 - Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan) (Release gate).
 - Ownership: ResearchForge owner (release decision and live spend).
+- Owner decision: 2026-10-21: release decision waits for the V-B6-run Pi pilot report; V-E5-run follows it
