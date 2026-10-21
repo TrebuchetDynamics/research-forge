@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-// todoBacklogHeading reports whether a TODO.md line opens a post-1.0 backlog
+// todoBacklogHeading reports whether a CHECKLIST.md line opens a post-1.0 backlog
 // section whose unchecked items are future work exempt from decision-coverage
 // auditing (mirrors isTodoBacklogHeading in internal/cli).
 func todoBacklogHeading(line string) bool {
@@ -22,7 +22,7 @@ func TestDevelopmentPlanDocumentsLicenseReleaseGate(t *testing.T) {
 		t.Fatalf("read development plan: %v", err)
 	}
 	text := string(data)
-	for _, want := range []string{"make license-decision-live-audit", "make license-decision-approval-gate", "TODO.md:34", "approved:true", "License SPDX identifier", "Copyright holder", "Approved by", "Approval date"} {
+	for _, want := range []string{"make license-decision-live-audit", "make license-decision-approval-gate", "CHECKLIST.md:34", "approved:true", "License SPDX identifier", "Copyright holder", "Approved by", "Approval date"} {
 		if !strings.Contains(text, want) {
 			t.Fatalf("development plan missing license release gate %q", want)
 		}
@@ -66,7 +66,7 @@ func TestReleaseDocsDocumentLicenseApprovalGate(t *testing.T) {
 		t.Fatalf("read release docs: %v", err)
 	}
 	text := string(data)
-	for _, want := range []string{"make license-decision-live-audit", "make license-decision-approval-gate", "TODO.md:34", "approved:true", "LICENSE", "License SPDX identifier", "Copyright holder", "Approved by", "Approval date"} {
+	for _, want := range []string{"make license-decision-live-audit", "make license-decision-approval-gate", "CHECKLIST.md:34", "approved:true", "LICENSE", "License SPDX identifier", "Copyright holder", "Approved by", "Approval date"} {
 		if !strings.Contains(text, want) {
 			t.Fatalf("release docs missing license approval gate %q", want)
 		}
@@ -108,7 +108,7 @@ func TestOneDotZeroReleaseGateDocumentsLicenseBlocker(t *testing.T) {
 		t.Fatalf("read 1.0 release gate: %v", err)
 	}
 	text := string(data)
-	for _, want := range []string{"Go + HTMX", "project_license", "TODO.md:34", "make license-decision-live-audit", "make license-decision-approval-gate", "approved:true", "License SPDX identifier", "Copyright holder", "Approved by", "Approval date"} {
+	for _, want := range []string{"Go + HTMX", "project_license", "CHECKLIST.md:34", "make license-decision-live-audit", "make license-decision-approval-gate", "approved:true", "License SPDX identifier", "Copyright holder", "Approved by", "Approval date"} {
 		if !strings.Contains(text, want) {
 			t.Fatalf("1.0 release gate missing %q", want)
 		}
@@ -122,7 +122,7 @@ func TestCLIReferenceDocumentsDecisionAuditModes(t *testing.T) {
 		t.Fatalf("read CLI reference: %v", err)
 	}
 	text := string(data)
-	for _, want := range []string{"rforge decisions --check TODO.md", "tracking issue references", "rforge decisions --completion-audit TODO.md docs/todo-completion-audit.md", "completion_blocked", "blocked_decisions", "blocked_decision_ids", "license_resolution_verified", "issue_title", "todo_refs", "issue_labels", "milestone", "options_considered", "owner_response_required_fields", "make license-decision-live-audit", "make license-decision-approval-gate", "approved:true", "rforge decisions --markdown", "routing/options", "rforge decisions --issue-body <decision-id>"} {
+	for _, want := range []string{"rforge decisions --check CHECKLIST.md", "tracking issue references", "rforge decisions --completion-audit CHECKLIST.md docs/todo-completion-audit.md", "completion_blocked", "blocked_decisions", "blocked_decision_ids", "license_resolution_verified", "issue_title", "todo_refs", "issue_labels", "milestone", "options_considered", "owner_response_required_fields", "make license-decision-live-audit", "make license-decision-approval-gate", "approved:true", "rforge decisions --markdown", "routing/options", "rforge decisions --issue-body <decision-id>"} {
 		if !strings.Contains(text, want) {
 			t.Fatalf("CLI reference missing %q", want)
 		}
@@ -131,9 +131,9 @@ func TestCLIReferenceDocumentsDecisionAuditModes(t *testing.T) {
 
 func TestUncheckedTodosPointToDecisionCommands(t *testing.T) {
 	root := filepath.Join("..", "..")
-	data, err := os.ReadFile(filepath.Join(root, "TODO.md"))
+	data, err := os.ReadFile(filepath.Join(root, "CHECKLIST.md"))
 	if err != nil {
-		t.Fatalf("read TODO.md: %v", err)
+		t.Fatalf("read CHECKLIST.md: %v", err)
 	}
 	inBacklog := false
 	for _, line := range strings.Split(string(data), "\n") {
@@ -152,9 +152,9 @@ func TestUncheckedTodosPointToDecisionCommands(t *testing.T) {
 
 func TestLicenseTodoRecordsOwnerResolution(t *testing.T) {
 	root := filepath.Join("..", "..")
-	data, err := os.ReadFile(filepath.Join(root, "TODO.md"))
+	data, err := os.ReadFile(filepath.Join(root, "CHECKLIST.md"))
 	if err != nil {
-		t.Fatalf("read TODO.md: %v", err)
+		t.Fatalf("read CHECKLIST.md: %v", err)
 	}
 	for _, line := range strings.Split(string(data), "\n") {
 		line = strings.TrimSpace(line)
@@ -173,9 +173,9 @@ func TestLicenseTodoRecordsOwnerResolution(t *testing.T) {
 
 func TestUncheckedTodosReferenceTrackingIssues(t *testing.T) {
 	root := filepath.Join("..", "..")
-	data, err := os.ReadFile(filepath.Join(root, "TODO.md"))
+	data, err := os.ReadFile(filepath.Join(root, "CHECKLIST.md"))
 	if err != nil {
-		t.Fatalf("read TODO.md: %v", err)
+		t.Fatalf("read CHECKLIST.md: %v", err)
 	}
 	inBacklog := false
 	for _, line := range strings.Split(string(data), "\n") {
@@ -211,20 +211,20 @@ func TestRemainingTodoAuditDocumentsExecutableAuditCommand(t *testing.T) {
 
 func TestTodoReferencesCompletionAudit(t *testing.T) {
 	root := filepath.Join("..", "..")
-	data, err := os.ReadFile(filepath.Join(root, "TODO.md"))
+	data, err := os.ReadFile(filepath.Join(root, "CHECKLIST.md"))
 	if err != nil {
-		t.Fatalf("read TODO.md: %v", err)
+		t.Fatalf("read CHECKLIST.md: %v", err)
 	}
 	if !strings.Contains(string(data), "docs/todo-completion-audit.md") {
-		t.Fatalf("TODO.md does not reference docs/todo-completion-audit.md")
+		t.Fatalf("CHECKLIST.md does not reference docs/todo-completion-audit.md")
 	}
 }
 
 func TestTodoCompletionAuditCoversUncheckedTodos(t *testing.T) {
 	root := filepath.Join("..", "..")
-	todoData, err := os.ReadFile(filepath.Join(root, "TODO.md"))
+	todoData, err := os.ReadFile(filepath.Join(root, "CHECKLIST.md"))
 	if err != nil {
-		t.Fatalf("read TODO.md: %v", err)
+		t.Fatalf("read CHECKLIST.md: %v", err)
 	}
 	auditData, err := os.ReadFile(filepath.Join(root, "docs", "todo-completion-audit.md"))
 	if err != nil {
@@ -259,7 +259,7 @@ func TestTodoCompletionAuditMapsObjectiveToEvidence(t *testing.T) {
 	}
 	text := string(data)
 	for _, want := range []string{
-		"TODO.md",
+		"CHECKLIST.md",
 		"Success criteria",
 		"Prompt-to-artifact checklist",
 		"issue #1",
@@ -268,8 +268,8 @@ func TestTodoCompletionAuditMapsObjectiveToEvidence(t *testing.T) {
 		"make license-decision-live-audit",
 		"make license-decision-approval-gate",
 		"approved:true",
-		"rforge decisions --check TODO.md",
-		"rforge decisions --completion-audit TODO.md docs/todo-completion-audit.md",
+		"rforge decisions --check CHECKLIST.md",
+		"rforge decisions --completion-audit CHECKLIST.md docs/todo-completion-audit.md",
 		"completion_blocked",
 		"blocked_decisions",
 		"blocked_decision_ids",
@@ -313,7 +313,7 @@ func TestLicenseDecisionBriefNamesRequiredOwnerResponseFields(t *testing.T) {
 		t.Fatalf("read license decision brief: %v", err)
 	}
 	text := string(data)
-	for _, want := range []string{"Required owner response fields", "License SPDX identifier", "Copyright holder", "Approved by", "Approval date", "make license-decision-live-audit", "make license-decision-approval-gate", "approved:true", "issue #1", "TODO.md:34"} {
+	for _, want := range []string{"Required owner response fields", "License SPDX identifier", "Copyright holder", "Approved by", "Approval date", "make license-decision-live-audit", "make license-decision-approval-gate", "approved:true", "issue #1", "CHECKLIST.md:34"} {
 		if !strings.Contains(text, want) {
 			t.Fatalf("license decision brief missing %q", want)
 		}
@@ -322,9 +322,9 @@ func TestLicenseDecisionBriefNamesRequiredOwnerResponseFields(t *testing.T) {
 
 func TestRemainingTodoAuditCoversUncheckedTodos(t *testing.T) {
 	root := filepath.Join("..", "..")
-	todoData, err := os.ReadFile(filepath.Join(root, "TODO.md"))
+	todoData, err := os.ReadFile(filepath.Join(root, "CHECKLIST.md"))
 	if err != nil {
-		t.Fatalf("read TODO.md: %v", err)
+		t.Fatalf("read CHECKLIST.md: %v", err)
 	}
 	auditData, err := os.ReadFile(filepath.Join(root, "docs", "remaining-todo-audit.md"))
 	if err != nil {

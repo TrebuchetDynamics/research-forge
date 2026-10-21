@@ -21,7 +21,7 @@ Current issue title: `Owner decision: project_license (SPDX, copyright holder, a
 
 ## Resolved TODO items
 
-- `TODO.md:34` — Add license after owner decision
+- `CHECKLIST.md:34` — Add license after owner decision
 
 ## Owner decision (recorded)
 
@@ -53,9 +53,9 @@ verified with `make license-decision-approval-gate` (`approved:true`).
 - Recorded owner approval on issue #1 and confirmed `make license-decision-approval-gate` reports `approved:true`.
 - Added `LICENSE` with the MIT license text and `Copyright (c) 2026 Trebuchet Dynamics`.
 - Updated `README.md` license section to name the MIT License and SPDX identifier.
-- Checked off the `TODO.md` license item.
+- Checked off the `CHECKLIST.md` license item.
 - Ran `make check`.
-- Ran `rforge decisions --completion-audit TODO.md docs/todo-completion-audit.md`.
+- Ran `rforge decisions --completion-audit CHECKLIST.md docs/todo-completion-audit.md`.
 
 ## Outcome
 

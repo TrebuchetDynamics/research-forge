@@ -557,7 +557,7 @@ func writeDecisionsMarkdown(decisions []map[string]any, stdout io.Writer) int {
 	return 0
 }
 
-// isTodoBacklogHeading reports whether a TODO.md line opens a post-1.0 backlog
+// isTodoBacklogHeading reports whether a CHECKLIST.md line opens a post-1.0 backlog
 // section. Unchecked items in that section are future work, not owner-gated MVP
 // blockers, so the decision/completion audits exempt them from coverage.
 func isTodoBacklogHeading(line string) bool {
@@ -593,7 +593,7 @@ func checkDecisionsCoverTODO(path string, decisions []map[string]any, stdout, st
 		if inBacklog || !strings.HasPrefix(line, "- [ ] ") {
 			continue
 		}
-		uncheckedRefs[fmt.Sprintf("TODO.md:%d", lineNumber+1)] = true
+		uncheckedRefs[fmt.Sprintf("CHECKLIST.md:%d", lineNumber+1)] = true
 		item := strings.TrimPrefix(line, "- [ ] ")
 		if idx := strings.Index(item, " _("); idx >= 0 {
 			item = strings.TrimSpace(item[:idx])
@@ -606,7 +606,7 @@ func checkDecisionsCoverTODO(path string, decisions []map[string]any, stdout, st
 		if issue := issueByTODO[item]; issue != "" {
 			issueNumber := issue[strings.LastIndex(issue, "/")+1:]
 			if !strings.Contains(line, issue) && !strings.Contains(line, "#"+issueNumber) {
-				missingIssueRefs = append(missingIssueRefs, fmt.Sprintf("TODO.md:%d", lineNumber+1))
+				missingIssueRefs = append(missingIssueRefs, fmt.Sprintf("CHECKLIST.md:%d", lineNumber+1))
 			}
 		}
 	}
@@ -878,7 +878,7 @@ func writeDecisionIssueBody(id string, decisions []map[string]any, stdout, stder
 				fmt.Fprintf(stdout, "- %s.\n", step)
 			}
 		} else {
-			fmt.Fprint(stdout, "- Record the approved option, approver, date, and blocked TODO lines.\n- Implement only the TODO items approved by this decision.\n- Update TODO.md and docs/remaining-todo-audit.md.\n- Run `make check`.\n- Run `rforge decisions --completion-audit TODO.md docs/todo-completion-audit.md` if unchecked TODOs remain.\n")
+			fmt.Fprint(stdout, "- Record the approved option, approver, date, and blocked TODO lines.\n- Implement only the TODO items approved by this decision.\n- Update CHECKLIST.md and docs/remaining-todo-audit.md.\n- Run `make check`.\n- Run `rforge decisions --completion-audit CHECKLIST.md docs/todo-completion-audit.md` if unchecked TODOs remain.\n")
 		}
 		return 0
 	}
@@ -4259,11 +4259,11 @@ func helpSections() []helpSection {
 					Description: "Show or set the automation policy for irreversible actions.",
 				},
 				{
-					Usage:       "rforge decisions --check TODO.md",
+					Usage:       "rforge decisions --check CHECKLIST.md",
 					Description: "Verify all unchecked TODO items are covered by owner decisions.",
 				},
 				{
-					Usage:       "rforge decisions --completion-audit TODO.md docs/todo-completion-audit.md",
+					Usage:       "rforge decisions --completion-audit CHECKLIST.md docs/todo-completion-audit.md",
 					Description: "Run the completion audit against the todo and audit files.",
 				},
 				{

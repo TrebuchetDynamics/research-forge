@@ -4,7 +4,7 @@ Disposition: blocked; no task-contract or ledger change is justified.
 
 ## Sources
 
-- [Current task](../../TODO.md#now): V-FS2, including both Acceptance items and the shared Budget field.
+- [Current task](../../tasks/items/V-FS2.md): V-FS2, including both Acceptance items and the shared Budget field.
 - [Accepted authorization](../benchmark/frontier-science-plan.md#authorized-v-fs2-campaign): one combined USD 20 / 200,000-token / 7,200-second allowance, including setup, cached input, helpers and resumes. Unknown consumption is not zero; unsafe metered operations must stop.
 - [Engine boundary](../verifiable-engine-plan.md#owner-decisions-2026-10-19): host-agent semantic judgment remains separate from engine operations.
 - Retained local worker evidence: `.git/autowork-execution/slot-data/V-FS2/attempt-1/report.json` and `.git/autowork-execution/slots/V-FS2.json` in the common Git directory. These are operational evidence references, not public research artifacts.

@@ -287,7 +287,7 @@ rforge --project <path> oss report --area <area>
 rforge oss inventory-check <manifest.json>
 rforge oss inventory-refresh <manifest.json> --source github
 rforge oss inventory-policy <manifest.json> [--stale-after 18mo]
-rforge oss inventory-roadmap <manifest.json> --todo TODO.md
+rforge oss inventory-roadmap <manifest.json> --todo CHECKLIST.md
 ```
 
 Do not treat stars/downloads as quality proof. Use them only as one signal alongside maintenance, license, activity, security posture, package metadata, and domain fit.

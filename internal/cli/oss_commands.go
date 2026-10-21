@@ -73,7 +73,7 @@ func executeOSS(args []string, stdout, stderr io.Writer, opts globalOptions) int
 	if args[0] == "inventory-roadmap" {
 		manifestPath, todoPath, ok := parseOSSInventoryRoadmap(args[1:])
 		if !ok {
-			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge oss inventory-roadmap <manifest.json> --todo <TODO.md>")
+			return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge oss inventory-roadmap <manifest.json> --todo <CHECKLIST.md>")
 		}
 		report, err := oss.BuildInventoryRoadmapReport(manifestPath, todoPath)
 		if err != nil {

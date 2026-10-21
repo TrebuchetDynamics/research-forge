@@ -12,7 +12,7 @@ Read:
 - [RESEARCH-FORGE-PRD.md](./RESEARCH-FORGE-PRD.md)
 - [DEVELOPMENT_PLAN.md](./DEVELOPMENT_PLAN.md)
 - [ROADMAP.md](./ROADMAP.md)
-- [TODO.md](./TODO.md)
+- [CHECKLIST.md](./CHECKLIST.md)
 - [SKILLS.md](./SKILLS.md)
 
 ## TDD requirement
@@ -75,15 +75,15 @@ of faster code. See the baseline's reproduction commands and the
 
 ## Decision-gated TODOs
 
-Some `TODO.md` items require explicit owner/build decisions before implementation. The remaining known blocker is project licensing; future scope changes may add more decision-gated items. Before changing those items:
+Some `CHECKLIST.md` items require explicit owner/build decisions before implementation. The remaining known blocker is project licensing; future scope changes may add more decision-gated items. Before changing those items:
 
 1. Run `make todo-audit`.
 2. Open an Owner decision issue with `.github/ISSUE_TEMPLATE/owner_decision.yml` or use `make decision-issues` to generate scaffolds.
 3. Link the approved decision in the PR.
 4. For license changes, confirm the approved SPDX identifier, exact copyright holder, approver, and approval date before adding `LICENSE`.
 5. Run `make license-decision-live-audit` to inspect issue #1 and `make license-decision-approval-gate` before implementing the license TODO.
-6. Keep `rforge decisions --check TODO.md` passing if unchecked TODOs remain.
-7. Run `rforge decisions --completion-audit TODO.md docs/todo-completion-audit.md` when changing TODO closeout evidence.
+6. Keep `rforge decisions --check CHECKLIST.md` passing if unchecked TODOs remain.
+7. Run `rforge decisions --completion-audit CHECKLIST.md docs/todo-completion-audit.md` when changing TODO closeout evidence.
 
 ## Pull requests
 

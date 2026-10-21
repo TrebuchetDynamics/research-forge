@@ -1,8 +1,8 @@
 # Owner decisions needed
 
-These items remain intentionally open in `TODO.md` because they require an explicit owner/product decision before implementation. See [remaining-todo-audit.md](remaining-todo-audit.md) for the prompt-to-artifact mapping of every unchecked item.
+These items remain intentionally open in `CHECKLIST.md` because they require an explicit owner/product decision before implementation. See [remaining-todo-audit.md](remaining-todo-audit.md) for the prompt-to-artifact mapping of every unchecked item.
 
-When resolving one of these blockers, open or reuse an `Owner decision` issue using `.github/ISSUE_TEMPLATE/owner_decision.yml` so the selected option, blocked TODO lines, and implementation steps are recorded before code changes. Run `make decisions` or `rforge --json decisions` to print the current machine-readable blocker list, including `issue_labels`, `milestone`, `options_considered`, and `owner_response_required_fields`, and `make todo-completion-audit` before closeout. Run `make license-decision-live-audit` to inspect issue #1 for non-placeholder owner approval fields, and `make license-decision-approval-gate` when you expect approval to be complete; it must pass with `approved:true` before adding `LICENSE`. Run `make todo-completion-audit` or `rforge decisions --completion-audit TODO.md docs/todo-completion-audit.md` before claiming TODO closeout; the audit reports whether completion remains blocked and verifies `license_owner_response_fields_verified`, `license_options_verified`, plus `license_issue_routing_verified` for the license blocker. Follow [decision-resolution-checklist.md](decision-resolution-checklist.md) when implementing an approved decision.
+When resolving one of these blockers, open or reuse an `Owner decision` issue using `.github/ISSUE_TEMPLATE/owner_decision.yml` so the selected option, blocked TODO lines, and implementation steps are recorded before code changes. Run `make decisions` or `rforge --json decisions` to print the current machine-readable blocker list, including `issue_labels`, `milestone`, `options_considered`, and `owner_response_required_fields`, and `make todo-completion-audit` before closeout. Run `make license-decision-live-audit` to inspect issue #1 for non-placeholder owner approval fields, and `make license-decision-approval-gate` when you expect approval to be complete; it must pass with `approved:true` before adding `LICENSE`. Run `make todo-completion-audit` or `rforge decisions --completion-audit CHECKLIST.md docs/todo-completion-audit.md` before claiming TODO closeout; the audit reports whether completion remains blocked and verifies `license_owner_response_fields_verified`, `license_options_verified`, plus `license_issue_routing_verified` for the license blocker. Follow [decision-resolution-checklist.md](decision-resolution-checklist.md) when implementing an approved decision.
 
 Issue-body scaffolds can be generated with:
 
@@ -31,7 +31,7 @@ Status: `resolved`
 
 Tracking issue: [#1 Owner decision: project_license (SPDX, copyright holder, approver, date required)](https://github.com/TrebuchetDynamics/research-forge/issues/1)
 
-`TODO.md`: Add license after owner decision (resolved).
+`CHECKLIST.md`: Add license after owner decision (resolved).
 
 Decision recorded (2026-06-13):
 

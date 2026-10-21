@@ -1,12 +1,12 @@
 # Remaining TODO audit
 
-Every `TODO.md` item is now checked. No item remains gated by an open owner
+Every `CHECKLIST.md` item is now checked. No item remains gated by an open owner
 decision or implementation tracker. This audit records the resolution of the
 last gated item and the executable commands used to verify closeout.
 
 | TODO item | Resolution | Evidence |
 | --- | --- | --- |
-| Add license after owner decision (`TODO.md:34`) | Resolved 2026-06-13 — MIT, Copyright (c) 2026 Trebuchet Dynamics, approved by the repository owner on issue #1 | GitHub issue [#1](https://github.com/TrebuchetDynamics/research-forge/issues/1), `LICENSE`, `README.md` license section, `docs/owner-decisions.md`, `docs/license-decision.md`, `docs/decisions/project_license_issue.md`, and `make license-decision-approval-gate` reporting `approved:true` |
+| Add license after owner decision (`CHECKLIST.md:34`) | Resolved 2026-06-13 — MIT, Copyright (c) 2026 Trebuchet Dynamics, approved by the repository owner on issue #1 | GitHub issue [#1](https://github.com/TrebuchetDynamics/research-forge/issues/1), `LICENSE`, `README.md` license section, `docs/owner-decisions.md`, `docs/license-decision.md`, `docs/decisions/project_license_issue.md`, and `make license-decision-approval-gate` reporting `approved:true` |
 
 ## Current validation evidence
 
@@ -25,7 +25,7 @@ make fmt-check
 go mod tidy -diff
 go test ./...
 go vet ./...
-go run ./cmd/rforge decisions --completion-audit TODO.md docs/todo-completion-audit.md
+go run ./cmd/rforge decisions --completion-audit CHECKLIST.md docs/todo-completion-audit.md
 go run ./cmd/rforge oss inventory-check opensource/inventory/manifest.json
 git diff --check
 ```

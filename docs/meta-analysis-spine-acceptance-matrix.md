@@ -52,7 +52,7 @@ Live-service slices must keep live checks opt-in and document environment variab
 
 ## Phase 0 acceptance
 
-Phase 0 is complete when these planning artifacts exist and are referenced from `TODO.md`:
+Phase 0 is complete when these planning artifacts exist and are referenced from `CHECKLIST.md`:
 
 - `docs/meta-analysis-spine-blueprint.md`
 - `docs/meta-analysis-spine-roadmap.md`

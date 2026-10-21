@@ -430,7 +430,7 @@ Report can answer:
 - Keep CI green from Milestone 0 onward.
 - Add security and performance checks as workflows mature.
 - Publish releases only after explicit owner approval.
-- Treat `TODO.md:34` as the current release blocker until `make license-decision-live-audit` and `make license-decision-approval-gate` show `approved:true` for the project license decision.
+- Treat `CHECKLIST.md:34` as the current release blocker until `make license-decision-live-audit` and `make license-decision-approval-gate` show `approved:true` for the project license decision.
 
 ## First execution slice
 

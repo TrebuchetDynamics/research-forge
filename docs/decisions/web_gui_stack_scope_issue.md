@@ -32,7 +32,7 @@ https://github.com/TrebuchetDynamics/research-forge/issues/2
 - `internal/webui/*_test.go` Go + HTMX handler tests
 - `web/assets/researchforge.css`
 - `make check`
-- `rforge decisions --completion-audit TODO.md docs/todo-completion-audit.md`
+- `rforge decisions --completion-audit CHECKLIST.md docs/todo-completion-audit.md`
 
 ## Outcome
 

@@ -425,7 +425,7 @@ go vet ./...
 govulncheck ./...
 ```
 
-License release gate for `TODO.md:34`:
+License release gate for `CHECKLIST.md:34`:
 
 ```sh
 make license-decision-live-audit

@@ -18,7 +18,7 @@ func TestExecuteOSSInventoryRoadmapReportsCoverageGaps(t *testing.T) {
 	if err := os.WriteFile(manifest, []byte(`{"schemaVersion":"1","entries":[{"id":"alpha","name":"Alpha","area":"retrieval","disposition":"pattern-reference","licensePolicy":"study","note":"alpha.md","risk":"low","nextSlice":"Add alpha retrieval."}]}`), 0o644); err != nil {
 		t.Fatal(err)
 	}
-	todo := filepath.Join(dir, "TODO.md")
+	todo := filepath.Join(dir, "CHECKLIST.md")
 	if err := os.WriteFile(todo, []byte("- [ ] Something unrelated.\n"), 0o644); err != nil {
 		t.Fatal(err)
 	}
