@@ -5,8 +5,8 @@ title = "Live agent-tier pilot"
 short = "Live agent-tier pilot"
 status = "open"
 goal = "RF-BENCH"
-section = "Needs decision"
-rank = 3000
+section = "Now"
+rank = 1000
 depends_on = ["V-B4-lock", "V-B6"]
 touches = ["benchmarks/agent-tier", "docs/benchmark"]
 resources = []
@@ -16,8 +16,10 @@ scope = "Precondition (owner decision 2026-10-19): do this only after V-B11 make
 acceptance = ["a committed pilot report with paired differences and 95% CIs per metric."]
 checks = ["make check"]
 exclusions = []
+live = "authorized"
 +++
 
 - Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan) (Owner answers: agent tier).
 - Ownership: ResearchForge owner (live spend authorization required before any run).
 - Dependencies: V-B6, V-B4-lock.
+- Owner decision: 2026-10-21: live spend authorized; run the 48-run Pi pilot, then Codex, and record actual spend
