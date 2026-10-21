@@ -1,0 +1,9 @@
+schema = 1
+task = "V-FS3"
+candidate = "aeb248090cc6db2a0664acf73c4e94fceabac8b1"
+integration = "4dd678d87a5b8682c3f583d45d77824c1d97d9c1"
+tree = "3bf0be3b9825fd0af3283855dd955ccb5637174e"
+contract_hash = "c603398d4d06144902d7845f26bbe7ab8f0330bec620e78513dd919a10395052"
+checks = ["<path>", "<path>", "--verify", "<path>", "V-FS3"]
+result = "pass"
+review = "passed"

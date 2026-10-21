@@ -3,7 +3,7 @@ schema = 1
 id = "V-FS3"
 title = "Publish discoverable, audited scientific research examples"
 short = "Publish two genuine research examples"
-status = "open"
+status = "done"
 goal = "RF-BENCH"
 section = "Next"
 rank = 2000
@@ -16,6 +16,8 @@ scope = "After V-FS1 and V-FS2 finish, curate the latest qualifying real two-top
 acceptance = ["Given absent discovery files, `internal/docs/frontier_examples_test.go::TestFrontierExamplesDiscoverable` first fails. When added, both reports are reachable from root README with correct Majorana/Comprehensive and nickelates/Standard labels and working reproduction links.", "Given incomplete/synthetic campaigns, unsafe paths or missing/tampered artifacts, `internal/docs/frontier_examples_test.go::TestFrontierExamplesRejectIncompleteOrSynthetic` rejects promotion using offline temporary fixtures. Those fixtures never become public scientific examples.", "Given the real selected campaign, `TestFrontierExamplesDiscoverable` checks actual engine run/event identities, source-audit/report/evidence references, nonempty evidence and matching saved output hashes. Mechanical checks never imply scientific or human approval."]
 checks = ["`env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE go test ./internal/docs -run 'TestFrontierExamples' -count=1`; `env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE make check`; run the actual rforge provenance validator offline on both manifest-selected topic indexes; `git diff --check`."]
 exclusions = []
+closure = "coordinator_verified"
+closure_evidence = "tasks/evidence/V-FS3.toml"
 +++
 
 - Sources: [public-examples handoff](docs/benchmark/frontier-science-plan.md#frontier-science-stress-test-plan).
