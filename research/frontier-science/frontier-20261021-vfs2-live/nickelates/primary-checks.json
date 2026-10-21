@@ -1,0 +1,459 @@
+{
+  "kind": "host_agent_primary_metadata_checks",
+  "fulltext_acquired": false,
+  "records": [
+    {
+      "source_id": "N1",
+      "url": "https://www.nature.com/articles/s41586-023-06408-7",
+      "checked_at": "2026-10-21T16:41:52.362905+00:00",
+      "http_status": 200,
+      "final_url": "https://www.nature.com/articles/s41586-023-06408-7",
+      "title": [
+        "Signatures of superconductivity near 80 K in a nickelate under high pressure"
+      ],
+      "authors": [
+        "Sun, Hualei",
+        "Huo, Mengwu",
+        "Hu, Xunwu",
+        "Li, Jingyuan",
+        "Liu, Zengjia",
+        "Han, Yifeng",
+        "Tang, Lingyun",
+        "Mao, Zhongquan",
+        "Yang, Pengtao",
+        "Wang, Bosen",
+        "Cheng, Jinguang",
+        "Yao, Dao-Xin",
+        "Zhang, Guang-Ming",
+        "Wang, Meng"
+      ],
+      "date": [
+        "2023/09"
+      ],
+      "doi": [
+        "10.1038/s41586-023-06408-7"
+      ],
+      "arxiv_id": [],
+      "short_excerpt": "signatures of superconductivity in single crystals of La 3 Ni 2 O 7 with maximum T c of 80 K at pressures between 14.0 GPa and 43.5 GPa.",
+      "supporting_passages": [
+        {"quote": "high-pressure resistance and mutual inductive magnetic susceptibility measurements showed signatures of superconductivity", "location": "Publisher Abstract, sentence beginning Here we observe"},
+        {"quote": "orthorhombic structure of Fmmm space group", "location": "Publisher Abstract, sentence beginning The superconducting phase"},
+        {"quote": "Our density functional theory calculations indicate that the superconductivity emerges coincidently with the metallization of the σ-bonding bands under the Fermi level", "location": "Publisher Abstract, sentence beginning Our density functional theory calculations"},
+        {"quote": "Ruddlesden–Popper double-layered perovskite nickelates", "location": "Publisher Abstract, final sentence"}
+      ],
+      "passage_retention": "Selected short excerpts retained after independent review from the original primary-page tool result 6ab6f8f8 at the recorded checked_at time. No new page open or full-text acquisition; the original capture contained these abstract passages.",
+      "excerpt_location": "Publisher Abstract, resistance/mutual-inductive susceptibility sentence; following Fmmm/DFT sentences",
+      "version_notes": "",
+      "http_requests_initiated": 1,
+      "http_attempts": null,
+      "http_attempts_unknown_reason": "Redirect hops and underlying HTTP attempts not instrumented; one explicit page open initiated.",
+      "correction_retraction_check": "Primary metadata/version page inspected; no comprehensive Crossmark or publisher correction registry audit. Absence of a notice on an abstract page does not establish clean status.",
+      "source_status": "published",
+      "status_note": "Status applies only to inspected record; no comprehensive correction-registry clearance."
+    },
+    {
+      "source_id": "N2",
+      "url": "https://www.nature.com/articles/s41563-021-01142-9",
+      "checked_at": "2026-10-21T16:41:52.371211+00:00",
+      "http_status": 200,
+      "final_url": "https://www.nature.com/articles/s41563-021-01142-9",
+      "title": [
+        "Superconductivity in a quintuple-layer square-planar nickelate"
+      ],
+      "authors": [
+        "Pan, Grace A.",
+        "Ferenc Segedin, Dan",
+        "LaBollita, Harrison",
+        "Song, Qi",
+        "Nica, Emilian M.",
+        "Goodge, Berit H.",
+        "Pierce, Andrew T.",
+        "Doyle, Spencer",
+        "Novakov, Steve",
+        "Córdova Carrizales, Denisse",
+        "N’Diaye, Alpha T.",
+        "Shafer, Padraic",
+        "Paik, Hanjong",
+        "Heron, John T.",
+        "Mason, Jarad A.",
+        "Yacoby, Amir",
+        "Kourkoutis, Lena F.",
+        "Erten, Onur",
+        "Brooks, Charles M.",
+        "Botana, Antia S.",
+        "Mundy, Julia A."
+      ],
+      "date": [
+        "2022/02"
+      ],
+      "doi": [
+        "10.1038/s41563-021-01142-9"
+      ],
+      "arxiv_id": [],
+      "short_excerpt": "We observe a superconducting transition beginning at ~13 K.",
+      "supporting_passages": [
+        {"quote": "Here we report the synthesis of the quintuple-layer ( n = 5) member of this series, Nd 6 Ni 5 O 12", "location": "Publisher Abstract, sentence beginning Here we report"},
+        {"quote": "Electronic structure calculations, in tandem with magnetoresistive and spectroscopic measurements, suggest that Nd 6 Ni 5 O 12 interpolates between cuprate-like and infinite-layer nickelate-like behaviour.", "location": "Publisher Abstract, sentence beginning Electronic structure calculations"}
+      ],
+      "passage_retention": "Selected short excerpts retained after independent review from the original primary-page tool result 6ab6f8f8 at the recorded checked_at time. No new page open or full-text acquisition; the original capture contained these abstract passages.",
+      "excerpt_location": "Publisher Abstract, following synthesis of Nd6Ni5O12 sentence",
+      "version_notes": "",
+      "http_requests_initiated": 1,
+      "http_attempts": null,
+      "http_attempts_unknown_reason": "Redirect hops and underlying HTTP attempts not instrumented; one explicit page open initiated.",
+      "correction_retraction_check": "Primary metadata/version page inspected; no comprehensive Crossmark or publisher correction registry audit. Absence of a notice on an abstract page does not establish clean status.",
+      "source_status": "published",
+      "status_note": "Status applies only to inspected record; no comprehensive correction-registry clearance."
+    },
+    {
+      "source_id": "N3",
+      "url": "https://arxiv.org/abs/2105.13492",
+      "checked_at": "2026-10-21T16:41:52.387674+00:00",
+      "http_status": 200,
+      "final_url": "https://arxiv.org/abs/2105.13492",
+      "title": [
+        "Superconductivity in infinite-layer nickelate La$_{1-x}$Ca$_x$NiO$_2$ thin films"
+      ],
+      "authors": [
+        "Zeng, S. W.",
+        "Li, C. J.",
+        "Chow, L. E.",
+        "Cao, Y.",
+        "Zhang, Z. T.",
+        "Tang, C. S.",
+        "Yin, X. M.",
+        "Lim, Z. S.",
+        "Hu, J. X.",
+        "Yang, P.",
+        "Ariando, A."
+      ],
+      "date": [
+        "2021/05/27"
+      ],
+      "doi": [
+        "10.1126/sciadv.abl9927"
+      ],
+      "arxiv_id": [
+        "2105.13492"
+      ],
+      "short_excerpt": "A superconducting dome is observed at 0.15<x<0.3 with weakly insulating behavior at the overdoped regime.",
+      "excerpt_location": "Abstract, phase-diagram sentences for La1-xCaxNiO2 thin films",
+      "version_notes": "Submitted on 27 May 2021 ( v1 ), last revised 24 Feb 2022 (this version, v2)] ",
+      "http_requests_initiated": 1,
+      "http_attempts": null,
+      "http_attempts_unknown_reason": "Redirect hops and underlying HTTP attempts not instrumented; one explicit page open initiated.",
+      "correction_retraction_check": "Primary metadata/version page inspected; no comprehensive Crossmark or publisher correction registry audit. Absence of a notice on an abstract page does not establish clean status.",
+      "source_status": "preprint",
+      "status_note": "Journal-linked preprint abstract inspected; journal content/version equivalence and later corrections not fully checked."
+    },
+    {
+      "source_id": "N4",
+      "url": "https://arxiv.org/abs/2412.16622",
+      "checked_at": "2026-10-21T16:41:52.532480+00:00",
+      "http_status": 200,
+      "final_url": "https://arxiv.org/abs/2412.16622",
+      "title": [
+        "Ambient-pressure superconductivity onset above 40 K in bilayer nickelate ultrathin films"
+      ],
+      "authors": [
+        "Zhou, Guangdi",
+        "Lv, Wei",
+        "Wang, Heng",
+        "Nie, Zihao",
+        "Chen, Yaqi",
+        "Li, Yueying",
+        "Huang, Haoliang",
+        "Chen, Weiqiang",
+        "Sun, Yujie",
+        "Xue, Qi-Kun",
+        "Chen, Zhuoyu"
+      ],
+      "date": [
+        "2024/12/21"
+      ],
+      "doi": [
+        "10.1038/s41586-025-08755-z"
+      ],
+      "arxiv_id": [
+        "2412.16622"
+      ],
+      "short_excerpt": "Resistivity measurements and magnetic-field responses indicate onset TC = 45 K.",
+      "excerpt_location": "Abstract, onset sentence; subsequent TBKT=9 K and mutual-inductance TM=8.5 K sentences; growth and strain sentences",
+      "version_notes": "Submitted on 21 Dec 2024] ",
+      "http_requests_initiated": 1,
+      "http_attempts": null,
+      "http_attempts_unknown_reason": "Redirect hops and underlying HTTP attempts not instrumented; one explicit page open initiated.",
+      "correction_retraction_check": "Primary metadata/version page inspected; no comprehensive Crossmark or publisher correction registry audit. Absence of a notice on an abstract page does not establish clean status.",
+      "source_status": "preprint",
+      "status_note": "Journal-linked preprint abstract inspected; journal content/version equivalence and later corrections not fully checked."
+    },
+    {
+      "source_id": "N5",
+      "url": "https://arxiv.org/abs/2501.14584",
+      "checked_at": "2026-10-21T16:41:52.566640+00:00",
+      "http_status": 200,
+      "final_url": "https://arxiv.org/abs/2501.14584",
+      "title": [
+        "Bulk superconductivity up to 96 K in pressurized nickelate single crystals"
+      ],
+      "authors": [
+        "Li, Feiyu",
+        "Xing, Zhenfang",
+        "Peng, Di",
+        "Dou, Jie",
+        "Guo, Ning",
+        "Ma, Liang",
+        "Zhang, Yulin",
+        "Wang, Lingzhen",
+        "Luo, Jun",
+        "Yang, Jie",
+        "Zhang, Jian",
+        "Chang, Tieyan",
+        "Chen, Yu-Sheng",
+        "Cai, Weizhao",
+        "Cheng, Jinguang",
+        "Wang, Yuzhu",
+        "Liu, Yuxin",
+        "Luo, Tao",
+        "Hirao, Naohisa",
+        "Matsuoka, Takahiro",
+        "Kadobayashi, Hirokazu",
+        "Zeng, Zhidan",
+        "Zheng, Qiang",
+        "Zhou, Rui",
+        "Zeng, Qiaoshi",
+        "Tao, Xutang",
+        "Zhang, Junjie"
+      ],
+      "date": [
+        "2025/01/24"
+      ],
+      "doi": [
+        "10.1038/s41586-025-09954-4"
+      ],
+      "arxiv_id": [
+        "2501.14584"
+      ],
+      "short_excerpt": "zero resistivity ($T_{c,max}^{onset}$ = 92 K and $T_{c,max}^{zero}$ = 73 K at 21.6 GPa) and the Meissner effect ($T_c$= 60 K at 20.6 GPa).",
+      "excerpt_location": "Abstract, La2SmNi2O7 result sentence; flux growth, mixed structure and La1.57Sm1.43Ni2O7-delta onset sentences",
+      "version_notes": "Submitted on 24 Jan 2025 ( v1 ), last revised 21 Apr 2026 (this version, v3)] ",
+      "http_requests_initiated": 1,
+      "http_attempts": null,
+      "http_attempts_unknown_reason": "Redirect hops and underlying HTTP attempts not instrumented; one explicit page open initiated.",
+      "correction_retraction_check": "Primary metadata/version page inspected; no comprehensive Crossmark or publisher correction registry audit. Absence of a notice on an abstract page does not establish clean status.",
+      "source_status": "preprint",
+      "status_note": "Journal-linked preprint abstract inspected; journal content/version equivalence and later corrections not fully checked."
+    },
+    {
+      "source_id": "N6",
+      "url": "https://arxiv.org/abs/2501.12647",
+      "checked_at": "2026-10-21T16:41:52.645881+00:00",
+      "http_status": 200,
+      "final_url": "https://arxiv.org/abs/2501.12647",
+      "title": [
+        "Absence of superconductivity and density-wave transition in ambient-pressure tetragonal La$_4$Ni$_3$O$_{10}$"
+      ],
+      "authors": [
+        "Shi, Mengzhu",
+        "Li, Yikang",
+        "Wang, Yuxing",
+        "Peng, Di",
+        "Yang, Shaohua",
+        "Li, Houpu",
+        "Fan, Kaibao",
+        "Jiang, Kun",
+        "He, Junfeng",
+        "Zeng, Qiaoshi",
+        "Song, Dongsheng",
+        "Ge, Binghui",
+        "Xiang, Ziji",
+        "Wang, Zhenyu",
+        "Ying, Jianjun",
+        "Wu, Tao",
+        "Chen, Xianhui"
+      ],
+      "date": [
+        "2025/01/22"
+      ],
+      "doi": [],
+      "arxiv_id": [
+        "2501.12647"
+      ],
+      "short_excerpt": "transport measurements find that both density-wave and superconducting transitions are absent up to 160 GPa",
+      "excerpt_location": "Abstract, tetragonal microcrystal transport sentence; high oxidative growth sentence",
+      "version_notes": "Submitted on 22 Jan 2025] ",
+      "http_requests_initiated": 1,
+      "http_attempts": null,
+      "http_attempts_unknown_reason": "Redirect hops and underlying HTTP attempts not instrumented; one explicit page open initiated.",
+      "correction_retraction_check": "Primary metadata/version page inspected; no comprehensive Crossmark or publisher correction registry audit. Absence of a notice on an abstract page does not establish clean status.",
+      "source_status": "preprint",
+      "status_note": "Status applies only to inspected record; no comprehensive correction-registry clearance."
+    },
+    {
+      "source_id": "N7",
+      "url": "https://arxiv.org/abs/2311.07423",
+      "checked_at": "2026-10-21T16:41:52.672842+00:00",
+      "http_status": 200,
+      "final_url": "https://arxiv.org/abs/2311.07423",
+      "title": [
+        "Superconductivity in trilayer nickelate La4Ni3O10 under pressure"
+      ],
+      "authors": [
+        "Zhang, Mingxin",
+        "Pei, Cuiying",
+        "Peng, Di",
+        "Du, Xian",
+        "Hu, Weixiong",
+        "Cao, Yantao",
+        "Wang, Qi",
+        "Wu, Juefei",
+        "Li, Yidian",
+        "Liu, Huanyu",
+        "Wen, Chenhaoping",
+        "Song, Jing",
+        "Zhao, Yi",
+        "Li, Changhua",
+        "Cao, Weizheng",
+        "Zhu, Shihao",
+        "Zhang, Qing",
+        "Yu, Na",
+        "Cheng, Peihong",
+        "Zhang, Lili",
+        "Li, Zhiwei",
+        "Zhao, Jinkui",
+        "Chen, Yulin",
+        "Jin, Changqing",
+        "Guo, Hanjie",
+        "Wu, Congjun",
+        "Yang, Fan",
+        "Zeng, Qiaoshi",
+        "Yan, Shichao",
+        "Yang, Lexian",
+        "Qi, Yanpeng"
+      ],
+      "date": [
+        "2023/11/13"
+      ],
+      "doi": [
+        "10.1103/PhysRevX.15.021005"
+      ],
+      "arxiv_id": [
+        "2311.07423"
+      ],
+      "short_excerpt": "emergence of the superconductivity around 25 K under I4/mmm space group.",
+      "excerpt_location": "Abstract, pressure evolution sentence and following susceptibility and AFM-theory sentences",
+      "version_notes": "Submitted on 13 Nov 2023 ( v1 ), last revised 7 Apr 2025 (this version, v3)] ",
+      "http_requests_initiated": 1,
+      "http_attempts": null,
+      "http_attempts_unknown_reason": "Redirect hops and underlying HTTP attempts not instrumented; one explicit page open initiated.",
+      "correction_retraction_check": "Primary metadata/version page inspected; no comprehensive Crossmark or publisher correction registry audit. Absence of a notice on an abstract page does not establish clean status.",
+      "source_status": "preprint",
+      "status_note": "Journal-linked preprint abstract inspected; journal content/version equivalence and later corrections not fully checked."
+    },
+    {
+      "source_id": "N8",
+      "url": "https://arxiv.org/abs/2609.19686",
+      "checked_at": "2026-10-21T16:41:52.707310+00:00",
+      "http_status": 200,
+      "final_url": "https://arxiv.org/abs/2609.19686",
+      "title": [
+        "Superconductivity at the metal-insulator phase boundary in a bulk nickelate at ambient pressure"
+      ],
+      "authors": [
+        "Ahn, Hyo-Bin",
+        "Chen, Xinglong",
+        "Zheng, Hong",
+        "Zhang, Yu",
+        "Chapai, Ramakanta",
+        "Li, Yu",
+        "Thind, Arashdeep S.",
+        "Klie, Robert F.",
+        "Norman, Michael R.",
+        "Welp, Ulrich",
+        "Mitchell, J. F.",
+        "Phelan, Daniel"
+      ],
+      "date": [
+        "2026/09/17"
+      ],
+      "doi": [],
+      "arxiv_id": [
+        "2609.19686"
+      ],
+      "short_excerpt": "intergrowth defects that approximate the known infinite layer nickelates are observed in TEM, leaving open the possibility that superconductivity resides here rather than in the trilayer matrix.",
+      "excerpt_location": "Abstract, alternative-origin sentence; preceding low-volume-fraction/non-percolative sentence",
+      "version_notes": "Submitted on 17 Sep 2026] ",
+      "http_requests_initiated": 1,
+      "http_attempts": null,
+      "http_attempts_unknown_reason": "Redirect hops and underlying HTTP attempts not instrumented; one explicit page open initiated.",
+      "correction_retraction_check": "Primary metadata/version page inspected; no comprehensive Crossmark or publisher correction registry audit. Absence of a notice on an abstract page does not establish clean status.",
+      "source_status": "preprint",
+      "status_note": "Status applies only to inspected record; no comprehensive correction-registry clearance."
+    },
+    {
+      "source_id": "N9",
+      "url": "https://arxiv.org/abs/2006.15928",
+      "checked_at": "2026-10-21T16:41:52.784525+00:00",
+      "http_status": 200,
+      "final_url": "https://arxiv.org/abs/2006.15928",
+      "title": [
+        "Distinct pairing symmetries of superconductivity in infinite-layer nickelates"
+      ],
+      "authors": [
+        "Wang, Zhan",
+        "Zhang, Guang-Ming",
+        "Yang, Yi-feng",
+        "Zhang, Fu-Chun"
+      ],
+      "date": [
+        "2020/06/29"
+      ],
+      "doi": [
+        "10.1103/PhysRevB.102.220501"
+      ],
+      "arxiv_id": [
+        "2006.15928"
+      ],
+      "short_excerpt": "We report theoretical predictions on the pairing symmetry",
+      "excerpt_location": "Abstract, opening renormalized-mean-field sentence and doping/hybridization-dependent states",
+      "version_notes": "Submitted on 29 Jun 2020] ",
+      "http_requests_initiated": 1,
+      "http_attempts": null,
+      "http_attempts_unknown_reason": "Redirect hops and underlying HTTP attempts not instrumented; one explicit page open initiated.",
+      "correction_retraction_check": "Primary metadata/version page inspected; no comprehensive Crossmark or publisher correction registry audit. Absence of a notice on an abstract page does not establish clean status.",
+      "source_status": "preprint",
+      "status_note": "Journal-linked preprint abstract inspected; journal content/version equivalence and later corrections not fully checked."
+    },
+    {
+      "source_id": "N10",
+      "url": "https://arxiv.org/abs/2409.09321",
+      "checked_at": "2026-10-21T16:41:52.796215+00:00",
+      "http_status": 200,
+      "final_url": "https://arxiv.org/abs/2409.09321",
+      "title": [
+        "Possible pairing states in the superconducting bilayer nickelate"
+      ],
+      "authors": [
+        "Singh, Dheeraj Kumar",
+        "Goyal, Garima",
+        "Bang, Yunkyu"
+      ],
+      "date": [
+        "2024/09/14"
+      ],
+      "doi": [],
+      "arxiv_id": [
+        "2409.09321"
+      ],
+      "short_excerpt": "While assuming that the superconductivity arises because of the magnetic correlations",
+      "excerpt_location": "Abstract, model assumption sentence; preceding d/sign-changing-s/mixed-state possibilities",
+      "version_notes": "Submitted on 14 Sep 2024 ( v1 ), last revised 4 Oct 2024 (this version, v2)] ",
+      "http_requests_initiated": 1,
+      "http_attempts": null,
+      "http_attempts_unknown_reason": "Redirect hops and underlying HTTP attempts not instrumented; one explicit page open initiated.",
+      "correction_retraction_check": "Primary metadata/version page inspected; no comprehensive Crossmark or publisher correction registry audit. Absence of a notice on an abstract page does not establish clean status.",
+      "source_status": "preprint",
+      "status_note": "Status applies only to inspected record; no comprehensive correction-registry clearance."
+    }
+  ]
+}

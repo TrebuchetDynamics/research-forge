@@ -1,0 +1,212 @@
+{
+  "job_id": "job_2f778d06f3eb12252fd757ad0be05a9e",
+  "schemaVersion": "1",
+  "createdAt": "2026-10-21T15:11:18Z",
+  "updatedAt": "2026-10-21T15:12:24Z",
+  "queries": [
+    "nickelate superconductivity infinite layer thin film substrate oxygen stoichiometry",
+    "nickelate superconductivity bilayer high pressure transition temperature",
+    "nickelate superconductivity ambient pressure structural phase",
+    "nickelate superconductivity resistive onset zero resistance magnetic shielding",
+    "nickelate superconductivity independent replication pressure calibration",
+    "nickelate superconductivity pairing mechanism experimental constraints review"
+  ],
+  "sources": [
+    "openalex",
+    "crossref",
+    "semantic-scholar",
+    "arxiv"
+  ],
+  "limit": 20,
+  "completed": [
+    {
+      "source": "openalex",
+      "query": "nickelate superconductivity infinite layer thin film substrate oxygen stoichiometry",
+      "rawFile": "raw/search-openalex-001-nickelate-superconductivity-infinite-layer-thin-film-substrate-oxygen-stoichiome.txt",
+      "records": 20
+    },
+    {
+      "source": "crossref",
+      "query": "nickelate superconductivity infinite layer thin film substrate oxygen stoichiometry",
+      "rawFile": "raw/search-crossref-001-nickelate-superconductivity-infinite-layer-thin-film-substrate-oxygen-stoichiome.txt",
+      "records": 20
+    },
+    {
+      "source": "arxiv",
+      "query": "nickelate superconductivity infinite layer thin film substrate oxygen stoichiometry",
+      "rawFile": "raw/search-arxiv-001-nickelate-superconductivity-infinite-layer-thin-film-substrate-oxygen-stoichiome.txt",
+      "records": 20
+    },
+    {
+      "source": "openalex",
+      "query": "nickelate superconductivity bilayer high pressure transition temperature",
+      "rawFile": "raw/search-openalex-002-nickelate-superconductivity-bilayer-high-pressure-transition-temperature.txt",
+      "records": 20
+    },
+    {
+      "source": "crossref",
+      "query": "nickelate superconductivity bilayer high pressure transition temperature",
+      "rawFile": "raw/search-crossref-002-nickelate-superconductivity-bilayer-high-pressure-transition-temperature.txt",
+      "records": 18
+    },
+    {
+      "source": "arxiv",
+      "query": "nickelate superconductivity bilayer high pressure transition temperature",
+      "rawFile": "raw/search-arxiv-002-nickelate-superconductivity-bilayer-high-pressure-transition-temperature.txt",
+      "records": 20
+    },
+    {
+      "source": "openalex",
+      "query": "nickelate superconductivity ambient pressure structural phase",
+      "rawFile": "raw/search-openalex-003-nickelate-superconductivity-ambient-pressure-structural-phase.txt",
+      "records": 20
+    },
+    {
+      "source": "crossref",
+      "query": "nickelate superconductivity ambient pressure structural phase",
+      "rawFile": "raw/search-crossref-003-nickelate-superconductivity-ambient-pressure-structural-phase.txt",
+      "records": 17
+    },
+    {
+      "source": "arxiv",
+      "query": "nickelate superconductivity ambient pressure structural phase",
+      "rawFile": "raw/search-arxiv-003-nickelate-superconductivity-ambient-pressure-structural-phase.txt",
+      "records": 20
+    },
+    {
+      "source": "openalex",
+      "query": "nickelate superconductivity resistive onset zero resistance magnetic shielding",
+      "rawFile": "raw/search-openalex-004-nickelate-superconductivity-resistive-onset-zero-resistance-magnetic-shielding.txt",
+      "records": 20
+    },
+    {
+      "source": "crossref",
+      "query": "nickelate superconductivity resistive onset zero resistance magnetic shielding",
+      "rawFile": "raw/search-crossref-004-nickelate-superconductivity-resistive-onset-zero-resistance-magnetic-shielding.txt",
+      "records": 20
+    },
+    {
+      "source": "arxiv",
+      "query": "nickelate superconductivity resistive onset zero resistance magnetic shielding",
+      "rawFile": "raw/search-arxiv-004-nickelate-superconductivity-resistive-onset-zero-resistance-magnetic-shielding.txt",
+      "records": 20
+    },
+    {
+      "source": "openalex",
+      "query": "nickelate superconductivity independent replication pressure calibration",
+      "rawFile": "raw/search-openalex-005-nickelate-superconductivity-independent-replication-pressure-calibration.txt",
+      "records": 5
+    },
+    {
+      "source": "crossref",
+      "query": "nickelate superconductivity independent replication pressure calibration",
+      "rawFile": "raw/search-crossref-005-nickelate-superconductivity-independent-replication-pressure-calibration.txt",
+      "records": 19
+    },
+    {
+      "source": "arxiv",
+      "query": "nickelate superconductivity independent replication pressure calibration",
+      "rawFile": "raw/search-arxiv-005-nickelate-superconductivity-independent-replication-pressure-calibration.txt",
+      "records": 20
+    },
+    {
+      "source": "openalex",
+      "query": "nickelate superconductivity pairing mechanism experimental constraints review",
+      "rawFile": "raw/search-openalex-006-nickelate-superconductivity-pairing-mechanism-experimental-constraints-review.txt",
+      "records": 20
+    },
+    {
+      "source": "crossref",
+      "query": "nickelate superconductivity pairing mechanism experimental constraints review",
+      "rawFile": "raw/search-crossref-006-nickelate-superconductivity-pairing-mechanism-experimental-constraints-review.txt",
+      "records": 20
+    },
+    {
+      "source": "arxiv",
+      "query": "nickelate superconductivity pairing mechanism experimental constraints review",
+      "rawFile": "raw/search-arxiv-006-nickelate-superconductivity-pairing-mechanism-experimental-constraints-review.txt",
+      "records": 20
+    }
+  ],
+  "failures": [
+    {
+      "source": "semantic-scholar",
+      "query": "nickelate superconductivity infinite layer thin film substrate oxygen stoichiometry",
+      "error": "source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)"
+    },
+    {
+      "source": "semantic-scholar",
+      "query": "nickelate superconductivity bilayer high pressure transition temperature",
+      "error": "source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)"
+    },
+    {
+      "source": "semantic-scholar",
+      "query": "nickelate superconductivity ambient pressure structural phase",
+      "error": "source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)"
+    },
+    {
+      "source": "semantic-scholar",
+      "query": "nickelate superconductivity resistive onset zero resistance magnetic shielding",
+      "error": "source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)"
+    },
+    {
+      "source": "semantic-scholar",
+      "query": "nickelate superconductivity independent replication pressure calibration",
+      "error": "source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)"
+    },
+    {
+      "source": "semantic-scholar",
+      "query": "nickelate superconductivity pairing mechanism experimental constraints review",
+      "error": "source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)"
+    }
+  ],
+  "result_count": 339,
+  "budget": {
+    "depth": "standard",
+    "max_query_variants": 10,
+    "max_sources": 5,
+    "max_api_calls": 50,
+    "low_yield_threshold": 2,
+    "saturation_queries": 3,
+    "max_consecutive_errors": 5
+  },
+  "stop_reason": "completed",
+  "requests_used": 24,
+  "coverage": {
+    "unique_records": 254,
+    "queries": [
+      {
+        "query": "nickelate superconductivity infinite layer thin film substrate oxygen stoichiometry",
+        "new_unique": 56,
+        "complete": false
+      },
+      {
+        "query": "nickelate superconductivity bilayer high pressure transition temperature",
+        "new_unique": 50,
+        "complete": false
+      },
+      {
+        "query": "nickelate superconductivity ambient pressure structural phase",
+        "new_unique": 33,
+        "complete": false
+      },
+      {
+        "query": "nickelate superconductivity resistive onset zero resistance magnetic shielding",
+        "new_unique": 54,
+        "complete": false
+      },
+      {
+        "query": "nickelate superconductivity independent replication pressure calibration",
+        "new_unique": 14,
+        "complete": false
+      },
+      {
+        "query": "nickelate superconductivity pairing mechanism experimental constraints review",
+        "new_unique": 47,
+        "complete": false
+      }
+    ],
+    "consecutive_low_yield": 0
+  },
+  "consecutive_errors": 0
+}

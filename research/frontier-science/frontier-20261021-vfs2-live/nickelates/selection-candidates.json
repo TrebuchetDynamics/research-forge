@@ -1,0 +1,604 @@
+[
+  {
+    "result_line": 1,
+    "record": {
+      "Title": "Superconductivity in infinite-layer nickelates",
+      "Identifiers": {
+        "DOI": "10.1088/1361-6633/ac5a60",
+        "ArXivID": "",
+        "PMID": "35240593",
+        "PMCID": "",
+        "OpenAlexID": "W3186095856",
+        "CrossrefID": "",
+        "SemanticScholarID": "",
+        "ZoteroItemKey": "",
+        "ADSBibcode": ""
+      },
+      "Authors": [],
+      "Abstract": "",
+      "Year": 2022,
+      "Venue": "",
+      "Publisher": "",
+      "URLs": [
+        "https://doi.org/10.1088/1361-6633/ac5a60"
+      ],
+      "License": "cc-by",
+      "OpenAccess": true,
+      "SourcePayload": "",
+      "SourceRefs": [
+        {
+          "Source": "openalex",
+          "RawPayloadRef": "openalex:/works?per-page=20&search=nickelate+superconductivity+infinite+layer+thin+film+substrate+oxygen+stoichiometry",
+          "RetrievedAt": "",
+          "Metadata": {
+            "concept_ids": "C205188671; C54101563; C74575197; C26873012; C57863236; C2989555556; C121332964; C192562407; C185592680; C8010536; C115624301; C55493867; C161790260",
+            "concepts": "Isostructural; Superconductivity; Non-blocking I/O; Condensed matter physics; Doping; Superconducting transition temperature; Physics; Materials science; Chemistry; Crystallography; Crystal structure; Biochemistry; Catalysis",
+            "domain": "Physical Sciences",
+            "field": "Physics and Astronomy",
+            "oa_status": "hybrid",
+            "publication_date": "2022-03-03",
+            "related_openalex_ids": "W3189347602; W3141849623; W3200689703; W2894552987; W2018994973; W80048461; W1566496708; W2079976648; W3162571423; W2489981980; W1580666260; W2223208275; W3022021339; W583722705; W2364685045; W2137828948; W2969794058; W2753990892; W2147235495; W1971300708",
+            "subfield": "Condensed Matter Physics",
+            "top_concept": "Isostructural",
+            "topic": "Physics of Superconductivity and Magnetism",
+            "type": "article"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "result_line": 6,
+    "record": {
+      "Title": "Superconductivity in an infinite-layer nickelate superlattice",
+      "Identifiers": {
+        "DOI": "10.1038/s41467-024-54660-w",
+        "ArXivID": "",
+        "PMID": "39587107",
+        "PMCID": "",
+        "OpenAlexID": "W4404673400",
+        "CrossrefID": "",
+        "SemanticScholarID": "",
+        "ZoteroItemKey": "",
+        "ADSBibcode": ""
+      },
+      "Authors": [],
+      "Abstract": "",
+      "Year": 2024,
+      "Venue": "",
+      "Publisher": "",
+      "URLs": [
+        "https://doi.org/10.1038/s41467-024-54660-w"
+      ],
+      "License": "cc-by-nc-nd",
+      "OpenAccess": true,
+      "SourcePayload": "",
+      "SourceRefs": [
+        {
+          "Source": "openalex",
+          "RawPayloadRef": "openalex:/works?per-page=20&search=nickelate+superconductivity+infinite+layer+thin+film+substrate+oxygen+stoichiometry",
+          "RetrievedAt": "",
+          "Metadata": {
+            "concept_ids": "C105382558; C54101563; C26873012; C2779227376; C192562407; C121332964; C171250308",
+            "concepts": "Superlattice; Superconductivity; Condensed matter physics; Layer (electronics); Materials science; Physics; Nanotechnology",
+            "domain": "Physical Sciences",
+            "field": "Materials Science",
+            "oa_status": "gold",
+            "publication_date": "2024-11-25",
+            "related_openalex_ids": "W2899084033; W2026628379; W1984860738; W2405895097; W2168586217; W2792721407; W279396859; W2765670836; W1965686274; W2012557245",
+            "subfield": "Materials Chemistry",
+            "top_concept": "Superlattice",
+            "topic": "Electronic and Structural Properties of Oxides",
+            "type": "article"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "result_line": 3,
+    "record": {
+      "Title": "Superconductivity in a quintuple-layer square-planar nickelate",
+      "Identifiers": {
+        "DOI": "10.1038/s41563-021-01142-9",
+        "ArXivID": "",
+        "PMID": "34811494",
+        "PMCID": "",
+        "OpenAlexID": "W3199601026",
+        "CrossrefID": "",
+        "SemanticScholarID": "",
+        "ZoteroItemKey": "",
+        "ADSBibcode": ""
+      },
+      "Authors": [],
+      "Abstract": "",
+      "Year": 2021,
+      "Venue": "",
+      "Publisher": "",
+      "URLs": [
+        "https://doi.org/10.1038/s41563-021-01142-9"
+      ],
+      "License": "",
+      "OpenAccess": true,
+      "SourcePayload": "",
+      "SourceRefs": [
+        {
+          "Source": "openalex",
+          "RawPayloadRef": "openalex:/works?per-page=20&search=nickelate+superconductivity+infinite+layer+thin+film+substrate+oxygen+stoichiometry",
+          "RetrievedAt": "",
+          "Metadata": {
+            "concept_ids": "C130893637; C54101563; C26873012; C57863236; C134786449; C192562407; C2781183027; C74575197; C2779851234; C121332964; C8010536; C185592680; C41008148; C191897082; C55493867; C121684516; C161790260",
+            "concepts": "Cuprate; Superconductivity; Condensed matter physics; Doping; Planar; Materials science; Copper oxide; Non-blocking I/O; Oxide; Physics; Crystallography; Chemistry; Computer science; Metallurgy; Biochemistry; Computer graphics (images); Catalysis",
+            "domain": "Physical Sciences",
+            "field": "Physics and Astronomy",
+            "oa_status": "green",
+            "publication_date": "2021-11-22",
+            "related_openalex_ids": "W3169897331; W3170436956; W3018102611; W2990674481; W3199514386; W3099253389; W2987678928; W3210759105; W1990888181; W3012601899; W2611816128; W2773539425; W2999321521; W2319205291; W560502939; W1544573031; W2227891475; W2965779348; W3089276852; W2946198673",
+            "subfield": "Condensed Matter Physics",
+            "top_concept": "Cuprate",
+            "topic": "Physics of Superconductivity and Magnetism",
+            "type": "article"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "result_line": 17,
+    "record": {
+      "Title": "Superconductivity in an ultrathin multilayer nickelate",
+      "Identifiers": {
+        "DOI": "10.1126/sciadv.ado4572",
+        "ArXivID": "",
+        "PMID": "39742487",
+        "PMCID": "",
+        "OpenAlexID": "W4405967768",
+        "CrossrefID": "",
+        "SemanticScholarID": "",
+        "ZoteroItemKey": "",
+        "ADSBibcode": ""
+      },
+      "Authors": [],
+      "Abstract": "",
+      "Year": 2025,
+      "Venue": "",
+      "Publisher": "",
+      "URLs": [
+        "https://doi.org/10.1126/sciadv.ado4572"
+      ],
+      "License": "cc-by-nc",
+      "OpenAccess": true,
+      "SourcePayload": "",
+      "SourceRefs": [
+        {
+          "Source": "openalex",
+          "RawPayloadRef": "openalex:/works?per-page=20&search=nickelate+superconductivity+infinite+layer+thin+film+substrate+oxygen+stoichiometry",
+          "RetrievedAt": "",
+          "Metadata": {
+            "concept_ids": "C54101563; C89464430; C192562407; C44280652; C79794668; C21368211; C134786449; C26873012; C130893637; C2777081348; C2779227376; C8010536; C171250308; C185592680; C49040817; C121332964; C120665830; C121684516; C191897082; C41008148; C178790620",
+            "concepts": "Superconductivity; Metastability; Materials science; Phase (matter); Heterojunction; Synchrotron; Planar; Condensed matter physics; Cuprate; Fluorite; Layer (electronics); Crystallography; Nanotechnology; Chemistry; Optoelectronics; Physics; Optics; Computer graphics (images); Metallurgy; Computer science; Organic chemistry",
+            "domain": "Physical Sciences",
+            "field": "Materials Science",
+            "oa_status": "gold",
+            "publication_date": "2025-01-01",
+            "related_openalex_ids": "W2373075048; W2352481938; W2365772002; W2392083667; W2374354396; W2355214898; W2349239281; W2394250915; W2027969547; W2309725223",
+            "subfield": "Materials Chemistry",
+            "top_concept": "Superconductivity",
+            "topic": "Electronic and Structural Properties of Oxides",
+            "type": "article"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "result_line": 61,
+    "record": {
+      "Title": "Signatures of superconductivity near 80 K in a nickelate under high pressure",
+      "Identifiers": {
+        "DOI": "10.1038/s41586-023-06408-7",
+        "ArXivID": "",
+        "PMID": "37437603",
+        "PMCID": "",
+        "OpenAlexID": "W4384028978",
+        "CrossrefID": "",
+        "SemanticScholarID": "",
+        "ZoteroItemKey": "",
+        "ADSBibcode": ""
+      },
+      "Authors": [],
+      "Abstract": "",
+      "Year": 2023,
+      "Venue": "",
+      "Publisher": "",
+      "URLs": [
+        "https://doi.org/10.1038/s41586-023-06408-7"
+      ],
+      "License": "",
+      "OpenAccess": true,
+      "SourcePayload": "",
+      "SourceRefs": [
+        {
+          "Source": "openalex",
+          "RawPayloadRef": "openalex:/works?per-page=20&search=nickelate+superconductivity+bilayer+high+pressure+transition+temperature",
+          "RetrievedAt": "",
+          "Metadata": {
+            "concept_ids": "C54101563; C130893637; C26873012; C37243968; C189394030; C155011858; C113037339; C109613756; C185592680; C121332964; C192562407; C8010536; C115624301; C147120987; C62520636",
+            "concepts": "Superconductivity; Cuprate; Condensed matter physics; Orthorhombic crystal system; Atomic orbital; Perovskite (structure); Room-temperature superconductor; High-temperature superconductivity; Chemistry; Physics; Materials science; Crystallography; Crystal structure; Electron; Quantum mechanics",
+            "domain": "Physical Sciences",
+            "field": "Physics and Astronomy",
+            "oa_status": "green",
+            "publication_date": "2023-07-12",
+            "related_openalex_ids": "W2023392096; W2108292829; W2063072476; W4224236328; W3117079972; W2061076094; W2040197898; W1996765737; W2333036573; W2052242108",
+            "subfield": "Condensed Matter Physics",
+            "top_concept": "Superconductivity",
+            "topic": "Physics of Superconductivity and Magnetism",
+            "type": "article"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "result_line": 68,
+    "record": {
+      "Title": "Research progress of high-temperature superconductivity in trilayer nickelate",
+      "Identifiers": {
+        "DOI": "10.7498/aps.74.20251258",
+        "ArXivID": "",
+        "PMID": "",
+        "PMCID": "",
+        "OpenAlexID": "W4415461947",
+        "CrossrefID": "",
+        "SemanticScholarID": "",
+        "ZoteroItemKey": "",
+        "ADSBibcode": ""
+      },
+      "Authors": [],
+      "Abstract": "",
+      "Year": 2025,
+      "Venue": "",
+      "Publisher": "",
+      "URLs": [
+        "https://doi.org/10.7498/aps.74.20251258"
+      ],
+      "License": "cc-by",
+      "OpenAccess": true,
+      "SourcePayload": "",
+      "SourceRefs": [
+        {
+          "Source": "openalex",
+          "RawPayloadRef": "openalex:/works?per-page=20&search=nickelate+superconductivity+bilayer+high+pressure+transition+temperature",
+          "RetrievedAt": "",
+          "Metadata": {
+            "concept_ids": "C54101563; C96026104; C26873012; C2910081258; C192562407; C192157962; C44280652; C114221277; C109613756; C134853933; C61696701; C171250308; C86025842; C2984729377",
+            "concepts": "Superconductivity; Diamagnetism; Condensed matter physics; Hydrostatic pressure; Materials science; Bilayer; Phase (matter); Vacancy defect; High-temperature superconductivity; Hydrostatic equilibrium; Engineering physics; Nanotechnology; Electronic structure; High pressure",
+            "domain": "Physical Sciences",
+            "field": "Physics and Astronomy",
+            "oa_status": "diamond",
+            "publication_date": "2025-01-01",
+            "subfield": "Condensed Matter Physics",
+            "top_concept": "Superconductivity",
+            "topic": "Physics of Superconductivity and Magnetism",
+            "type": "article"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "result_line": 71,
+    "record": {
+      "Title": "Bulk high-temperature superconductivity in the high-pressure tetragonal phase of bilayer La2PrNi2O7",
+      "Identifiers": {
+        "DOI": "10.48550/arxiv.2407.05681",
+        "ArXivID": "",
+        "PMID": "",
+        "PMCID": "",
+        "OpenAlexID": "W4400481171",
+        "CrossrefID": "",
+        "SemanticScholarID": "",
+        "ZoteroItemKey": "",
+        "ADSBibcode": ""
+      },
+      "Authors": [],
+      "Abstract": "",
+      "Year": 2024,
+      "Venue": "",
+      "Publisher": "",
+      "URLs": [
+        "http://arxiv.org/abs/2407.05681"
+      ],
+      "License": "cc-by",
+      "OpenAccess": true,
+      "SourcePayload": "",
+      "SourceRefs": [
+        {
+          "Source": "openalex",
+          "RawPayloadRef": "openalex:/works?per-page=20&search=nickelate+superconductivity+bilayer+high+pressure+transition+temperature",
+          "RetrievedAt": "",
+          "Metadata": {
+            "concept_ids": "C170751736; C54101563; C192157962; C26873012; C2984729377; C44280652; C192562407; C109613756; C185592680; C121332964; C97355855; C41625074; C178790620; C55493867",
+            "concepts": "Tetragonal crystal system; Superconductivity; Bilayer; Condensed matter physics; High pressure; Phase (matter); Materials science; High-temperature superconductivity; Chemistry; Physics; Thermodynamics; Membrane; Organic chemistry; Biochemistry",
+            "domain": "Physical Sciences",
+            "field": "Physics and Astronomy",
+            "oa_status": "green",
+            "publication_date": "2024-07-08",
+            "related_openalex_ids": "W2108157117; W2031633929; W2082642415; W3153333807; W2005241827; W2914551589; W2750204626; W4381251772; W2084791892; W2064635581",
+            "subfield": "Condensed Matter Physics",
+            "top_concept": "Tetragonal crystal system",
+            "topic": "Physics of Superconductivity and Magnetism",
+            "type": "preprint"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "result_line": 121,
+    "record": {
+      "Title": "Superconductivity at the metal-insulator phase boundary in a bulk nickelate at ambient pressure",
+      "Identifiers": {
+        "DOI": "10.48550/arxiv.2609.19686",
+        "ArXivID": "",
+        "PMID": "",
+        "PMCID": "",
+        "OpenAlexID": "W7213601418",
+        "CrossrefID": "",
+        "SemanticScholarID": "",
+        "ZoteroItemKey": "",
+        "ADSBibcode": ""
+      },
+      "Authors": [],
+      "Abstract": "",
+      "Year": 2026,
+      "Venue": "",
+      "Publisher": "",
+      "URLs": [
+        "https://arxiv.org/abs/2609.19686"
+      ],
+      "License": "",
+      "OpenAccess": true,
+      "SourcePayload": "",
+      "SourceRefs": [
+        {
+          "Source": "openalex",
+          "RawPayloadRef": "openalex:/works?per-page=20&search=nickelate+superconductivity+ambient+pressure+structural+phase",
+          "RetrievedAt": "",
+          "Metadata": {
+            "concept_ids": "C54101563; C26873012; C143895478; C192562407; C44280652; C2779851234; C85906118; C188324986; C504270822; C544153396; C69990965; C86025842; C57863236; C147120987; C117958382; C115624301; C47542005; C2781285689; C9652623; C109613756; C19067145; C149288129; C197162081; C48496998",
+            "concepts": "Superconductivity; Condensed matter physics; Ambient pressure; Materials science; Phase (matter); Oxide; Phase diagram; Phase boundary; Nickel; Metal; Electrical resistivity and conductivity; Electronic structure; Doping; Electron; Magnetoresistance; Crystal structure; Transition temperature; Crystal (programming language); Field (mathematics); High-temperature superconductivity; Thin film; Phase transition; Magnetism; Critical field",
+            "domain": "Physical Sciences",
+            "field": "Physics and Astronomy",
+            "oa_status": "green",
+            "publication_date": "2026-09-17",
+            "subfield": "Condensed Matter Physics",
+            "top_concept": "Superconductivity",
+            "topic": "Physics of Superconductivity and Magnetism",
+            "type": "preprint"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "result_line": 122,
+    "record": {
+      "Title": "Probing Structural Origins of Ambient Pressure Superconductivity and Charge Modulation in Nickelate Thin Films with Multislice Electron Ptychography",
+      "Identifiers": {
+        "DOI": "10.1093/mam/ozaf048.072",
+        "ArXivID": "",
+        "PMID": "",
+        "PMCID": "",
+        "OpenAlexID": "W4412908660",
+        "CrossrefID": "",
+        "SemanticScholarID": "",
+        "ZoteroItemKey": "",
+        "ADSBibcode": ""
+      },
+      "Authors": [],
+      "Abstract": "",
+      "Year": 2025,
+      "Venue": "",
+      "Publisher": "",
+      "URLs": [
+        "https://doi.org/10.1093/mam/ozaf048.072"
+      ],
+      "License": "",
+      "OpenAccess": true,
+      "SourcePayload": "",
+      "SourceRefs": [
+        {
+          "Source": "openalex",
+          "RawPayloadRef": "openalex:/works?per-page=20&search=nickelate+superconductivity+ambient+pressure+structural+phase",
+          "RetrievedAt": "",
+          "Metadata": {
+            "concept_ids": "C54101563; C78153596; C192562407; C147120987; C26873012; C121332964; C120665830; C207114421; C185544564",
+            "concepts": "Superconductivity; Ptychography; Materials science; Electron; Condensed matter physics; Physics; Optics; Diffraction; Nuclear physics",
+            "domain": "Physical Sciences",
+            "field": "Physics and Astronomy",
+            "oa_status": "bronze",
+            "publication_date": "2025-07-01",
+            "related_openalex_ids": "W2899084033; W2298138607; W2011577330; W2321707934; W4235925647; W4404995717; W2016187641; W4404725684; W2754101072; W4372284105",
+            "subfield": "Condensed Matter Physics",
+            "top_concept": "Superconductivity",
+            "topic": "Physics of Superconductivity and Magnetism",
+            "type": "article"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "result_line": 232,
+    "record": {
+      "Title": "Superconductivity driven by pairing of the coherent parts of the physical electrons",
+      "Identifiers": {
+        "DOI": "10.1016/j.physc.2017.12.001",
+        "ArXivID": "1603.03851",
+        "PMID": "",
+        "PMCID": "",
+        "OpenAlexID": "",
+        "CrossrefID": "",
+        "SemanticScholarID": "",
+        "ZoteroItemKey": "",
+        "ADSBibcode": ""
+      },
+      "Authors": [],
+      "Abstract": "How the superconductivity in unconventional superconductors emerges from the diverse mother normal states is still a big puzzle. Whatever the mother normal states are the superconductivity is {\\em normal} with BCS-like behaviours of the paired quasiparticles in condensation. To reconcile the diverse mother normal states and the normal superconductivity in unconventional superconductors, we revisit a proposal that the emergence of the low-energy coherent parts of the physical electrons, which survive from the interaction correlations, is an essential prerequisite for superconductivity. The superconductivity is driven by the pair condensation of these coherent parts of the physical electrons. Moreover the incoherent parts of the physical electrons can enhance the superconducting transition temperature $T_c$ although they are not in driving role in the emergence of the superconductivity. Some experimental responses of the coherent parts of the physical electrons are predicted.",
+      "Year": 2016,
+      "Venue": "",
+      "Publisher": "",
+      "URLs": [
+        "https://arxiv.org/abs/1603.03851v3",
+        "https://arxiv.org/pdf/1603.03851v3",
+        "https://doi.org/10.1016/j.physc.2017.12.001",
+        "https://arxiv.org/pdf/1603.03851",
+        "https://arxiv.org/e-print/1603.03851"
+      ],
+      "License": "",
+      "OpenAccess": false,
+      "SourcePayload": "",
+      "SourceRefs": [
+        {
+          "Source": "arxiv",
+          "RawPayloadRef": "arxiv:/api/query?max_results=20&search_query=all%3Anickelate+superconductivity+resistive+onset+zero+resistance+magnetic+shielding",
+          "RetrievedAt": "",
+          "Metadata": {
+            "categories": "cond-mat.supr-con",
+            "comment": "9 pages; Revised version submitted to Physica C: Superconductivity and its applications",
+            "journal_ref": "Physica C: Superconductivity and its applications 546 (2018) 21-27",
+            "version": "v3"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "result_line": 281,
+    "record": {
+      "Title": "Interlayer pairing mechanism for bilayer nickelate superconductors",
+      "Identifiers": {
+        "DOI": "10.48550/arxiv.2606.15298",
+        "ArXivID": "",
+        "PMID": "",
+        "PMCID": "",
+        "OpenAlexID": "W7164889247",
+        "CrossrefID": "",
+        "SemanticScholarID": "",
+        "ZoteroItemKey": "",
+        "ADSBibcode": ""
+      },
+      "Authors": [],
+      "Abstract": "",
+      "Year": 2026,
+      "Venue": "",
+      "Publisher": "",
+      "URLs": [
+        "https://arxiv.org/abs/2606.15298"
+      ],
+      "License": "cc-by",
+      "OpenAccess": true,
+      "SourcePayload": "",
+      "SourceRefs": [
+        {
+          "Source": "openalex",
+          "RawPayloadRef": "openalex:/works?per-page=20&search=nickelate+superconductivity+pairing+mechanism+experimental+constraints+review",
+          "RetrievedAt": "",
+          "Metadata": {
+            "concept_ids": "C14103023; C26873012; C54101563; C192157962; C115516489; C168900304; C86025842; C121332964; C109613756; C201991461; C191486275; C85725439; C192562407; C51675196; C178429038; C143895478; C185592680; C157077121; C35052450; C196609583; C186769553; C85906118; C106074065; C40636707; C149288129; C44280652",
+            "concepts": "Pairing; Condensed matter physics; Superconductivity; Bilayer; Pseudogap; Valence (chemistry); Electronic structure; Physics; High-temperature superconductivity; Fermi surface; Scattering; Anisotropy; Materials science; Fermi liquid theory; Valence bond theory; Ambient pressure; Chemistry; Strongly correlated material; Electronic correlation; Electron pair; Fermi Gamma-ray Space Telescope; Phase diagram; Hubbard model; Fermi level; Phase transition; Phase (matter)",
+            "domain": "Physical Sciences",
+            "field": "Physics and Astronomy",
+            "oa_status": "green",
+            "publication_date": "2026-06-13",
+            "subfield": "Condensed Matter Physics",
+            "top_concept": "Pairing",
+            "topic": "Physics of Superconductivity and Magnetism",
+            "type": "preprint"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "result_line": 204,
+    "record": {
+      "Title": "A novel vacuum tube may achieve zero resistance and superconductivity properties",
+      "Identifiers": {
+        "DOI": "10.36227/techrxiv.11973624",
+        "ArXivID": "",
+        "PMID": "",
+        "PMCID": "",
+        "OpenAlexID": "",
+        "CrossrefID": "10.36227/techrxiv.11973624",
+        "SemanticScholarID": "",
+        "ZoteroItemKey": "",
+        "ADSBibcode": ""
+      },
+      "Authors": [],
+      "Abstract": "&lt;p&gt;At present, all superconductivity techniques are carried out at ultra-low temperature. The aim of this study is to design a novel vacuum tube at room temperature, which can move electrons without resistance to achieve zero resistance and superconductivity properties.&lt;/p&gt;&lt;p&gt;superconductor; vacuum tube; electronics; electrostatic shielding; zero resistance&lt;br&gt;&lt;/p&gt;",
+      "Year": 2020,
+      "Venue": "",
+      "Publisher": "Institute of Electrical and Electronics Engineers (IEEE)",
+      "URLs": [
+        "https://doi.org/10.36227/techrxiv.11973624"
+      ],
+      "License": "https://creativecommons.org/licenses/by/4.0/",
+      "OpenAccess": true,
+      "SourcePayload": "",
+      "SourceRefs": [
+        {
+          "Source": "crossref",
+          "RawPayloadRef": "crossref:/works?query=nickelate+superconductivity+resistive+onset+zero+resistance+magnetic+shielding&rows=20",
+          "RetrievedAt": "",
+          "Metadata": {
+            "publication_dates": "2020-03-16",
+            "reference_count": "0",
+            "type": "posted-content"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "result_line": 206,
+    "record": {
+      "Title": "ZERO RESISTANCE",
+      "Identifiers": {
+        "DOI": "10.1016/b978-0-08-021651-5.50008-5",
+        "ArXivID": "",
+        "PMID": "",
+        "PMCID": "",
+        "OpenAlexID": "",
+        "CrossrefID": "10.1016/b978-0-08-021651-5.50008-5",
+        "SemanticScholarID": "",
+        "ZoteroItemKey": "",
+        "ADSBibcode": ""
+      },
+      "Authors": [],
+      "Abstract": "",
+      "Year": 1978,
+      "Venue": "Introduction to Superconductivity",
+      "Publisher": "Elsevier",
+      "URLs": [
+        "https://doi.org/10.1016/b978-0-08-021651-5.50008-5"
+      ],
+      "License": "",
+      "OpenAccess": false,
+      "SourcePayload": "",
+      "SourceRefs": [
+        {
+          "Source": "crossref",
+          "RawPayloadRef": "crossref:/works?query=nickelate+superconductivity+resistive+onset+zero+resistance+magnetic+shielding&rows=20",
+          "RetrievedAt": "",
+          "Metadata": {
+            "publication_dates": "1978;1978",
+            "reference_count": "0",
+            "type": "book-chapter"
+          }
+        }
+      ]
+    }
+  }
+]

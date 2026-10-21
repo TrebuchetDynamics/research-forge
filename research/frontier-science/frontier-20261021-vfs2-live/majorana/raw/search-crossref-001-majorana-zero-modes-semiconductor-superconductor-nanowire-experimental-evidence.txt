@@ -1,0 +1,19 @@
+10.21203/rs.3.rs-1566363/v1	Conductance Spectroscopy of Majorana Zero Modes in Superconductor-Magnetic Insulator Nanowire Hybrid Systems
+10.1103/physrevb.86.220506	Splitting of the zero-bias conductance peak as smoking gun evidence for the existence of the Majorana mode in a superconductor-semiconductor nanowire
+10.12693/aphyspola.138.681	Majorana Bound States and Zero-Bias Conductance Peaks in Superconductor/Semiconductor Nanowire Devices
+10.1103/physrevb.103.224505	Disorder effects on Majorana zero modes: Kitaev chain versus semiconductor nanowire
+10.2139/ssrn.4189347	Majorana Zero Modes in a Double-Stranded DNA with S-Wave Superconductor
+10.21203/rs.3.rs-882201/v1	Robustness of Majorana Zero-energy State in a Spin-orbit Coupled Semiconductor/superconductor Heterostructure
+10.1103/2v41-yvs1	Majorana zero modes in semiconductor-superconductor hybrid structures: Defining topology in short and disordered nanowires through Majorana splitting
+10.1103/physrevb.88.144512	Majorana modes in smooth normal-superconductor nanowire junctions
+10.1038/s41578-018-0003-1	Majorana zero modes in superconductor–semiconductor heterostructures
+10.1103/physrevlett.122.107701	Fractional Josephson Vortices and Braiding of Majorana Zero Modes in Planar Superconductor-Semiconductor Heterostructures
+10.1103/physrevb.106.064505	Non-Hermiticity-stabilized Majorana zero modes in semiconductor-superconductor nanowires
+10.1103/physrevb.98.155314	Quantized zero-bias conductance plateau in semiconductor-superconductor heterostructures without topological Majorana zero modes
+10.1117/12.2594311	Majorana zero modes in ferromagnet-superconductor heterostructures
+10.1103/physrevb.81.214516	Majorana zero modes bound to a vortex line in a topological superconductor
+10.33915/etd.6720	Conductance Calculations for Semiconductor-Superconductor Majorana Structures
+10.1109/mipro65660.2025.11131778	Probing the Design Space of InSb Topological Superconductor Nanowires for the Realization of Majorana Zero Modes
+10.29172/049639f2-4ab9-4899-b4d7-408090e296f9	Majorana zero modes
+10.1103/physrevb.111.235442	Detection of Majorana zero modes bound to Josephson vortices in planar superconductor–topological insulator–superconductor junctions
+10.1021/acsnano.4c10395.s001	Chirality-Induced Majorana Zero Modes and Majorana Polarization

@@ -1,0 +1,20 @@
+10.1103/physrevb.103.195158	Disorder-induced zero-bias peaks in Majorana nanowires
+10.12693/aphyspola.138.681	Majorana Bound States and Zero-Bias Conductance Peaks in Superconductor/Semiconductor Nanowire Devices
+10.1103/physrevb.106.094504	Quality factor for zero-bias conductance peaks in Majorana nanowire
+10.1038/nphys2479	Zero-bias peaks and splitting in an Al–InAs nanowire topological superconductor as a signature of Majorana fermions
+10.1103/physrevb.96.075161	Andreev bound states versus Majorana bound states in quantum dot-nanowire-superconductor hybrid structures: Trivial versus topological zero-bias conductance peaks
+10.67698/pjpcr.2026.0175	Proximity-Induced Topological Superconductivity in MnBi2Te4/NbSe2 van der Waals Heterostructures: Zero-Bias Conductance Peaks, 2e Josephson Periodicity, and Majorana Signature Analysis
+10.1103/physrevresearch.2.013377	Physical mechanisms for zero-bias conductance peaks in Majorana nanowires
+10.1103/physrevb.96.184520	Electron temperature and tunnel coupling dependence of zero-bias and almost-zero-bias conductance peaks in Majorana nanowires
+10.1103/physrevlett.132.099901	Erratum: Ubiquitous Non-Majorana Zero-Bias Conductance Peaks in Nanowire Devices [Phys. Rev. Lett. <b>123</b> , 107703 (2019)]
+10.1103/physrevb.103.224505	Disorder effects on Majorana zero modes: Kitaev chain versus semiconductor nanowire
+10.1103/physrevb.105.115432	On-demand large conductance in trivial zero-bias tunneling peaks in Majorana nanowires
+10.1021/acsnano.4c10395.s001	Chirality-Induced Majorana Zero Modes and Majorana Polarization
+10.2139/ssrn.4678158	Machine Learning Detection of Majorana Zero Modes from Zero Bias Peak Measurements
+10.21203/rs.3.rs-1566363/v1	Conductance Spectroscopy of Majorana Zero Modes in Superconductor-Magnetic Insulator Nanowire Hybrid Systems
+10.1103/physrevlett.123.107703	Ubiquitous Non-Majorana Zero-Bias Conductance Peaks in Nanowire Devices
+10.1103/physrevb.86.220506	Splitting of the zero-bias conductance peak as smoking gun evidence for the existence of the Majorana mode in a superconductor-semiconductor nanowire
+10.1103/physrevlett.109.267002	Zero-Bias Peaks in the Tunneling Conductance of Spin-Orbit-Coupled Superconducting Wires with and without Majorana End-States
+10.1038/s41586-022-05382-w	Majorana-like Coulomb spectroscopy in the absence of zero-bias peaks
+10.21468/scipostphys.19.2.030	Zero-bias conductance peaks at zero applied magnetic field due to stray fields from integrated micromagnets in hybrid nanowire quantum dots
+10.1088/1402-4896/abe0ee	Induced superconductivity in linear carbon chains and engineering of zero-bias peaks with geometric angles: a new approach

@@ -1,0 +1,599 @@
+{
+  "job_id": "job_2f347c6e8e2200c6712c0a16af8e8029",
+  "schemaVersion": "1",
+  "createdAt": "2026-10-21T15:06:53Z",
+  "updatedAt": "2026-10-21T16:37:58Z",
+  "queries": [
+    "Majorana zero modes semiconductor superconductor nanowire experimental evidence",
+    "Majorana nanowire zero bias peak trivial Andreev bound states",
+    "Majorana nanowire quantized conductance replication",
+    "Majorana nanowire quantized conductance correction retraction",
+    "Majorana nanowire disorder induced zero bias peaks",
+    "Majorana nanowire smooth confinement Andreev states",
+    "Majorana nanowire nonlocal conductance",
+    "Majorana nanowire bulk gap closing reopening",
+    "Majorana nanowire topological gap protocol",
+    "Majorana nanowire topological gap protocol criticism",
+    "Majorana nanowire Coulomb blockade parity",
+    "Majorana nanowire parity lifetime poisoning",
+    "Majorana nanowire conductance temperature dependence",
+    "Majorana nanowire magnetic field angle dependence",
+    "Majorana nanowire length dependence energy splitting",
+    "Majorana nanowire Josephson fractional periodicity trivial explanation",
+    "Majorana nanowire braiding non Abelian experimental evidence",
+    "Majorana nanowire correlated end states",
+    "Majorana nanowire independent replication experimental signatures",
+    "Majorana nanowire review experimental limitations"
+  ],
+  "sources": [
+    "openalex",
+    "crossref",
+    "semantic-scholar",
+    "arxiv"
+  ],
+  "limit": 20,
+  "completed": [
+    {
+      "source": "openalex",
+      "query": "Majorana zero modes semiconductor superconductor nanowire experimental evidence",
+      "rawFile": "raw/search-openalex-001-majorana-zero-modes-semiconductor-superconductor-nanowire-experimental-evidence.txt",
+      "records": 20
+    },
+    {
+      "source": "crossref",
+      "query": "Majorana zero modes semiconductor superconductor nanowire experimental evidence",
+      "rawFile": "raw/search-crossref-001-majorana-zero-modes-semiconductor-superconductor-nanowire-experimental-evidence.txt",
+      "records": 19
+    },
+    {
+      "source": "arxiv",
+      "query": "Majorana zero modes semiconductor superconductor nanowire experimental evidence",
+      "rawFile": "raw/search-arxiv-001-majorana-zero-modes-semiconductor-superconductor-nanowire-experimental-evidence.txt",
+      "records": 20
+    },
+    {
+      "source": "openalex",
+      "query": "Majorana nanowire zero bias peak trivial Andreev bound states",
+      "rawFile": "raw/search-openalex-002-majorana-nanowire-zero-bias-peak-trivial-andreev-bound-states.txt",
+      "records": 20
+    },
+    {
+      "source": "crossref",
+      "query": "Majorana nanowire zero bias peak trivial Andreev bound states",
+      "rawFile": "raw/search-crossref-002-majorana-nanowire-zero-bias-peak-trivial-andreev-bound-states.txt",
+      "records": 20
+    },
+    {
+      "source": "arxiv",
+      "query": "Majorana nanowire zero bias peak trivial Andreev bound states",
+      "rawFile": "raw/search-arxiv-002-majorana-nanowire-zero-bias-peak-trivial-andreev-bound-states.txt",
+      "records": 20
+    },
+    {
+      "source": "openalex",
+      "query": "Majorana nanowire quantized conductance replication",
+      "rawFile": "raw/search-openalex-003-majorana-nanowire-quantized-conductance-replication.txt",
+      "records": 20
+    },
+    {
+      "source": "crossref",
+      "query": "Majorana nanowire quantized conductance replication",
+      "rawFile": "raw/search-crossref-003-majorana-nanowire-quantized-conductance-replication.txt",
+      "records": 20
+    },
+    {
+      "source": "arxiv",
+      "query": "Majorana nanowire quantized conductance replication",
+      "rawFile": "raw/search-arxiv-003-majorana-nanowire-quantized-conductance-replication.txt",
+      "records": 20
+    },
+    {
+      "source": "openalex",
+      "query": "Majorana nanowire quantized conductance correction retraction",
+      "rawFile": "raw/search-openalex-004-majorana-nanowire-quantized-conductance-correction-retraction.txt",
+      "records": 14
+    },
+    {
+      "source": "crossref",
+      "query": "Majorana nanowire quantized conductance correction retraction",
+      "rawFile": "raw/search-crossref-004-majorana-nanowire-quantized-conductance-correction-retraction.txt",
+      "records": 20
+    },
+    {
+      "source": "arxiv",
+      "query": "Majorana nanowire quantized conductance correction retraction",
+      "rawFile": "raw/search-arxiv-004-majorana-nanowire-quantized-conductance-correction-retraction.txt",
+      "records": 20
+    },
+    {
+      "source": "openalex",
+      "query": "Majorana nanowire disorder induced zero bias peaks",
+      "rawFile": "raw/search-openalex-005-majorana-nanowire-disorder-induced-zero-bias-peaks.txt",
+      "records": 20
+    },
+    {
+      "source": "crossref",
+      "query": "Majorana nanowire disorder induced zero bias peaks",
+      "rawFile": "raw/search-crossref-005-majorana-nanowire-disorder-induced-zero-bias-peaks.txt",
+      "records": 20
+    },
+    {
+      "source": "arxiv",
+      "query": "Majorana nanowire disorder induced zero bias peaks",
+      "rawFile": "raw/search-arxiv-005-majorana-nanowire-disorder-induced-zero-bias-peaks.txt",
+      "records": 20
+    },
+    {
+      "source": "openalex",
+      "query": "Majorana nanowire smooth confinement Andreev states",
+      "rawFile": "raw/search-openalex-006-majorana-nanowire-smooth-confinement-andreev-states.txt",
+      "records": 20
+    },
+    {
+      "source": "crossref",
+      "query": "Majorana nanowire smooth confinement Andreev states",
+      "rawFile": "raw/search-crossref-006-majorana-nanowire-smooth-confinement-andreev-states.txt",
+      "records": 19
+    },
+    {
+      "source": "arxiv",
+      "query": "Majorana nanowire smooth confinement Andreev states",
+      "rawFile": "raw/search-arxiv-006-majorana-nanowire-smooth-confinement-andreev-states.txt",
+      "records": 20
+    },
+    {
+      "source": "openalex",
+      "query": "Majorana nanowire nonlocal conductance",
+      "rawFile": "raw/search-openalex-007-majorana-nanowire-nonlocal-conductance.txt",
+      "records": 20
+    },
+    {
+      "source": "crossref",
+      "query": "Majorana nanowire nonlocal conductance",
+      "rawFile": "raw/search-crossref-007-majorana-nanowire-nonlocal-conductance.txt",
+      "records": 19
+    },
+    {
+      "source": "arxiv",
+      "query": "Majorana nanowire nonlocal conductance",
+      "rawFile": "raw/search-arxiv-007-majorana-nanowire-nonlocal-conductance.txt",
+      "records": 20
+    },
+    {
+      "source": "openalex",
+      "query": "Majorana nanowire bulk gap closing reopening",
+      "rawFile": "raw/search-openalex-008-majorana-nanowire-bulk-gap-closing-reopening.txt",
+      "records": 20
+    },
+    {
+      "source": "crossref",
+      "query": "Majorana nanowire bulk gap closing reopening",
+      "rawFile": "raw/search-crossref-008-majorana-nanowire-bulk-gap-closing-reopening.txt",
+      "records": 20
+    },
+    {
+      "source": "arxiv",
+      "query": "Majorana nanowire bulk gap closing reopening",
+      "rawFile": "raw/search-arxiv-008-majorana-nanowire-bulk-gap-closing-reopening.txt",
+      "records": 20
+    },
+    {
+      "source": "openalex",
+      "query": "Majorana nanowire topological gap protocol",
+      "rawFile": "raw/search-openalex-009-majorana-nanowire-topological-gap-protocol.txt",
+      "records": 20
+    },
+    {
+      "source": "crossref",
+      "query": "Majorana nanowire topological gap protocol",
+      "rawFile": "raw/search-crossref-009-majorana-nanowire-topological-gap-protocol.txt",
+      "records": 17
+    },
+    {
+      "source": "arxiv",
+      "query": "Majorana nanowire topological gap protocol",
+      "rawFile": "raw/search-arxiv-009-majorana-nanowire-topological-gap-protocol.txt",
+      "records": 20
+    },
+    {
+      "source": "openalex",
+      "query": "Majorana nanowire topological gap protocol criticism",
+      "rawFile": "raw/search-openalex-010-majorana-nanowire-topological-gap-protocol-criticism.txt",
+      "records": 9
+    },
+    {
+      "source": "crossref",
+      "query": "Majorana nanowire topological gap protocol criticism",
+      "rawFile": "raw/search-crossref-010-majorana-nanowire-topological-gap-protocol-criticism.txt",
+      "records": 17
+    },
+    {
+      "source": "arxiv",
+      "query": "Majorana nanowire topological gap protocol criticism",
+      "rawFile": "raw/search-arxiv-010-majorana-nanowire-topological-gap-protocol-criticism.txt",
+      "records": 20
+    },
+    {
+      "source": "openalex",
+      "query": "Majorana nanowire Coulomb blockade parity",
+      "rawFile": "raw/search-openalex-011-majorana-nanowire-coulomb-blockade-parity.txt",
+      "records": 20
+    },
+    {
+      "source": "crossref",
+      "query": "Majorana nanowire Coulomb blockade parity",
+      "rawFile": "raw/search-crossref-011-majorana-nanowire-coulomb-blockade-parity.txt",
+      "records": 20
+    },
+    {
+      "source": "arxiv",
+      "query": "Majorana nanowire Coulomb blockade parity",
+      "rawFile": "raw/search-arxiv-011-majorana-nanowire-coulomb-blockade-parity.txt",
+      "records": 20
+    },
+    {
+      "source": "openalex",
+      "query": "Majorana nanowire parity lifetime poisoning",
+      "rawFile": "raw/search-openalex-012-majorana-nanowire-parity-lifetime-poisoning.txt",
+      "records": 20
+    },
+    {
+      "source": "crossref",
+      "query": "Majorana nanowire parity lifetime poisoning",
+      "rawFile": "raw/search-crossref-012-majorana-nanowire-parity-lifetime-poisoning.txt",
+      "records": 20
+    },
+    {
+      "source": "semantic-scholar",
+      "query": "Majorana zero modes semiconductor superconductor nanowire experimental evidence",
+      "rawFile": "raw/search-semantic-scholar-001-majorana-zero-modes-semiconductor-superconductor-nanowire-experimental-evidence.txt",
+      "records": 20
+    },
+    {
+      "source": "semantic-scholar",
+      "query": "Majorana nanowire quantized conductance replication",
+      "rawFile": "raw/search-semantic-scholar-003-majorana-nanowire-quantized-conductance-replication.txt",
+      "records": 20
+    },
+    {
+      "source": "semantic-scholar",
+      "query": "Majorana nanowire Coulomb blockade parity",
+      "rawFile": "raw/search-semantic-scholar-011-majorana-nanowire-coulomb-blockade-parity.txt",
+      "records": 20
+    },
+    {
+      "source": "semantic-scholar",
+      "query": "Majorana nanowire parity lifetime poisoning",
+      "rawFile": "raw/search-semantic-scholar-012-majorana-nanowire-parity-lifetime-poisoning.txt",
+      "records": 19
+    },
+    {
+      "source": "arxiv",
+      "query": "Majorana nanowire parity lifetime poisoning",
+      "rawFile": "raw/search-arxiv-012-majorana-nanowire-parity-lifetime-poisoning.txt",
+      "records": 20
+    },
+    {
+      "source": "openalex",
+      "query": "Majorana nanowire conductance temperature dependence",
+      "rawFile": "raw/search-openalex-013-majorana-nanowire-conductance-temperature-dependence.txt",
+      "records": 20
+    },
+    {
+      "source": "crossref",
+      "query": "Majorana nanowire conductance temperature dependence",
+      "rawFile": "raw/search-crossref-013-majorana-nanowire-conductance-temperature-dependence.txt",
+      "records": 17
+    },
+    {
+      "source": "arxiv",
+      "query": "Majorana nanowire conductance temperature dependence",
+      "rawFile": "raw/search-arxiv-013-majorana-nanowire-conductance-temperature-dependence.txt",
+      "records": 20
+    },
+    {
+      "source": "openalex",
+      "query": "Majorana nanowire magnetic field angle dependence",
+      "rawFile": "raw/search-openalex-014-majorana-nanowire-magnetic-field-angle-dependence.txt",
+      "records": 20
+    },
+    {
+      "source": "crossref",
+      "query": "Majorana nanowire magnetic field angle dependence",
+      "rawFile": "raw/search-crossref-014-majorana-nanowire-magnetic-field-angle-dependence.txt",
+      "records": 20
+    },
+    {
+      "source": "arxiv",
+      "query": "Majorana nanowire magnetic field angle dependence",
+      "rawFile": "raw/search-arxiv-014-majorana-nanowire-magnetic-field-angle-dependence.txt",
+      "records": 20
+    },
+    {
+      "source": "openalex",
+      "query": "Majorana nanowire length dependence energy splitting",
+      "rawFile": "raw/search-openalex-015-majorana-nanowire-length-dependence-energy-splitting.txt",
+      "records": 20
+    },
+    {
+      "source": "crossref",
+      "query": "Majorana nanowire length dependence energy splitting",
+      "rawFile": "raw/search-crossref-015-majorana-nanowire-length-dependence-energy-splitting.txt",
+      "records": 20
+    },
+    {
+      "source": "arxiv",
+      "query": "Majorana nanowire length dependence energy splitting",
+      "rawFile": "raw/search-arxiv-015-majorana-nanowire-length-dependence-energy-splitting.txt",
+      "records": 20
+    },
+    {
+      "source": "openalex",
+      "query": "Majorana nanowire Josephson fractional periodicity trivial explanation",
+      "rawFile": "raw/search-openalex-016-majorana-nanowire-josephson-fractional-periodicity-trivial-explanation.txt",
+      "records": 20
+    },
+    {
+      "source": "crossref",
+      "query": "Majorana nanowire Josephson fractional periodicity trivial explanation",
+      "rawFile": "raw/search-crossref-016-majorana-nanowire-josephson-fractional-periodicity-trivial-explanation.txt",
+      "records": 20
+    },
+    {
+      "source": "semantic-scholar",
+      "query": "Majorana nanowire quantized conductance correction retraction",
+      "rawFile": "raw/search-semantic-scholar-004-majorana-nanowire-quantized-conductance-correction-retraction.txt",
+      "records": 20
+    },
+    {
+      "source": "semantic-scholar",
+      "query": "Majorana nanowire nonlocal conductance",
+      "rawFile": "raw/search-semantic-scholar-007-majorana-nanowire-nonlocal-conductance.txt",
+      "records": 20
+    },
+    {
+      "source": "semantic-scholar",
+      "query": "Majorana nanowire topological gap protocol",
+      "rawFile": "raw/search-semantic-scholar-009-majorana-nanowire-topological-gap-protocol.txt",
+      "records": 20
+    },
+    {
+      "source": "semantic-scholar",
+      "query": "Majorana nanowire conductance temperature dependence",
+      "rawFile": "raw/search-semantic-scholar-013-majorana-nanowire-conductance-temperature-dependence.txt",
+      "records": 20
+    },
+    {
+      "source": "arxiv",
+      "query": "Majorana nanowire Josephson fractional periodicity trivial explanation",
+      "rawFile": "raw/search-arxiv-016-majorana-nanowire-josephson-fractional-periodicity-trivial-explanation.txt",
+      "records": 20
+    },
+    {
+      "source": "openalex",
+      "query": "Majorana nanowire braiding non Abelian experimental evidence",
+      "rawFile": "raw/search-openalex-017-majorana-nanowire-braiding-non-abelian-experimental-evidence.txt",
+      "records": 20
+    },
+    {
+      "source": "crossref",
+      "query": "Majorana nanowire braiding non Abelian experimental evidence",
+      "rawFile": "raw/search-crossref-017-majorana-nanowire-braiding-non-abelian-experimental-evidence.txt",
+      "records": 19
+    },
+    {
+      "source": "arxiv",
+      "query": "Majorana nanowire braiding non Abelian experimental evidence",
+      "rawFile": "raw/search-arxiv-017-majorana-nanowire-braiding-non-abelian-experimental-evidence.txt",
+      "records": 20
+    },
+    {
+      "source": "openalex",
+      "query": "Majorana nanowire correlated end states",
+      "rawFile": "raw/search-openalex-018-majorana-nanowire-correlated-end-states.txt",
+      "records": 20
+    },
+    {
+      "source": "crossref",
+      "query": "Majorana nanowire correlated end states",
+      "rawFile": "raw/search-crossref-018-majorana-nanowire-correlated-end-states.txt",
+      "records": 20
+    },
+    {
+      "source": "semantic-scholar",
+      "query": "Majorana nanowire correlated end states",
+      "rawFile": "raw/search-semantic-scholar-018-majorana-nanowire-correlated-end-states.txt",
+      "records": 20
+    },
+    {
+      "source": "arxiv",
+      "query": "Majorana nanowire correlated end states",
+      "rawFile": "raw/search-arxiv-018-majorana-nanowire-correlated-end-states.txt",
+      "records": 20
+    },
+    {
+      "source": "openalex",
+      "query": "Majorana nanowire independent replication experimental signatures",
+      "rawFile": "raw/search-openalex-019-majorana-nanowire-independent-replication-experimental-signatures.txt",
+      "records": 20
+    },
+    {
+      "source": "crossref",
+      "query": "Majorana nanowire independent replication experimental signatures",
+      "rawFile": "raw/search-crossref-019-majorana-nanowire-independent-replication-experimental-signatures.txt",
+      "records": 19
+    },
+    {
+      "source": "arxiv",
+      "query": "Majorana nanowire independent replication experimental signatures",
+      "rawFile": "raw/search-arxiv-019-majorana-nanowire-independent-replication-experimental-signatures.txt",
+      "records": 20
+    }
+  ],
+  "failures": [
+    {
+      "source": "semantic-scholar",
+      "query": "Majorana nanowire zero bias peak trivial Andreev bound states",
+      "error": "source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)"
+    },
+    {
+      "source": "semantic-scholar",
+      "query": "Majorana nanowire disorder induced zero bias peaks",
+      "error": "source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)"
+    },
+    {
+      "source": "semantic-scholar",
+      "query": "Majorana nanowire smooth confinement Andreev states",
+      "error": "source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)"
+    },
+    {
+      "source": "semantic-scholar",
+      "query": "Majorana nanowire bulk gap closing reopening",
+      "error": "source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)"
+    },
+    {
+      "source": "semantic-scholar",
+      "query": "Majorana nanowire topological gap protocol criticism",
+      "error": "source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)"
+    },
+    {
+      "source": "semantic-scholar",
+      "query": "Majorana nanowire magnetic field angle dependence",
+      "error": "source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)"
+    },
+    {
+      "source": "semantic-scholar",
+      "query": "Majorana nanowire length dependence energy splitting",
+      "error": "source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)"
+    },
+    {
+      "source": "semantic-scholar",
+      "query": "Majorana nanowire Josephson fractional periodicity trivial explanation",
+      "error": "source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)"
+    },
+    {
+      "source": "semantic-scholar",
+      "query": "Majorana nanowire braiding non Abelian experimental evidence",
+      "error": "source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)"
+    },
+    {
+      "source": "semantic-scholar",
+      "query": "Majorana nanowire independent replication experimental signatures",
+      "error": "source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)"
+    }
+  ],
+  "result_count": 1288,
+  "budget": {
+    "depth": "comprehensive",
+    "max_query_variants": 30,
+    "max_sources": 20,
+    "max_api_calls": 100,
+    "low_yield_threshold": 1,
+    "saturation_queries": 5,
+    "max_consecutive_errors": 10
+  },
+  "stop_reason": "budget_exhausted",
+  "requests_used": 100,
+  "coverage": {
+    "unique_records": 599,
+    "queries": [
+      {
+        "query": "Majorana zero modes semiconductor superconductor nanowire experimental evidence",
+        "new_unique": 57,
+        "complete": true
+      },
+      {
+        "query": "Majorana nanowire zero bias peak trivial Andreev bound states",
+        "new_unique": 40,
+        "complete": false
+      },
+      {
+        "query": "Majorana nanowire quantized conductance replication",
+        "new_unique": 52,
+        "complete": true
+      },
+      {
+        "query": "Majorana nanowire quantized conductance correction retraction",
+        "new_unique": 17,
+        "complete": true
+      },
+      {
+        "query": "Majorana nanowire disorder induced zero bias peaks",
+        "new_unique": 19,
+        "complete": false
+      },
+      {
+        "query": "Majorana nanowire smooth confinement Andreev states",
+        "new_unique": 26,
+        "complete": false
+      },
+      {
+        "query": "Majorana nanowire nonlocal conductance",
+        "new_unique": 23,
+        "complete": true
+      },
+      {
+        "query": "Majorana nanowire bulk gap closing reopening",
+        "new_unique": 36,
+        "complete": false
+      },
+      {
+        "query": "Majorana nanowire topological gap protocol",
+        "new_unique": 35,
+        "complete": true
+      },
+      {
+        "query": "Majorana nanowire topological gap protocol criticism",
+        "new_unique": 9,
+        "complete": false
+      },
+      {
+        "query": "Majorana nanowire Coulomb blockade parity",
+        "new_unique": 45,
+        "complete": true
+      },
+      {
+        "query": "Majorana nanowire parity lifetime poisoning",
+        "new_unique": 43,
+        "complete": true
+      },
+      {
+        "query": "Majorana nanowire conductance temperature dependence",
+        "new_unique": 23,
+        "complete": true
+      },
+      {
+        "query": "Majorana nanowire magnetic field angle dependence",
+        "new_unique": 36,
+        "complete": false
+      },
+      {
+        "query": "Majorana nanowire length dependence energy splitting",
+        "new_unique": 23,
+        "complete": false
+      },
+      {
+        "query": "Majorana nanowire Josephson fractional periodicity trivial explanation",
+        "new_unique": 32,
+        "complete": false
+      },
+      {
+        "query": "Majorana nanowire braiding non Abelian experimental evidence",
+        "new_unique": 35,
+        "complete": false
+      },
+      {
+        "query": "Majorana nanowire correlated end states",
+        "new_unique": 28,
+        "complete": true
+      },
+      {
+        "query": "Majorana nanowire independent replication experimental signatures",
+        "new_unique": 20,
+        "complete": false
+      }
+    ],
+    "consecutive_low_yield": 0
+  },
+  "consecutive_errors": 0
+}

@@ -1,0 +1,12 @@
+# Independent review and source-support corrections
+
+Purpose: supporting QC for the [two research drafts](summary.md), not scientific acceptance or a replacement for the [citation audits](majorana/citation-audit.json).
+
+Two fresh-context, read-only reviewers separately assessed mechanical integrity and scientific source support. Neither launched research calls or acquired full texts. The parent remained the sole writer for the corrections below.
+
+- **Mechanical review:** no critical/important issues; original receipts/events and command history preserved, current indexes linked and hashed, authorized resume accounting checked. A copied nickelates HTTP-accounting explanation incorrectly mentioned Majorana's M2 notice; that clause was removed, without changing its ten recorded page opens or claiming known redirect attempts.
+- **Source-support review:** primary nickelates N1/N2 records retained outcome excerpts but omitted the supporting passages for some conditions and interpretation. Majorana M2 omitted the explanatory re-analysis/recalibration sentence. The relevant passages were present in the original primary-page captures, not newly inferred from titles.
+- **Correction:** short attributable `supporting_passages` were retained in each topic's `primary-checks.json` from those original captures, with exact locations and original capture identifiers. N1 now exposes its resistance/susceptibility, Fmmm and theoretical-metallization support; N2 exposes synthesis/composition and measurements/calculation support; M2 exposes the re-analysis/recalibration sentence. No additional page opens, searches or paper acquisitions occurred. Full abstracts/articles are not redistributed.
+- **Readback:** the retained passages were compared against the original capture text. Report/evidence/audit claims remain bounded to what those passages say; computational interpretation is not experimental pairing proof. Index hashes were refreshed and real offline validators rerun after the corrections.
+
+Both reviewers declined to certify experimental validity, complete correction histories, independent matched replication, scientific truth or human approval. Original/rebuilt executable byte equivalence is explicitly unavailable; its disclosed mismatch is authorized by the owner, not waived by review. Public discovery remains V-FS3's responsibility. Exact final mechanical receipts are retained in [offline-checks.json](offline-checks.json) and topic command ledgers.

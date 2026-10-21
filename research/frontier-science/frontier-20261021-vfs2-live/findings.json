@@ -1,0 +1,109 @@
+[
+  {
+    "id": "QC-429",
+    "topics": [
+      "majorana",
+      "nickelates"
+    ],
+    "category": "upstream_failure",
+    "severity": "medium",
+    "observed": "Saved final failures contain Semantic Scholar HTTP 429s: 10 Majorana pairs and all 6 nickelate pairs; this is retrieval-access failure, not adverse physics.",
+    "expected": "Provider responses for planned query/source pairs, or explicit gaps.",
+    "command_refs": [
+      "majorana/search-resume-owner2",
+      "nickelates/search-1"
+    ],
+    "artifact_refs": [
+      "majorana/failures.jsonl",
+      "nickelates/failures.jsonl",
+      "majorana/manifest.json",
+      "nickelates/manifest.json"
+    ],
+    "reproduction_steps": [
+      "Offline: read failures.jsonl and manifest coverage for each topic.",
+      "Do not replay provider traffic automatically; the saved status is observed, live reproducibility not established."
+    ],
+    "reproducibility": "unconfirmed",
+    "proposed_next_action": "Carry coverage gaps into scientific interpretation; any future retrieval requires a separately authorized campaign, not another search here."
+  },
+  {
+    "id": "QC-DEPTH",
+    "topics": [
+      "majorana"
+    ],
+    "category": "engine_bug_candidate",
+    "severity": "low",
+    "observed": "Search argv and manifest/checkpoint specify comprehensive, but immutable search receipt 8f404258609590c80f7fe09e406e780d has generic depth standard. Hashes/run linkage remain separately validator-checked.",
+    "expected": "Receipt descriptive depth should agree with selected search depth, or document distinct semantics.",
+    "command_refs": [
+      "majorana/search-resume-owner2"
+    ],
+    "artifact_refs": [
+      "majorana/manifest.json",
+      "majorana/batch-state.json",
+      "majorana/provenance/runs/8f404258609590c80f7fe09e406e780d.json"
+    ],
+    "reproduction_steps": [
+      "Offline: compare depth in saved argv, manifest budget and immutable receipt.",
+      "No reduced offline execution reproducer was built; observation alone is not a confirmed engine defect."
+    ],
+    "reproducibility": "unconfirmed",
+    "proposed_next_action": "Later scoped reduced-offline-repro investigation; do not alter receipts, executable or product during this campaign."
+  },
+  {
+    "id": "QC-BINARY",
+    "topics": [
+      "majorana"
+    ],
+    "category": "usability_gap",
+    "severity": "medium",
+    "observed": "Original executable missing; rebuild from same pinned source revision has a different SHA-256. Owner expressly permits continuing with disclosed mismatch, not claiming executable byte equivalence.",
+    "expected": "One preserved byte-identical executable snapshot for full replay equivalence.",
+    "command_refs": [
+      "majorana/restore-capabilities",
+      "majorana/search-resume-owner2"
+    ],
+    "artifact_refs": [
+      "run.json",
+      "recovery.json",
+      "rebuild.stdout.log",
+      "rebuild.stderr.log",
+      "rebuilt-version.json"
+    ],
+    "reproduction_steps": [
+      "Offline: compare original_binary and rebuilt_binary fingerprints in recovery.json.",
+      "Current executable hash can be checked while task TMPDIR remains available; original cannot be independently rehashed."
+    ],
+    "reproducibility": "unconfirmed",
+    "proposed_next_action": "Keep gap visible in reproducibility instructions; V-FS3/independent reviewer must not claim original executable equivalence."
+  },
+  {
+    "id": "QC-SOURCE-LIMITS",
+    "topics": [
+      "majorana",
+      "nickelates"
+    ],
+    "category": "scientific_gap",
+    "severity": "medium",
+    "observed": "Engine resolutions contain empty authors and, for nickelate DOI records, empty abstracts. Host checked primary metadata/abstract pages; missing physical conditions, calibration and independent replication still constrain conclusions.",
+    "expected": "Material claims tied to actual primary passages, not titles or retrieval counts.",
+    "command_refs": [
+      "majorana/paper-1",
+      "majorana/paper-2",
+      "nickelates/paper-1",
+      "nickelates/paper-2"
+    ],
+    "artifact_refs": [
+      "majorana/primary-checks.json",
+      "nickelates/primary-checks.json",
+      "majorana/citation-audit.json",
+      "nickelates/citation-audit.json"
+    ],
+    "reproduction_steps": [
+      "Offline: inspect saved resolved-paper fields and source audit.",
+      "Compare quoted short primary excerpts and explicit unknown conditions; no PDF/full-text acquisition authorized."
+    ],
+    "reproducibility": "unconfirmed",
+    "proposed_next_action": "Independent semantic review should check every material passage and preserve gaps; no autonomous scientific acceptance."
+  }
+]

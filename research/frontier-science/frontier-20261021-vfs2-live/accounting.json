@@ -1,0 +1,21 @@
+{
+  "at": "2026-10-21T15:13:05.115156+00:00",
+  "sessions": {
+    "parent": {
+      "tokens": 659673,
+      "USD": 0.48019559999999994,
+      "messages": 13
+    },
+    "child": {
+      "tokens": 167919,
+      "USD": 0.16994199999999998,
+      "messages": 5
+    }
+  },
+  "total_tokens": 827592,
+  "total_USD": 0.6501375999999999,
+  "parent_closeout_reserve_tokens": 75000,
+  "child_hard_ceiling_tokens": 210000,
+  "safe_remaining_tokens": 42081,
+  "inflight_unknown_reserve_tokens": 40000
+}

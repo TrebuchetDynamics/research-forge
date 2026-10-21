@@ -1,0 +1,20 @@
+10.1038/s41567-020-01107-w	Non-Majorana states yield nearly quantized conductance in superconductor-semiconductor nanowire devices
+	The MAJORANA Experiment
+10.1088/1367-2630/17/7/075001	Substrate-induced Majorana renormalization in topological nanowires
+	White Paper on the Majorana Zero-Neutrino Double-Beta Decay Experiment
+10.1088/1742-6596/203/1/012057	TThe {\sc Majorana} Project
+10.1103/physrevb.109.045132	Topological gap protocol based machine learning optimization of Majorana hybrid wires
+10.1103/physrevb.98.224512	Quasiparticle gaps in multiprobe Majorana nanowires
+10.1103/physrevb.111.195415	Exponential suppression of the topological gap in self-consistent intrinsic Majorana nanowires
+10.1103/physrevresearch.2.032068	Braiding Majorana corner modes in a second-order topological superconductor
+10.1103/physrevb.86.155431	Stability of Majorana Fermions in Proximity-Coupled Topological Insulator Nanowires
+10.1103/physrevb.99.054507	Curvature of gap closing features and the extraction of Majorana nanowire parameters
+10.1103/physrevb.96.035306	Low-field Topological Threshold in Majorana Double Nanowires
+10.1038/s41598-021-96415-3	Topological isoconductance signatures in Majorana nanowires
+10.1103/physrevb.88.155133	Floquet generation of Majorana end modes and topological invariants
+10.1103/physrevb.88.180507	Electrical detection of topological quantum phase transitions in disordered Majorana nanowires
+	Towards searching for Majorana fermions in topological insulator nanowires
+10.1103/physrevb.92.174511	Effects of large induced superconducting gap on semiconductor Majorana nanowires
+	Adaptation of TURN protocol to SIP protocol
+10.1103/physrevb.84.201105	Majorana Fermions in Proximity-coupled Topological Insulator Nanowires
+10.1103/physrevb.94.035143	How to infer non-Abelian statistics and topological invariants from tunneling conductance properties of realistic Majorana nanowires

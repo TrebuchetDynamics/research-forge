@@ -1,0 +1,20 @@
+10.1103/physrevb.84.165440	Coulomb blockade of Majorana-fermion-induced transport
+10.1103/physrevb.96.054504	Conductance of a superconducting Coulomb-blockaded Majorana nanowire
+10.1016/s0167-9317(00)00296-3	Coulomb blockade in a silicon-on-sapphire nanowire
+10.1063/1.2937406	Classical Coulomb blockade of a silicon nanowire dot
+10.1103/physrevb.106.l201305	Interference and parity blockade in transport through a Majorana box
+10.11606/d.43.2021.tde-19052021-163141	Majorana bound states in nanowire junctions
+10.1103/p8qg-p1fp	Capacitance-based fermion parity readout and predicted Rabi oscillations in a Majorana nanowire
+10.1103/physrevb.94.035424	Time scales for Majorana manipulation using Coulomb blockade in gate-controlled superconducting nanowires
+10.1007/978-94-011-4327-1_10	Coulomb Blockade in Single Tunnel Junction Connected to Nanowire and Carbon Nanotube
+10.1103/physrevlett.70.2940	Parity-induced suppression of the Coulomb blockade of Josephson tunneling
+10.1007/978-94-007-6618-1_5	Transport Through a Coulomb Blockaded Majorana Nanowire
+10.29172/c3346a7a-9719-46d6-baf5-df9a9fe6a7aa	Coulomb blockade
+10.29172/c3346a7a971946d6baf5df9a9fe6a7aa	Coulomb blockade
+10.1103/physrevb.74.224505	Coulomb blockade of Cooper pair tunneling and parity effects in the Cooper pair transistor
+10.2139/ssrn.4493810	Pure Real Solutions to the Dirac-Coulomb Problem in Majorana Representation
+10.1103/physrevb.50.1953	Parity-controlled Coulomb-blockade effects identified by shot noise
+10.1002/1521-4095(20020517)14:10<736::aid-adma736>3.0.co;2-9	A Silicon Nanowire with a Coulomb Blockade Effect at Room Temperature
+10.1103/physrevb.101.195420	Transport properties of coupled Majorana bound states in the Coulomb blockade regime
+10.21468/scipostphys.13.4.089	Spin and Orbital Spectroscopy in the Absence of Coulomb Blockade in Lead Telluride Nanowire Quantum Dots
+10.1021/nl801454k	Andreev Reflection versus Coulomb Blockade in Hybrid Semiconductor Nanowire Devices

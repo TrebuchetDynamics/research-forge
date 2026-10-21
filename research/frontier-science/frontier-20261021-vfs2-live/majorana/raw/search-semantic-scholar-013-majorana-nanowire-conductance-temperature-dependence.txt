@@ -1,0 +1,20 @@
+10.1103/physrevb.99.024510	Conductance smearing and anisotropic suppression of induced superconductivity in a Majorana nanowire
+10.1103/physrevb.96.184520	Electron temperature and tunnel coupling dependence of zero-bias and almost-zero-bias conductance peaks in Majorana nanowires
+10.1103/physrevb.102.045303	Signatures of the Majorana spin in electrical transport through a Majorana nanowire
+	Majorana signatures in an asymmetrically coupled quantum dot--topological superconducting nanowire junction
+10.1103/physrevb.96.045135	Isolating Majorana fermions with finite Kitaev nanowires and temperature: Universality of the zero-bias conductance
+10.1038/s41598-024-66478-z	Spin-selective transport in a correlated double quantum dot-Majorana wire system
+10.1038/s42005-020-0392-5	Temperature induced shifts of Yu–Shiba–Rusinov resonances in nanowire-based hybrid quantum dots
+10.1103/physrevb.93.195161	Tunneling conductance for Majorana fermions in spin-orbit coupled semiconductor-superconductor heterostructures using superconducting leads
+10.1038/srep21767	Kondo-like zero-bias conductance anomaly in a three-dimensional topological insulator nanowire
+10.3390/nano15171359	Negative Differential Conductance Induced by Majorana Bound States Side-Coupled to T-Shaped Double Quantum Dots
+10.1103/physrevb.96.054504	Conductance of a superconducting Coulomb-blockaded Majorana nanowire
+10.1103/physrevb.106.094504	Quality factor for zero-bias conductance peaks in Majorana nanowire
+10.1088/1367-2630/ada9ab	Distinguishing Majorana bound states from Andreev bound states through differential conductance and current noise spectrum
+10.1007/s10854-024-13578-1	Temperature dependence electron conduction in horizontally aligned trapezoidal-shaped AlGaN/GaN nanowire wrap-gate transistor
+10.1109/iccisc52257.2021.9484926	Temperature dependence of Linearity and RF Performance metrics in DMG GaSb-Si Nanowire TFET
+10.1103/12cp-xlkb	Avoiding dilution: Using diffusion and vision transformers to resolve Majorana features in nanowires at high temperature
+	Formation of high temperature Majorana macroscopic states with fractional entropy and conductance
+10.1103/physrevb.99.054507	Curvature of gap closing features and the extraction of Majorana nanowire parameters
+10.1088/1361-6528/ae93c3	Phonon transport in gold quantum wires: temperature and thickness dependence
+10.1038/s41467-022-34437-9	Anomalous universal conductance as a hallmark of non-locality in a Majorana-hosted superconducting island

@@ -1,0 +1,20 @@
+	Non-Majorana states yield nearly quantized conductance in superconductor-semiconductor nanowire devices
+10.1103/physrevb.106.094504	Quality factor for zero-bias conductance peaks in Majorana nanowire
+10.1038/s41567-020-01107-w	Non-Majorana states yield nearly quantized conductance in proximatized nanowires
+	Quantized zero bias conductance plateaus in hybrid nanowire topological quantum information processing platforms without non-Abelian Majorana zero modes
+10.3390/ma17235898	Critical Lengths of Kitaev Chains for Majorana Zero Modes with a Microsecond Coherence Time and a Quantized Conductance Signature
+	Transport signatures of single and multiple Floquet Majorana modes in one-dimensional Rashba nanowire and Shiba chain
+10.1103/bwp9-7dsd	Quantized Andreev conductance in semiconductor nanowires
+10.1038/s41567-020-01107-w	Non-Majorana states yield nearly quantized conductance in proximatized nanowires
+10.1103/physrevb.103.214502	Quantized and unquantized zero-bias tunneling conductance peaks in Majorana nanowires: Conductance below and above 2e2/h
+10.1103/physrevlett.129.167702	Plateau Regions for Zero-Bias Peaks within 5% of the Quantized Conductance Value 2e^{2}/h.
+10.1038/nature26142	Quantized Majorana conductance
+10.1103/physrevb.108.l121407	Differential current noise as an identifier of Andreev bound states that induce nearly quantized conductance plateaus
+10.1103/physrevb.96.075161	Andreev bound states versus Majorana bound states in quantum dot-nanowire-superconductor hybrid structures: Trivial versus topological zero-bias conductance peaks
+10.5281/zenodo.3958243	Supplementary data for 'Non-Majorana states yield nearly quantized conductance in proximatized nanowires' and more
+10.4233/uuid:bf8250f8-6377-4dd2-bb6a-dfd9e41451fc	Zero-energy states in Majorana nanowire devices
+10.1103/physrevb.111.l121401	Distinguishing between topological Majorana and trivial zero modes via transport and shot noise study in an altermagnet heterostructure
+10.1103/physrevb.108.045418	Transport features of a topological superconducting nanowire with a quantum dot: Conductance and noise
+10.21468/scipostphys.19.2.030	Zero-bias conductance peaks at zero applied magnetic field due to stray fields from integrated micromagnets in hybrid nanowire quantum dots
+10.1103/gj6c-mcd2	Majorana modes in a helical altermagnet without net magnetism and spin-orbit coupling
+10.1088/1402-4896/aeaca4	Floquet-engineered Majorana leakage effect

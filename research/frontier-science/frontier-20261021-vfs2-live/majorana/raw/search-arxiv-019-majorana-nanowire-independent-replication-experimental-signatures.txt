@@ -1,0 +1,20 @@
+10.1038/s41567-020-01107-w	Non-Majorana states yield nearly quantized conductance in superconductor-semiconductor nanowire devices
+	The MAJORANA Experiment
+	White Paper on the Majorana Zero-Neutrino Double-Beta Decay Experiment
+10.1088/1742-6596/203/1/012057	TThe {\sc Majorana} Project
+	Signature of Majorana Fermions in Charge Transport in Semiconductor Nanowires
+10.1038/s41598-021-96415-3	Topological isoconductance signatures in Majorana nanowires
+10.1103/physrevb.84.144522	Majorana Fermions in Semiconductor Nanowires
+10.1103/physrevb.98.035419	Boundary spin polarization as robust signature of topological phase transition in Majorana nanowires
+10.1039/c1sm05503h	High-Speed Propulsion of Flexible Nanowire Motors: Theory and Experiments
+10.1103/physrevb.102.045303	Signatures of the Majorana spin in electrical transport through a Majorana nanowire
+10.1038/s41565-017-0032-8	Ballistic Majorana nanowire devices
+	A new macroscopic model derived from the Boltzmann equation and the discontinuous Galerkin method for solving kinetic equations
+10.1103/physrevb.107.035440	Majorana nanowires, Kitaev chains, and spin models
+10.1103/physrevb.84.094505	Controlling non-Abelian statistics of Majorana fermions on Majorana dimer lattices
+10.1103/physrevlett.133.266605	Dressed Majorana fermion in a hybrid nanowire
+	The Scientific Manuscripts left Unpublished by Ettore Majorana (with outlines of his life and work)
+10.1103/physrevb.98.224512	Quasiparticle gaps in multiprobe Majorana nanowires
+10.1103/physrevlett.103.237001	Majorana Fermion Induced Resonant Andreev Reflection
+10.1088/0953-8984/25/23/233201	Majorana Fermions in Semiconductor Nanowires: Fundamentals, Modeling, and Experiment
+10.1103/physrevb.89.245405	Effects of tilting the magnetic field in 1D Majorana nanowires

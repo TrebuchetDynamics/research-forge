@@ -1,0 +1,20 @@
+10.1103/physrevb.109.045132	Topological gap protocol based machine learning optimization of Majorana hybrid wires
+10.1103/physrevb.110.165403	Single and multifrequency driving protocols in a Rashba nanowire proximitized to an s -wave superconductor
+	Comment on"InAs-Al hybrid devices passing the topological gap protocol", Microsoft Quantum, Phys. Rev. B 107, 245423 (2023)
+10.1103/physrevb.107.245423	InAs-Al hybrid devices passing the topological gap protocol
+10.1103/prnx-47mk	Josephson current signature of Floquet Majorana and topological accidental zero modes in altermagnet heterostructures
+10.1103/physrevb.111.l121401	Distinguishing between topological Majorana and trivial zero modes via transport and shot noise study in an altermagnet heterostructure
+10.1103/physrevb.111.195415	Exponential suppression of the topological gap in self-consistent intrinsic Majorana nanowires
+	Floquet-Engineered Hybrid Topological Orders with Majorana Edge Modes in Number-Conserving Fermionic Quantum Simulators
+10.1063/5.0332814	Finite-time braiding dynamics within topological nanowire qubits
+10.1088/1361-648x/aba154	Leakage of Majorana bound states in an inhomogeneous topological nanowire
+10.1103/physrevb.106.094504	Quality factor for zero-bias conductance peaks in Majorana nanowire
+10.1103/physrevb.109.075408	Electrostatic environment and Majorana bound states in full-shell topological insulator nanowires
+10.1103/bsxt-n9ls	Stability of Majorana modes in Coulomb-disordered topological insulator nanowires
+10.1103/tswn-kxhx	Shuttling Majorana zero modes in disordered and noisy topological superconductors
+	Optimising the exchange of Majorana zero modes in a quantum nanowire network
+10.1103/physrevb.99.054507	Curvature of gap closing features and the extraction of Majorana nanowire parameters
+10.4233/uuid:bf8250f8-6377-4dd2-bb6a-dfd9e41451fc	Zero-energy states in Majorana nanowire devices
+	Concomitant opening of a topological bulk-gap with an emerging Majorana edge-state
+	Investigating topological in-gap states in non-Hermitian quasicrystal with unconventional $p$-wave pairing
+	Majorana bound states and subgap states in three-terminal topological superconducting nanowire-quantum dot hybrid devices

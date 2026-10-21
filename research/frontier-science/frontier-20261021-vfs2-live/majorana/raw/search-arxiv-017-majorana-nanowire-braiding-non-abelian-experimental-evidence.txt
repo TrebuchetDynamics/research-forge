@@ -1,0 +1,20 @@
+10.1103/physrevlett.117.073901	Non-Abelian braiding of light
+10.1038/s41567-020-01107-w	Non-Majorana states yield nearly quantized conductance in superconductor-semiconductor nanowire devices
+10.1103/physrevb.95.155451	Probability and (Braiding) Statistics in Majorana nanowires
+10.21468/scipostphyslectnotes.15	Search for non-Abelian Majorana braiding statistics in superconductors
+10.1038/srep21427	Majorana bound states from exceptional points in non-topological superconductors
+10.1103/physrevb.91.174305	Majorana Braiding Dynamics on Nanowires
+10.1103/physrevlett.131.176601	Many-body Majorana braiding without an exponential Hilbert space
+10.1103/physrevb.84.094505	Controlling non-Abelian statistics of Majorana fermions on Majorana dimer lattices
+10.1103/physrevresearch.2.032068	Braiding Majorana corner modes in a second-order topological superconductor
+10.1103/physrevb.99.195137	Non-Abelian Braiding of Chiral Majorana Fermions by Quantum Dots
+	The MAJORANA Experiment
+10.1103/physrevb.94.035143	How to infer non-Abelian statistics and topological invariants from tunneling conductance properties of realistic Majorana nanowires
+	White Paper on the Majorana Zero-Neutrino Double-Beta Decay Experiment
+10.1134/s002136401115015x	Detecting non-Abelian statistics of Majorana fermions in quantum nanowire networks
+10.1103/physrevb.94.224509	Symmetry-protected non-Abelian braiding of Majorana Kramers' pairs
+10.1088/1742-6596/203/1/012057	TThe {\sc Majorana} Project
+10.1103/physrevresearch.1.033207	Majorana Braiding in Realistic Nanowire Y-Junctions and Tuning Forks
+	Minimal setup for non-Abelian braiding of Majorana zero modes
+	Verifying Non-Abelian Statistics by Numerical Braiding Majorana Fermions
+10.1103/physrevb.111.205411	Quantifying the non-Abelian property of Andreev bound states in inhomogeneous Majorana nanowires

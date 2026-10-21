@@ -1,0 +1,17 @@
+10.1093/oxfordhb/9780198738169.013.6	Topological Superconductors and Majorana Fermions
+10.1103/physrevb.87.104513	Majorana fermions and odd-frequency Cooper pairs in a normal-metal nanowire proximity-coupled to a topological superconductor
+10.11606/d.43.2021.tde-19052021-163141	Majorana bound states in nanowire junctions
+10.70675/2e958ffaz9560z4a51za0c2zc2ce6e82572c	Topological Phases and Majorana Fermions
+10.14711/thesis-b1254373	Majorana fermions in topological superconductors
+10.31390/gradschool_dissertations.5488	Majorana Quasiparticles in Topological Material Interfaces
+10.1103/physrevb.97.045410	Building topological quantum circuits: Majorana nanowire junctions
+10.70675/7fac0383ze2cdz44b5z9e3az03d03c277671	Topological Majorana fermions models and new applications
+10.14711/thesis-b1334491	Transport properties of Majorana fermions in topological superconductors
+10.14711/thesis-991013246558503412	Searching Majorana modes in various topological superconductors
+10.1103/physrevb.99.054507	Curvature of gap closing features and the extraction of Majorana nanowire parameters
+10.1201/9781003266419-7	Topological Superconductors and Majorana Modes
+10.1103/physrevlett.108.067001	Avoidance of Majorana Resonances in Periodic Topological Superconductor-Nanowire Structures
+10.14711/thesis-991013114549403412	Vortex majorana zero modes in superconducting topological crystalline insulators
+10.1103/physrevb.84.201105	Majorana fermions in a topological-insulator nanowire proximity-coupled to an<mml:math xmlns:mml="http://www.w3.org/1998/Math/MathML" display="inline"><mml:mi>s</mml:mi></mml:math>-wave superconductor
+10.1038/nphys2479	Zero-bias peaks and splitting in an Al–InAs nanowire topological superconductor as a signature of Majorana fermions
+10.14711/thesis-991012565467003412	Studies on topological superconductors and Majorana fermions : realization, detection and application

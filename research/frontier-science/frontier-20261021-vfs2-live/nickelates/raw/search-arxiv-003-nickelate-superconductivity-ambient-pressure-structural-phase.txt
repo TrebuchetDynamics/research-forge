@@ -1,0 +1,20 @@
+	Superconductivity at the metal-insulator phase boundary in a bulk nickelate at ambient pressure
+	Experimental Progress in Ambient-Pressure Superconducting Bilayer Nickelate Films
+10.1209/0295-5075/99/26002	Simultaneous measurement of pressure evolution of crystal structure and superconductivity in FeSe0.92 using designer diamonds
+10.1002/adma.202520724	Reducing the strain required for ambient-pressure superconductivity in bilayer nickelates
+10.15302/frontphys.2026.115301	Progress of ambient-pressure superconductivity in bilayer nickelate thin films
+10.1038/s41586-025-08755-z	Ambient-pressure superconductivity onset above 40 K in bilayer nickelate ultrathin films
+10.7566/jpsj.86.113705	Pressure-Induced Superconductivity from Doping-Induced Antiferromagnetic Phase of 112-type Ca$_{1-x}$La$_{x}$FeAs$_{2}$
+10.1103/physrevlett.100.197003	Pressure-induced Superconductivity in CaLi2
+	Single-crystal structural phase diagram of stoichiometric bilayer nickelate La3Ni2O7 under hydrostatic pressure
+10.1093/nsr/nwag151	Superconductivity onset above 60 K in ambient-pressure nickelate films
+10.1002/adma.202507365	Signature of superconductivity in pressurized La4Ni3O10-x single crystals grown at ambient pressure
+10.1103/physrevmaterials.8.044801	Structural routes to stabilise superconducting La$_3$Ni$_2$O$_7$ at ambient pressure
+10.1038/s41467-026-69660-1	Enhanced superconductivity in the compressively strained bilayer nickelate thin films by pressure
+10.1038/s41586-025-09954-4	Bulk superconductivity up to 96 K in pressurized nickelate single crystals
+10.1080/08957950802564676	Hydrostaticity and hidden order: effects of experimental conditions on the temperature-pressure phase diagram of URu2Si2
+10.1007/s10948-017-4366-0	Phase transitions in quasi-one dimensional system with unconventional superconductivity
+10.1103/physrevx.15.021005	Superconductivity in trilayer nickelate La4Ni3O10 under pressure
+10.1007/s11433-025-2852-4	Unveiling pressurized bulk superconductivity in a trilayer nickelate Pr4Ni3O10 single crystal
+10.1080/08957959.2016.1173690	High pressure research using muons at the Paul Scherrer Institute
+	Absence of superconductivity and density-wave transition in ambient-pressure tetragonal La$_4$Ni$_3$O$_{10}$

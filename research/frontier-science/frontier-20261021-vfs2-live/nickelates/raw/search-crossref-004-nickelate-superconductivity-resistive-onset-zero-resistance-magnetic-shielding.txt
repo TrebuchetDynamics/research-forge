@@ -1,0 +1,20 @@
+10.1103/physics.17.s32	Zero-Resistance State for a Potential High-Temperature Superconducting Nickelate
+10.1887/0750303778/b367v2c12	Magnetic shielding
+10.1016/0921-4534(94)90587-8	Magnetic hysteresis of the zero-resistance critical temperature in YBa2Cu3O7 − x ceramic superconductors
+10.1109/tasc.2013.2284199	Optimization Design of a Giant Magneto Resistive Effect Based Current Sensor With a Magnetic Shielding
+10.1007/978-4-431-68195-3_230	Magnetic Shielding by HTc Superconductor
+10.1016/0964-1807(94)90082-5	Magnetic shielding at liquid nitrogen temperature
+10.1016/s0921-4534(99)00144-6	Magnetic hysteresis of the zero-resistance critical temperature in YBaCuO, BiSrCaCuO and HgBaCaCuO superconducting polycrystals
+10.1016/s0921-4534(02)02312-2	Resistive behavior and magnetic phase diagram of MgB2 single crystals
+10.36227/techrxiv.11973624	A novel vacuum tube may achieve zero resistance and superconductivity properties
+10.36227/techrxiv.11973624.v1	A novel vacuum tube may achieve zero resistance and superconductivity properties
+10.1016/b978-0-08-021651-5.50008-5	ZERO RESISTANCE
+10.36471/jccm_november_2023_03	Superconductivity in a Nickelate
+10.1016/s0921-4534(02)02113-5	Magnetic shielding effects of the superposition of a ferromagnetic cylinder over an HTS cylinder: magnetic shielding dependence on the air gap between the BPSCCO and soft-iron cylinders
+10.1201/9781420050271.chg10	Magnetic shielding
+10.1007/978-4-431-68535-7_302	Static Magnetic Shielding Analysis of High Tc Oxide Superconductor with Nonlinear Magnetic Permeability
+10.1016/j.physc.2007.04.015	Weak magnetic field superconductor resistive sensors in comparison with semiconductor and magnetoresistive sensors
+10.1016/0921-4534(92)90487-w	Angular dependence of resistive transition in strongly anisotropic superconductors under magnetic field
+10.1016/0921-4534(90)90039-h	Broad resistive transition under magnetic field in high-temperature superconductors
+10.1021/acsami.5c15606.s001	Visible Light-Modulated Low-Power Resistive Switching in Perovskite Nickelate Photovoltaic Heterostructures
+10.1016/0921-4534(93)90606-q	Critical current models and magnetic shielding of high temperature superconductors

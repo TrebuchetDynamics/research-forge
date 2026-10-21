@@ -1,0 +1,617 @@
+# Search batch results
+
+Deduped records: 599
+
+- Splitting of the zero-bias conductance peak as smoking gun evidence for the existence of the Majorana mode in a superconductor-semiconductor nanowire — DOI: `10.1103/physrevb.86.220506`
+- Electric field tunable superconductor-semiconductor coupling in Majorana nanowires — DOI: `10.1088/1367-2630/aae61d`
+- Experimental phase diagram of zero-bias conductance peaks in superconductor/semiconductor nanowire devices — DOI: `10.1126/sciadv.1701476`
+- Theory of Majorana Zero Modes in Unconventional Superconductors — DOI: `10.1093/ptep/ptae065`
+- Experimental review on Majorana zero-modes in hybrid nanowires — DOI: `10.1007/s11433-021-1737-4`
+- Magnetic field constraint for Majorana zero modes in a hybrid nanowire — DOI: `10.1103/physrevb.106.104517`
+- Fractional Josephson effect with and without Majorana zero modes — DOI: `10.1103/physrevb.99.035312`
+- Effects of Gate-Induced Electric Fields on Semiconductor Majorana Nanowires — DOI: `10.1103/physrevx.8.031041`
+- Majorana zero modes and topological quantum computation — DOI: `10.1038/npjqi.2015.1`
+- Exponential protection of zero modes in Majorana islands — DOI: `10.1038/nature17162`
+- Majorana Zero Mode Detected with Spin Selective Andreev Reflection in the Vortex of a Topological Superconductor — DOI: `10.1103/physrevlett.116.257003`
+- Majorana zero modes in semiconductor-superconductor hybrid structures: Defining topology in short and disordered nanowires through Majorana splitting — DOI: `10.1103/2v41-yvs1`
+- Majorana zero modes in impurity-assisted vortex of LiFeAs superconductor — DOI: `10.1038/s41467-021-24372-6`
+- Conductance spectroscopy of Majorana zero modes in superconductor-magnetic insulator nanowire hybrid systems — DOI: `10.1038/s42005-023-01147-7`
+- Robust and Clean Majorana Zero Mode in the Vortex Core of High-Temperature Superconductor (Li0.84Fe0.16)OHFeSe — DOI: `10.1103/physrevx.8.041056`
+- Engineered platforms for topological superconductivity and Majorana zero modes — DOI: `10.1038/s41578-021-00336-6`
+- Closing of the induced gap in a hybrid superconductor-semiconductor nanowire — DOI: `10.1103/physrevb.103.235201`
+- Perspective on Majorana bound-states in hybrid superconductor-semiconductor nanowires — DOI: `10.48550/arxiv.2406.17568`
+- Physical mechanisms for zero-bias conductance peaks in Majorana nanowires — DOI: `10.1103/physrevresearch.2.013377`
+- Detection of Majorana zero mode in the vortex — DOI: `10.1038/s41535-017-0037-4`
+- Conductance Spectroscopy of Majorana Zero Modes in Superconductor-Magnetic Insulator Nanowire Hybrid Systems — DOI: `10.21203/rs.3.rs-1566363/v1`
+- Majorana Bound States and Zero-Bias Conductance Peaks in Superconductor/Semiconductor Nanowire Devices — DOI: `10.12693/aphyspola.138.681`
+- Disorder effects on Majorana zero modes: Kitaev chain versus semiconductor nanowire — DOI: `10.1103/physrevb.103.224505`
+- Majorana Zero Modes in a Double-Stranded DNA with S-Wave Superconductor — DOI: `10.2139/ssrn.4189347`
+- Robustness of Majorana Zero-energy State in a Spin-orbit Coupled Semiconductor/superconductor Heterostructure — DOI: `10.21203/rs.3.rs-882201/v1`
+- Majorana modes in smooth normal-superconductor nanowire junctions — DOI: `10.1103/physrevb.88.144512`
+- Majorana zero modes in superconductor–semiconductor heterostructures — DOI: `10.1038/s41578-018-0003-1`
+- Fractional Josephson Vortices and Braiding of Majorana Zero Modes in Planar Superconductor-Semiconductor Heterostructures — DOI: `10.1103/physrevlett.122.107701`
+- Non-Hermiticity-stabilized Majorana zero modes in semiconductor-superconductor nanowires — DOI: `10.1103/physrevb.106.064505`
+- Quantized zero-bias conductance plateau in semiconductor-superconductor heterostructures without topological Majorana zero modes — DOI: `10.1103/physrevb.98.155314`
+- Majorana zero modes in ferromagnet-superconductor heterostructures — DOI: `10.1117/12.2594311`
+- Majorana zero modes bound to a vortex line in a topological superconductor — DOI: `10.1103/physrevb.81.214516`
+- Conductance Calculations for Semiconductor-Superconductor Majorana Structures — DOI: `10.33915/etd.6720`
+- Probing the Design Space of InSb Topological Superconductor Nanowires for the Realization of Majorana Zero Modes — DOI: `10.1109/mipro65660.2025.11131778`
+- Majorana zero modes — DOI: `10.29172/049639f2-4ab9-4899-b4d7-408090e296f9`
+- Detection of Majorana zero modes bound to Josephson vortices in planar superconductor–topological insulator–superconductor junctions — DOI: `10.1103/physrevb.111.235442`
+- Chirality-Induced Majorana Zero Modes and Majorana Polarization — DOI: `10.1021/acsnano.4c10395.s001`
+- Emergent vortex Majorana zero mode in iron-based superconductors — DOI: `10.7498/aps.69.20200717`
+- Non-Majorana states yield nearly quantized conductance in superconductor-semiconductor nanowire devices — DOI: `10.1038/s41567-020-01107-w`
+- Majorana Zero Modes in Semiconductor Nanowires in Contact with Higher-$T_c$ Superconductors — DOI: `10.1103/physrevb.86.235429`
+- Braiding Majorana corner modes in a second-order topological superconductor — DOI: `10.1103/physrevresearch.2.032068`
+- Conductance Spectroscopy of Majorana Zero Modes in Superconductor-Magnetic Insulating Nanowire Hybrid Systems
+- Signature of Majorana Fermions in Charge Transport in Semiconductor Nanowires
+- Crossover between trivial zero modes in Majorana nanowires — DOI: `10.1103/physrevb.104.054510`
+- Majorana Fermions in Semiconductor Nanowires — DOI: `10.1103/physrevb.84.144522`
+- Majorana Fermions in Semiconductor Nanowires: Fundamentals, Modeling, and Experiment — DOI: `10.1088/0953-8984/25/23/233201`
+- Estimating disorder and its adverse effects in semiconductor Majorana nanowires — DOI: `10.1103/physrevmaterials.5.124602`
+- Subband occupation in semiconductor-superconductor nanowires — DOI: `10.1103/physrevb.101.045405`
+- One-dimensional p-wave superconductor toy-model for Majorana fermions in multiband semiconductor nanowires — DOI: `10.1109/tasc.2018.2807361`
+- Majorana Zero Modes in Nanowires with Combined Triangular and Hexagonal Geometry — DOI: `10.1088/1361-6528/ab932e`
+- Andreev bound states versus Majorana bound states in quantum dot-nanowire-superconductor hybrid structures: Trivial versus topological zero-bias conductance peaks — DOI: `10.1103/physrevb.96.075161`
+- Presence versus absence of end-to-end nonlocal conductance correlations in Majorana nanowires: Majorana bound states versus Andreev bound states — DOI: `10.1103/physrevb.100.045302`
+- Distinguishing topological Majorana bound states from trivial Andreev bound states: Proposed tests through differential tunneling conductance spectroscopy — DOI: `10.1103/physrevb.97.214502`
+- From Andreev to Majorana bound states in hybrid superconductor–semiconductor nanowires — DOI: `10.1038/s42254-020-0228-y`
+- Quantized and unquantized zero-bias tunneling conductance peaks in Majorana nanowires: Conductance below and above 2e2/h — DOI: `10.1103/physrevb.103.214502`
+- Distinguishing Majorana and Andreev bound states in a topological superconducting nanowire with a potential barrier — DOI: `10.1016/j.physe.2022.115247`
+- Ubiquitous Non-Majorana Zero-Bias Conductance Peaks in Nanowire Devices — DOI: `10.1103/physrevlett.123.107703`
+- Zero-energy pinning of topologically trivial bound states in multiband semiconductor-superconductor nanowires — DOI: `10.1103/physrevb.100.125407`
+- MAJORANA AND ANDREEV BOUND STATES IN SEMICONDUCTOR-SUPERCONDUCTOR NANOSTRUCTURES — DOI: `10.13016/wtjj-ilcc`
+- Two-terminal charge tunneling: Disentangling Majorana zero modes from partially separated Andreev bound states in semiconductor-superconductor heterostructures — DOI: `10.1103/physrevb.97.165302`
+- Andreev spectrum and supercurrents in nanowire-based SNS junctions containing Majorana bound states — DOI: `10.3762/bjnano.9.127`
+- Coexistence of Majorana and topologically nontrivial Andreev bound states in 1D superconductors
+- Electron temperature and tunnel coupling dependence of zero-bias and almost-zero-bias conductance peaks in Majorana nanowires — DOI: `10.1103/physrevb.96.184520`
+- Scaling of Majorana Zero-Bias Conductance Peaks — DOI: `10.1103/physrevlett.119.136803`
+- Distinguishing Majorana bound states from localized Andreev bound states by interferometry — DOI: `10.1103/physrevb.97.161401`
+- A zero-voltage conductance peak from weak antilocalization in a Majorana nanowire — DOI: `10.1088/1367-2630/14/12/125011`
+- Quantifying the non-Abelian property of Andreev bound states in inhomogeneous Majorana nanowires — DOI: `10.1103/physrevb.111.205411`
+- Nonlocality of Majorana modes in hybrid nanowires — DOI: `10.1103/physrevb.98.085125`
+- Majorana bound states in topological insulators and nanowires — DOI: `10.5451/unibas-006738780`
+- Topologically trivial zero-bias conductance peak in semiconductor Majorana wires from boundary effects — DOI: `10.1103/physrevb.88.020502`
+- Majorana bound states in nanowire junctions — DOI: `10.11606/d.43.2021.tde-19052021-163141`
+- Machine Learning Detection of Majorana Zero Modes from Zero Bias Peak Measurements — DOI: `10.2139/ssrn.4678158`
+- Spin-dependent zero-bias peak in a hybrid nanowire-quantum dot system: Distinguishing isolated Majorana fermions from Andreev bound states — DOI: `10.1103/physrevb.99.155159`
+- Supplementary video 2 — DOI: `10.1088/1361-648x/ae943f/data2`
+- Distinguishing Majorana bound states and Andreev bound states with microwave spectra — DOI: `10.1088/1361-648x/aab134`
+- ANDREEV--MAJORANA BOUND STATES IN SUPERFLUIDS — DOI: `10.7868/s0044451014120050`
+- Non-Hermitian zero-energy pinning of Andreev and Majorana bound states in superconductor-semiconductor systems — DOI: `10.1103/physrevb.110.085414`
+- Probing Majorana and Andreev bound states with waiting times — DOI: `10.1209/0295-5075/116/27005`
+- Nature of the zero-bias conductance peak associated with Majorana bound states in topological phases of semiconductor-superconductor hybrid structures — DOI: `10.2172/1073055`
+- Distinguishing Majorana bound states from Andreev bound states through differential conductance and current noise spectrum — DOI: `10.1088/1367-2630/ada97c`
+- On-demand large conductance in trivial zero-bias tunneling peaks in Majorana nanowires — DOI: `10.1103/physrevb.105.115432`
+- Hybridization energy oscillations of Majorana and Andreev bound states in semiconductor-superconductor nanowire heterostructures — DOI: `10.1103/physrevb.101.245405`
+- Andreev Bound States and Their Signatures — DOI: `10.1098/rsta.2018.0140`
+- Disorder-induced zero-bias peaks in Majorana nanowires — DOI: `10.1103/physrevb.103.195158`
+- Suppressing Andreev bound state zero bias peaks using a strongly dissipative lead — DOI: `10.1103/physrevlett.128.076803`
+- Odd-frequency pairing due to Majorana and trivial Andreev bound states — DOI: `10.1103/fksg-x8pr`
+- Nontopological zero-bias peaks in full-shell nanowires induced by flux tunable Andreev states — DOI: `10.1126/science.abf1513`
+- Metamorphosis of Andreev bound states into Majorana bound states in pristine nanowires — DOI: `10.1103/physrevb.98.144511`
+- Large Andreev bound state zero bias peaks in a weakly dissipative environment — DOI: `10.1103/physrevb.106.205421`
+- Manipulating Andreev and Majorana Bound States with microwaves — DOI: `10.1103/physrevb.92.020513`
+- Substrate-induced Majorana renormalization in topological nanowires — DOI: `10.1088/1367-2630/17/7/075001`
+- Properties of dissipative Floquet Majorana modes using a quantum dot — DOI: `10.1103/physrevb.107.195412`
+- Majorana bound states in a driven quantum dot — DOI: `10.1140/epjp/s13360-023-04326-1`
+- A Robust Protocol for Self-Testing Majorana Fermions
+- Robust and Fragile Majorana Bound States in Proximitized Topological Insulator Nanoribbons — DOI: `10.3390/nano13040723`
+- Machine learning Majorana topology using unsupervised and supervised learning — DOI: `10.1103/ywsw-29xc`
+- Searching Majorana modes in various topological superconductors — DOI: `10.14711/thesis-991013246558503412`
+- Triple Andreev dot chains in semiconductor nanowires — DOI: `10.48550/arxiv.2105.08636`
+- Observing and braiding topological Majorana modes on programmable quantum simulators — DOI: `10.1038/s41467-023-37725-0`
+- Topology and energy dependence of Majorana bound states in a photonic cavity
+- Single-electron charge transfer into putative Majorana and trivial modes in individual vortices — DOI: `10.1038/s41467-023-39109-w`
+- Multiband-driven anisotropic vortex topology in iron-based superconductors yielding a strain-tunable x-vortex Majorana platform — DOI: `10.1038/s41467-026-71938-3`
+- Multiple chiral Majorana states in proximitized magnetic topological insulator heterostructures — DOI: `10.48550/arxiv.2609.01243`
+- Josephson current signature of Floquet Majorana and topological accidental zero modes in altermagnet heterostructures — DOI: `10.1103/prnx-47mk`
+- Spectroscopic Visualization of Hard Quasi-1D Superconductivity Induced in Nanowires Deposited on a Quasi-2D Indium film — DOI: `10.48550/arxiv.2409.19736`
+- Topological phases, non-equilibrium dynamics and parallels of black hole phenomena in condensed matter
+- Anisotropic and tunable vortex topology in multiband iron-based superconductors — DOI: `10.48550/arxiv.2412.19096`
+- Topological phases of matter: Classification, realization and application
+- InAs-Al hybrid devices passing the topological gap protocol — DOI: `10.1103/physrevb.107.245423`
+- Nonlinear two-level dynamics of quantum time crystals — DOI: `10.1038/s41467-022-30783-w`
+- Conductance of a superconducting Coulomb-blockaded Majorana nanowire — DOI: `10.1103/physrevb.96.054504`
+- QUANTIZED CONDUCTANCE OF GOLD NANOWIRE STUDIED BY UHV-ELECTRON MICROSCOPE WITH STM — DOI: `10.1142/9789812776716_0042`
+- Critical Lengths of Kitaev Chains for Majorana Zero Modes with a Microsecond Coherence Time and a Quantized Conductance Signature — DOI: `10.3390/ma17235898`
+- Quantized Conductance at the Majorana Phase Transition in a Disordered Superconducting Wire — DOI: `10.1103/physrevlett.106.057001`
+- Quality factor for zero-bias conductance peaks in Majorana nanowire — DOI: `10.1103/physrevb.106.094504`
+- Conductance smearing and anisotropic suppression of induced superconductivity in a Majorana nanowire — DOI: `10.1103/physrevb.99.024510`
+- Quantized Conductance in an InSb Nanowire — DOI: `10.1021/nl3035256`
+- Molecular detection using metallic nanowires with quantized conductance — DOI: `10.25148/etd.fi14051182`
+- Quantized Conductance and Its Correlation to the Supercurrent in a Nanowire Connected to Superconductors — DOI: `10.1021/nl4014265`
+- Majorana fermions in a nanowire? — DOI: `10.1063/pt.4.0018`
+- Quantized conductance in carbon nanotubes — DOI: `10.1126/science.280.5370.1665h`
+- The MAJORANA Experiment
+- Quantized Majorana conductance — DOI: `10.1038/nature26142`
+- White Paper on the Majorana Zero-Neutrino Double-Beta Decay Experiment
+- TThe {\sc Majorana} Project — DOI: `10.1088/1742-6596/203/1/012057`
+- Quantized Andreev conductance in semiconductor nanowires — DOI: `10.1103/bwp9-7dsd`
+- Conductance Quantization in PbTe Nanowires — DOI: `10.1103/physrevb.108.045426`
+- How to infer non-Abelian statistics and topological invariants from tunneling conductance properties of realistic Majorana nanowires — DOI: `10.1103/physrevb.94.035143`
+- Observation of Conductance Quantization in InSb Nanowire Networks — DOI: `10.1021/acs.nanolett.7b00797`
+- On mesoscopic forces and quantized conductance in model metallic nanowires
+- Observation of Quantized Conductance in the Surface Bands of Bismuth Nanowires
+- Three-terminal nonlocal conductance in Majorana nanowires: Distinguishing topological and trivial in realistic systems with disorder and inhomogeneous potential — DOI: `10.1103/physrevb.103.014513`
+- Majorana quasiparticles in atomic spin chains on superconductors — DOI: `10.1016/j.physrep.2024.10.005`
+- Majorana bound states in superconductor vortex cores — DOI: `10.11606/t.43.2023.tde-25052023-095947`
+- Perspective Chapter: Monolayer Graphene Quantum Dots – Majorana Fermion Model — DOI: `10.5772/intechopen.1012427`
+- Many-body correlations and Majorana fermions in quantum impurity problems — DOI: `10.14393/ufu.te.2021.182`
+- Distinguishing Majorana zero modes from trivial defect states in an iron-based superconductor — DOI: `10.1038/s42005-026-02832-z`
+- Realistic quantum device data synthesized by consumer AI and how to identify it — DOI: `10.48550/arxiv.2606.05472`
+- Report on reproducibility in condensed matter physics — DOI: `10.1103/27h6-yghn`
+- Modos parafermiônicos em sistemas de elétrons correlacionados
+- Parafermionic modes in correlated electron systems — DOI: `10.11606/t.43.2023.tde-03052023-080210`
+- Exploiting Anyonic Behavior of Quasicrystals for Topological Quantum Computing — DOI: `10.3390/sym14091780`
+- Vortex bound states in superconducting topological matter — DOI: `10.47749/t/unicamp.2016.964823`
+- Low-dimensional transport in quantum anomalous hall insulator-superconductor hybrid devices — DOI: `10.14711/thesis-991013222948303412`
+- Quantum Computing Logistics — DOI: `10.5281/zenodo.7213028`
+- Retraction Note: Quantized Majorana conductance — DOI: `10.1038/s41586-021-03373-x`
+- Energetics, forces, and quantized conductance in jellium modeled metallic nanowires — DOI: `10.1103/physrevb.57.4872`
+- Majorana modes in InSb nanowires (I): zero bias peaks in hybrid devices with low-disorder and hard induced superconducting gap
+- Zero-Bias Peaks in the Tunneling Conductance of Spin-Orbit-Coupled Superconducting Wires with and without Majorana End-States — DOI: `10.1103/physrevlett.109.267002`
+- Phenomenology of the soft gap, zero-bias peak, and zero-mode splitting in ideal Majorana nanowires — DOI: `10.1103/physrevb.96.054520`
+- ZERO-BIAS CONDUCTANCE PEAKS IN MAJORANA NANOWIRES: THE GOOD, THE BAD, AND THE UGLY — DOI: `10.13016/4ca2-jvbg`
+- Disorder-induced suppression of the zero-bias conductance peak splitting in topological superconducting nanowires — DOI: `10.3762/bjnano.9.128`
+- Zero-bias peaks at zero magnetic field in ferromagnetic hybrid nanowires — DOI: `10.1038/s41567-020-1017-3`
+- Majorana nanowires for topological quantum computation — DOI: `10.1063/5.0102999`
+- Spin-Orbit Protection of Induced Superconductivity in Majorana Nanowires — DOI: `10.1103/physrevlett.122.187702`
+- Interaction-induced zero-energy pinning and quantum dot formation in Majorana nanowires — DOI: `10.3762/bjnano.9.203`
+- Majorana-like Coulomb spectroscopy in the absence of zero-bias peaks — DOI: `10.1038/s41586-022-05382-w`
+- Zero-bias peaks and splitting in an Al–InAs nanowire topological superconductor as a signature of Majorana fermions — DOI: `10.1038/nphys2479`
+- Proximity-Induced Topological Superconductivity in MnBi2Te4/NbSe2 van der Waals Heterostructures: Zero-Bias Conductance Peaks, 2e Josephson Periodicity, and Majorana Signature Analysis — DOI: `10.67698/pjpcr.2026.0175`
+- Erratum: Ubiquitous Non-Majorana Zero-Bias Conductance Peaks in Nanowire Devices [Phys. Rev. Lett. <b>123</b> , 107703 (2019)] — DOI: `10.1103/physrevlett.132.099901`
+- Zero-bias conductance peaks at zero applied magnetic field due to stray fields from integrated micromagnets in hybrid nanowire quantum dots — DOI: `10.21468/scipostphys.19.2.030`
+- Induced superconductivity in linear carbon chains and engineering of zero-bias peaks with geometric angles: a new approach — DOI: `10.1088/1402-4896/abe0ee`
+- Interplay of disorder and interaction in Majorana quantum wires — DOI: `10.1103/physrevlett.109.146403`
+- Large zero-bias peaks in InSb-Al hybrid semiconductor-superconductor nanowire devices
+- Parity independence of the zero-bias conductance peak in a nanowire based topological superconductor-quantum dot hybrid device — DOI: `10.1038/srep07261`
+- Large zero bias peaks and dips in a four-terminal thin InAs-Al nanowire device — DOI: `10.1103/physrevresearch.4.033235`
+- Disorder-robust trivial Majorana-like states from smooth confinement in chiral superconducting nanowires — DOI: `10.48550/arxiv.2608.09758`
+- Majorana/Andreev crossover and the fate of the topological phase transition in inhomogeneous nanowires — DOI: `10.1088/1361-648x/ac44d2`
+- Non-hermitian topology as a unifying framework for the Andreev versus Majorana states controversy — DOI: `10.1038/s42005-019-0231-8`
+- Next steps of quantum transport in Majorana nanowire devices — DOI: `10.1038/s41467-019-13133-1`
+- Reproducing topological properties with quasi-Majorana states — DOI: `10.21468/scipostphys.7.5.061`
+- Topological isoconductance signatures in Majorana nanowires — DOI: `10.1038/s41598-021-96415-3`
+- Decays of Majorana or Andreev Oscillations Induced by Steplike Spin-Orbit Coupling — DOI: `10.1103/physrevlett.122.147701`
+- Anomalous Proximity Effect Under Andreev and Majorana Bound States — DOI: `10.1007/s10948-025-07057-9`
+- Quantifying wave-function overlaps in inhomogeneous Majorana nanowires — DOI: `10.1103/physrevb.98.235406`
+- Distinguishing Majorana and quasi-Majorana bound states in a hybrid superconductor-semiconductor nanowire with inhomogeneous potential barriers — DOI: `10.1016/j.rinp.2021.104273`
+- Illustrated guide to robust low-energy Andreev bound states in semiconductor-superconductor heterostructures: Importance of partial separation of component Majorana bound states
+- Majorana modes in graphene strips: Polarization, wavefunctions, disorder, and Andreev states — DOI: `10.1103/mbj9-q8d8`
+- Transport through Majorana nanowires attached to normal leads — DOI: `10.1088/1367-2630/14/8/083020`
+- Estados ligados de Andreev e Majorana em pontos quânticos — DOI: `10.14393/ufu.di.2017.172`
+- Transport in a long-range Kitaev ladder: Role of Majorana and subgap Andreev states — DOI: `10.1209/0295-5075/130/27003`
+- Majorana Bound States in Two-Channel Time-Reversal-Symmetric Nanowire Systems — DOI: `10.1103/physrevlett.112.126402`
+- Andreev-Majorana bound states in superfluids — DOI: `10.1134/s1063776114120097`
+- Probing Majorana bound states through an inhomogeneous Andreev double dot interferometer — DOI: `10.1103/physrevb.107.085417`
+- Surface Andreev bound states of superfluid<sup>3</sup>He and Majorana fermions — DOI: `10.1088/0953-8984/24/34/343201`
+- Disorder-robust trivial Majorana-like states from smooth confinement in chiral superconducting nanowires
+- Majorana Fermion Induced Resonant Andreev Reflection — DOI: `10.1103/physrevlett.103.237001`
+- Andreev reflection, Andreev states, and long ballistic SNS junction
+- Transport-based fusion that distinguishes between Majorana and Andreev bound states — DOI: `10.1103/physrevb.109.165404`
+- Direct microwave measurement of Andreev-bound-state dynamics in a proximitized semiconducting nanowire — DOI: `10.1103/physrevlett.121.047001`
+- Mutation of Andreev into Majorana bound states in long NS and SNS junctions — DOI: `10.1103/physrevb.85.235307`
+- Josephson diode effect with Andreev and Majorana bound states — DOI: `10.1103/79tj-c3y4`
+- Quasiparticle gaps in multiprobe Majorana nanowires — DOI: `10.1103/physrevb.98.224512`
+- Majorana oscillations modulated by Fano interference and degree of nonlocality in a topological superconducting-nanowire–quantum-dot system — DOI: `10.1103/physrevb.98.075142`
+- Nonlocality of local Andreev conductances as a probe for topological Majorana wires — DOI: `10.1103/physrevb.110.014504`
+- Measuring Majorana nonlocality and spin structure with a quantum dot — DOI: `10.1103/physrevb.96.085418`
+- Accessing the degree of Majorana nonlocality with photons
+- Electrical detection of topological quantum phase transitions in disordered Majorana nanowires — DOI: `10.1103/physrevb.88.180507`
+- Charge-neutral nonlocal response in superconductor-InAs nanowire hybrid devices — DOI: `10.1088/1361-6641/ac187b`
+- Accessing the degree of Majorana nonlocality in a quantum dot-optical microcavity system — DOI: `10.1038/s41598-022-05855-y`
+- Nonlocal conductance of a Majorana wire near the topological transition — DOI: `10.1103/4dy1-kdzp`
+- Zero-energy states in Majorana nanowire devices — DOI: `10.4233/uuid:bf8250f8-6377-4dd2-bb6a-dfd9e41451fc`
+- Demonstrating nonlocality-induced teleportation through Majorana bound states in a semiconductor nanowire — DOI: `10.1016/j.physleta.2014.01.039`
+- Fingerprint of Majorana Zero Modes through Nonlocal Measurements — DOI: `10.7566/jpsht.3.018`
+- Anomalous Nonlocal Conductance as a Fingerprint of Chiral Majorana Edge States — DOI: `10.1103/physrevlett.123.207002`
+- Signatures of the Majorana spin in electrical transport through a Majorana nanowire — DOI: `10.1103/physrevb.102.045303`
+- Nonlocal conductance and the detection of Majorana zero modes: Insights from von Neumann entropy — DOI: `10.1103/physrevb.105.l161403`
+- Observation of Conductance Quantization in InSb Nanowire Networks — DOI: `10.1021/acs.nanolett.7b00797.s001`
+- Observation of Conductance Quantization in InSb Nanowire Networks — DOI: `10.1021/acs.nanolett.7b00797.s002`
+- Demonstrating nonlocality induced teleportation through Majorana bound states in a semiconductor nanowire
+- Concomitant opening of a bulk-gap with an emerging possible Majorana zero mode — DOI: `10.1038/s41467-019-09771-0`
+- Effects of large induced superconducting gap on semiconductor Majorana nanowires — DOI: `10.1103/physrevb.92.174511`
+- Concomitant opening of a topological bulk-gap with an emerging Majorana edge-state — DOI: `10.48550/arxiv.1807.06632`
+- Transport spectroscopy of N S nanowire junctions with Majorana fermions — DOI: `10.1103/physrevb.86.180503`
+- Effects of the electrostatic environment on the Majorana nanowire devices — DOI: `10.1088/1367-2630/18/3/033013`
+- Approaching a topological phase transition in Majorana nanowires — DOI: `10.1103/physrevb.93.245404`
+- To Close or Not to Close: The Fate of the Superconducting Gap Across the Topological Quantum Phase Transition in Majorana-Carrying Semiconductor Nanowires — DOI: `10.1103/physrevlett.109.266402`
+- Density of states, transport, and topology in disordered Majorana nanowires — DOI: `10.1103/physrevb.108.085415`
+- Majorana states in prismatic core-shell nanowires — DOI: `10.1103/physrevb.96.125435`
+- Majorana-based quantum computing in nanowire devices — DOI: `10.1103/physrevb.102.125407`
+- Curvature of gap closing features and the extraction of Majorana nanowire parameters — DOI: `10.1103/physrevb.99.054507`
+- Comment on “Trivial Andreev Band Mimicking Topological Bulk Gap Reopening in the Nonlocal Conductance of Long Rashba Nanowires” — DOI: `10.1103/physrevlett.132.099601`
+- Closing the Surgical Training Gap — DOI: `10.1302/3114-230235`
+- Closing and reopening the black box — DOI: `10.4324/9780203064511-9`
+- Closing the vocabulary gap — DOI: `10.4324/9781315113272-1`
+- Closing the Gender Gap — DOI: `10.5089/9781484398784.022.a003`
+- Practical strategies for closing the reading gap — DOI: `10.4324/9780429297328-7`
+- Practical strategies for closing the vocabulary gap — DOI: `10.4324/9781315113272-7`
+- Strength of Performance Based Compensation: Evidence from Hedge Fund Closing and Reopening Events — DOI: `10.2139/ssrn.1105886`
+- Closing and Reopening—Another Round — DOI: `10.1007/978-981-97-7194-3_10`
+- Dodecacene Generated on Surface: Reopening of the Energy Gap — DOI: `10.1021/acsnano.9b08456.s001`
+- Figure 5.3. Closing the gap — DOI: `10.1787/888933889039`
+- Closing the Gap — DOI: `10.14418/wes01.1.2208`
+- Geology and Health — DOI: `10.1093/oso/9780195162042.001.0001`
+- Figure 2.5. Closing the gender gap? — DOI: `10.1787/888933316133`
+- Closing the Gap — DOI: `10.18235/0008787`
+- Closing the Gap — DOI: `10.1108/978-1-78714-206-020171004`
+- Trivial Andreev band mimicking topological bulk gap reopening in the non-local conductance of long Rashba nanowires — DOI: `10.1103/physrevlett.130.207001`
+- Reply to "Comment on 'Trivial Andreev Band Mimicking Topological Bulk Gap Reopening in the Nonlocal Conductance of Long Rashba Nanowires'" — DOI: `10.1103/physrevlett.132.099602`
+- Concomitant opening of a topological bulk-gap with an emerging Majorana edge-state
+- The bulk spectral gap is certifiable from above but uncomputable from below
+- Robust gap closing and reopening in topological-insulator Josephson junctions
+- Stability of Majorana Fermions in Proximity-Coupled Topological Insulator Nanowires — DOI: `10.1103/physrevb.86.155431`
+- Band folding, strain, confinement, and surface relaxation effects on the electronic structure of GaAs and GaP: from bulk to nanowires
+- Hierarchical Majoranas in a Programmable Nanowire Network — DOI: `10.1103/physrevb.99.155138`
+- A new macroscopic model derived from the Boltzmann equation and the discontinuous Galerkin method for solving kinetic equations
+- Exponential suppression of the topological gap in self-consistent intrinsic Majorana nanowires — DOI: `10.1103/physrevb.111.195415`
+- Optimising the exchange of Majorana zero modes in a quantum nanowire network — DOI: `10.48550/arxiv.2310.13634`
+- Vision transformer based deep learning of topological indicators in Majorana nanowires — DOI: `10.1103/physrevb.111.104208`
+- Machine Learning the Disorder Landscape of Majorana Nanowires — DOI: `10.1103/physrevlett.132.206602`
+- Electrostatic environment and Majorana bound states in full-shell topological insulator nanowires — DOI: `10.1103/physrevb.109.075408`
+- Majorana braiding in realistic nanowire Y-junctions and tuning forks — DOI: `10.1103/physrevresearch.1.033207`
+- Scalable designs for quasiparticle-poisoning-protected topological quantum computation with Majorana zero modes — DOI: `10.1103/physrevb.95.235305`
+- Time-quasiperiodic topological superconductors with Majorana multiplexing — DOI: `10.1103/physrevb.98.220509`
+- Single and multifrequency driving protocols in a Rashba nanowire proximitized to an s -wave superconductor — DOI: `10.1103/physrevb.110.165403`
+- Topological Superconductors and Majorana Fermions — DOI: `10.1093/oxfordhb/9780198738169.013.6`
+- Majorana fermions and odd-frequency Cooper pairs in a normal-metal nanowire proximity-coupled to a topological superconductor — DOI: `10.1103/physrevb.87.104513`
+- Topological Phases and Majorana Fermions — DOI: `10.70675/2e958ffaz9560z4a51za0c2zc2ce6e82572c`
+- Majorana fermions in topological superconductors — DOI: `10.14711/thesis-b1254373`
+- Majorana Quasiparticles in Topological Material Interfaces — DOI: `10.31390/gradschool_dissertations.5488`
+- Building topological quantum circuits: Majorana nanowire junctions — DOI: `10.1103/physrevb.97.045410`
+- Transport properties of Majorana fermions in topological superconductors — DOI: `10.14711/thesis-b1334491`
+- Topological Majorana fermions models and new applications — DOI: `10.70675/7fac0383ze2cdz44b5z9e3az03d03c277671`
+- Topological Superconductors and Majorana Modes — DOI: `10.1201/9781003266419-7`
+- Avoidance of Majorana Resonances in Periodic Topological Superconductor-Nanowire Structures — DOI: `10.1103/physrevlett.108.067001`
+- Vortex majorana zero modes in superconducting topological crystalline insulators — DOI: `10.14711/thesis-991013114549403412`
+- Majorana fermions in a topological-insulator nanowire proximity-coupled to an<mml:math xmlns:mml="http://www.w3.org/1998/Math/MathML" display="inline"><mml:mi>s</mml:mi></mml:math>-wave superconductor — DOI: `10.1103/physrevb.84.201105`
+- Studies on topological superconductors and Majorana fermions : realization, detection and application — DOI: `10.14711/thesis-991012565467003412`
+- Topological gap protocol based machine learning optimization of Majorana hybrid wires — DOI: `10.1103/physrevb.109.045132`
+- Low-field Topological Threshold in Majorana Double Nanowires — DOI: `10.1103/physrevb.96.035306`
+- Floquet generation of Majorana end modes and topological invariants — DOI: `10.1103/physrevb.88.155133`
+- Towards searching for Majorana fermions in topological insulator nanowires
+- Adaptation of TURN protocol to SIP protocol
+- Topological quantum computing — DOI: `10.48550/arxiv.2410.13547`
+- Microsoft’s Claim of a Topological Qubit Faces Tough Questions — DOI: `10.1103/physics.18.68`
+- Why Current AI Architectures are Not Conscious: Neural Networks as Spinfoam Networks in a Theory of Quantum Gravity — DOI: `10.59973/ipil.307`
+- Why Current AI Architectures are Not Conscious:Neural Networks as Spinfoam Networks in a Theory ofQuantum Gravity — DOI: `10.21203/rs.3.rs-8443771/v1`
+- AU HD TYPE FREEDOM-1: Acta Universi (AU): A Unified Informational-Entropic Cosmology and Holographic Drive Technology — DOI: `10.24108/preprints-3116381`
+- Fermi-Bose crossover in superconductors: Disorder in control — DOI: `10.1103/hmyb-2b8q`
+- DNA as a perfect quantum computer based on the quantum physics principles — DOI: `10.1038/s41598-024-62539-5`
+- DNA as a perfect quantum computer based on the quantum physics principle — DOI: `10.21203/rs.3.rs-3830073/v1`
+- Majorana Fermions in Topological Superconducting Metallic Nanowires probed by a Superconducting Condensate
+- Transport Through a Coulomb Blockaded Majorana Nanowire — DOI: `10.1007/978-94-007-6618-1_5`
+- Evolution of the transmission phase through a Coulomb-blockaded Majorana wire — DOI: `10.1103/physrevb.98.161401`
+- Transmission amplitude through a Coulomb blockaded Majorana wire — DOI: `10.1103/physrevresearch.3.023221`
+- Transport properties of coupled Majorana bound states in the Coulomb blockade regime — DOI: `10.1103/physrevb.101.195420`
+- Interference and parity blockade in transport through a Majorana box — DOI: `10.1103/physrevb.106.l201305`
+- Capacitance-based fermion parity readout and predicted Rabi oscillations in a Majorana nanowire — DOI: `10.1103/p8qg-p1fp`
+- Robustness of topological order in semiconductor–superconductor nanowires in the Coulomb blockade regime — DOI: `10.1088/1367-2630/15/8/085003`
+- Enhanced current noise correlations in a Coulomb-Majorana device — DOI: `10.1103/physrevb.93.245418`
+- Parity lifetime of bound states in a proximitized semiconductor nanowire — DOI: `10.1038/nphys3461`
+- Majorana box qubits — DOI: `10.1088/1367-2630/aa54e1`
+- Parity-to-charge conversion in Majorana qubit readout — DOI: `10.1103/physrevresearch.2.033254`
+- Full parity phase diagram of a proximitized nanowire island — DOI: `10.1103/physrevb.104.045422`
+- Electrostatic-controlled parity switching in InAs–Al hybrid Coulomb island without Zeeman effect — DOI: `10.1088/1674-1056/ae6f9a`
+- Coulomb blockade of Majorana-fermion-induced transport — DOI: `10.1103/physrevb.84.165440`
+- Coulomb blockade in a silicon-on-sapphire nanowire — DOI: `10.1016/s0167-9317(00)00296-3`
+- Classical Coulomb blockade of a silicon nanowire dot — DOI: `10.1063/1.2937406`
+- Time scales for Majorana manipulation using Coulomb blockade in gate-controlled superconducting nanowires — DOI: `10.1103/physrevb.94.035424`
+- Coulomb Blockade in Single Tunnel Junction Connected to Nanowire and Carbon Nanotube — DOI: `10.1007/978-94-011-4327-1_10`
+- Parity-induced suppression of the Coulomb blockade of Josephson tunneling — DOI: `10.1103/physrevlett.70.2940`
+- Coulomb blockade — DOI: `10.29172/c3346a7a-9719-46d6-baf5-df9a9fe6a7aa`
+- Coulomb blockade — DOI: `10.29172/c3346a7a971946d6baf5df9a9fe6a7aa`
+- Coulomb blockade of Cooper pair tunneling and parity effects in the Cooper pair transistor — DOI: `10.1103/physrevb.74.224505`
+- Pure Real Solutions to the Dirac-Coulomb Problem in Majorana Representation — DOI: `10.2139/ssrn.4493810`
+- Parity-controlled Coulomb-blockade effects identified by shot noise — DOI: `10.1103/physrevb.50.1953`
+- A Silicon Nanowire with a Coulomb Blockade Effect at Room Temperature — DOI: `10.1002/1521-4095(20020517)14:10<736::aid-adma736>3.0.co;2-9`
+- Spin and Orbital Spectroscopy in the Absence of Coulomb Blockade in Lead Telluride Nanowire Quantum Dots — DOI: `10.21468/scipostphys.13.4.089`
+- Andreev Reflection versus Coulomb Blockade in Hybrid Semiconductor Nanowire Devices — DOI: `10.1021/nl801454k`
+- Theory of Coulomb blockaded transport in realistic Majorana nanowires — DOI: `10.1103/physrevb.104.085403`
+- Conductance of a proximitized nanowire in the Coulomb blockade regime — DOI: `10.1103/physrevb.93.235431`
+- Antilocalization of Coulomb Blockade in a Ge-Si Nanowire — DOI: `10.1103/physrevlett.112.216806`
+- Coulomb Blockade from the Shell of an InP-InAs Core-Shell Nanowire with a Triangular Cross Section — DOI: `10.1063/1.5084222`
+- Coulomb blockade and Bloch oscillations in superconducting Ti nanowires — DOI: `10.1103/physrevlett.109.187001`
+- Weber blockade in superconducting nanowires — DOI: `10.1103/physrevlett.114.077002`
+- Coulomb blockade of a nearly-open Majorana island — DOI: `10.1103/physrevlett.122.016801`
+- Modeling Electronic and Thermal Characteristics of Ge/Si-Core/Shell Nanowire Quantum Dot in the Coulomb Blockade Regime
+- On the single-particle-reduced entropy of a gated nanowire system in the Coulomb blockade regime
+- ac Josephson Effect in Finite-Length Nanowire Junctions with Majorana Modes — DOI: `10.1103/physrevlett.108.257001`
+- Transport Signatures of Quasiparticle Poisoning in a Majorana Island — DOI: `10.1103/physrevlett.118.137701`
+- Measurement-induced enhancement of the $X$-parity lifetime in a Majorana tetron — DOI: `10.48550/arxiv.2610.12223`
+- Kondo physics from quasiparticle poisoning in Majorana devices — DOI: `10.1103/physrevb.93.104524`
+- One minute parity lifetime of a NbTiN Cooper-pair transistor — DOI: `10.1038/nphys3342`
+- Dynamical Polarization of the Fermion Parity in a Nanowire Josephson Junction — DOI: `10.1103/physrevlett.131.117001`
+- Dynamic current susceptibility as a probe of Majorana bound states in nanowire-based Josephson junctions — DOI: `10.1103/physrevb.97.041415`
+- Superconducting islands and gate-based readout in semiconductor nanowires — DOI: `10.4233/uuid:ebfff02c-f87c-4c8a-9edd-53adb12f4403`
+- Detecting Majorana modes by readout of poisoning-induced parity flips — DOI: `10.1103/physrevb.107.l121401`
+- Parity-Sector Signatures in Ultraweak Photon Emission from Driven-Dissipative Majorana Spin Systems — DOI: `10.2139/ssrn.5964654`
+- Parity Flipping Mediated by a Quantum Dot in Majorana Josephson Junctions — DOI: `10.2139/ssrn.4309921`
+- Parity-Sector Signatures in Ultraweak Photon Emission from Driven-Dissipative Majorana Spin Systems — DOI: `10.20944/preprints202512.2321.v1`
+- Parity-dependent Majorana thermoelectric effect in a coupled single-quantum-dot system — DOI: `10.2139/ssrn.5583018`
+- Evidence for Majorana fermions in a nanowire — DOI: `10.1063/pt.3.1587`
+- Parity-Sector Signatures in Ultraweak Photon Emission from Driven-Dissipative Majorana Spin Systems — DOI: `10.59973/ipil.321`
+- Even–odd parity effects in Majorana junctions — DOI: `10.1088/1367-2630/15/3/035033`
+- Quantum inductance as a phase-sensitive probe of fermion parity switching in Majorana nanowires — DOI: `10.1103/x5ts-xw51`
+- Majorana qubit decoherence by quasiparticle poisoning — DOI: `10.1103/physrevb.85.174533`
+- Fermion parity and quantum capacitance oscillation with partially separated Majorana and quasi-Majorana modes — DOI: `10.1103/q488-97dp`
+- Quasiparticle Poisoning of Majorana Qubits — DOI: `10.1103/physrevlett.126.057702`
+- Dam parity of origin is associated with lifetime productivity in first parity sows — DOI: `10.1093/jas/skag338`
+- Phenomenology of Majorana zero modes in full-shell hybrid nanowires — DOI: `10.1103/physrevb.109.115428`
+- Topologically Protected Quantum Teleportation via Majorana Zero Modes: A Perspective on Scalability and Decoherence Immunity — DOI: `10.3390/quantum7030042`
+- Subgap states in semiconductor-superconductor devices for quantum technologies: Andreev qubits and minimal Majorana chains — DOI: `10.1007/978-3-031-55657-9_3`
+- On the conclusive detection of Majorana zero modes: conductance spectroscopy, disconnected entanglement entropy and the fermion parity noise — DOI: `10.1088/1367-2630/ad23a2`
+- Disorder effects in planar semiconductor-superconductor structures: Majorana wires versus Josephson junctions — DOI: `10.1103/physrevapplied.23.034068`
+- Identifying trivial and Majorana zero-energy modes using the Majorana polarization — DOI: `10.1103/physrevb.110.165404`
+- A random matrix theory for the robustness, quantization, and end-to-end correlation of zero-bias conductance peaks in class D ensemble: Searching for Majorana zero modes in disordered quantum dots and wires
+- Non-Majorana states yield nearly quantized conductance in superconductor-semiconductor nanowire devices
+- Quantized zero bias conductance plateaus in hybrid nanowire topological quantum information processing platforms without non-Abelian Majorana zero modes
+- Transport signatures of single and multiple Floquet Majorana modes in one-dimensional Rashba nanowire and Shiba chain
+- Plateau Regions for Zero-Bias Peaks within 5% of the Quantized Conductance Value 2e^{2}/h. — DOI: `10.1103/physrevlett.129.167702`
+- Differential current noise as an identifier of Andreev bound states that induce nearly quantized conductance plateaus — DOI: `10.1103/physrevb.108.l121407`
+- Supplementary data for 'Non-Majorana states yield nearly quantized conductance in proximatized nanowires' and more — DOI: `10.5281/zenodo.3958243`
+- Distinguishing between topological Majorana and trivial zero modes via transport and shot noise study in an altermagnet heterostructure — DOI: `10.1103/physrevb.111.l121401`
+- Transport features of a topological superconducting nanowire with a quantum dot: Conductance and noise — DOI: `10.1103/physrevb.108.045418`
+- Majorana modes in a helical altermagnet without net magnetism and spin-orbit coupling — DOI: `10.1103/gj6c-mcd2`
+- Floquet-engineered Majorana leakage effect — DOI: `10.1088/1402-4896/aeaca4`
+- In situ
+ tuning of dynamical Coulomb blockade on Andreev bound states in hybrid nanowire devices — DOI: `10.1103/physrevb.108.235416`
+- In situ tuning of dynamical Coulomb blockade in hybrid nanowire devices
+- Ultrafast directional readout of Majorana parity in a chiral CNT nanophotonic cavity — DOI: `10.1088/1751-8121/aeacb0`
+- On-demand population of Andreev levels by their ionization in the presence of Coulomb blockade — DOI: `10.1103/physrevb.110.184508`
+- Coulomb-assisted nonlocal electron transport between two pairs of Majorana bound states in a superconducting island — DOI: `10.1088/1674-1056/ad2a68`
+- Supercurrent parity meter in a nanowire Cooper pair transistor — DOI: `10.1126/sciadv.abm9896`
+- Parity-dependent shot noise and spin-flip relaxation process in a hybrid superconductor-nanowire quantum dot
+- Parity-Controlled 2π Josephson Effect Mediated by Majorana Kramers Pairs. — DOI: `10.1103/physrevlett.120.267002`
+- Topological Kondo effect with spinful Majorana fermions — DOI: `10.1103/physrevb.110.035136`
+- Measurement-induced enhancement of the $X$-parity lifetime in a Majorana tetron
+- Interferometric single-shot parity measurement in InAs–Al hybrid devices — DOI: `10.1038/s41586-024-08445-2`
+- Distinct Lifetimes for $X$ and $Z$ Loop Measurements in a Majorana Tetron Device
+- Combating quasiparticle poisoning with multiple Majorana fermions in a periodically-driven quantum wire — DOI: `10.1088/1361-648x/aba291`
+- Parity-protected superconducting diode effect in topological Josephson junctions — DOI: `10.1103/physrevb.108.214520`
+- Proposing one-sided tetrons as topological qubits for Majorana-based quantum computation
+- Interferometric Single-Shot Parity Measurement in an InAs-Al Hybrid Device
+- Proposal to measure the quasiparticle poisoning time of Majorana bound states — DOI: `10.1103/physrevb.89.140505`
+- nite-length nanowire junctions with Majorana modes
+- Magnetic-field-dependent quasiparticle dynamics of nanowire single-Cooper-pair transistors — DOI: `10.1103/physrevb.98.174502`
+- Realization of superconducting transmon qubits based on topological insulator nanowires — DOI: `10.1063/5.0140079`
+- Signatures of Majorana bound states in the electronic transport through finite-size topological superconductors — DOI: `10.24355/dbbs.084-202106171212-0`
+- Monte Carlo studies of modified scalable designs for quantum computation
+- The hybrid topological longitudinal transmon qubit — DOI: `10.1088/2633-4356/abfbc9`
+- Hybrid Josephson junction-based quantum devices in magnetic field — DOI: `10.4233/uuid:dd3c8524-413c-405b-98f2-9dba974965db`
+- Autoregressive Perturbations for Data Poisoning
+- Model-Targeted Poisoning Attacks with Provable Convergence
+- Lifetime of Majorana qubits in Rashba nanowires with non-uniform chemical potential — DOI: `10.1103/physrevb.98.155414`
+- Quantum Inductance as a Phase-Sensitive Probe of Fermion Parity Switching in Majorana Nanowires
+- Quasiparticle poisoning rate in a superconducting transmon qubit involving Majorana zero modes
+- Controlling non-Abelian statistics of Majorana fermions on Majorana dimer lattices — DOI: `10.1103/physrevb.84.094505`
+- The Scientific Manuscripts left Unpublished by Ettore Majorana (with outlines of his life and work)
+- Isolating Majorana fermions with finite Kitaev nanowires and temperature: the universality of the the zero-bias conductance — DOI: `10.17648/bwsp-2017-70083`
+- The Temperature Dependence of Thermal Conductance at Solid/Solid Interfaces — DOI: `10.18130/v3wr9c`
+- Extracting the Temperature Dependence of Both Nanowire Resistivity and Junction Resistance from Electrical Measurements on Printed Silver Nanowire Networks — DOI: `10.1021/acsaelm.4c01965.s002`
+- Extracting the Temperature Dependence of Both Nanowire Resistivity and Junction Resistance from Electrical Measurements on Printed Silver Nanowire Networks — DOI: `10.1021/acsaelm.4c01965.s001`
+- Temperature dependence of gas conductance through porous silicon carbide plugs — DOI: `10.1016/s0042-207x(76)81078-0`
+- Low-energy anomalies in electron tunneling through strongly asymmetric Majorana nanowire — DOI: `10.1063/1.4947307`
+- Temperature dependence of gas conductance through porous silicon carbide plugs — DOI: `10.1016/0042-207x(75)91656-5`
+- Isolating Majorana fermions with finite Kitaev nanowires and temperature: the universality of the zero-bias conductance — DOI: `10.1103/physrevb.96.045135`
+- Avoiding Dilution: Using Diffusion and Vision Transformers to resolve Majorana Features in Nanowires at High Temperature
+- Temperature dependence of electrical and thermal conduction in single silver nanowire
+- Diameter-dependent conductance of InAs nanowires — DOI: `10.1063/1.3270259`
+- Tilting of the magnetic field in Majorana nanowires: Critical angle and zero-energy differential conductance — DOI: `10.1103/physrevb.90.115429`
+- Effects of tilting the magnetic field in one-dimensional Majorana nanowires — DOI: `10.1103/physrevb.89.245405`
+- Weakly coupled Majorana wire arrays under tilted magnetic fields — DOI: `10.1063/5.0151104`
+- Inverse proximity effect in semiconductor Majorana nanowires — DOI: `10.3762/bjnano.9.109`
+- Proposal for realizing Majorana fermions without external magnetic field in strongly correlated nanowires — DOI: `10.1103/physrevb.109.115140`
+- Boundary Green's function approach for spinful single-channel and multichannel Majorana nanowires — DOI: `10.1103/physrevb.101.094511`
+- Manipulating Majorana zero modes on atomic rings with an external magnetic field — DOI: `10.1038/ncomms10395`
+- Magnetic Field Dependence of the Small-Angle Neutron Scattering (SANS) in Amorphous DyCu and NdFe2 — DOI: `10.23860/thesis-andrauskas-donna-1985`
+- Oriented atoms in a variable magnetic field — DOI: `10.1007/978-3-540-48095-2_7`
+- Fiber-to-field angle dependence of proton nuclear magnetic relaxation in collagen — DOI: `10.1016/0730-725x(90)90005-m`
+- Oriented Atoms in a Variable Magnetic Field — DOI: `10.1007/978-3-030-23509-3_8`
+- Magnetic field dependence of the small angle neutron scattering in HoMo6Se8 — DOI: `10.1016/0304-8853(86)90915-7`
+- Majorana ϕ 0 -junction in a disordered spin-orbit coupling nanowire with tilted magnetic field — DOI: `10.1016/j.physc.2017.10.005`
+- Temperature, Confinement and Magnetic Field Dependence of Spin Transport in Ge Nanowire — DOI: `10.1166/qm.2014.1099`
+- Magnetic Field Dependence of Critical Current Density of NbTi Thin Films as a Parameter of Angle — DOI: `10.1007/978-4-431-66874-9_122`
+- The bond angle dependence of the asymmetry parameter of the oxygen-17 electric field gradient tensor — DOI: `10.1016/0926-2040(93)90023-g`
+- Magnetic Field Angle Dependence of Switching Field in CoFeB-MgO Magnetic Tunnel Junctions with Perpendicular Easy Axis at Low Temperature — DOI: `10.7567/ssdm.2016.g-3-03`
+- Majorana zero modes in metallic carbon nanotubes induced by magnetic field and geometry — DOI: `10.2139/ssrn.6985093`
+- Electric Field-Induced Magnetization Switching in CoFeB-MgO—Static Magnetic Field Angle Dependence — DOI: `10.1109/tmag.2013.2278559`
+- Dependence of bubble deflection angle on the orientation of an in-plane magnetic field — DOI: `10.1063/1.88739`
+- Magnetic field dependence of the Leggett angle, the susceptibility, and the longitudinal nuclear magnetic resonance of3He-B — DOI: `10.1007/bf00681597`
+- Magnetic Field and Pressure Dependence of Small Angle Neutron Scattering in MnSi — DOI: `10.1103/physrevlett.99.156406`
+- Identification of a Kitaev quantum spin liquid by magnetic field angle dependence — DOI: `10.1038/s41467-021-27943-9`
+- Magnetization reversal analysis for antiferromagnetic-coupled films with magnetic field angle dependence — DOI: `10.1063/1.1453347`
+- Derivation of the Lorentz Force Law, the Magnetic Field Concept and the Faraday-Lenz Law using an Invariant Formulation of the Lorentz Transformation — DOI: `10.1088/0031-8949/73/6/018`
+- Derivation of the Lorentz Force Law and the Magnetic Field Concept using an Invariant Formulation of the Lorentz Transformation
+- Majorana fermions in spin-singlet nodal superconductors with coexisting non-collinear magnetic order — DOI: `10.1103/physrevlett.110.096403`
+- Retarded electric and magnetic fields of a moving charge: Feynman's derivation of Liénard-Wiechert potentials revisited
+- Space-time transformation properties of inter-charge forces and dipole radiation: Breakdown of the classical field concept in relativistic electrodynamics
+- Fast evaluation of far-field signals for time-domain wave propagation — DOI: `10.1007/s10915-015-9995-5`
+- Axions and Cosmic Magnetic Fields
+- Primordial Magnetic Fields that Last?
+- Cosmological Magnetic Fields from Primordial Helicity — DOI: `10.1103/physrevd.62.103008`
+- Magnetic nanowires and nanotubes — DOI: `10.1016/bs.hmm.2018.08.002`
+- Mean Field Dynamo Saturation: Toward Understanding Conflicting Results
+- Magnetic relaxation and magnetization field dependence measurements in La0.5Ca0.5MnO3 — DOI: `10.1016/s0304-8853(00)00987-2`
+- Zero-energy pinning from interactions in Majorana nanowires — DOI: `10.1038/s41535-017-0012-0`
+- Leakage of Majorana bound states in an inhomogeneous topological nanowire — DOI: `10.1088/1361-648x/aba154`
+- Majorana splitting from critical currents in Josephson junctions — DOI: `10.1103/physrevb.96.205425`
+- The dependence of the optoelectrical properties of silver nanowire networks on nanowire length and diameter — DOI: `10.1088/0957-4484/23/18/185201`
+- Supplementary data 1 — DOI: `10.1088/1361-6528/ae308d/data1`
+- Dependence of nanowire length, diameter, and concentration on the electrochromic properties of hybrid silver nanowire network/PEDOT:PSS-based devices — DOI: `10.1364/oe.535426`
+- Channel-Length Dependence of Low-Field Mobility in Silicon-Nanowire FETs — DOI: `10.1109/led.2009.2031418`
+- Channel length dependence of discrete dopant effects in narrow si nanowire transistors: A full 3D NEGF study — DOI: `10.1109/iwce.2010.5677945`
+- Electrocatalyst decorated hematite nanowire arrays for photoelectrochemical water splitting. — DOI: `10.18297/honors/66`
+- Surface Metal Ion Doped Tio2 Nanowire Arrays by Low Energy Ion Implantation for Enhanced Photoelectrochemical Water Splitting — DOI: `10.2139/ssrn.4349392`
+- On the splitting of the Roentgen and optical terms caused by the electron rotation and on the intensity of the cesium lines — DOI: `10.1007/978-3-540-48095-2_1`
+- Logical Majorana zero modes in a nanowire network — DOI: `10.1103/physrevb.107.075402`
+- Effects of Nanowire Length on Charge Transport in Vertically Aligned Gold Nanowire Array Electrodes — DOI: `10.1021/acs.langmuir.8b03089.s001`
+- Full Water Splitting Electrocatalyzed by NiWO4 Nanowire Array — DOI: `10.1021/acssuschemeng.8b01841.s001`
+- The Dark Energy Survey
+- Large Synoptic Survey Telescope: Dark Energy Science Collaboration
+- Absence of Majorana oscillations in finite-length full-shell hybrid nanowires — DOI: `10.1103/physrevb.110.115417`
+- Searching for minimum in dependence of squared speed-of-sound on collision energy — DOI: `10.1155/2016/9467194`
+- Dark Energy and Cosmic Sound: w(z) Surveys with the Gemini/Subaru Wide-Field Multi-Object Spectrograph
+- A Low Energy Rare Event Search with the Majorana Demonstrator — DOI: `10.1088/1742-6596/1468/1/012040`
+- Dressed Majorana fermion in a hybrid nanowire — DOI: `10.1103/physrevlett.133.266605`
+- Majorana Fermions in Ge/Si Hole Nanowires — DOI: `10.1103/physrevb.90.195421`
+- Evaluation of the LEP Centre-of-Mass Energy Above the W-Pair Production Threshold — DOI: `10.1007/s100520050657`
+- 4π-periodic Josephson supercurrent in HgTe-based topological Josephson junctions — DOI: `10.1038/ncomms10303`
+- Josephson-Current Signatures of Unpaired Floquet Majorana Fermions — DOI: `10.1103/physrevlett.133.196601`
+- Magnetically-driven colossal supercurrent enhancement in InAs nanowire Josephson junctions — DOI: `10.1038/ncomms14984`
+- Majorana bound states in inhomogeneous nanowires
+- Hysteresis from nonlinear dynamics of Majorana modes in topological Josephson junctions — DOI: `10.1103/physrevb.98.134515`
+- Signatures of fractional Josephson effect in Josephson junctions based on the higher-order topological insulator WTe2 — DOI: `10.1016/j.cap.2026.03.005`
+- ac Josephson effect in a gate-tunable Cd3As2 nanowire superconducting weak link — DOI: `10.1103/physrevb.108.094514`
+- Hunting for Majoranas — DOI: `10.1126/science.ade0850`
+- Quasi-Majorana states in Majorana devices — DOI: `10.4233/uuid:b61039b3-7014-425d-8803-eeb34f12ee1d`
+- Spins in Josephson Junctions — DOI: `10.4233/uuid:ff2ffac0-c76a-4a3d-af22-88f2151f6133`
+- The fractional a.c. Josephson effect in a semiconductor–superconductor nanowire as a signature of Majorana particles — DOI: `10.1038/nphys2429`
+- Nonreciprocal equilibrium Josephson effect of arbitrary periodicity from poor man's Majorana zero modes — DOI: `10.1103/jt2g-hbwq`
+- Robustness of Majorana fermion induced fractional Josephson effect in multichannel superconducting wires — DOI: `10.1103/physrevb.84.081304`
+- Majorana States in Presence of Electron Interactions: Spinful Fractional Josephson Junction with a Quantum Dot — DOI: `10.12693/aphyspola.133.362`
+- Disentangling Majorana fermions from topologically trivial low-energy states in semiconductor Majorana wires — DOI: `10.1103/physrevb.87.140504`
+- Features of the Dynamics of a System of Coupled Josephson Junctions with Topologically Trivial and Nontrivial Barriers: Manifestation of the Majorana Mode — DOI: `10.1134/s0021364019010120`
+- Skyrmion Control of Majorana States in Planar Josephson Junctions — DOI: `10.21203/rs.3.rs-155447/v1`
+- Dynamic of excitations of the Fractional quantum Hall effect : fractional charge and fractional Josephson frequency — DOI: `10.70675/4b8cb60ez00d8z4f43zb69azfa7b413d2805`
+- Majorana Edge and End States in Planar Josephson Junctions — DOI: `10.2139/ssrn.5317094`
+- Sn-InAs Nanowire Shadow-Defined Josephson Junctions — DOI: `10.1021/acs.nanolett.5c02410.s001`
+- Unexpected results for the non-trivial fusion of Majorana zero modes in interacting quantum-dot arrays — DOI: `10.21203/rs.3.rs-3745657/v1`
+- Non-Trivial Topological Majorana Architectures: Möbius and Trefoil Band Topologiesevaluated by Signal to Noise Ratio and Coherence time measurements — DOI: `10.2139/ssrn.6154693`
+- Author Correction: Ballistic Majorana nanowire devices — DOI: `10.1038/s41565-024-01602-8`
+- Data repository accompanying retraction of "Quantized Majorana conductance" — DOI: `10.5281/zenodo.4545577`
+- Avoiding dilution: Using diffusion and vision transformers to resolve Majorana features in nanowires at high temperature — DOI: `10.1103/12cp-xlkb`
+- Conductance fingerprint of Majorana fermions in the topological Kondo effect — DOI: `10.1103/physrevb.89.045143`
+- Local and nonlocal quantum transport due to Andreev bound states in finite Rashba nanowires with superconducting and normal sections — DOI: `10.1103/physrevb.104.075405`
+- Transport through a Majorana Island in the Strong Tunneling Regime. — DOI: `10.1103/physrevlett.119.057002`
+- The modulation of Majorana bound states comb through quantum dots — DOI: `10.1016/j.ssc.2020.113973`
+- Comment on"InAs-Al hybrid devices passing the topological gap protocol", Microsoft Quantum, Phys. Rev. B 107, 245423 (2023)
+- Floquet-Engineered Hybrid Topological Orders with Majorana Edge Modes in Number-Conserving Fermionic Quantum Simulators
+- Finite-time braiding dynamics within topological nanowire qubits — DOI: `10.1063/5.0332814`
+- Stability of Majorana modes in Coulomb-disordered topological insulator nanowires — DOI: `10.1103/bsxt-n9ls`
+- Shuttling Majorana zero modes in disordered and noisy topological superconductors — DOI: `10.1103/tswn-kxhx`
+- Optimising the exchange of Majorana zero modes in a quantum nanowire network
+- Investigating topological in-gap states in non-Hermitian quasicrystal with unconventional $p$-wave pairing
+- Majorana bound states and subgap states in three-terminal topological superconducting nanowire-quantum dot hybrid devices
+- Majorana signatures in an asymmetrically coupled quantum dot--topological superconducting nanowire junction
+- Spin-selective transport in a correlated double quantum dot-Majorana wire system — DOI: `10.1038/s41598-024-66478-z`
+- Temperature induced shifts of Yu–Shiba–Rusinov resonances in nanowire-based hybrid quantum dots — DOI: `10.1038/s42005-020-0392-5`
+- Tunneling conductance for Majorana fermions in spin-orbit coupled semiconductor-superconductor heterostructures using superconducting leads — DOI: `10.1103/physrevb.93.195161`
+- Kondo-like zero-bias conductance anomaly in a three-dimensional topological insulator nanowire — DOI: `10.1038/srep21767`
+- Negative Differential Conductance Induced by Majorana Bound States Side-Coupled to T-Shaped Double Quantum Dots — DOI: `10.3390/nano15171359`
+- Distinguishing Majorana bound states from Andreev bound states through differential conductance and current noise spectrum — DOI: `10.1088/1367-2630/ada9ab`
+- Temperature dependence electron conduction in horizontally aligned trapezoidal-shaped AlGaN/GaN nanowire wrap-gate transistor — DOI: `10.1007/s10854-024-13578-1`
+- Temperature dependence of Linearity and RF Performance metrics in DMG GaSb-Si Nanowire TFET — DOI: `10.1109/iccisc52257.2021.9484926`
+- Formation of high temperature Majorana macroscopic states with fractional entropy and conductance
+- Phonon transport in gold quantum wires: temperature and thickness dependence — DOI: `10.1088/1361-6528/ae93c3`
+- Anomalous universal conductance as a hallmark of non-locality in a Majorana-hosted superconducting island — DOI: `10.1038/s41467-022-34437-9`
+- Approximation of Fractional Order Conflict-Controlled Systems
+- Quantum bits with Josephson junctions — DOI: `10.1007/978-3-030-20726-7_17`
+- Periodic trivial extension algebras and fractionally Calabi-Yau algebras
+- Dipolar phase transitions in the cavity with Majorana populated Josephson junctions
+- Qubit States Based on Fractional Vortices in $0-π$ Josephson Junctions
+- Erdélyi-Kober Fractional Diffusion
+- Majorana fermions in topological insulator nanowires: from single superconducting nanowires to Josephson junctions — DOI: `10.1103/physrevb.95.155420`
+- Anomalous $h/2e$ periodicity and Majorana zero modes in chiral Josephson junctions — DOI: `10.1103/physrevlett.133.056601`
+- Experimental and Theoretical Study on 2D Ordered and 3D Disordered SIS-type Arrays of Josephson Junctions
+- Coulomb stability of the 4π-periodic Josephson effect of Majorana fermions — DOI: `10.1103/physrevb.84.180502`
+- Probability and braiding statistics in Majorana nanowires — DOI: `10.1103/physrevb.95.155451`
+- Search for non-Abelian Majorana braiding statistics in superconductors — DOI: `10.21468/scipostphyslectnotes.15`
+- SIGNATURE OF MAJORANA MODES AND ASPECTS OF THEIR BRAIDING — DOI: `10.13016/za9o-pibw`
+- Fractionalizing Majorana Fermions: Non-Abelian Statistics on the Edges of Abelian Quantum Hall States — DOI: `10.1103/physrevx.2.041002`
+- Three-Majorana cotunneling interferometer for non-Abelian braiding and topological quantum gate implementation — DOI: `10.1103/qls3-tjzv`
+- Majorana Qubits and Non-Abelian Physics in Quantum Dot–Based Minimal Kitaev Chains — DOI: `10.1103/prxquantum.5.010323`
+- Simulating the dynamics of braiding of Majorana zero modes using an IBM quantum computer — DOI: `10.1103/physrevresearch.3.033171`
+- Exotic non-Abelian anyons from conventional fractional quantum Hall states — DOI: `10.1038/ncomms2340`
+- Braiding of Majorana zero modes in vortex cores — DOI: `10.1103/t264-dq2z`
+- Platform for braiding Majorana modes with magnetic skyrmions — DOI: `10.1103/physrevresearch.5.033109`
+- Majorana Fermions and representations of the braid group — DOI: `10.1142/s0217751x18300235`
+- Majorana fermions qubit states and non-Abelian braiding statistics in quenched inhomogeneous spin ladders — DOI: `10.1103/physrevb.88.180402`
+- Detecting non-Abelian statistics of Majorana fermions in quantum nanowire networks — DOI: `10.1134/s002136401115015x`
+- Erratum: Symmetry-protected non-Abelian braiding of Majorana Kramers pairs [Phys. Rev. B 94, 224509 (2016)] — DOI: `10.1103/physrevb.95.019902`
+- Majorana meets Coxeter: Non-Abelian Majorana fermions and non-Abelian statistics — DOI: `10.1103/physrevb.83.134518`
+- Minimal setup for non-Abelian braiding of Majorana zero modes — DOI: `10.1007/s11433-021-1773-3`
+- Unified model for non-Abelian braiding of Majorana and Dirac fermion zero modes — DOI: `10.1007/s11433-025-2808-x`
+- Non-abelian physics in condensed matter physics : Möbius band and Majorana fermions — DOI: `10.14711/thesis-b1517519`
+- Symmetry-protected non-Abelian braiding of Majorana Kramers pairs — DOI: `10.1103/physrevb.94.224509`
+- Reconstructing non-Abelian braiding and fusion without anyon transport — DOI: `10.21203/rs.3.rs-10607154/v1`
+- Non-Abelian braiding of Majorana zero modes in B-form single-stranded DNA with s-wave superconductor — DOI: `10.1016/j.physleta.2025.130515`
+- Simulation of Non-Abelian Braiding in Majorana Time Crystals — DOI: `10.1103/physrevlett.120.230405`
+- Electron-Tunneling-Assisted Non-Abelian Braiding of Rotating Majorana Bound States — DOI: `10.1103/physrevlett.125.187702`
+- Minimal non-abelian nodal braiding in ideal metamaterials — DOI: `10.21203/rs.3.rs-1303568/v2`
+- Minimal non-abelian nodal braiding in ideal metamaterials — DOI: `10.21203/rs.3.rs-1303568/v1`
+- Non-Abelian Vortices, Majorana Fermions and Non-Abelian Statistics — DOI: `10.7566/jpscp.4.013004`
+- Non-Abelian Three-Loop Braiding Statistics for 3D Fermionic Topological Phases — DOI: `10.21203/rs.3.rs-147750/v1`
+- Majorana Fermions in Non-Abelian QCD Vortices — DOI: `10.1143/ptps.186.549`
+- Non-Abelian braiding of light — DOI: `10.1103/physrevlett.117.073901`
+- Majorana bound states from exceptional points in non-topological superconductors — DOI: `10.1038/srep21427`
+- Majorana Braiding Dynamics on Nanowires — DOI: `10.1103/physrevb.91.174305`
+- Many-body Majorana braiding without an exponential Hilbert space — DOI: `10.1103/physrevlett.131.176601`
+- Non-Abelian Braiding of Chiral Majorana Fermions by Quantum Dots — DOI: `10.1103/physrevb.99.195137`
+- Minimal setup for non-Abelian braiding of Majorana zero modes
+- Verifying Non-Abelian Statistics by Numerical Braiding Majorana Fermions
+- End-to-end correlated subgap states in hybrid nanowires — DOI: `10.1103/physrevb.100.205412`
+- Cross-correlations mediated by Majorana bound states — DOI: `10.1209/0295-5075/103/57016`
+- Corner states, hinge states, and Majorana modes in SnTe nanowires — DOI: `10.1103/physrevb.105.075310`
+- Even-odd effect and Majorana states in full-shell nanowires — DOI: `10.1103/physrevresearch.2.023171`
+- Low-Energy Effective Hamiltonian and End States of an Inverted Hgte Nanowire — DOI: `10.2139/ssrn.5267399`
+- Existence of Majorana Bound States in A Superconducting Nanowire Near an Impurity — DOI: `10.1134/s0040577918110077`
+- Erratum to: Proximity Effect on the Density of States and Majorana Bound States in a Thin Superconducting Ferromagnetic Nanowire — DOI: `10.1007/s10948-016-3905-4`
+- Dual Negative Differential of Heat Generation in a Strongly Correlated Quantum Dot Side-Coupled to Majorana Bound States — DOI: `10.3389/fphy.2021.727934`
+- Reentrant topological transitions with Majorana end states in one-dimensional superconductors by lattice modulation — DOI: `10.1103/physrevb.88.155428`
+- Majorana bound states — DOI: `10.29172/b3ecb9a8-e74e-445a-9d05-21d86b298385`
+- Phase-Correlated Nondirectional Laser Emission from the End Facets of a ZnO Nanowire — DOI: `10.1021/nl0616227`
+- Thermoelectric Effect in a Correlated Quantum Dot Side-Coupled to Majorana Bound States — DOI: `10.1186/s11671-020-03307-y`
+- Leakage of Majorana mode into correlated quantum dot nearby its singlet-doublet crossover — DOI: `10.1088/1361-648x/ab46d9`
+- Josephson effect in junctions of conventional and topological superconductors — DOI: `10.3762/bjnano.9.158`
+- Nonlinear Seebeck and Peltier effects in a Majorana nanowire coupled to leads — DOI: `10.1088/1674-1056/ad3f99`
+- Quantum Transport through a Quantum Dot Coupled to Majorana Nanowire and Two Ferromagnets with Noncollinear Magnetizations — DOI: `10.3390/nano14141210`
+- Majorana bound states induced transparency and slow light enhanced by mechanical resonators in a hybrid quantum system — DOI: `10.1088/1361-648x/ae217e`
+- Effect of interatomic repulsion on Majorana zero modes in a coupled quantum-dot–superconducting-nanowire hybrid system — DOI: `10.1103/physrevb.109.075416`
+- Hybrid superconductor-semiconductor nanowire junctions as useful platforms to study Majorana bound states
+- Fano-Rashba effect in the presence of Majorana bound states
+- Majorana bound states in a superconducting Rashba nanowire in the presence of antiferromagnetic order — DOI: `10.1103/physrevb.103.125110`
+- Strongly correlated superconductivity
+- Continuous-Time Estimation-Aware Optimal Control of Mobile Sensors for Target Tracking
+- Effect of disorder in non-uniform hybrid nanowires with Majorana and fermionic bound states
+- Controllable Majorana vortex states in iron-based superconducting nanowires — DOI: `10.1093/nsr/nwac095`
+- Majorana Bound States in Proximity Junctions of Superconducting Nanowires with Dresselhaus Spin-orbit Coupling
+- Chiral Majorana edge states in HgTe quantum wells — DOI: `10.1088/1367-2630/15/8/085008`
+- Majorana bound states in a coupled quantum-dot hybrid-nanowire system — DOI: `10.1126/science.aaf3961`
+- Enhanced Majorana stability in a three-site Kitaev chain — DOI: `10.1038/s41565-025-01894-4`
+- Decoherence of Majorana qubits by 1/f noise — DOI: `10.48550/arxiv.2506.22394`
+- Elementary quantum operations on Majorana systems
+- Growth mechanisms and properties of semiconductor nanowires at the atomic scale : From VLS to SAG quantum networks
+- Intermediate states in Andreev bound state fusion — DOI: `10.1038/s42005-023-01273-2`
+- Phase-engineering the Andreev band structure of a three-terminal Josephson junction — DOI: `10.1038/s41467-023-42356-6`
+- Signatures of Majorana Fermions in Hybrid Superconductor-Semiconductor Nanowire Devices — DOI: `10.1126/science.1222360`
+- Signatures of Majorana Fermions in Hybrid Superconductor-Topological Insulator Devices — DOI: `10.2172/1051382`
+- Transport signatures of single and multiple Floquet Majorana modes in a one-dimensional Rashba nanowire and Shiba chain — DOI: `10.1103/6wnf-b5g8`
+- Figure 6: Independent replication of results. — DOI: `10.7717/peerj.2661/fig-6`
+- Topological Kondo device for distinguishing quasi-Majorana and Majorana signatures — DOI: `10.1103/physrevb.104.205125`
+- Signatures for Majorana Neutrinos at Hadron Colliders — DOI: `10.1103/physrevlett.97.171804`
+- Signatures of Majorana Fermions in Topological Superconductor Nanowires — DOI: `10.7567/ssdm.2014.p-3-1`
+- Signatures of topological ground state degeneracy in Majorana islands — DOI: `10.1117/12.2566302`
+- Figure 8: Independent prognostic analysis of two prognostic signatures. — DOI: `10.7717/peerj.11433/fig-8`
+- Replication in Experimental Economics — DOI: `10.1108/s0193-230620150000018009`
+- Boundary spin polarization as robust signature of topological phase transition in Majorana nanowires — DOI: `10.1103/physrevb.98.035419`
+- High-Speed Propulsion of Flexible Nanowire Motors: Theory and Experiments — DOI: `10.1039/c1sm05503h`
+- Ballistic Majorana nanowire devices — DOI: `10.1038/s41565-017-0032-8`
+- Majorana nanowires, Kitaev chains, and spin models — DOI: `10.1103/physrevb.107.035440`
+
+## Failures
+
+- semantic-scholar / "Majorana nanowire zero bias peak trivial Andreev bound states": source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)
+- semantic-scholar / "Majorana nanowire disorder induced zero bias peaks": source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)
+- semantic-scholar / "Majorana nanowire smooth confinement Andreev states": source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)
+- semantic-scholar / "Majorana nanowire bulk gap closing reopening": source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)
+- semantic-scholar / "Majorana nanowire topological gap protocol criticism": source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)
+- semantic-scholar / "Majorana nanowire magnetic field angle dependence": source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)
+- semantic-scholar / "Majorana nanowire length dependence energy splitting": source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)
+- semantic-scholar / "Majorana nanowire Josephson fractional periodicity trivial explanation": source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)
+- semantic-scholar / "Majorana nanowire braiding non Abelian experimental evidence": source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)
+- semantic-scholar / "Majorana nanowire independent replication experimental signatures": source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)

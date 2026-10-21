@@ -1,0 +1,20 @@
+10.1038/s42254-020-0228-y	From Andreev to Majorana bound states in hybrid superconductor–semiconductor nanowires
+10.48550/arxiv.2608.09758	Disorder-robust trivial Majorana-like states from smooth confinement in chiral superconducting nanowires
+10.1088/1361-648x/ac44d2	Majorana/Andreev crossover and the fate of the topological phase transition in inhomogeneous nanowires
+10.1038/s42005-019-0231-8	Non-hermitian topology as a unifying framework for the Andreev versus Majorana states controversy
+10.1103/physrevb.97.161401	Distinguishing Majorana bound states from localized Andreev bound states by interferometry
+10.1038/s41467-019-13133-1	Next steps of quantum transport in Majorana nanowire devices
+10.1038/s41567-020-01107-w	Non-Majorana states yield nearly quantized conductance in proximatized nanowires
+10.1103/physrevresearch.2.013377	Physical mechanisms for zero-bias conductance peaks in Majorana nanowires
+10.21468/scipostphys.7.5.061	Reproducing topological properties with quasi-Majorana states
+10.1038/s41598-021-96415-3	Topological isoconductance signatures in Majorana nanowires
+10.1103/physrevlett.122.147701	Decays of Majorana or Andreev Oscillations Induced by Steplike Spin-Orbit Coupling
+10.1103/physrevlett.123.107703	Ubiquitous Non-Majorana Zero-Bias Conductance Peaks in Nanowire Devices
+10.1007/s10948-025-07057-9	Anomalous Proximity Effect Under Andreev and Majorana Bound States
+10.1103/fksg-x8pr	Odd-frequency pairing due to Majorana and trivial Andreev bound states
+10.1103/physrevb.98.235406	Quantifying wave-function overlaps in inhomogeneous Majorana nanowires
+10.1103/physrevx.8.031041	Effects of Gate-Induced Electric Fields on Semiconductor Majorana Nanowires
+10.1016/j.rinp.2021.104273	Distinguishing Majorana and quasi-Majorana bound states in a hybrid superconductor-semiconductor nanowire with inhomogeneous potential barriers
+	Illustrated guide to robust low-energy Andreev bound states in semiconductor-superconductor heterostructures: Importance of partial separation of component Majorana bound states
+10.1103/mbj9-q8d8	Majorana modes in graphene strips: Polarization, wavefunctions, disorder, and Andreev states
+10.1088/1367-2630/14/8/083020	Transport through Majorana nanowires attached to normal leads

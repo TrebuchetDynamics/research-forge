@@ -1,0 +1,44 @@
+{
+  "copied_from": "/home/xel/git/research-forge/.worktrees/autowork-V-FS2-set-aside-3/research/frontier-science/frontier-20261021-vfs2-live",
+  "copied_unchanged_files": 150,
+  "build": {
+    "argv": [
+      "autowork-run",
+      "go",
+      "-C",
+      "/home/xel/git/research-forge/.worktrees/autowork-V-FS2-set-aside-3",
+      "build",
+      "-o",
+      "/var/tmp/aw-1000-d0648c07-1/vfs2-tools/rforge",
+      "./cmd/rforge"
+    ],
+    "start": "2026-10-21T16:35:02.869059+00:00",
+    "end": "2026-10-21T16:35:33.637216+00:00",
+    "exit_code": 0,
+    "stdout": "rebuild.stdout.log",
+    "stderr": "rebuild.stderr.log",
+    "revision": "04d4e87d0ed2f66d95f92aa741e39892fd6ab2e5"
+  },
+  "original_binary": {
+    "path": "/var/tmp/aw-1000-d0648c07-1/vfs2-tools/rforge",
+    "sha256": "52bcdd5d0fb84f90551113a8c2cd1f516e7d3671de25ce0c685cb3e342b90d7a",
+    "version": {
+      "commit": "unknown",
+      "date": "unknown",
+      "name": "rforge",
+      "version": "dev"
+    }
+  },
+  "rebuilt_binary": {
+    "path": "/var/tmp/aw-1000-d0648c07-1/vfs2-tools/rforge",
+    "sha256": "8b869cb012fc7cc20b134976e9d8f599c5dce6e5d27b02a4bafc8b5196767308",
+    "version": {
+      "commit": "unknown",
+      "date": "unknown",
+      "name": "rforge",
+      "version": "dev"
+    }
+  },
+  "matches_original_binary": false,
+  "audit_gap": "Rebuilt binary path/source-directory environment differs; owner explicitly permits disclosed hash mismatch without changing original receipts."
+}

@@ -1,0 +1,38 @@
+{
+  "at": "2026-10-21T16:53:03.077869+00:00",
+  "policy": "Runtime job records and empty process locks excluded from public artifacts; no receipt-bound outputs removed. Original source worktree remains read-only.",
+  "files": [
+    {
+      "path": "majorana/jobs/job_2f347c6e8e2200c6712c0a16af8e8029.json",
+      "sha256": "048af70b201d6d94bf11a4bfcf701d8cf95fd7fd646b240d19931c2c0976b659",
+      "bytes": 6265,
+      "classification": "mutable runtime job state (not in any immutable receipt outputs)",
+      "receipt_bound": false,
+      "disposition": "moved outside campaign under task TMPDIR; not committed"
+    },
+    {
+      "path": "majorana/jobs/run.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "classification": "empty process lock",
+      "receipt_bound": false,
+      "disposition": "moved outside campaign under task TMPDIR; not committed"
+    },
+    {
+      "path": "nickelates/jobs/job_2f778d06f3eb12252fd757ad0be05a9e.json",
+      "sha256": "5255e82329f6175adc7046d893c2077da2120d28c571a6e80fb85fc92ce7c588",
+      "bytes": 3456,
+      "classification": "mutable runtime job state (not in any immutable receipt outputs)",
+      "receipt_bound": false,
+      "disposition": "moved outside campaign under task TMPDIR; not committed"
+    },
+    {
+      "path": "nickelates/jobs/run.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "classification": "empty process lock",
+      "receipt_bound": false,
+      "disposition": "moved outside campaign under task TMPDIR; not committed"
+    }
+  ]
+}

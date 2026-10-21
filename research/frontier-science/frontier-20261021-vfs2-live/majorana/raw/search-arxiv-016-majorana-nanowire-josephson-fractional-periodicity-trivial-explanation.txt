@@ -1,0 +1,20 @@
+10.1038/s41567-020-01107-w	Non-Majorana states yield nearly quantized conductance in superconductor-semiconductor nanowire devices
+	Approximation of Fractional Order Conflict-Controlled Systems
+10.1103/physrevb.99.035312	Fractional Josephson Effect with and without Majorana Zero Modes
+10.1007/978-3-030-20726-7_17	Quantum bits with Josephson junctions
+	Periodic trivial extension algebras and fractionally Calabi-Yau algebras
+	Dipolar phase transitions in the cavity with Majorana populated Josephson junctions
+	The MAJORANA Experiment
+	Qubit States Based on Fractional Vortices in $0-π$ Josephson Junctions
+10.1088/1742-6596/203/1/012057	TThe {\sc Majorana} Project
+	White Paper on the Majorana Zero-Neutrino Double-Beta Decay Experiment
+10.1103/physrevlett.108.257001	AC Josephson effect in finite-length nanowire junctions with Majorana modes
+10.1103/physrevb.84.081304	Robustness of Majorana Fermion induced Fractional Josephson Effect
+	Erdélyi-Kober Fractional Diffusion
+10.1103/physrevb.97.041415	Dynamic current susceptibility as a probe of Majorana bound states in nanowire-based Josephson junctions
+10.1103/physrevb.104.054510	Crossover between trivial zero modes in Majorana nanowires
+10.1103/physrevb.95.155420	Majorana fermions in topological insulator nanowires: from single superconducting nanowires to Josephson junctions
+10.1103/physrevlett.133.056601	Anomalous $h/2e$ periodicity and Majorana zero modes in chiral Josephson junctions
+	Experimental and Theoretical Study on 2D Ordered and 3D Disordered SIS-type Arrays of Josephson Junctions
+10.1103/physrevb.84.180502	Coulomb stability of the 4π-periodic Josephson effect of Majorana fermions
+10.1038/nphys2429	Observation of the fractional ac Josephson effect: the signature of Majorana particles

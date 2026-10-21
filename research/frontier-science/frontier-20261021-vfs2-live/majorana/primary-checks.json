@@ -1,0 +1,527 @@
+{
+  "kind": "host_agent_primary_metadata_checks",
+  "fulltext_acquired": false,
+  "records": [
+    {
+      "source_id": "M1",
+      "url": "https://arxiv.org/abs/1710.10701",
+      "checked_at": "2026-10-21T16:41:52.061232+00:00",
+      "http_status": 200,
+      "final_url": "https://arxiv.org/abs/1710.10701",
+      "title": [
+        "Quantized Majorana conductance"
+      ],
+      "authors": [
+        "Zhang, Hao",
+        "Liu, Chun-Xiao",
+        "Gazibegovic, Sasa",
+        "Xu, Di",
+        "Logan, John A.",
+        "Wang, Guanzhong",
+        "van Loo, Nick",
+        "Bommer, Jouri D. S.",
+        "de Moor, Michiel W. A.",
+        "Car, Diana",
+        "Veld, Roy L. M. Op het",
+        "van Veldhoven, Petrus J.",
+        "Koelling, Sebastian",
+        "Verheijen, Marcel A.",
+        "Pendharkar, Mihir",
+        "Pennachio, Daniel J.",
+        "Shojaei, Borzoyeh",
+        "Lee, Joon Sue",
+        "Palmstrom, Chris J.",
+        "Bakkers, Erik P. A. M.",
+        "Sarma, S. Das",
+        "Kouwenhoven, Leo P."
+      ],
+      "date": [
+        "2017/10/29"
+      ],
+      "doi": [
+        "10.1038/nature26142"
+      ],
+      "arxiv_id": [
+        "1710.10701"
+      ],
+      "short_excerpt": "Here, we report a quantized conductance plateau at 2e2/h in the zero-bias conductance measured in InSb semiconductor nanowires covered with an Al superconducting shell.",
+      "excerpt_location": "Abstract, sentence beginning Here; historical claim, retracted journal article",
+      "version_notes": "Submitted on 29 Oct 2017] ",
+      "http_requests_initiated": 1,
+      "http_attempts": null,
+      "http_attempts_unknown_reason": "Redirect hops and underlying HTTP attempts not instrumented; one explicit page open initiated.",
+      "correction_retraction_check": "Primary metadata/version page inspected; no comprehensive Crossmark or publisher correction registry audit. Absence of a notice on an abstract page does not establish clean status.",
+      "source_status": "retracted",
+      "status_note": "Status applies only to inspected record; no comprehensive correction-registry clearance."
+    },
+    {
+      "source_id": "M2",
+      "url": "https://www.nature.com/articles/s41586-021-03373-x",
+      "checked_at": "2026-10-21T16:41:52.062810+00:00",
+      "http_status": 200,
+      "final_url": "https://www.nature.com/articles/s41586-021-03373-x",
+      "title": [
+        "Retraction Note: Quantized Majorana conductance"
+      ],
+      "authors": [
+        "Zhang, Hao",
+        "Liu, Chun-Xiao",
+        "Gazibegovic, Sasa",
+        "Xu, Di",
+        "Logan, John A.",
+        "Wang, Guanzhong",
+        "van Loo, Nick",
+        "Bommer, Jouri D. S.",
+        "de Moor, Michiel W. A.",
+        "Car, Diana",
+        "Op het Veld, Roy L. M.",
+        "van Veldhoven, Petrus J.",
+        "Koelling, Sebastian",
+        "Verheijen, Marcel A.",
+        "Pendharkar, Mihir",
+        "Pennachio, Daniel J.",
+        "Shojaei, Borzoyeh",
+        "Lee, Joon Sue",
+        "Palmstrøm, Chris J.",
+        "Bakkers, Erik P. A. M.",
+        "Das Sarma, S.",
+        "Kouwenhoven, Leo P."
+      ],
+      "date": [
+        "2021/03"
+      ],
+      "doi": [
+        "10.1038/s41586-021-03373-x"
+      ],
+      "arxiv_id": [],
+      "short_excerpt": "We can therefore no longer claim the observation of a quantized Majorana conductance, and wish to retract this Letter.",
+      "supporting_passages": [
+        {"quote": "We therefore re-analysed all the existing raw data for our original measurements and rebuilt the original experimental set-up for a re-calibration of the conductance values.", "location": "Retraction notice, sentence beginning We therefore re-analysed"}
+      ],
+      "passage_retention": "Selected short excerpt retained after independent review from original retraction-page tool result 86c3ff89 at the recorded notice_checked_at time. No new page open or research-paper full-text acquisition; this is the previously inspected primary retraction notice.",
+      "excerpt_location": "Retraction notice, main paragraph following recalibration discussion",
+      "version_notes": "",
+      "http_requests_initiated": 1,
+      "http_attempts": null,
+      "http_attempts_unknown_reason": "Redirect hops and underlying HTTP attempts not instrumented; one explicit page open initiated.",
+      "correction_retraction_check": "Primary metadata/version page inspected; no comprehensive Crossmark or publisher correction registry audit. Absence of a notice on an abstract page does not establish clean status.",
+      "additional_notice_page_open_initiated": 1,
+      "notice_checked_at": "2026-10-21T16:48:59.542541+00:00",
+      "source_status": "published",
+      "status_note": "Status applies only to inspected record; no comprehensive correction-registry clearance."
+    },
+    {
+      "source_id": "M3",
+      "url": "https://arxiv.org/abs/2009.11809v3",
+      "checked_at": "2026-10-21T16:41:52.063324+00:00",
+      "http_status": 200,
+      "final_url": "https://arxiv.org/abs/2009.11809v3",
+      "title": [
+        "Three-terminal nonlocal conductance in Majorana nanowires: Distinguishing topological and trivial in realistic systems with disorder and inhomogeneous potential"
+      ],
+      "authors": [
+        "Pan, Haining",
+        "Sau, Jay D.",
+        "Sarma, S. Das"
+      ],
+      "date": [
+        "2020/09/24"
+      ],
+      "doi": [
+        "10.1103/PhysRevB.103.014513"
+      ],
+      "arxiv_id": [
+        "2009.11809"
+      ],
+      "short_excerpt": "The local conductance by itself is incapable of distinguishing the trivial states from the topological states",
+      "excerpt_location": "Abstract, local-conductance sentence; subsequent sentences discuss weak nonlocal signals and combined thermal/electrical measurements",
+      "version_notes": "Submitted on 24 Sep 2020 ( v1 ), last revised 24 Jan 2021 (this version, v3)] ",
+      "http_requests_initiated": 1,
+      "http_attempts": null,
+      "http_attempts_unknown_reason": "Redirect hops and underlying HTTP attempts not instrumented; one explicit page open initiated.",
+      "correction_retraction_check": "Primary metadata/version page inspected; no comprehensive Crossmark or publisher correction registry audit. Absence of a notice on an abstract page does not establish clean status.",
+      "source_status": "preprint",
+      "status_note": "Journal-linked preprint abstract inspected; journal content/version equivalence and later corrections not fully checked."
+    },
+    {
+      "source_id": "M4",
+      "url": "https://arxiv.org/abs/2008.02348v3",
+      "checked_at": "2026-10-21T16:41:52.064083+00:00",
+      "http_status": 200,
+      "final_url": "https://arxiv.org/abs/2008.02348v3",
+      "title": [
+        "Nontopological zero-bias peaks in full-shell nanowires induced by flux tunable Andreev states"
+      ],
+      "authors": [
+        "Valentini, Marco",
+        "Peñaranda, Fernando",
+        "Hofmann, Andrea",
+        "Brauns, Matthias",
+        "Hauschild, Robert",
+        "Krogstrup, Peter",
+        "San-Jose, Pablo",
+        "Prada, Elsa",
+        "Aguado, Ramón",
+        "Katsaros, Georgios"
+      ],
+      "date": [
+        "2020/08/05"
+      ],
+      "doi": [
+        "10.1126/science.abf1513"
+      ],
+      "arxiv_id": [
+        "2008.02348"
+      ],
+      "short_excerpt": "Short tunneling regions never show subgap states, whereas longer junctions always do.",
+      "excerpt_location": "Abstract, junction-length comparison; later sentences identify Andreev levels and robust zero-bias peaks",
+      "version_notes": "Submitted on 5 Aug 2020 ( v1 ), last revised 10 Aug 2021 (this version, v3)] ",
+      "http_requests_initiated": 1,
+      "http_attempts": null,
+      "http_attempts_unknown_reason": "Redirect hops and underlying HTTP attempts not instrumented; one explicit page open initiated.",
+      "correction_retraction_check": "Primary metadata/version page inspected; no comprehensive Crossmark or publisher correction registry audit. Absence of a notice on an abstract page does not establish clean status.",
+      "source_status": "preprint",
+      "status_note": "Journal-linked preprint abstract inspected; journal content/version equivalence and later corrections not fully checked."
+    },
+    {
+      "source_id": "M5",
+      "url": "https://arxiv.org/abs/2207.02472",
+      "checked_at": "2026-10-21T16:41:52.067016+00:00",
+      "http_status": 200,
+      "final_url": "https://arxiv.org/abs/2207.02472",
+      "title": [
+        "InAs-Al Hybrid Devices Passing the Topological Gap Protocol"
+      ],
+      "authors": [
+        "Aghaee, Morteza",
+        "Akkala, Arun",
+        "Alam, Zulfi",
+        "Ali, Rizwan",
+        "Ramirez, Alejandro Alcaraz",
+        "Andrzejczuk, Mariusz",
+        "Antipov, Andrey E",
+        "Aseev, Pavel",
+        "Astafev, Mikhail",
+        "Bauer, Bela",
+        "Becker, Jonathan",
+        "Boddapati, Srini",
+        "Boekhout, Frenk",
+        "Bommer, Jouri",
+        "Hansen, Esben Bork",
+        "Bosma, Tom",
+        "Bourdet, Leo",
+        "Boutin, Samuel",
+        "Caroff, Philippe",
+        "Casparis, Lucas",
+        "Cassidy, Maja",
+        "Christensen, Anna Wulf",
+        "Clay, Noah",
+        "Cole, William S",
+        "Corsetti, Fabiano",
+        "Cui, Ajuan",
+        "Dalampiras, Paschalis",
+        "Dokania, Anand",
+        "de Lange, Gijs",
+        "de Moor, Michiel",
+        "Saldaña, Juan Carlos Estrada",
+        "Fallahi, Saeed",
+        "Fathabad, Zahra Heidarnia",
+        "Gamble, John",
+        "Gardner, Geoff",
+        "Govender, Deshan",
+        "Griggio, Flavio",
+        "Grigoryan, Ruben",
+        "Gronin, Sergei",
+        "Gukelberger, Jan",
+        "Heedt, Sebastian",
+        "Zamorano, Jesús Herranz",
+        "Ho, Samantha",
+        "Holgaard, Ulrik Laurens",
+        "Nielsen, William Hvidtfelt Padkær",
+        "Ingerslev, Henrik",
+        "Krogstrup, Peter Jeppesen",
+        "Johansson, Linda",
+        "Jones, Jeffrey",
+        "Kallaher, Ray",
+        "Karimi, Farhad",
+        "Karzig, Torsten",
+        "King, Evelyn",
+        "Kloster, Maren Elisabeth",
+        "Knapp, Christina",
+        "Kocon, Dariusz",
+        "Koski, Jonne",
+        "Kostamo, Pasi",
+        "Kumar, Mahesh",
+        "Laeven, Tom",
+        "Larsen, Thorvald",
+        "Li, Kongyi",
+        "Lindemann, Tyler",
+        "Love, Julie",
+        "Lutchyn, Roman",
+        "Manfra, Michael",
+        "Memisevic, Elvedin",
+        "Nayak, Chetan",
+        "Nijholt, Bas",
+        "Madsen, Morten Hannibal",
+        "Markussen, Signe",
+        "Martinez, Esteban",
+        "McNeil, Robert",
+        "Mullally, Andrew",
+        "Nielsen, Jens",
+        "Nurmohamed, Anne",
+        "O'Farrell, Eoin",
+        "Otani, Keita",
+        "Pauka, Sebastian",
+        "Petersson, Karl",
+        "Petit, Luca",
+        "Pikulin, Dima",
+        "Preiss, Frank",
+        "Perez, Marina Quintero",
+        "Rasmussen, Katrine",
+        "Rajpalke, Mohana",
+        "Razmadze, Davydas",
+        "Reentila, Outi",
+        "Reilly, David",
+        "Rouse, Richard",
+        "Sadovskyy, Ivan",
+        "Sainiemi, Lauri",
+        "Schreppler, Sydney",
+        "Sidorkin, Vadim",
+        "Singh, Amrita",
+        "Singh, Shilpi",
+        "Sinha, Sarat",
+        "Sohr, Patrick",
+        "Stankevič, Tomaš",
+        "Stek, Lieuwe",
+        "Suominen, Henri",
+        "Suter, Judith",
+        "Svidenko, Vicky",
+        "Teicher, Sam",
+        "Temuerhan, Mine",
+        "Thiyagarajah, Nivetha",
+        "Tholapi, Raj",
+        "Thomas, Mason",
+        "Toomey, Emily",
+        "Upadhyay, Shivendra",
+        "Urban, Ivan",
+        "Vaitiekėnas, Saulius",
+        "Van Hoogdalem, Kevin",
+        "Viazmitinov, Dmitrii V.",
+        "Waddy, Steven",
+        "Van Woerkom, David",
+        "Vogel, Dominik",
+        "Watson, John",
+        "Weston, Joseph",
+        "Winkler, Georg W.",
+        "Yang, Chung Kai",
+        "Yau, Sean",
+        "Yi, Daniel",
+        "Yucelen, Emrah",
+        "Webster, Alex",
+        "Zeisel, Roland",
+        "Zhao, Ruichen"
+      ],
+      "date": [
+        "2022/07/06"
+      ],
+      "doi": [
+        "10.1103/PhysRevB.107.245423"
+      ],
+      "arxiv_id": [
+        "2207.02472"
+      ],
+      "short_excerpt": "These regions feature a closing and re-opening of the bulk gap, with simultaneous zero-bias conductance peaks at both ends of the devices that withstand changes in the junction transparencies.",
+      "excerpt_location": "Abstract, penultimate result sentences; extracted gaps and prerequisite-for-braiding conclusion",
+      "version_notes": "Submitted on 6 Jul 2022 ( v1 ), last revised 8 Mar 2024 (this version, v4)] ",
+      "http_requests_initiated": 1,
+      "http_attempts": null,
+      "http_attempts_unknown_reason": "Redirect hops and underlying HTTP attempts not instrumented; one explicit page open initiated.",
+      "correction_retraction_check": "Primary metadata/version page inspected; no comprehensive Crossmark or publisher correction registry audit. Absence of a notice on an abstract page does not establish clean status.",
+      "source_status": "preprint",
+      "status_note": "Journal-linked preprint abstract inspected; journal content/version equivalence and later corrections not fully checked."
+    },
+    {
+      "source_id": "M6",
+      "url": "https://arxiv.org/abs/2502.19560",
+      "checked_at": "2026-10-21T16:41:52.067499+00:00",
+      "http_status": 200,
+      "final_url": "https://arxiv.org/abs/2502.19560",
+      "title": [
+        "Comment on \"InAs-Al hybrid devices passing the topological gap protocol\", Microsoft Quantum, Phys. Rev. B 107, 245423 (2023)"
+      ],
+      "authors": [
+        "Legg, Henry F."
+      ],
+      "date": [
+        "2025/02/26"
+      ],
+      "doi": [],
+      "arxiv_id": [
+        "2502.19560"
+      ],
+      "short_excerpt": "the TGP's outcome is sensitive to the choice of magnetic field range, bias voltage range, data resolution, and number of cutter voltage pairs",
+      "excerpt_location": "Abstract, sentence beginning Furthermore; criticism, not adjudicated experimental fact",
+      "version_notes": "Submitted on 26 Feb 2025] ",
+      "http_requests_initiated": 1,
+      "http_attempts": null,
+      "http_attempts_unknown_reason": "Redirect hops and underlying HTTP attempts not instrumented; one explicit page open initiated.",
+      "correction_retraction_check": "Primary metadata/version page inspected; no comprehensive Crossmark or publisher correction registry audit. Absence of a notice on an abstract page does not establish clean status.",
+      "source_status": "preprint",
+      "status_note": "Status applies only to inspected record; no comprehensive correction-registry clearance."
+    },
+    {
+      "source_id": "M7",
+      "url": "https://arxiv.org/abs/1908.05549",
+      "checked_at": "2026-10-21T16:41:52.217852+00:00",
+      "http_status": 200,
+      "final_url": "https://arxiv.org/abs/1908.05549",
+      "title": [
+        "End-to-end correlated subgap states in hybrid nanowires"
+      ],
+      "authors": [
+        "Anselmetti, G. L. R.",
+        "Martinez, E. A.",
+        "Ménard, G. C.",
+        "Puglia, D.",
+        "Malinowski, F. K.",
+        "Lee, J. S.",
+        "Choi, S.",
+        "Pendharkar, M.",
+        "Palmstrøm, C. J.",
+        "Marcus, C. M.",
+        "Casparis, L.",
+        "Higginbotham, A. P."
+      ],
+      "date": [
+        "2019/08/15"
+      ],
+      "doi": [
+        "10.1103/PhysRevB.100.205412"
+      ],
+      "arxiv_id": [
+        "1908.05549"
+      ],
+      "short_excerpt": "End-to-end correlated bound states are investigated in superconductor-semiconductor hybrid nanowires at zero magnetic field.",
+      "excerpt_location": "Abstract, opening and following cross-correlation/device-length sentences",
+      "version_notes": "Submitted on 15 Aug 2019 ( v1 ), last revised 17 Sep 2019 (this version, v2)] ",
+      "http_requests_initiated": 1,
+      "http_attempts": null,
+      "http_attempts_unknown_reason": "Redirect hops and underlying HTTP attempts not instrumented; one explicit page open initiated.",
+      "correction_retraction_check": "Primary metadata/version page inspected; no comprehensive Crossmark or publisher correction registry audit. Absence of a notice on an abstract page does not establish clean status.",
+      "source_status": "preprint",
+      "status_note": "Journal-linked preprint abstract inspected; journal content/version equivalence and later corrections not fully checked."
+    },
+    {
+      "source_id": "M8",
+      "url": "https://arxiv.org/abs/1901.02655",
+      "checked_at": "2026-10-21T16:41:52.224246+00:00",
+      "http_status": 200,
+      "final_url": "https://arxiv.org/abs/1901.02655",
+      "title": [
+        "Presence versus absence of end-to-end nonlocal conductance correlations in Majorana nanowires: Majorana bound states versus Andreev bound states"
+      ],
+      "authors": [
+        "Lai, Yi-Hua",
+        "Sau, Jay D.",
+        "Sarma, Sankar Das"
+      ],
+      "date": [
+        "2019/01/09"
+      ],
+      "doi": [
+        "10.1103/PhysRevB.100.045302"
+      ],
+      "arxiv_id": [
+        "1901.02655"
+      ],
+      "short_excerpt": "By calculating the differential tunneling conductance spectra from the two ends of a Majorana nanowire with a quantum dot embedded at one end",
+      "excerpt_location": "Abstract, opening model definition and following correlated-peak predictions",
+      "version_notes": "Submitted on 9 Jan 2019 ( v1 ), last revised 5 Jul 2019 (this version, v2)] ",
+      "http_requests_initiated": 1,
+      "http_attempts": null,
+      "http_attempts_unknown_reason": "Redirect hops and underlying HTTP attempts not instrumented; one explicit page open initiated.",
+      "correction_retraction_check": "Primary metadata/version page inspected; no comprehensive Crossmark or publisher correction registry audit. Absence of a notice on an abstract page does not establish clean status.",
+      "source_status": "preprint",
+      "status_note": "Journal-linked preprint abstract inspected; journal content/version equivalence and later corrections not fully checked."
+    },
+    {
+      "source_id": "M9",
+      "url": "https://arxiv.org/abs/2103.05628v3",
+      "checked_at": "2026-10-21T16:41:52.233986+00:00",
+      "http_status": 200,
+      "final_url": "https://arxiv.org/abs/2103.05628v3",
+      "title": [
+        "Disorder-induced zero-bias peaks in Majorana nanowires"
+      ],
+      "authors": [
+        "Sarma, Sankar Das",
+        "Pan, Haining"
+      ],
+      "date": [
+        "2021/03/09"
+      ],
+      "doi": [
+        "10.1103/PhysRevB.103.195158"
+      ],
+      "arxiv_id": [
+        "2103.05628"
+      ],
+      "short_excerpt": "disorder, which produces trivial (but quite sharp and large) zero-bias Andreev tunneling peaks with large conductance",
+      "excerpt_location": "Abstract, disorder interpretation and following field/barrier-stability sentences",
+      "version_notes": "Submitted on 9 Mar 2021 ( v1 ), last revised 28 May 2021 (this version, v3)] ",
+      "http_requests_initiated": 1,
+      "http_attempts": null,
+      "http_attempts_unknown_reason": "Redirect hops and underlying HTTP attempts not instrumented; one explicit page open initiated.",
+      "correction_retraction_check": "Primary metadata/version page inspected; no comprehensive Crossmark or publisher correction registry audit. Absence of a notice on an abstract page does not establish clean status.",
+      "source_status": "preprint",
+      "status_note": "Journal-linked preprint abstract inspected; journal content/version equivalence and later corrections not fully checked."
+    },
+    {
+      "source_id": "M10",
+      "url": "https://arxiv.org/abs/2202.09299v1",
+      "checked_at": "2026-10-21T16:41:52.333940+00:00",
+      "http_status": 200,
+      "final_url": "https://arxiv.org/abs/2202.09299v1",
+      "title": [
+        "Large Andreev bound state zero bias peaks in a weakly dissipative environment"
+      ],
+      "authors": [
+        "Wang, Zhichuan",
+        "Zhang, Shan",
+        "Pan, Dong",
+        "Zhang, Gu",
+        "Xia, Zezhou",
+        "Li, Zonglin",
+        "Liu, Donghao",
+        "Cao, Zhan",
+        "Liu, Lei",
+        "Wen, Lianjun",
+        "Liao, Dunyuan",
+        "Zhuo, Ran",
+        "Li, Yongqing",
+        "Liu, Dong E.",
+        "Shang, Runan",
+        "Zhao, Jianhua",
+        "Zhang, Hao"
+      ],
+      "date": [
+        "2022/02/18"
+      ],
+      "doi": [
+        "10.1103/PhysRevB.106.205421"
+      ],
+      "arxiv_id": [
+        "2202.09299"
+      ],
+      "short_excerpt": "The energy of these states can be tuned to zero by gate voltage or magnetic field, revealing large zero bias peaks (ZBPs) near 2e^2/h in tunneling conductance.",
+      "excerpt_location": "Abstract, second sentence; subsequent sentences describe environmental Coulomb blockade and temperature dependence",
+      "version_notes": "Submitted on 18 Feb 2022] ",
+      "http_requests_initiated": 1,
+      "http_attempts": null,
+      "http_attempts_unknown_reason": "Redirect hops and underlying HTTP attempts not instrumented; one explicit page open initiated.",
+      "correction_retraction_check": "Primary metadata/version page inspected; no comprehensive Crossmark or publisher correction registry audit. Absence of a notice on an abstract page does not establish clean status.",
+      "source_status": "preprint",
+      "status_note": "Journal-linked preprint abstract inspected; journal content/version equivalence and later corrections not fully checked."
+    }
+  ]
+}

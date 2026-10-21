@@ -1,0 +1,20 @@
+10.21203/rs.3.rs-1566363/v1	Conductance Spectroscopy of Majorana Zero Modes in Superconductor-Magnetic Insulator Nanowire Hybrid Systems
+10.1103/physrevb.96.054504	Conductance of a superconducting Coulomb-blockaded Majorana nanowire
+10.1142/9789812776716_0042	QUANTIZED CONDUCTANCE OF GOLD NANOWIRE STUDIED BY UHV-ELECTRON MICROSCOPE WITH STM
+10.3390/ma17235898	Critical Lengths of Kitaev Chains for Majorana Zero Modes with a Microsecond Coherence Time and a Quantized Conductance Signature
+10.12693/aphyspola.138.681	Majorana Bound States and Zero-Bias Conductance Peaks in Superconductor/Semiconductor Nanowire Devices
+10.1103/physrevlett.106.057001	Quantized Conductance at the Majorana Phase Transition in a Disordered Superconducting Wire
+10.1103/physrevb.106.094504	Quality factor for zero-bias conductance peaks in Majorana nanowire
+10.33915/etd.6720	Conductance Calculations for Semiconductor-Superconductor Majorana Structures
+10.11606/d.43.2021.tde-19052021-163141	Majorana bound states in nanowire junctions
+10.1088/1367-2630/14/12/125011	A zero-voltage conductance peak from weak antilocalization in a Majorana nanowire
+10.1103/physrevb.99.024510	Conductance smearing and anisotropic suppression of induced superconductivity in a Majorana nanowire
+10.1021/nl3035256	Quantized Conductance in an InSb Nanowire
+10.25148/etd.fi14051182	Molecular detection using metallic nanowires with quantized conductance
+10.1103/physrevb.86.220506	Splitting of the zero-bias conductance peak as smoking gun evidence for the existence of the Majorana mode in a superconductor-semiconductor nanowire
+10.1103/physrevb.98.155314	Quantized zero-bias conductance plateau in semiconductor-superconductor heterostructures without topological Majorana zero modes
+10.1038/s41567-020-01107-w	Non-Majorana states yield nearly quantized conductance in proximatized nanowires
+10.1021/nl4014265	Quantized Conductance and Its Correlation to the Supercurrent in a Nanowire Connected to Superconductors
+10.1038/s41586-021-03373-x	Retraction Note: Quantized Majorana conductance
+10.1063/pt.4.0018	Majorana fermions in a nanowire?
+10.1103/physrevb.96.075161	Andreev bound states versus Majorana bound states in quantum dot-nanowire-superconductor hybrid structures: Trivial versus topological zero-bias conductance peaks

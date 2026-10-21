@@ -1,0 +1,20 @@
+10.1038/s41567-020-01107-w	Non-Majorana states yield nearly quantized conductance in superconductor-semiconductor nanowire devices
+10.1103/physrevb.103.195158	Disorder-induced zero-bias peaks in Majorana nanowires
+10.1103/physrevresearch.2.013377	Physical mechanisms for zero-bias conductance peaks in Majorana nanowires
+10.1103/physrevlett.123.107703	Ubiquitous non-Majorana Zero-Bias Conductance Peaks in Nanowire Devices
+10.1103/physrevb.96.184520	Electron temperature and tunnel coupling dependence of zero-bias and almost-zero-bias conductance peaks in Majorana nanowires
+10.1103/physrevlett.109.146403	Interplay of disorder and interaction in Majorana quantum wires
+10.1103/physrevb.105.115432	On-demand large-conductance in trivial zero-bias tunneling peaks in Majorana nanowires
+10.7498/aps.69.20200717	Emergent vortex Majorana zero mode in iron-based superconductors
+10.1103/physrevb.103.214502	Quantized and unquantized zero-bias tunneling conductance peaks in Majorana nanowires: Conductance below and above $ 2e^2/h $
+10.1103/physrevb.103.224505	Disorder effects on Majorana zero modes: Kitaev chain versus semiconductor nanowire
+	Large zero-bias peaks in InSb-Al hybrid semiconductor-superconductor nanowire devices
+10.1103/physrevmaterials.5.124602	Estimating disorder and its adverse effects in semiconductor Majorana nanowires
+10.1103/physrevlett.109.267002	Zero-bias peaks in spin-orbit coupled superconducting wires with and without Majorana end-states
+10.1103/physrevb.104.054510	Crossover between trivial zero modes in Majorana nanowires
+	White Paper on the Majorana Zero-Neutrino Double-Beta Decay Experiment
+	The MAJORANA Experiment
+10.1038/srep07261	Parity independence of the zero-bias conductance peak in a nanowire based topological superconductor-quantum dot hybrid device
+10.1103/physrevb.96.054520	Phenomenology of soft gap, zero bias peak, and zero mode splitting in ideal Majorana nanowires
+10.1038/s41586-022-05382-w	Majorana-like Coulomb spectroscopy in the absence of zero bias peaks
+10.1103/physrevresearch.4.033235	Large zero bias peaks and dips in a four-terminal thin InAs-Al nanowire device

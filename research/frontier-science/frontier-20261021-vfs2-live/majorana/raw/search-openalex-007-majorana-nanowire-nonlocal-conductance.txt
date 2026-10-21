@@ -1,0 +1,20 @@
+10.1103/physrevb.103.014513	Three-terminal nonlocal conductance in Majorana nanowires: Distinguishing topological and trivial in realistic systems with disorder and inhomogeneous potential
+10.1103/physrevb.100.045302	Presence versus absence of end-to-end nonlocal conductance correlations in Majorana nanowires: Majorana bound states versus Andreev bound states
+10.1103/physrevb.98.085125	Nonlocality of Majorana modes in hybrid nanowires
+10.1038/s41598-021-96415-3	Topological isoconductance signatures in Majorana nanowires
+10.1103/physrevresearch.2.013377	Physical mechanisms for zero-bias conductance peaks in Majorana nanowires
+10.1103/physrevb.98.224512	Quasiparticle gaps in multiprobe Majorana nanowires
+10.1016/j.rinp.2021.104273	Distinguishing Majorana and quasi-Majorana bound states in a hybrid superconductor-semiconductor nanowire with inhomogeneous potential barriers
+10.1103/physrevb.98.075142	Majorana oscillations modulated by Fano interference and degree of nonlocality in a topological superconducting-nanowire–quantum-dot system
+10.1063/5.0102999	Majorana nanowires for topological quantum computation
+10.1103/physrevb.110.014504	Nonlocality of local Andreev conductances as a probe for topological Majorana wires
+10.1038/s41467-019-13133-1	Next steps of quantum transport in Majorana nanowire devices
+10.1103/physrevb.96.085418	Measuring Majorana nonlocality and spin structure with a quantum dot
+	Accessing the degree of Majorana nonlocality with photons
+10.1103/physrevb.88.180507	Electrical detection of topological quantum phase transitions in disordered Majorana nanowires
+10.1038/s41567-020-01107-w	Non-Majorana states yield nearly quantized conductance in proximatized nanowires
+10.1088/1361-6641/ac187b	Charge-neutral nonlocal response in superconductor-InAs nanowire hybrid devices
+10.1038/s41598-022-05855-y	Accessing the degree of Majorana nonlocality in a quantum dot-optical microcavity system
+10.1103/4dy1-kdzp	Nonlocal conductance of a Majorana wire near the topological transition
+10.4233/uuid:bf8250f8-6377-4dd2-bb6a-dfd9e41451fc	Zero-energy states in Majorana nanowire devices
+10.1016/j.physleta.2014.01.039	Demonstrating nonlocality-induced teleportation through Majorana bound states in a semiconductor nanowire

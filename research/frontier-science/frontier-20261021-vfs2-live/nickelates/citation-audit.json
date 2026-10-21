@@ -1,0 +1,827 @@
+{
+  "topic": "nickelates",
+  "assessed_by": {
+    "kind": "host_agent",
+    "identity": "Pi / openai-codex/gpt-6.1-sol"
+  },
+  "engine_run_ids": [
+    "94eff39a4085283a676067f11330d568",
+    "e09472279e686d5f971376e9f3ecff3d"
+  ],
+  "claims": [
+    {
+      "id": "table-N1-N1",
+      "report_anchor": "n1",
+      "claim": "| <a id=\"n1\"></a>N1 [1], bilayer La3Ni2O7 | Bulk single crystals; **14.0–43.5 GPa**; high-pressure **Fmmm** per abstract. Pressure calibration/preparation details unknown. | Resistance and mutual-inductive susceptibility signatures; abstract maximum **80 K**, criterion unspecified. | Do not relabel the maximum as zero resistance or shielding fraction. DFT orbital-metallization interpretation is not a pairing-symmetry measurement. |",
+      "evidence_rows": [
+        1
+      ],
+      "source_id": "N1",
+      "source_locator": "https://www.nature.com/articles/s41586-023-06408-7",
+      "source_location": "Publisher Abstract, resistance/mutual-inductive susceptibility sentence; following Fmmm/DFT sentences",
+      "source_status": "published",
+      "support": "supported",
+      "rationale": "Primary abstract supports this narrowly attributed report; host inference is not engine or human scientific approval.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance."
+      ]
+    },
+    {
+      "id": "table-N2-N2",
+      "report_anchor": "n2",
+      "claim": "| <a id=\"n2\"></a>N2 [2], quintuple square-planar Nd6Ni5O12 | Synthesized **n=5** member; precise film/bulk/substrate/preparation/pressure conditions unavailable in inspected abstract. | Transition **beginning around 13 K**, not an audited zero-resistance or magnetic Tc. | Distinct composition/layer family; do not import film/substrate conditions from another paper or compare as a matched bilayer experiment. |",
+      "evidence_rows": [
+        2
+      ],
+      "source_id": "N2",
+      "source_locator": "https://www.nature.com/articles/s41563-021-01142-9",
+      "source_location": "Publisher Abstract, following synthesis of Nd6Ni5O12 sentence",
+      "source_status": "published",
+      "support": "supported",
+      "rationale": "Primary abstract supports this narrowly attributed report; host inference is not engine or human scientific approval.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance."
+      ]
+    },
+    {
+      "id": "table-N3-N3",
+      "report_anchor": "n3",
+      "claim": "| <a id=\"n3\"></a>N3 [3], infinite-layer La1-xCaxNiO2 | Thin films; abstract superconducting dome **0.15<x<0.3**. Substrate/preparation/pressure unknown here. | Reports superconductivity and a doping-dependent phase diagram; **no Tc value extracted**. | Multiband/lattice interpretation, not a measured pairing glue; different family/composition from bilayers and Nd quintuple material. |",
+      "evidence_rows": [
+        3
+      ],
+      "source_id": "N3",
+      "source_locator": "https://arxiv.org/abs/2105.13492",
+      "source_location": "Abstract, phase-diagram sentences for La1-xCaxNiO2 thin films",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Primary abstract supports this narrowly attributed report; host inference is not engine or human scientific approval.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "table-N4-N4",
+      "report_anchor": "n4",
+      "claim": "| <a id=\"n4\"></a>N4 [4], bilayer La2.85Pr0.15Ni2O7 | **3-unit-cell** films on **SrLaAlO4**, GOALL-Epitaxy; ambient pressure; tetragonal and approximately **2%** in-plane compressive strain relative to bulk. | Resistive onset **45 K**; BKT-like **TBKT=9 K**; mutual-inductance Meissner **TM=8.5 K**. | Same paper/film system, not three independent replications. TBKT is not silently renamed a numerical zero-resistance criterion. |",
+      "evidence_rows": [
+        4,
+        5,
+        6
+      ],
+      "source_id": "N4",
+      "source_locator": "https://arxiv.org/abs/2412.16622",
+      "source_location": "Abstract, onset sentence; subsequent TBKT=9 K and mutual-inductance TM=8.5 K sentences; growth and strain sentences",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Primary abstract supports this narrowly attributed report; host inference is not engine or human scientific approval.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "table-N5-N5",
+      "report_anchor": "n5",
+      "claim": "| <a id=\"n5\"></a>N5 [5], Sm-substituted bilayer crystals | Ambient-pressure flux-grown La2SmNi2O7-delta; measured at high pressure. Abstract says monoclinic and tetragonal structures can support SC, without assigning phase to each quoted point. | La2SmNi2O7: onset **92 K**, zero **73 K**, both **21.6 GPa**; Meissner **60 K**, **20.6 GPa**. Separate La1.57Sm1.43Ni2O7-delta onset **96 K**, pressure for that value not extracted. | Different definitions, pressure points and compositions. Do not infer common specimen, pressure calibration, uncertainties, or a universal tetragonal requirement. |",
+      "evidence_rows": [
+        7,
+        8,
+        9,
+        10
+      ],
+      "source_id": "N5",
+      "source_locator": "https://arxiv.org/abs/2501.14584",
+      "source_location": "Abstract, La2SmNi2O7 result sentence; flux growth, mixed structure and La1.57Sm1.43Ni2O7-delta onset sentences",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Primary abstract supports this narrowly attributed report; host inference is not engine or human scientific approval.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "table-N6-N6",
+      "report_anchor": "n6",
+      "claim": "| <a id=\"n6\"></a>N6 [6], adverse trilayer La4Ni3O10 study | High-oxidative-growth tetragonal microcrystals stabilized at ambient pressure; transport tested **up to 160 GPa**. | No superconducting or density-wave transition reported in tested range; temperature floor/calibration unknown. | **Preprint** negative result; no transition is not Tc=0. Different preparation from N7: not a matched failed replication, nor proof no La4Ni3O10 can superconduct. |",
+      "evidence_rows": [
+        11
+      ],
+      "source_id": "N6",
+      "source_locator": "https://arxiv.org/abs/2501.12647",
+      "source_location": "Abstract, tetragonal microcrystal transport sentence; high oxidative growth sentence",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Primary abstract supports this narrowly attributed report; host inference is not engine or human scientific approval.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "table-N7-N7",
+      "report_anchor": "n7",
+      "claim": "| <a id=\"n7\"></a>N7 [7], positive trilayer La4Ni3O10 study | Pressurized RP single crystal, **I4/mmm**; exact pressure and calibration absent from abstract. | SC emerges around **25 K**, exact Tc criterion unstated; susceptibility volume fraction **exceeding 80%** reported. | Reported fraction not independently recalculated. AFM superexchange is theoretical analysis, not a direct observation of the pairing interaction. |",
+      "evidence_rows": [
+        12
+      ],
+      "source_id": "N7",
+      "source_locator": "https://arxiv.org/abs/2311.07423",
+      "source_location": "Abstract, pressure evolution sentence and following susceptibility and AFM-theory sentences",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Primary abstract supports this narrowly attributed report; host inference is not engine or human scientific approval.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "table-N8-N8",
+      "report_anchor": "n8",
+      "claim": "| <a id=\"n8\"></a>N8 [8], square-planar trilayer (La1-xPrx)4Ni3O8 and (La1-xYx)4Ni3O8 | Ambient-pressure bulk crystals near metal/charge-stripe coexistence; x and numerical Tc not extracted. | Low-volume-fraction, non-percolative superconducting signatures; TEM shows infinite-layer-like intergrowths. | **Non-peer-reviewed preprint** explicitly leaves intrinsic trilayer vs intergrowth origin open. Not evidence for homogeneous bulk zero resistance or independent replication between its two series. |",
+      "evidence_rows": [
+        13
+      ],
+      "source_id": "N8",
+      "source_locator": "https://arxiv.org/abs/2609.19686",
+      "source_location": "Abstract, alternative-origin sentence; preceding low-volume-fraction/non-percolative sentence",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Primary abstract supports this narrowly attributed report; host inference is not engine or human scientific approval.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "table-N9-N9",
+      "report_anchor": "n9",
+      "claim": "| <a id=\"n9\"></a>N9 [9], infinite-layer Nd1-xSrxNiO2 theory | Renormalized mean-field model, not a measured sample. | Predicts doping/hybridization-dependent **d+is**, **d**, or **s** states. | Conditional theoretical possibilities; no direct symmetry measurement. |",
+      "evidence_rows": [
+        14
+      ],
+      "source_id": "N9",
+      "source_locator": "https://arxiv.org/abs/2006.15928",
+      "source_location": "Abstract, opening renormalized-mean-field sentence and doping/hybridization-dependent states",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Primary abstract supports this narrowly attributed report; host inference is not engine or human scientific approval.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "table-N10-N10",
+      "report_anchor": "n10",
+      "claim": "| <a id=\"n10\"></a>N10 [10], bilayer theory | BCS framework assuming magnetic correlations and multi-pocket/orbital structure. | Explores d, sign-changing s and mixed instabilities. | **Preprint** model alternatives, not experimental selection of pairing symmetry. |",
+      "evidence_rows": [
+        15
+      ],
+      "source_id": "N10",
+      "source_locator": "https://arxiv.org/abs/2409.09321",
+      "source_location": "Abstract, model assumption sentence; preceding d/sign-changing-s/mixed-state possibilities",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Primary abstract supports this narrowly attributed report; host inference is not engine or human scientific approval.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "findings-N4",
+      "report_anchor": "findings",
+      "claim": "Different transition definitions and sample conditions preclude pooling or unique pairing-mechanism selection.",
+      "evidence_rows": [
+        4,
+        5,
+        6
+      ],
+      "source_id": "N4",
+      "source_locator": "https://arxiv.org/abs/2412.16622",
+      "source_location": "Abstract, onset sentence; subsequent TBKT=9 K and mutual-inductance TM=8.5 K sentences; growth and strain sentences",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Host comparison of explicitly attributed primary abstracts, not a reanalysis of data. Negative/gap conclusions apply to this inspected evidence set only; differing conditions prevent a matched contradiction.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "findings-N5",
+      "report_anchor": "findings",
+      "claim": "Different transition definitions and sample conditions preclude pooling or unique pairing-mechanism selection.",
+      "evidence_rows": [
+        7,
+        8,
+        9,
+        10
+      ],
+      "source_id": "N5",
+      "source_locator": "https://arxiv.org/abs/2501.14584",
+      "source_location": "Abstract, La2SmNi2O7 result sentence; flux growth, mixed structure and La1.57Sm1.43Ni2O7-delta onset sentences",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Host comparison of explicitly attributed primary abstracts, not a reanalysis of data. Negative/gap conclusions apply to this inspected evidence set only; differing conditions prevent a matched contradiction.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "findings-N6",
+      "report_anchor": "findings",
+      "claim": "Different transition definitions and sample conditions preclude pooling or unique pairing-mechanism selection.",
+      "evidence_rows": [
+        11
+      ],
+      "source_id": "N6",
+      "source_locator": "https://arxiv.org/abs/2501.12647",
+      "source_location": "Abstract, tetragonal microcrystal transport sentence; high oxidative growth sentence",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Host comparison of explicitly attributed primary abstracts, not a reanalysis of data. Negative/gap conclusions apply to this inspected evidence set only; differing conditions prevent a matched contradiction.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "findings-N7",
+      "report_anchor": "findings",
+      "claim": "Different transition definitions and sample conditions preclude pooling or unique pairing-mechanism selection.",
+      "evidence_rows": [
+        12
+      ],
+      "source_id": "N7",
+      "source_locator": "https://arxiv.org/abs/2311.07423",
+      "source_location": "Abstract, pressure evolution sentence and following susceptibility and AFM-theory sentences",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Host comparison of explicitly attributed primary abstracts, not a reanalysis of data. Negative/gap conclusions apply to this inspected evidence set only; differing conditions prevent a matched contradiction.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "findings-N9",
+      "report_anchor": "findings",
+      "claim": "Different transition definitions and sample conditions preclude pooling or unique pairing-mechanism selection.",
+      "evidence_rows": [
+        14
+      ],
+      "source_id": "N9",
+      "source_locator": "https://arxiv.org/abs/2006.15928",
+      "source_location": "Abstract, opening renormalized-mean-field sentence and doping/hybridization-dependent states",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Host comparison of explicitly attributed primary abstracts, not a reanalysis of data. Negative/gap conclusions apply to this inspected evidence set only; differing conditions prevent a matched contradiction.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "findings-N10",
+      "report_anchor": "findings",
+      "claim": "Different transition definitions and sample conditions preclude pooling or unique pairing-mechanism selection.",
+      "evidence_rows": [
+        15
+      ],
+      "source_id": "N10",
+      "source_locator": "https://arxiv.org/abs/2409.09321",
+      "source_location": "Abstract, model assumption sentence; preceding d/sign-changing-s/mixed-state possibilities",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Host comparison of explicitly attributed primary abstracts, not a reanalysis of data. Negative/gap conclusions apply to this inspected evidence set only; differing conditions prevent a matched contradiction.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "rivals-N1",
+      "report_anchor": "rivals",
+      "claim": "Structural labels do not guarantee SC; minority/intergrowth explanations and theoretical pairing alternatives remain.",
+      "evidence_rows": [
+        1
+      ],
+      "source_id": "N1",
+      "source_locator": "https://www.nature.com/articles/s41586-023-06408-7",
+      "source_location": "Publisher Abstract, resistance/mutual-inductive susceptibility sentence; following Fmmm/DFT sentences",
+      "source_status": "published",
+      "support": "supported",
+      "rationale": "Host comparison of explicitly attributed primary abstracts, not a reanalysis of data. Negative/gap conclusions apply to this inspected evidence set only; differing conditions prevent a matched contradiction.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance."
+      ]
+    },
+    {
+      "id": "rivals-N4",
+      "report_anchor": "rivals",
+      "claim": "Structural labels do not guarantee SC; minority/intergrowth explanations and theoretical pairing alternatives remain.",
+      "evidence_rows": [
+        4,
+        5,
+        6
+      ],
+      "source_id": "N4",
+      "source_locator": "https://arxiv.org/abs/2412.16622",
+      "source_location": "Abstract, onset sentence; subsequent TBKT=9 K and mutual-inductance TM=8.5 K sentences; growth and strain sentences",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Host comparison of explicitly attributed primary abstracts, not a reanalysis of data. Negative/gap conclusions apply to this inspected evidence set only; differing conditions prevent a matched contradiction.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "rivals-N5",
+      "report_anchor": "rivals",
+      "claim": "Structural labels do not guarantee SC; minority/intergrowth explanations and theoretical pairing alternatives remain.",
+      "evidence_rows": [
+        7,
+        8,
+        9,
+        10
+      ],
+      "source_id": "N5",
+      "source_locator": "https://arxiv.org/abs/2501.14584",
+      "source_location": "Abstract, La2SmNi2O7 result sentence; flux growth, mixed structure and La1.57Sm1.43Ni2O7-delta onset sentences",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Host comparison of explicitly attributed primary abstracts, not a reanalysis of data. Negative/gap conclusions apply to this inspected evidence set only; differing conditions prevent a matched contradiction.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "rivals-N6",
+      "report_anchor": "rivals",
+      "claim": "Structural labels do not guarantee SC; minority/intergrowth explanations and theoretical pairing alternatives remain.",
+      "evidence_rows": [
+        11
+      ],
+      "source_id": "N6",
+      "source_locator": "https://arxiv.org/abs/2501.12647",
+      "source_location": "Abstract, tetragonal microcrystal transport sentence; high oxidative growth sentence",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Host comparison of explicitly attributed primary abstracts, not a reanalysis of data. Negative/gap conclusions apply to this inspected evidence set only; differing conditions prevent a matched contradiction.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "rivals-N7",
+      "report_anchor": "rivals",
+      "claim": "Structural labels do not guarantee SC; minority/intergrowth explanations and theoretical pairing alternatives remain.",
+      "evidence_rows": [
+        12
+      ],
+      "source_id": "N7",
+      "source_locator": "https://arxiv.org/abs/2311.07423",
+      "source_location": "Abstract, pressure evolution sentence and following susceptibility and AFM-theory sentences",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Host comparison of explicitly attributed primary abstracts, not a reanalysis of data. Negative/gap conclusions apply to this inspected evidence set only; differing conditions prevent a matched contradiction.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "rivals-N8",
+      "report_anchor": "rivals",
+      "claim": "Structural labels do not guarantee SC; minority/intergrowth explanations and theoretical pairing alternatives remain.",
+      "evidence_rows": [
+        13
+      ],
+      "source_id": "N8",
+      "source_locator": "https://arxiv.org/abs/2609.19686",
+      "source_location": "Abstract, alternative-origin sentence; preceding low-volume-fraction/non-percolative sentence",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Host comparison of explicitly attributed primary abstracts, not a reanalysis of data. Negative/gap conclusions apply to this inspected evidence set only; differing conditions prevent a matched contradiction.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "rivals-N9",
+      "report_anchor": "rivals",
+      "claim": "Structural labels do not guarantee SC; minority/intergrowth explanations and theoretical pairing alternatives remain.",
+      "evidence_rows": [
+        14
+      ],
+      "source_id": "N9",
+      "source_locator": "https://arxiv.org/abs/2006.15928",
+      "source_location": "Abstract, opening renormalized-mean-field sentence and doping/hybridization-dependent states",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Host comparison of explicitly attributed primary abstracts, not a reanalysis of data. Negative/gap conclusions apply to this inspected evidence set only; differing conditions prevent a matched contradiction.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "rivals-N10",
+      "report_anchor": "rivals",
+      "claim": "Structural labels do not guarantee SC; minority/intergrowth explanations and theoretical pairing alternatives remain.",
+      "evidence_rows": [
+        15
+      ],
+      "source_id": "N10",
+      "source_locator": "https://arxiv.org/abs/2409.09321",
+      "source_location": "Abstract, model assumption sentence; preceding d/sign-changing-s/mixed-state possibilities",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Host comparison of explicitly attributed primary abstracts, not a reanalysis of data. Negative/gap conclusions apply to this inspected evidence set only; differing conditions prevent a matched contradiction.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "replication-N1",
+      "report_anchor": "replication",
+      "claim": "Within-paper measurements and different samples/compositions are not verified independent matched replication; missing calibration and uncertainties remain unknown.",
+      "evidence_rows": [
+        1
+      ],
+      "source_id": "N1",
+      "source_locator": "https://www.nature.com/articles/s41586-023-06408-7",
+      "source_location": "Publisher Abstract, resistance/mutual-inductive susceptibility sentence; following Fmmm/DFT sentences",
+      "source_status": "published",
+      "support": "supported",
+      "rationale": "Host comparison of explicitly attributed primary abstracts, not a reanalysis of data. Negative/gap conclusions apply to this inspected evidence set only; differing conditions prevent a matched contradiction.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance."
+      ]
+    },
+    {
+      "id": "replication-N2",
+      "report_anchor": "replication",
+      "claim": "Within-paper measurements and different samples/compositions are not verified independent matched replication; missing calibration and uncertainties remain unknown.",
+      "evidence_rows": [
+        2
+      ],
+      "source_id": "N2",
+      "source_locator": "https://www.nature.com/articles/s41563-021-01142-9",
+      "source_location": "Publisher Abstract, following synthesis of Nd6Ni5O12 sentence",
+      "source_status": "published",
+      "support": "supported",
+      "rationale": "Host comparison of explicitly attributed primary abstracts, not a reanalysis of data. Negative/gap conclusions apply to this inspected evidence set only; differing conditions prevent a matched contradiction.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance."
+      ]
+    },
+    {
+      "id": "replication-N3",
+      "report_anchor": "replication",
+      "claim": "Within-paper measurements and different samples/compositions are not verified independent matched replication; missing calibration and uncertainties remain unknown.",
+      "evidence_rows": [
+        3
+      ],
+      "source_id": "N3",
+      "source_locator": "https://arxiv.org/abs/2105.13492",
+      "source_location": "Abstract, phase-diagram sentences for La1-xCaxNiO2 thin films",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Host comparison of explicitly attributed primary abstracts, not a reanalysis of data. Negative/gap conclusions apply to this inspected evidence set only; differing conditions prevent a matched contradiction.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "replication-N4",
+      "report_anchor": "replication",
+      "claim": "Within-paper measurements and different samples/compositions are not verified independent matched replication; missing calibration and uncertainties remain unknown.",
+      "evidence_rows": [
+        4,
+        5,
+        6
+      ],
+      "source_id": "N4",
+      "source_locator": "https://arxiv.org/abs/2412.16622",
+      "source_location": "Abstract, onset sentence; subsequent TBKT=9 K and mutual-inductance TM=8.5 K sentences; growth and strain sentences",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Host comparison of explicitly attributed primary abstracts, not a reanalysis of data. Negative/gap conclusions apply to this inspected evidence set only; differing conditions prevent a matched contradiction.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "replication-N5",
+      "report_anchor": "replication",
+      "claim": "Within-paper measurements and different samples/compositions are not verified independent matched replication; missing calibration and uncertainties remain unknown.",
+      "evidence_rows": [
+        7,
+        8,
+        9,
+        10
+      ],
+      "source_id": "N5",
+      "source_locator": "https://arxiv.org/abs/2501.14584",
+      "source_location": "Abstract, La2SmNi2O7 result sentence; flux growth, mixed structure and La1.57Sm1.43Ni2O7-delta onset sentences",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Host comparison of explicitly attributed primary abstracts, not a reanalysis of data. Negative/gap conclusions apply to this inspected evidence set only; differing conditions prevent a matched contradiction.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "replication-N6",
+      "report_anchor": "replication",
+      "claim": "Within-paper measurements and different samples/compositions are not verified independent matched replication; missing calibration and uncertainties remain unknown.",
+      "evidence_rows": [
+        11
+      ],
+      "source_id": "N6",
+      "source_locator": "https://arxiv.org/abs/2501.12647",
+      "source_location": "Abstract, tetragonal microcrystal transport sentence; high oxidative growth sentence",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Host comparison of explicitly attributed primary abstracts, not a reanalysis of data. Negative/gap conclusions apply to this inspected evidence set only; differing conditions prevent a matched contradiction.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "replication-N7",
+      "report_anchor": "replication",
+      "claim": "Within-paper measurements and different samples/compositions are not verified independent matched replication; missing calibration and uncertainties remain unknown.",
+      "evidence_rows": [
+        12
+      ],
+      "source_id": "N7",
+      "source_locator": "https://arxiv.org/abs/2311.07423",
+      "source_location": "Abstract, pressure evolution sentence and following susceptibility and AFM-theory sentences",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Host comparison of explicitly attributed primary abstracts, not a reanalysis of data. Negative/gap conclusions apply to this inspected evidence set only; differing conditions prevent a matched contradiction.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "conclusion-N1",
+      "report_anchor": "conclusion",
+      "claim": "Source-attributed observations are separated from theory and unresolved independent replication/phase assignment; no pooled Tc or mechanism selection.",
+      "evidence_rows": [
+        1
+      ],
+      "source_id": "N1",
+      "source_locator": "https://www.nature.com/articles/s41586-023-06408-7",
+      "source_location": "Publisher Abstract, resistance/mutual-inductive susceptibility sentence; following Fmmm/DFT sentences",
+      "source_status": "published",
+      "support": "supported",
+      "rationale": "Host comparison of explicitly attributed primary abstracts, not a reanalysis of data. Negative/gap conclusions apply to this inspected evidence set only; differing conditions prevent a matched contradiction.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance."
+      ]
+    },
+    {
+      "id": "conclusion-N2",
+      "report_anchor": "conclusion",
+      "claim": "Source-attributed observations are separated from theory and unresolved independent replication/phase assignment; no pooled Tc or mechanism selection.",
+      "evidence_rows": [
+        2
+      ],
+      "source_id": "N2",
+      "source_locator": "https://www.nature.com/articles/s41563-021-01142-9",
+      "source_location": "Publisher Abstract, following synthesis of Nd6Ni5O12 sentence",
+      "source_status": "published",
+      "support": "supported",
+      "rationale": "Host comparison of explicitly attributed primary abstracts, not a reanalysis of data. Negative/gap conclusions apply to this inspected evidence set only; differing conditions prevent a matched contradiction.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance."
+      ]
+    },
+    {
+      "id": "conclusion-N3",
+      "report_anchor": "conclusion",
+      "claim": "Source-attributed observations are separated from theory and unresolved independent replication/phase assignment; no pooled Tc or mechanism selection.",
+      "evidence_rows": [
+        3
+      ],
+      "source_id": "N3",
+      "source_locator": "https://arxiv.org/abs/2105.13492",
+      "source_location": "Abstract, phase-diagram sentences for La1-xCaxNiO2 thin films",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Host comparison of explicitly attributed primary abstracts, not a reanalysis of data. Negative/gap conclusions apply to this inspected evidence set only; differing conditions prevent a matched contradiction.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "conclusion-N4",
+      "report_anchor": "conclusion",
+      "claim": "Source-attributed observations are separated from theory and unresolved independent replication/phase assignment; no pooled Tc or mechanism selection.",
+      "evidence_rows": [
+        4,
+        5,
+        6
+      ],
+      "source_id": "N4",
+      "source_locator": "https://arxiv.org/abs/2412.16622",
+      "source_location": "Abstract, onset sentence; subsequent TBKT=9 K and mutual-inductance TM=8.5 K sentences; growth and strain sentences",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Host comparison of explicitly attributed primary abstracts, not a reanalysis of data. Negative/gap conclusions apply to this inspected evidence set only; differing conditions prevent a matched contradiction.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "conclusion-N5",
+      "report_anchor": "conclusion",
+      "claim": "Source-attributed observations are separated from theory and unresolved independent replication/phase assignment; no pooled Tc or mechanism selection.",
+      "evidence_rows": [
+        7,
+        8,
+        9,
+        10
+      ],
+      "source_id": "N5",
+      "source_locator": "https://arxiv.org/abs/2501.14584",
+      "source_location": "Abstract, La2SmNi2O7 result sentence; flux growth, mixed structure and La1.57Sm1.43Ni2O7-delta onset sentences",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Host comparison of explicitly attributed primary abstracts, not a reanalysis of data. Negative/gap conclusions apply to this inspected evidence set only; differing conditions prevent a matched contradiction.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "conclusion-N6",
+      "report_anchor": "conclusion",
+      "claim": "Source-attributed observations are separated from theory and unresolved independent replication/phase assignment; no pooled Tc or mechanism selection.",
+      "evidence_rows": [
+        11
+      ],
+      "source_id": "N6",
+      "source_locator": "https://arxiv.org/abs/2501.12647",
+      "source_location": "Abstract, tetragonal microcrystal transport sentence; high oxidative growth sentence",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Host comparison of explicitly attributed primary abstracts, not a reanalysis of data. Negative/gap conclusions apply to this inspected evidence set only; differing conditions prevent a matched contradiction.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "conclusion-N7",
+      "report_anchor": "conclusion",
+      "claim": "Source-attributed observations are separated from theory and unresolved independent replication/phase assignment; no pooled Tc or mechanism selection.",
+      "evidence_rows": [
+        12
+      ],
+      "source_id": "N7",
+      "source_locator": "https://arxiv.org/abs/2311.07423",
+      "source_location": "Abstract, pressure evolution sentence and following susceptibility and AFM-theory sentences",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Host comparison of explicitly attributed primary abstracts, not a reanalysis of data. Negative/gap conclusions apply to this inspected evidence set only; differing conditions prevent a matched contradiction.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "conclusion-N8",
+      "report_anchor": "conclusion",
+      "claim": "Source-attributed observations are separated from theory and unresolved independent replication/phase assignment; no pooled Tc or mechanism selection.",
+      "evidence_rows": [
+        13
+      ],
+      "source_id": "N8",
+      "source_locator": "https://arxiv.org/abs/2609.19686",
+      "source_location": "Abstract, alternative-origin sentence; preceding low-volume-fraction/non-percolative sentence",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Host comparison of explicitly attributed primary abstracts, not a reanalysis of data. Negative/gap conclusions apply to this inspected evidence set only; differing conditions prevent a matched contradiction.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "conclusion-N9",
+      "report_anchor": "conclusion",
+      "claim": "Source-attributed observations are separated from theory and unresolved independent replication/phase assignment; no pooled Tc or mechanism selection.",
+      "evidence_rows": [
+        14
+      ],
+      "source_id": "N9",
+      "source_locator": "https://arxiv.org/abs/2006.15928",
+      "source_location": "Abstract, opening renormalized-mean-field sentence and doping/hybridization-dependent states",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Host comparison of explicitly attributed primary abstracts, not a reanalysis of data. Negative/gap conclusions apply to this inspected evidence set only; differing conditions prevent a matched contradiction.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "conclusion-N10",
+      "report_anchor": "conclusion",
+      "claim": "Source-attributed observations are separated from theory and unresolved independent replication/phase assignment; no pooled Tc or mechanism selection.",
+      "evidence_rows": [
+        15
+      ],
+      "source_id": "N10",
+      "source_locator": "https://arxiv.org/abs/2409.09321",
+      "source_location": "Abstract, model assumption sentence; preceding d/sign-changing-s/mixed-state possibilities",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Host comparison of explicitly attributed primary abstracts, not a reanalysis of data. Negative/gap conclusions apply to this inspected evidence set only; differing conditions prevent a matched contradiction.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "method-workflow",
+      "report_anchor": "method",
+      "claim": "Recorded Standard caps, requests, coverage flags, provider failures and completed stop; not recall or scientific exhaustiveness.",
+      "evidence_rows": [
+        16
+      ],
+      "source_id": "workflow",
+      "source_locator": "artifact:nickelates/manifest.json#coverage",
+      "source_location": "manifest.json budget/requests_used/coverage/failures/stop_reason; batch-state.json cumulative state; commands.jsonl stages/argv, and ../run.json authorized_ceilings/usage for independent resolve/citation/resume counts",
+      "source_status": "unknown",
+      "support": "supported",
+      "rationale": "Primary abstract supports this narrowly attributed report; host inference is not engine or human scientific approval.",
+      "access_limitations": [
+        "Operational metadata, not a measure of relevance, recall or scientific truth."
+      ]
+    }
+  ]
+}

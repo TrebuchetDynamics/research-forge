@@ -1,0 +1,14 @@
+10.48550/arxiv.2406.17568	Perspective on Majorana bound-states in hybrid superconductor-semiconductor nanowires
+10.1016/j.physrep.2024.10.005	Majorana quasiparticles in atomic spin chains on superconductors
+10.11606/t.43.2023.tde-25052023-095947	Majorana bound states in superconductor vortex cores
+10.5772/intechopen.1012427	Perspective Chapter: Monolayer Graphene Quantum Dots – Majorana Fermion Model
+10.14393/ufu.te.2021.182	Many-body correlations and Majorana fermions in quantum impurity problems
+10.1038/s42005-026-02832-z	Distinguishing Majorana zero modes from trivial defect states in an iron-based superconductor
+10.48550/arxiv.2606.05472	Realistic quantum device data synthesized by consumer AI and how to identify it
+10.1103/27h6-yghn	Report on reproducibility in condensed matter physics
+	Modos parafermiônicos em sistemas de elétrons correlacionados
+10.11606/t.43.2023.tde-03052023-080210	Parafermionic modes in correlated electron systems
+10.3390/sym14091780	Exploiting Anyonic Behavior of Quasicrystals for Topological Quantum Computing
+10.47749/t/unicamp.2016.964823	Vortex bound states in superconducting topological matter
+10.14711/thesis-991013222948303412	Low-dimensional transport in quantum anomalous hall insulator-superconductor hybrid devices
+10.5281/zenodo.7213028	Quantum Computing Logistics

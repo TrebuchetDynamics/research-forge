@@ -1,0 +1,19 @@
+10.21203/rs.3.rs-1566363/v1	Conductance Spectroscopy of Majorana Zero Modes in Superconductor-Magnetic Insulator Nanowire Hybrid Systems
+10.1103/physrevb.100.045302	Presence versus absence of end-to-end nonlocal conductance correlations in Majorana nanowires: Majorana bound states versus Andreev bound states
+10.1103/physrevb.96.054504	Conductance of a superconducting Coulomb-blockaded Majorana nanowire
+10.12693/aphyspola.138.681	Majorana Bound States and Zero-Bias Conductance Peaks in Superconductor/Semiconductor Nanowire Devices
+10.1103/physrevb.106.094504	Quality factor for zero-bias conductance peaks in Majorana nanowire
+10.33915/etd.6720	Conductance Calculations for Semiconductor-Superconductor Majorana Structures
+10.11606/d.43.2021.tde-19052021-163141	Majorana bound states in nanowire junctions
+10.1088/1367-2630/14/12/125011	A zero-voltage conductance peak from weak antilocalization in a Majorana nanowire
+10.1103/physrevb.99.024510	Conductance smearing and anisotropic suppression of induced superconductivity in a Majorana nanowire
+10.1103/physrevb.103.014513	Three-terminal nonlocal conductance in Majorana nanowires: Distinguishing topological and trivial in realistic systems with disorder and inhomogeneous potential
+10.1103/physrevb.86.220506	Splitting of the zero-bias conductance peak as smoking gun evidence for the existence of the Majorana mode in a superconductor-semiconductor nanowire
+10.7566/jpsht.3.018	Fingerprint of Majorana Zero Modes through Nonlocal Measurements
+10.1103/physrevlett.123.207002	Anomalous Nonlocal Conductance as a Fingerprint of Chiral Majorana Edge States
+10.1063/pt.4.0018	Majorana fermions in a nanowire?
+10.1103/physrevb.96.075161	Andreev bound states versus Majorana bound states in quantum dot-nanowire-superconductor hybrid structures: Trivial versus topological zero-bias conductance peaks
+10.1103/physrevb.102.045303	Signatures of the Majorana spin in electrical transport through a Majorana nanowire
+10.1103/physrevb.105.l161403	Nonlocal conductance and the detection of Majorana zero modes: Insights from von Neumann entropy
+10.1021/acs.nanolett.7b00797.s001	Observation of Conductance Quantization in InSb Nanowire Networks
+10.1021/acs.nanolett.7b00797.s002	Observation of Conductance Quantization in InSb Nanowire Networks

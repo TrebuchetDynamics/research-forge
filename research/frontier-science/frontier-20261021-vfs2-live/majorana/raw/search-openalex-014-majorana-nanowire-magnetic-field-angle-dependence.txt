@@ -1,0 +1,20 @@
+10.1103/physrevb.90.115429	Tilting of the magnetic field in Majorana nanowires: Critical angle and zero-energy differential conductance
+10.1103/physrevb.89.245405	Effects of tilting the magnetic field in one-dimensional Majorana nanowires
+10.1063/5.0102999	Majorana nanowires for topological quantum computation
+10.1103/physrevb.98.085125	Nonlocality of Majorana modes in hybrid nanowires
+10.1103/physrevx.8.031041	Effects of Gate-Induced Electric Fields on Semiconductor Majorana Nanowires
+10.1103/physrevlett.122.187702	Spin-Orbit Protection of Induced Superconductivity in Majorana Nanowires
+10.1063/5.0151104	Weakly coupled Majorana wire arrays under tilted magnetic fields
+10.1038/s42254-020-0228-y	From Andreev to Majorana bound states in hybrid superconductor–semiconductor nanowires
+10.1038/s41567-020-01107-w	Non-Majorana states yield nearly quantized conductance in proximatized nanowires
+10.1103/physrevb.98.235406	Quantifying wave-function overlaps in inhomogeneous Majorana nanowires
+10.3762/bjnano.9.109	Inverse proximity effect in semiconductor Majorana nanowires
+10.1103/physrevlett.132.206602	Machine Learning the Disorder Landscape of Majorana Nanowires
+10.1103/physrevb.96.125435	Majorana states in prismatic core-shell nanowires
+10.1088/1367-2630/14/8/083020	Transport through Majorana nanowires attached to normal leads
+10.1103/physrevb.109.115140	Proposal for realizing Majorana fermions without external magnetic field in strongly correlated nanowires
+10.1038/s41567-020-1017-3	Zero-bias peaks at zero magnetic field in ferromagnetic hybrid nanowires
+10.1103/physrevb.101.094511	Boundary Green's function approach for spinful single-channel and multichannel Majorana nanowires
+10.1038/ncomms10395	Manipulating Majorana zero modes on atomic rings with an external magnetic field
+10.11606/d.43.2021.tde-19052021-163141	Majorana bound states in nanowire junctions
+10.1103/physrevresearch.1.033207	Majorana braiding in realistic nanowire Y-junctions and tuning forks

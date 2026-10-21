@@ -1,0 +1,20 @@
+10.1103/physrevlett.100.197003	Pressure-induced Superconductivity in CaLi2
+	Experimental Progress in Ambient-Pressure Superconducting Bilayer Nickelate Films
+10.1080/08957959.2023.2209902	The use of LEDs as a light source for fluorescence pressure measurements
+10.1016/j.physc.2017.12.001	Superconductivity driven by pairing of the coherent parts of the physical electrons
+10.1038/s41467-026-69660-1	Enhanced superconductivity in the compressively strained bilayer nickelate thin films by pressure
+10.1103/physrevx.15.021005	Superconductivity in trilayer nickelate La4Ni3O10 under pressure
+	Superconductivity at the metal-insulator phase boundary in a bulk nickelate at ambient pressure
+10.1080/08957959.2016.1173690	High pressure research using muons at the Paul Scherrer Institute
+10.7566/jpsj.86.113705	Pressure-Induced Superconductivity from Doping-Induced Antiferromagnetic Phase of 112-type Ca$_{1-x}$La$_{x}$FeAs$_{2}$
+10.1103/physrevx.15.021008	Bulk superconductivity in pressurized trilayer nickelate Pr4Ni3O10 single crystals
+10.1109/tasc.2016.2638404	Relaxation of Microwave Nonlinearity in a Cuprate Superconducting Resonator
+10.1007/s11433-025-2852-4	Unveiling pressurized bulk superconductivity in a trilayer nickelate Pr4Ni3O10 single crystal
+10.1038/s41467-024-48169-5	Unconventional superconductivity without doping: infinite-layer nickelates under pressure
+10.1038/s41586-025-09954-4	Bulk superconductivity up to 96 K in pressurized nickelate single crystals
+10.1007/s10948-019-5029-0	Superconductivity in SrTiO$_{3}$: dielectric function method for non-parabolic bands
+10.15302/frontphys.2026.115301	Progress of ambient-pressure superconductivity in bilayer nickelate thin films
+10.1016/j.physc.2007.03.025	Recent Studies in Superconductivity at Extreme Pressures
+10.1007/s10948-017-4366-0	Phase transitions in quasi-one dimensional system with unconventional superconductivity
+	Isotropic superconductivity in pressurized trilayer nickelate La4Ni3O10
+10.1038/s41586-025-08755-z	Ambient-pressure superconductivity onset above 40 K in bilayer nickelate ultrathin films

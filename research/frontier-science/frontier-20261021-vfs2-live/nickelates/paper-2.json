@@ -1,0 +1,53 @@
+{
+  "count": 1,
+  "requested": 1,
+  "resolutions": [
+    {
+      "input": "10.1038/s41563-021-01142-9",
+      "paper": {
+        "Title": "Superconductivity in a quintuple-layer square-planar nickelate",
+        "Identifiers": {
+          "DOI": "10.1038/s41563-021-01142-9",
+          "ArXivID": "",
+          "PMID": "34811494",
+          "PMCID": "",
+          "OpenAlexID": "W3199601026",
+          "CrossrefID": "",
+          "SemanticScholarID": "",
+          "ZoteroItemKey": "",
+          "ADSBibcode": ""
+        },
+        "Authors": [],
+        "Abstract": "",
+        "Year": 2021,
+        "Venue": "",
+        "Publisher": "",
+        "URLs": [
+          "https://doi.org/10.1038/s41563-021-01142-9"
+        ],
+        "License": "",
+        "OpenAccess": true,
+        "SourcePayload": "",
+        "SourceRefs": []
+      },
+      "sources": [
+        {
+          "source": "crossref",
+          "title": "Superconductivity in a quintuple-layer square-planar nickelate",
+          "rawRef": "crossref:/works/10.1038/s41563-021-01142-9",
+          "matchBy": "doi"
+        },
+        {
+          "source": "openalex",
+          "title": "Superconductivity in a quintuple-layer square-planar nickelate",
+          "rawRef": "openalex:/works?filter=doi%3A10.1038%2Fs41563-021-01142-9\u0026per-page=1",
+          "matchBy": "doi"
+        }
+      ],
+      "oa": {
+        "isOA": true
+      },
+      "resolved": true
+    }
+  ]
+}

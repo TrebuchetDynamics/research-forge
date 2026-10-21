@@ -165,6 +165,29 @@ class CheckTest(unittest.TestCase):
             self.assertEqual(before, {p.relative_to(root): (p.read_bytes(), p.stat().st_mtime_ns)
                                       for p in root.rglob("*") if p.is_file()})
 
+    def test_owner_authorized_additional_majorana_resume(self):
+        # Catch accepting extra resumes without authority, or extending other caps.
+        for topic, count, authorization, expected in [
+            ("majorana", 2, {"additional_resumes": 1, "authority": "2026-10-21 owner decision"}, 0),
+            ("majorana", 2, None, 1),
+            ("majorana", 2, {"additional_resumes": 1, "authority": ""}, 1),
+            ("majorana", 3, {"additional_resumes": 1, "authority": "2026-10-21 owner decision"}, 1),
+            ("majorana", 3, {"additional_resumes": 2, "authority": "2026-10-21 owner decision"}, 1),
+            ("nickelates", 2, {"additional_resumes": 1, "authority": "2026-10-21 owner decision"}, 1),
+        ]:
+            with self.subTest(topic=topic, count=count, authorization=authorization), tempfile.TemporaryDirectory(dir=os.environ.get("TMPDIR")) as temp:
+                root = Path(temp)
+                self.fixture(root)
+                path = root / "run.json"
+                run = json.loads(path.read_text())
+                run["authorized_ceilings"][topic]["search_resumes"] = count
+                run["topics"][topic]["usage"]["search_resumes"] = count
+                if authorization is not None:
+                    run["owner_resume_authorization"] = {topic: authorization}
+                path.write_text(json.dumps(run))
+                result = self.invoke(root)
+                self.assertEqual(result.returncode, expected, result.stderr)
+
     def test_partial_run(self):
         with tempfile.TemporaryDirectory(dir=os.environ.get("TMPDIR")) as temp:
             root = Path(temp)

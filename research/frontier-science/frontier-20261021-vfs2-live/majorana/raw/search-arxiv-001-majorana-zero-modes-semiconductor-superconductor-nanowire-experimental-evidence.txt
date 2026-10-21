@@ -1,0 +1,20 @@
+10.7498/aps.69.20200717	Emergent vortex Majorana zero mode in iron-based superconductors
+10.1038/s41567-020-01107-w	Non-Majorana states yield nearly quantized conductance in superconductor-semiconductor nanowire devices
+10.1103/physrevb.86.235429	Majorana Zero Modes in Semiconductor Nanowires in Contact with Higher-$T_c$ Superconductors
+10.1103/physrevb.103.224505	Disorder effects on Majorana zero modes: Kitaev chain versus semiconductor nanowire
+10.1103/physrevresearch.2.032068	Braiding Majorana corner modes in a second-order topological superconductor
+	Conductance Spectroscopy of Majorana Zero Modes in Superconductor-Magnetic Insulating Nanowire Hybrid Systems
+10.1088/1367-2630/aae61d	Electric field tunable superconductor-semiconductor coupling in Majorana nanowires
+10.1103/physrevb.88.144512	Majorana modes in smooth normal-superconductor nanowire junctions
+10.1103/physrevb.106.104517	Do Majorana zero modes emerge in the hybrid nanowire under a strong magnetic field?
+	Signature of Majorana Fermions in Charge Transport in Semiconductor Nanowires
+10.1038/s41578-018-0003-1	Realizing Majorana zero modes in superconductor-semiconductor heterostructures
+10.1103/physrevb.104.054510	Crossover between trivial zero modes in Majorana nanowires
+10.1103/physrevb.84.144522	Majorana Fermions in Semiconductor Nanowires
+10.1088/0953-8984/25/23/233201	Majorana Fermions in Semiconductor Nanowires: Fundamentals, Modeling, and Experiment
+10.1103/2v41-yvs1	Majorana zero modes in semiconductor-superconductor hybrid structures: Defining topology in short and disordered nanowires through Majorana splitting
+10.1103/physrevmaterials.5.124602	Estimating disorder and its adverse effects in semiconductor Majorana nanowires
+10.1103/physrevb.101.045405	Subband occupation in semiconductor-superconductor nanowires
+10.1109/mipro65660.2025.11131778	Probing the Design Space of InSb Topological Superconductor Nanowires for the Realization of Majorana Zero Modes
+10.1109/tasc.2018.2807361	One-dimensional p-wave superconductor toy-model for Majorana fermions in multiband semiconductor nanowires
+10.1088/1361-6528/ab932e	Majorana Zero Modes in Nanowires with Combined Triangular and Hexagonal Geometry

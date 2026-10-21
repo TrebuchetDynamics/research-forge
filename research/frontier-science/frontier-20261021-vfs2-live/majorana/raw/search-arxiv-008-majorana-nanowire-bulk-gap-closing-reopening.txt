@@ -1,0 +1,20 @@
+10.1103/physrevlett.130.207001	Trivial Andreev band mimicking topological bulk gap reopening in the non-local conductance of long Rashba nanowires
+10.1038/s41567-020-01107-w	Non-Majorana states yield nearly quantized conductance in superconductor-semiconductor nanowire devices
+10.1103/physrevb.99.054507	Curvature of gap closing features and the extraction of Majorana nanowire parameters
+10.1103/physrevlett.132.099602	Reply to "Comment on 'Trivial Andreev Band Mimicking Topological Bulk Gap Reopening in the Nonlocal Conductance of Long Rashba Nanowires'"
+	The MAJORANA Experiment
+	Concomitant opening of a topological bulk-gap with an emerging Majorana edge-state
+10.1103/physrevb.98.224512	Quasiparticle gaps in multiprobe Majorana nanowires
+	White Paper on the Majorana Zero-Neutrino Double-Beta Decay Experiment
+10.1088/1742-6596/203/1/012057	TThe {\sc Majorana} Project
+	The bulk spectral gap is certifiable from above but uncomputable from below
+10.1103/physrevlett.109.266402	To close or not to close: the fate of the superconducting gap across the topological quantum phase transition in Majorana-carrying semiconductor nanowires
+10.1103/physrevb.92.174511	Effects of large induced superconducting gap on semiconductor Majorana nanowires
+	Robust gap closing and reopening in topological-insulator Josephson junctions
+10.1103/physrevb.103.235201	Closing of the Induced Gap in a Hybrid Superconductor-Semiconductor Nanowire
+10.1103/physrevb.86.155431	Stability of Majorana Fermions in Proximity-Coupled Topological Insulator Nanowires
+	Conductance Spectroscopy of Majorana Zero Modes in Superconductor-Magnetic Insulating Nanowire Hybrid Systems
+	Band folding, strain, confinement, and surface relaxation effects on the electronic structure of GaAs and GaP: from bulk to nanowires
+10.1103/physrevb.99.155138	Hierarchical Majoranas in a Programmable Nanowire Network
+10.1103/physrevb.103.014513	Three-terminal nonlocal conductance in Majorana nanowires: Distinguishing topological and trivial in realistic systems with disorder and inhomogeneous potential
+	A new macroscopic model derived from the Boltzmann equation and the discontinuous Galerkin method for solving kinetic equations

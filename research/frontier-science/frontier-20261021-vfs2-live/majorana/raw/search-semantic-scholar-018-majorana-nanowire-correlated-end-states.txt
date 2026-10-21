@@ -1,0 +1,20 @@
+10.1103/physrevb.100.045302	Presence versus absence of end-to-end nonlocal conductance correlations in Majorana nanowires: Majorana bound states versus Andreev bound states
+10.1088/1361-648x/ab46d9	Leakage of Majorana mode into correlated quantum dot nearby its singlet-doublet crossover
+10.1103/physrevb.104.075405	Local and nonlocal quantum transport due to Andreev bound states in finite Rashba nanowires with superconducting and normal sections
+10.3762/bjnano.9.158	Josephson effect in junctions of conventional and topological superconductors
+10.1088/1674-1056/ad3f99	Nonlinear Seebeck and Peltier effects in a Majorana nanowire coupled to leads
+10.3390/nano14141210	Quantum Transport through a Quantum Dot Coupled to Majorana Nanowire and Two Ferromagnets with Noncollinear Magnetizations
+10.1016/j.rinp.2021.104273	Distinguishing Majorana and quasi-Majorana bound states in a hybrid superconductor-semiconductor nanowire with inhomogeneous potential barriers
+10.3389/fphy.2021.727934	Dual Negative Differential of Heat Generation in a Strongly Correlated Quantum Dot Side-Coupled to Majorana Bound States
+10.1103/physrevb.102.045303	Signatures of the Majorana spin in electrical transport through a Majorana nanowire
+	Non-Majorana states yield nearly quantized conductance in superconductor-semiconductor nanowire devices
+10.1186/s11671-020-03307-y	Thermoelectric Effect in a Correlated Quantum Dot Side-Coupled to Majorana Bound States
+10.3390/nano15171359	Negative Differential Conductance Induced by Majorana Bound States Side-Coupled to T-Shaped Double Quantum Dots
+10.1103/physrevb.101.245405	Hybridization energy oscillations of Majorana and Andreev bound states in semiconductor-superconductor nanowire heterostructures
+10.1088/1361-648x/ae217e	Majorana bound states induced transparency and slow light enhanced by mechanical resonators in a hybrid quantum system
+10.1088/1361-648x/aba154	Leakage of Majorana bound states in an inhomogeneous topological nanowire
+10.1103/physrevb.99.155159	Spin-dependent zero-bias peak in a hybrid nanowire-quantum dot system: Distinguishing isolated Majorana fermions from Andreev bound states
+10.1103/physrevb.109.075416	Effect of interatomic repulsion on Majorana zero modes in a coupled quantum-dot–superconducting-nanowire hybrid system
+	Hybrid superconductor-semiconductor nanowire junctions as useful platforms to study Majorana bound states
+	Fano-Rashba effect in the presence of Majorana bound states
+10.1103/physrevb.103.125110	Majorana bound states in a superconducting Rashba nanowire in the presence of antiferromagnetic order

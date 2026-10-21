@@ -4,10 +4,13 @@ This is **exploratory, not gold**: no recall denominator, release qualification,
 causal tool-superiority claim, or scientific approval. Follow the
 [accepted plan](../frontier-science-plan.md) and the **repository**
 [research skill](../../../skills/research-forge/SKILL.md), not an installed copy.
-V-FS1 is offline preparation only. **Do not run the live sections until V-FS2's
-operator authorizes API scope and agent/model, token, elapsed-time and spend
-allowances.** These ceilings are not permission to spend. Use only existing
-approved access; no account purchases, host configuration changes or new services.
+V-FS1 is offline preparation only. **Do not run the live sections without V-FS2's
+recorded owner authorization for API scope and agent/model.** The accepted plan's
+2026-10-21 decision withdraws model-token, model-spend and campaign-time budgets;
+record actual usage, including unknowns, without stopping for withdrawn limits.
+Connector/process ceilings remain in force and are not permission to spend. Use
+only existing approved access; no account purchases, host configuration changes or
+new services.
 
 ## Offline packet check
 
@@ -31,10 +34,11 @@ checker requires those identifiers, not a placeholder or a judgment about prose.
 Use Bash from the repository root. Pick a new safe campaign ID; never overwrite
 an existing root, re-use another campaign, or change product code during a run.
 Run Majorana first, then nickelates, with the same binary and host agent/model.
-Record the operator's authorization and numeric token/time/spend allowances in
-`authorization.md` under the campaign root before any API calls. Stop at those
-allowances even if connector caps remain. Do not copy credentials, `.env`, full
-sessions, unrestricted full text or secret-bearing command arguments into logs.
+Record the operator's authorization and any applicable allowances in
+`authorization.md` under the campaign root before any API calls. Preserve historical
+allowances as superseded where the owner withdrew them; never reset actual usage.
+Do not copy credentials, `.env`, full sessions, unrestricted full text or
+secret-bearing command arguments into logs.
 
 ```sh
 export CAMPAIGN_ID=frontier-YYYYMMDD-unique
@@ -147,10 +151,15 @@ of success, failure, absence of physics, or exhaustive coverage.
 - `coverage_saturated`: stop; do not fill the query quota.
 - `budget_exhausted`: stop at the cap.
 - `interrupted` / `error_threshold`: record interruption/errors separately from
-  scientific evidence. At most **one** resume, only after inspecting the cause,
-  within the **original total** allowance. Never delete/reset the checkpoint.
+  scientific evidence. Normally at most **one** resume, only after inspecting the
+  cause, within the **original total** allowance. Never delete/reset the checkpoint.
+  The 2026-10-21 V-FS2 owner decision explicitly permits **one additional Majorana
+  resume** (two cumulative), retaining the 120-second process bound and 100 total
+  connector calls. If that resume remains interrupted/incomplete, surface the
+  required owner question; do not resume again. No nickelate extension is authorized.
 
-For Majorana only, the one permitted resume command is:
+For Majorana, the within-cap resume command is (use a unique receipt ID for the
+explicitly authorized additional resume; never overwrite the first resume logs):
 
 ```sh
 record search-resume search "$RF" --json search batch --out "$RUN/$TOPIC" \
@@ -274,7 +283,13 @@ Create `run.json` with these exact fields (JSON, not the explanatory shorthand):
   `search_calls` (100/50 or lower authorized cap), `citation_seeds` (≤3),
   `citation_depth` (≤1), `citation_max_records` (≤30), `citation_max_api_calls` (≤6),
   `citation_retry_budget` (0), `paper_resolutions` (≤5),
-  `process_timeout_seconds` (≤120), `search_resumes` (≤1). Zero disables a stage.
+  `process_timeout_seconds` (≤120), `search_resumes` (normally ≤1). The optional
+  top-level `owner_resume_authorization` object may contain only `majorana`, with
+  `additional_resumes: 1` and nonempty `authority` identifying the explicit owner
+  decision. Only then may Majorana's ceiling and cumulative usage be 2. This
+  records the 2026-10-21 exception, not general permission for extra searches or
+  nickelate resumes; the checker validates representation, not the authority's
+  authenticity. Zero disables a stage.
   Reduce command flags/timeout to any lower authorized limits before use; do not
   pass zero `--max-requests` (unsupported): skip search entirely when disallowed.
 - `topics`: both IDs, each with `status` (`complete`, `partial`, `blocked`, `failed`),

@@ -1,0 +1,20 @@
+10.1038/s41586-023-06408-7	Signatures of superconductivity near 80 K in a nickelate under high pressure
+10.1093/nsr/nwaf220	Identification of superconductivity in bilayer nickelate La3Ni2O7 under high pressure up to 100 GPa
+10.15302/frontphys.2026.115301	Progress of ambient-pressure superconductivity in bilayer nickelate thin films
+10.1103/physrevb.110.024514	Superconductivity in nickelate and cuprate superconductors with strong bilayer coupling
+10.1038/s41467-026-69660-1	Enhanced superconductivity in the compressively strained bilayer nickelate thin films by pressure
+10.1038/s41467-024-52001-5	Electronic correlations and partial gap in the bilayer nickelate La3Ni2O7
+10.1093/nsr/nwaf253	Correlated electronic structures and unconventional superconductivity in bilayer nickelate heterostructures
+10.7498/aps.74.20251258	Research progress of high-temperature superconductivity in trilayer nickelate
+10.1038/s41586-025-09954-4	Bulk superconductivity up to 96 K in pressurized nickelate single crystals
+10.1038/s41586-026-10352-7	Superconductivity and electronic structures of nickelate thin film superstructures
+10.48550/arxiv.2407.05681	Bulk high-temperature superconductivity in the high-pressure tetragonal phase of bilayer La2PrNi2O7
+10.1038/s41586-024-07996-8	Bulk high-temperature superconductivity in pressurized tetragonal La2PrNi2O7
+10.1016/j.scib.2025.02.019	Pressure-enhanced spin-density-wave transition in double-layer nickelate La3Ni2O7−δ
+10.1038/s41563-021-01142-9	Superconductivity in a quintuple-layer square-planar nickelate
+10.1007/s11433-023-2329-x	Structural transition, electric transport, and electronic structures in the compressed trilayer nickelate La4Ni3O10
+10.48550/arxiv.2605.11584	Experimental Progress in Ambient-Pressure Superconducting Bilayer Nickelate Films
+10.1016/j.scib.2024.10.011	Distinct ultrafast dynamics of bilayer and trilayer nickelate superconductors regarding the density-wave-like transitions
+10.1103/physrevlett.134.076001	Theory of Pressure Dependence of Superconductivity in Bilayer Nickelate La 3 Ni 2 O 7
+10.1038/s41563-026-02750-z	Interlayer hybridization promotes superconductivity in bilayer nickelates
+10.1038/s41586-025-08755-z	Ambient-pressure superconductivity onset above 40 K in (La,Pr)3Ni2O7 films

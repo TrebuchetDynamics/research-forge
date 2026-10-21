@@ -1,0 +1,20 @@
+10.1088/0031-8949/83/03/038302	The pairing mechanism of high-temperature superconductivity: experimental constraints
+10.1088/0031-8949/83/03/038303	Comment on ‘The pairing mechanism of high-temperature superconductivity: experimental constraints’
+10.1088/0031-8949/83/03/038304	Reply to Comment on ‘The pairing mechanism of high-temperature superconductivity: experimental constraints’
+10.21203/rs.3.rs-6852646/v1	Pairing mechanism and superconductivity in pressurized La5Ni3O11
+10.1103/physrevb.36.5595	Two-particle resonance pairing mechanism of oxide superconductivity
+10.1007/978-1-4615-3338-2_58	Valence-Fluctuation Scenario for Cuprate Superconductivity: The Finite-U Pairing Mechanism
+10.1023/a:1007755032546	Pairing Mechanism and Superconductivity of Rb3C60 Fullerides
+10.1103/physrevb.38.10900	Attractive interaction between electrons: An electron-pairing mechanism for superconductivity
+10.1016/0921-4534(88)90264-x	A new pairing mechanism in oxide superconductors
+10.21203/rs.3.rs-9480217/v1	Benchmarking cuprate superconductivity theories: experimental constraints, quantum simulation targets, and a unified framework
+10.31219/osf.io/xauqn	New Pairing Mechanism via Chiral Electron-Hole Condensation for Non-BCS Superconductivity
+10.1016/0921-4534(94)92427-9	Symmetry of the pairing, isotope effect and mechanism of superconductivity in the cuprates
+10.1016/0921-4534(88)90298-5	Band structure, electron correlations, and an interlayer pairing mechanism for high temperature superconductivity
+10.1016/j.physc.2004.01.047	Quantum chemical studies on the pairing mechanism of high Tc cuprates
+10.1103/physrevb.40.119	Magnetic pairing mechanism for superconductivity in the Heisenberg model
+10.1103/physrevb.98.220505	Novel pairing mechanism for superconductivity at a vanishing level of doping driven by critical ferroelectric modes
+10.1016/0921-4534(90)90193-i	Jahn-teller (reverse sign) mechanism for superconductive pairing
+10.36471/jccm_november_2023_03	Superconductivity in a Nickelate
+10.1142/9789814343152_0002	The pairing mechanism of overdoped cuprates
+10.1103/wwp3-sphm	Strong pairing and symmetric pseudogap metal in double Kondo lattice model: From nickelate superconductor to tetralayer optical lattice

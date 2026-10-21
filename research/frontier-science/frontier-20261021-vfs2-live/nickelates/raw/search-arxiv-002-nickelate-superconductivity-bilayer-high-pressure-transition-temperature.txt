@@ -1,0 +1,20 @@
+	How optimal inhomogeneity produces high temperature superconductivity
+10.1080/08957959.2016.1173690	High pressure research using muons at the Paul Scherrer Institute
+	Experimental Progress in Ambient-Pressure Superconducting Bilayer Nickelate Films
+10.1038/s41467-026-69660-1	Enhanced superconductivity in the compressively strained bilayer nickelate thin films by pressure
+10.1080/08957959.2016.1198905	Combined single crystal polarized XAFS and XRD at high pressure: probing the interplay between lattice distortions and electronic order at multiple length scales in high $T_c$ cuprates
+10.15302/frontphys.2026.115301	Progress of ambient-pressure superconductivity in bilayer nickelate thin films
+10.1002/adma.202520724	Reducing the strain required for ambient-pressure superconductivity in bilayer nickelates
+10.1038/s41586-025-08755-z	Ambient-pressure superconductivity onset above 40 K in bilayer nickelate ultrathin films
+10.1080/08957959.2023.2209902	The use of LEDs as a light source for fluorescence pressure measurements
+10.1103/physrevlett.134.076001	Theory of Pressure Dependence of Superconductivity in Bilayer Nickelate La$_3$Ni$_2$O$_{7}$
+	A possible explanation for the high superconducting Tc in bcc Ti at high pressure
+	What High Pressure Studies Have Taught Us about High-Temperature Superconductivity
+10.1080/08957959.2013.879867	High Pressure Effects on the Superconductivity in Rare-Earth Doped CaFe2As2
+	Strong-Coupling Theory of High Temperature Superconductivity
+10.1080/08957950802564676	Hydrostaticity and hidden order: effects of experimental conditions on the temperature-pressure phase diagram of URu2Si2
+	Magnetism and superconductivity in bilayer nickelate
+10.1007/s10948-025-07115-2	Enhancement of the superconducting transition temperature in Mn-doped CaKFe4As4 processed by the high gas-pressure and high-temperature synthesis method
+	A superconducting half-dome in bilayer nickelates
+	Bulk high-temperature superconductivity in the high-pressure tetragonal phase of bilayer La2PrNi2O7
+	High-T$_c$ and Low-T$_c$ Superconductivity in Electron Systems With Repulsion

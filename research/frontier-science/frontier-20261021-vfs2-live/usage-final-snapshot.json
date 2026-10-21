@@ -1,0 +1,77 @@
+{
+  "observed_at": "2026-10-21T17:11:05.508769+00:00",
+  "budget_status": "withdrawn: no token/cost/campaign-time execution budget",
+  "session_ledgers": [
+    {
+      "session_role": "surviving_parent_root",
+      "ledger": "/home/xel/.local/state/pi-autowork/d0648c07b9fe8e30/sessions/2026-10-20T19-25-22-756Z_pi-autowork-V-FS2-attempt-1.jsonl",
+      "assistant_messages": 53,
+      "tokens_including_cache": 6293883,
+      "host_reported_USD": 1.569294,
+      "components": {
+        "input": 278664,
+        "output": 41459,
+        "cacheRead": 5973760,
+        "cacheWrite": 0
+      }
+    },
+    {
+      "session_role": "current_finish_child",
+      "ledger": "/var/tmp/aw-1000-d0648c07-1/vfs2-finish-agent/run-0/session.jsonl",
+      "assistant_messages": 44,
+      "tokens_including_cache": 6102932,
+      "host_reported_USD": 1.4622112,
+      "components": {
+        "input": 204791,
+        "output": 46749,
+        "cacheRead": 5851392,
+        "cacheWrite": 0
+      }
+    },
+    {
+      "session_role": "independent_reviewer_0",
+      "ledger": "/home/xel/git/research-forge/.worktrees/autowork-V-FS2/.pi-subagents/artifacts/cd47c46c_reviewer_0_transcript.jsonl",
+      "assistant_messages": 12,
+      "tokens_including_cache": 641460,
+      "host_reported_USD": 0.3019712,
+      "components": {
+        "input": 82325,
+        "output": 8223,
+        "cacheRead": 550912,
+        "cacheWrite": 0
+      }
+    },
+    {
+      "session_role": "independent_reviewer_1",
+      "ledger": "/home/xel/git/research-forge/.worktrees/autowork-V-FS2/.pi-subagents/artifacts/cd47c46c_reviewer_1_transcript.jsonl",
+      "assistant_messages": 14,
+      "tokens_including_cache": 1072608,
+      "host_reported_USD": 0.404544,
+      "components": {
+        "input": 127536,
+        "output": 5552,
+        "cacheRead": 939520,
+        "cacheWrite": 0
+      }
+    },
+    {
+      "session_role": "prior_child_missing_ledger",
+      "ledger_available": false,
+      "tokens_including_cache": 232632,
+      "host_reported_USD": 0.2092848,
+      "authority": "Preserved original closeout-accounting.json prior-child snapshot, counted once separately from surviving parent.",
+      "unknowns": [
+        "Any additional unavailable prior-child usage is unknown, not zero."
+      ]
+    }
+  ],
+  "persisted_tokens_lower_bound": 14343515,
+  "host_reported_USD_lower_bound": 3.9473052,
+  "elapsed_seconds_since_original_start": 7454.867917,
+  "unknowns": [
+    "Current in-flight and later parent closeout messages are not in this snapshot.",
+    "Unenumerated earlier/owner-triage ledgers are unknown, not zero.",
+    "Historical accounting snapshots overlap these ledgers and are not added again.",
+    "Host-reported model costs are not independent provider billing or scholarly API metering."
+  ]
+}

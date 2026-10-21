@@ -1,0 +1,306 @@
+{
+  "campaign_id": "frontier-20261021-vfs2-live",
+  "purpose": "exploratory_not_gold",
+  "started_at": "2026-10-21T15:06:50.640852+00:00",
+  "deadline": "2026-10-21T17:06:50.640852+00:00",
+  "environment": {
+    "os": "Linux-7.0.0-31-generic-x86_64-with-glibc2.39",
+    "agent": "Pi delegated host-agent",
+    "model": "openai-codex/gpt-6.1-sol"
+  },
+  "binary": {
+    "path": "/var/tmp/aw-1000-d0648c07-1/vfs2-tools/rforge",
+    "sha256": "8b869cb012fc7cc20b134976e9d8f599c5dce6e5d27b02a4bafc8b5196767308",
+    "version": {
+      "commit": "unknown",
+      "date": "unknown",
+      "name": "rforge",
+      "version": "dev"
+    }
+  },
+  "git": {
+    "revision": "04d4e87d0ed2f66d95f92aa741e39892fd6ab2e5",
+    "dirty": true,
+    "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "untracked_build_inputs": [],
+    "note": "Only untracked .pi-subagents runtime metadata exists; not a Go build input. No tracked changes at build."
+  },
+  "authorized_ceilings": {
+    "majorana": {
+      "search_calls": 100,
+      "citation_seeds": 3,
+      "citation_depth": 1,
+      "citation_max_records": 30,
+      "citation_max_api_calls": 6,
+      "citation_retry_budget": 0,
+      "paper_resolutions": 5,
+      "process_timeout_seconds": 120,
+      "search_resumes": 2
+    },
+    "nickelates": {
+      "search_calls": 50,
+      "citation_seeds": 3,
+      "citation_depth": 1,
+      "citation_max_records": 30,
+      "citation_max_api_calls": 6,
+      "citation_retry_budget": 0,
+      "paper_resolutions": 5,
+      "process_timeout_seconds": 120,
+      "search_resumes": 1
+    }
+  },
+  "shared_ceilings": {
+    "tokens": null,
+    "USD": null,
+    "seconds": null,
+    "owner_decision": "2026-10-21: all V-FS2 model-token/cost/time ceilings withdrawn; actual usage remains recorded."
+  },
+  "accounting": [
+    {
+      "at": "2026-10-21T15:06:50.638655+00:00",
+      "sessions": {
+        "parent": {
+          "tokens": 659673,
+          "USD": 0.48019559999999994,
+          "messages": 13
+        },
+        "child": {
+          "tokens": 69765,
+          "USD": 0.1093748,
+          "messages": 3
+        }
+      },
+      "total_tokens": 729438,
+      "total_USD": 0.5895703999999999,
+      "parent_closeout_reserve_tokens": 75000,
+      "child_hard_ceiling_tokens": 210000,
+      "safe_remaining_tokens": 140235,
+      "inflight_unknown_reserve_tokens": 40000
+    }
+  ],
+  "topics": {
+    "majorana": {
+      "status": "complete",
+      "reason": "Genuine terminal search, retained actual resolution/citation artifacts, source-attributed report/evidence/audit/reproduction produced. Workflow completion is not scientific approval or exhaustive evidence.",
+      "search_attempted": true,
+      "stop_reason": "budget_exhausted",
+      "coverage": "599 unique deduped records; consecutive_low_yield=0; 19 reached query variants; not saturated",
+      "gaps": [
+        "Selected abstract/metadata synthesis, not exhaustive screened review or recall assessment.",
+        "HTTP retry attempts uninstrumented; missing full-text conditions, uncertainty and matched replication remain unknown.",
+        "Acquisition/privacy/scientific acceptance/export remain unapproved.",
+        "Capped unsaturated retrieval: final query variant not represented in coverage; rate-limited pairs remain.",
+        "Topological gap protocol positive inference disputed by inspected preprint; no independent exact-protocol replication verified.",
+        "Original executable unavailable; rebuilt same pinned source has different SHA-256, explicitly owner-authorized audit gap.",
+        "Search receipts generic depth says standard despite comprehensive argv/manifest/checkpoint; no product fix made."
+      ],
+      "usage": {
+        "search_calls": 100,
+        "citation_seeds": 1,
+        "paper_resolutions": 3,
+        "search_resumes": 2,
+        "http_attempts": null
+      },
+      "usage_unknowns": {
+        "http_attempts": "Connector HTTP retries and redirects were not instrumented; search invocations, resolution invocations and expansion seeds are separately known and not HTTP counts."
+      },
+      "primary_metadata_page_opens_initiated": 11,
+      "primary_metadata_http_attempts": null,
+      "primary_metadata_http_attempts_unknown_reason": "One explicit open per record plus one extra M2 retraction-body check; redirected requests not counted, so page opens are not total HTTP attempts."
+    },
+    "nickelates": {
+      "status": "complete",
+      "reason": "Genuine terminal search, retained actual resolution/citation artifacts, source-attributed report/evidence/audit/reproduction produced. Workflow completion is not scientific approval or exhaustive evidence.",
+      "search_attempted": true,
+      "stop_reason": "completed",
+      "coverage": "254 unique deduped records; consecutive_low_yield=0; 6 reached query variants; not saturated",
+      "gaps": [
+        "Selected abstract/metadata synthesis, not exhaustive screened review or recall assessment.",
+        "HTTP retry attempts uninstrumented; missing full-text conditions, uncertainty and matched replication remain unknown.",
+        "Acquisition/privacy/scientific acceptance/export remain unapproved.",
+        "All six Semantic Scholar pairs failed; completed sweep is not complete provider coverage.",
+        "Pressure calibration, sample identity and transition criteria missing where not stated; no pooling or unique mechanism selection."
+      ],
+      "usage": {
+        "search_calls": 24,
+        "citation_seeds": 1,
+        "paper_resolutions": 2,
+        "search_resumes": 0,
+        "http_attempts": null
+      },
+      "usage_unknowns": {
+        "http_attempts": "Connector HTTP retries and redirects were not instrumented; search invocations, resolution invocations and expansion seeds are separately known and not HTTP counts."
+      },
+      "primary_metadata_page_opens_initiated": 10,
+      "primary_metadata_http_attempts": null,
+      "primary_metadata_http_attempts_unknown_reason": "One explicit open per record; redirected requests not counted, so page opens are not total HTTP attempts."
+    }
+  },
+  "build": {
+    "argv": [
+      "autowork-run",
+      "env",
+      "-u",
+      "GIT_DIR",
+      "-u",
+      "GIT_WORK_TREE",
+      "-u",
+      "GIT_INDEX_FILE",
+      "go",
+      "build",
+      "-o",
+      "/var/tmp/aw-1000-d0648c07-1/vfs2-tools/rforge",
+      "./cmd/rforge"
+    ],
+    "start": "2026-10-21T15:06:50Z",
+    "end": "2026-10-21T15:06:53.679437+00:00",
+    "exit_code": 0
+  },
+  "campaign_dir": "/home/xel/git/research-forge/.worktrees/autowork-V-FS2/research/frontier-science/frontier-20261021-vfs2-live",
+  "original_binary": {
+    "path": "/var/tmp/aw-1000-d0648c07-1/vfs2-tools/rforge",
+    "sha256": "52bcdd5d0fb84f90551113a8c2cd1f516e7d3671de25ce0c685cb3e342b90d7a",
+    "version": {
+      "commit": "unknown",
+      "date": "unknown",
+      "name": "rforge",
+      "version": "dev"
+    }
+  },
+  "recovery": {
+    "copied_from": "/home/xel/git/research-forge/.worktrees/autowork-V-FS2-set-aside-3/research/frontier-science/frontier-20261021-vfs2-live",
+    "copied_unchanged_files": 150,
+    "build": {
+      "argv": [
+        "autowork-run",
+        "go",
+        "-C",
+        "/home/xel/git/research-forge/.worktrees/autowork-V-FS2-set-aside-3",
+        "build",
+        "-o",
+        "/var/tmp/aw-1000-d0648c07-1/vfs2-tools/rforge",
+        "./cmd/rforge"
+      ],
+      "start": "2026-10-21T16:35:02.869059+00:00",
+      "end": "2026-10-21T16:35:33.637216+00:00",
+      "exit_code": 0,
+      "stdout": "rebuild.stdout.log",
+      "stderr": "rebuild.stderr.log",
+      "revision": "04d4e87d0ed2f66d95f92aa741e39892fd6ab2e5"
+    },
+    "original_binary": {
+      "path": "/var/tmp/aw-1000-d0648c07-1/vfs2-tools/rforge",
+      "sha256": "52bcdd5d0fb84f90551113a8c2cd1f516e7d3671de25ce0c685cb3e342b90d7a",
+      "version": {
+        "commit": "unknown",
+        "date": "unknown",
+        "name": "rforge",
+        "version": "dev"
+      }
+    },
+    "rebuilt_binary": {
+      "path": "/var/tmp/aw-1000-d0648c07-1/vfs2-tools/rforge",
+      "sha256": "8b869cb012fc7cc20b134976e9d8f599c5dce6e5d27b02a4bafc8b5196767308",
+      "version": {
+        "commit": "unknown",
+        "date": "unknown",
+        "name": "rforge",
+        "version": "dev"
+      }
+    },
+    "matches_original_binary": false,
+    "audit_gap": "Rebuilt binary path/source-directory environment differs; owner explicitly permits disclosed hash mismatch without changing original receipts."
+  },
+  "additional_resume_authorization": "2026-10-21 owner: one additional Majorana --resume beyond the earlier permitted resume, same 120s process timeout, same total search cap.",
+  "owner_resume_authorization": {
+    "majorana": {
+      "additional_resumes": 1,
+      "authority": "2026-10-21 owner decision, authoritative V-FS2 task prompt Resume authorization: allow one more Majorana resume beyond the earlier permitted one, total two; 120-second process bound and original 100-call cap unchanged."
+    }
+  },
+  "deadline_status": "Historical deadline superseded by 2026-10-21 owner withdrawal of all token/cost/campaign-time budgets; not an execution gate.",
+  "completed_at": "2026-10-21T17:11:05.508769+00:00",
+  "actual_usage_snapshot": {
+    "observed_at": "2026-10-21T17:11:05.508769+00:00",
+    "budget_status": "withdrawn: no token/cost/campaign-time execution budget",
+    "session_ledgers": [
+      {
+        "session_role": "surviving_parent_root",
+        "ledger": "/home/xel/.local/state/pi-autowork/d0648c07b9fe8e30/sessions/2026-10-20T19-25-22-756Z_pi-autowork-V-FS2-attempt-1.jsonl",
+        "assistant_messages": 53,
+        "tokens_including_cache": 6293883,
+        "host_reported_USD": 1.569294,
+        "components": {
+          "input": 278664,
+          "output": 41459,
+          "cacheRead": 5973760,
+          "cacheWrite": 0
+        }
+      },
+      {
+        "session_role": "current_finish_child",
+        "ledger": "/var/tmp/aw-1000-d0648c07-1/vfs2-finish-agent/run-0/session.jsonl",
+        "assistant_messages": 44,
+        "tokens_including_cache": 6102932,
+        "host_reported_USD": 1.4622112,
+        "components": {
+          "input": 204791,
+          "output": 46749,
+          "cacheRead": 5851392,
+          "cacheWrite": 0
+        }
+      },
+      {
+        "session_role": "independent_reviewer_0",
+        "ledger": "/home/xel/git/research-forge/.worktrees/autowork-V-FS2/.pi-subagents/artifacts/cd47c46c_reviewer_0_transcript.jsonl",
+        "assistant_messages": 12,
+        "tokens_including_cache": 641460,
+        "host_reported_USD": 0.3019712,
+        "components": {
+          "input": 82325,
+          "output": 8223,
+          "cacheRead": 550912,
+          "cacheWrite": 0
+        }
+      },
+      {
+        "session_role": "independent_reviewer_1",
+        "ledger": "/home/xel/git/research-forge/.worktrees/autowork-V-FS2/.pi-subagents/artifacts/cd47c46c_reviewer_1_transcript.jsonl",
+        "assistant_messages": 14,
+        "tokens_including_cache": 1072608,
+        "host_reported_USD": 0.404544,
+        "components": {
+          "input": 127536,
+          "output": 5552,
+          "cacheRead": 939520,
+          "cacheWrite": 0
+        }
+      },
+      {
+        "session_role": "prior_child_missing_ledger",
+        "ledger_available": false,
+        "tokens_including_cache": 232632,
+        "host_reported_USD": 0.2092848,
+        "authority": "Preserved original closeout-accounting.json prior-child snapshot, counted once separately from surviving parent.",
+        "unknowns": [
+          "Any additional unavailable prior-child usage is unknown, not zero."
+        ]
+      }
+    ],
+    "persisted_tokens_lower_bound": 14343515,
+    "host_reported_USD_lower_bound": 3.9473052,
+    "elapsed_seconds_since_original_start": 7454.867917,
+    "unknowns": [
+      "Current in-flight and later parent closeout messages are not in this snapshot.",
+      "Unenumerated earlier/owner-triage ledgers are unknown, not zero.",
+      "Historical accounting snapshots overlap these ledgers and are not added again.",
+      "Host-reported model costs are not independent provider billing or scholarly API metering."
+    ]
+  },
+  "independent_review": {
+    "kind": "host_agent",
+    "record": "review.md",
+    "scientific_approval": false,
+    "source_support_corrections": "Retained short passages from original primary-page captures; no additional source opens."
+  }
+}

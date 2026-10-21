@@ -1,0 +1,20 @@
+10.1103/physrevb.103.195158	Disorder-induced zero-bias peaks in Majorana nanowires
+	Majorana modes in InSb nanowires (I): zero bias peaks in hybrid devices with low-disorder and hard induced superconducting gap
+10.1103/physrevresearch.2.013377	Physical mechanisms for zero-bias conductance peaks in Majorana nanowires
+10.1103/physrevlett.109.267002	Zero-Bias Peaks in the Tunneling Conductance of Spin-Orbit-Coupled Superconducting Wires with and without Majorana End-States
+10.1103/physrevb.105.115432	On-demand large conductance in trivial zero-bias tunneling peaks in Majorana nanowires
+10.1103/physrevb.103.214502	Quantized and unquantized zero-bias tunneling conductance peaks in Majorana nanowires: Conductance below and above 2e2/h
+10.1103/physrevb.96.054520	Phenomenology of the soft gap, zero-bias peak, and zero-mode splitting in ideal Majorana nanowires
+10.1088/1367-2630/14/12/125011	A zero-voltage conductance peak from weak antilocalization in a Majorana nanowire
+10.1103/physrevlett.123.107703	Ubiquitous Non-Majorana Zero-Bias Conductance Peaks in Nanowire Devices
+10.13016/4ca2-jvbg	ZERO-BIAS CONDUCTANCE PEAKS IN MAJORANA NANOWIRES: THE GOOD, THE BAD, AND THE UGLY
+10.1103/physrevb.96.075161	Andreev bound states versus Majorana bound states in quantum dot-nanowire-superconductor hybrid structures: Trivial versus topological zero-bias conductance peaks
+10.3762/bjnano.9.128	Disorder-induced suppression of the zero-bias conductance peak splitting in topological superconducting nanowires
+10.1103/physrevlett.119.136803	Scaling of Majorana Zero-Bias Conductance Peaks
+10.1103/physrevb.106.094504	Quality factor for zero-bias conductance peaks in Majorana nanowire
+10.1038/s41567-020-1017-3	Zero-bias peaks at zero magnetic field in ferromagnetic hybrid nanowires
+10.1103/physrevx.8.031041	Effects of Gate-Induced Electric Fields on Semiconductor Majorana Nanowires
+10.1063/5.0102999	Majorana nanowires for topological quantum computation
+10.1103/physrevlett.122.187702	Spin-Orbit Protection of Induced Superconductivity in Majorana Nanowires
+10.3762/bjnano.9.203	Interaction-induced zero-energy pinning and quantum dot formation in Majorana nanowires
+10.1038/s41586-022-05382-w	Majorana-like Coulomb spectroscopy in the absence of zero-bias peaks

@@ -1,0 +1,20 @@
+10.1103/physrevb.100.045302	Presence versus absence of end-to-end nonlocal conductance correlations in Majorana nanowires: Majorana bound states versus Andreev bound states
+10.1103/physrevb.108.085415	Density of states, transport, and topology in disordered Majorana nanowires
+10.1063/5.0102999	Majorana nanowires for topological quantum computation
+10.1103/physrevb.98.085125	Nonlocality of Majorana modes in hybrid nanowires
+10.1038/s41467-019-13133-1	Next steps of quantum transport in Majorana nanowire devices
+10.1038/s41567-020-01107-w	Non-Majorana states yield nearly quantized conductance in proximatized nanowires
+10.1103/physrevresearch.2.013377	Physical mechanisms for zero-bias conductance peaks in Majorana nanowires
+10.1103/physrevb.96.125435	Majorana states in prismatic core-shell nanowires
+10.1038/s41598-021-96415-3	Topological isoconductance signatures in Majorana nanowires
+10.1103/physrevb.100.205412	End-to-end correlated subgap states in hybrid nanowires
+10.1209/0295-5075/103/57016	Cross-correlations mediated by Majorana bound states
+10.11606/d.43.2021.tde-19052021-163141	Majorana bound states in nanowire junctions
+10.1103/physrevb.105.075310	Corner states, hinge states, and Majorana modes in SnTe nanowires
+10.1038/nphys2429	The fractional a.c. Josephson effect in a semiconductor–superconductor nanowire as a signature of Majorana particles
+10.1103/physrevresearch.2.023171	Even-odd effect and Majorana states in full-shell nanowires
+10.1103/physrevx.8.031041	Effects of Gate-Induced Electric Fields on Semiconductor Majorana Nanowires
+10.1103/physrevb.98.235406	Quantifying wave-function overlaps in inhomogeneous Majorana nanowires
+10.1103/physrevlett.123.107703	Ubiquitous Non-Majorana Zero-Bias Conductance Peaks in Nanowire Devices
+10.1038/s41535-017-0012-0	Zero-energy pinning from interactions in Majorana nanowires
+10.3762/bjnano.9.203	Interaction-induced zero-energy pinning and quantum dot formation in Majorana nanowires

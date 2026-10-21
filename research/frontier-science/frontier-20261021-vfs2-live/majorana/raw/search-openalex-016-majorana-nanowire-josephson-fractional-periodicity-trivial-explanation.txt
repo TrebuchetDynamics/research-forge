@@ -1,0 +1,20 @@
+10.1063/5.0102999	Majorana nanowires for topological quantum computation
+10.1038/ncomms10303	4π-periodic Josephson supercurrent in HgTe-based topological Josephson junctions
+10.1038/s42254-020-0228-y	From Andreev to Majorana bound states in hybrid superconductor–semiconductor nanowires
+10.1103/physrevlett.133.196601	Josephson-Current Signatures of Unpaired Floquet Majorana Fermions
+10.1038/ncomms14984	Magnetically-driven colossal supercurrent enhancement in InAs nanowire Josephson junctions
+10.11606/d.43.2021.tde-19052021-163141	Majorana bound states in nanowire junctions
+10.3762/bjnano.9.127	Andreev spectrum and supercurrents in nanowire-based SNS junctions containing Majorana bound states
+	Majorana bound states in inhomogeneous nanowires
+10.1103/physrevresearch.1.033207	Majorana braiding in realistic nanowire Y-junctions and tuning forks
+10.1103/p8qg-p1fp	Capacitance-based fermion parity readout and predicted Rabi oscillations in a Majorana nanowire
+10.1103/physrevb.98.134515	Hysteresis from nonlinear dynamics of Majorana modes in topological Josephson junctions
+10.1038/npjqi.2015.1	Majorana zero modes and topological quantum computation
+10.21468/scipostphys.7.5.061	Reproducing topological properties with quasi-Majorana states
+10.1016/j.cap.2026.03.005	Signatures of fractional Josephson effect in Josephson junctions based on the higher-order topological insulator WTe2
+10.1103/physrevb.108.094514	ac Josephson effect in a gate-tunable Cd3As2 nanowire superconducting weak link
+10.48550/arxiv.2406.17568	Perspective on Majorana bound-states in hybrid superconductor-semiconductor nanowires
+10.1126/science.ade0850	Hunting for Majoranas
+10.1103/physrevb.111.235442	Detection of Majorana zero modes bound to Josephson vortices in planar superconductor–topological insulator–superconductor junctions
+10.4233/uuid:b61039b3-7014-425d-8803-eeb34f12ee1d	Quasi-Majorana states in Majorana devices
+10.4233/uuid:ff2ffac0-c76a-4a3d-af22-88f2151f6133	Spins in Josephson Junctions

@@ -1,0 +1,20 @@
+10.1007/978-94-007-6618-1_5	Transport Through a Coulomb Blockaded Majorana Nanowire
+10.1103/physrevb.98.161401	Evolution of the transmission phase through a Coulomb-blockaded Majorana wire
+10.1063/5.0102999	Majorana nanowires for topological quantum computation
+10.1103/physrevb.98.085125	Nonlocality of Majorana modes in hybrid nanowires
+10.1103/physrevresearch.3.023221	Transmission amplitude through a Coulomb blockaded Majorana wire
+10.1038/s41467-019-13133-1	Next steps of quantum transport in Majorana nanowire devices
+10.1103/physrevb.101.195420	Transport properties of coupled Majorana bound states in the Coulomb blockade regime
+10.1103/physrevb.106.l201305	Interference and parity blockade in transport through a Majorana box
+10.1103/p8qg-p1fp	Capacitance-based fermion parity readout and predicted Rabi oscillations in a Majorana nanowire
+10.1088/1367-2630/15/8/085003	Robustness of topological order in semiconductor–superconductor nanowires in the Coulomb blockade regime
+10.1038/s42254-020-0228-y	From Andreev to Majorana bound states in hybrid superconductor–semiconductor nanowires
+10.1103/physrevb.93.245418	Enhanced current noise correlations in a Coulomb-Majorana device
+10.1038/nphys3461	Parity lifetime of bound states in a proximitized semiconductor nanowire
+10.1038/s41586-022-05382-w	Majorana-like Coulomb spectroscopy in the absence of zero-bias peaks
+10.1088/1367-2630/aa54e1	Majorana box qubits
+10.1103/physrevb.96.085418	Measuring Majorana nonlocality and spin structure with a quantum dot
+10.1103/physrevresearch.2.033254	Parity-to-charge conversion in Majorana qubit readout
+10.1038/nature17162	Exponential protection of zero modes in Majorana islands
+10.1103/physrevb.104.045422	Full parity phase diagram of a proximitized nanowire island
+10.1088/1674-1056/ae6f9a	Electrostatic-controlled parity switching in InAs–Al hybrid Coulomb island without Zeeman effect

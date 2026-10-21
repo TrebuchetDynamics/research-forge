@@ -1,0 +1,20 @@
+10.1103/physrevb.96.184520	Electron temperature and tunnel coupling dependence of zero-bias and almost-zero-bias conductance peaks in Majorana nanowires
+10.1103/physrevb.96.054504	Conductance of a superconducting Coulomb-blockaded Majorana nanowire
+10.1103/physrevb.102.045303	Signatures of the Majorana spin in electrical transport through a Majorana nanowire
+10.1103/physrevb.99.024510	Conductance smearing and anisotropic suppression of induced superconductivity in a Majorana nanowire
+10.1038/nature26142	RETRACTED ARTICLE: Quantized Majorana conductance
+10.1063/5.0102999	Majorana nanowires for topological quantum computation
+10.1038/s41467-019-13133-1	Next steps of quantum transport in Majorana nanowire devices
+10.1103/physrevb.98.085125	Nonlocality of Majorana modes in hybrid nanowires
+10.1088/1367-2630/14/12/125011	A zero-voltage conductance peak from weak antilocalization in a Majorana nanowire
+10.1038/s41567-020-01107-w	Non-Majorana states yield nearly quantized conductance in proximatized nanowires
+10.17648/bwsp-2017-70083	Isolating Majorana fermions with finite Kitaev nanowires and temperature: the universality of the the zero-bias conductance
+10.1103/physrevb.93.245404	Approaching a topological phase transition in Majorana nanowires
+10.1088/1367-2630/aae61d	Electric field tunable superconductor-semiconductor coupling in Majorana nanowires
+10.1103/physrevlett.123.107703	Ubiquitous Non-Majorana Zero-Bias Conductance Peaks in Nanowire Devices
+10.1038/s41598-021-96415-3	Topological isoconductance signatures in Majorana nanowires
+10.1103/physrevb.92.174511	Effects of large induced superconducting gap on semiconductor Majorana nanowires
+10.1103/physrevlett.132.206602	Machine Learning the Disorder Landscape of Majorana Nanowires
+10.1038/s42254-020-0228-y	From Andreev to Majorana bound states in hybrid superconductor–semiconductor nanowires
+10.1088/1367-2630/14/8/083020	Transport through Majorana nanowires attached to normal leads
+10.1103/physrevlett.122.187702	Spin-Orbit Protection of Induced Superconductivity in Majorana Nanowires

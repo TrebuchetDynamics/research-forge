@@ -1,0 +1,9 @@
+10.48550/arxiv.2406.17568	Perspective on Majorana bound-states in hybrid superconductor-semiconductor nanowires
+10.48550/arxiv.2410.13547	Topological quantum computing
+10.1103/physics.18.68	Microsoft’s Claim of a Topological Qubit Faces Tough Questions
+10.59973/ipil.307	Why Current AI Architectures are Not Conscious: Neural Networks as Spinfoam Networks in a Theory of Quantum Gravity
+10.21203/rs.3.rs-8443771/v1	Why Current AI Architectures are Not Conscious:Neural Networks as Spinfoam Networks in a Theory ofQuantum Gravity
+10.24108/preprints-3116381	AU HD TYPE FREEDOM-1: Acta Universi (AU): A Unified Informational-Entropic Cosmology and Holographic Drive Technology
+10.1103/hmyb-2b8q	Fermi-Bose crossover in superconductors: Disorder in control
+10.1038/s41598-024-62539-5	DNA as a perfect quantum computer based on the quantum physics principles
+10.21203/rs.3.rs-3830073/v1	DNA as a perfect quantum computer based on the quantum physics principle

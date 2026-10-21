@@ -1,0 +1,841 @@
+{
+  "topic": "majorana",
+  "assessed_by": {
+    "kind": "host_agent",
+    "identity": "Pi / openai-codex/gpt-6.1-sol"
+  },
+  "engine_run_ids": [
+    "8f404258609590c80f7fe09e406e780d",
+    "2767d7081c0ea76ac53d0b0106f1f6a4"
+  ],
+  "claims": [
+    {
+      "id": "table-M1-M1",
+      "report_anchor": "m1",
+      "claim": "| <a id=\"m1\"></a>M1 [1] historical quantized plateau | Original abstract claimed a **2e²/h** plateau in InSb–Al nanowires. | **Retracted**: not surviving evidence for quantized Majorana conductance; paired with M2, never counted as confirmation. |",
+      "evidence_rows": [
+        1
+      ],
+      "source_id": "M1",
+      "source_locator": "https://arxiv.org/abs/1710.10701",
+      "source_location": "Abstract, sentence beginning Here; historical claim, retracted journal article",
+      "source_status": "retracted",
+      "support": "supported",
+      "rationale": "Primary abstract supports this narrowly attributed report; host inference is not engine or human scientific approval.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance."
+      ]
+    },
+    {
+      "id": "table-M2-M2",
+      "report_anchor": "m2",
+      "claim": "| <a id=\"m2\"></a>M2 [2] primary retraction | Authors explicitly say they can no longer claim quantized Majorana conductance after re-analysis/recalibration. | Withdrawal does not establish which trivial mechanism caused every feature. |",
+      "evidence_rows": [
+        2
+      ],
+      "source_id": "M2",
+      "source_locator": "https://www.nature.com/articles/s41586-021-03373-x",
+      "source_location": "Retraction notice, main paragraph following recalibration discussion",
+      "source_status": "published",
+      "support": "supported",
+      "rationale": "Primary abstract supports this narrowly attributed report; host inference is not engine or human scientific approval.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance."
+      ]
+    },
+    {
+      "id": "table-M3-M3",
+      "report_anchor": "m3",
+      "claim": "| <a id=\"m3\"></a>M3 [3] local/nonlocal/thermal theory | Models pristine, dot/inhomogeneous and disordered finite wires; local peaks fail to distinguish them, nonlocal signals can be weak. | Advocates combined electrical/thermal diagnostics; a conditional theoretical guide, not an experimental sufficiency theorem. |",
+      "evidence_rows": [
+        3
+      ],
+      "source_id": "M3",
+      "source_locator": "https://arxiv.org/abs/2009.11809v3",
+      "source_location": "Abstract, local-conductance sentence; subsequent sentences discuss weak nonlocal signals and combined thermal/electrical measurements",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Primary abstract supports this narrowly attributed report; host inference is not engine or human scientific approval.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "table-M4-M4",
+      "report_anchor": "m4",
+      "claim": "| <a id=\"m4\"></a>M4 [4] full-shell junction study | Short junctions lack subgap states while longer junctions show them; authors explain robust zero-bias peaks using junction Andreev levels. | Full-shell geometry and robust peaks alone do not remove junction-dot alternatives. Material species and numerical field/T ranges are unavailable in the inspected abstract. |",
+      "evidence_rows": [
+        4
+      ],
+      "source_id": "M4",
+      "source_locator": "https://arxiv.org/abs/2008.02348v3",
+      "source_location": "Abstract, junction-length comparison; later sentences identify Andreev levels and robust zero-bias peaks",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Primary abstract supports this narrowly attributed report; host inference is not engine or human scientific approval.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "table-M5-M5",
+      "report_anchor": "m5",
+      "claim": "| <a id=\"m5\"></a>M5 [5] positive topological-gap-protocol study | Gated InAs–Al quasi-1D wires defined in a 2D electron gas; reports bulk-gap closing/reopening and simultaneous end peaks; extracted maximum gaps **20–60 μeV**. | Inference of high topological probability is conditioned on disorder simulations/protocol. Not direct fusion/braiding proof; M6 disputes the analysis. |",
+      "evidence_rows": [
+        5
+      ],
+      "source_id": "M5",
+      "source_locator": "https://arxiv.org/abs/2207.02472",
+      "source_location": "Abstract, penultimate result sentences; extracted gaps and prerequisite-for-braiding conclusion",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Primary abstract supports this narrowly attributed report; host inference is not engine or human scientific approval.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "table-M6-M6",
+      "report_anchor": "m6",
+      "claim": "| <a id=\"m6\"></a>M6 [6] adverse protocol comment | Legg argues that gap/topology definitions and field/bias windows, resolution and cutter-pair counts affect whether the protocol passes. | **Non-peer-reviewed preprint** criticism in this audit; host did not rerun its analysis or exhaustively locate responses. Not proof all devices are trivial. |",
+      "evidence_rows": [
+        6
+      ],
+      "source_id": "M6",
+      "source_locator": "https://arxiv.org/abs/2502.19560",
+      "source_location": "Abstract, sentence beginning Furthermore; criticism, not adjudicated experimental fact",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Primary abstract supports this narrowly attributed report; host inference is not engine or human scientific approval.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "table-M7-M7",
+      "report_anchor": "m7",
+      "claim": "| <a id=\"m7\"></a>M7 [7] correlated subgap experiment | At **zero field**, end-to-end correlations in a **300 nm** device are reported reduced by factor **four** in a **900 nm** device. | These are subgap-feature coincidences, not equivalent to a verified topological zero-mode pair or a matched replication of M5. |",
+      "evidence_rows": [
+        7
+      ],
+      "source_id": "M7",
+      "source_locator": "https://arxiv.org/abs/1908.05549",
+      "source_location": "Abstract, opening and following cross-correlation/device-length sentences",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Primary abstract supports this narrowly attributed report; host inference is not engine or human scientific approval.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "table-M8-M8",
+      "report_anchor": "m8",
+      "claim": "| <a id=\"m8\"></a>M8 [8] end-correlated zero-bias model | Dot-at-one-end model predicts identical end zero-bias peaks for Majorana states but not its trivial Andreev states. | Model-specific discriminator. Cannot extend it to every disorder configuration or equate all subgap correlations with topology. |",
+      "evidence_rows": [
+        8
+      ],
+      "source_id": "M8",
+      "source_locator": "https://arxiv.org/abs/1901.02655",
+      "source_location": "Abstract, opening model definition and following correlated-peak predictions",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Primary abstract supports this narrowly attributed report; host inference is not engine or human scientific approval.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "table-M9-M9",
+      "report_anchor": "m9",
+      "claim": "| <a id=\"m9\"></a>M9 [9] disorder alternative | Calculations produce trivial sharp Andreev peaks near **2e²/h**, interpreting existing Delft/Yu datasets; field/barrier stability is discussed. | Theory/reinterpretation, not independent experimental replication or a host-established cause of the original data. |",
+      "evidence_rows": [
+        9
+      ],
+      "source_id": "M9",
+      "source_locator": "https://arxiv.org/abs/2103.05628v3",
+      "source_location": "Abstract, disorder interpretation and following field/barrier-stability sentences",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Primary abstract supports this narrowly attributed report; host inference is not engine or human scientific approval.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "table-M10-M10",
+      "report_anchor": "m10",
+      "claim": "| <a id=\"m10\"></a>M10 [10] weakly dissipative experiment | InAs–Al Andreev peaks near **2e²/h**; with increasing temperature, peak growth or split-peak merging is reported. | Environmental Coulomb blockade competes with thermal broadening. Height and temperature behavior require environmental controls, not a unique Majorana inference. |",
+      "evidence_rows": [
+        10
+      ],
+      "source_id": "M10",
+      "source_locator": "https://arxiv.org/abs/2202.09299v1",
+      "source_location": "Abstract, second sentence; subsequent sentences describe environmental Coulomb blockade and temperature dependence",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Primary abstract supports this narrowly attributed report; host inference is not engine or human scientific approval.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "findings-M3",
+      "report_anchor": "findings",
+      "claim": "No standalone peak certification; joint diagnostic remains model/analysis conditioned; no braiding established by this inspected source set.",
+      "evidence_rows": [
+        3
+      ],
+      "source_id": "M3",
+      "source_locator": "https://arxiv.org/abs/2009.11809v3",
+      "source_location": "Abstract, local-conductance sentence; subsequent sentences discuss weak nonlocal signals and combined thermal/electrical measurements",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Host synthesis/proposal constrained to cited primary abstracts; gap statements refer only to this audit, not universal absence. Shared author identities inspected on primary metadata pages.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "findings-M5",
+      "report_anchor": "findings",
+      "claim": "No standalone peak certification; joint diagnostic remains model/analysis conditioned; no braiding established by this inspected source set.",
+      "evidence_rows": [
+        5
+      ],
+      "source_id": "M5",
+      "source_locator": "https://arxiv.org/abs/2207.02472",
+      "source_location": "Abstract, penultimate result sentences; extracted gaps and prerequisite-for-braiding conclusion",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Host synthesis/proposal constrained to cited primary abstracts; gap statements refer only to this audit, not universal absence. Shared author identities inspected on primary metadata pages.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "findings-M6",
+      "report_anchor": "findings",
+      "claim": "No standalone peak certification; joint diagnostic remains model/analysis conditioned; no braiding established by this inspected source set.",
+      "evidence_rows": [
+        6
+      ],
+      "source_id": "M6",
+      "source_locator": "https://arxiv.org/abs/2502.19560",
+      "source_location": "Abstract, sentence beginning Furthermore; criticism, not adjudicated experimental fact",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Host synthesis/proposal constrained to cited primary abstracts; gap statements refer only to this audit, not universal absence. Shared author identities inspected on primary metadata pages.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "findings-M9",
+      "report_anchor": "findings",
+      "claim": "No standalone peak certification; joint diagnostic remains model/analysis conditioned; no braiding established by this inspected source set.",
+      "evidence_rows": [
+        9
+      ],
+      "source_id": "M9",
+      "source_locator": "https://arxiv.org/abs/2103.05628v3",
+      "source_location": "Abstract, disorder interpretation and following field/barrier-stability sentences",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Host synthesis/proposal constrained to cited primary abstracts; gap statements refer only to this audit, not universal absence. Shared author identities inspected on primary metadata pages.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "findings-M10",
+      "report_anchor": "findings",
+      "claim": "No standalone peak certification; joint diagnostic remains model/analysis conditioned; no braiding established by this inspected source set.",
+      "evidence_rows": [
+        10
+      ],
+      "source_id": "M10",
+      "source_locator": "https://arxiv.org/abs/2202.09299v1",
+      "source_location": "Abstract, second sentence; subsequent sentences describe environmental Coulomb blockade and temperature dependence",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Host synthesis/proposal constrained to cited primary abstracts; gap statements refer only to this audit, not universal absence. Shared author identities inspected on primary metadata pages.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "rivals-M2",
+      "report_anchor": "rivals",
+      "claim": "Different alternatives/tests and shared authors do not establish independent exact-protocol replication.",
+      "evidence_rows": [
+        2
+      ],
+      "source_id": "M2",
+      "source_locator": "https://www.nature.com/articles/s41586-021-03373-x",
+      "source_location": "Retraction notice, main paragraph following recalibration discussion",
+      "source_status": "published",
+      "support": "supported",
+      "rationale": "Host synthesis/proposal constrained to cited primary abstracts; gap statements refer only to this audit, not universal absence. Shared author identities inspected on primary metadata pages.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance."
+      ]
+    },
+    {
+      "id": "rivals-M3",
+      "report_anchor": "rivals",
+      "claim": "Different alternatives/tests and shared authors do not establish independent exact-protocol replication.",
+      "evidence_rows": [
+        3
+      ],
+      "source_id": "M3",
+      "source_locator": "https://arxiv.org/abs/2009.11809v3",
+      "source_location": "Abstract, local-conductance sentence; subsequent sentences discuss weak nonlocal signals and combined thermal/electrical measurements",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Host synthesis/proposal constrained to cited primary abstracts; gap statements refer only to this audit, not universal absence. Shared author identities inspected on primary metadata pages.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "rivals-M4",
+      "report_anchor": "rivals",
+      "claim": "Different alternatives/tests and shared authors do not establish independent exact-protocol replication.",
+      "evidence_rows": [
+        4
+      ],
+      "source_id": "M4",
+      "source_locator": "https://arxiv.org/abs/2008.02348v3",
+      "source_location": "Abstract, junction-length comparison; later sentences identify Andreev levels and robust zero-bias peaks",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Host synthesis/proposal constrained to cited primary abstracts; gap statements refer only to this audit, not universal absence. Shared author identities inspected on primary metadata pages.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "rivals-M5",
+      "report_anchor": "rivals",
+      "claim": "Different alternatives/tests and shared authors do not establish independent exact-protocol replication.",
+      "evidence_rows": [
+        5
+      ],
+      "source_id": "M5",
+      "source_locator": "https://arxiv.org/abs/2207.02472",
+      "source_location": "Abstract, penultimate result sentences; extracted gaps and prerequisite-for-braiding conclusion",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Host synthesis/proposal constrained to cited primary abstracts; gap statements refer only to this audit, not universal absence. Shared author identities inspected on primary metadata pages.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "rivals-M6",
+      "report_anchor": "rivals",
+      "claim": "Different alternatives/tests and shared authors do not establish independent exact-protocol replication.",
+      "evidence_rows": [
+        6
+      ],
+      "source_id": "M6",
+      "source_locator": "https://arxiv.org/abs/2502.19560",
+      "source_location": "Abstract, sentence beginning Furthermore; criticism, not adjudicated experimental fact",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Host synthesis/proposal constrained to cited primary abstracts; gap statements refer only to this audit, not universal absence. Shared author identities inspected on primary metadata pages.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "rivals-M7",
+      "report_anchor": "rivals",
+      "claim": "Different alternatives/tests and shared authors do not establish independent exact-protocol replication.",
+      "evidence_rows": [
+        7
+      ],
+      "source_id": "M7",
+      "source_locator": "https://arxiv.org/abs/1908.05549",
+      "source_location": "Abstract, opening and following cross-correlation/device-length sentences",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Host synthesis/proposal constrained to cited primary abstracts; gap statements refer only to this audit, not universal absence. Shared author identities inspected on primary metadata pages.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "rivals-M8",
+      "report_anchor": "rivals",
+      "claim": "Different alternatives/tests and shared authors do not establish independent exact-protocol replication.",
+      "evidence_rows": [
+        8
+      ],
+      "source_id": "M8",
+      "source_locator": "https://arxiv.org/abs/1901.02655",
+      "source_location": "Abstract, opening model definition and following correlated-peak predictions",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Host synthesis/proposal constrained to cited primary abstracts; gap statements refer only to this audit, not universal absence. Shared author identities inspected on primary metadata pages.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "rivals-M9",
+      "report_anchor": "rivals",
+      "claim": "Different alternatives/tests and shared authors do not establish independent exact-protocol replication.",
+      "evidence_rows": [
+        9
+      ],
+      "source_id": "M9",
+      "source_locator": "https://arxiv.org/abs/2103.05628v3",
+      "source_location": "Abstract, disorder interpretation and following field/barrier-stability sentences",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Host synthesis/proposal constrained to cited primary abstracts; gap statements refer only to this audit, not universal absence. Shared author identities inspected on primary metadata pages.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "rivals-M10",
+      "report_anchor": "rivals",
+      "claim": "Different alternatives/tests and shared authors do not establish independent exact-protocol replication.",
+      "evidence_rows": [
+        10
+      ],
+      "source_id": "M10",
+      "source_locator": "https://arxiv.org/abs/2202.09299v1",
+      "source_location": "Abstract, second sentence; subsequent sentences describe environmental Coulomb blockade and temperature dependence",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Host synthesis/proposal constrained to cited primary abstracts; gap statements refer only to this audit, not universal absence. Shared author identities inspected on primary metadata pages.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "predictions-M2",
+      "report_anchor": "predictions",
+      "claim": "Five conditional host falsification proposals grounded in reported signatures and explicit adverse alternatives; not demonstrations.",
+      "evidence_rows": [
+        2
+      ],
+      "source_id": "M2",
+      "source_locator": "https://www.nature.com/articles/s41586-021-03373-x",
+      "source_location": "Retraction notice, main paragraph following recalibration discussion",
+      "source_status": "published",
+      "support": "supported",
+      "rationale": "Host synthesis/proposal constrained to cited primary abstracts; gap statements refer only to this audit, not universal absence. Shared author identities inspected on primary metadata pages.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance."
+      ]
+    },
+    {
+      "id": "predictions-M3",
+      "report_anchor": "predictions",
+      "claim": "Five conditional host falsification proposals grounded in reported signatures and explicit adverse alternatives; not demonstrations.",
+      "evidence_rows": [
+        3
+      ],
+      "source_id": "M3",
+      "source_locator": "https://arxiv.org/abs/2009.11809v3",
+      "source_location": "Abstract, local-conductance sentence; subsequent sentences discuss weak nonlocal signals and combined thermal/electrical measurements",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Host synthesis/proposal constrained to cited primary abstracts; gap statements refer only to this audit, not universal absence. Shared author identities inspected on primary metadata pages.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "predictions-M4",
+      "report_anchor": "predictions",
+      "claim": "Five conditional host falsification proposals grounded in reported signatures and explicit adverse alternatives; not demonstrations.",
+      "evidence_rows": [
+        4
+      ],
+      "source_id": "M4",
+      "source_locator": "https://arxiv.org/abs/2008.02348v3",
+      "source_location": "Abstract, junction-length comparison; later sentences identify Andreev levels and robust zero-bias peaks",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Host synthesis/proposal constrained to cited primary abstracts; gap statements refer only to this audit, not universal absence. Shared author identities inspected on primary metadata pages.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "predictions-M5",
+      "report_anchor": "predictions",
+      "claim": "Five conditional host falsification proposals grounded in reported signatures and explicit adverse alternatives; not demonstrations.",
+      "evidence_rows": [
+        5
+      ],
+      "source_id": "M5",
+      "source_locator": "https://arxiv.org/abs/2207.02472",
+      "source_location": "Abstract, penultimate result sentences; extracted gaps and prerequisite-for-braiding conclusion",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Host synthesis/proposal constrained to cited primary abstracts; gap statements refer only to this audit, not universal absence. Shared author identities inspected on primary metadata pages.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "predictions-M6",
+      "report_anchor": "predictions",
+      "claim": "Five conditional host falsification proposals grounded in reported signatures and explicit adverse alternatives; not demonstrations.",
+      "evidence_rows": [
+        6
+      ],
+      "source_id": "M6",
+      "source_locator": "https://arxiv.org/abs/2502.19560",
+      "source_location": "Abstract, sentence beginning Furthermore; criticism, not adjudicated experimental fact",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Host synthesis/proposal constrained to cited primary abstracts; gap statements refer only to this audit, not universal absence. Shared author identities inspected on primary metadata pages.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "predictions-M7",
+      "report_anchor": "predictions",
+      "claim": "Five conditional host falsification proposals grounded in reported signatures and explicit adverse alternatives; not demonstrations.",
+      "evidence_rows": [
+        7
+      ],
+      "source_id": "M7",
+      "source_locator": "https://arxiv.org/abs/1908.05549",
+      "source_location": "Abstract, opening and following cross-correlation/device-length sentences",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Host synthesis/proposal constrained to cited primary abstracts; gap statements refer only to this audit, not universal absence. Shared author identities inspected on primary metadata pages.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "predictions-M8",
+      "report_anchor": "predictions",
+      "claim": "Five conditional host falsification proposals grounded in reported signatures and explicit adverse alternatives; not demonstrations.",
+      "evidence_rows": [
+        8
+      ],
+      "source_id": "M8",
+      "source_locator": "https://arxiv.org/abs/1901.02655",
+      "source_location": "Abstract, opening model definition and following correlated-peak predictions",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Host synthesis/proposal constrained to cited primary abstracts; gap statements refer only to this audit, not universal absence. Shared author identities inspected on primary metadata pages.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "predictions-M9",
+      "report_anchor": "predictions",
+      "claim": "Five conditional host falsification proposals grounded in reported signatures and explicit adverse alternatives; not demonstrations.",
+      "evidence_rows": [
+        9
+      ],
+      "source_id": "M9",
+      "source_locator": "https://arxiv.org/abs/2103.05628v3",
+      "source_location": "Abstract, disorder interpretation and following field/barrier-stability sentences",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Host synthesis/proposal constrained to cited primary abstracts; gap statements refer only to this audit, not universal absence. Shared author identities inspected on primary metadata pages.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "predictions-M10",
+      "report_anchor": "predictions",
+      "claim": "Five conditional host falsification proposals grounded in reported signatures and explicit adverse alternatives; not demonstrations.",
+      "evidence_rows": [
+        10
+      ],
+      "source_id": "M10",
+      "source_locator": "https://arxiv.org/abs/2202.09299v1",
+      "source_location": "Abstract, second sentence; subsequent sentences describe environmental Coulomb blockade and temperature dependence",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Host synthesis/proposal constrained to cited primary abstracts; gap statements refer only to this audit, not universal absence. Shared author identities inspected on primary metadata pages.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "limits-M2",
+      "report_anchor": "limits",
+      "claim": "Evidence supports convergent diagnostics but not a universal sufficient experimental proof or independent certification.",
+      "evidence_rows": [
+        2
+      ],
+      "source_id": "M2",
+      "source_locator": "https://www.nature.com/articles/s41586-021-03373-x",
+      "source_location": "Retraction notice, main paragraph following recalibration discussion",
+      "source_status": "published",
+      "support": "supported",
+      "rationale": "Host synthesis/proposal constrained to cited primary abstracts; gap statements refer only to this audit, not universal absence. Shared author identities inspected on primary metadata pages.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance."
+      ]
+    },
+    {
+      "id": "limits-M3",
+      "report_anchor": "limits",
+      "claim": "Evidence supports convergent diagnostics but not a universal sufficient experimental proof or independent certification.",
+      "evidence_rows": [
+        3
+      ],
+      "source_id": "M3",
+      "source_locator": "https://arxiv.org/abs/2009.11809v3",
+      "source_location": "Abstract, local-conductance sentence; subsequent sentences discuss weak nonlocal signals and combined thermal/electrical measurements",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Host synthesis/proposal constrained to cited primary abstracts; gap statements refer only to this audit, not universal absence. Shared author identities inspected on primary metadata pages.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "limits-M4",
+      "report_anchor": "limits",
+      "claim": "Evidence supports convergent diagnostics but not a universal sufficient experimental proof or independent certification.",
+      "evidence_rows": [
+        4
+      ],
+      "source_id": "M4",
+      "source_locator": "https://arxiv.org/abs/2008.02348v3",
+      "source_location": "Abstract, junction-length comparison; later sentences identify Andreev levels and robust zero-bias peaks",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Host synthesis/proposal constrained to cited primary abstracts; gap statements refer only to this audit, not universal absence. Shared author identities inspected on primary metadata pages.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "limits-M5",
+      "report_anchor": "limits",
+      "claim": "Evidence supports convergent diagnostics but not a universal sufficient experimental proof or independent certification.",
+      "evidence_rows": [
+        5
+      ],
+      "source_id": "M5",
+      "source_locator": "https://arxiv.org/abs/2207.02472",
+      "source_location": "Abstract, penultimate result sentences; extracted gaps and prerequisite-for-braiding conclusion",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Host synthesis/proposal constrained to cited primary abstracts; gap statements refer only to this audit, not universal absence. Shared author identities inspected on primary metadata pages.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "limits-M6",
+      "report_anchor": "limits",
+      "claim": "Evidence supports convergent diagnostics but not a universal sufficient experimental proof or independent certification.",
+      "evidence_rows": [
+        6
+      ],
+      "source_id": "M6",
+      "source_locator": "https://arxiv.org/abs/2502.19560",
+      "source_location": "Abstract, sentence beginning Furthermore; criticism, not adjudicated experimental fact",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Host synthesis/proposal constrained to cited primary abstracts; gap statements refer only to this audit, not universal absence. Shared author identities inspected on primary metadata pages.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "limits-M7",
+      "report_anchor": "limits",
+      "claim": "Evidence supports convergent diagnostics but not a universal sufficient experimental proof or independent certification.",
+      "evidence_rows": [
+        7
+      ],
+      "source_id": "M7",
+      "source_locator": "https://arxiv.org/abs/1908.05549",
+      "source_location": "Abstract, opening and following cross-correlation/device-length sentences",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Host synthesis/proposal constrained to cited primary abstracts; gap statements refer only to this audit, not universal absence. Shared author identities inspected on primary metadata pages.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "limits-M8",
+      "report_anchor": "limits",
+      "claim": "Evidence supports convergent diagnostics but not a universal sufficient experimental proof or independent certification.",
+      "evidence_rows": [
+        8
+      ],
+      "source_id": "M8",
+      "source_locator": "https://arxiv.org/abs/1901.02655",
+      "source_location": "Abstract, opening model definition and following correlated-peak predictions",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Host synthesis/proposal constrained to cited primary abstracts; gap statements refer only to this audit, not universal absence. Shared author identities inspected on primary metadata pages.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "limits-M9",
+      "report_anchor": "limits",
+      "claim": "Evidence supports convergent diagnostics but not a universal sufficient experimental proof or independent certification.",
+      "evidence_rows": [
+        9
+      ],
+      "source_id": "M9",
+      "source_locator": "https://arxiv.org/abs/2103.05628v3",
+      "source_location": "Abstract, disorder interpretation and following field/barrier-stability sentences",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Host synthesis/proposal constrained to cited primary abstracts; gap statements refer only to this audit, not universal absence. Shared author identities inspected on primary metadata pages.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "limits-M10",
+      "report_anchor": "limits",
+      "claim": "Evidence supports convergent diagnostics but not a universal sufficient experimental proof or independent certification.",
+      "evidence_rows": [
+        10
+      ],
+      "source_id": "M10",
+      "source_locator": "https://arxiv.org/abs/2202.09299v1",
+      "source_location": "Abstract, second sentence; subsequent sentences describe environmental Coulomb blockade and temperature dependence",
+      "source_status": "preprint",
+      "support": "supported",
+      "rationale": "Host synthesis/proposal constrained to cited primary abstracts; gap statements refer only to this audit, not universal absence. Shared author identities inspected on primary metadata pages.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance.",
+        "This audit assessed the preprint abstract; any linked journal article was not assumed text-identical or correction-free."
+      ]
+    },
+    {
+      "id": "method-workflow",
+      "report_anchor": "method",
+      "claim": "Recorded Comprehensive caps, calls, coverage, failures and actual stop, not recall or physical measurements.",
+      "evidence_rows": [
+        11
+      ],
+      "source_id": "workflow",
+      "source_locator": "artifact:majorana/manifest.json#coverage",
+      "source_location": "manifest.json budget/requests_used/coverage/failures/stop_reason; batch-state.json cumulative state; commands.jsonl stages/argv, and ../run.json authorized_ceilings/usage for independent resolve/citation/resume counts",
+      "source_status": "unknown",
+      "support": "supported",
+      "rationale": "Primary abstract supports this narrowly attributed report; host inference is not engine or human scientific approval.",
+      "access_limitations": [
+        "Operational metadata, not a measure of relevance, recall or scientific truth."
+      ]
+    },
+    {
+      "id": "table-M1-M2",
+      "report_anchor": "m1",
+      "claim": "| <a id=\"m1\"></a>M1 [1] historical quantized plateau | Original abstract claimed a **2e²/h** plateau in InSb–Al nanowires. | **Retracted**: not surviving evidence for quantized Majorana conductance; paired with M2, never counted as confirmation. |",
+      "evidence_rows": [
+        2
+      ],
+      "source_id": "M2",
+      "source_locator": "https://www.nature.com/articles/s41586-021-03373-x",
+      "source_location": "Retraction notice main paragraph",
+      "source_status": "published",
+      "support": "supported",
+      "rationale": "Primary notice explicitly withdraws original quantization claim; original abstract is historical only.",
+      "access_limitations": [
+        "Abstract/metadata only; no full-text acquisition or raw-data reanalysis.",
+        "Correction/retraction checking limited to inspected primary pages and explicit notice; no comprehensive registry clearance."
+      ]
+    }
+  ]
+}

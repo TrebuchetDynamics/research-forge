@@ -1,0 +1,20 @@
+10.1088/1367-2630/17/7/075001	Substrate-induced Majorana renormalization in topological nanowires
+10.1103/prnx-47mk	Josephson current signature of Floquet Majorana and topological accidental zero modes in altermagnet heterostructures
+10.1038/s41565-025-01894-4	Enhanced Majorana stability in a three-site Kitaev chain
+10.48550/arxiv.2506.22394	Decoherence of Majorana qubits by 1/f noise
+	A Robust Protocol for Self-Testing Majorana Fermions
+10.1140/epjp/s13360-023-04326-1	Majorana bound states in a driven quantum dot
+10.1103/physrevb.107.195412	Properties of dissipative Floquet Majorana modes using a quantum dot
+10.48550/arxiv.2105.08636	Triple Andreev dot chains in semiconductor nanowires
+10.1103/ywsw-29xc	Machine learning Majorana topology using unsupervised and supervised learning
+	Elementary quantum operations on Majorana systems
+10.14711/thesis-991013246558503412	Searching Majorana modes in various topological superconductors
+10.3390/nano13040723	Robust and Fragile Majorana Bound States in Proximitized Topological Insulator Nanoribbons
+	Topology and energy dependence of Majorana bound states in a photonic cavity
+10.1038/s41467-023-39109-w	Single-electron charge transfer into putative Majorana and trivial modes in individual vortices
+10.48550/arxiv.2609.01243	Multiple chiral Majorana states in proximitized magnetic topological insulator heterostructures
+	Growth mechanisms and properties of semiconductor nanowires at the atomic scale : From VLS to SAG quantum networks
+10.1038/s42005-023-01273-2	Intermediate states in Andreev bound state fusion
+10.1038/s41467-023-42356-6	Phase-engineering the Andreev band structure of a three-terminal Josephson junction
+	Topological phases, non-equilibrium dynamics and parallels of black hole phenomena in condensed matter
+	Topological phases of matter: Classification, realization and application

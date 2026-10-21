@@ -1,0 +1,20 @@
+10.1103/physrevb.104.085403	Theory of Coulomb blockaded transport in realistic Majorana nanowires
+10.1038/s41567-020-01107-w	Non-Majorana states yield nearly quantized conductance in superconductor-semiconductor nanowire devices
+10.1103/physrevb.96.054504	Conductance of a superconducting Coulomb blockaded Majorana nanowire
+10.1103/physrevb.93.235431	Conductance of a proximitized nanowire in the Coulomb blockade regime
+10.1103/physrevb.106.l201305	Interference and parity blockade in transport through a Majorana box
+	The MAJORANA Experiment
+10.1103/physrevlett.112.216806	Antilocalization of Coulomb Blockade in a Ge-Si Nanowire
+10.1103/physrevb.84.165440	Coulomb blockade of Majorana fermion induced transport
+10.1088/1742-6596/203/1/012057	TThe {\sc Majorana} Project
+	White Paper on the Majorana Zero-Neutrino Double-Beta Decay Experiment
+10.1063/1.5084222	Coulomb Blockade from the Shell of an InP-InAs Core-Shell Nanowire with a Triangular Cross Section
+10.1088/1367-2630/15/8/085003	Robustness of Topological Order in Semiconductor-Superconductor Nanowires in the Coulomb Blockade Regime
+10.1021/nl801454k	Andreev reflection versus Coulomb blockade in hybrid semiconductor nanowire devices
+10.21468/scipostphys.13.4.089	Spin and Orbital Spectroscopy in the Absence of Coulomb Blockade in Lead Telluride Nanowire Quantum Dots
+10.1103/physrevlett.109.187001	Coulomb blockade and Bloch oscillations in superconducting Ti nanowires
+10.1103/physrevlett.114.077002	Weber blockade in superconducting nanowires
+10.1103/p8qg-p1fp	Capacitance-based Fermion parity read-out and predicted Rabi oscillations in a Majorana nanowire
+10.1103/physrevlett.122.016801	Coulomb blockade of a nearly-open Majorana island
+	Modeling Electronic and Thermal Characteristics of Ge/Si-Core/Shell Nanowire Quantum Dot in the Coulomb Blockade Regime
+	On the single-particle-reduced entropy of a gated nanowire system in the Coulomb blockade regime

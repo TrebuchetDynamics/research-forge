@@ -1,0 +1,20 @@
+10.11606/d.43.2021.tde-19052021-163141	Majorana bound states in nanowire junctions
+10.1103/physrevb.100.045302	Presence versus absence of end-to-end nonlocal conductance correlations in Majorana nanowires: Majorana bound states versus Andreev bound states
+10.2139/ssrn.5317094	Majorana Edge and End States in Planar Josephson Junctions
+10.2139/ssrn.5267399	Low-Energy Effective Hamiltonian and End States of an Inverted Hgte Nanowire
+10.1103/physrevlett.112.126402	Majorana Bound States in Two-Channel Time-Reversal-Symmetric Nanowire Systems
+10.1134/s0040577918110077	Existence of Majorana Bound States in A Superconducting Nanowire Near an Impurity
+10.12693/aphyspola.138.681	Majorana Bound States and Zero-Bias Conductance Peaks in Superconductor/Semiconductor Nanowire Devices
+10.3762/bjnano.9.127	Andreev spectrum and supercurrents in nanowire-based SNS junctions containing Majorana bound states
+10.1063/pt.4.0018	Majorana fermions in a nanowire?
+10.1007/s10948-016-3905-4	Erratum to: Proximity Effect on the Density of States and Majorana Bound States in a Thin Superconducting Ferromagnetic Nanowire
+10.3389/fphy.2021.727934	Dual Negative Differential of Heat Generation in a Strongly Correlated Quantum Dot Side-Coupled to Majorana Bound States
+10.1016/j.physleta.2014.01.039	Demonstrating nonlocality-induced teleportation through Majorana bound states in a semiconductor nanowire
+10.1103/physrevb.102.045303	Signatures of the Majorana spin in electrical transport through a Majorana nanowire
+10.1103/physrevb.88.155428	Reentrant topological transitions with Majorana end states in one-dimensional superconductors by lattice modulation
+10.21203/rs.3.rs-1566363/v1	Conductance Spectroscopy of Majorana Zero Modes in Superconductor-Magnetic Insulator Nanowire Hybrid Systems
+10.29172/b3ecb9a8-e74e-445a-9d05-21d86b298385	Majorana bound states
+10.1103/physrevb.96.075161	Andreev bound states versus Majorana bound states in quantum dot-nanowire-superconductor hybrid structures: Trivial versus topological zero-bias conductance peaks
+10.1021/nl0616227	Phase-Correlated Nondirectional Laser Emission from the End Facets of a ZnO Nanowire
+10.1186/s11671-020-03307-y	Thermoelectric Effect in a Correlated Quantum Dot Side-Coupled to Majorana Bound States
+10.1063/pt.3.1587	Evidence for Majorana fermions in a nanowire
