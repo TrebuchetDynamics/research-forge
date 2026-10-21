@@ -14,12 +14,4 @@
 - Answer: Decide it: record the decision in the dependent tasks' `depends_on`, or move the task that owns it into Now or Next. To defer it, keep that task in Needs decision with a dated `Owner decision:` note; its dependents then wait without another question.
 - Kind: outside
 
-### Q-V-B6-run — USER_INPUT — effort input — unblocks 0
-
-- Task: V-B6-run — Live agent-tier pilot
-- Needs: worker reported a blocker: The installed Codex 0.163.0 native-search interface cannot satisfy the unchanged comparison protocol. Its generated app-server WebSearchThreadItem exposes id/query/action and optional opaque results, not interception/accounting of underlying provider HTTP attempts. A repository-local recorder cannot establish complete nested HTTP/provider receipts, enforce the reference-review/date gate before del…
-- Since: 2026-10-21T19:22:06Z
-- Answer: Answer in tasks/items/V-B6-run.md: widen `touches`, supply the input, narrow the acceptance, or add a dated `Owner decision:` note. The runner reruns it when the record changes.
-- Kind: held
-
 <!-- pi-autowork:questions:end -->
