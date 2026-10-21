@@ -69,11 +69,12 @@ func TestPassivePluginConformance(t *testing.T) {
 	codex := parse("adapters/.codex-plugin/plugin.json")
 	pi := parse("package.json")
 	hermes := parse("plugin.yaml")
+	hermesPackage := parse("hermes-plugin/plugin.yaml")
 	version, _ := pi["version"].(string)
 	if !regexp.MustCompile(`^[0-9]+\.[0-9]+\.[0-9]+(?:-[0-9A-Za-z.-]+)?$`).MatchString(version) {
 		t.Fatalf("invalid package version %q", version)
 	}
-	for host, manifest := range map[string]map[string]any{"Claude": claude, "Codex": codex, "Hermes": hermes} {
+	for host, manifest := range map[string]map[string]any{"Claude": claude, "Codex": codex, "Hermes root": hermes, "Hermes package": hermesPackage} {
 		if manifest["version"] != version {
 			t.Errorf("%s version %v differs from Pi %s", host, manifest["version"], version)
 		}
@@ -124,7 +125,7 @@ func TestPassivePluginConformance(t *testing.T) {
 	if !reflect.DeepEqual(pi["files"], packageFiles) {
 		t.Fatal("npm package must not ship developer skills or unrelated adapters")
 	}
-	if hermes["kind"] != "standalone" {
+	if hermes["kind"] != "standalone" || hermesPackage["kind"] != "standalone" {
 		t.Fatal("Hermes plugin must be standalone")
 	}
 	// Check the entire isolated skill root, including implicitly discovered
@@ -185,11 +186,16 @@ func TestPassivePluginConformance(t *testing.T) {
 		t.Fatalf("skill requires unavailable engine contracts: %s%s", out.String(), errOut.String())
 	}
 	for _, path := range []string{"hooks", "agents", "settings.json", "defaults.json", "plugins/defaults.json", ".mcp.json", ".claude-plugin/hooks.json"} {
-		for _, base := range []string{"", "adapters"} {
+		for _, base := range []string{"", "adapters", "hermes-plugin"} {
 			if _, err := os.Stat(filepath.Join(root, base, path)); !os.IsNotExist(err) {
 				t.Errorf("unexpected runtime surface %s", filepath.Join(base, path))
 			}
 		}
+	}
+	hermesCmd := exec.Command("python3", "-B", "-m", "unittest", "adapters/test_hermes.py")
+	hermesCmd.Dir = root
+	if out, err := hermesCmd.CombinedOutput(); err != nil {
+		t.Fatalf("Hermes registration and isolated package contract: %v\n%s", err, out)
 	}
 	cmd := exec.Command("node", "--test", "adapters/test")
 	cmd.Dir = root

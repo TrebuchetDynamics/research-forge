@@ -402,7 +402,7 @@ func TestFreshInstallInstallsEveryComponent(t *testing.T) {
 		"codex plugin marketplace add",
 		"codex plugin add research-forge@research-forge",
 		"pi install git:github.com/TrebuchetDynamics/research-forge",
-		"hermes plugins install https://github.com/TrebuchetDynamics/research-forge",
+		"hermes plugins install https://github.com/TrebuchetDynamics/research-forge/tree/main/hermes-plugin --no-deps",
 		"hermes plugins enable research-forge",
 	} {
 		wantContains(t, log, want, "host invocations")

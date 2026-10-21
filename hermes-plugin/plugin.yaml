@@ -1,0 +1,9 @@
+{
+  "name": "research-forge",
+  "version": "0.1.22",
+  "description": "Passive research methodology skill with rforge provenance and human review gates.",
+  "author": "TrebuchetDynamics",
+  "license": "MIT",
+  "homepage": "https://github.com/TrebuchetDynamics/research-forge",
+  "kind": "standalone"
+}

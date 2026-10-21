@@ -197,9 +197,16 @@ Requires Hermes native plugins with `register_skill` support. Use the intended
 profile for each command (for example, `hermes --profile <name> plugins ...`).
 
 ```sh
-hermes plugins install https://github.com/TrebuchetDynamics/research-forge
+hermes plugins install https://github.com/TrebuchetDynamics/research-forge/tree/main/hermes-plugin --no-deps
 hermes plugins enable research-forge
 ```
+
+Install the self-contained [`hermes-plugin/`](../hermes-plugin/) subdirectory,
+not the repository root. Hermes scans the tree it installs; this directory
+contains only `plugin.yaml`, `__init__.py` and the registered methodology skill,
+so unrelated benchmarks, reports and installer examples are not scanned. It has
+no Node package or dependencies. The root plugin remains available unchanged
+for existing installs; reinstall from the subdirectory to switch to the smaller tree.
 
 Restart the Hermes session or gateway. Ask Hermes to load
 `skill_view(name="research-forge:research-forge")` and research your question.
@@ -207,28 +214,29 @@ The entry point registers only this read-only skill: it does not copy skills
 into the profile, inject messages, or register slash commands. The plugin is
 `kind: standalone`, has no plugin dependencies and ships no `defaults.json`.
 Hermes' native `register(ctx)` API registers the skill, not MCP servers. For typed
-tools, **you** must add this entry to the selected profile's `config.yaml`
-(normally `~/.hermes/config.yaml`), merging into any existing `mcp_servers` map:
+tools, keep a separate full ResearchForge checkout containing
+[`adapters/mcp.mjs`](../adapters/mcp.mjs); the isolated Hermes plugin intentionally
+does not ship that launcher. **You** must add this entry to the selected profile's
+`config.yaml` (normally `~/.hermes/config.yaml`), merging into any existing
+`mcp_servers` map:
 
 ```yaml
 mcp_servers:
   rforge:
     command: node
-    args: ["/absolute/path/to/installed/research-forge/adapters/mcp.mjs"]
+    args: ["/absolute/path/to/research-forge-checkout/adapters/mcp.mjs"]
 ```
 
-Replace the path with the actual installed plugin location (inspect
-`hermes plugins list`). Keep it absolute so calls from other workspaces work.
+Replace the path with your full checkout location, not the isolated plugin
+location. Keep the checkout in place and the path absolute so calls from other
+workspaces work.
 The launcher performs the same compatibility check and starts `rforge mcp serve`;
 using the bare engine command here would skip the adapter's preflight. Run
 `hermes mcp test rforge` and restart the session/gateway or use `/reload-mcp`.
 The plugin does not add this entry, weaken approvals, or change any other config.
 Remove this manual entry yourself when removing the plugin; after an update,
-verify its path still points to the installed launcher.
-
-If Hermes offers to install Node dependencies because it sees the Pi
-`package.json`, decline: the native skill plugin needs none. MCP only needs
-Node 22+ itself, with no npm dependencies.
+verify its path still points to the retained checkout's launcher.
+MCP only needs Node 22+ itself, with no npm dependencies.
 
 ```sh
 hermes plugins update research-forge
@@ -269,11 +277,14 @@ user-authored work intact. Remove the engine separately if desired.
 The marketplaces point at the isolated `adapters/` plugin root because Claude
 Code also scans a plugin's default `skills/` directory. Explicit paths alone
 must not expose the repository's developer skills. The checked copy at
-`adapters/skills/research-forge/SKILL.md` must match the canonical
-`skills/research-forge/SKILL.md` byte-for-byte. After editing the canonical skill:
+`adapters/skills/research-forge/SKILL.md` and every file under
+`hermes-plugin/skills/research-forge/` must match the canonical
+`skills/research-forge/` byte-for-byte. After editing the canonical skill,
+refresh both packaged copies (including any added or removed skill files):
 
 ```sh
 cp skills/research-forge/SKILL.md adapters/skills/research-forge/SKILL.md
+cp skills/research-forge/SKILL.md hermes-plugin/skills/research-forge/SKILL.md
 go test ./internal/docs
 PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s adapters -p test_hermes.py
 ```
@@ -281,10 +292,14 @@ PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s adapters -p test_herme
 Claude lists the six public skill paths explicitly; Codex points at the isolated
 `adapters/skills/` root. Pi lists the canonical methodology directory and the five
 workflow directories explicitly, and its npm archive includes those workflow files.
-Hermes registers only the canonical methodology `SKILL.md` directly. `plugin.yaml`
-and workflow `agents/openai.yaml` policies use JSON syntax (a YAML subset) so Go's
-offline conformance gate can parse them without adding a YAML dependency. The gate
-is part of `make test`; it requires Node 22+ and checks manifests, versions, the
+Hermes' isolated entry point registers only its in-directory methodology
+`SKILL.md`; `adapters/test_hermes.py` checks both entry points, the exact isolated
+file set and byte-for-byte skill parity. Both Hermes manifests' versions and
+passive surfaces are checked by `internal/docs/plugin_conformance_test.go`.
+`plugin.yaml` and workflow `agents/openai.yaml` policies use JSON syntax (a YAML
+subset) so Go's offline conformance gate can parse them without adding a YAML
+dependency. The gate is part of `make test`; it requires Node 22+ and Python 3
+and checks manifests, versions, the
 allowed skill set, explicit-only workflow policies, passive Pi command loading,
 exact MCP registrations and prohibited runtime surfaces. The Pi adapter tests
 build the real Go engine, check its current read/run tool set and CLI JSON parity,
