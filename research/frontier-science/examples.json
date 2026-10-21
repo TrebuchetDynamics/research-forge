@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "examples": [
+    {
+      "id": "majorana",
+      "depth": "comprehensive",
+      "campaign_dir": "research/frontier-science/frontier-20261021-vfs2-live",
+      "report": "research/frontier-science/frontier-20261021-vfs2-live/majorana/report.md",
+      "evidence": "research/frontier-science/frontier-20261021-vfs2-live/majorana/evidence.csv",
+      "provenance": "research/frontier-science/frontier-20261021-vfs2-live/majorana/provenance.json",
+      "citation_audit": "research/frontier-science/frontier-20261021-vfs2-live/majorana/citation-audit.json",
+      "reproduce": "research/frontier-science/frontier-20261021-vfs2-live/majorana/reproduce.md"
+    },
+    {
+      "id": "nickelates",
+      "depth": "standard",
+      "campaign_dir": "research/frontier-science/frontier-20261021-vfs2-live",
+      "report": "research/frontier-science/frontier-20261021-vfs2-live/nickelates/report.md",
+      "evidence": "research/frontier-science/frontier-20261021-vfs2-live/nickelates/evidence.csv",
+      "provenance": "research/frontier-science/frontier-20261021-vfs2-live/nickelates/provenance.json",
+      "citation_audit": "research/frontier-science/frontier-20261021-vfs2-live/nickelates/citation-audit.json",
+      "reproduce": "research/frontier-science/frontier-20261021-vfs2-live/nickelates/reproduce.md"
+    }
+  ]
+}

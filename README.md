@@ -44,6 +44,16 @@ research/my-topic/
 
 Nothing is hidden in a hosted dashboard. Review the JSONL, version it, diff it, retry it, or hand it to another tool.
 
+## Scientific research examples
+
+- [Majorana zero modes — Comprehensive](./research/frontier-science/frontier-20261021-vfs2-live/majorana/report.md): which nanowire signatures distinguish topological modes from trivial alternatives?
+- [Nickelates — Standard](./research/frontier-science/frontier-20261021-vfs2-live/nickelates/report.md): which structural conditions and measurements are comparable, and what do they constrain about pairing?
+
+These genuine engine workflows retain host-agent, source-limited scientific
+synthesis—not peer review or human scientific approval. The
+[examples index](./research/frontier-science/README.md) links evidence, citation
+audits, provenance, limitations, and offline inspection / opt-in live reproduction.
+
 ## Quick start
 
 ### 1. Install
