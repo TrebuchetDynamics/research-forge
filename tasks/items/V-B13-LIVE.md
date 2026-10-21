@@ -6,7 +6,7 @@ short = "Live checks for V-B13"
 status = "open"
 goal = "RF-BENCH"
 section = "Needs decision"
-rank = 16000
+rank = 25000
 depends_on = ["V-B13"]
 touches = ["**"]
 resources = []
@@ -20,3 +20,4 @@ exclusions = []
 
 - Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan); generated live follow-up of V-B13, as indexed in goals.json.
 - Touches: none before conversion; ** stands for the whole repository
+- Owner decision: 2026-10-21: deferred to the release gates (V-R1/V-R2); kept as their live-check checklist
