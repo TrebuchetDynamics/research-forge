@@ -6,7 +6,7 @@ short = "Cross-host release gate"
 status = "open"
 goal = "RF-RELEASE"
 section = "Needs decision"
-rank = 6000
+rank = 32000
 depends_on = ["V-E4", "V-E5-run"]
 touches = ["docs/release.md"]
 resources = []
@@ -20,3 +20,4 @@ exclusions = []
 
 - Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan) (Owner requirements: release acceptance).
 - Ownership: ResearchForge owner (release decision).
+- Owner decision: 2026-10-21: release decision waits for V-E5-run's host receipts
