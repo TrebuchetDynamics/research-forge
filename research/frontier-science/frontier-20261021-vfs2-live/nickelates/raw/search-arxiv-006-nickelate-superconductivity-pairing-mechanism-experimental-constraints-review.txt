@@ -1,0 +1,20 @@
+10.1016/j.physc.2017.12.001	Superconductivity driven by pairing of the coherent parts of the physical electrons
+	Brief review on iron-based superconductors: are there clues for unconventional superconductivity?
+10.1088/0031-8949/83/03/038304	Reply to Comment on the paper "Pairing mechanism of high-temperature superconductivity: Experimental constraints (arXiv:1012.2368)"
+	Experimental Progress in Ambient-Pressure Superconducting Bilayer Nickelate Films
+10.1088/1361-6633/ae9aae	Superconductivity in Ruddlesden-Popper nickelates: a review of recent progress, focusing on thin films
+10.1109/tasc.2016.2638404	Relaxation of Microwave Nonlinearity in a Cuprate Superconducting Resonator
+10.1088/1361-6633/ac5a60	Superconductivity in infinite-layer nickelates
+10.1007/s10948-017-4366-0	Phase transitions in quasi-one dimensional system with unconventional superconductivity
+10.1007/s10948-019-5029-0	Superconductivity in SrTiO$_{3}$: dielectric function method for non-parabolic bands
+	O-bridged electron pairing: the microscopic mechanism for high-temperature superconductivity in cuprates and nickelates
+	Interlayer pairing mechanism for bilayer nickelate superconductors
+	Pair-density-wave superconductivity and Anderson's theorem in bilayer nickelates
+	Possible pairing states in the superconducting bilayer nickelate
+10.1007/s10948-013-2157-9	In-plane oxygens in high-temperature superconducting cuprates
+10.1007/s10948-017-4535-1	Lifshitz transitions in multi-band Hubbard models for topological superconductivity in complex quantum matter
+10.1146/annurev-conmatphys-031218-013125	Fluctuations and Higgs mechanism in Under-Doped Cuprates: a Review
+10.1109/tasc.2014.2330522	Copper waveguide cavities with reduced surface loss for coupling to superconducting qubits
+10.1109/tasc.2007.898036	Two tone response in Superconducting Quantum Interference Filters
+10.1103/physrevb.102.220501	Distinct pairing symmetries of superconductivity in infinite-layer nickelates
+	High-Tc Superconductivity via BCS and BEC Unification: A Review

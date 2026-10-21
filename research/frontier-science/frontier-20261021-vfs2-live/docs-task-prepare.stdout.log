@@ -1,0 +1,44 @@
+{
+  "ok": true,
+  "repo": "/home/xel/git/research-forge/.worktrees/autowork-V-FS2",
+  "mode": "check",
+  "state": "converted",
+  "actions": [],
+  "refusals": [],
+  "in_flight": [
+    "V-FS2"
+  ],
+  "pending": [],
+  "diagnostics": [
+    {
+      "code": "IN_FLIGHT",
+      "id": "V-FS2",
+      "detail": "a worker or lease holds it: rank, title and notes only",
+      "fix": "change no contract field until its attempt ends"
+    }
+  ],
+  "read": "HEAD",
+  "tasks": 62,
+  "goals": 7,
+  "counts": {
+    "done": 43,
+    "open:Needs decision": 16,
+    "open:Next": 1,
+    "open:Now": 1,
+    "superseded": 1
+  },
+  "drafts": [],
+  "order": [
+    "V-FS2"
+  ],
+  "next": "reconcile accepted documents with these records through `autowork tasks`; repair the diagnostics only from evidence",
+  "in_flight_state": [
+    "a live parallel coordinator lease"
+  ],
+  "runner": {
+    "running": true,
+    "release": "6c69c4ba",
+    "reads_tasks": true
+  },
+  "outcome": "READY"
+}

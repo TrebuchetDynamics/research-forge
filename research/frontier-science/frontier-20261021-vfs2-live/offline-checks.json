@@ -1,0 +1,145 @@
+{
+  "observed_at": "2026-10-21T16:57:19.920927+00:00",
+  "commands": [
+    {
+      "id": "packet-tests",
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "docs/benchmark/frontier-science",
+        "-p",
+        "test_check.py",
+        "-v"
+      ],
+      "start": "2026-10-21T16:57:16.286194+00:00",
+      "end": "2026-10-21T16:57:18.359512+00:00",
+      "exit_code": 0,
+      "stdout": "packet-tests.stdout.log",
+      "stderr": "packet-tests.stderr.log",
+      "environment_notes": "PYTHONDONTWRITEBYTECODE=1; Git override variables removed"
+    },
+    {
+      "id": "packet-case-check",
+      "argv": [
+        "python3",
+        "docs/benchmark/frontier-science/check.py",
+        "--cases",
+        "docs/benchmark/frontier-science/cases.json"
+      ],
+      "start": "2026-10-21T16:57:18.359703+00:00",
+      "end": "2026-10-21T16:57:18.420377+00:00",
+      "exit_code": 0,
+      "stdout": "packet-case-check.stdout.log",
+      "stderr": "packet-case-check.stderr.log",
+      "environment_notes": "PYTHONDONTWRITEBYTECODE=1; Git override variables removed"
+    },
+    {
+      "id": "packet-run-check",
+      "argv": [
+        "python3",
+        "docs/benchmark/frontier-science/check.py",
+        "--cases",
+        "docs/benchmark/frontier-science/cases.json",
+        "--run",
+        "/home/xel/git/research-forge/.worktrees/autowork-V-FS2/research/frontier-science/frontier-20261021-vfs2-live"
+      ],
+      "start": "2026-10-21T16:57:18.420540+00:00",
+      "end": "2026-10-21T16:57:18.533232+00:00",
+      "exit_code": 0,
+      "stdout": "packet-run-check.stdout.log",
+      "stderr": "packet-run-check.stderr.log",
+      "environment_notes": "PYTHONDONTWRITEBYTECODE=1; Git override variables removed"
+    },
+    {
+      "id": "source-audit-check",
+      "argv": [
+        "python3",
+        "/home/xel/git/research-forge/.worktrees/autowork-V-FS2/research/frontier-science/frontier-20261021-vfs2-live/validate-audits.py",
+        "/home/xel/git/research-forge/.worktrees/autowork-V-FS2/research/frontier-science/frontier-20261021-vfs2-live"
+      ],
+      "start": "2026-10-21T16:57:18.536509+00:00",
+      "end": "2026-10-21T16:57:18.632717+00:00",
+      "exit_code": 0,
+      "stdout": "source-audit-check.stdout.log",
+      "stderr": "source-audit-check.stderr.log",
+      "environment_notes": "PYTHONDONTWRITEBYTECODE=1; Git override variables removed"
+    },
+    {
+      "id": "tracked-diff-check",
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "start": "2026-10-21T16:57:18.632825+00:00",
+      "end": "2026-10-21T16:57:18.647464+00:00",
+      "exit_code": 0,
+      "stdout": "tracked-diff-check.stdout.log",
+      "stderr": "tracked-diff-check.stderr.log",
+      "environment_notes": "PYTHONDONTWRITEBYTECODE=1; Git override variables removed"
+    },
+    {
+      "id": "staged-diff-check",
+      "argv": [
+        "git",
+        "diff",
+        "--cached",
+        "--check"
+      ],
+      "start": "2026-10-21T16:57:18.647824+00:00",
+      "end": "2026-10-21T16:57:18.655869+00:00",
+      "exit_code": 0,
+      "stdout": "staged-diff-check.stdout.log",
+      "stderr": "staged-diff-check.stderr.log",
+      "environment_notes": "PYTHONDONTWRITEBYTECODE=1; Git override variables removed"
+    },
+    {
+      "id": "docs-task-validate",
+      "argv": [
+        "autowork",
+        "tasks",
+        "validate",
+        "--worktree",
+        "."
+      ],
+      "start": "2026-10-21T16:57:18.656012+00:00",
+      "end": "2026-10-21T16:57:18.944019+00:00",
+      "exit_code": 0,
+      "stdout": "docs-task-validate.stdout.log",
+      "stderr": "docs-task-validate.stderr.log",
+      "environment_notes": "PYTHONDONTWRITEBYTECODE=1; Git override variables removed"
+    },
+    {
+      "id": "docs-task-prepare",
+      "argv": [
+        "autowork",
+        "tasks",
+        "prepare",
+        ".",
+        "--check"
+      ],
+      "start": "2026-10-21T16:57:18.944150+00:00",
+      "end": "2026-10-21T16:57:19.187914+00:00",
+      "exit_code": 0,
+      "stdout": "docs-task-prepare.stdout.log",
+      "stderr": "docs-task-prepare.stderr.log",
+      "environment_notes": "PYTHONDONTWRITEBYTECODE=1; Git override variables removed"
+    }
+  ],
+  "scoped_markdown_readback": {
+    "files": 14,
+    "local_links_and_anchors": 54,
+    "passed": true
+  },
+  "untracked_campaign_whitespace_check": {
+    "files": 223,
+    "passed": true,
+    "method": "git diff --no-index --check /dev/null PATH for each file; only return 0/1 with empty diagnostic output accepted"
+  },
+  "excluded_artifact_check": "No symlinks, PDFs, ELF binaries or process locks in campaign; sessions/agent runtime outside campaign.",
+  "no_staged_files": true,
+  "semantic_scientific_approval": false
+}

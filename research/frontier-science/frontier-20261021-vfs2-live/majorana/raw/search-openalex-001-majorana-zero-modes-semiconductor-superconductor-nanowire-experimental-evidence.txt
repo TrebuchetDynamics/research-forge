@@ -1,0 +1,20 @@
+10.1103/physrevb.86.220506	Splitting of the zero-bias conductance peak as smoking gun evidence for the existence of the Majorana mode in a superconductor-semiconductor nanowire
+10.1088/1367-2630/aae61d	Electric field tunable superconductor-semiconductor coupling in Majorana nanowires
+10.1126/sciadv.1701476	Experimental phase diagram of zero-bias conductance peaks in superconductor/semiconductor nanowire devices
+10.1093/ptep/ptae065	Theory of Majorana Zero Modes in Unconventional Superconductors
+10.1007/s11433-021-1737-4	Experimental review on Majorana zero-modes in hybrid nanowires
+10.1103/physrevb.106.104517	Magnetic field constraint for Majorana zero modes in a hybrid nanowire
+10.1103/physrevb.99.035312	Fractional Josephson effect with and without Majorana zero modes
+10.1103/physrevx.8.031041	Effects of Gate-Induced Electric Fields on Semiconductor Majorana Nanowires
+10.1038/npjqi.2015.1	Majorana zero modes and topological quantum computation
+10.1038/nature17162	Exponential protection of zero modes in Majorana islands
+10.1103/physrevlett.116.257003	Majorana Zero Mode Detected with Spin Selective Andreev Reflection in the Vortex of a Topological Superconductor
+10.1103/2v41-yvs1	Majorana zero modes in semiconductor-superconductor hybrid structures: Defining topology in short and disordered nanowires through Majorana splitting
+10.1038/s41467-021-24372-6	Majorana zero modes in impurity-assisted vortex of LiFeAs superconductor
+10.1038/s42005-023-01147-7	Conductance spectroscopy of Majorana zero modes in superconductor-magnetic insulator nanowire hybrid systems
+10.1103/physrevx.8.041056	Robust and Clean Majorana Zero Mode in the Vortex Core of High-Temperature Superconductor (Li0.84Fe0.16)OHFeSe
+10.1038/s41578-021-00336-6	Engineered platforms for topological superconductivity and Majorana zero modes
+10.1103/physrevb.103.235201	Closing of the induced gap in a hybrid superconductor-semiconductor nanowire
+10.48550/arxiv.2406.17568	Perspective on Majorana bound-states in hybrid superconductor-semiconductor nanowires
+10.1103/physrevresearch.2.013377	Physical mechanisms for zero-bias conductance peaks in Majorana nanowires
+10.1038/s41535-017-0037-4	Detection of Majorana zero mode in the vortex

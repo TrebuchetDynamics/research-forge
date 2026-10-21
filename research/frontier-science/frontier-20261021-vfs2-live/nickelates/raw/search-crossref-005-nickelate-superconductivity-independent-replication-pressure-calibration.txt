@@ -1,0 +1,19 @@
+10.1016/j.newton.2026.100470	Pressure lifts nickelate superconductivity to 48 K
+10.1088/2058-7058/37/10/04	Superconductivity appears in nickelate crystals under pressure
+10.15302/frontphys.2026.115301	Progress of ambient-pressure superconductivity in bilayer nickelate thin films
+10.36471/jccm_november_2023_03	Superconductivity in a Nickelate
+10.70675/df81cc61z83a2z45a3z987bzf8a077a43652	Structural and orbital engineering in nickelate thin films : on the road of superconductivity
+10.21203/rs.3.rs-6967272/v1	Enhanced superconductivity in the compressively strained bilayer nickelate thin films by pressure
+10.54254/2753-8818/2026.dl33826	Nickelate Superconductors: A Gateway to High-Temperature Superconductivity
+10.1103/btb3-gww3	Magnetism and superconductivity in bilayer nickelate
+10.1021/acs.chemmater.3c00593.s001	Evidence for a Pressure-Induced Phase Transition in the Highly Distorted TlNiO3 Nickelate
+10.7717/peerj.2661/fig-6	Figure 6: Independent replication of results.
+10.1038/s41586-023-06408-7	Signatures of superconductivity near 80 K in a nickelate under high pressure
+10.21203/rs.3.rs-3607723/v1	Atomic origin of absent superconductivity in bulk infinite-layer nickelate
+10.1029/2005jb004251	Elasticity of MgO to 11 GPa with an independent absolute pressure scale: Implications for pressure calibration
+10.1088/1674-1056/ac0bb1	Theory of unconventional superconductivity in nickelate-based materials*
+10.1016/j.rinp.2020.103118	Classifying superconductivity in an infinite-layer nickelate Nd0.8Sr0.2NiO2
+10.2139/ssrn.7447208	Emergent Fibonacci Anyon Phases in Bilayer Nickelate La₃Ni₂O₇ under Pressure ​​
+10.1016/0964-1807(93)90224-p	Status of superconductivity in the commonwealth of independent states
+10.20944/preprints201912.0191.v1	Classifying Superconductivity in an Infinite-Layer Nickelate Nd&lt;sub&gt;0.8&lt;/sub&gt;Sr&lt;sub&gt;0.2&lt;/sub&gt;NiO&lt;sub&gt;2&lt;/sub&gt;
+10.3403/30355501u	Underwater acoustics. Hydrophones. Calibration of hydrophones

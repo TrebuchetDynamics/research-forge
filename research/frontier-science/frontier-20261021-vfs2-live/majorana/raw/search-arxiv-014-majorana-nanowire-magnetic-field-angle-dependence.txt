@@ -1,0 +1,20 @@
+10.1038/s41567-020-01107-w	Non-Majorana states yield nearly quantized conductance in superconductor-semiconductor nanowire devices
+	The MAJORANA Experiment
+10.1103/physrevb.89.245405	Effects of tilting the magnetic field in 1D Majorana nanowires
+10.1103/physrevb.90.115429	Tilting of the magnetic field in Majorana nanowires: critical angle and zero-energy differential conductance
+10.1088/0031-8949/73/6/018	Derivation of the Lorentz Force Law, the Magnetic Field Concept and the Faraday-Lenz Law using an Invariant Formulation of the Lorentz Transformation
+	Derivation of the Lorentz Force Law and the Magnetic Field Concept using an Invariant Formulation of the Lorentz Transformation
+10.1103/physrevlett.110.096403	Majorana fermions in spin-singlet nodal superconductors with coexisting non-collinear magnetic order
+10.1088/1742-6596/203/1/012057	TThe {\sc Majorana} Project
+	White Paper on the Majorana Zero-Neutrino Double-Beta Decay Experiment
+10.1103/physrevb.106.104517	Do Majorana zero modes emerge in the hybrid nanowire under a strong magnetic field?
+	Retarded electric and magnetic fields of a moving charge: Feynman's derivation of Liénard-Wiechert potentials revisited
+	Space-time transformation properties of inter-charge forces and dipole radiation: Breakdown of the classical field concept in relativistic electrodynamics
+10.1007/s10915-015-9995-5	Fast evaluation of far-field signals for time-domain wave propagation
+	Axions and Cosmic Magnetic Fields
+10.1016/j.physc.2017.10.005	Majorana phi0 Junction in a Disordered Spin-orbit Coupling Nanowire with Tilted Magnetic Field
+	Primordial Magnetic Fields that Last?
+10.1103/physrevd.62.103008	Cosmological Magnetic Fields from Primordial Helicity
+10.1016/bs.hmm.2018.08.002	Magnetic nanowires and nanotubes
+	Mean Field Dynamo Saturation: Toward Understanding Conflicting Results
+10.1016/s0304-8853(00)00987-2	Magnetic relaxation and magnetization field dependence measurements in La0.5Ca0.5MnO3

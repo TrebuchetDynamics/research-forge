@@ -1,0 +1,20 @@
+10.1088/1367-2630/17/7/075001	Substrate-induced Majorana renormalization in topological nanowires
+10.1103/physrevb.107.195412	Properties of dissipative Floquet Majorana modes using a quantum dot
+10.1140/epjp/s13360-023-04326-1	Majorana bound states in a driven quantum dot
+	A Robust Protocol for Self-Testing Majorana Fermions
+10.3390/nano13040723	Robust and Fragile Majorana Bound States in Proximitized Topological Insulator Nanoribbons
+10.1103/ywsw-29xc	Machine learning Majorana topology using unsupervised and supervised learning
+10.14711/thesis-991013246558503412	Searching Majorana modes in various topological superconductors
+10.48550/arxiv.2105.08636	Triple Andreev dot chains in semiconductor nanowires
+10.1038/s41467-023-37725-0	Observing and braiding topological Majorana modes on programmable quantum simulators
+	Topology and energy dependence of Majorana bound states in a photonic cavity
+10.1038/s41467-023-39109-w	Single-electron charge transfer into putative Majorana and trivial modes in individual vortices
+10.1038/s41467-026-71938-3	Multiband-driven anisotropic vortex topology in iron-based superconductors yielding a strain-tunable x-vortex Majorana platform
+10.48550/arxiv.2609.01243	Multiple chiral Majorana states in proximitized magnetic topological insulator heterostructures
+10.1103/prnx-47mk	Josephson current signature of Floquet Majorana and topological accidental zero modes in altermagnet heterostructures
+10.48550/arxiv.2409.19736	Spectroscopic Visualization of Hard Quasi-1D Superconductivity Induced in Nanowires Deposited on a Quasi-2D Indium film
+	Topological phases, non-equilibrium dynamics and parallels of black hole phenomena in condensed matter
+10.48550/arxiv.2412.19096	Anisotropic and tunable vortex topology in multiband iron-based superconductors
+	Topological phases of matter: Classification, realization and application
+10.1103/physrevb.107.245423	InAs-Al hybrid devices passing the topological gap protocol
+10.1038/s41467-022-30783-w	Nonlinear two-level dynamics of quantum time crystals

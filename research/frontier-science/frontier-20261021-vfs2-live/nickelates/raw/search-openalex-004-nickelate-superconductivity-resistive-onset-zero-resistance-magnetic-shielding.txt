@@ -1,0 +1,20 @@
+10.48550/arxiv.2610.20249	Bulk superconductivity in quintuple-layer square-planar nickelate La6Ni5O12
+10.48550/arxiv.2609.19686	Superconductivity at the metal-insulator phase boundary in a bulk nickelate at ambient pressure
+10.1038/s43246-026-01312-9	Superconductivity with enhanced critical current density in ultrathin infinite-layer nickelate films
+10.1038/s41467-026-69650-3	Enhanced superconductivity and mixed-dimensional behaviour in infinite-layer samarium nickelate thin films
+10.1038/s41467-021-24670-z	Superconductivity in an extreme strange metal
+10.21203/rs.3.rs-7803050/v1	A chemical avenue to manipulate field-reentrant superconducting rivalries in infinite layer nickelates
+10.48550/arxiv.2511.22026	A chemical avenue to manipulate field-reentrant superconducting rivalries in infinite layer nickelates
+10.1093/nsr/nwag457	A chemical avenue to manipulate field-reentrant superconducting competition in infinite-layer nickelates
+10.48550/arxiv.2604.16611	Ultrafast Magneto-Pressure Spectroscopy and Control of Correlated Phases in a Trilayer Nickelate
+10.48550/arxiv.2407.05681	Bulk high-temperature superconductivity in the high-pressure tetragonal phase of bilayer La2PrNi2O7
+10.1038/s41535-024-00677-9	Collapse of metallicity and high-Tc superconductivity in the high-pressure phase of FeSe0.89S0.11
+10.3390/ma19071456	Optically Activated Superconductivity in MgB2 via Electroluminescent GaP Inhomogeneous Phase
+10.82444/warw.33768430	An Investigation of high Tc superconductivity in the doped YBa2Cu3O7 and Ln2CuO4 (Ln=La, Nd) systems by neutron scattering and nuclear magnetic resonance
+10.21203/rs.3.rs-10558612/v1	Interplay of Pressure, Modulation, and Disorder in the Superconductivity of AuAgTe 4
+	Angle-resolved Photoemission Spectroscopy Study of High Temperature Superconductor Cuprate, and Potential High Temperature Superconductors K-Doped p-Terphenyl and Trilayer Nickelate
+	Optically Activated Superconductivity in MgB2 via Electroluminescent GaP Inhomogeneous Phase
+10.11606/t.43.2021.tde-20102021-215946	Noncentrosymmetric superconductivity and peak effect in rhenium based materials
+10.1021/jacs.3c09756	Enhanced Superconductivity and Critical Current Density Due to the Interaction of InSe2 Bonded Layer in (InSe2)0.12NbSe2
+10.48550/arxiv.2606.18683	Counterintuitive inverse superconducting transition beyond 4He-cooling limit
+10.26686/wgtn.22180168	AC Loss Research of REBCO High-Tc Superconductors Carrying a DC Current in an AC Magnetic Field

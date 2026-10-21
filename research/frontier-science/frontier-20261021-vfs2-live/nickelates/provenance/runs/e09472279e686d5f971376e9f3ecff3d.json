@@ -1,0 +1,30 @@
+{
+  "budget": {
+    "maxDepth": 1,
+    "maxNodes": 30,
+    "maxApiCalls": 6,
+    "retryBudget": 0
+  },
+  "depth": "standard",
+  "direction": "both",
+  "errors": [],
+  "outputs": [
+    {
+      "path": "graph-1.json",
+      "sha256": "b231efcf7063504aecfc672dcb6a333457b92568bb6202fac74f51bf132b0a3d"
+    }
+  ],
+  "provenance_level": "engine_verified",
+  "question": "citations: W4384028978",
+  "rforge_version": {
+    "commit": "unknown",
+    "date": "unknown",
+    "version": "dev"
+  },
+  "run_id": "e09472279e686d5f971376e9f3ecff3d",
+  "schema_version": "2",
+  "sources": [
+    "openalex"
+  ],
+  "timestamp": "2026-10-21T15:13:09.551677758Z"
+}

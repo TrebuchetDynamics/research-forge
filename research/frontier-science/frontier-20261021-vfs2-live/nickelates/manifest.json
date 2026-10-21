@@ -1,0 +1,70 @@
+{
+  "budget": {
+    "depth": "standard",
+    "max_query_variants": 10,
+    "max_sources": 5,
+    "max_api_calls": 50,
+    "low_yield_threshold": 2,
+    "saturation_queries": 3,
+    "max_consecutive_errors": 5
+  },
+  "stop_reason": "completed",
+  "requests_used": 24,
+  "coverage": {
+    "unique_records": 254,
+    "queries": [
+      {
+        "query": "nickelate superconductivity infinite layer thin film substrate oxygen stoichiometry",
+        "new_unique": 56,
+        "complete": false
+      },
+      {
+        "query": "nickelate superconductivity bilayer high pressure transition temperature",
+        "new_unique": 50,
+        "complete": false
+      },
+      {
+        "query": "nickelate superconductivity ambient pressure structural phase",
+        "new_unique": 33,
+        "complete": false
+      },
+      {
+        "query": "nickelate superconductivity resistive onset zero resistance magnetic shielding",
+        "new_unique": 54,
+        "complete": false
+      },
+      {
+        "query": "nickelate superconductivity independent replication pressure calibration",
+        "new_unique": 14,
+        "complete": false
+      },
+      {
+        "query": "nickelate superconductivity pairing mechanism experimental constraints review",
+        "new_unique": 47,
+        "complete": false
+      }
+    ],
+    "consecutive_low_yield": 0
+  },
+  "consecutive_errors": 0,
+  "schemaVersion": "1",
+  "createdAt": "2026-10-21T15:12:24Z",
+  "queries": [
+    "nickelate superconductivity infinite layer thin film substrate oxygen stoichiometry",
+    "nickelate superconductivity bilayer high pressure transition temperature",
+    "nickelate superconductivity ambient pressure structural phase",
+    "nickelate superconductivity resistive onset zero resistance magnetic shielding",
+    "nickelate superconductivity independent replication pressure calibration",
+    "nickelate superconductivity pairing mechanism experimental constraints review"
+  ],
+  "sources": [
+    "openalex",
+    "crossref",
+    "semantic-scholar",
+    "arxiv"
+  ],
+  "limit": 20,
+  "results": 339,
+  "deduped": 254,
+  "failures": 6
+}

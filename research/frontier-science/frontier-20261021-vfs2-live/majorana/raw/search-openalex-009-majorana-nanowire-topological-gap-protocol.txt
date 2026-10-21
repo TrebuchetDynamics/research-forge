@@ -1,0 +1,20 @@
+10.1063/5.0102999	Majorana nanowires for topological quantum computation
+10.1103/physrevb.93.245404	Approaching a topological phase transition in Majorana nanowires
+10.1038/s41598-021-96415-3	Topological isoconductance signatures in Majorana nanowires
+10.1103/physrevb.111.195415	Exponential suppression of the topological gap in self-consistent intrinsic Majorana nanowires
+10.1038/npjqi.2015.1	Majorana zero modes and topological quantum computation
+10.1038/s42254-020-0228-y	From Andreev to Majorana bound states in hybrid superconductor–semiconductor nanowires
+10.1103/physrevb.108.085415	Density of states, transport, and topology in disordered Majorana nanowires
+10.48550/arxiv.2310.13634	Optimising the exchange of Majorana zero modes in a quantum nanowire network
+10.1038/s41578-021-00336-6	Engineered platforms for topological superconductivity and Majorana zero modes
+10.1103/physrevb.111.104208	Vision transformer based deep learning of topological indicators in Majorana nanowires
+10.1103/physrevlett.132.206602	Machine Learning the Disorder Landscape of Majorana Nanowires
+10.1103/physrevb.102.125407	Majorana-based quantum computing in nanowire devices
+10.1103/physrevb.109.075408	Electrostatic environment and Majorana bound states in full-shell topological insulator nanowires
+10.1103/physrevb.99.155138	Hierarchical Majoranas in a programmable nanowire network
+10.1103/physrevb.98.075142	Majorana oscillations modulated by Fano interference and degree of nonlocality in a topological superconducting-nanowire–quantum-dot system
+10.1103/physrevresearch.1.033207	Majorana braiding in realistic nanowire Y-junctions and tuning forks
+10.1103/physrevb.95.235305	Scalable designs for quasiparticle-poisoning-protected topological quantum computation with Majorana zero modes
+10.1103/physrevb.107.245423	InAs-Al hybrid devices passing the topological gap protocol
+10.1103/physrevb.98.220509	Time-quasiperiodic topological superconductors with Majorana multiplexing
+10.1103/physrevb.110.165403	Single and multifrequency driving protocols in a Rashba nanowire proximitized to an s -wave superconductor

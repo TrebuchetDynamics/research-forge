@@ -1,0 +1,20 @@
+10.1038/s41567-020-01107-w	Non-Majorana states yield nearly quantized conductance in superconductor-semiconductor nanowire devices
+	The MAJORANA Experiment
+	White Paper on the Majorana Zero-Neutrino Double-Beta Decay Experiment
+10.1088/1742-6596/203/1/012057	TThe {\sc Majorana} Project
+	Measurement-induced enhancement of the $X$-parity lifetime in a Majorana tetron
+10.1038/nphys3461	Parity lifetime of bound states in a proximitized semiconductor nanowire
+10.1103/physrevb.89.140505	A Proposal to Measure the Quasiparticle Poisoning Time of Majorana Bound States
+10.1103/p8qg-p1fp	Capacitance-based Fermion parity read-out and predicted Rabi oscillations in a Majorana nanowire
+	Autoregressive Perturbations for Data Poisoning
+	Model-Targeted Poisoning Attacks with Provable Convergence
+10.1103/physrevb.98.155414	Lifetime of Majorana qubits in Rashba nanowires with non-uniform chemical potential
+10.1103/physrevlett.118.137701	Transport signatures of quasiparticle poisoning in a Majorana island
+10.1088/1361-648x/aba291	Combating quasiparticle poisoning with multiple Majorana fermions in a periodically-driven quantum wire
+	Quantum Inductance as a Phase-Sensitive Probe of Fermion Parity Switching in Majorana Nanowires
+	Quasiparticle poisoning rate in a superconducting transmon qubit involving Majorana zero modes
+10.1103/physrevb.85.174533	Majorana qubit decoherence by quasiparticle poisoning
+10.1103/physrevlett.126.057702	Quasiparticle poisoning of Majorana qubits
+	A new macroscopic model derived from the Boltzmann equation and the discontinuous Galerkin method for solving kinetic equations
+10.1103/physrevb.84.094505	Controlling non-Abelian statistics of Majorana fermions on Majorana dimer lattices
+	The Scientific Manuscripts left Unpublished by Ettore Majorana (with outlines of his life and work)

@@ -1,0 +1,20 @@
+10.1038/s41567-020-01107-w	Non-Majorana states yield nearly quantized conductance in superconductor-semiconductor nanowire devices
+10.1098/rsta.2018.0140	Andreev Bound States and Their Signatures
+	Disorder-robust trivial Majorana-like states from smooth confinement in chiral superconducting nanowires
+10.1103/physrevb.100.045302	Presence versus absence of end-to-end nonlocal conductance correlations in Majorana nanowires: Majorana bound states versus Andreev bound states
+	The MAJORANA Experiment
+10.1103/physrevb.98.144511	Metamorphosis of Andreev bound states into Majorana bound states in pristine nanowires
+10.1103/physrevlett.103.237001	Majorana Fermion Induced Resonant Andreev Reflection
+10.1088/1742-6596/203/1/012057	TThe {\sc Majorana} Project
+10.1088/1361-648x/ac44d2	Majorana/Andreev crossover and the fate of the topological phase transition in inhomogeneous nanowires
+	White Paper on the Majorana Zero-Neutrino Double-Beta Decay Experiment
+10.1134/s1063776114120097	Andreev-Majorana bound states in superfluids
+	Andreev reflection, Andreev states, and long ballistic SNS junction
+10.1103/fksg-x8pr	Odd-frequency pairing due to Majorana and trivial Andreev bound states
+10.1103/physrevb.109.165404	Transport-based fusion that distinguishes between Majorana and Andreev bound states
+10.3762/bjnano.9.127	Andreev spectrum and supercurrents in nanowire-based SNS junctions containing Majorana bound states
+10.1103/physrevb.92.020513	Manipulating Andreev and Majorana Bound States with microwaves
+10.1103/physrevlett.121.047001	Direct microwave measurement of Andreev-bound-state dynamics in a proximitized semiconducting nanowire
+10.1103/physrevb.85.235307	Mutation of Andreev into Majorana bound states in long NS and SNS junctions
+10.1103/79tj-c3y4	Josephson diode effect with Andreev and Majorana bound states
+10.1103/physrevb.88.144512	Majorana modes in smooth normal-superconductor nanowire junctions

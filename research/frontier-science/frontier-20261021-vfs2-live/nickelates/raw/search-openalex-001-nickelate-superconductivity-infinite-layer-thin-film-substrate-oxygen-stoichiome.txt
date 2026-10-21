@@ -1,0 +1,20 @@
+10.1088/1361-6633/ac5a60	Superconductivity in infinite-layer nickelates
+10.1002/adma.202416187	Superconductivity in PrNiO2 Infinite‐Layer Nickelates
+10.1038/s41563-021-01142-9	Superconductivity in a quintuple-layer square-planar nickelate
+10.1002/adma.202402916	Superconductivity in Freestanding Infinite‐Layer Nickelate Membranes
+10.3389/fphy.2021.719534	Impact of Cation Stoichiometry on the Crystalline Structure and Superconductivity in Nickelates
+10.1038/s41467-024-54660-w	Superconductivity in an infinite-layer nickelate superlattice
+10.1002/advs.202305252	Robust Superconductivity in Infinite‐Layer Nickelates
+10.1038/s41586-026-10352-7	Superconductivity and electronic structures of nickelate thin film superstructures
+10.1002/advs.202309092	Toward Reliable Synthesis of Superconducting Infinite Layer Nickelate Thin Films by Topochemical Reduction
+10.15302/frontphys.2026.024202	Effect of target nickel stoichiometry on the synthesis of infinite-layer nickelates
+10.3389/fphy.2022.828007	Thin-Film Aspects of Superconducting Nickelates
+10.1063/5.0288315	Effects of stoichiometry and epitaxial strain on the stabilization of infinite-layer nickelates
+10.1063/5.0197304	Synthesis of thin film infinite-layer nickelates by atomic hydrogen reduction: Clarifying the role of the capping layer
+10.1002/adfm.202409930	Unraveling P‐Type and N‐Type Interfaces in Superconducting Infinite‐Layer Nickelate Thin Films
+10.1038/s41467-023-37117-4	Limits to the strain engineering of layered square-planar nickelate thin films
+10.48550/arxiv.2401.12307	Towards reliable synthesis of superconducting infinite layer nickelate thin films by topochemical reduction
+10.1126/sciadv.ado4572	Superconductivity in an ultrathin multilayer nickelate
+10.3389/fphy.2022.834658	Infinite-Layer Nickelate Superconductors: A Current Experimental Perspective of the Crystal and Electronic Structures
+10.1088/1361-6463/aca54a	Synthesis of infinite-layer nickelates and influence of the capping-layer on magnetotransport
+10.1088/1361-6633/ae9aae	Superconductivity in Ruddlesden–Popper nickelates: a review of recent progress, focusing on thin films

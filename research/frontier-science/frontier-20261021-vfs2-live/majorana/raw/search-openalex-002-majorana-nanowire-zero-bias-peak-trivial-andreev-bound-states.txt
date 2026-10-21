@@ -1,0 +1,20 @@
+10.1103/physrevb.96.075161	Andreev bound states versus Majorana bound states in quantum dot-nanowire-superconductor hybrid structures: Trivial versus topological zero-bias conductance peaks
+10.1103/physrevb.100.045302	Presence versus absence of end-to-end nonlocal conductance correlations in Majorana nanowires: Majorana bound states versus Andreev bound states
+10.1103/physrevb.97.214502	Distinguishing topological Majorana bound states from trivial Andreev bound states: Proposed tests through differential tunneling conductance spectroscopy
+10.1038/s42254-020-0228-y	From Andreev to Majorana bound states in hybrid superconductor–semiconductor nanowires
+10.1103/physrevb.103.214502	Quantized and unquantized zero-bias tunneling conductance peaks in Majorana nanowires: Conductance below and above 2e2/h
+10.1016/j.physe.2022.115247	Distinguishing Majorana and Andreev bound states in a topological superconducting nanowire with a potential barrier
+10.1103/physrevresearch.2.013377	Physical mechanisms for zero-bias conductance peaks in Majorana nanowires
+10.1103/physrevlett.123.107703	Ubiquitous Non-Majorana Zero-Bias Conductance Peaks in Nanowire Devices
+10.1103/physrevb.100.125407	Zero-energy pinning of topologically trivial bound states in multiband semiconductor-superconductor nanowires
+10.13016/wtjj-ilcc	MAJORANA AND ANDREEV BOUND STATES IN SEMICONDUCTOR-SUPERCONDUCTOR NANOSTRUCTURES
+10.1103/physrevb.97.165302	Two-terminal charge tunneling: Disentangling Majorana zero modes from partially separated Andreev bound states in semiconductor-superconductor heterostructures
+10.3762/bjnano.9.127	Andreev spectrum and supercurrents in nanowire-based SNS junctions containing Majorana bound states
+	Coexistence of Majorana and topologically nontrivial Andreev bound states in 1D superconductors
+10.1103/physrevb.96.184520	Electron temperature and tunnel coupling dependence of zero-bias and almost-zero-bias conductance peaks in Majorana nanowires
+10.1103/physrevlett.119.136803	Scaling of Majorana Zero-Bias Conductance Peaks
+10.1103/physrevb.97.161401	Distinguishing Majorana bound states from localized Andreev bound states by interferometry
+10.1088/1367-2630/14/12/125011	A zero-voltage conductance peak from weak antilocalization in a Majorana nanowire
+10.1103/physrevb.111.205411	Quantifying the non-Abelian property of Andreev bound states in inhomogeneous Majorana nanowires
+10.1103/physrevb.98.085125	Nonlocality of Majorana modes in hybrid nanowires
+10.5451/unibas-006738780	Majorana bound states in topological insulators and nanowires

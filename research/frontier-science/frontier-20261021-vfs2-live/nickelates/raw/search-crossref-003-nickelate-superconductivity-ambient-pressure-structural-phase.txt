@@ -1,0 +1,17 @@
+10.15302/frontphys.2026.115301	Progress of ambient-pressure superconductivity in bilayer nickelate thin films
+10.70675/df81cc61z83a2z45a3z987bzf8a077a43652	Structural and orbital engineering in nickelate thin films : on the road of superconductivity
+10.1021/acs.inorgchem.9b02746.s001	Pressure-Induced Structural Phase Transition and Superconductivity in NaSn5
+10.1016/j.newton.2026.100470	Pressure lifts nickelate superconductivity to 48 K
+10.2139/ssrn.4416475	High-Pressure Effect on the Superconductivity of Naalge and Pressure-Induced Structural Phase Transition
+10.1016/j.physc.2009.03.033	Structural, magnetic and superconducting phase transitions in CaFe2As2 under ambient and applied pressure
+10.1021/acs.jpcc.0c09447.s001	Pressure-Driven Structural Phase Transitions and Superconductivity of Ternary Hydride MgVH6
+10.1088/2058-7058/37/10/04	Superconductivity appears in nickelate crystals under pressure
+10.1093/mam/ozaf048.072	Probing Structural Origins of Ambient Pressure Superconductivity and Charge Modulation in Nickelate Thin Films with Multislice Electron Ptychography
+10.1021/acs.chemmater.3c00593.s001	Evidence for a Pressure-Induced Phase Transition in the Highly Distorted TlNiO3 Nickelate
+10.1016/0921-4534(94)00576-1	A simple route to single-phase YBa2Cu4O8 at ambient pressure
+10.1021/acs.inorgchem.3c04474.s001	Long-Range Structural Order in a Hidden Phase of RuddlesdenPopper Bilayer Nickelate La3Ni2O7
+10.36471/jccm_november_2023_03	Superconductivity in a Nickelate
+10.1016/j.physc.2007.01.071	Superconductivity and structural characteristics of ceramic Pr2Ba4Cu7O15−δ prepared by ambient pressure synthesis using citrate pyrolysis method
+10.1016/0921-4534(92)90029-c	Pressure effects on superconductivity and structural phase transitions in La2−xMxCuO4 (M  Ba, Sr)
+10.1016/0921-4534(94)91643-8	Structural phase transitions and superconductivity of La2−xBaxCuO4 with x=0.125: Effects of pressure and Sr-substitution
+10.1021/acs.jpcc.6c01444.s001	Coexistence of Superconductivity and Superhardness in M2B4C8 Clathrates at Ambient Pressure

@@ -1,0 +1,20 @@
+10.23860/thesis-andrauskas-donna-1985	Magnetic Field Dependence of the Small-Angle Neutron Scattering (SANS) in Amorphous DyCu and NdFe2
+10.21203/rs.3.rs-1566363/v1	Conductance Spectroscopy of Majorana Zero Modes in Superconductor-Magnetic Insulator Nanowire Hybrid Systems
+10.1007/978-3-540-48095-2_7	Oriented atoms in a variable magnetic field
+10.1103/physrevb.90.115429	Tilting of the magnetic field in Majorana nanowires: Critical angle and zero-energy differential conductance
+10.1016/0730-725x(90)90005-m	Fiber-to-field angle dependence of proton nuclear magnetic relaxation in collagen
+10.1007/978-3-030-23509-3_8	Oriented Atoms in a Variable Magnetic Field
+10.1016/0304-8853(86)90915-7	Magnetic field dependence of the small angle neutron scattering in HoMo6Se8
+10.1016/j.physc.2017.10.005	Majorana ϕ 0 -junction in a disordered spin-orbit coupling nanowire with tilted magnetic field
+10.11606/d.43.2021.tde-19052021-163141	Majorana bound states in nanowire junctions
+10.1166/qm.2014.1099	Temperature, Confinement and Magnetic Field Dependence of Spin Transport in Ge Nanowire
+10.1007/978-4-431-66874-9_122	Magnetic Field Dependence of Critical Current Density of NbTi Thin Films as a Parameter of Angle
+10.1016/0926-2040(93)90023-g	The bond angle dependence of the asymmetry parameter of the oxygen-17 electric field gradient tensor
+10.7567/ssdm.2016.g-3-03	Magnetic Field Angle Dependence of Switching Field in CoFeB-MgO Magnetic Tunnel Junctions with Perpendicular Easy Axis at Low Temperature
+10.2139/ssrn.6985093	Majorana zero modes in metallic carbon nanotubes induced by magnetic field and geometry
+10.1109/tmag.2013.2278559	Electric Field-Induced Magnetization Switching in CoFeB-MgO—Static Magnetic Field Angle Dependence
+10.1063/1.88739	Dependence of bubble deflection angle on the orientation of an in-plane magnetic field
+10.1007/bf00681597	Magnetic field dependence of the Leggett angle, the susceptibility, and the longitudinal nuclear magnetic resonance of3He-B
+10.1103/physrevlett.99.156406	Magnetic Field and Pressure Dependence of Small Angle Neutron Scattering in MnSi
+10.1038/s41467-021-27943-9	Identification of a Kitaev quantum spin liquid by magnetic field angle dependence
+10.1063/1.1453347	Magnetization reversal analysis for antiferromagnetic-coupled films with magnetic field angle dependence

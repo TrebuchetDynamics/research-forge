@@ -1,0 +1,20 @@
+10.1103/physrevb.106.104517	Magnetic field constraint for Majorana zero modes in a hybrid nanowire
+10.1103/physrevb.86.220506	Splitting of the zero-bias conductance peak as smoking gun evidence for the existence of the Majorana mode in a superconductor-semiconductor nanowire
+10.1103/physrevb.86.220506	A Majorana smoking gun for the superconductor-semiconductor hybrid topological system
+10.1103/physrevlett.128.076803	Suppressing Andreev Bound State Zero Bias Peaks Using a Strongly Dissipative Lead.
+10.1103/2v41-yvs1	Majorana zero modes in semiconductor-superconductor hybrid structures: Defining topology in short and disordered nanowires through Majorana splitting
+10.1103/physrevb.97.165302	Two-terminal charge tunneling: Disentangling Majorana zero modes from partially separated Andreev bound states in semiconductor-superconductor heterostructures
+10.1103/physrevb.98.155314	Quantized zero-bias conductance plateau in semiconductor-superconductor heterostructures without topological Majorana zero modes
+10.1103/physrevb.109.115428	Phenomenology of Majorana zero modes in full-shell hybrid nanowires
+10.3390/quantum7030042	Topologically Protected Quantum Teleportation via Majorana Zero Modes: A Perspective on Scalability and Decoherence Immunity
+10.1103/physrevb.106.064505	Non-Hermiticity-stabilized Majorana zero modes in semiconductor-superconductor nanowires
+10.1007/978-3-031-55657-9_3	Subgap states in semiconductor-superconductor devices for quantum technologies: Andreev qubits and minimal Majorana chains
+10.1088/1367-2630/ad23a2	On the conclusive detection of Majorana zero modes: conductance spectroscopy, disconnected entanglement entropy and the fermion parity noise
+10.1103/physrevapplied.23.034068	Disorder effects in planar semiconductor-superconductor structures: Majorana wires versus Josephson junctions
+10.1103/physrevb.110.165404	Identifying trivial and Majorana zero-energy modes using the Majorana polarization
+10.1093/ptep/ptae065	Theory of Majorana zero modes in unconventional superconductors
+10.1126/sciadv.1701476	Experimental phase diagram of zero-bias conductance peaks in superconductor/semiconductor nanowire devices
+	A random matrix theory for the robustness, quantization, and end-to-end correlation of zero-bias conductance peaks in class D ensemble: Searching for Majorana zero modes in disordered quantum dots and wires
+10.1103/physrevb.103.224505	Disorder effects on Majorana zero modes: Kitaev chain versus semiconductor nanowire
+10.1007/s11433-021-1737-4	Experimental review on Majorana zero-modes in hybrid nanowires
+10.1103/physrevb.101.245405	Hybridization energy oscillations of Majorana and Andreev bound states in semiconductor-superconductor nanowire heterostructures

@@ -1,0 +1,24 @@
+{
+  "observed_at": "2026-10-21T15:15:15.757377+00:00",
+  "kind": "partial_closeout",
+  "session_ledgers": [
+    {
+      "session": "/home/xel/.local/state/pi-autowork/d0648c07b9fe8e30/sessions/2026-10-20T19-25-22-756Z_pi-autowork-V-FS2-attempt-1.jsonl",
+      "assistant_messages": 14,
+      "tokens": 729120,
+      "host_reported_cost_usd": 0.5080671999999999
+    },
+    {
+      "session": "/var/tmp/aw-1000-d0648c07-1/vfs2-agent/run-0/session.jsonl",
+      "assistant_messages": 6,
+      "tokens": 232632,
+      "host_reported_cost_usd": 0.2092848
+    }
+  ],
+  "persisted_tokens_lower_bound": 961752,
+  "ceiling_tokens": 1000000,
+  "remaining_at_snapshot_upper_bound": 38248,
+  "excludes": "Subsequent model closeout messages; no future consumption assumed zero.",
+  "status": "partial_unfinished_not_a_public_example",
+  "commit": null
+}

@@ -1,0 +1,20 @@
+10.1038/s41467-019-09771-0	Concomitant opening of a bulk-gap with an emerging possible Majorana zero mode
+10.1103/physrevb.92.174511	Effects of large induced superconducting gap on semiconductor Majorana nanowires
+10.1063/5.0102999	Majorana nanowires for topological quantum computation
+10.1103/physrevb.98.144511	Metamorphosis of Andreev bound states into Majorana bound states in pristine nanowires
+10.48550/arxiv.1807.06632	Concomitant opening of a topological bulk-gap with an emerging Majorana edge-state
+10.1103/physrevb.86.180503	Transport spectroscopy of N S nanowire junctions with Majorana fermions
+10.1038/s41467-019-13133-1	Next steps of quantum transport in Majorana nanowire devices
+10.1103/physrevresearch.2.013377	Physical mechanisms for zero-bias conductance peaks in Majorana nanowires
+10.1103/physrevb.103.014513	Three-terminal nonlocal conductance in Majorana nanowires: Distinguishing topological and trivial in realistic systems with disorder and inhomogeneous potential
+10.1088/1367-2630/18/3/033013	Effects of the electrostatic environment on the Majorana nanowire devices
+10.1103/physrevb.93.245404	Approaching a topological phase transition in Majorana nanowires
+10.1038/s42254-020-0228-y	From Andreev to Majorana bound states in hybrid superconductor–semiconductor nanowires
+10.1103/physrevlett.109.266402	To Close or Not to Close: The Fate of the Superconducting Gap Across the Topological Quantum Phase Transition in Majorana-Carrying Semiconductor Nanowires
+10.1103/physrevb.103.235201	Closing of the induced gap in a hybrid superconductor-semiconductor nanowire
+10.1103/physrevb.108.085415	Density of states, transport, and topology in disordered Majorana nanowires
+10.1103/physrevlett.123.107703	Ubiquitous Non-Majorana Zero-Bias Conductance Peaks in Nanowire Devices
+10.1103/physrevb.96.125435	Majorana states in prismatic core-shell nanowires
+10.1103/physrevb.102.125407	Majorana-based quantum computing in nanowire devices
+10.11606/d.43.2021.tde-19052021-163141	Majorana bound states in nanowire junctions
+10.1088/1361-648x/ac44d2	Majorana/Andreev crossover and the fate of the topological phase transition in inhomogeneous nanowires

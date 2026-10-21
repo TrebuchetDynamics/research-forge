@@ -1,0 +1,20 @@
+10.1103/physrevb.103.014513	Three-terminal nonlocal conductance in Majorana nanowires: Distinguishing topological and trivial in realistic systems with disorder and inhomogeneous potential
+10.1103/physrevb.100.045302	Presence versus absence of end-to-end nonlocal conductance correlations in Majorana nanowires: Majorana bound states versus Andreev bound states
+10.1088/1361-6641/ac187b	Charge-neutral nonlocal response in superconductor-InAs nanowire hybrid devices
+10.1016/j.rinp.2021.104273	Distinguishing Majorana and quasi-Majorana bound states in a hybrid superconductor-semiconductor nanowire with inhomogeneous potential barriers
+10.1103/physrevb.97.214502	Distinguishing topological Majorana bound states from trivial Andreev bound states: Proposed tests through differential tunneling conductance spectroscopy
+10.1103/12cp-xlkb	Avoiding dilution: Using diffusion and vision transformers to resolve Majorana features in nanowires at high temperature
+10.1103/physrevb.89.045143	Conductance fingerprint of Majorana fermions in the topological Kondo effect
+10.1103/physrevb.104.075405	Local and nonlocal quantum transport due to Andreev bound states in finite Rashba nanowires with superconducting and normal sections
+10.1038/s41598-022-05855-y	Accessing the degree of Majorana nonlocality in a quantum dot-optical microcavity system
+10.1103/physrevb.103.235201	Closing of the induced gap in a hybrid superconductor-semiconductor nanowire
+10.1038/s41598-021-96415-3	Topological isoconductance signatures in Majorana nanowires
+10.1103/physrevlett.119.057002	Transport through a Majorana Island in the Strong Tunneling Regime.
+10.1016/j.ssc.2020.113973	The modulation of Majorana bound states comb through quantum dots
+10.1103/physrevb.93.245418	Enhanced current noise correlations in a Coulomb-Majorana device
+10.1103/physrevb.88.180507	Electrical detection of topological quantum phase transitions in disordered Majorana nanowires
+10.1103/4dy1-kdzp	Nonlocal conductance of a Majorana wire near the topological transition
+10.1103/physrevb.106.094504	Quality factor for zero-bias conductance peaks in Majorana nanowire
+10.1038/s41565-024-01602-8	Author Correction: Ballistic Majorana nanowire devices
+10.1103/physrevlett.132.099901	Erratum: Ubiquitous Non-Majorana Zero-Bias Conductance Peaks in Nanowire Devices [Phys. Rev. Lett. 123, 107703 (2019)].
+10.1103/physrevb.105.l161403	Nonlocal conductance and the detection of Majorana zero modes: Insights from von Neumann entropy

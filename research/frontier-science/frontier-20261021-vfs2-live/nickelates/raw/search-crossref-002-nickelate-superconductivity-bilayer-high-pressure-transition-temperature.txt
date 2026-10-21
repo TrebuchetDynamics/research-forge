@@ -1,0 +1,18 @@
+10.15302/frontphys.2026.115301	Progress of ambient-pressure superconductivity in bilayer nickelate thin films
+10.1021/acs.inorgchem.4c03042.s001	Temperature-Dependent Structural Evolution of RuddlesdenPopper Bilayer Nickelate La3Ni2O7
+10.54254/2753-8818/2026.dl33826	Nickelate Superconductors: A Gateway to High-Temperature Superconductivity
+10.1016/0921-4534(94)91928-3	Constant-pressure versus constant-volume resistivities of some high transition temperature superconductors
+10.1007/978-1-4684-3351-7_14	Pressure Induced Spin-Glass→Single-Impurity Transition in LaCe, Superconductivity in LaCe and YCe under Pressure
+10.1007/978-3-662-05613-4_36	Effects of Gas Pressure on the Phase Transition Temperature of Liposomal Bilayer Membranes
+10.21203/rs.3.rs-6967272/v1	Enhanced superconductivity in the compressively strained bilayer nickelate thin films by pressure
+10.1201/9781003209621-5	Transition Metal Oxides and High Temperature Superconductors
+10.1103/btb3-gww3	Magnetism and superconductivity in bilayer nickelate
+10.1007/978-0-387-68734-6_11	High-Pressure Effects
+10.1021/acs.jpcc.6c00868.s001	Mechanism of Pressure-Driven High-Temperature Superconductivity in LiAlH Systems under High Pressure
+10.2139/ssrn.7447208	Emergent Fibonacci Anyon Phases in Bilayer Nickelate La₃Ni₂O₇ under Pressure ​​
+10.1016/j.newton.2026.100470	Pressure lifts nickelate superconductivity to 48 K
+10.1007/978-1-4684-3351-7_23	High Temperature Superconductivity and Instabilities
+10.1007/0-306-48216-9_2	Superconducting Transition
+10.1080/08957959108245505	High temperature superconductivity under pressure
+10.1016/j.physc.2014.04.034	Ferromagnetic thickness dependence of superconducting transition temperature in a superconductor/ferromagnet bilayer system with an inhomogeneous exchange field
+10.1016/j.physc.2013.02.008	On the high pressure superconductivity of transition metal nitride: TiN

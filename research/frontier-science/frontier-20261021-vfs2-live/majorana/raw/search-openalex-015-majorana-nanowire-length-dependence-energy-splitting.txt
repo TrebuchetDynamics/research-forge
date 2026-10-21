@@ -1,0 +1,20 @@
+10.1103/physrevb.96.054504	Conductance of a superconducting Coulomb-blockaded Majorana nanowire
+10.1103/physrevb.98.085125	Nonlocality of Majorana modes in hybrid nanowires
+10.1038/s41535-017-0012-0	Zero-energy pinning from interactions in Majorana nanowires
+10.3762/bjnano.9.127	Andreev spectrum and supercurrents in nanowire-based SNS junctions containing Majorana bound states
+10.1063/5.0102999	Majorana nanowires for topological quantum computation
+10.1088/1361-648x/aba154	Leakage of Majorana bound states in an inhomogeneous topological nanowire
+10.1088/1367-2630/18/3/033013	Effects of the electrostatic environment on the Majorana nanowire devices
+10.1038/s42254-020-0228-y	From Andreev to Majorana bound states in hybrid superconductor–semiconductor nanowires
+10.1038/s41467-019-13133-1	Next steps of quantum transport in Majorana nanowire devices
+10.1038/nature17162	Exponential protection of zero modes in Majorana islands
+10.1103/physrevb.96.205425	Majorana splitting from critical currents in Josephson junctions
+10.1103/physrevb.93.245404	Approaching a topological phase transition in Majorana nanowires
+10.1103/physrevb.98.235406	Quantifying wave-function overlaps in inhomogeneous Majorana nanowires
+10.1088/1367-2630/14/12/125011	A zero-voltage conductance peak from weak antilocalization in a Majorana nanowire
+10.1103/physrevx.8.031041	Effects of Gate-Induced Electric Fields on Semiconductor Majorana Nanowires
+10.1038/s41567-020-01107-w	Non-Majorana states yield nearly quantized conductance in proximatized nanowires
+10.1103/physrevlett.122.187702	Spin-Orbit Protection of Induced Superconductivity in Majorana Nanowires
+10.1103/physrevb.96.125435	Majorana states in prismatic core-shell nanowires
+10.1088/1367-2630/aae61d	Electric field tunable superconductor-semiconductor coupling in Majorana nanowires
+10.1088/1367-2630/17/7/075001	Substrate-induced Majorana renormalization in topological nanowires

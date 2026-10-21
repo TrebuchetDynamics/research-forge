@@ -1,0 +1,19 @@
+	Measurement-induced enhancement of the $X$-parity lifetime in a Majorana tetron
+10.1038/nphys3461	Parity lifetime of bound states in a proximitized semiconductor nanowire
+10.1038/s41586-024-08445-2	Interferometric single-shot parity measurement in InAs–Al hybrid devices
+	Distinct Lifetimes for $X$ and $Z$ Loop Measurements in a Majorana Tetron Device
+10.1088/1361-648x/aba291	Combating quasiparticle poisoning with multiple Majorana fermions in a periodically-driven quantum wire
+10.1103/physrevlett.118.137701	Transport Signatures of Quasiparticle Poisoning in a Majorana Island.
+10.1103/physrevb.108.214520	Parity-protected superconducting diode effect in topological Josephson junctions
+	Proposing one-sided tetrons as topological qubits for Majorana-based quantum computation
+	Interferometric Single-Shot Parity Measurement in an InAs-Al Hybrid Device
+10.1103/physrevb.89.140505	Proposal to measure the quasiparticle poisoning time of Majorana bound states
+10.1103/physrevlett.108.257001	ac Josephson effect in finite-length nanowire junctions with Majorana modes.
+	nite-length nanowire junctions with Majorana modes
+10.1103/physrevb.98.174502	Magnetic-field-dependent quasiparticle dynamics of nanowire single-Cooper-pair transistors
+10.1063/5.0140079	Realization of superconducting transmon qubits based on topological insulator nanowires
+10.24355/dbbs.084-202106171212-0	Signatures of Majorana bound states in the electronic transport through finite-size topological superconductors
+	Monte Carlo studies of modified scalable designs for quantum computation
+10.4233/uuid:ebfff02c-f87c-4c8a-9edd-53adb12f4403	Superconducting islands and gate-based readout in semiconductor nanowires
+10.1088/2633-4356/abfbc9	The hybrid topological longitudinal transmon qubit
+10.4233/uuid:dd3c8524-413c-405b-98f2-9dba974965db	Hybrid Josephson junction-based quantum devices in magnetic field

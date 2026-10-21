@@ -1,0 +1,20 @@
+	Shunt-controlled resistive state of superconducting wires
+10.1109/tasc.2025.3550837	Resistance of high-temperature superconducting tapes triggered by alternating magnetic field
+10.1016/j.physc.2024.1354531	Describing heat dissipation in the resistive state of three-dimensional superconductors
+10.1038/s41586-025-08755-z	Ambient-pressure superconductivity onset above 40 K in bilayer nickelate ultrathin films
+10.1016/s0375-9601(02)00725-9	Superconductivity of epsilon-Fe: complete resistive transition
+10.1103/physrevb.64.220504	On the origin of the zero-resistance anomaly in heavy fermion superconducting Ir: a clue from magnetic field and Rh-doping studies
+10.1093/nsr/nwag151	Superconductivity onset above 60 K in ambient-pressure nickelate films
+	High Temperature Superconducting Radio Frequency Coils for NMR Spectroscopy and Magnetic Resonance Imaging
+	Superconductivity from Meissner Effect and Zero Resistivity in a Phenyl Molecule
+	Josephson-like Colossal Resistive Switching in Nanocrystalline Y-Ba-Cu-O at Room Temperature
+10.1109/tasc.2016.2638404	Relaxation of Microwave Nonlinearity in a Cuprate Superconducting Resonator
+10.1063/5.0162409	Thermal resistance in superconducting flip-chip assemblies
+	Bulk superconductivity in quintuple-layer square-planar nickelate La6Ni5O12
+10.1038/s41567-024-02515-y	High-temperature superconductivity with zero-resistance and strange metal behavior in La$_{3}$Ni$_{2}$O$_{7-δ}$
+	Observation of double resistance anomalies and excessive resistance in mesoscopic superconducting Au$_{0.7}$In$_{0.3}$ rings with phase separation
+10.1016/j.physc.2020.1353811	Negative nonlocal and local voltages (resistances) in a quasi-one-dimensional superconducting aluminum structure
+10.1016/j.physc.2017.12.001	Superconductivity driven by pairing of the coherent parts of the physical electrons
+10.1007/s10948-017-4366-0	Phase transitions in quasi-one dimensional system with unconventional superconductivity
+10.1134/1.1364540	Width of the Zero-Field Superconducting Resistive Transition in the Vicinity of the Localization Threshold
+10.1109/tasc.2007.897322	Imaging of Microscopic Sources of Resistive and Reactive Nonlinearities in Superconducting Microwave Devices

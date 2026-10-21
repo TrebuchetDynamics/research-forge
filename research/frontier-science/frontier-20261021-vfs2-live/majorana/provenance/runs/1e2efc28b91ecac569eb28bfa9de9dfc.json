@@ -1,0 +1,214 @@
+{
+  "depth": "standard",
+  "errors": [],
+  "interrupted": true,
+  "limit": 20,
+  "outputs": [
+    {
+      "path": "results.jsonl",
+      "sha256": "5c3338bb7979a1add9d3e5c3114bac05855179da3fad272c41d7f5367aa96720"
+    },
+    {
+      "path": "results-deduped.jsonl",
+      "sha256": "3c271c91c05527eddbdae07bbb37252fd4da129a7fd1dffcf794b54ae31d6a0a"
+    },
+    {
+      "path": "results.md",
+      "sha256": "b28768b91f05e261333fbe9fb4d581838c230582332d337a407ff731885478f8"
+    },
+    {
+      "path": "failures.jsonl",
+      "sha256": "169f95b169eeef0f0ee069184c6ea1ef933b078043bc849ebf1454e72c2a8c21"
+    },
+    {
+      "path": "manifest.json",
+      "sha256": "071f81eb4776d93622af1d1bc61e6363618bd510b707e9c3fb22b0ed52da203b"
+    },
+    {
+      "path": "batch-state.json",
+      "sha256": "769edac99179a31c0f6d43a0762ce6a51293b9ae9e1b3c64381947043d3d0f91"
+    },
+    {
+      "path": "search-stats.txt",
+      "sha256": "9c3e5ccec888e621329f7331db3771107ed8e6c164c3f2ea218435c746b75655"
+    },
+    {
+      "path": "raw/search-openalex-001-majorana-zero-modes-semiconductor-superconductor-nanowire-experimental-evidence.txt",
+      "sha256": "bc0479963bfa8edcd938154d4bec8bc64b7305f99573149fcd03dc70e86dd804"
+    },
+    {
+      "path": "raw/search-crossref-001-majorana-zero-modes-semiconductor-superconductor-nanowire-experimental-evidence.txt",
+      "sha256": "fe40241ccc4efb55f6558f8a64212b2bd1d8d79da830e924b90c30dbab7c4c94"
+    },
+    {
+      "path": "raw/search-arxiv-001-majorana-zero-modes-semiconductor-superconductor-nanowire-experimental-evidence.txt",
+      "sha256": "a9d0209bd4ee90cb51b6755c43268410da1546ddaadff063b1d11b8b49832ffd"
+    },
+    {
+      "path": "raw/search-openalex-002-majorana-nanowire-zero-bias-peak-trivial-andreev-bound-states.txt",
+      "sha256": "9c91a87fb51cec339816853ee47d317b02ea6b68197949680df54ea0d361855b"
+    },
+    {
+      "path": "raw/search-crossref-002-majorana-nanowire-zero-bias-peak-trivial-andreev-bound-states.txt",
+      "sha256": "8dca1f41da6e42ce695669dc336aa441255343b4940040d5f54a044683a9aec7"
+    },
+    {
+      "path": "raw/search-arxiv-002-majorana-nanowire-zero-bias-peak-trivial-andreev-bound-states.txt",
+      "sha256": "70da545a8eb315d0f13b0a2e399d73bad61b6ad12d34f563d239c1d9ad9a1ecf"
+    },
+    {
+      "path": "raw/search-openalex-003-majorana-nanowire-quantized-conductance-replication.txt",
+      "sha256": "c811cc30faa36f308fd8f33e200dcfedfc04241c518e268dd9970a40e0b0f1cf"
+    },
+    {
+      "path": "raw/search-crossref-003-majorana-nanowire-quantized-conductance-replication.txt",
+      "sha256": "f25907de83756d6f3f93bd8e54e1c6c9292060d45993c3371d1b406b91f75710"
+    },
+    {
+      "path": "raw/search-arxiv-003-majorana-nanowire-quantized-conductance-replication.txt",
+      "sha256": "6bdc55c8334504acacc0cb611ca3740c5b19b256da36a20dfbe4492a6044cf39"
+    },
+    {
+      "path": "raw/search-openalex-004-majorana-nanowire-quantized-conductance-correction-retraction.txt",
+      "sha256": "31405b97d42bbbb43e586f021e7879733d32499133af853db19751c869831498"
+    },
+    {
+      "path": "raw/search-crossref-004-majorana-nanowire-quantized-conductance-correction-retraction.txt",
+      "sha256": "fda7220d1914fea4f02505b3abfff2a86c480bfed3dcb290de48854a99a9ba49"
+    },
+    {
+      "path": "raw/search-arxiv-004-majorana-nanowire-quantized-conductance-correction-retraction.txt",
+      "sha256": "a3a0a552197ada2b75f6b14e327df0960960299b41b7c567115bc21bdd955436"
+    },
+    {
+      "path": "raw/search-openalex-005-majorana-nanowire-disorder-induced-zero-bias-peaks.txt",
+      "sha256": "0df393247f7935dcabd24c5d30638bb6266d4ae974b310a4c907c62ba2250106"
+    },
+    {
+      "path": "raw/search-crossref-005-majorana-nanowire-disorder-induced-zero-bias-peaks.txt",
+      "sha256": "38e2cea422ba12c0b05e7f102f66f7134289eb72aec58d66eb2c2622692a253d"
+    },
+    {
+      "path": "raw/search-arxiv-005-majorana-nanowire-disorder-induced-zero-bias-peaks.txt",
+      "sha256": "0185e30789fb892dc9ad19c95de9f9131fa10537583672abcb7df0971ca079ca"
+    },
+    {
+      "path": "raw/search-openalex-006-majorana-nanowire-smooth-confinement-andreev-states.txt",
+      "sha256": "8210fde419a16c7305732da00b57e9672d0d50cf10a1161a1824dad235c2d1bf"
+    },
+    {
+      "path": "raw/search-crossref-006-majorana-nanowire-smooth-confinement-andreev-states.txt",
+      "sha256": "be6e032d91c34bea3723a5804239b7202c022627878473fbf21580ba0a5cbf36"
+    },
+    {
+      "path": "raw/search-arxiv-006-majorana-nanowire-smooth-confinement-andreev-states.txt",
+      "sha256": "b1dd6e238d39f6a61bf00103a59827a34f759c72ac8fc57166bee0d3a6c1c23d"
+    },
+    {
+      "path": "raw/search-openalex-007-majorana-nanowire-nonlocal-conductance.txt",
+      "sha256": "007745ed43ca9b18819aa513b139b625a31934d24935511b8ae37da810b42ef4"
+    },
+    {
+      "path": "raw/search-crossref-007-majorana-nanowire-nonlocal-conductance.txt",
+      "sha256": "b46444eec6038ff507e2ac92809c346418109b3e75535a6d408578fe7bd8683a"
+    },
+    {
+      "path": "raw/search-arxiv-007-majorana-nanowire-nonlocal-conductance.txt",
+      "sha256": "01a38618e27f5df9941def1ba7de75405167732e627e1bcdce1b184ac2b893af"
+    },
+    {
+      "path": "raw/search-openalex-008-majorana-nanowire-bulk-gap-closing-reopening.txt",
+      "sha256": "34902f0d093336df4c6d5b13c0fd86b1317f0d5ac68b297657d087ef3ffadb7d"
+    },
+    {
+      "path": "raw/search-crossref-008-majorana-nanowire-bulk-gap-closing-reopening.txt",
+      "sha256": "10e76fc8208400b49443f785a11400d55eb5fd8acd7a0ddb99723927e52bf242"
+    },
+    {
+      "path": "raw/search-arxiv-008-majorana-nanowire-bulk-gap-closing-reopening.txt",
+      "sha256": "d1daefbfe1dce4febcdfb05e029cdad59d02125651f99cef8185b68f6fa7a9b4"
+    },
+    {
+      "path": "raw/search-openalex-009-majorana-nanowire-topological-gap-protocol.txt",
+      "sha256": "7170ccd69d44db3241e6e8e6f6efba157b7cbe3c6bab45be6dafd68007dc1e05"
+    },
+    {
+      "path": "raw/search-crossref-009-majorana-nanowire-topological-gap-protocol.txt",
+      "sha256": "adf977d26416360fa25729afa3d66c8d28b3de501fd17ce35ce7d429fd1cae85"
+    },
+    {
+      "path": "raw/search-arxiv-009-majorana-nanowire-topological-gap-protocol.txt",
+      "sha256": "2e23b82d8fd8504f7e9b9490c9594d0fbbcd05f2c9aefdb54dc8a9fc1e467195"
+    },
+    {
+      "path": "raw/search-openalex-010-majorana-nanowire-topological-gap-protocol-criticism.txt",
+      "sha256": "f91d847ca9800d85a052941fec4ebe459cd3e5db7b94390c4b2054f8f988c5ce"
+    },
+    {
+      "path": "raw/search-crossref-010-majorana-nanowire-topological-gap-protocol-criticism.txt",
+      "sha256": "141df6eaf3b83deadd464dce1b80b7ab38dc84909ca3ab09888a084b8bfb0ce7"
+    },
+    {
+      "path": "raw/search-arxiv-010-majorana-nanowire-topological-gap-protocol-criticism.txt",
+      "sha256": "a5ce7b07f1d943a828e48882ccb7e495fa0098675964a3f1400f95c69bfeb7dd"
+    },
+    {
+      "path": "raw/search-openalex-011-majorana-nanowire-coulomb-blockade-parity.txt",
+      "sha256": "638f7be59d8c95a9fac5194ca0f589f2373ee3c89ad273de9457a47b24ee9491"
+    },
+    {
+      "path": "raw/search-crossref-011-majorana-nanowire-coulomb-blockade-parity.txt",
+      "sha256": "1af2c2f413cccb642d6d98f92e0897e74b1054c06bf798d59bfae3f71f09eb5f"
+    },
+    {
+      "path": "raw/search-arxiv-011-majorana-nanowire-coulomb-blockade-parity.txt",
+      "sha256": "6d33a939dbb4da7c480c83972a61f0d7b75096769a4732d80577c1a4b0ed6773"
+    },
+    {
+      "path": "raw/search-openalex-012-majorana-nanowire-parity-lifetime-poisoning.txt",
+      "sha256": "cb988f99615d79c7edab59bd2296306eb2c683b5cd3704ae8df11d9adf8ba1ca"
+    },
+    {
+      "path": "raw/search-crossref-012-majorana-nanowire-parity-lifetime-poisoning.txt",
+      "sha256": "482ab3788c8442863e673b3370b7415e03a8f6a8bc012169af5a6a92b474a7c6"
+    }
+  ],
+  "provenance_level": "engine_verified",
+  "queries": [
+    "Majorana zero modes semiconductor superconductor nanowire experimental evidence",
+    "Majorana nanowire zero bias peak trivial Andreev bound states",
+    "Majorana nanowire quantized conductance replication",
+    "Majorana nanowire quantized conductance correction retraction",
+    "Majorana nanowire disorder induced zero bias peaks",
+    "Majorana nanowire smooth confinement Andreev states",
+    "Majorana nanowire nonlocal conductance",
+    "Majorana nanowire bulk gap closing reopening",
+    "Majorana nanowire topological gap protocol",
+    "Majorana nanowire topological gap protocol criticism",
+    "Majorana nanowire Coulomb blockade parity",
+    "Majorana nanowire parity lifetime poisoning",
+    "Majorana nanowire conductance temperature dependence",
+    "Majorana nanowire magnetic field angle dependence",
+    "Majorana nanowire length dependence energy splitting",
+    "Majorana nanowire Josephson fractional periodicity trivial explanation",
+    "Majorana nanowire braiding non Abelian experimental evidence",
+    "Majorana nanowire correlated end states",
+    "Majorana nanowire independent replication experimental signatures",
+    "Majorana nanowire review experimental limitations"
+  ],
+  "question": "Majorana zero modes semiconductor superconductor nanowire experimental evidence; Majorana nanowire zero bias peak trivial Andreev bound states; Majorana nanowire quantized conductance replication; Majorana nanowire quantized conductance correction retraction; Majorana nanowire disorder induced zero bias peaks; Majorana nanowire smooth confinement Andreev states; Majorana nanowire nonlocal conductance; Majorana nanowire bulk gap closing reopening; Majorana nanowire topological gap protocol; Majorana nanowire topological gap protocol criticism; Majorana nanowire Coulomb blockade parity; Majorana nanowire parity lifetime poisoning; Majorana nanowire conductance temperature dependence; Majorana nanowire magnetic field angle dependence; Majorana nanowire length dependence energy splitting; Majorana nanowire Josephson fractional periodicity trivial explanation; Majorana nanowire braiding non Abelian experimental evidence; Majorana nanowire correlated end states; Majorana nanowire independent replication experimental signatures; Majorana nanowire review experimental limitations",
+  "rforge_version": {
+    "commit": "unknown",
+    "date": "unknown",
+    "version": "dev"
+  },
+  "run_id": "1e2efc28b91ecac569eb28bfa9de9dfc",
+  "schema_version": "2",
+  "sources": [
+    "openalex",
+    "crossref",
+    "semantic-scholar",
+    "arxiv"
+  ],
+  "timestamp": "2026-10-21T15:08:53.806433551Z"
+}

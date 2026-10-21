@@ -1,0 +1,20 @@
+10.1063/5.0005103	Aspects of the Synthesis of Thin Film Superconducting Infinite-Layer Nickelates
+10.1002/adfm.202409930	Unraveling p-type and n-type interfaces in Superconducting Infinite-Layer Nickelate thin films
+10.3389/fphy.2021.719534	Impact of Cation Stoichiometry on the Crystalline Structure and Superconductivity in Nickelates
+	Towards reliable synthesis of superconducting infinite layer nickelate thin films by topochemical reduction
+10.1016/j.tsf.2003.11.188	Quenched growth of nanostructured lead thin films on insulating substrates
+10.1038/s43246-025-01013-9	Achieving superconductivity in infinite-layer nickelate thin films by aluminum sputtering deposition
+10.3389/fphy.2022.828007	Thin-film aspects of superconducting nickelates
+10.1109/tasc.2016.2631948	Superconducting NbTiN Thin Films with Highly Uniform Properties over a 100 mm diameter Wafer
+10.7498/aps.74.20251080	Preparation and optimization of high-temperature superconducting Ruddlesden-Popper nickelate thin films
+	Enhanced Superconductivity and Mixed-dimensional Behaviour in Infinite-layer Samarium Nickelate Thin Films
+10.1021/acs.nanolett.0c01392	A superconducting praseodymium nickelate with infinite layer structure
+10.1088/0953-2048/21/01/015018	Effect of stoichiometry on oxygen incorporation in MgB2 thin films
+10.1126/sciadv.abl9927	Superconductivity in infinite-layer nickelate La$_{1-x}$Ca$_x$NiO$_2$ thin films
+10.1021/acsami.0c18327	Controlling Metal-Insulator Transitions in Vanadium Oxide Thin Films by Modifying Oxygen Stoichiometry
+	Direct imaging of disordered residual oxygen and its impact on electronic structure in an infinite-layer nickelate superlattice
+10.1016/s0040-6090(03)01025-3	Pulsed Laser Deposition of epitaxial titanium diboride thin films
+10.15302/frontphys.2026.115301	Progress of ambient-pressure superconductivity in bilayer nickelate thin films
+10.1002/adma.202416187	Superconductivity in PrNiO2 infinite-layer nickelates
+	Evaluation of the superconducting characteristics of multi-layer thin-film structures of NbN and SiO$_2$ on pure Nb substrate
+10.1038/s41563-023-01510-7	Reconstructing the polar interface of infinite-layer nickelate thin films

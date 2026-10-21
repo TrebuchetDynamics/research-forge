@@ -1,0 +1,5 @@
+10.1038/s41535-025-00830-y	Stabilization of Tetragonal Phase and Aluminum-Doping Effect in a Bilayer Nickelate
+10.1021/acs.chemmater.5c00507	Stabilization of Infinite-Layer NdNi1–xAlxO2 Nickelates Containing Monovalent Ni as Bulk Polycrystalline Materials
+	Optically Activated Superconductivity in MgB2 via Electroluminescent GaP Inhomogeneous Phase
+10.48550/arxiv.2310.11801	Towards Quantum Dynamics Simulation of Physical Systems: A Survey
+10.58088/e3xp-j961	Vanadium dioxide deposited by pulsed laser deposition: from materials optimization to applications in terahertz modulation

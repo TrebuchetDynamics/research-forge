@@ -1,0 +1,17 @@
+10.21203/rs.3.rs-1566363/v1	Conductance Spectroscopy of Majorana Zero Modes in Superconductor-Magnetic Insulator Nanowire Hybrid Systems
+10.1103/physrevb.96.054504	Conductance of a superconducting Coulomb-blockaded Majorana nanowire
+10.18130/v3wr9c	The Temperature Dependence of Thermal Conductance at Solid/Solid Interfaces
+10.12693/aphyspola.138.681	Majorana Bound States and Zero-Bias Conductance Peaks in Superconductor/Semiconductor Nanowire Devices
+10.1103/physrevb.106.094504	Quality factor for zero-bias conductance peaks in Majorana nanowire
+10.1103/physrevb.96.184520	Electron temperature and tunnel coupling dependence of zero-bias and almost-zero-bias conductance peaks in Majorana nanowires
+10.33915/etd.6720	Conductance Calculations for Semiconductor-Superconductor Majorana Structures
+10.11606/d.43.2021.tde-19052021-163141	Majorana bound states in nanowire junctions
+10.1088/1367-2630/14/12/125011	A zero-voltage conductance peak from weak antilocalization in a Majorana nanowire
+10.1021/acsaelm.4c01965.s002	Extracting the Temperature Dependence of Both Nanowire Resistivity and Junction Resistance from Electrical Measurements on Printed Silver Nanowire Networks
+10.1021/acsaelm.4c01965.s001	Extracting the Temperature Dependence of Both Nanowire Resistivity and Junction Resistance from Electrical Measurements on Printed Silver Nanowire Networks
+10.1103/physrevb.99.024510	Conductance smearing and anisotropic suppression of induced superconductivity in a Majorana nanowire
+10.1103/physrevb.86.220506	Splitting of the zero-bias conductance peak as smoking gun evidence for the existence of the Majorana mode in a superconductor-semiconductor nanowire
+10.1016/s0042-207x(76)81078-0	Temperature dependence of gas conductance through porous silicon carbide plugs
+10.1063/1.4947307	Low-energy anomalies in electron tunneling through strongly asymmetric Majorana nanowire
+10.1016/0042-207x(75)91656-5	Temperature dependence of gas conductance through porous silicon carbide plugs
+10.1063/pt.4.0018	Majorana fermions in a nanowire?

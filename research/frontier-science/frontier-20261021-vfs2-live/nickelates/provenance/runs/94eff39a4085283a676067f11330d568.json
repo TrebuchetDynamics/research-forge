@@ -1,0 +1,132 @@
+{
+  "depth": "standard",
+  "errors": [],
+  "interrupted": false,
+  "limit": 20,
+  "outputs": [
+    {
+      "path": "results.jsonl",
+      "sha256": "aa3888c5ae00b31f68cab327dc94456f816a52894ac6eb970e81354d72c5ec69"
+    },
+    {
+      "path": "results-deduped.jsonl",
+      "sha256": "6ff91933c2e4db9f4ec7c7b596ae49ba04c45d858189424c130ac85c8f85bfd1"
+    },
+    {
+      "path": "results.md",
+      "sha256": "88f4c1b28ff967e9756cb9799474ca2844f99cd42b9f3c829215ec2a2d73a34f"
+    },
+    {
+      "path": "failures.jsonl",
+      "sha256": "4ae1695b4f0ddaaa754f4e7e472c71e1685260a59098c8a1d8c02eb02d6aaa1f"
+    },
+    {
+      "path": "manifest.json",
+      "sha256": "25aa31238960ebada4ad1d446ffe83c9f8677642cdfd85680ef449a6e72e5115"
+    },
+    {
+      "path": "batch-state.json",
+      "sha256": "48208b9b9dd39511636044b230bc80d4f10642bf8aaf256a7554261ad8d1fd86"
+    },
+    {
+      "path": "search-stats.txt",
+      "sha256": "17d56f8a77fa176200ad86b1e9ffe559e76c4eb0e3fac3a607fb3dd9a3133006"
+    },
+    {
+      "path": "raw/search-openalex-001-nickelate-superconductivity-infinite-layer-thin-film-substrate-oxygen-stoichiome.txt",
+      "sha256": "ae492ef16b4831c1ff5b16722ac7f9d1b9ac2264f1ec418769979f70a95d0e0f"
+    },
+    {
+      "path": "raw/search-crossref-001-nickelate-superconductivity-infinite-layer-thin-film-substrate-oxygen-stoichiome.txt",
+      "sha256": "e2c0056064916a227560938e86bb211ee72a2c2ad62b3fe636648bebdbf35cf9"
+    },
+    {
+      "path": "raw/search-arxiv-001-nickelate-superconductivity-infinite-layer-thin-film-substrate-oxygen-stoichiome.txt",
+      "sha256": "74b1fecff60ac6eeb9d10d57d394012af8a9682703a9b36582fc23eb4925014c"
+    },
+    {
+      "path": "raw/search-openalex-002-nickelate-superconductivity-bilayer-high-pressure-transition-temperature.txt",
+      "sha256": "66aba9da0b2743773b07fa95f0b560d9657484363f7bbd1aa0a2bee426a9a7ad"
+    },
+    {
+      "path": "raw/search-crossref-002-nickelate-superconductivity-bilayer-high-pressure-transition-temperature.txt",
+      "sha256": "9e768d3e0778dfaae4eff0c2b4138ea8790f1a033a1502bffd68d6605995fb40"
+    },
+    {
+      "path": "raw/search-arxiv-002-nickelate-superconductivity-bilayer-high-pressure-transition-temperature.txt",
+      "sha256": "471b30818ad1e7f76ded60c8730cab0d5c2cea4f15ff129f8e02a4318a56b84f"
+    },
+    {
+      "path": "raw/search-openalex-003-nickelate-superconductivity-ambient-pressure-structural-phase.txt",
+      "sha256": "d31b51899b8d80ca3a90eebe51a70fb44f93cc86170d7a043cc5423b52259494"
+    },
+    {
+      "path": "raw/search-crossref-003-nickelate-superconductivity-ambient-pressure-structural-phase.txt",
+      "sha256": "73272f7c27f6672b8b2f768652881c7fbc30912b5acd73dfc7331c835be07d8d"
+    },
+    {
+      "path": "raw/search-arxiv-003-nickelate-superconductivity-ambient-pressure-structural-phase.txt",
+      "sha256": "fce1f5c0f252e367cdf06a4f4127cc13972ce44569e0296189aa5b6eff2434df"
+    },
+    {
+      "path": "raw/search-openalex-004-nickelate-superconductivity-resistive-onset-zero-resistance-magnetic-shielding.txt",
+      "sha256": "8d99fba68c8bb38d80368a07a46882751a7bbfe1de68441ee135e406fd8eccc1"
+    },
+    {
+      "path": "raw/search-crossref-004-nickelate-superconductivity-resistive-onset-zero-resistance-magnetic-shielding.txt",
+      "sha256": "b46ee3c993f498ef34920b7252ff0079eddc5a6a81dc6be023b7526ee4fcabe6"
+    },
+    {
+      "path": "raw/search-arxiv-004-nickelate-superconductivity-resistive-onset-zero-resistance-magnetic-shielding.txt",
+      "sha256": "651ded21a0ecd160cfe8fe175d3b9986b91566a1249e1812fc9e5f437ec16cbe"
+    },
+    {
+      "path": "raw/search-openalex-005-nickelate-superconductivity-independent-replication-pressure-calibration.txt",
+      "sha256": "2d87afe6bacfdd94516e32eade97b7d1075799583a699b44daba4257b2896652"
+    },
+    {
+      "path": "raw/search-crossref-005-nickelate-superconductivity-independent-replication-pressure-calibration.txt",
+      "sha256": "7e9abb04d3f20e15140994bf35282dfec224a25cf41dbb6bf0bbf0880a51c856"
+    },
+    {
+      "path": "raw/search-arxiv-005-nickelate-superconductivity-independent-replication-pressure-calibration.txt",
+      "sha256": "1d4c965f56ccba3677a35e3c856553d4c87a4ff7f31f8e15e68a1e33736b0ac3"
+    },
+    {
+      "path": "raw/search-openalex-006-nickelate-superconductivity-pairing-mechanism-experimental-constraints-review.txt",
+      "sha256": "28252b4bcd81372175d83a5b091a3eac1cd96dfb85dac90d2a25e0492cdc0a60"
+    },
+    {
+      "path": "raw/search-crossref-006-nickelate-superconductivity-pairing-mechanism-experimental-constraints-review.txt",
+      "sha256": "3bfd24db8aa125c71d1a48c8df975c4814858ea2af4793920c07118050a07f4e"
+    },
+    {
+      "path": "raw/search-arxiv-006-nickelate-superconductivity-pairing-mechanism-experimental-constraints-review.txt",
+      "sha256": "d259269aa39a4af6287f2a65c11d2132f9ed4c653c5bbdc8d572c27ea103a095"
+    }
+  ],
+  "provenance_level": "engine_verified",
+  "queries": [
+    "nickelate superconductivity infinite layer thin film substrate oxygen stoichiometry",
+    "nickelate superconductivity bilayer high pressure transition temperature",
+    "nickelate superconductivity ambient pressure structural phase",
+    "nickelate superconductivity resistive onset zero resistance magnetic shielding",
+    "nickelate superconductivity independent replication pressure calibration",
+    "nickelate superconductivity pairing mechanism experimental constraints review"
+  ],
+  "question": "nickelate superconductivity infinite layer thin film substrate oxygen stoichiometry; nickelate superconductivity bilayer high pressure transition temperature; nickelate superconductivity ambient pressure structural phase; nickelate superconductivity resistive onset zero resistance magnetic shielding; nickelate superconductivity independent replication pressure calibration; nickelate superconductivity pairing mechanism experimental constraints review",
+  "rforge_version": {
+    "commit": "unknown",
+    "date": "unknown",
+    "version": "dev"
+  },
+  "run_id": "94eff39a4085283a676067f11330d568",
+  "schema_version": "2",
+  "sources": [
+    "openalex",
+    "crossref",
+    "semantic-scholar",
+    "arxiv"
+  ],
+  "timestamp": "2026-10-21T15:12:24.547863548Z"
+}

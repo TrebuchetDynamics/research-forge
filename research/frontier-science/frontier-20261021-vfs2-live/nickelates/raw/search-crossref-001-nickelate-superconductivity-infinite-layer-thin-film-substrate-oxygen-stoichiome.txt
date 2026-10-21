@@ -1,0 +1,20 @@
+10.70675/8b6e727az284bz4f77za0cfza4f7d9c87e72	Innovative synthesis routes to superconducting infinite-layer nickelate thin films
+10.1016/s0921-4534(00)00246-x	Particle formation on the YBCO thin film surface: effect of stoichiometry and substrate material
+10.1016/j.physc.2005.06.002	Stoichiometry control of magnetron sputtered Bi2Sr2Ca1−xYxCu2Oy (0⩽x⩽0.5) thin film, composition spread libraries: Substrate bias and gas density factors
+10.21203/rs.3.rs-3607723/v1	Atomic origin of absent superconductivity in bulk infinite-layer nickelate
+10.1016/0921-4534(94)90796-x	P-type carrier doping in ACuO2 infinite-layer thin film
+10.1016/j.rinp.2020.103118	Classifying superconductivity in an infinite-layer nickelate Nd0.8Sr0.2NiO2
+10.1016/0921-4534(93)90703-s	A high-resolution electron microscopy study on epitaxial infinite- layer SrCuO2 thin films grown on a SrTiO3 (100) substrate
+10.1109/tasc.2003.811956	Infinite-layer copper-oxide laser-ablated thin films: substrate, buffer-layer, and processing effects
+10.1021/acs.nanolett.3c00192.s001	Thickness-Dependent Interface Polarity in Infinite-Layer Nickelate Superlattices
+10.12693/aphyspola.143.200	Hubbard Subbands and Superconductivity in the Infinite-Layer Nickelate
+10.20944/preprints201912.0191.v1	Classifying Superconductivity in an Infinite-Layer Nickelate Nd&lt;sub&gt;0.8&lt;/sub&gt;Sr&lt;sub&gt;0.2&lt;/sub&gt;NiO&lt;sub&gt;2&lt;/sub&gt;
+10.1016/0921-4534(94)90417-0	HREM observations of (Sr, Ca)CuO2 infinite-layer thin film prepared by RF thermal plasma evaporation
+10.1016/0921-4534(92)90605-c	Preservation of substrate crystal and enhancement of YBa2Cu3O7−x thin film growth using YSZ/Si3N4 as a buffer layer
+10.1038/s44160-025-00736-4	Freestanding infinite-layer nickelate super-conductors
+10.1016/0921-4534(94)92116-4	noise study in YBCO thin films with different oxygen stoichiometry
+10.70675/df81cc61z83a2z45a3z987bzf8a077a43652	Structural and orbital engineering in nickelate thin films : on the road of superconductivity
+10.1016/s0040-6090(98)01129-8	Effects of radical oxygen O* in synthesis of Sr1−xNaxCuO2 infinite-layer thin film by reactive RF sputtering
+10.1016/0921-4534(91)90452-5	Effect of substrate temperature and oxygen pressure on the microstructure of thin YBa2Cu3O7-δ film deposited on MgO by pulsed-laser ablation
+10.1016/j.tsf.2006.01.072	Deformation of thin solid film/liquid layer/substrate structures with rough liquid layer/substrate interface
+10.1016/s0921-4534(00)01263-6	Superconducting YBCO thin film on multicrystalline Ag film evaporated on MgO substrate

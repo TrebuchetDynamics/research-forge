@@ -1,0 +1,56 @@
+[
+  {
+    "slot": 1,
+    "status": "proposed",
+    "prediction": "In the dot-at-one-end model, candidate topological zero-bias features recur at both ends over the same field/chemical-potential window.",
+    "refuting_observation": "A reproducible candidate peak remains localized to one end despite verified sensitivity at both ends over that same window.",
+    "source_rationale": "M8 predicts end-correlated peaks in its specified model. M7 cautions that generic correlations alone do not prove topology; M3 limits disorder robustness.",
+    "source_locators": [
+      "https://arxiv.org/abs/1901.02655",
+      "https://arxiv.org/abs/1908.05549",
+      "https://arxiv.org/abs/2009.11809v3"
+    ]
+  },
+  {
+    "slot": 2,
+    "status": "proposed",
+    "prediction": "A preregistered application of the M5 protocol yields overlapping bulk-gap closing/reopening and simultaneous end peaks without material dependence on reasonable fixed analysis-window/resolution choices.",
+    "refuting_observation": "Passing regions disappear or move inconsistently when declared sensitivity checks change field/bias windows or resolution while device conditions are fixed.",
+    "source_rationale": "M5 reports the combined signature; M6 specifically disputes parameter sensitivity. This refutes diagnostic robustness, not every possible topological phase.",
+    "source_locators": [
+      "https://arxiv.org/abs/2207.02472",
+      "https://arxiv.org/abs/2502.19560"
+    ]
+  },
+  {
+    "slot": 3,
+    "status": "proposed",
+    "prediction": "The junction-dot mechanism of M4 predicts subgap/zero-bias features track the junction-region configuration rather than being guaranteed by the full shell alone.",
+    "refuting_observation": "Controlled matched devices retain the same subgap-state distribution independent of junction length/configuration after verifying equivalent sensitivity and shell properties.",
+    "source_rationale": "M4 reports short/long junction contrasts and Andreev-level interpretation; proposed controlled extension, not a universal Majorana exclusion.",
+    "source_locators": [
+      "https://arxiv.org/abs/2008.02348v3"
+    ]
+  },
+  {
+    "slot": 4,
+    "status": "proposed",
+    "prediction": "In the M9 disorder-peak explanation, apparent near-quantized peaks have limited stability to field and barrier variation relative to a claimed robust plateau.",
+    "refuting_observation": "A prespecified broad field/barrier window shows calibration-controlled peak stability incompatible with the tested disorder model across independent devices.",
+    "source_rationale": "M9 identifies field/barrier instability as a feature of its disorder-induced peaks; this rejects that fitted alternative only, not all trivial mechanisms.",
+    "source_locators": [
+      "https://arxiv.org/abs/2103.05628v3",
+      "https://www.nature.com/articles/s41586-021-03373-x"
+    ]
+  },
+  {
+    "slot": 5,
+    "status": "proposed",
+    "prediction": "For the weakly dissipative Andreev regime of M10, selected gate/field settings yield temperature evolution with peak growth or split-peak merging rather than simple thermal suppression alone.",
+    "refuting_observation": "Under independently verified comparable dissipation and tuning, temperature sweeps yield only conventional thermal broadening and never the predicted anomalous evolution across the stated regime.",
+    "source_rationale": "M10 reports these environmental-Coulomb-blockade trends; conditional test of that explanation, not a Majorana certification procedure.",
+    "source_locators": [
+      "https://arxiv.org/abs/2202.09299v1"
+    ]
+  }
+]

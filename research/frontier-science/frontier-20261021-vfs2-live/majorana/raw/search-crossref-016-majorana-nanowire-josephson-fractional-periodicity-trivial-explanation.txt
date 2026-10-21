@@ -1,0 +1,20 @@
+10.1088/1361-648x/ae943f/data2	Supplementary video 2
+10.1038/nphys2429	The fractional a.c. Josephson effect in a semiconductor–superconductor nanowire as a signature of Majorana particles
+10.1103/physrevlett.108.257001	ac Josephson Effect in Finite-Length Nanowire Junctions with Majorana Modes
+10.1103/jt2g-hbwq	Nonreciprocal equilibrium Josephson effect of arbitrary periodicity from poor man's Majorana zero modes
+10.1103/physrevb.84.081304	Robustness of Majorana fermion induced fractional Josephson effect in multichannel superconducting wires
+10.1103/physrevb.99.035312	Fractional Josephson effect with and without Majorana zero modes
+10.67698/pjpcr.2026.0175	Proximity-Induced Topological Superconductivity in MnBi2Te4/NbSe2 van der Waals Heterostructures: Zero-Bias Conductance Peaks, 2e Josephson Periodicity, and Majorana Signature Analysis
+10.12693/aphyspola.133.362	Majorana States in Presence of Electron Interactions: Spinful Fractional Josephson Junction with a Quantum Dot
+10.11606/d.43.2021.tde-19052021-163141	Majorana bound states in nanowire junctions
+10.1103/physrevb.96.075161	Andreev bound states versus Majorana bound states in quantum dot-nanowire-superconductor hybrid structures: Trivial versus topological zero-bias conductance peaks
+10.1103/physrevlett.122.107701	Fractional Josephson Vortices and Braiding of Majorana Zero Modes in Planar Superconductor-Semiconductor Heterostructures
+10.1103/physrevb.87.140504	Disentangling Majorana fermions from topologically trivial low-energy states in semiconductor Majorana wires
+10.1134/s0021364019010120	Features of the Dynamics of a System of Coupled Josephson Junctions with Topologically Trivial and Nontrivial Barriers: Manifestation of the Majorana Mode
+10.21203/rs.3.rs-155447/v1	Skyrmion Control of Majorana States in Planar Josephson Junctions
+10.70675/4b8cb60ez00d8z4f43zb69azfa7b413d2805	Dynamic of excitations of the Fractional quantum Hall effect : fractional charge and fractional Josephson frequency
+10.2139/ssrn.5317094	Majorana Edge and End States in Planar Josephson Junctions
+10.1063/pt.4.0018	Majorana fermions in a nanowire?
+10.1021/acs.nanolett.5c02410.s001	Sn-InAs Nanowire Shadow-Defined Josephson Junctions
+10.21203/rs.3.rs-3745657/v1	Unexpected results for the non-trivial fusion of Majorana zero modes in interacting quantum-dot arrays
+10.2139/ssrn.6154693	Non-Trivial Topological Majorana Architectures: Möbius and Trefoil Band Topologiesevaluated by Signal to Noise Ratio and Coherence time measurements

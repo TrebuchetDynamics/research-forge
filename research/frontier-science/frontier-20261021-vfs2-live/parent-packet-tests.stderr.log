@@ -1,0 +1,10 @@
+test_case_packet (test_check.CheckTest.test_case_packet) ... ok
+test_complete_run (test_check.CheckTest.test_complete_run) ... ok
+test_owner_authorized_additional_majorana_resume (test_check.CheckTest.test_owner_authorized_additional_majorana_resume) ... ok
+test_partial_run (test_check.CheckTest.test_partial_run) ... ok
+test_rejects_unsafe_or_overclaimed_run (test_check.CheckTest.test_rejects_unsafe_or_overclaimed_run) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 2.292s
+
+OK

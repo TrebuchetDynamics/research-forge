@@ -1,0 +1,252 @@
+{
+  "schema_version": "2",
+  "provenance_level": "agent_reported",
+  "question": "Which pairing mechanisms and structural conditions explain superconductivity across nickelate families, and which experimental results are genuinely comparable?",
+  "depth": "standard",
+  "sources": [
+    "openalex",
+    "crossref",
+    "semantic-scholar",
+    "arxiv"
+  ],
+  "queries": [
+    "nickelate superconductivity infinite layer thin film substrate oxygen stoichiometry",
+    "nickelate superconductivity bilayer high pressure transition temperature",
+    "nickelate superconductivity ambient pressure structural phase",
+    "nickelate superconductivity resistive onset zero resistance magnetic shielding",
+    "nickelate superconductivity independent replication pressure calibration",
+    "nickelate superconductivity pairing mechanism experimental constraints review"
+  ],
+  "timestamp": "2026-10-21T17:11:05.508769+00:00",
+  "rforge_version": {
+    "commit": "unknown",
+    "date": "unknown",
+    "name": "rforge",
+    "version": "dev"
+  },
+  "runs": [
+    "94eff39a4085283a676067f11330d568",
+    "e09472279e686d5f971376e9f3ecff3d"
+  ],
+  "entries": [
+    {
+      "provenance_level": "agent_reported",
+      "description": "Host primary-metadata passage assessment, evidence matrix, scientific interpretation, predictions where applicable, audit and reproduction instructions; no human scientific acceptance."
+    }
+  ],
+  "outputs": [
+    {
+      "path": "batch-state.json",
+      "sha256": "48208b9b9dd39511636044b230bc80d4f10642bf8aaf256a7554261ad8d1fd86"
+    },
+    {
+      "path": "brief-final.md",
+      "sha256": "ae9910d4f629fbe48ea5aab22f33f5fce852263690247ea17c280c61b1308ed7"
+    },
+    {
+      "path": "brief.md",
+      "sha256": "ae9910d4f629fbe48ea5aab22f33f5fce852263690247ea17c280c61b1308ed7"
+    },
+    {
+      "path": "citation-audit.json",
+      "sha256": "56756c4c404d7d0a6c4556c2ba5baccdd1ddce77a7c8021595a73009712349d6"
+    },
+    {
+      "path": "coverage-stats.log",
+      "sha256": "dea19333f7f0776b45ce02bbe0b8b7e43e728c124d14d3b46e359e15da79fa2a"
+    },
+    {
+      "path": "evidence.csv",
+      "sha256": "8235f5e0348f734e188a8802588df730653ecca23b4da28df377ff90fb9368bc"
+    },
+    {
+      "path": "failures.jsonl",
+      "sha256": "4ae1695b4f0ddaaa754f4e7e472c71e1685260a59098c8a1d8c02eb02d6aaa1f"
+    },
+    {
+      "path": "graph-1.json",
+      "sha256": "b231efcf7063504aecfc672dcb6a333457b92568bb6202fac74f51bf132b0a3d"
+    },
+    {
+      "path": "manifest.json",
+      "sha256": "25aa31238960ebada4ad1d446ffe83c9f8677642cdfd85680ef449a6e72e5115"
+    },
+    {
+      "path": "paper-1.json",
+      "sha256": "3d71b47b0dfba38626e601444bc4e2f0266d30ac21e7972561da1bf479809220"
+    },
+    {
+      "path": "paper-2.json",
+      "sha256": "cc0fcc983508888d060ff2934642c60f4be62dff312484d1655226df74f8ca21"
+    },
+    {
+      "path": "primary-checks.json",
+      "sha256": "68734de0f230107c3587f08ffe01cbf710c7eb8cf544b63f86908c98ac10f260"
+    },
+    {
+      "path": "provenance/events.jsonl",
+      "sha256": "57dc5e60f352830880e0186305376537ab0cdf9d4297a20f7dc33eab8a8e69e2"
+    },
+    {
+      "path": "provenance/runs/94eff39a4085283a676067f11330d568.json",
+      "sha256": "89579d7d071bd83340ec8c053e4c7943c95893f3565ed7bedfacddeb7bfa9000"
+    },
+    {
+      "path": "provenance/runs/e09472279e686d5f971376e9f3ecff3d.json",
+      "sha256": "4a98218acd194072d7b14da311195d0af50fa44e9cab52f83905ad3b548fccce"
+    },
+    {
+      "path": "queries.txt",
+      "sha256": "19b23a1fb64ddae100237e482988e68501f8e87437bd2a5c64f5dbb0285d484b"
+    },
+    {
+      "path": "raw/search-arxiv-001-nickelate-superconductivity-infinite-layer-thin-film-substrate-oxygen-stoichiome.txt",
+      "sha256": "74b1fecff60ac6eeb9d10d57d394012af8a9682703a9b36582fc23eb4925014c"
+    },
+    {
+      "path": "raw/search-arxiv-002-nickelate-superconductivity-bilayer-high-pressure-transition-temperature.txt",
+      "sha256": "471b30818ad1e7f76ded60c8730cab0d5c2cea4f15ff129f8e02a4318a56b84f"
+    },
+    {
+      "path": "raw/search-arxiv-003-nickelate-superconductivity-ambient-pressure-structural-phase.txt",
+      "sha256": "fce1f5c0f252e367cdf06a4f4127cc13972ce44569e0296189aa5b6eff2434df"
+    },
+    {
+      "path": "raw/search-arxiv-004-nickelate-superconductivity-resistive-onset-zero-resistance-magnetic-shielding.txt",
+      "sha256": "651ded21a0ecd160cfe8fe175d3b9986b91566a1249e1812fc9e5f437ec16cbe"
+    },
+    {
+      "path": "raw/search-arxiv-005-nickelate-superconductivity-independent-replication-pressure-calibration.txt",
+      "sha256": "1d4c965f56ccba3677a35e3c856553d4c87a4ff7f31f8e15e68a1e33736b0ac3"
+    },
+    {
+      "path": "raw/search-arxiv-006-nickelate-superconductivity-pairing-mechanism-experimental-constraints-review.txt",
+      "sha256": "d259269aa39a4af6287f2a65c11d2132f9ed4c653c5bbdc8d572c27ea103a095"
+    },
+    {
+      "path": "raw/search-crossref-001-nickelate-superconductivity-infinite-layer-thin-film-substrate-oxygen-stoichiome.txt",
+      "sha256": "e2c0056064916a227560938e86bb211ee72a2c2ad62b3fe636648bebdbf35cf9"
+    },
+    {
+      "path": "raw/search-crossref-002-nickelate-superconductivity-bilayer-high-pressure-transition-temperature.txt",
+      "sha256": "9e768d3e0778dfaae4eff0c2b4138ea8790f1a033a1502bffd68d6605995fb40"
+    },
+    {
+      "path": "raw/search-crossref-003-nickelate-superconductivity-ambient-pressure-structural-phase.txt",
+      "sha256": "73272f7c27f6672b8b2f768652881c7fbc30912b5acd73dfc7331c835be07d8d"
+    },
+    {
+      "path": "raw/search-crossref-004-nickelate-superconductivity-resistive-onset-zero-resistance-magnetic-shielding.txt",
+      "sha256": "b46ee3c993f498ef34920b7252ff0079eddc5a6a81dc6be023b7526ee4fcabe6"
+    },
+    {
+      "path": "raw/search-crossref-005-nickelate-superconductivity-independent-replication-pressure-calibration.txt",
+      "sha256": "7e9abb04d3f20e15140994bf35282dfec224a25cf41dbb6bf0bbf0880a51c856"
+    },
+    {
+      "path": "raw/search-crossref-006-nickelate-superconductivity-pairing-mechanism-experimental-constraints-review.txt",
+      "sha256": "3bfd24db8aa125c71d1a48c8df975c4814858ea2af4793920c07118050a07f4e"
+    },
+    {
+      "path": "raw/search-openalex-001-nickelate-superconductivity-infinite-layer-thin-film-substrate-oxygen-stoichiome.txt",
+      "sha256": "ae492ef16b4831c1ff5b16722ac7f9d1b9ac2264f1ec418769979f70a95d0e0f"
+    },
+    {
+      "path": "raw/search-openalex-002-nickelate-superconductivity-bilayer-high-pressure-transition-temperature.txt",
+      "sha256": "66aba9da0b2743773b07fa95f0b560d9657484363f7bbd1aa0a2bee426a9a7ad"
+    },
+    {
+      "path": "raw/search-openalex-003-nickelate-superconductivity-ambient-pressure-structural-phase.txt",
+      "sha256": "d31b51899b8d80ca3a90eebe51a70fb44f93cc86170d7a043cc5423b52259494"
+    },
+    {
+      "path": "raw/search-openalex-004-nickelate-superconductivity-resistive-onset-zero-resistance-magnetic-shielding.txt",
+      "sha256": "8d99fba68c8bb38d80368a07a46882751a7bbfe1de68441ee135e406fd8eccc1"
+    },
+    {
+      "path": "raw/search-openalex-005-nickelate-superconductivity-independent-replication-pressure-calibration.txt",
+      "sha256": "2d87afe6bacfdd94516e32eade97b7d1075799583a699b44daba4257b2896652"
+    },
+    {
+      "path": "raw/search-openalex-006-nickelate-superconductivity-pairing-mechanism-experimental-constraints-review.txt",
+      "sha256": "28252b4bcd81372175d83a5b091a3eac1cd96dfb85dac90d2a25e0492cdc0a60"
+    },
+    {
+      "path": "report.md",
+      "sha256": "cbb78da001ca853f8356243974c2c15aa6916cc66bfc5eead4f714e624af36cb"
+    },
+    {
+      "path": "reproduce.md",
+      "sha256": "9e3e825e1d902d4e587b0b3be5717cea6f79735cd34681917f676798d60816d4"
+    },
+    {
+      "path": "results-deduped.jsonl",
+      "sha256": "6ff91933c2e4db9f4ec7c7b596ae49ba04c45d858189424c130ac85c8f85bfd1"
+    },
+    {
+      "path": "results.jsonl",
+      "sha256": "aa3888c5ae00b31f68cab327dc94456f816a52894ac6eb970e81354d72c5ec69"
+    },
+    {
+      "path": "results.md",
+      "sha256": "88f4c1b28ff967e9756cb9799474ca2844f99cd42b9f3c829215ec2a2d73a34f"
+    },
+    {
+      "path": "search-stats.txt",
+      "sha256": "17d56f8a77fa176200ad86b1e9ffe559e76c4eb0e3fac3a607fb3dd9a3133006"
+    },
+    {
+      "path": "selection-candidates.json",
+      "sha256": "4adadc8b553358c1d448f7fa0d35196a83940d13d7a4866dc2be7f6ccfd8052e"
+    }
+  ],
+  "errors": [
+    "Selected abstract/metadata synthesis, not exhaustive screened review or recall assessment.",
+    "HTTP retry attempts uninstrumented; missing full-text conditions, uncertainty and matched replication remain unknown.",
+    "Acquisition/privacy/scientific acceptance/export remain unapproved.",
+    "All six Semantic Scholar pairs failed; completed sweep is not complete provider coverage.",
+    "Pressure calibration, sample identity and transition criteria missing where not stated; no pooling or unique mechanism selection."
+  ],
+  "search_stats": {
+    "unique_records": 254,
+    "queries": [
+      {
+        "query": "nickelate superconductivity infinite layer thin film substrate oxygen stoichiometry",
+        "new_unique": 56,
+        "complete": false
+      },
+      {
+        "query": "nickelate superconductivity bilayer high pressure transition temperature",
+        "new_unique": 50,
+        "complete": false
+      },
+      {
+        "query": "nickelate superconductivity ambient pressure structural phase",
+        "new_unique": 33,
+        "complete": false
+      },
+      {
+        "query": "nickelate superconductivity resistive onset zero resistance magnetic shielding",
+        "new_unique": 54,
+        "complete": false
+      },
+      {
+        "query": "nickelate superconductivity independent replication pressure calibration",
+        "new_unique": 14,
+        "complete": false
+      },
+      {
+        "query": "nickelate superconductivity pairing mechanism experimental constraints review",
+        "new_unique": 47,
+        "complete": false
+      }
+    ],
+    "consecutive_low_yield": 0
+  },
+  "citation_expand_attempted": [
+    "W4384028978"
+  ],
+  "citation_expand_succeeded": [
+    "W4384028978"
+  ]
+}

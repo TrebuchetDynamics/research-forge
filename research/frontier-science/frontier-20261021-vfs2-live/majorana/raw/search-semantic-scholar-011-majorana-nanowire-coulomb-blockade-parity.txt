@@ -1,0 +1,20 @@
+10.1103/physrevb.108.235416	In situ tuning of dynamical Coulomb blockade on Andreev bound states in hybrid nanowire devices
+	In situ tuning of dynamical Coulomb blockade in hybrid nanowire devices
+10.1088/1674-1056/ae6f9a	Electrostatic-controlled parity switching in InAs–Al hybrid Coulomb island without Zeeman effect
+10.1088/1751-8121/aeacb0	Ultrafast directional readout of Majorana parity in a chiral CNT nanophotonic cavity
+10.1103/physrevb.110.184508	On-demand population of Andreev levels by their ionization in the presence of Coulomb blockade
+10.1103/physrevb.101.195420	Transport properties of coupled Majorana bound states in the Coulomb blockade regime
+10.1103/physrevb.96.054504	Conductance of a superconducting Coulomb-blockaded Majorana nanowire
+10.1103/physrevb.93.235431	Conductance of a proximitized nanowire in the Coulomb blockade regime
+10.1007/978-94-007-6618-1_5	Transport Through a Coulomb Blockaded Majorana Nanowire
+10.1103/physrevb.106.l201305	Interference and parity blockade in transport through a Majorana box
+10.1103/physrevb.94.035424	Time scales for Majorana manipulation using Coulomb blockade in gate-controlled superconducting nanowires
+10.1088/1674-1056/ad2a68	Coulomb-assisted nonlocal electron transport between two pairs of Majorana bound states in a superconducting island
+10.1103/physrevb.104.085403	Theory of Coulomb blockaded transport in realistic Majorana nanowires
+10.1126/sciadv.abm9896	Supercurrent parity meter in a nanowire Cooper pair transistor
+10.1038/s41586-022-05382-w	Majorana-like Coulomb spectroscopy in the absence of zero-bias peaks.
+	Parity-dependent shot noise and spin-flip relaxation process in a hybrid superconductor-nanowire quantum dot
+10.1103/physrevlett.120.267002	Parity-Controlled 2π Josephson Effect Mediated by Majorana Kramers Pairs.
+10.1103/physrevb.98.161401	Evolution of the transmission phase through a Coulomb-blockaded Majorana wire
+10.1103/physrevb.110.035136	Topological Kondo effect with spinful Majorana fermions
+10.1103/physrevb.93.245418	Enhanced current noise correlations in a Coulomb-Majorana device

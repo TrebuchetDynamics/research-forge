@@ -1,0 +1,635 @@
+[
+  {
+    "result_line": 162,
+    "record": {
+      "Title": "Quantized Majorana conductance",
+      "Identifiers": {
+        "DOI": "10.1038/nature26142",
+        "ArXivID": "1710.10701",
+        "PMID": "",
+        "PMCID": "",
+        "OpenAlexID": "",
+        "CrossrefID": "",
+        "SemanticScholarID": "",
+        "ZoteroItemKey": "",
+        "ADSBibcode": ""
+      },
+      "Authors": [],
+      "Abstract": "Majorana zero-modes hold great promise for topological quantum computing. Tunnelling spectroscopy in electrical transport is the primary tool to identify the presence of Majorana zero-modes, for instance as a zero-bias peak (ZBP) in differential-conductance. The Majorana ZBP-height is predicted to be quantized at the universal conductance value of 2e2/h at zero temperature. Interestingly, this quantization is a direct consequence of the famous Majorana symmetry, 'particle equals antiparticle'. The Majorana symmetry protects the quantization against disorder, interactions, and variations in the tunnel coupling. Previous experiments, however, have shown ZBPs much smaller than 2e2/h, with a recent observation of a peak-height close to 2e2/h. Here, we report a quantized conductance plateau at 2e2/h in the zero-bias conductance measured in InSb semiconductor nanowires covered with an Al superconducting shell. Our ZBP-height remains constant despite changing parameters such as the magnetic field and tunnel coupling, i.e. a quantized conductance plateau. We distinguish this quantized Majorana peak from possible non-Majorana origins, by investigating its robustness on electric and magnetic fields as well as its temperature dependence. The observation of a quantized conductance plateau strongly supports the existence of non-Abelian Majorana zero-modes in the system, consequently paving the way for future braiding experiments.",
+      "Year": 2017,
+      "Venue": "",
+      "Publisher": "",
+      "URLs": [
+        "https://arxiv.org/abs/1710.10701v1",
+        "https://arxiv.org/pdf/1710.10701v1",
+        "https://doi.org/10.1038/nature26142",
+        "https://arxiv.org/pdf/1710.10701",
+        "https://arxiv.org/e-print/1710.10701"
+      ],
+      "License": "",
+      "OpenAccess": false,
+      "SourcePayload": "",
+      "SourceRefs": [
+        {
+          "Source": "arxiv",
+          "RawPayloadRef": "arxiv:/api/query?max_results=20&search_query=all%3AMajorana+nanowire+quantized+conductance+replication",
+          "RetrievedAt": "",
+          "Metadata": {
+            "categories": "cond-mat.mes-hall",
+            "comment": "5 figures",
+            "journal_ref": "Nature (2018)",
+            "version": "v1"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "result_line": 211,
+    "record": {
+      "Title": "Retraction Note: Quantized Majorana conductance",
+      "Identifiers": {
+        "DOI": "10.1038/s41586-021-03373-x",
+        "ArXivID": "",
+        "PMID": "",
+        "PMCID": "",
+        "OpenAlexID": "",
+        "CrossrefID": "10.1038/s41586-021-03373-x",
+        "SemanticScholarID": "",
+        "ZoteroItemKey": "",
+        "ADSBibcode": ""
+      },
+      "Authors": [],
+      "Abstract": "",
+      "Year": 2021,
+      "Venue": "Nature",
+      "Publisher": "Springer Science and Business Media LLC",
+      "URLs": [
+        "https://doi.org/10.1038/s41586-021-03373-x"
+      ],
+      "License": "http://www.springer.com/tdm",
+      "OpenAccess": true,
+      "SourcePayload": "",
+      "SourceRefs": [
+        {
+          "Source": "crossref",
+          "RawPayloadRef": "crossref:/works?query=Majorana+nanowire+quantized+conductance+correction+retraction&rows=20",
+          "RetrievedAt": "",
+          "Metadata": {
+            "publication_dates": "2021-03-08;2021-03-25;2021-03-08",
+            "reference_count": "3",
+            "reference_dois": "10.5281/zenodo.4545577; 10.1038/s41586-020-2252-6",
+            "type": "journal-article"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "result_line": 60,
+    "record": {
+      "Title": "Andreev bound states versus Majorana bound states in quantum dot-nanowire-superconductor hybrid structures: Trivial versus topological zero-bias conductance peaks",
+      "Identifiers": {
+        "DOI": "10.1103/physrevb.96.075161",
+        "ArXivID": "",
+        "PMID": "",
+        "PMCID": "",
+        "OpenAlexID": "W2613483744",
+        "CrossrefID": "",
+        "SemanticScholarID": "",
+        "ZoteroItemKey": "",
+        "ADSBibcode": ""
+      },
+      "Authors": [],
+      "Abstract": "",
+      "Year": 2017,
+      "Venue": "",
+      "Publisher": "",
+      "URLs": [
+        "https://doi.org/10.1103/physrevb.96.075161"
+      ],
+      "License": "",
+      "OpenAccess": true,
+      "SourcePayload": "",
+      "SourceRefs": [
+        {
+          "Source": "openalex",
+          "RawPayloadRef": "openalex:/works?per-page=20&search=Majorana+nanowire+zero+bias+peak+trivial+Andreev+bound+states",
+          "RetrievedAt": "",
+          "Metadata": {
+            "concept_ids": "C174084160; C25227350; C2778761060; C184720557; C121332964; C120398109; C53104380; C74214498; C62520636; C54101563; C26873012; C124657808; C45646460; C84114770; C33923547; C115260700; C114614502",
+            "concepts": "Bound state; Zeeman effect; MAJORANA; Topology (electrical circuits); Physics; Quantum tunnelling; Zero-point energy; Nanowire; Quantum mechanics; Superconductivity; Condensed matter physics; Quantum dot; Topological order; Quantum; Mathematics; Magnetic field; Combinatorics",
+            "domain": "Physical Sciences",
+            "field": "Physics and Astronomy",
+            "oa_status": "green",
+            "publication_date": "2017-08-30",
+            "related_openalex_ids": "W2805315634; W1976848611; W3031572198; W3176732897; W1969939956; W2763191415; W3122347574; W2963127073; W4300051424; W3162681371",
+            "subfield": "Atomic and Molecular Physics, and Optics",
+            "top_concept": "Bound state",
+            "topic": "Topological Materials and Phenomena",
+            "type": "article"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "result_line": 61,
+    "record": {
+      "Title": "Presence versus absence of end-to-end nonlocal conductance correlations in Majorana nanowires: Majorana bound states versus Andreev bound states",
+      "Identifiers": {
+        "DOI": "10.1103/physrevb.100.045302",
+        "ArXivID": "",
+        "PMID": "",
+        "PMCID": "",
+        "OpenAlexID": "W2955719531",
+        "CrossrefID": "",
+        "SemanticScholarID": "",
+        "ZoteroItemKey": "",
+        "ADSBibcode": ""
+      },
+      "Authors": [],
+      "Abstract": "",
+      "Year": 2019,
+      "Venue": "",
+      "Publisher": "",
+      "URLs": [
+        "https://doi.org/10.1103/physrevb.100.045302"
+      ],
+      "License": "",
+      "OpenAccess": true,
+      "SourcePayload": "",
+      "SourceRefs": [
+        {
+          "Source": "openalex",
+          "RawPayloadRef": "openalex:/works?per-page=20&search=Majorana+nanowire+zero+bias+peak+trivial+Andreev+bound+states",
+          "RetrievedAt": "",
+          "Metadata": {
+            "concept_ids": "C2778761060; C174084160; C121332964; C121932024; C26873012; C74214498; C120398109; C184423171; C77553402; C62520636; C184720557; C54101563; C33923547; C114614502; C134306372",
+            "concepts": "MAJORANA; Bound state; Physics; Conductance; Condensed matter physics; Nanowire; Quantum tunnelling; Andreev reflection; Upper and lower bounds; Quantum mechanics; Topology (electrical circuits); Superconductivity; Mathematics; Combinatorics; Mathematical analysis",
+            "domain": "Physical Sciences",
+            "field": "Physics and Astronomy",
+            "oa_status": "green",
+            "publication_date": "2019-07-03",
+            "related_openalex_ids": "W2333120639; W3159661357; W3092867021; W1999579758; W2043899612; W2805315634; W4286900139; W1976848611; W2768085590; W3104736164",
+            "subfield": "Atomic and Molecular Physics, and Optics",
+            "top_concept": "MAJORANA",
+            "topic": "Topological Materials and Phenomena",
+            "type": "article"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "result_line": 138,
+    "record": {
+      "Title": "InAs-Al hybrid devices passing the topological gap protocol",
+      "Identifiers": {
+        "DOI": "10.1103/physrevb.107.245423",
+        "ArXivID": "",
+        "PMID": "",
+        "PMCID": "",
+        "OpenAlexID": "W4381549427",
+        "CrossrefID": "",
+        "SemanticScholarID": "",
+        "ZoteroItemKey": "",
+        "ADSBibcode": ""
+      },
+      "Authors": [],
+      "Abstract": "",
+      "Year": 2023,
+      "Venue": "",
+      "Publisher": "",
+      "URLs": [
+        "https://doi.org/10.1103/physrevb.107.245423"
+      ],
+      "License": "cc-by",
+      "OpenAccess": true,
+      "SourcePayload": "",
+      "SourceRefs": [
+        {
+          "Source": "openalex",
+          "RawPayloadRef": "openalex:/works?per-page=20&search=Majorana+nanowire+quantized+conductance+replication",
+          "RetrievedAt": "",
+          "Metadata": {
+            "concept_ids": "C203087015; C184720557; C121332964; C44280652; C2780385302; C62520636; C84114770; C33923547; C114614502; C71924100; C204787440; C142724271",
+            "concepts": "Qubit; Topology (electrical circuits); Physics; Phase (matter); Protocol (science); Quantum mechanics; Quantum; Mathematics; Combinatorics; Medicine; Alternative medicine; Pathology",
+            "domain": "Physical Sciences",
+            "field": "Physics and Astronomy",
+            "oa_status": "hybrid",
+            "publication_date": "2023-06-21",
+            "related_openalex_ids": "W2935759653; W3105167352; W54078636; W2954470139; W1501425562; W2902782467; W3084825885; W2298861036; W3148032049; W2271181815",
+            "subfield": "Atomic and Molecular Physics, and Optics",
+            "top_concept": "Qubit",
+            "topic": "Topological Materials and Phenomena",
+            "type": "article"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "result_line": 514,
+    "record": {
+      "Title": "Topological gap protocol based machine learning optimization of Majorana hybrid wires",
+      "Identifiers": {
+        "DOI": "10.1103/physrevb.109.045132",
+        "ArXivID": "2305.16230",
+        "PMID": "",
+        "PMCID": "",
+        "OpenAlexID": "",
+        "CrossrefID": "",
+        "SemanticScholarID": "",
+        "ZoteroItemKey": "",
+        "ADSBibcode": ""
+      },
+      "Authors": [],
+      "Abstract": "Majorana zero modes in superconductor-nanowire hybrid structures are a promising candidate for topologically protected qubits with the potential to be used in scalable structures. Currently, disorder in such Majorana wires is a major challenge, as it can destroy the topological phase and thus reduce the yield in the fabrication of Majorana devices. We study machine learning optimization of a gate array in proximity to a grounded Majorana wire, which allows us to reliably compensate even strong disorder. We propose a metric for optimization that is inspired by the topological gap protocol, and which can be implemented based on measurements of the non-local conductance through the wire.",
+      "Year": 2023,
+      "Venue": "",
+      "Publisher": "",
+      "URLs": [
+        "https://arxiv.org/abs/2305.16230v1",
+        "https://arxiv.org/pdf/2305.16230v1",
+        "https://doi.org/10.1103/PhysRevB.109.045132",
+        "https://arxiv.org/pdf/2305.16230",
+        "https://arxiv.org/e-print/2305.16230"
+      ],
+      "License": "",
+      "OpenAccess": false,
+      "SourcePayload": "",
+      "SourceRefs": [
+        {
+          "Source": "arxiv",
+          "RawPayloadRef": "arxiv:/api/query?max_results=20&search_query=all%3AMajorana+nanowire+topological+gap+protocol",
+          "RetrievedAt": "",
+          "Metadata": {
+            "categories": "cond-mat.mes-hall,cs.LG",
+            "comment": "13 pages, 11 figures",
+            "journal_ref": "Phys. Rev. B 109, 045132 (2023)",
+            "version": "v1"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "result_line": 176,
+    "record": {
+      "Title": "Three-terminal nonlocal conductance in Majorana nanowires: Distinguishing topological and trivial in realistic systems with disorder and inhomogeneous potential",
+      "Identifiers": {
+        "DOI": "10.1103/physrevb.103.014513",
+        "ArXivID": "2009.11809",
+        "PMID": "",
+        "PMCID": "",
+        "OpenAlexID": "",
+        "CrossrefID": "",
+        "SemanticScholarID": "",
+        "ZoteroItemKey": "",
+        "ADSBibcode": ""
+      },
+      "Authors": [],
+      "Abstract": "We develop a theory for the three-terminal nonlocal conductance in Majorana nanowires as existing in the superconductor-semiconductor hybrid structures in the presence of superconducting proximity, spin-orbit coupling, and Zeeman splitting. The key question addressed is whether such nonlocal conductance can decisively distinguish between trivial and topological Majorana scenarios in the presence of chemical potential inhomogeneity and random impurity disorder. We calculate the local electrical as well as nonlocal electrical and thermal conductance of the pristine nanowire (good zero-bias conductance peaks), the nanowire in the presence of quantum dots and inhomogeneous potential (bad zero-bias conductance peaks), and the nanowire in the presence of large disorder (ugly zero-bias conductance peaks). The local conductance by itself is incapable of distinguishing the trivial states from the topological states since zero-bias conductance peaks are generic in the presence of disorder and inhomogeneous potential. The nonlocal conductance, which in principle is capable of providing the bulk gap closing and reopening information at the topological quantum phase transition, is found to be far too weak in magnitude to be particularly useful in the presence of disorder and inhomogeneous potential. Therefore, we focus on the question of whether the combination of the local, nonlocal electrical, and thermal conductance can separate the good, bad, and ugly zero-bias conductance peaks in finite-length wires. Our paper aims to provide a guide to future experiments, and we conclude that a combination of all three measurements would be necessary for a decisive demonstration of topological Majorana zero modes in nanowires -- positive signals corresponding to just one kind of measurements are likely to be false positives arising from disorder and inhomogeneous potential.",
+      "Year": 2020,
+      "Venue": "",
+      "Publisher": "",
+      "URLs": [
+        "https://arxiv.org/abs/2009.11809v3",
+        "https://arxiv.org/pdf/2009.11809v3",
+        "https://doi.org/10.1103/PhysRevB.103.014513",
+        "https://arxiv.org/pdf/2009.11809",
+        "https://arxiv.org/e-print/2009.11809"
+      ],
+      "License": "",
+      "OpenAccess": false,
+      "SourcePayload": "",
+      "SourceRefs": [
+        {
+          "Source": "arxiv",
+          "RawPayloadRef": "arxiv:/api/query?max_results=20&search_query=all%3AMajorana+nanowire+quantized+conductance+replication",
+          "RetrievedAt": "",
+          "Metadata": {
+            "categories": "cond-mat.mes-hall",
+            "comment": "26 pages, 26 figures",
+            "journal_ref": "Phys. Rev. B 103, 014513 (2021)",
+            "version": "v3"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "result_line": 370,
+    "record": {
+      "Title": "Nonlocal conductance of a Majorana wire near the topological transition",
+      "Identifiers": {
+        "DOI": "10.1103/4dy1-kdzp",
+        "ArXivID": "",
+        "PMID": "",
+        "PMCID": "",
+        "OpenAlexID": "W7128165013",
+        "CrossrefID": "",
+        "SemanticScholarID": "",
+        "ZoteroItemKey": "",
+        "ADSBibcode": ""
+      },
+      "Authors": [],
+      "Abstract": "",
+      "Year": 2026,
+      "Venue": "",
+      "Publisher": "",
+      "URLs": [
+        "https://doi.org/10.1103/4dy1-kdzp"
+      ],
+      "License": "",
+      "OpenAccess": true,
+      "SourcePayload": "",
+      "SourceRefs": [
+        {
+          "Source": "openalex",
+          "RawPayloadRef": "openalex:/works?per-page=20&search=Majorana+nanowire+nonlocal+conductance",
+          "RetrievedAt": "",
+          "Metadata": {
+            "concept_ids": "C121332964; C2778761060; C121932024; C26873012; C184720557; C33332235; C62520636; C194232998; C149288129; C2781089630; C128911142; C18762648",
+            "concepts": "Physics; MAJORANA; Conductance; Condensed matter physics; Topology (electrical circuits); Theoretical physics; Quantum mechanics; Transition (genetics); Phase transition; Realization (probability); Topological insulator; Work (physics)",
+            "domain": "Physical Sciences",
+            "field": "Physics and Astronomy",
+            "oa_status": "green",
+            "publication_date": "2026-02-06",
+            "subfield": "Atomic and Molecular Physics, and Optics",
+            "top_concept": "Physics",
+            "topic": "Topological Materials and Phenomena",
+            "type": "article"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "result_line": 103,
+    "record": {
+      "Title": "Disorder-induced zero-bias peaks in Majorana nanowires",
+      "Identifiers": {
+        "DOI": "10.1103/physrevb.103.195158",
+        "ArXivID": "2103.05628",
+        "PMID": "",
+        "PMCID": "",
+        "OpenAlexID": "",
+        "CrossrefID": "",
+        "SemanticScholarID": "",
+        "ZoteroItemKey": "",
+        "ADSBibcode": ""
+      },
+      "Authors": [],
+      "Abstract": "Focusing specifically on the recently retracted Nature 2018 Zhang et al. work [Zhang et al., Nature (2021)] and the related recently available correctly analyzed data from this Delft experiment [Zhang et al., arXiv:2101.11456 (2021)], we discuss the general problem of confirmation bias in experiments verifying various theoretical topological quantization predictions. We show that the Delft Majorana experiment is most likely dominated by disorder, which produces trivial (but quite sharp and large) zero-bias Andreev tunneling peaks with large conductance $ \\sim 2e^2/h $ in the theory, closely mimicking the data. It is possible to misinterpret such disorder-induced zero-bias trivial peaks as the apparent Majorana quantization, as was originally done in 2018 arising from confirmation bias. One characteristic of the disorder-induced trivial peaks is that they manifest little stability as a function of Zeeman field and tunnel barrier, distinguishing their trivial behavior from the expected topological robustness of non-Abelian Majorana zero modes. We also analyze a more recent nanowire experiment [Yu et al., Nature Physics (2021)] which is known to have a huge amount of disorder, showing that such highly disordered nanowires may produce very small above-background trivial peaks with values $ \\sim 2e^2/h $.",
+      "Year": 2021,
+      "Venue": "",
+      "Publisher": "",
+      "URLs": [
+        "https://arxiv.org/abs/2103.05628v3",
+        "https://arxiv.org/pdf/2103.05628v3",
+        "https://doi.org/10.1103/PhysRevB.103.195158",
+        "https://arxiv.org/pdf/2103.05628",
+        "https://arxiv.org/e-print/2103.05628"
+      ],
+      "License": "",
+      "OpenAccess": false,
+      "SourcePayload": "",
+      "SourceRefs": [
+        {
+          "Source": "arxiv",
+          "RawPayloadRef": "arxiv:/api/query?max_results=20&search_query=all%3AMajorana+nanowire+zero+bias+peak+trivial+Andreev+bound+states",
+          "RetrievedAt": "",
+          "Metadata": {
+            "categories": "cond-mat.mes-hall",
+            "comment": "13 pages, 8 figures",
+            "journal_ref": "Phys. Rev. B 103, 195158 (2021)",
+            "version": "v3"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "result_line": 111,
+    "record": {
+      "Title": "Nontopological zero-bias peaks in full-shell nanowires induced by flux tunable Andreev states",
+      "Identifiers": {
+        "DOI": "10.1126/science.abf1513",
+        "ArXivID": "2008.02348",
+        "PMID": "",
+        "PMCID": "",
+        "OpenAlexID": "",
+        "CrossrefID": "",
+        "SemanticScholarID": "",
+        "ZoteroItemKey": "",
+        "ADSBibcode": ""
+      },
+      "Authors": [],
+      "Abstract": "A semiconducting nanowire fully wrapped by a superconducting shell has been proposed as a platform for obtaining Majorana modes at small magnetic fields. In this study, we demonstrate that the appearance of subgap states in such structures is actually governed by the junction region in tunneling spectroscopy measurements, and not the full-shell nanowire itself. Short tunneling regions never show subgap states, whereas longer junctions always do. This can be understood in terms of quantum dots forming in the junction and hosting Andreev levels in the Yu-Shiba-Rusinov regime. The intricate magnetic field dependence of the Andreev levels, through both the Zeeman and Little-Parks effects, may result in robust zero-bias peaks, features that could be easily misinterpreted as originating from Majorana zero modes, but are unrelated to topological superconductivity.",
+      "Year": 2020,
+      "Venue": "",
+      "Publisher": "",
+      "URLs": [
+        "https://arxiv.org/abs/2008.02348v3",
+        "https://arxiv.org/pdf/2008.02348v3",
+        "https://doi.org/10.1126/science.abf1513",
+        "https://arxiv.org/pdf/2008.02348",
+        "https://arxiv.org/e-print/2008.02348"
+      ],
+      "License": "",
+      "OpenAccess": false,
+      "SourcePayload": "",
+      "SourceRefs": [
+        {
+          "Source": "arxiv",
+          "RawPayloadRef": "arxiv:/api/query?max_results=20&search_query=all%3AMajorana+nanowire+zero+bias+peak+trivial+Andreev+bound+states",
+          "RetrievedAt": "",
+          "Metadata": {
+            "categories": "cond-mat.mes-hall",
+            "journal_ref": "Science 373, 82-88 (2021)",
+            "version": "v3"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "result_line": 106,
+    "record": {
+      "Title": "Suppressing Andreev bound state zero bias peaks using a strongly dissipative lead",
+      "Identifiers": {
+        "DOI": "10.1103/physrevlett.128.076803",
+        "ArXivID": "2111.00708",
+        "PMID": "",
+        "PMCID": "",
+        "OpenAlexID": "",
+        "CrossrefID": "",
+        "SemanticScholarID": "",
+        "ZoteroItemKey": "",
+        "ADSBibcode": ""
+      },
+      "Authors": [],
+      "Abstract": "Hybrid semiconductor-superconductor nanowires are predicted to host Majorana zero modes, manifested as zero-bias peaks (ZBPs) in tunneling conductance. ZBPs alone, however, are not sufficient evidence due to the ubiquitous presence of Andreev bound states in the same system. Here, we implement a strongly resistive normal lead in our InAs-Al nanowire devices and show that most of the expected ZBPs, corresponding to zero-energy Andreev bound states, can be suppressed, a phenomenon known as environmental Coulomb blockade. Our result is the first experimental demonstration of this dissipative interaction effect on Andreev bound states and can serve as a possible filter to narrow down ZBP phase diagram in future Majorana searches.",
+      "Year": 2021,
+      "Venue": "",
+      "Publisher": "",
+      "URLs": [
+        "https://arxiv.org/abs/2111.00708v1",
+        "https://arxiv.org/pdf/2111.00708v1",
+        "https://doi.org/10.1103/PhysRevLett.128.076803",
+        "https://arxiv.org/pdf/2111.00708",
+        "https://arxiv.org/e-print/2111.00708"
+      ],
+      "License": "",
+      "OpenAccess": false,
+      "SourcePayload": "",
+      "SourceRefs": [
+        {
+          "Source": "arxiv",
+          "RawPayloadRef": "arxiv:/api/query?max_results=20&search_query=all%3AMajorana+nanowire+zero+bias+peak+trivial+Andreev+bound+states",
+          "RetrievedAt": "",
+          "Metadata": {
+            "categories": "cond-mat.mes-hall",
+            "comment": "Raw data and processing codes within this paper are available at https://doi.org/10.5281/zenodo.5630076",
+            "journal_ref": "Phys. Rev. Lett. 128, 076803 (2022)",
+            "version": "v1"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "result_line": 115,
+    "record": {
+      "Title": "Large Andreev bound state zero bias peaks in a weakly dissipative environment",
+      "Identifiers": {
+        "DOI": "10.1103/physrevb.106.205421",
+        "ArXivID": "2202.09299",
+        "PMID": "",
+        "PMCID": "",
+        "OpenAlexID": "",
+        "CrossrefID": "",
+        "SemanticScholarID": "",
+        "ZoteroItemKey": "",
+        "ADSBibcode": ""
+      },
+      "Authors": [],
+      "Abstract": "We study Andreev bound states in hybrid InAs-Al nanowire devices. The energy of these states can be tuned to zero by gate voltage or magnetic field, revealing large zero bias peaks (ZBPs) near 2e^2/h in tunneling conductance. Probing these large ZBPs using a weakly dissipative lead reveals non-Fermi liquid temperature (T) dependence due to environmental Coulomb blockade (ECB), an interaction effect from the lead acting on the nanowire junction. By increasing T, these large ZBPs either show a height increase or a transition from split peaks to a ZBP, both deviate significantly from non-dissipative devices where a Fermi-liquid T dependence is revealed. Our result demonstrates the competing effect between ECB and thermal broadening on Andreev bound states.",
+      "Year": 2022,
+      "Venue": "",
+      "Publisher": "",
+      "URLs": [
+        "https://arxiv.org/abs/2202.09299v1",
+        "https://arxiv.org/pdf/2202.09299v1",
+        "https://doi.org/10.1103/PhysRevB.106.205421",
+        "https://arxiv.org/pdf/2202.09299",
+        "https://arxiv.org/e-print/2202.09299"
+      ],
+      "License": "",
+      "OpenAccess": false,
+      "SourcePayload": "",
+      "SourceRefs": [
+        {
+          "Source": "arxiv",
+          "RawPayloadRef": "arxiv:/api/query?max_results=20&search_query=all%3AMajorana+nanowire+zero+bias+peak+trivial+Andreev+bound+states",
+          "RetrievedAt": "",
+          "Metadata": {
+            "categories": "cond-mat.mes-hall",
+            "comment": "Raw data and processing codes are available at https://doi.org/10.5281/zenodo.6123849",
+            "journal_ref": "Phys. Rev. B 106, 205421 (2022)",
+            "version": "v1"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "result_line": 30,
+    "record": {
+      "Title": "Fractional Josephson Vortices and Braiding of Majorana Zero Modes in Planar Superconductor-Semiconductor Heterostructures",
+      "Identifiers": {
+        "DOI": "10.1103/physrevlett.122.107701",
+        "ArXivID": "",
+        "PMID": "",
+        "PMCID": "",
+        "OpenAlexID": "",
+        "CrossrefID": "10.1103/physrevlett.122.107701",
+        "SemanticScholarID": "",
+        "ZoteroItemKey": "",
+        "ADSBibcode": ""
+      },
+      "Authors": [],
+      "Abstract": "",
+      "Year": 2019,
+      "Venue": "Physical Review Letters",
+      "Publisher": "American Physical Society (APS)",
+      "URLs": [
+        "https://doi.org/10.1103/physrevlett.122.107701"
+      ],
+      "License": "https://link.aps.org/licenses/aps-default-license",
+      "OpenAccess": true,
+      "SourcePayload": "",
+      "SourceRefs": [
+        {
+          "Source": "crossref",
+          "RawPayloadRef": "crossref:/works?query=Majorana+zero+modes+semiconductor+superconductor+nanowire+experimental+evidence&rows=20",
+          "RetrievedAt": "",
+          "Metadata": {
+            "funders": "Deutsche Forschungsgemeinschaft; H2020 European Research Council; Israel Science Foundation",
+            "publication_dates": "2019-03-14;2019-03-14",
+            "reference_count": "30",
+            "reference_dois": "10.1038/s41578-018-0003-1; 10.1393/ncr/i2017-10141-9; 10.1088/0034-4885/75/7/076501; 10.1146/annurev-conmatphys-030212-184337; 10.1103/physrevb.44.9667; 10.1103/physrevb.61.10267; 10.1070/1063-7869/44/10s/s29; 10.1103/physrevlett.105.077001; 10.1103/physrevlett.104.040502; 10.1103/physrevlett.105.177002; 10.1103/physrevb.88.020407; 10.1103/physrevlett.111.186805; 10.1126/science.1222360; 10.1038/nphys2479; 10.1038/nature17162; 10.1126/science.1259327; 10.1103/physrevb.93.155402; 10.1103/physrevlett.119.176805; 10.1103/physrevx.7.021032; 10.1103/physrevlett.118.107701; 10.1103/physrevb.96.035444; 10.1038/nphys3877; 10.1038/nphys1915; 10.1103/physrevb.84.035120; 10.1016/0550-3213(91)90407-o; 10.1103/physrevlett.86.268; 10.1088/1367-2630/aa54e1; 10.1103/physrevb.95.235305; 10.1103/physrevb.85.121405",
+            "type": "journal-article"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "result_line": 44,
+    "record": {
+      "Title": "Braiding Majorana corner modes in a second-order topological superconductor",
+      "Identifiers": {
+        "DOI": "10.1103/physrevresearch.2.032068",
+        "ArXivID": "1904.07822",
+        "PMID": "",
+        "PMCID": "",
+        "OpenAlexID": "",
+        "CrossrefID": "",
+        "SemanticScholarID": "",
+        "ZoteroItemKey": "",
+        "ADSBibcode": ""
+      },
+      "Authors": [],
+      "Abstract": "We propose the concept of a device based on a square-shaped sample of a two-dimensional second-order topological helical superconductor which hosts two zero-dimensional Majorana quasiparticles at the corners. The two zero-energy modes rely on particle-hole symmetry (PHS) and their spacial position can be shifted by rotating an in-plane magnetic field and tuning proximity-induced spin-singlet pairing. We consider an adiabatic cycle performed on the degenerate ground-state manifold and show that it realizes the braiding of the two modes whereby they accumulate a non-trivial statistical phase $\u03c0$ within one cycle. Alongside with the PHS-ensured operator algebra, the fractional statistics confirms the Majorana nature of the zero-energy excitations. A schematic design for a possible experimental implementation of such a device is presented, which could be a step towards realizing non-Abelian braiding.",
+      "Year": 2019,
+      "Venue": "",
+      "Publisher": "",
+      "URLs": [
+        "https://arxiv.org/abs/1904.07822v3",
+        "https://arxiv.org/pdf/1904.07822v3",
+        "https://doi.org/10.1103/PhysRevResearch.2.032068",
+        "https://arxiv.org/pdf/1904.07822",
+        "https://arxiv.org/e-print/1904.07822"
+      ],
+      "License": "",
+      "OpenAccess": false,
+      "SourcePayload": "",
+      "SourceRefs": [
+        {
+          "Source": "arxiv",
+          "RawPayloadRef": "arxiv:/api/query?max_results=20&search_query=all%3AMajorana+zero+modes+semiconductor+superconductor+nanowire+experimental+evidence",
+          "RetrievedAt": "",
+          "Metadata": {
+            "categories": "cond-mat.mes-hall",
+            "comment": "A different physical system is considered in this version (topological superconductor), however, the topological and symmetry features are closely related to those of the two-layer topological insulator of version 2 (arXiv:1904.07822v2). A more accurate distinction is made between the fractional statistics of the Majorana corner states and their potential non-Abelian properties",
+            "journal_ref": "Phys. Rev. Research 2, 032068 (2020)",
+            "version": "v3"
+          }
+        }
+      ]
+    }
+  }
+]

@@ -1,0 +1,20 @@
+10.1038/s41567-020-01107-w	Non-Majorana states yield nearly quantized conductance in superconductor-semiconductor nanowire devices
+	The MAJORANA Experiment
+10.1038/nature26142	Quantized Majorana conductance
+	White Paper on the Majorana Zero-Neutrino Double-Beta Decay Experiment
+10.1088/1742-6596/203/1/012057	TThe {\sc Majorana} Project
+10.1103/physrevb.103.214502	Quantized and unquantized zero-bias tunneling conductance peaks in Majorana nanowires: Conductance below and above $ 2e^2/h $
+10.1103/bwp9-7dsd	Quantized Andreev conductance in semiconductor nanowires
+10.1103/physrevb.108.045426	Conductance Quantization in PbTe Nanowires
+10.1103/physrevb.94.035143	How to infer non-Abelian statistics and topological invariants from tunneling conductance properties of realistic Majorana nanowires
+	On mesoscopic forces and quantized conductance in model metallic nanowires
+10.1103/physrevb.96.184520	Electron temperature and tunnel coupling dependence of zero-bias and almost-zero-bias conductance peaks in Majorana nanowires
+10.1021/acs.nanolett.7b00797	Observation of Conductance Quantization in InSb Nanowire Networks
+10.1103/physrevb.96.054504	Conductance of a superconducting Coulomb blockaded Majorana nanowire
+10.1103/physrevb.100.045302	Presence versus absence of end-to-end nonlocal conductance correlations in Majorana nanowires: Majorana bound states versus Andreev bound states
+10.1103/physrevb.57.4872	Energetics, forces, and quantized conductance in jellium modeled metallic nanowires
+10.1103/physrevlett.123.107703	Ubiquitous non-Majorana Zero-Bias Conductance Peaks in Nanowire Devices
+	Observation of Quantized Conductance in the Surface Bands of Bismuth Nanowires
+10.1103/physrevb.103.014513	Three-terminal nonlocal conductance in Majorana nanowires: Distinguishing topological and trivial in realistic systems with disorder and inhomogeneous potential
+10.1103/physrevresearch.2.013377	Physical mechanisms for zero-bias conductance peaks in Majorana nanowires
+10.1103/physrevb.99.024510	Conductance feature smearing and anisotropic suppression of induced superconductivity in a Majorana nanowire

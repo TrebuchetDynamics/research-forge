@@ -1,0 +1,53 @@
+{
+  "count": 1,
+  "requested": 1,
+  "resolutions": [
+    {
+      "input": "10.1038/s41586-023-06408-7",
+      "paper": {
+        "Title": "Signatures of superconductivity near 80 K in a nickelate under high pressure",
+        "Identifiers": {
+          "DOI": "10.1038/s41586-023-06408-7",
+          "ArXivID": "",
+          "PMID": "37437603",
+          "PMCID": "",
+          "OpenAlexID": "W4384028978",
+          "CrossrefID": "",
+          "SemanticScholarID": "",
+          "ZoteroItemKey": "",
+          "ADSBibcode": ""
+        },
+        "Authors": [],
+        "Abstract": "",
+        "Year": 2023,
+        "Venue": "",
+        "Publisher": "",
+        "URLs": [
+          "https://doi.org/10.1038/s41586-023-06408-7"
+        ],
+        "License": "",
+        "OpenAccess": true,
+        "SourcePayload": "",
+        "SourceRefs": []
+      },
+      "sources": [
+        {
+          "source": "crossref",
+          "title": "Signatures of superconductivity near 80 K in a nickelate under high pressure",
+          "rawRef": "crossref:/works/10.1038/s41586-023-06408-7",
+          "matchBy": "doi"
+        },
+        {
+          "source": "openalex",
+          "title": "Signatures of superconductivity near 80 K in a nickelate under high pressure",
+          "rawRef": "openalex:/works?filter=doi%3A10.1038%2Fs41586-023-06408-7\u0026per-page=1",
+          "matchBy": "doi"
+        }
+      ],
+      "oa": {
+        "isOA": true
+      },
+      "resolved": true
+    }
+  ]
+}

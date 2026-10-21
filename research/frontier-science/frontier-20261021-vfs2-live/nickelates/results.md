@@ -1,0 +1,267 @@
+# Search batch results
+
+Deduped records: 254
+
+- Superconductivity in infinite-layer nickelates — DOI: `10.1088/1361-6633/ac5a60`
+- Superconductivity in PrNiO2 Infinite‐Layer Nickelates — DOI: `10.1002/adma.202416187`
+- Superconductivity in a quintuple-layer square-planar nickelate — DOI: `10.1038/s41563-021-01142-9`
+- Superconductivity in Freestanding Infinite‐Layer Nickelate Membranes — DOI: `10.1002/adma.202402916`
+- Impact of Cation Stoichiometry on the Crystalline Structure and Superconductivity in Nickelates — DOI: `10.3389/fphy.2021.719534`
+- Superconductivity in an infinite-layer nickelate superlattice — DOI: `10.1038/s41467-024-54660-w`
+- Robust Superconductivity in Infinite‐Layer Nickelates — DOI: `10.1002/advs.202305252`
+- Superconductivity and electronic structures of nickelate thin film superstructures — DOI: `10.1038/s41586-026-10352-7`
+- Toward Reliable Synthesis of Superconducting Infinite Layer Nickelate Thin Films by Topochemical Reduction — DOI: `10.1002/advs.202309092`
+- Effect of target nickel stoichiometry on the synthesis of infinite-layer nickelates — DOI: `10.15302/frontphys.2026.024202`
+- Thin-Film Aspects of Superconducting Nickelates — DOI: `10.3389/fphy.2022.828007`
+- Effects of stoichiometry and epitaxial strain on the stabilization of infinite-layer nickelates — DOI: `10.1063/5.0288315`
+- Synthesis of thin film infinite-layer nickelates by atomic hydrogen reduction: Clarifying the role of the capping layer — DOI: `10.1063/5.0197304`
+- Unraveling P‐Type and N‐Type Interfaces in Superconducting Infinite‐Layer Nickelate Thin Films — DOI: `10.1002/adfm.202409930`
+- Limits to the strain engineering of layered square-planar nickelate thin films — DOI: `10.1038/s41467-023-37117-4`
+- Towards reliable synthesis of superconducting infinite layer nickelate thin films by topochemical reduction — DOI: `10.48550/arxiv.2401.12307`
+- Superconductivity in an ultrathin multilayer nickelate — DOI: `10.1126/sciadv.ado4572`
+- Infinite-Layer Nickelate Superconductors: A Current Experimental Perspective of the Crystal and Electronic Structures — DOI: `10.3389/fphy.2022.834658`
+- Synthesis of infinite-layer nickelates and influence of the capping-layer on magnetotransport — DOI: `10.1088/1361-6463/aca54a`
+- Superconductivity in Ruddlesden–Popper nickelates: a review of recent progress, focusing on thin films — DOI: `10.1088/1361-6633/ae9aae`
+- Innovative synthesis routes to superconducting infinite-layer nickelate thin films — DOI: `10.70675/8b6e727az284bz4f77za0cfza4f7d9c87e72`
+- Particle formation on the YBCO thin film surface: effect of stoichiometry and substrate material — DOI: `10.1016/s0921-4534(00)00246-x`
+- Stoichiometry control of magnetron sputtered Bi2Sr2Ca1−xYxCu2Oy (0⩽x⩽0.5) thin film, composition spread libraries: Substrate bias and gas density factors — DOI: `10.1016/j.physc.2005.06.002`
+- Atomic origin of absent superconductivity in bulk infinite-layer nickelate — DOI: `10.21203/rs.3.rs-3607723/v1`
+- P-type carrier doping in ACuO2 infinite-layer thin film — DOI: `10.1016/0921-4534(94)90796-x`
+- Classifying superconductivity in an infinite-layer nickelate Nd0.8Sr0.2NiO2 — DOI: `10.1016/j.rinp.2020.103118`
+- A high-resolution electron microscopy study on epitaxial infinite- layer SrCuO2 thin films grown on a SrTiO3 (100) substrate — DOI: `10.1016/0921-4534(93)90703-s`
+- Infinite-layer copper-oxide laser-ablated thin films: substrate, buffer-layer, and processing effects — DOI: `10.1109/tasc.2003.811956`
+- Thickness-Dependent Interface Polarity in Infinite-Layer Nickelate Superlattices — DOI: `10.1021/acs.nanolett.3c00192.s001`
+- Hubbard Subbands and Superconductivity in the Infinite-Layer Nickelate — DOI: `10.12693/aphyspola.143.200`
+- Classifying Superconductivity in an Infinite-Layer Nickelate Nd&lt;sub&gt;0.8&lt;/sub&gt;Sr&lt;sub&gt;0.2&lt;/sub&gt;NiO&lt;sub&gt;2&lt;/sub&gt; — DOI: `10.20944/preprints201912.0191.v1`
+- HREM observations of (Sr, Ca)CuO2 infinite-layer thin film prepared by RF thermal plasma evaporation — DOI: `10.1016/0921-4534(94)90417-0`
+- Preservation of substrate crystal and enhancement of YBa2Cu3O7−x thin film growth using YSZ/Si3N4 as a buffer layer — DOI: `10.1016/0921-4534(92)90605-c`
+- Freestanding infinite-layer nickelate super-conductors — DOI: `10.1038/s44160-025-00736-4`
+- noise study in YBCO thin films with different oxygen stoichiometry — DOI: `10.1016/0921-4534(94)92116-4`
+- Structural and orbital engineering in nickelate thin films : on the road of superconductivity — DOI: `10.70675/df81cc61z83a2z45a3z987bzf8a077a43652`
+- Effects of radical oxygen O* in synthesis of Sr1−xNaxCuO2 infinite-layer thin film by reactive RF sputtering — DOI: `10.1016/s0040-6090(98)01129-8`
+- Effect of substrate temperature and oxygen pressure on the microstructure of thin YBa2Cu3O7-δ film deposited on MgO by pulsed-laser ablation — DOI: `10.1016/0921-4534(91)90452-5`
+- Deformation of thin solid film/liquid layer/substrate structures with rough liquid layer/substrate interface — DOI: `10.1016/j.tsf.2006.01.072`
+- Superconducting YBCO thin film on multicrystalline Ag film evaporated on MgO substrate — DOI: `10.1016/s0921-4534(00)01263-6`
+- Aspects of the Synthesis of Thin Film Superconducting Infinite-Layer Nickelates — DOI: `10.1063/5.0005103`
+- Towards reliable synthesis of superconducting infinite layer nickelate thin films by topochemical reduction
+- Quenched growth of nanostructured lead thin films on insulating substrates — DOI: `10.1016/j.tsf.2003.11.188`
+- Achieving superconductivity in infinite-layer nickelate thin films by aluminum sputtering deposition — DOI: `10.1038/s43246-025-01013-9`
+- Superconducting NbTiN Thin Films with Highly Uniform Properties over a 100 mm diameter Wafer — DOI: `10.1109/tasc.2016.2631948`
+- Preparation and optimization of high-temperature superconducting Ruddlesden-Popper nickelate thin films — DOI: `10.7498/aps.74.20251080`
+- Enhanced Superconductivity and Mixed-dimensional Behaviour in Infinite-layer Samarium Nickelate Thin Films
+- A superconducting praseodymium nickelate with infinite layer structure — DOI: `10.1021/acs.nanolett.0c01392`
+- Effect of stoichiometry on oxygen incorporation in MgB2 thin films — DOI: `10.1088/0953-2048/21/01/015018`
+- Superconductivity in infinite-layer nickelate La$_{1-x}$Ca$_x$NiO$_2$ thin films — DOI: `10.1126/sciadv.abl9927`
+- Controlling Metal-Insulator Transitions in Vanadium Oxide Thin Films by Modifying Oxygen Stoichiometry — DOI: `10.1021/acsami.0c18327`
+- Direct imaging of disordered residual oxygen and its impact on electronic structure in an infinite-layer nickelate superlattice
+- Pulsed Laser Deposition of epitaxial titanium diboride thin films — DOI: `10.1016/s0040-6090(03)01025-3`
+- Progress of ambient-pressure superconductivity in bilayer nickelate thin films — DOI: `10.15302/frontphys.2026.115301`
+- Evaluation of the superconducting characteristics of multi-layer thin-film structures of NbN and SiO$_2$ on pure Nb substrate
+- Reconstructing the polar interface of infinite-layer nickelate thin films — DOI: `10.1038/s41563-023-01510-7`
+- Signatures of superconductivity near 80 K in a nickelate under high pressure — DOI: `10.1038/s41586-023-06408-7`
+- Identification of superconductivity in bilayer nickelate La3Ni2O7 under high pressure up to 100 GPa — DOI: `10.1093/nsr/nwaf220`
+- Superconductivity in nickelate and cuprate superconductors with strong bilayer coupling — DOI: `10.1103/physrevb.110.024514`
+- Enhanced superconductivity in the compressively strained bilayer nickelate thin films by pressure — DOI: `10.1038/s41467-026-69660-1`
+- Electronic correlations and partial gap in the bilayer nickelate La3Ni2O7 — DOI: `10.1038/s41467-024-52001-5`
+- Correlated electronic structures and unconventional superconductivity in bilayer nickelate heterostructures — DOI: `10.1093/nsr/nwaf253`
+- Research progress of high-temperature superconductivity in trilayer nickelate — DOI: `10.7498/aps.74.20251258`
+- Bulk superconductivity up to 96 K in pressurized nickelate single crystals — DOI: `10.1038/s41586-025-09954-4`
+- Bulk high-temperature superconductivity in the high-pressure tetragonal phase of bilayer La2PrNi2O7 — DOI: `10.48550/arxiv.2407.05681`
+- Bulk high-temperature superconductivity in pressurized tetragonal La2PrNi2O7 — DOI: `10.1038/s41586-024-07996-8`
+- Pressure-enhanced spin-density-wave transition in double-layer nickelate La3Ni2O7−δ — DOI: `10.1016/j.scib.2025.02.019`
+- Structural transition, electric transport, and electronic structures in the compressed trilayer nickelate La4Ni3O10 — DOI: `10.1007/s11433-023-2329-x`
+- Experimental Progress in Ambient-Pressure Superconducting Bilayer Nickelate Films — DOI: `10.48550/arxiv.2605.11584`
+- Distinct ultrafast dynamics of bilayer and trilayer nickelate superconductors regarding the density-wave-like transitions — DOI: `10.1016/j.scib.2024.10.011`
+- Theory of Pressure Dependence of Superconductivity in Bilayer Nickelate La 3 Ni 2 O 7 — DOI: `10.1103/physrevlett.134.076001`
+- Interlayer hybridization promotes superconductivity in bilayer nickelates — DOI: `10.1038/s41563-026-02750-z`
+- Ambient-pressure superconductivity onset above 40 K in (La,Pr)3Ni2O7 films — DOI: `10.1038/s41586-025-08755-z`
+- Temperature-Dependent Structural Evolution of RuddlesdenPopper Bilayer Nickelate La3Ni2O7 — DOI: `10.1021/acs.inorgchem.4c03042.s001`
+- Nickelate Superconductors: A Gateway to High-Temperature Superconductivity — DOI: `10.54254/2753-8818/2026.dl33826`
+- Constant-pressure versus constant-volume resistivities of some high transition temperature superconductors — DOI: `10.1016/0921-4534(94)91928-3`
+- Pressure Induced Spin-Glass→Single-Impurity Transition in LaCe, Superconductivity in LaCe and YCe under Pressure — DOI: `10.1007/978-1-4684-3351-7_14`
+- Effects of Gas Pressure on the Phase Transition Temperature of Liposomal Bilayer Membranes — DOI: `10.1007/978-3-662-05613-4_36`
+- Enhanced superconductivity in the compressively strained bilayer nickelate thin films by pressure — DOI: `10.21203/rs.3.rs-6967272/v1`
+- Transition Metal Oxides and High Temperature Superconductors — DOI: `10.1201/9781003209621-5`
+- Magnetism and superconductivity in bilayer nickelate — DOI: `10.1103/btb3-gww3`
+- High-Pressure Effects — DOI: `10.1007/978-0-387-68734-6_11`
+- Mechanism of Pressure-Driven High-Temperature Superconductivity in LiAlH Systems under High Pressure — DOI: `10.1021/acs.jpcc.6c00868.s001`
+- Emergent Fibonacci Anyon Phases in Bilayer Nickelate La₃Ni₂O₇ under Pressure ​​ — DOI: `10.2139/ssrn.7447208`
+- Pressure lifts nickelate superconductivity to 48 K — DOI: `10.1016/j.newton.2026.100470`
+- High Temperature Superconductivity and Instabilities — DOI: `10.1007/978-1-4684-3351-7_23`
+- Superconducting Transition — DOI: `10.1007/0-306-48216-9_2`
+- High temperature superconductivity under pressure — DOI: `10.1080/08957959108245505`
+- Ferromagnetic thickness dependence of superconducting transition temperature in a superconductor/ferromagnet bilayer system with an inhomogeneous exchange field — DOI: `10.1016/j.physc.2014.04.034`
+- On the high pressure superconductivity of transition metal nitride: TiN — DOI: `10.1016/j.physc.2013.02.008`
+- How optimal inhomogeneity produces high temperature superconductivity
+- High pressure research using muons at the Paul Scherrer Institute — DOI: `10.1080/08957959.2016.1173690`
+- Experimental Progress in Ambient-Pressure Superconducting Bilayer Nickelate Films
+- Combined single crystal polarized XAFS and XRD at high pressure: probing the interplay between lattice distortions and electronic order at multiple length scales in high $T_c$ cuprates — DOI: `10.1080/08957959.2016.1198905`
+- Reducing the strain required for ambient-pressure superconductivity in bilayer nickelates — DOI: `10.1002/adma.202520724`
+- The use of LEDs as a light source for fluorescence pressure measurements — DOI: `10.1080/08957959.2023.2209902`
+- A possible explanation for the high superconducting Tc in bcc Ti at high pressure
+- What High Pressure Studies Have Taught Us about High-Temperature Superconductivity
+- High Pressure Effects on the Superconductivity in Rare-Earth Doped CaFe2As2 — DOI: `10.1080/08957959.2013.879867`
+- Strong-Coupling Theory of High Temperature Superconductivity
+- Hydrostaticity and hidden order: effects of experimental conditions on the temperature-pressure phase diagram of URu2Si2 — DOI: `10.1080/08957950802564676`
+- Magnetism and superconductivity in bilayer nickelate
+- Enhancement of the superconducting transition temperature in Mn-doped CaKFe4As4 processed by the high gas-pressure and high-temperature synthesis method — DOI: `10.1007/s10948-025-07115-2`
+- A superconducting half-dome in bilayer nickelates
+- Bulk high-temperature superconductivity in the high-pressure tetragonal phase of bilayer La2PrNi2O7
+- High-T$_c$ and Low-T$_c$ Superconductivity in Electron Systems With Repulsion
+- Superconductivity at the metal-insulator phase boundary in a bulk nickelate at ambient pressure — DOI: `10.48550/arxiv.2609.19686`
+- Probing Structural Origins of Ambient Pressure Superconductivity and Charge Modulation in Nickelate Thin Films with Multislice Electron Ptychography — DOI: `10.1093/mam/ozaf048.072`
+- The Quest for High-Temperature Superconductivity in Nickelates under Ambient Pressure — DOI: `10.3390/ma17112546`
+- Superconductivity onset above 60 K in ambient-pressure nickelate films — DOI: `10.1093/nsr/nwag151`
+- Single-crystal structural phase diagram of stoichiometric bilayer nickelate La3Ni2O7 under hydrostatic pressure — DOI: `10.48550/arxiv.2607.27607`
+- Persistent structural distortions and absent superconductivity in trilayer nickelate thin films — DOI: `10.48550/arxiv.2606.20941`
+- Structural transitions, octahedral rotations, and electronic properties of A3Ni2O7 rare-earth nickelates under high pressure — DOI: `10.1038/s41535-024-00648-0`
+- Superconductivity in Trilayer Nickelate La 4 Ni 3 O 10 under Pressure — DOI: `10.1103/physrevx.15.021005`
+- Chemical versus physical pressure effects on the structure transition of bilayer nickelates — DOI: `10.1038/s41535-024-00721-8`
+- Pressure induced superconductivity in hybrid Ruddlesden‒Popper La5Ni3O11 single crystals — DOI: `10.1038/s41567-025-03023-3`
+- Pressure-Induced Structural Phase Transition and Superconductivity in NaSn5 — DOI: `10.1021/acs.inorgchem.9b02746.s001`
+- High-Pressure Effect on the Superconductivity of Naalge and Pressure-Induced Structural Phase Transition — DOI: `10.2139/ssrn.4416475`
+- Structural, magnetic and superconducting phase transitions in CaFe2As2 under ambient and applied pressure — DOI: `10.1016/j.physc.2009.03.033`
+- Pressure-Driven Structural Phase Transitions and Superconductivity of Ternary Hydride MgVH6 — DOI: `10.1021/acs.jpcc.0c09447.s001`
+- Superconductivity appears in nickelate crystals under pressure — DOI: `10.1088/2058-7058/37/10/04`
+- Evidence for a Pressure-Induced Phase Transition in the Highly Distorted TlNiO3 Nickelate — DOI: `10.1021/acs.chemmater.3c00593.s001`
+- A simple route to single-phase YBa2Cu4O8 at ambient pressure — DOI: `10.1016/0921-4534(94)00576-1`
+- Long-Range Structural Order in a Hidden Phase of RuddlesdenPopper Bilayer Nickelate La3Ni2O7 — DOI: `10.1021/acs.inorgchem.3c04474.s001`
+- Superconductivity in a Nickelate — DOI: `10.36471/jccm_november_2023_03`
+- Superconductivity and structural characteristics of ceramic Pr2Ba4Cu7O15−δ prepared by ambient pressure synthesis using citrate pyrolysis method — DOI: `10.1016/j.physc.2007.01.071`
+- Pressure effects on superconductivity and structural phase transitions in La2−xMxCuO4 (M  Ba, Sr) — DOI: `10.1016/0921-4534(92)90029-c`
+- Structural phase transitions and superconductivity of La2−xBaxCuO4 with x=0.125: Effects of pressure and Sr-substitution — DOI: `10.1016/0921-4534(94)91643-8`
+- Coexistence of Superconductivity and Superhardness in M2B4C8 Clathrates at Ambient Pressure — DOI: `10.1021/acs.jpcc.6c01444.s001`
+- Superconductivity at the metal-insulator phase boundary in a bulk nickelate at ambient pressure
+- Simultaneous measurement of pressure evolution of crystal structure and superconductivity in FeSe0.92 using designer diamonds — DOI: `10.1209/0295-5075/99/26002`
+- Pressure-Induced Superconductivity from Doping-Induced Antiferromagnetic Phase of 112-type Ca$_{1-x}$La$_{x}$FeAs$_{2}$ — DOI: `10.7566/jpsj.86.113705`
+- Pressure-induced Superconductivity in CaLi2 — DOI: `10.1103/physrevlett.100.197003`
+- Single-crystal structural phase diagram of stoichiometric bilayer nickelate La3Ni2O7 under hydrostatic pressure
+- Signature of superconductivity in pressurized La4Ni3O10-x single crystals grown at ambient pressure — DOI: `10.1002/adma.202507365`
+- Structural routes to stabilise superconducting La$_3$Ni$_2$O$_7$ at ambient pressure — DOI: `10.1103/physrevmaterials.8.044801`
+- Phase transitions in quasi-one dimensional system with unconventional superconductivity — DOI: `10.1007/s10948-017-4366-0`
+- Unveiling pressurized bulk superconductivity in a trilayer nickelate Pr4Ni3O10 single crystal — DOI: `10.1007/s11433-025-2852-4`
+- Absence of superconductivity and density-wave transition in ambient-pressure tetragonal La$_4$Ni$_3$O$_{10}$
+- Bulk superconductivity in quintuple-layer square-planar nickelate La6Ni5O12 — DOI: `10.48550/arxiv.2610.20249`
+- Superconductivity with enhanced critical current density in ultrathin infinite-layer nickelate films — DOI: `10.1038/s43246-026-01312-9`
+- Enhanced superconductivity and mixed-dimensional behaviour in infinite-layer samarium nickelate thin films — DOI: `10.1038/s41467-026-69650-3`
+- Superconductivity in an extreme strange metal — DOI: `10.1038/s41467-021-24670-z`
+- A chemical avenue to manipulate field-reentrant superconducting rivalries in infinite layer nickelates — DOI: `10.21203/rs.3.rs-7803050/v1`
+- A chemical avenue to manipulate field-reentrant superconducting rivalries in infinite layer nickelates — DOI: `10.48550/arxiv.2511.22026`
+- A chemical avenue to manipulate field-reentrant superconducting competition in infinite-layer nickelates — DOI: `10.1093/nsr/nwag457`
+- Ultrafast Magneto-Pressure Spectroscopy and Control of Correlated Phases in a Trilayer Nickelate — DOI: `10.48550/arxiv.2604.16611`
+- Collapse of metallicity and high-Tc superconductivity in the high-pressure phase of FeSe0.89S0.11 — DOI: `10.1038/s41535-024-00677-9`
+- Optically Activated Superconductivity in MgB2 via Electroluminescent GaP Inhomogeneous Phase — DOI: `10.3390/ma19071456`
+- An Investigation of high Tc superconductivity in the doped YBa2Cu3O7 and Ln2CuO4 (Ln=La, Nd) systems by neutron scattering and nuclear magnetic resonance — DOI: `10.82444/warw.33768430`
+- Interplay of Pressure, Modulation, and Disorder in the Superconductivity of AuAgTe 4 — DOI: `10.21203/rs.3.rs-10558612/v1`
+- Angle-resolved Photoemission Spectroscopy Study of High Temperature Superconductor Cuprate, and Potential High Temperature Superconductors K-Doped p-Terphenyl and Trilayer Nickelate
+- Optically Activated Superconductivity in MgB2 via Electroluminescent GaP Inhomogeneous Phase
+- Noncentrosymmetric superconductivity and peak effect in rhenium based materials — DOI: `10.11606/t.43.2021.tde-20102021-215946`
+- Enhanced Superconductivity and Critical Current Density Due to the Interaction of InSe2 Bonded Layer in (InSe2)0.12NbSe2 — DOI: `10.1021/jacs.3c09756`
+- Counterintuitive inverse superconducting transition beyond 4He-cooling limit — DOI: `10.48550/arxiv.2606.18683`
+- AC Loss Research of REBCO High-Tc Superconductors Carrying a DC Current in an AC Magnetic Field — DOI: `10.26686/wgtn.22180168`
+- Zero-Resistance State for a Potential High-Temperature Superconducting Nickelate — DOI: `10.1103/physics.17.s32`
+- Magnetic shielding — DOI: `10.1887/0750303778/b367v2c12`
+- Magnetic hysteresis of the zero-resistance critical temperature in YBa2Cu3O7 − x ceramic superconductors — DOI: `10.1016/0921-4534(94)90587-8`
+- Optimization Design of a Giant Magneto Resistive Effect Based Current Sensor With a Magnetic Shielding — DOI: `10.1109/tasc.2013.2284199`
+- Magnetic Shielding by HTc Superconductor — DOI: `10.1007/978-4-431-68195-3_230`
+- Magnetic shielding at liquid nitrogen temperature — DOI: `10.1016/0964-1807(94)90082-5`
+- Magnetic hysteresis of the zero-resistance critical temperature in YBaCuO, BiSrCaCuO and HgBaCaCuO superconducting polycrystals — DOI: `10.1016/s0921-4534(99)00144-6`
+- Resistive behavior and magnetic phase diagram of MgB2 single crystals — DOI: `10.1016/s0921-4534(02)02312-2`
+- A novel vacuum tube may achieve zero resistance and superconductivity properties — DOI: `10.36227/techrxiv.11973624`
+- A novel vacuum tube may achieve zero resistance and superconductivity properties — DOI: `10.36227/techrxiv.11973624.v1`
+- ZERO RESISTANCE — DOI: `10.1016/b978-0-08-021651-5.50008-5`
+- Magnetic shielding effects of the superposition of a ferromagnetic cylinder over an HTS cylinder: magnetic shielding dependence on the air gap between the BPSCCO and soft-iron cylinders — DOI: `10.1016/s0921-4534(02)02113-5`
+- Magnetic shielding — DOI: `10.1201/9781420050271.chg10`
+- Static Magnetic Shielding Analysis of High Tc Oxide Superconductor with Nonlinear Magnetic Permeability — DOI: `10.1007/978-4-431-68535-7_302`
+- Weak magnetic field superconductor resistive sensors in comparison with semiconductor and magnetoresistive sensors — DOI: `10.1016/j.physc.2007.04.015`
+- Angular dependence of resistive transition in strongly anisotropic superconductors under magnetic field — DOI: `10.1016/0921-4534(92)90487-w`
+- Broad resistive transition under magnetic field in high-temperature superconductors — DOI: `10.1016/0921-4534(90)90039-h`
+- Visible Light-Modulated Low-Power Resistive Switching in Perovskite Nickelate Photovoltaic Heterostructures — DOI: `10.1021/acsami.5c15606.s001`
+- Critical current models and magnetic shielding of high temperature superconductors — DOI: `10.1016/0921-4534(93)90606-q`
+- Shunt-controlled resistive state of superconducting wires
+- Resistance of high-temperature superconducting tapes triggered by alternating magnetic field — DOI: `10.1109/tasc.2025.3550837`
+- Describing heat dissipation in the resistive state of three-dimensional superconductors — DOI: `10.1016/j.physc.2024.1354531`
+- Superconductivity of epsilon-Fe: complete resistive transition — DOI: `10.1016/s0375-9601(02)00725-9`
+- On the origin of the zero-resistance anomaly in heavy fermion superconducting Ir: a clue from magnetic field and Rh-doping studies — DOI: `10.1103/physrevb.64.220504`
+- High Temperature Superconducting Radio Frequency Coils for NMR Spectroscopy and Magnetic Resonance Imaging
+- Superconductivity from Meissner Effect and Zero Resistivity in a Phenyl Molecule
+- Josephson-like Colossal Resistive Switching in Nanocrystalline Y-Ba-Cu-O at Room Temperature
+- Relaxation of Microwave Nonlinearity in a Cuprate Superconducting Resonator — DOI: `10.1109/tasc.2016.2638404`
+- Thermal resistance in superconducting flip-chip assemblies — DOI: `10.1063/5.0162409`
+- Bulk superconductivity in quintuple-layer square-planar nickelate La6Ni5O12
+- High-temperature superconductivity with zero-resistance and strange metal behavior in La$_{3}$Ni$_{2}$O$_{7-δ}$ — DOI: `10.1038/s41567-024-02515-y`
+- Observation of double resistance anomalies and excessive resistance in mesoscopic superconducting Au$_{0.7}$In$_{0.3}$ rings with phase separation
+- Negative nonlocal and local voltages (resistances) in a quasi-one-dimensional superconducting aluminum structure — DOI: `10.1016/j.physc.2020.1353811`
+- Superconductivity driven by pairing of the coherent parts of the physical electrons — DOI: `10.1016/j.physc.2017.12.001`
+- Width of the Zero-Field Superconducting Resistive Transition in the Vicinity of the Localization Threshold — DOI: `10.1134/1.1364540`
+- Imaging of Microscopic Sources of Resistive and Reactive Nonlinearities in Superconducting Microwave Devices — DOI: `10.1109/tasc.2007.897322`
+- Stabilization of Tetragonal Phase and Aluminum-Doping Effect in a Bilayer Nickelate — DOI: `10.1038/s41535-025-00830-y`
+- Stabilization of Infinite-Layer NdNi1–xAlxO2 Nickelates Containing Monovalent Ni as Bulk Polycrystalline Materials — DOI: `10.1021/acs.chemmater.5c00507`
+- Towards Quantum Dynamics Simulation of Physical Systems: A Survey — DOI: `10.48550/arxiv.2310.11801`
+- Vanadium dioxide deposited by pulsed laser deposition: from materials optimization to applications in terahertz modulation — DOI: `10.58088/e3xp-j961`
+- Figure 6: Independent replication of results. — DOI: `10.7717/peerj.2661/fig-6`
+- Elasticity of MgO to 11 GPa with an independent absolute pressure scale: Implications for pressure calibration — DOI: `10.1029/2005jb004251`
+- Theory of unconventional superconductivity in nickelate-based materials* — DOI: `10.1088/1674-1056/ac0bb1`
+- Status of superconductivity in the commonwealth of independent states — DOI: `10.1016/0964-1807(93)90224-p`
+- Underwater acoustics. Hydrophones. Calibration of hydrophones — DOI: `10.3403/30355501u`
+- Bulk superconductivity in pressurized trilayer nickelate Pr4Ni3O10 single crystals — DOI: `10.1103/physrevx.15.021008`
+- Unconventional superconductivity without doping: infinite-layer nickelates under pressure — DOI: `10.1038/s41467-024-48169-5`
+- Superconductivity in SrTiO$_{3}$: dielectric function method for non-parabolic bands — DOI: `10.1007/s10948-019-5029-0`
+- Recent Studies in Superconductivity at Extreme Pressures — DOI: `10.1016/j.physc.2007.03.025`
+- Isotropic superconductivity in pressurized trilayer nickelate La4Ni3O10
+- Frustrated superconductivity and intrinsic reduction of Tc in trilayer nickelate — DOI: `10.59717/j.xinn-mater.2024.100102`
+- Interlayer pairing mechanism for bilayer nickelate superconductors — DOI: `10.48550/arxiv.2606.15298`
+- Shear-stress-constrained superconductivity in Ruddlesden-Popper nickelates — DOI: `10.48550/arxiv.2605.14265`
+- Pairing Mechanism in Bilayer Nickelate La$_3$Ni$_2$O$_7$ Superconductors — DOI: `10.48550/arxiv.2604.17181`
+- Layer-Asymmetry-Induced Topological Superconductivity in High-T$_c$ Bilayer Nickelates — DOI: `10.48550/arxiv.2610.03601`
+- Exposing nontrivial flat bands and superconducting pairing in infinite-layer nickelates — DOI: `10.48550/arxiv.2311.03302`
+- Observation of Correlated Plasmons in Low-Valence Nickelates — DOI: `10.1103/3ycq-jclr`
+- Structural and ferroelectric transitions in magnetic nickelate PbNiO3 — DOI: `10.1088/1367-2630/16/1/015030`
+- Spin-glass state in nickelate superconductors — DOI: `10.1038/s41535-025-00813-z`
+- Strongly correlated superconductivity with long-range spatial fluctuations — DOI: `10.1088/2515-7639/ac7e6d`
+- Cooper Pairing Mediated by Onsite Exchange: A Possible Mechanism For High-Temperature Superconductivity — DOI: `10.48550/arxiv.2607.13086`
+- Electronic structure of superconducting infinite-layer lanthanum nickelates — DOI: `10.1126/sciadv.adr5116`
+- High-Tc superconductivity through a charge pairing mechanism in a strongly coupled disordered phase — DOI: `10.48550/arxiv.cond-mat/9804184`
+- Superconductivity in bilayer La$_3$Ni$_2$O$_7$ : A review focusing on the strong-coupling Hund's rule assisted pairing mechanism — DOI: `10.1088/1361-648x/aea8b1`
+- Self-Doping and the Mott-Kondo Scenario for Infinite-Layer Nickelate Superconductors — DOI: `10.3389/fphy.2021.801236`
+- Altermagnetism and superconductivity: a short historical review — DOI: `10.1088/1361-6633/ae9e46`
+- The pairing mechanism of high-temperature superconductivity: experimental constraints — DOI: `10.1088/0031-8949/83/03/038302`
+- Comment on ‘The pairing mechanism of high-temperature superconductivity: experimental constraints’ — DOI: `10.1088/0031-8949/83/03/038303`
+- Reply to Comment on ‘The pairing mechanism of high-temperature superconductivity: experimental constraints’ — DOI: `10.1088/0031-8949/83/03/038304`
+- Pairing mechanism and superconductivity in pressurized La5Ni3O11 — DOI: `10.21203/rs.3.rs-6852646/v1`
+- Two-particle resonance pairing mechanism of oxide superconductivity — DOI: `10.1103/physrevb.36.5595`
+- Valence-Fluctuation Scenario for Cuprate Superconductivity: The Finite-U Pairing Mechanism — DOI: `10.1007/978-1-4615-3338-2_58`
+- Pairing Mechanism and Superconductivity of Rb3C60 Fullerides — DOI: `10.1023/a:1007755032546`
+- Attractive interaction between electrons: An electron-pairing mechanism for superconductivity — DOI: `10.1103/physrevb.38.10900`
+- A new pairing mechanism in oxide superconductors — DOI: `10.1016/0921-4534(88)90264-x`
+- Benchmarking cuprate superconductivity theories: experimental constraints, quantum simulation targets, and a unified framework — DOI: `10.21203/rs.3.rs-9480217/v1`
+- New Pairing Mechanism via Chiral Electron-Hole Condensation for Non-BCS Superconductivity — DOI: `10.31219/osf.io/xauqn`
+- Symmetry of the pairing, isotope effect and mechanism of superconductivity in the cuprates — DOI: `10.1016/0921-4534(94)92427-9`
+- Band structure, electron correlations, and an interlayer pairing mechanism for high temperature superconductivity — DOI: `10.1016/0921-4534(88)90298-5`
+- Quantum chemical studies on the pairing mechanism of high Tc cuprates — DOI: `10.1016/j.physc.2004.01.047`
+- Magnetic pairing mechanism for superconductivity in the Heisenberg model — DOI: `10.1103/physrevb.40.119`
+- Novel pairing mechanism for superconductivity at a vanishing level of doping driven by critical ferroelectric modes — DOI: `10.1103/physrevb.98.220505`
+- Jahn-teller (reverse sign) mechanism for superconductive pairing — DOI: `10.1016/0921-4534(90)90193-i`
+- The pairing mechanism of overdoped cuprates — DOI: `10.1142/9789814343152_0002`
+- Strong pairing and symmetric pseudogap metal in double Kondo lattice model: From nickelate superconductor to tetralayer optical lattice — DOI: `10.1103/wwp3-sphm`
+- Brief review on iron-based superconductors: are there clues for unconventional superconductivity?
+- O-bridged electron pairing: the microscopic mechanism for high-temperature superconductivity in cuprates and nickelates
+- Interlayer pairing mechanism for bilayer nickelate superconductors
+- Pair-density-wave superconductivity and Anderson's theorem in bilayer nickelates
+- Possible pairing states in the superconducting bilayer nickelate
+- In-plane oxygens in high-temperature superconducting cuprates — DOI: `10.1007/s10948-013-2157-9`
+- Lifshitz transitions in multi-band Hubbard models for topological superconductivity in complex quantum matter — DOI: `10.1007/s10948-017-4535-1`
+- Fluctuations and Higgs mechanism in Under-Doped Cuprates: a Review — DOI: `10.1146/annurev-conmatphys-031218-013125`
+- Copper waveguide cavities with reduced surface loss for coupling to superconducting qubits — DOI: `10.1109/tasc.2014.2330522`
+- Two tone response in Superconducting Quantum Interference Filters — DOI: `10.1109/tasc.2007.898036`
+- Distinct pairing symmetries of superconductivity in infinite-layer nickelates — DOI: `10.1103/physrevb.102.220501`
+- High-Tc Superconductivity via BCS and BEC Unification: A Review
+
+## Failures
+
+- semantic-scholar / "nickelate superconductivity infinite layer thin film substrate oxygen stoichiometry": source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)
+- semantic-scholar / "nickelate superconductivity bilayer high pressure transition temperature": source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)
+- semantic-scholar / "nickelate superconductivity ambient pressure structural phase": source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)
+- semantic-scholar / "nickelate superconductivity resistive onset zero resistance magnetic shielding": source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)
+- semantic-scholar / "nickelate superconductivity independent replication pressure calibration": source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)
+- semantic-scholar / "nickelate superconductivity pairing mechanism experimental constraints review": source HTTP status 429: rate limited; reduce request frequency, try again later, or configure an API key (check connector env vars)

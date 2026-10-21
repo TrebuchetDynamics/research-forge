@@ -294,6 +294,15 @@ def check_run(root, cases):
     topics = object_value(run.get("topics"), "run.topics")
     ceilings = object_value(run.get("authorized_ceilings"), "run.authorized_ceilings")
     require(set(topics) == set(IDS) and set(ceilings) == set(IDS), "run: expected both topics and authorized ceilings")
+    resume_authorizations = object_value(run.get("owner_resume_authorization", {}),
+                                         "run.owner_resume_authorization")
+    require(set(resume_authorizations) <= {"majorana"},
+            "owner_resume_authorization: only one additional Majorana resume is supported")
+    if "majorana" in resume_authorizations:
+        authorization = object_value(resume_authorizations["majorana"], "majorana resume authorization")
+        require(type(authorization.get("additional_resumes")) is int
+                and authorization["additional_resumes"] == 1 and text(authorization.get("authority")),
+                "majorana resume authorization: require additional_resumes=1 and recorded owner authority")
     command_ids = set()
     partial = False
     for case in cases:
@@ -311,7 +320,8 @@ def check_run(root, cases):
         limits = object_value(ceilings[topic], f"{topic}.authorized_ceilings")
         maximums = {"search_calls": case["max_search_calls"], "citation_seeds": 3, "citation_depth": 1,
                     "citation_max_records": 30, "citation_max_api_calls": 6, "citation_retry_budget": 0,
-                    "paper_resolutions": 5, "process_timeout_seconds": 120, "search_resumes": 1}
+                    "paper_resolutions": 5, "process_timeout_seconds": 120,
+                    "search_resumes": 2 if topic in resume_authorizations else 1}
         for key, maximum in maximums.items():
             require(type(limits.get(key)) is int and 0 <= limits[key] <= maximum,
                     f"{topic}.{key}: authorized ceiling must be 0..{maximum}")

@@ -1,0 +1,20 @@
+10.59717/j.xinn-mater.2024.100102	Frustrated superconductivity and intrinsic reduction of Tc in trilayer nickelate
+10.48550/arxiv.2606.15298	Interlayer pairing mechanism for bilayer nickelate superconductors
+10.3390/ma17112546	The Quest for High-Temperature Superconductivity in Nickelates under Ambient Pressure
+10.1088/1361-6633/ae9aae	Superconductivity in Ruddlesden–Popper nickelates: a review of recent progress, focusing on thin films
+10.54254/2753-8818/2026.dl33826	Nickelate Superconductors: A Gateway to High-Temperature Superconductivity
+10.48550/arxiv.2605.14265	Shear-stress-constrained superconductivity in Ruddlesden-Popper nickelates
+10.15302/frontphys.2026.115301	Progress of ambient-pressure superconductivity in bilayer nickelate thin films
+10.48550/arxiv.2604.17181	Pairing Mechanism in Bilayer Nickelate La$_3$Ni$_2$O$_7$ Superconductors
+10.48550/arxiv.2610.03601	Layer-Asymmetry-Induced Topological Superconductivity in High-T$_c$ Bilayer Nickelates
+10.48550/arxiv.2311.03302	Exposing nontrivial flat bands and superconducting pairing in infinite-layer nickelates
+10.1103/3ycq-jclr	Observation of Correlated Plasmons in Low-Valence Nickelates
+10.1088/1367-2630/16/1/015030	Structural and ferroelectric transitions in magnetic nickelate PbNiO3
+10.1038/s41535-025-00813-z	Spin-glass state in nickelate superconductors
+10.1088/2515-7639/ac7e6d	Strongly correlated superconductivity with long-range spatial fluctuations
+10.48550/arxiv.2607.13086	Cooper Pairing Mediated by Onsite Exchange: A Possible Mechanism For High-Temperature Superconductivity
+10.1126/sciadv.adr5116	Electronic structure of superconducting infinite-layer lanthanum nickelates
+10.48550/arxiv.cond-mat/9804184	High-Tc superconductivity through a charge pairing mechanism in a strongly coupled disordered phase
+10.1088/1361-648x/aea8b1	Superconductivity in bilayer La$_3$Ni$_2$O$_7$ : A review focusing on the strong-coupling Hund's rule assisted pairing mechanism
+10.3389/fphy.2021.801236	Self-Doping and the Mott-Kondo Scenario for Infinite-Layer Nickelate Superconductors
+10.1088/1361-6633/ae9e46	Altermagnetism and superconductivity: a short historical review

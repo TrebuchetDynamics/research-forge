@@ -1,0 +1,19 @@
+10.1103/physrevb.102.045303	Signatures of the Majorana spin in electrical transport through a Majorana nanowire
+10.11606/d.43.2021.tde-19052021-163141	Majorana bound states in nanowire junctions
+10.1126/science.1222360	Signatures of Majorana Fermions in Hybrid Superconductor-Semiconductor Nanowire Devices
+10.2172/1051382	Signatures of Majorana Fermions in Hybrid Superconductor-Topological Insulator Devices
+10.1063/pt.4.0018	Majorana fermions in a nanowire?
+10.1103/6wnf-b5g8	Transport signatures of single and multiple Floquet Majorana modes in a one-dimensional Rashba nanowire and Shiba chain
+10.21203/rs.3.rs-1566363/v1	Conductance Spectroscopy of Majorana Zero Modes in Superconductor-Magnetic Insulator Nanowire Hybrid Systems
+10.2139/ssrn.5964654	Parity-Sector Signatures in Ultraweak Photon Emission from Driven-Dissipative Majorana Spin Systems
+10.1063/pt.3.1587	Evidence for Majorana fermions in a nanowire
+10.20944/preprints202512.2321.v1	Parity-Sector Signatures in Ultraweak Photon Emission from Driven-Dissipative Majorana Spin Systems
+10.1103/physrevb.88.144512	Majorana modes in smooth normal-superconductor nanowire junctions
+10.7717/peerj.2661/fig-6	Figure 6: Independent replication of results.
+10.1103/physrevb.104.205125	Topological Kondo device for distinguishing quasi-Majorana and Majorana signatures
+10.1103/physrevlett.97.171804	Signatures for Majorana Neutrinos at Hadron Colliders
+10.7567/ssdm.2014.p-3-1	Signatures of Majorana Fermions in Topological Superconductor Nanowires
+10.59973/ipil.321	Parity-Sector Signatures in Ultraweak Photon Emission from Driven-Dissipative Majorana Spin Systems
+10.1117/12.2566302	Signatures of topological ground state degeneracy in Majorana islands
+10.7717/peerj.11433/fig-8	Figure 8: Independent prognostic analysis of two prognostic signatures.
+10.1108/s0193-230620150000018009	Replication in Experimental Economics

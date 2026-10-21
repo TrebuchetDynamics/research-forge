@@ -1,0 +1,20 @@
+10.1038/s41586-026-10352-7	Superconductivity and electronic structures of nickelate thin film superstructures
+10.1038/s41586-023-06408-7	Signatures of superconductivity near 80 K in a nickelate under high pressure
+10.48550/arxiv.2609.19686	Superconductivity at the metal-insulator phase boundary in a bulk nickelate at ambient pressure
+10.1093/mam/ozaf048.072	Probing Structural Origins of Ambient Pressure Superconductivity and Charge Modulation in Nickelate Thin Films with Multislice Electron Ptychography
+10.1093/nsr/nwaf253	Correlated electronic structures and unconventional superconductivity in bilayer nickelate heterostructures
+10.3390/ma17112546	The Quest for High-Temperature Superconductivity in Nickelates under Ambient Pressure
+10.1093/nsr/nwag151	Superconductivity onset above 60 K in ambient-pressure nickelate films
+10.48550/arxiv.2607.27607	Single-crystal structural phase diagram of stoichiometric bilayer nickelate La3Ni2O7 under hydrostatic pressure
+10.48550/arxiv.2605.11584	Experimental Progress in Ambient-Pressure Superconducting Bilayer Nickelate Films
+10.48550/arxiv.2606.20941	Persistent structural distortions and absent superconductivity in trilayer nickelate thin films
+10.1038/s41535-024-00648-0	Structural transitions, octahedral rotations, and electronic properties of A3Ni2O7 rare-earth nickelates under high pressure
+10.54254/2753-8818/2026.dl33826	Nickelate Superconductors: A Gateway to High-Temperature Superconductivity
+10.15302/frontphys.2026.115301	Progress of ambient-pressure superconductivity in bilayer nickelate thin films
+10.1103/physrevb.110.024514	Superconductivity in nickelate and cuprate superconductors with strong bilayer coupling
+10.1093/nsr/nwaf220	Identification of superconductivity in bilayer nickelate La3Ni2O7 under high pressure up to 100 GPa
+10.1103/physrevx.15.021005	Superconductivity in Trilayer Nickelate La 4 Ni 3 O 10 under Pressure
+10.1002/advs.202305252	Robust Superconductivity in Infinite‐Layer Nickelates
+10.1038/s41535-024-00721-8	Chemical versus physical pressure effects on the structure transition of bilayer nickelates
+10.1038/s41586-025-09954-4	Bulk superconductivity up to 96 K in pressurized nickelate single crystals
+10.1038/s41567-025-03023-3	Pressure induced superconductivity in hybrid Ruddlesden‒Popper La5Ni3O11 single crystals

@@ -1,0 +1,20 @@
+10.1038/s41567-020-01107-w	Non-Majorana states yield nearly quantized conductance in superconductor-semiconductor nanowire devices
+10.1103/physrevb.96.184520	Electron temperature and tunnel coupling dependence of zero-bias and almost-zero-bias conductance peaks in Majorana nanowires
+	The MAJORANA Experiment
+	White Paper on the Majorana Zero-Neutrino Double-Beta Decay Experiment
+10.1088/1742-6596/203/1/012057	TThe {\sc Majorana} Project
+10.1103/physrevb.96.045135	Isolating Majorana fermions with finite Kitaev nanowires and temperature: the universality of the zero-bias conductance
+10.1103/physrevb.96.054504	Conductance of a superconducting Coulomb blockaded Majorana nanowire
+	Avoiding Dilution: Using Diffusion and Vision Transformers to resolve Majorana Features in Nanowires at High Temperature
+10.1103/physrevb.99.024510	Conductance feature smearing and anisotropic suppression of induced superconductivity in a Majorana nanowire
+	Temperature dependence of electrical and thermal conduction in single silver nanowire
+10.1103/physrevb.94.035143	How to infer non-Abelian statistics and topological invariants from tunneling conductance properties of realistic Majorana nanowires
+10.1103/physrevb.100.045302	Presence versus absence of end-to-end nonlocal conductance correlations in Majorana nanowires: Majorana bound states versus Andreev bound states
+10.1103/physrevlett.123.107703	Ubiquitous non-Majorana Zero-Bias Conductance Peaks in Nanowire Devices
+10.1103/physrevb.103.014513	Three-terminal nonlocal conductance in Majorana nanowires: Distinguishing topological and trivial in realistic systems with disorder and inhomogeneous potential
+10.1103/physrevresearch.2.013377	Physical mechanisms for zero-bias conductance peaks in Majorana nanowires
+10.1088/1367-2630/14/12/125011	Zero-voltage conductance peak from weak antilocalization in a Majorana nanowire
+10.1063/1.3270259	Diameter-dependent conductance of InAs nanowires
+10.1103/physrevb.98.224512	Quasiparticle gaps in multiprobe Majorana nanowires
+10.1103/physrevb.102.045303	Signatures of the Majorana spin in electrical transport through a Majorana nanowire
+	Conductance Spectroscopy of Majorana Zero Modes in Superconductor-Magnetic Insulating Nanowire Hybrid Systems

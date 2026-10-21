@@ -1,0 +1,20 @@
+10.1038/nphys3461	Parity lifetime of bound states in a proximitized semiconductor nanowire
+10.1103/physrevb.98.085125	Nonlocality of Majorana modes in hybrid nanowires
+10.1063/5.0102999	Majorana nanowires for topological quantum computation
+10.1103/physrevlett.108.257001	ac Josephson Effect in Finite-Length Nanowire Junctions with Majorana Modes
+10.1103/physrevlett.118.137701	Transport Signatures of Quasiparticle Poisoning in a Majorana Island
+10.48550/arxiv.2610.12223	Measurement-induced enhancement of the $X$-parity lifetime in a Majorana tetron
+10.1103/physrevresearch.2.033254	Parity-to-charge conversion in Majorana qubit readout
+10.1103/physrevb.95.235305	Scalable designs for quasiparticle-poisoning-protected topological quantum computation with Majorana zero modes
+10.1103/physrevresearch.1.033207	Majorana braiding in realistic nanowire Y-junctions and tuning forks
+10.11606/d.43.2021.tde-19052021-163141	Majorana bound states in nanowire junctions
+10.1007/s11433-021-1737-4	Experimental review on Majorana zero-modes in hybrid nanowires
+10.1088/1361-648x/ac44d2	Majorana/Andreev crossover and the fate of the topological phase transition in inhomogeneous nanowires
+10.1103/physrevb.93.104524	Kondo physics from quasiparticle poisoning in Majorana devices
+10.1103/physrevb.104.045422	Full parity phase diagram of a proximitized nanowire island
+10.1103/physrevb.106.l201305	Interference and parity blockade in transport through a Majorana box
+10.1038/nphys3342	One minute parity lifetime of a NbTiN Cooper-pair transistor
+10.1038/npjqi.2015.1	Majorana zero modes and topological quantum computation
+10.1103/physrevlett.131.117001	Dynamical Polarization of the Fermion Parity in a Nanowire Josephson Junction
+10.1103/physrevb.97.041415	Dynamic current susceptibility as a probe of Majorana bound states in nanowire-based Josephson junctions
+10.4233/uuid:ebfff02c-f87c-4c8a-9edd-53adb12f4403	Superconducting islands and gate-based readout in semiconductor nanowires

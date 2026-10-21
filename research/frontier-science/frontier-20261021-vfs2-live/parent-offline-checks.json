@@ -1,0 +1,119 @@
+{
+  "observed_at": "2026-10-21T17:11:08.289393+00:00",
+  "commands": [
+    {
+      "id": "parent-packet-tests",
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "docs/benchmark/frontier-science",
+        "-p",
+        "test_check.py",
+        "-v"
+      ],
+      "start": "2026-10-21T17:11:05.571971+00:00",
+      "end": "2026-10-21T17:11:07.956969+00:00",
+      "exit_code": 0,
+      "stdout": "parent-packet-tests.stdout.log",
+      "stderr": "parent-packet-tests.stderr.log"
+    },
+    {
+      "id": "parent-packet-cases",
+      "argv": [
+        "python3",
+        "docs/benchmark/frontier-science/check.py",
+        "--cases",
+        "docs/benchmark/frontier-science/cases.json"
+      ],
+      "start": "2026-10-21T17:11:07.957319+00:00",
+      "end": "2026-10-21T17:11:08.023329+00:00",
+      "exit_code": 0,
+      "stdout": "parent-packet-cases.stdout.log",
+      "stderr": "parent-packet-cases.stderr.log"
+    },
+    {
+      "id": "parent-packet-run",
+      "argv": [
+        "python3",
+        "docs/benchmark/frontier-science/check.py",
+        "--cases",
+        "docs/benchmark/frontier-science/cases.json",
+        "--run",
+        "/home/xel/git/research-forge/.worktrees/autowork-V-FS2/research/frontier-science/frontier-20261021-vfs2-live"
+      ],
+      "start": "2026-10-21T17:11:08.023672+00:00",
+      "end": "2026-10-21T17:11:08.141159+00:00",
+      "exit_code": 0,
+      "stdout": "parent-packet-run.stdout.log",
+      "stderr": "parent-packet-run.stderr.log"
+    },
+    {
+      "id": "validate-parent-final",
+      "argv": [
+        "/var/tmp/aw-1000-d0648c07-1/vfs2-tools/rforge",
+        "--json",
+        "provenance",
+        "validate",
+        "/home/xel/git/research-forge/.worktrees/autowork-V-FS2/research/frontier-science/frontier-20261021-vfs2-live/majorana/provenance.json"
+      ],
+      "start": "2026-10-21T17:11:08.142432+00:00",
+      "end": "2026-10-21T17:11:08.159547+00:00",
+      "exit_code": 0,
+      "stdout": "majorana/validate-parent-final.stdout.log",
+      "stderr": "majorana/validate-parent-final.stderr.log"
+    },
+    {
+      "id": "validate-parent-final",
+      "argv": [
+        "/var/tmp/aw-1000-d0648c07-1/vfs2-tools/rforge",
+        "--json",
+        "provenance",
+        "validate",
+        "/home/xel/git/research-forge/.worktrees/autowork-V-FS2/research/frontier-science/frontier-20261021-vfs2-live/nickelates/provenance.json"
+      ],
+      "start": "2026-10-21T17:11:08.160048+00:00",
+      "end": "2026-10-21T17:11:08.168341+00:00",
+      "exit_code": 0,
+      "stdout": "nickelates/validate-parent-final.stdout.log",
+      "stderr": "nickelates/validate-parent-final.stderr.log"
+    },
+    {
+      "id": "parent-source-audits",
+      "argv": [
+        "python3",
+        "/home/xel/git/research-forge/.worktrees/autowork-V-FS2/research/frontier-science/frontier-20261021-vfs2-live/validate-audits.py",
+        "/home/xel/git/research-forge/.worktrees/autowork-V-FS2/research/frontier-science/frontier-20261021-vfs2-live"
+      ],
+      "start": "2026-10-21T17:11:08.168745+00:00",
+      "end": "2026-10-21T17:11:08.282972+00:00",
+      "exit_code": 0,
+      "stdout": "parent-source-audits.stdout.log",
+      "stderr": "parent-source-audits.stderr.log"
+    },
+    {
+      "id": "parent-diff-check",
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "start": "2026-10-21T17:11:08.283306+00:00",
+      "end": "2026-10-21T17:11:08.289180+00:00",
+      "exit_code": 0,
+      "stdout": "parent-diff-check.stdout.log",
+      "stderr": "parent-diff-check.stderr.log"
+    }
+  ],
+  "scoped_markdown_readback": {
+    "markdown_files": 15,
+    "local_links_and_anchors": 58,
+    "passed": true,
+    "method": "Scoped offline path/anchor readback, no scientific approval."
+  },
+  "retained_primary_passages": "M2/N1/N2 selected quotes verified verbatim against original host tool captures, not new acquisition.",
+  "immutable_history": "Original receipt files byte-identical; original events/command bytes exact prefixes.",
+  "scientific_approval": false
+}

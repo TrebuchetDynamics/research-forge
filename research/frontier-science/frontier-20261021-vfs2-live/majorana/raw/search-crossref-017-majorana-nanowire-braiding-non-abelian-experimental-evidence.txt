@@ -1,0 +1,19 @@
+10.21468/scipostphyslectnotes.15	Search for non-Abelian Majorana braiding statistics in superconductors
+10.1103/physrevb.88.180402	Majorana fermions qubit states and non-Abelian braiding statistics in quenched inhomogeneous spin ladders
+10.1134/s002136401115015x	Detecting non-Abelian statistics of Majorana fermions in quantum nanowire networks
+10.1103/physrevb.95.019902	Erratum: Symmetry-protected non-Abelian braiding of Majorana Kramers pairs [Phys. Rev. B 94, 224509 (2016)]
+10.1103/physrevb.83.134518	Majorana meets Coxeter: Non-Abelian Majorana fermions and non-Abelian statistics
+10.1007/s11433-021-1773-3	Minimal setup for non-Abelian braiding of Majorana zero modes
+10.1007/s11433-025-2808-x	Unified model for non-Abelian braiding of Majorana and Dirac fermion zero modes
+10.14711/thesis-b1517519	Non-abelian physics in condensed matter physics : Möbius band and Majorana fermions
+10.1103/physrevb.94.224509	Symmetry-protected non-Abelian braiding of Majorana Kramers pairs
+10.21203/rs.3.rs-10607154/v1	Reconstructing non-Abelian braiding and fusion without anyon transport
+10.1016/j.physleta.2025.130515	Non-Abelian braiding of Majorana zero modes in B-form single-stranded DNA with s-wave superconductor
+10.1103/physrevlett.120.230405	Simulation of Non-Abelian Braiding in Majorana Time Crystals
+10.1103/physrevlett.125.187702	Electron-Tunneling-Assisted Non-Abelian Braiding of Rotating Majorana Bound States
+10.21203/rs.3.rs-1303568/v2	Minimal non-abelian nodal braiding in ideal metamaterials
+10.1103/physrevresearch.1.033207	Majorana braiding in realistic nanowire Y-junctions and tuning forks
+10.21203/rs.3.rs-1303568/v1	Minimal non-abelian nodal braiding in ideal metamaterials
+10.7566/jpscp.4.013004	Non-Abelian Vortices, Majorana Fermions and Non-Abelian Statistics
+10.21203/rs.3.rs-147750/v1	Non-Abelian Three-Loop Braiding Statistics for 3D Fermionic Topological Phases
+10.1143/ptps.186.549	Majorana Fermions in Non-Abelian QCD Vortices

@@ -1,0 +1,20 @@
+10.1103/physrevb.95.155451	Probability and braiding statistics in Majorana nanowires
+10.21468/scipostphyslectnotes.15	Search for non-Abelian Majorana braiding statistics in superconductors
+10.13016/za9o-pibw	SIGNATURE OF MAJORANA MODES AND ASPECTS OF THEIR BRAIDING
+10.1103/physrevresearch.1.033207	Majorana braiding in realistic nanowire Y-junctions and tuning forks
+10.1038/s41467-019-13133-1	Next steps of quantum transport in Majorana nanowire devices
+10.1103/physrevx.2.041002	Fractionalizing Majorana Fermions: Non-Abelian Statistics on the Edges of Abelian Quantum Hall States
+10.1063/5.0102999	Majorana nanowires for topological quantum computation
+10.1103/physrevlett.123.107703	Ubiquitous Non-Majorana Zero-Bias Conductance Peaks in Nanowire Devices
+10.1103/qls3-tjzv	Three-Majorana cotunneling interferometer for non-Abelian braiding and topological quantum gate implementation
+10.1103/prxquantum.5.010323	Majorana Qubits and Non-Abelian Physics in Quantum Dot–Based Minimal Kitaev Chains
+10.1007/s11433-021-1737-4	Experimental review on Majorana zero-modes in hybrid nanowires
+10.1038/npjqi.2015.1	Majorana zero modes and topological quantum computation
+10.1103/physrevb.102.125407	Majorana-based quantum computing in nanowire devices
+10.1103/physrevresearch.3.033171	Simulating the dynamics of braiding of Majorana zero modes using an IBM quantum computer
+10.1038/s41535-017-0012-0	Zero-energy pinning from interactions in Majorana nanowires
+10.1038/ncomms2340	Exotic non-Abelian anyons from conventional fractional quantum Hall states
+10.1103/t264-dq2z	Braiding of Majorana zero modes in vortex cores
+10.1103/physrevresearch.5.033109	Platform for braiding Majorana modes with magnetic skyrmions
+10.1142/s0217751x18300235	Majorana Fermions and representations of the braid group
+10.1103/physrevb.108.085415	Density of states, transport, and topology in disordered Majorana nanowires
