@@ -20,9 +20,9 @@ func TestNoFyneDependencyAfterWebGUIRescope(t *testing.T) {
 
 func TestLicenseTODOReferencesResolutionArtifacts(t *testing.T) {
 	root := filepath.Join("..", "..")
-	data, err := os.ReadFile(filepath.Join(root, "TODO.md"))
+	data, err := os.ReadFile(filepath.Join(root, "CHECKLIST.md"))
 	if err != nil {
-		t.Fatalf("read TODO.md: %v", err)
+		t.Fatalf("read CHECKLIST.md: %v", err)
 	}
 	var licenseLine string
 	for _, line := range strings.Split(string(data), "\n") {
@@ -79,7 +79,7 @@ func TestLicenseDecisionBriefCoversRemainingLicenseTODO(t *testing.T) {
 		t.Fatalf("read license decision brief: %v", err)
 	}
 	text := string(data)
-	for _, want := range []string{"No public license yet", "SPDX", "MIT", "Apache-2.0", "GPL-3.0", "AGPL-3.0", "copyright holder", "Add `LICENSE`", "Update `README.md`", "Mark `TODO.md` license item complete"} {
+	for _, want := range []string{"No public license yet", "SPDX", "MIT", "Apache-2.0", "GPL-3.0", "AGPL-3.0", "copyright holder", "Add `LICENSE`", "Update `README.md`", "Mark `CHECKLIST.md` license item complete"} {
 		if !strings.Contains(text, want) {
 			t.Fatalf("license decision brief missing %q", want)
 		}
@@ -135,7 +135,7 @@ func TestRoadmapDocumentsDecisionGatedWebGUIScope(t *testing.T) {
 		t.Fatalf("read ROADMAP: %v", err)
 	}
 	text := string(data)
-	for _, want := range []string{"rforge decisions", "docs/owner-decisions.md", "docs/remaining-todo-audit.md", "ADR 0006", "Dependency-free view models", "make license-decision-live-audit", "make license-decision-approval-gate", "TODO.md:34", "approved:true"} {
+	for _, want := range []string{"rforge decisions", "docs/owner-decisions.md", "docs/remaining-todo-audit.md", "ADR 0006", "Dependency-free view models", "make license-decision-live-audit", "make license-decision-approval-gate", "CHECKLIST.md:34", "approved:true"} {
 		if !strings.Contains(text, want) {
 			t.Fatalf("ROADMAP missing %q", want)
 		}
@@ -149,7 +149,7 @@ func TestContributingDocumentsDecisionGatedTODOWorkflow(t *testing.T) {
 		t.Fatalf("read CONTRIBUTING: %v", err)
 	}
 	text := string(data)
-	for _, want := range []string{"Decision-gated TODOs", "make todo-audit", "Owner decision issue", "make decision-issues", "SPDX identifier", "copyright holder", "approver", "approval date", "make license-decision-live-audit", "make license-decision-approval-gate", "rforge decisions --check TODO.md", "rforge decisions --completion-audit TODO.md docs/todo-completion-audit.md"} {
+	for _, want := range []string{"Decision-gated TODOs", "make todo-audit", "Owner decision issue", "make decision-issues", "SPDX identifier", "copyright holder", "approver", "approval date", "make license-decision-live-audit", "make license-decision-approval-gate", "rforge decisions --check CHECKLIST.md", "rforge decisions --completion-audit CHECKLIST.md docs/todo-completion-audit.md"} {
 		if !strings.Contains(text, want) {
 			t.Fatalf("CONTRIBUTING missing %q", want)
 		}
@@ -222,7 +222,7 @@ func TestMakefileIncludesTodoCompletionAuditTarget(t *testing.T) {
 		t.Fatalf("read Makefile: %v", err)
 	}
 	text := string(data)
-	for _, want := range []string{"todo-completion-audit", "--completion-audit TODO.md docs/todo-completion-audit.md", "docs/todo-completion-audit.md"} {
+	for _, want := range []string{"todo-completion-audit", "--completion-audit CHECKLIST.md docs/todo-completion-audit.md", "docs/todo-completion-audit.md"} {
 		if !strings.Contains(text, want) {
 			t.Fatalf("Makefile missing TODO completion audit target content %q:\n%s", want, text)
 		}
@@ -286,7 +286,7 @@ func TestMakeCheckIncludesTodoDecisionAudit(t *testing.T) {
 		t.Fatalf("read Makefile: %v", err)
 	}
 	text := string(data)
-	if !strings.Contains(text, "check: fmt-check mod-tidy-check test vet todo-completion-audit") || !strings.Contains(text, "decisions --check TODO.md") {
+	if !strings.Contains(text, "check: fmt-check mod-tidy-check test vet todo-completion-audit") || !strings.Contains(text, "decisions --check CHECKLIST.md") {
 		t.Fatalf("Makefile check target does not include TODO decision audit:\n%s", text)
 	}
 }
@@ -347,7 +347,7 @@ func TestPullRequestTemplateRequiresDecisionLinksForDecisionGatedTODOs(t *testin
 		t.Fatalf("read PR template: %v", err)
 	}
 	text := string(data)
-	for _, want := range []string{"Decision-gated TODOs", "Owner decision issue linked", "SPDX identifier", "copyright holder", "approver", "approval date", "make license-decision-live-audit", "approved", "owner_response_required_fields", "license_owner_approval_absent_verified", "license_owner_response_fields_verified", "rforge decisions --check TODO.md", "rforge decisions --completion-audit TODO.md docs/todo-completion-audit.md", "completion_blocked", "blocked_decisions", "blocked_decision_ids"} {
+	for _, want := range []string{"Decision-gated TODOs", "Owner decision issue linked", "SPDX identifier", "copyright holder", "approver", "approval date", "make license-decision-live-audit", "approved", "owner_response_required_fields", "license_owner_approval_absent_verified", "license_owner_response_fields_verified", "rforge decisions --check CHECKLIST.md", "rforge decisions --completion-audit CHECKLIST.md docs/todo-completion-audit.md", "completion_blocked", "blocked_decisions", "blocked_decision_ids"} {
 		if !strings.Contains(text, want) {
 			t.Fatalf("PR template missing %q", want)
 		}
@@ -361,7 +361,7 @@ func TestDecisionResolutionChecklistDocumentsApprovalWorkflow(t *testing.T) {
 		t.Fatalf("read decision checklist: %v", err)
 	}
 	text := string(data)
-	for _, want := range []string{"make todo-audit", "reuse an existing open issue", "Owner decision issue", "SPDX", "copyright holder", "issue_labels", "milestone", "options_considered", "owner_response_required_fields", "license_owner_response_fields_verified", "license_options_verified", "license_issue_routing_verified", "make license-decision-live-audit", "gh issue view 1", "non-placeholder", "Update `TODO.md`", "make check", "rforge decisions --check TODO.md", "rforge decisions --completion-audit TODO.md docs/todo-completion-audit.md", "completion_blocked", "blocked_decisions"} {
+	for _, want := range []string{"make todo-audit", "reuse an existing open issue", "Owner decision issue", "SPDX", "copyright holder", "issue_labels", "milestone", "options_considered", "owner_response_required_fields", "license_owner_response_fields_verified", "license_options_verified", "license_issue_routing_verified", "make license-decision-live-audit", "gh issue view 1", "non-placeholder", "Update `CHECKLIST.md`", "make check", "rforge decisions --check CHECKLIST.md", "rforge decisions --completion-audit CHECKLIST.md docs/todo-completion-audit.md", "completion_blocked", "blocked_decisions"} {
 		if !strings.Contains(text, want) {
 			t.Fatalf("decision checklist missing %q", want)
 		}
@@ -428,7 +428,7 @@ func TestOwnerDecisionIssueTemplateSupportsRemainingDecisionIDs(t *testing.T) {
 			t.Fatalf("owner decision template missing %q", want)
 		}
 	}
-	for _, want := range []string{"project_license", "owner_decision_required", "Owner decision: project_license (SPDX, copyright holder, approver, date required)", "issue_labels", "milestone", "options_considered", "owner_response_required_fields", "license_owner_response_fields_verified", "license_options_verified", "license_issue_routing_verified", "web_gui_stack_scope", "complete", "Go + HTMX", "make decisions", "make todo-completion-audit", "make license-decision-approval-gate", "approved:true", "rforge decisions --completion-audit TODO.md docs/todo-completion-audit.md", "decisions/project_license_issue.md", "decisions/web_gui_stack_scope_issue.md"} {
+	for _, want := range []string{"project_license", "owner_decision_required", "Owner decision: project_license (SPDX, copyright holder, approver, date required)", "issue_labels", "milestone", "options_considered", "owner_response_required_fields", "license_owner_response_fields_verified", "license_options_verified", "license_issue_routing_verified", "web_gui_stack_scope", "complete", "Go + HTMX", "make decisions", "make todo-completion-audit", "make license-decision-approval-gate", "approved:true", "rforge decisions --completion-audit CHECKLIST.md docs/todo-completion-audit.md", "decisions/project_license_issue.md", "decisions/web_gui_stack_scope_issue.md"} {
 		if !strings.Contains(string(decisionsData), want) {
 			t.Fatalf("owner decisions doc missing %q", want)
 		}
@@ -441,7 +441,7 @@ func TestOwnerDecisionIssueTemplateSupportsRemainingDecisionIDs(t *testing.T) {
 			"https://github.com/TrebuchetDynamics/research-forge/issues/1",
 			"Owner decision: project_license (SPDX, copyright holder, approver, date required)",
 			"Resolved TODO items",
-			"TODO.md:34",
+			"CHECKLIST.md:34",
 			"Add license after owner decision",
 			"Options considered",
 			"MIT",
@@ -450,7 +450,7 @@ func TestOwnerDecisionIssueTemplateSupportsRemainingDecisionIDs(t *testing.T) {
 			"Approval date",
 			"make license-decision-approval-gate",
 			"make check",
-			"rforge decisions --completion-audit TODO.md docs/todo-completion-audit.md",
+			"rforge decisions --completion-audit CHECKLIST.md docs/todo-completion-audit.md",
 		},
 		"web_gui_stack_scope_issue.md": {
 			"Decision ID",
@@ -462,7 +462,7 @@ func TestOwnerDecisionIssueTemplateSupportsRemainingDecisionIDs(t *testing.T) {
 			"Go + HTMX",
 			"internal/webui",
 			"make check",
-			"rforge decisions --completion-audit TODO.md docs/todo-completion-audit.md",
+			"rforge decisions --completion-audit CHECKLIST.md docs/todo-completion-audit.md",
 		},
 	}
 	for draft, required := range drafts {

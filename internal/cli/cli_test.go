@@ -57,7 +57,7 @@ func TestExecuteHelpMentionsDecisionCompletionAudit(t *testing.T) {
 	if code != 0 {
 		t.Fatalf("exit code = %d, stderr = %s", code, stderr.String())
 	}
-	for _, want := range []string{"rforge automation policy [--action <action>]", "rforge decisions --check TODO.md", "rforge decisions --completion-audit TODO.md docs/todo-completion-audit.md", "rforge knowledge path --project <path> --from <node-id> --to <node-id>", "rforge graph papers"} {
+	for _, want := range []string{"rforge automation policy [--action <action>]", "rforge decisions --check CHECKLIST.md", "rforge decisions --completion-audit CHECKLIST.md docs/todo-completion-audit.md", "rforge knowledge path --project <path> --from <node-id> --to <node-id>", "rforge graph papers"} {
 		if !strings.Contains(stdout.String(), want) {
 			t.Fatalf("help missing %q:\n%s", want, stdout.String())
 		}
@@ -122,7 +122,7 @@ func TestExecuteDecisionsCheckTODO(t *testing.T) {
 	stdout := new(bytes.Buffer)
 	stderr := new(bytes.Buffer)
 
-	code := Execute([]string{"decisions", "--check", filepath.Join("..", "..", "TODO.md")}, stdout, stderr)
+	code := Execute([]string{"decisions", "--check", filepath.Join("..", "..", "CHECKLIST.md")}, stdout, stderr)
 	if code != 0 {
 		t.Fatalf("exit code = %d, stderr = %s", code, stderr.String())
 	}
@@ -208,7 +208,7 @@ func TestExecuteDecisionsCompletionAuditVerifiesAuditDocument(t *testing.T) {
 	stdout := new(bytes.Buffer)
 	stderr := new(bytes.Buffer)
 
-	code := Execute([]string{"decisions", "--completion-audit", filepath.Join("..", "..", "TODO.md"), filepath.Join("..", "..", "docs", "todo-completion-audit.md")}, stdout, stderr)
+	code := Execute([]string{"decisions", "--completion-audit", filepath.Join("..", "..", "CHECKLIST.md"), filepath.Join("..", "..", "docs", "todo-completion-audit.md")}, stdout, stderr)
 	if code != 0 {
 		t.Fatalf("exit code = %d, stdout = %s, stderr = %s", code, stdout.String(), stderr.String())
 	}
@@ -226,7 +226,7 @@ func TestExecuteDecisionsCompletionAuditJSONIsSingleEnvelope(t *testing.T) {
 	stdout := new(bytes.Buffer)
 	stderr := new(bytes.Buffer)
 
-	code := Execute([]string{"--json", "decisions", "--completion-audit", filepath.Join("..", "..", "TODO.md"), filepath.Join("..", "..", "docs", "todo-completion-audit.md")}, stdout, stderr)
+	code := Execute([]string{"--json", "decisions", "--completion-audit", filepath.Join("..", "..", "CHECKLIST.md"), filepath.Join("..", "..", "docs", "todo-completion-audit.md")}, stdout, stderr)
 	if code != 0 {
 		t.Fatalf("exit code = %d, stdout = %s, stderr = %s", code, stdout.String(), stderr.String())
 	}
@@ -245,7 +245,7 @@ func TestExecuteDecisionsCheckReportsAllUncheckedTODOReferences(t *testing.T) {
 	stdout := new(bytes.Buffer)
 	stderr := new(bytes.Buffer)
 
-	code := Execute([]string{"--json", "decisions", "--check", filepath.Join("..", "..", "TODO.md")}, stdout, stderr)
+	code := Execute([]string{"--json", "decisions", "--check", filepath.Join("..", "..", "CHECKLIST.md")}, stdout, stderr)
 	if code != 0 {
 		t.Fatalf("exit code = %d, stderr = %s", code, stderr.String())
 	}
@@ -260,7 +260,7 @@ func TestExecuteDecisionsCheckVerifiesLineReferences(t *testing.T) {
 	stdout := new(bytes.Buffer)
 	stderr := new(bytes.Buffer)
 
-	code := Execute([]string{"decisions", "--check", filepath.Join("..", "..", "TODO.md")}, stdout, stderr)
+	code := Execute([]string{"decisions", "--check", filepath.Join("..", "..", "CHECKLIST.md")}, stdout, stderr)
 	if code != 0 {
 		t.Fatalf("exit code = %d, stderr = %s", code, stderr.String())
 	}
@@ -271,9 +271,9 @@ func TestExecuteDecisionsCheckVerifiesLineReferences(t *testing.T) {
 
 func uncheckedTODOLineRefs(t *testing.T) []string {
 	t.Helper()
-	data, err := os.ReadFile(filepath.Join("..", "..", "TODO.md"))
+	data, err := os.ReadFile(filepath.Join("..", "..", "CHECKLIST.md"))
 	if err != nil {
-		t.Fatalf("read TODO.md: %v", err)
+		t.Fatalf("read CHECKLIST.md: %v", err)
 	}
 	refs := []string{}
 	inBacklog := false
@@ -282,7 +282,7 @@ func uncheckedTODOLineRefs(t *testing.T) []string {
 			inBacklog = true
 		}
 		if !inBacklog && strings.HasPrefix(strings.TrimSpace(line), "- [ ] ") {
-			refs = append(refs, fmt.Sprintf("TODO.md:%d", i+1))
+			refs = append(refs, fmt.Sprintf("CHECKLIST.md:%d", i+1))
 		}
 	}
 	return refs

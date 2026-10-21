@@ -2,7 +2,7 @@
 
 Status: Accepted
 
-Accepted 2026-10-19 by the owner. Tasks live in [TODO.md §12](../TODO.md#12-verifiable-research-engine-cycle).
+Accepted 2026-10-19 by the owner. Tasks live in [CHECKLIST.md §12](../CHECKLIST.md#12-verifiable-research-engine-cycle).
 Origin: competitive review of Feynman (Companion-Inc) and related research agents, refined in a
 plan-with-me session with the owner.
 

@@ -19,7 +19,7 @@ func TestBuildInventoryRoadmapReportGroupsNextSlicesByAreaAndFindsCoverageGaps(t
 	if err := os.WriteFile(manifestPath, []byte(`{"schemaVersion":"1","entries":[{"id":"alpha","name":"Alpha","area":"retrieval","disposition":"pattern-reference","licensePolicy":"study","note":"alpha.md","risk":"low","nextSlice":"Add alpha retrieval."},{"id":"beta","name":"Beta","area":"screening","disposition":"pattern-reference","licensePolicy":"study","note":"beta.md","risk":"low","nextSlice":"Add beta screening."}]}`), 0o644); err != nil {
 		t.Fatal(err)
 	}
-	todoPath := filepath.Join(dir, "TODO.md")
+	todoPath := filepath.Join(dir, "CHECKLIST.md")
 	if err := os.WriteFile(todoPath, []byte("- [ ] Add alpha retrieval (`opensource/inventory/alpha.md`).\n"), 0o644); err != nil {
 		t.Fatal(err)
 	}

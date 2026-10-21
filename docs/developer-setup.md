@@ -13,7 +13,7 @@ make license-decision-live-audit
 make license-decision-approval-gate
 ```
 
-`make license-decision-live-audit` prints the current issue #1 approval booleans. While owner approval is missing it reports `approved:false`; `make license-decision-approval-gate` must only pass with `approved:true` before adding `LICENSE` or checking off `TODO.md:34`.
+`make license-decision-live-audit` prints the current issue #1 approval booleans. While owner approval is missing it reports `approved:false`; `make license-decision-approval-gate` must only pass with `approved:true` before adding `LICENSE` or checking off `CHECKLIST.md:34`.
 
 Run the CI security gate with:
 

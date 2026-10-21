@@ -17,7 +17,7 @@ body:
     id: blocked_todos
     attributes:
       label: Blocked TODO items
-      description: Copy the exact unchecked TODO.md lines this decision will unblock.
+      description: Copy the exact unchecked CHECKLIST.md lines this decision will unblock.
     validations:
       required: true
   - type: textarea

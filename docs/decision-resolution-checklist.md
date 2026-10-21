@@ -1,6 +1,6 @@
 # Decision resolution checklist
 
-Use this checklist when an owner decision or implementation tracker unblocks one of the remaining `TODO.md` items.
+Use this checklist when an owner decision or implementation tracker unblocks one of the remaining `CHECKLIST.md` items.
 
 ## Before implementation
 
@@ -24,7 +24,7 @@ Use this checklist when an owner decision or implementation tracker unblocks one
 
 1. Update or add the approved artifact (`LICENSE`, Go + HTMX web GUI templates/screens, or superseding ADR).
 2. Keep core behavior in shared services and add/adjust tests first.
-3. Update `TODO.md` only for items actually implemented by the approved decision.
+3. Update `CHECKLIST.md` only for items actually implemented by the approved decision.
 4. Update `docs/remaining-todo-audit.md` and `rforge decisions` if any unchecked items remain.
 
 ## Before merge
@@ -33,8 +33,8 @@ Use this checklist when an owner decision or implementation tracker unblocks one
 make check
 go test ./...
 go vet ./...
-rforge decisions --completion-audit TODO.md docs/todo-completion-audit.md
+rforge decisions --completion-audit CHECKLIST.md docs/todo-completion-audit.md
 git diff --check
 ```
 
-The PR must link the Owner decision or implementation tracker issue and include evidence that `rforge decisions --check TODO.md` and `rforge decisions --completion-audit TODO.md docs/todo-completion-audit.md` still pass if unchecked items remain. Inspect `completion_blocked`, `blocked_decisions`, `blocked_decision_ids`, `license_owner_response_fields_verified`, `license_options_verified`, and `license_issue_routing_verified` before claiming the TODO objective is complete. For `project_license`, include the `gh issue view 1` live issue evidence showing non-placeholder owner approval fields before adding `LICENSE`.
+The PR must link the Owner decision or implementation tracker issue and include evidence that `rforge decisions --check CHECKLIST.md` and `rforge decisions --completion-audit CHECKLIST.md docs/todo-completion-audit.md` still pass if unchecked items remain. Inspect `completion_blocked`, `blocked_decisions`, `blocked_decision_ids`, `license_owner_response_fields_verified`, `license_options_verified`, and `license_issue_routing_verified` before claiming the TODO objective is complete. For `project_license`, include the `gh issue view 1` live issue evidence showing non-placeholder owner approval fields before adding `LICENSE`.

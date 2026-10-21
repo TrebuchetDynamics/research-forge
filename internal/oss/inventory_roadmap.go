@@ -51,7 +51,7 @@ func BuildInventoryRoadmapReport(manifestPath, todoPath string) (InventoryRoadma
 		note := filepath.ToSlash(entry.Note)
 		referenced[note] = true
 		if note != "" && !strings.Contains(todo, note) && !strings.Contains(todo, entry.NextSlice) {
-			report.CoverageGaps = append(report.CoverageGaps, fmt.Sprintf("%s: nextSlice not covered by TODO.md", note))
+			report.CoverageGaps = append(report.CoverageGaps, fmt.Sprintf("%s: nextSlice not covered by CHECKLIST.md", note))
 		}
 	}
 	notes, err := filepath.Glob(filepath.Join(base, "*.md"))

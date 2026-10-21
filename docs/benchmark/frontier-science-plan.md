@@ -4,7 +4,7 @@ Status: Accepted
 
 This is the accepted handoff for **public, high-quality scientific research examples**, with scientific stress-testing as supporting quality control. The historical filename/heading is retained so existing task/source links remain valid. The owner's confirmed priorities below supersede earlier bug-hunting-first descriptions and the old prohibition on repository publication. Remaining operating defaults are **planner's calls**, not additional owner decisions. Planning itself does not run research or authorize live spend.
 
-Tasks: [V-FS1](../../TODO.md#now), [V-FS2](../../TODO.md#needs-decision) and [V-FS3](../../TODO.md#next). This slice supports RF-BENCH without changing its held-out-ground-truth definition, existing benchmark task IDs or [release gate](../verifiable-engine-plan.md#acceptance).
+Tasks: [V-FS1](../../tasks/items/V-FS1.md), [V-FS2](../../tasks/items/V-FS2.md) and [V-FS3](../../tasks/items/V-FS3.md). This slice supports RF-BENCH without changing its held-out-ground-truth definition, existing benchmark task IDs or [release gate](../verifiable-engine-plan.md#acceptance).
 
 ## Confirmed owner direction — public examples first
 

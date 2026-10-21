@@ -34,7 +34,7 @@ Use the SPDX identifier when recording the decision so downstream packaging, SBO
 
 ## Required owner response fields
 
-Before adding `LICENSE` or checking off `TODO.md:34`, record all of these fields in issue #1:
+Before adding `LICENSE` or checking off `CHECKLIST.md:34`, record all of these fields in issue #1:
 
 - License SPDX identifier;
 - Copyright holder;
@@ -48,4 +48,4 @@ Before adding `LICENSE` or checking off `TODO.md:34`, record all of these fields
 3. Add `LICENSE` with the selected license text.
 4. Update `README.md` license section.
 5. Update contribution guidance if contributor terms change.
-6. Mark `TODO.md` license item complete.
+6. Mark `CHECKLIST.md` license item complete.
