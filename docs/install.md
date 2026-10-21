@@ -182,6 +182,52 @@ modified. The installer does **not** register MCP servers or edit `config.yaml`;
 that entry stays manual and reversible, as described in the
 [agent installation guide](./agent-install.md#hermes).
 
+### Pinned installation in every existing profile
+
+For an authorized all-profile rollout, enumerate `hermes profile list` first and
+repeat the following for `default` and **each named profile**. Run from a checkout
+containing the exact commit; `file://` with `#hermes-plugin` selects only the
+self-contained plugin, and `--ref` makes Hermes fetch, verify and record the pin:
+
+```sh
+R=c98d77ca34554efa2848767e707e3b6a631a7a5c
+SOURCE="file://$(pwd)#hermes-plugin"
+p=default # repeat with each name from hermes profile list
+
+env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE \
+  hermes --profile "$p" plugins install "$SOURCE" --ref "$R" --no-deps
+hermes --profile "$p" plugins enable research-forge
+hermes --profile "$p" plugins list --plain --no-bundled
+hermes --profile "$p" skills list
+```
+
+Keep install scanning enabled and review its verdict before enabling. Do not use
+`--force` or disable scanning to bypass a warning: a scan-warning override needs
+the owner's decision for that exact commit. `--no-deps` initially leaves the
+plugin disabled; the separate enable command selects only this plugin. This
+native path does not move or replace standalone skills, unlike the unified
+installer's legacy-skill migration. Preserve their customizations and all
+unrelated profile settings. It does not install or update Pi, Claude Code or Codex.
+
+Verify `research-forge` is enabled with source `git pinned@c98d77ca`. In each
+profile's `plugins/.install-metadata.json`, its record must have `pinned: true`,
+`revision: c98d77ca34554efa2848767e707e3b6a631a7a5c` and the local source URI.
+A pinned install does not advance with `plugins update`; changing its revision
+requires an explicit new `--ref` and a fresh scan review. Installed files are
+copied into each profile; the source checkout is needed for a later reinstall,
+not for loading the installed skill.
+
+**Qualification (2026-10-21, V0-011-e3):** the local checkout source above was
+installed and enabled in default and all 12 named profiles at that exact pin.
+`plugin-guard-v11` returned **SAFE / ALLOWED**, with no scan-warning override.
+Every profile's plugin list, full-revision metadata and installed file bytes were
+verified; existing settings and standalone skills were preserved. Hermes runtime
+`skills_list` discovered `research-forge:research-forge`, and `skill_view` loaded
+it in every profile. The installed Hermes CLI's `skills list` currently lists
+filesystem skills only and omits plugin-registered skills; it was run in every
+profile but cannot establish this plugin's discovery. Use the runtime tools for
+that check rather than creating a duplicate standalone skill.
+
 ## Verify
 
 ```sh
