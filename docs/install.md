@@ -155,6 +155,19 @@ accurate.
 
 ## Hermes profiles
 
+The installer uses the self-contained [`hermes-plugin/`](../hermes-plugin/)
+subdirectory, not the full repository tree, so Hermes scans only the passive
+entry point, manifest and methodology skill. The equivalent manual install is:
+
+```sh
+hermes plugins install https://github.com/TrebuchetDynamics/research-forge/tree/main/hermes-plugin --no-deps
+hermes plugins enable research-forge
+```
+
+Existing repository-root installs keep their original tree; reinstall using the
+subdirectory URL to switch. No Hermes profile is changed merely by this packaging
+change.
+
 By default the **current** Hermes profile is used (`HERMES_PROFILE` if set, else
 Hermes' sticky default). Name profiles explicitly to target others:
 

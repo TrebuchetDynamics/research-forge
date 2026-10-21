@@ -914,7 +914,7 @@ install_hermes() {
     else
       # --no-deps keeps Hermes from installing Node/Python dependencies for a
       # passive skill plugin; enable is explicit so nothing is activated by guess.
-      hermes_argv "$profile" plugins install "$PLUGIN_URL" --no-deps
+      hermes_argv "$profile" plugins install "$PLUGIN_URL/tree/main/hermes-plugin" --no-deps
       run "${HERMES_ARGV[@]}" || return 1
       hermes_argv "$profile" plugins enable research-forge
       run "${HERMES_ARGV[@]}" || return 1

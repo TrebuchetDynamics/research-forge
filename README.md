@@ -245,7 +245,7 @@ Run `rforge doctor` before a large sweep. It reports optional configuration such
 
 ## Use it from an agent
 
-Install the passive **Claude Code, Codex, Pi or Hermes plugin** with the [unified installer](./docs/install.md) (`./install.sh`, or `--only claude` for one host), or follow the per-host commands in the [agent installation guide](./docs/agent-install.md). The installer moves an old curl-installed `research-forge` skill copy to `<name>.bak` instead of leaving it to shadow the plugin. Plugins do not change host approvals, permissions or schedules.
+Install the passive **Claude Code, Codex, Pi or Hermes plugin** with the [unified installer](./docs/install.md) (`./install.sh`, or `--only claude` for one host), or follow the per-host commands in the [agent installation guide](./docs/agent-install.md). Hermes uses the self-contained [`hermes-plugin/`](./hermes-plugin/) subdirectory so it does not scan unrelated repository content. The installer moves an old curl-installed `research-forge` skill copy to `<name>.bak` instead of leaving it to shadow the plugin. Plugins do not change host approvals, permissions or schedules.
 
 All hosts expose the same retrieval-first skill at [`skills/research-forge/SKILL.md`](./skills/research-forge/SKILL.md). It defines source breadth, provenance requirements, legal-acquisition boundaries, and human approval gates; it never authorizes an agent to approve screening, extraction, final claims, or package export.
 
