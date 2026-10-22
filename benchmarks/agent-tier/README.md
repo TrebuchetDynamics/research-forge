@@ -10,7 +10,11 @@ go test ./benchmarks/agent-tier ./internal/benchmarks -count=1
 
 Commands: `stub`, `prepare`, `blind`, `score`, `report`; all require `--out`.
 Outputs are create-only. The stub is offline canned fixture data, not an
-improvement claim. No command starts Pi/Codex or performs live research.
+improvement claim. None of these Go commands starts Pi/Codex or performs live research. The separate
+[opt-in Pi adapter](live/README.md) implements the authorized Pi-only pilot;
+[registration](pilot-pi-2026-10-21/registration.json) and
+[pilot status/results](../../docs/benchmark/pilot-pi-2026-10-21.md) are separate
+from this canned fixture.
 
 Protocol v2 registers a provider mix (default Crossref, Semantic Scholar, arXiv;
 no OpenAlex dependency), continuation on failure and per-observation quarantine
