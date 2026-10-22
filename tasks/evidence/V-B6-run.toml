@@ -1,0 +1,9 @@
+schema = 1
+task = "V-B6-run"
+candidate = "eb89088b6e6a3a79e821766ba5a803de8e3cbf76"
+integration = "3b08be27229928efbf34174cc4ec377668a295ff"
+tree = "1b7668ec64f5779a9e443530aa18c06a1fff2d0d"
+contract_hash = "cac005012090ed0ae55d47baebc1335b5866a32bad2ae45159dd5e4866b5e9d7"
+checks = ["<path>", "<path>", "--verify", "<path>", "V-B6-run"]
+result = "pass"
+review = "passed"

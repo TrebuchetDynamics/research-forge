@@ -3,7 +3,7 @@ schema = 1
 id = "V-B6-run"
 title = "Live agent-tier pilot"
 short = "Live agent-tier pilot"
-status = "open"
+status = "done"
 goal = "RF-BENCH"
 section = "Now"
 rank = 1000
@@ -17,6 +17,8 @@ acceptance = ["a committed Pi pilot report with paired differences and 95% CIs p
 checks = ["make check"]
 exclusions = []
 live = "authorized"
+closure = "coordinator_verified"
+closure_evidence = "tasks/evidence/V-B6-run.toml"
 +++
 
 - Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan) (Owner answers: agent tier).
