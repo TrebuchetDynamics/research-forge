@@ -1,0 +1,72 @@
+{
+  "formula": "ceil(((Phi^-1(0.975)+Phi^-1(0.8))*sample_SD/0.05)^2), then max(24,Q)",
+  "limitations": [
+    "Q=8 SD is unstable; normal approximation, not a powered release-gate design.",
+    "All native observations had search-service failures; this is outage-conditioned variance, not normal-service variance.",
+    "23 with-tools runs exceeded the token cap on an indivisible response; partial answers and actual counters are retained.",
+    "Do not spend on an expanded run without separately approved set/protocol and qualified functioning native search."
+  ],
+  "minimum_independent_review_families": 24,
+  "normal_approximation_question_count_ceil": 241,
+  "normal_approximation_question_count_unrounded": 240.1812852502983,
+  "planned_independent_review_families": 241,
+  "planned_observations_at_N3": 1446,
+  "power": 0.8,
+  "prospective_absolute_recall_difference": 0.05,
+  "question_count": 8,
+  "question_recall_differences": [
+    {
+      "difference": 0.14285714285714285,
+      "question_id": "q-b",
+      "with_rforge_recall": 0.14285714285714285,
+      "without_rforge_recall": 0
+    },
+    {
+      "difference": 0.6666666666666666,
+      "question_id": "q-c",
+      "with_rforge_recall": 0.6666666666666666,
+      "without_rforge_recall": 0
+    },
+    {
+      "difference": 0,
+      "question_id": "q-d",
+      "with_rforge_recall": 0,
+      "without_rforge_recall": 0
+    },
+    {
+      "difference": 0,
+      "question_id": "q-e",
+      "with_rforge_recall": 0,
+      "without_rforge_recall": 0
+    },
+    {
+      "difference": 0.5555555555555556,
+      "question_id": "q-f",
+      "with_rforge_recall": 0.5555555555555556,
+      "without_rforge_recall": 0
+    },
+    {
+      "difference": 0.11904761904761904,
+      "question_id": "q-g",
+      "with_rforge_recall": 0.11904761904761904,
+      "without_rforge_recall": 0
+    },
+    {
+      "difference": 0.2,
+      "question_id": "q-h",
+      "with_rforge_recall": 0.2,
+      "without_rforge_recall": 0
+    },
+    {
+      "difference": 0.6,
+      "question_id": "q-m",
+      "with_rforge_recall": 0.6,
+      "without_rforge_recall": 0
+    }
+  ],
+  "recall_mean_difference": 0.285515873015873,
+  "recall_sample_sd": 0.2765895382452826,
+  "recall_standardized_paired_effect_dz": 1.0322728575607745,
+  "repetitions_per_condition": 3,
+  "two_sided_alpha": 0.05
+}

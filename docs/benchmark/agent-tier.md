@@ -1,8 +1,10 @@
 # Agent-tier protocol and custodian runbook
 
 V-B6 supplies offline protocol preparation, blinding, scoring and reporting.
-**It does not run Pi/Codex, authorize spending, qualify a live search gateway, or
-establish an improvement claim.** Live execution belongs to V-B6-run.
+**The Go utility does not run Pi/Codex, authorize spending, qualify a live search
+gateway, or establish an improvement claim.** The separate opt-in
+[Pi adapter](../../benchmarks/agent-tier/live/README.md) supplies V-B6-run's live
+execution; see its [pilot record](pilot-pi-2026-10-21.md).
 
 Authority: [accepted owner answers](../verifiable-engine-plan.md#owner-answers-2026-10-19-follow-up)
 and [benchmark specification §§6–8](spec.md#6-scoring-definitions-shared-by-both-tiers).
@@ -57,8 +59,9 @@ Student-t intervals, including Q=8 and the Q<2/zero-variance cases.
 
 ## 2. Pre-register before live work
 
-Run **Pi first**, then **Codex as a separate experiment/report**. Do not pool
-hosts or models. The pilot is 8 independent held-out questions × 2 conditions ×
+Run **Pi first**, then **Codex as a separate experiment/report**. Owner decision
+2026-10-21 narrows **V-B6-run to Pi only**; Codex belongs to **V-B6-codex** and is
+not a prerequisite for publishing the Pi pilot. Do not pool hosts or models. The pilot is 8 independent held-out questions × 2 conditions ×
 N=3 = 48 Pi runs; it estimates effect sizes, not the release-gate result.
 
 Use the stub-produced `private/protocol.json` as a field-complete authoring

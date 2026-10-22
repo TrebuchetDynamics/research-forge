@@ -1,0 +1,192 @@
+{
+  "adapter_sha256": {
+    "custodian.py": "76d4ddedcbdeaed7e288ba4de1ae056f6c49dab15be32e0c20b66b19f118e6ef",
+    "gateway.py": "538a940302c38bb9777070826e540c96f91ce75d573938557ad981f453fc00ba",
+    "pi-session.mjs": "32aa52de2d7b7093411939558648b976aa98efc59de9a0eff028c8db0421a1cb"
+  },
+  "analysis_plan": {
+    "ci": "two-sided 95% Student-t over questions, df=7; all secondary metrics descriptive; unavailable facets null",
+    "desired_recall_delta": 0.05,
+    "expanded_sizing": "normal-approximation paired planning from pilot question-level sample SD, two-sided alpha 0.05, power 0.8, target absolute recall delta 0.05, floor 24 independent review families; expanded set/registration require separate approval",
+    "minimum_expanded_questions": 24,
+    "paired_delta": "with_rforge minus without_rforge; average N=3 repetitions within question then over Q=8 questions",
+    "power": 0.8,
+    "primary": "recall"
+  },
+  "engine_binary_sha256": "50b46ba573b764cd04660dd584ac68ccd967d4b4b9ec0db8314e8da8496eebb6",
+  "engine_version_receipt": "rforge dev (a25cd54455f7baad9e64af9e04ced6882f73cb97, 2026-10-21T00:00:00Z)",
+  "exact_upstream_model": "anthropic/claude-4.5-sonnet-20250929",
+  "host_version": "1.3.0",
+  "native_tool": {
+    "jina_reader_exposed": false,
+    "loadout": [
+      "web_search",
+      "submit_answer"
+    ],
+    "module_sha256": "bb99e227b97430715f31b644cc40dbbf28881921e5d9374b62a18f276aa56e1c",
+    "provider": "duckduckgo"
+  },
+  "outage_qualification": [
+    {
+      "actual_host": "1.3.0",
+      "complete_accounting": true,
+      "condition": "with_rforge",
+      "cost_usd": 0.0708987,
+      "events": [
+        {
+          "action": "failed",
+          "error": "HTTP 429",
+          "http_status": 429,
+          "provider": "crossref",
+          "query": "photovoltaic silicon solar energy research studies",
+          "retry_after": "3600",
+          "stop_reason": "error_threshold"
+        },
+        {
+          "action": "failed",
+          "error": "HTTP 429",
+          "http_status": 429,
+          "provider": "semantic-scholar",
+          "query": "photovoltaic silicon solar energy research studies",
+          "retry_after": "",
+          "stop_reason": "error_threshold"
+        },
+        {
+          "action": "completed",
+          "error": "",
+          "http_status": 200,
+          "provider": "europepmc",
+          "query": "photovoltaic silicon solar energy research studies",
+          "retry_after": "",
+          "stop_reason": "completed"
+        },
+        {
+          "action": "skipped",
+          "error": "provider quarantined after HTTP 429",
+          "http_status": 0,
+          "provider": "crossref",
+          "query": "photoelectric silicon solar cell research papers",
+          "retry_after": "",
+          "stop_reason": "error_threshold"
+        },
+        {
+          "action": "skipped",
+          "error": "provider quarantined after HTTP 429",
+          "http_status": 0,
+          "provider": "semantic-scholar",
+          "query": "photoelectric silicon solar cell research papers",
+          "retry_after": "",
+          "stop_reason": "error_threshold"
+        },
+        {
+          "action": "completed",
+          "error": "",
+          "http_status": 200,
+          "provider": "europepmc",
+          "query": "photoelectric silicon solar cell research papers",
+          "retry_after": "",
+          "stop_reason": "completed"
+        }
+      ],
+      "http_requests": 4,
+      "injected_provider_wire_attempts": 1,
+      "registered_model": {
+        "provider": "openrouter",
+        "version": "anthropic/claude-4.5-sonnet-20250929"
+      },
+      "search_calls": 4,
+      "tool_calls": 3,
+      "wall_clock_ms": 17609
+    },
+    {
+      "actual_host": "1.3.0",
+      "complete_accounting": true,
+      "condition": "without_rforge",
+      "cost_usd": 0.010321199999999999,
+      "events": [
+        {
+          "action": "failed",
+          "error": "HTTP 429",
+          "http_status": 429,
+          "provider": "duckduckgo",
+          "query": "photovoltaic silicon solar energy research studies",
+          "retry_after": "3600",
+          "stop_reason": "error_threshold"
+        },
+        {
+          "action": "skipped",
+          "error": "provider quarantined after HTTP 429",
+          "http_status": 0,
+          "provider": "duckduckgo",
+          "query": "photoelectric silicon solar cell research papers",
+          "retry_after": "",
+          "stop_reason": "error_threshold"
+        }
+      ],
+      "http_requests": 1,
+      "injected_provider_wire_attempts": 1,
+      "registered_model": {
+        "provider": "openrouter",
+        "version": "anthropic/claude-4.5-sonnet-20250929"
+      },
+      "search_calls": 1,
+      "tool_calls": 3,
+      "wall_clock_ms": 7268
+    }
+  ],
+  "per_response_output_limit": 4096,
+  "private_artifacts": "Retained by custodian; not committed: raw HTTP bodies, transcripts, engine artifacts, source/legal passages, condition mapping and billing IDs.",
+  "protocol_sha256": "65df906713479525e46782f49169168692d1dff3d9c109051d496afb23692a7e",
+  "qualification_costs": [
+    {
+      "cost_usd": 0.010321199999999999,
+      "probe": "outage-qualification-v2-without_rforge"
+    },
+    {
+      "cost_usd": 0.1468044,
+      "probe": "outage-qualification-with_rforge"
+    },
+    {
+      "cost_usd": 0.010321199999999999,
+      "probe": "outage-qualification-without_rforge"
+    },
+    {
+      "cost_usd": 0.00159,
+      "probe": "exact-model-qualification"
+    },
+    {
+      "cost_usd": 0.005454,
+      "probe": "model-qualification"
+    },
+    {
+      "cost_usd": 0.0708987,
+      "probe": "outage-qualification-v2-with_rforge"
+    }
+  ],
+  "qualification_total_cost_usd": 0.24538949999999998,
+  "receipt_import_qualification": {
+    "note": "Six canned fixture rows reuse the two synthetic live probe event streams solely to exercise blind/freeze/join. They are not six independent live observations or a research-quality result.",
+    "os_isolated_scorer": true,
+    "provider_availability_rows": 6,
+    "purpose": "fixture",
+    "report_sha256": "9fa38dec55e90bc9ff9375345e700d48c52452a95f42546240a5f8bdbf77a165",
+    "status": "complete"
+  },
+  "research_provider_mix": [
+    "crossref",
+    "semantic-scholar",
+    "europepmc"
+  ],
+  "schedule_sha256": "8ab9063bb7cfdd9a5c01316d02cbf9beb00cb355ad89881052aba3a84101e5d7",
+  "scope": "Pi only; Codex is V-B6-codex (owner decision 2026-10-21)",
+  "scorer_isolation": "bubblewrap filesystem + PID + network namespace with only utility, locked set, blinded answers and fresh score output mount",
+  "spend_cap_usd": 50,
+  "spend_scope": "qualification plus 48 scheduled Pi observations; no expanded experiment authorized here",
+  "status": "registered_before_held_out_execution",
+  "task": "V-B6-run",
+  "upstream_provider": "Anthropic",
+  "with_tools_loadout": [
+    "rforge_search",
+    "submit_answer"
+  ]
+}
