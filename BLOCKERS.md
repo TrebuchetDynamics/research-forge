@@ -8,4 +8,12 @@
 
 <!-- pi-autowork:questions:start -->
 
+### Q-V0-012-88342f33 — USER_INPUT — effort input — unblocks 0
+
+- Task: V0-012-88342f33 — The without-rforge baseline search produces parseable results before any expanded agent-tier run
+- Needs: worker reported a blocker: The task's 2026-10-22 owner decision explicitly defers execution until the owner supplies either a valid Brave Search API web-search key (BRAVE_API_KEY, custodian-held) or a usable SearXNG endpoint (SEARCH_HUB_SEARXNG_URL or SEARXNG_URL, plus authentication if required). Fresh inspection confirms BRAVE_API_KEY, SEARCH_BRAVE_API_KEY, SEARCH_HUB_SEARXNG_URL and SEARXNG_URL are absent. No replacement…
+- Since: 2026-10-22T21:47:28Z
+- Answer: Answer in tasks/items/V0-012-88342f33.md: widen `touches`, supply the input, narrow the acceptance, or add a dated `Owner decision:` note. The runner reruns it when the record changes.
+- Kind: held
+
 <!-- pi-autowork:questions:end -->
