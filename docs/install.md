@@ -150,8 +150,9 @@ Reinstalling without `update` is also safe: it is idempotent and reports
 
 `--dry-run` prints every command it would run and changes nothing: no files, no
 host plugin state, no configuration. Detection commands (`claude plugin list`,
-`pi list`, `hermes profile list`, …) are read-only and do still run so the plan is
-accurate.
+`pi list`, `hermes profile show NAME`, `hermes plugins list --plain --no-bundled`,
+…) are read-only and do still run so the plan is accurate. A failed Hermes
+preflight also fails a dry-run; a plan is not an installation or runtime check.
 
 ## Hermes profiles
 
@@ -164,22 +165,43 @@ hermes plugins install https://github.com/TrebuchetDynamics/research-forge/tree/
 hermes plugins enable research-forge
 ```
 
-Existing repository-root installs keep their original tree; reinstall using the
-subdirectory URL to switch. No Hermes profile is changed merely by this packaging
-change.
+Existing installs keep their source and revision: an exact, enabled
+`research-forge` is a verified no-op, including a pinned install. A disabled
+existing plugin is enabled without reinstalling. Only an absent plugin uses the
+subdirectory install above. To switch an old repository-root install to the
+subdirectory, explicitly reinstall through the native Hermes CLI after reviewing
+its source and scan result; rerunning the unified installer does not switch it.
 
-By default the **current** Hermes profile is used (`HERMES_PROFILE` if set, else
-Hermes' sticky default). Name profiles explicitly to target others:
+By default the **current** Hermes profile is used. Selection stays native to
+Hermes, including `HERMES_PROFILE`, sticky selection and `HERMES_HOME`; the
+installer does not guess profile directories. Name profiles explicitly to target
+others, including `default`:
 
 ```sh
+./install.sh --only hermes --hermes-profile default
 ./install.sh --only hermes --hermes-profile research-forge
 ./install.sh --only hermes --hermes-profiles research-forge,default
 ```
 
-An unknown profile fails before anything is installed and lists the profiles
-detected from `hermes profile list`. Profiles that were not named are never
-modified. The installer does **not** register MCP servers or edit `config.yaml`;
-that entry stays manual and reversible, as described in the
+Every explicit name is validated with `hermes profile show NAME`, not by parsing
+the human-readable profile list. All selected profiles are validated and their
+plugin lists successfully read before any Hermes mutation, including multi-profile
+requests. An invalid name or failed probe stops the Hermes component; detected
+profile names are shown as error hints. Profiles that were not selected are never
+modified.
+
+Verification uses `plugins list --plain --no-bundled`, matching the exact last-field
+name `research-forge` and first-field status `enabled`. Similar names and a
+successful enable command alone do not establish success. Native install, enable,
+list and update failures remain failures, including in quiet mode. Explicit
+`update` delegates to Hermes: a pinned-update refusal stays visible, with no
+automatic unpin, reinstall or scanner override. Follow native repin guidance only
+when intentionally changing a pin.
+
+The installer leaves **all Hermes standalone skills untouched**. Inspect potential
+shadowing manually in the selected profile/home before deciding whether to move a
+customized standalone copy. It does **not** register MCP servers or edit
+`config.yaml`; that entry stays manual and reversible, as described in the
 [agent installation guide](./agent-install.md#hermes).
 
 ### Pinned installation in every existing profile
@@ -205,8 +227,8 @@ Keep install scanning enabled and review its verdict before enabling. Do not use
 `--force` or disable scanning to bypass a warning: a scan-warning override needs
 the owner's decision for that exact commit. `--no-deps` initially leaves the
 plugin disabled; the separate enable command selects only this plugin. This
-native path does not move or replace standalone skills, unlike the unified
-installer's legacy-skill migration. Preserve their customizations and all
+native path does not move or replace standalone skills; the unified installer's
+Hermes component also leaves them untouched. Preserve their customizations and all
 unrelated profile settings. It does not install or update Pi, Claude Code or Codex.
 
 Verify `research-forge` is enabled with source `git pinned@c98d77ca`. In each
@@ -237,7 +259,7 @@ rforge capabilities --json      # build and command contracts
 claude plugin list              # contains research-forge
 codex plugin list               # contains research-forge
 pi list                         # contains the research-forge package
-hermes plugins list             # contains research-forge, enabled
+hermes plugins list --plain --no-bundled # exact research-forge row, enabled
 ls ~/.agents/skills             # the six public skills
 ```
 
@@ -249,11 +271,12 @@ packages. The installer detects that and reports `skills` as skipped, pointing a
 the package as the single source.
 
 A standalone copy left over from an earlier curl install can shadow a plugin in
-the same host. When the installer installs a native plugin, it detects such
-legacy copies (`~/.claude/skills/research-forge`, `~/.codex/skills/…`,
-`~/.pi/agent/skills/…`, `~/.hermes/skills/…`, and per-profile Hermes skill
-directories) and moves them to `<name>.bak` instead of deleting them. Existing
-copies are never overwritten without a backup.
+the same host. For Claude Code, Codex and Pi, the installer detects such legacy
+copies (`~/.claude/skills/research-forge`, `~/.codex/skills/…`,
+`~/.pi/agent/skills/…`) and moves them to `<name>.bak` instead of deleting them.
+Existing copies are never overwritten without a backup. Hermes standalone skills
+are never moved automatically: inspect the natively selected profile/home and
+preserve customizations when resolving a duplicate manually.
 
 ## Removal
 
@@ -288,7 +311,7 @@ commands.
 | `binary` fails: `checksum mismatch` | The download was corrupted or the release is inconsistent; rerun, then report it if it persists. Nothing was installed. |
 | `--dry-run` reports a host `not found` | That host's CLI is not on `PATH`; install it or select other components with `--only`. |
 | A host component fails while others install | Components are independent; rerun the failed one with `--only`, or `./install.sh update`. |
-| Skills appear twice in a host | A legacy standalone copy is still present; the installer moves it to `.bak` when it installs the plugin. Remove it manually if you installed the plugin earlier. |
+| Skills appear twice in a host | Inspect legacy standalone copies. Claude Code, Codex and Pi installs move them to `.bak`; Hermes installs preserve them. For Hermes, inspect the selected profile/home and manually back up or move a conflicting copy only after reviewing its customizations. |
 | `rforge` not found after install | `~/.local/bin` is not on `PATH`; add the `export PATH=…` line printed by the installer. |
 
 ## Development
