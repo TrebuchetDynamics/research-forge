@@ -24,4 +24,4 @@ closure_reason = "2026-10-22 owner decision: defer the live 2.0 release-gate/ben
 
 - Sources: [plan](docs/verifiable-engine-plan.md#verifiable-research-engine-plan) (Release gate).
 - Ownership: ResearchForge owner (release decision and live spend).
-- Owner decision: 2026-10-21: release decision waits for the V-B6-run Pi pilot report; V-E5-run follows it
+- Owner decision: 2026-10-22: the Pi pilot (docs/benchmark/pilot-pi-2026-10-21.md) does not meet the gate: the without-rforge baseline returned no parseable search results in all 48 runs, so the positive recall contrast is descriptive, not a demonstrated improvement, and citation correctness stayed unmeasured. 2.0 does not ship on this evidence. The gate stays deferred until the baseline search is qualified (new task under RF-BENCH) and an expanded run is registered with its own spending cap; no expanded spend is authorized yet.
