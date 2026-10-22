@@ -49,12 +49,50 @@ case "$host" in
       install|update) record research-forge ;;
     esac ;;
   hermes)
-    profile=default
+    # Model native selection, not installer path resolution. The sticky fixture
+    # is private to this fake; HOME/HERMES_HOME/HERMES_PROFILE reach it unchanged.
+    profile="${HERMES_PROFILE:-}"
+    if [ -z "$profile" ] && [ -f "${HERMES_HOME:-$HOME/.hermes}/fake-current-profile" ]; then
+      IFS= read -r profile < "${HERMES_HOME:-$HOME/.hermes}/fake-current-profile"
+    fi
+    profile="${profile:-default}"
     if [ "${1:-}" = "--profile" ]; then profile="$2"; shift 2; fi
+    rows="$state.$profile"
     case "${1:-} ${2:-}" in
       "profile list") printf ' Profile   Model\n ─────────  ─────\n ◆default   gpt\n  research-forge  gpt\n' ;;
-      "plugins list") if has "research-forge@$profile"; then printf 'research-forge  enabled\n'; fi ;;
-      "plugins install"|"plugins enable"|"plugins update") record "research-forge@$profile" ;;
+      "profile show")
+        case "${3:-}" in
+          default|research-forge|native-only) printf 'Profile: %s\n' "$3" ;;
+          *) printf 'Unknown profile: %s\n' "${3:-}" >&2; exit 1 ;;
+        esac ;;
+      "plugins list")
+        if [ -f "$state.fail-enabled-list" ] && grep -q '^enabled .* research-forge$' "$rows" 2>/dev/null; then
+          printf 'enabled git 0.1.0 research-forge\n'
+          echo 'hermes: simulated post-enable list failure' >&2
+          exit 1
+        fi
+        if [ "${3:-} ${4:-}" != '--plain --no-bundled' ]; then
+          printf 'Name Status\nresearch-forge enabled\n'
+        elif [ -f "$rows" ]; then
+          while IFS= read -r row; do printf '%s\n' "$row"; done < "$rows"
+        elif has "research-forge@$profile"; then
+          printf 'enabled git 0.1.0 research-forge\n'
+        fi ;;
+      "plugins install")
+        if [ -f "$rows" ]; then awk '$NF != "research-forge"' "$rows" > "$rows.next"; else : > "$rows.next"; fi
+        printf 'disabled git 0.1.0 research-forge\n' >> "$rows.next"
+        mv "$rows.next" "$rows"
+        record "research-forge@$profile" ;;
+      "plugins enable")
+        if [ ! -f "$state.enable-noop" ] && [ -f "$rows" ]; then
+          awk '$NF == "research-forge" {$1="enabled"} {print}' "$rows" > "$rows.next"
+          mv "$rows.next" "$rows"
+        fi ;;
+      "plugins update")
+        if grep -q 'pinned@' "$rows" 2>/dev/null; then
+          echo 'Pinned plugin: update refused; reinstall with an explicit --ref to repin.' >&2
+          exit 1
+        fi ;;
     esac ;;
 esac
 exit 0
@@ -132,6 +170,8 @@ func newSandbox(t *testing.T, hosts ...string) *sandbox {
 	s.addReleaseFixtures()
 	s.env = []string{
 		"HOME=" + s.home,
+		"HERMES_PROFILE=",
+		"HERMES_HOME=",
 		"PATH=" + s.bin + ":/usr/bin:/bin:/usr/sbin:/sbin",
 		"SANDBOX_LOG=" + s.log,
 		"FAKE_STATE_DIR=" + s.state,

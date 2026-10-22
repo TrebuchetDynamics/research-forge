@@ -381,27 +381,42 @@ hermes_profile_names() {
     }'
 }
 
-# hermes_argv fills HERMES_ARGV for the current profile (__current__) or a named
+# hermes_argv fills HERMES_ARGV for the current profile (empty name) or a named
 # one. Callers pass the resolved argv to run/capture so the printed command is
 # the command that actually runs.
 hermes_argv() {
   local profile="$1"; shift
   HERMES_ARGV=(hermes)
-  if [ "$profile" != "__current__" ] && [ -n "$profile" ]; then
+  if [ -n "$profile" ]; then
     HERMES_ARGV=(hermes --profile "$profile")
   fi
   HERMES_ARGV+=("$@")
 }
 
+# Unlike capture, native Hermes probes must retain their exit status and errors.
+# Plain rows are status, source (which may contain spaces), version, exact name.
+hermes_plugin_status() {
+  local profile="$1" listing
+  hermes_argv "$profile" plugins list --plain --no-bundled
+  listing=$("${HERMES_ARGV[@]}") || return 1
+  printf '%s\n' "$listing" | awk '
+    NF >= 4 && $NF == "research-forge" {
+      print ($1 == "enabled" ? "enabled" : "disabled")
+      found = 1
+      exit
+    }
+    END { if (!found) print "absent" }'
+}
+
 hermes_installed() {
-  local profile="$1"
+  local status
   have hermes || return 1
-  hermes_argv "$profile" plugins list
-  capture "${HERMES_ARGV[@]}" | grep -q 'research-forge'
+  status=$(hermes_plugin_status "$1") || return 1
+  [ "$status" != "absent" ]
 }
 
 hermes_any_profile_installed() {
-  hermes_installed "__current__" && return 0
+  hermes_installed "" && return 0
   local profile
   for profile in $(hermes_profile_names); do
     hermes_installed "$profile" && return 0
@@ -411,9 +426,9 @@ hermes_any_profile_installed() {
 
 selected_hermes_profiles() {
   if [ "$HERMES_PROFILES_GIVEN" = 1 ]; then
-    printf '%s\n' "$HERMES_PROFILES" | tr ',' '\n' | sed '/^[[:space:]]*$/d'
+    printf '%s\n' "$HERMES_PROFILES" | tr ',' '\n'
   else
-    printf '__current__\n'
+    printf '\n'
   fi
 }
 
@@ -874,57 +889,87 @@ install_pi() {
 
 # --- Hermes ---------------------------------------------------------------------
 
-hermes_skills_dir() {
-  local profile="$1"
-  if [ "$profile" = "__current__" ] || [ -z "$profile" ]; then
-    printf '%s/.hermes/skills' "$HOME"
-  else
-    printf '%s/.hermes/profiles/%s/skills' "$HOME" "$profile"
+# Preserve native failure status in quiet mode as well, without changing the
+# other hosts' command handling.
+hermes_run() {
+  if [ "$QUIET" != 1 ] || [ "$DRY_RUN" = 1 ]; then
+    run "${HERMES_ARGV[@]}"
+    return $?
   fi
+  if [ "$VERBOSE" = 1 ]; then
+    printf '  %s$ %s%s\n' "$DIM" "$(quote_args "${HERMES_ARGV[@]}")" "$RESET"
+  fi
+  local status=0
+  "${HERMES_ARGV[@]}" >>"$LOG_FILE" 2>&1 || status=$?
+  [ "$status" = 0 ] && return 0
+  err "command failed: $(quote_args "${HERMES_ARGV[@]}")"
+  tail -n 5 "$LOG_FILE" >&2 || true
+  return "$status"
 }
 
 validate_hermes_profiles() {
-  local available profile
-  available=$(hermes_profile_names)
-  for profile in $(selected_hermes_profiles); do
-    [ "$profile" = "__current__" ] && continue
-    if ! printf '%s\n' "$available" | grep -qx -- "$profile"; then
-      detail "unknown Hermes profile: $profile (detected: $(printf '%s' "$available" | tr '\n' ' ' | sed 's/ $//'))"
+  local profile
+  while IFS= read -r profile; do
+    [ "$HERMES_PROFILES_GIVEN" = 0 ] && continue
+    if ! hermes profile show "$profile" >/dev/null; then
+      detail "could not validate Hermes profile: $profile (detected: $(hermes_profile_names | tr '\n' ' ' | sed 's/ $//'))"
       return 1
     fi
-  done
+  done < <(selected_hermes_profiles)
   return 0
 }
 
 install_hermes() {
-  local profile any=0
+  local profile status any=0 i=0
+  local states=()
   COMPONENT_STATUS="installed"
   step "Hermes native plugin"
   if ! validate_hermes_profiles; then return 1; fi
 
-  for profile in $(selected_hermes_profiles); do
-    if [ "$COMMAND" = "update" ] && ! hermes_installed "$profile"; then
+  # Probe every target before changing any of them. A failed list is not absence.
+  while IFS= read -r profile; do
+    if ! status=$(hermes_plugin_status "$profile"); then
+      detail "could not list Hermes plugins in profile $(hermes_profile_label "$profile")"
+      return 1
+    fi
+    states+=("$status")
+  done < <(selected_hermes_profiles)
+
+  while IFS= read -r profile; do
+    status="${states[$i]}"
+    i=$((i + 1))
+    if [ "$COMMAND" = "update" ] && [ "$status" = "absent" ]; then
       detail "not installed in profile $(hermes_profile_label "$profile")"
       continue
     fi
     any=1
     if [ "$COMMAND" = "update" ]; then
+      # Native update owns pin policy; never unpin or reinstall on refusal.
       hermes_argv "$profile" plugins update research-forge
-      run "${HERMES_ARGV[@]}" || return 1
+      hermes_run || return 1
+    elif [ "$status" = "enabled" ]; then
+      detail "already enabled in profile $(hermes_profile_label "$profile"); keeping existing source/revision"
+      continue
     else
-      # --no-deps keeps Hermes from installing Node/Python dependencies for a
-      # passive skill plugin; enable is explicit so nothing is activated by guess.
-      hermes_argv "$profile" plugins install "$PLUGIN_URL/tree/main/hermes-plugin" --no-deps
-      run "${HERMES_ARGV[@]}" || return 1
+      if [ "$status" = "absent" ]; then
+        # Scan only the passive plugin subdirectory, without dependency installs.
+        hermes_argv "$profile" plugins install "$PLUGIN_URL/tree/main/hermes-plugin" --no-deps
+        hermes_run || return 1
+      fi
       hermes_argv "$profile" plugins enable research-forge
-      run "${HERMES_ARGV[@]}" || return 1
+      hermes_run || return 1
     fi
-    if [ "$DRY_RUN" = 0 ] && ! hermes_installed "$profile"; then
-      detail "hermes does not list research-forge in profile $(hermes_profile_label "$profile")"
-      return 1
+    if [ "$DRY_RUN" = 0 ]; then
+      if ! status=$(hermes_plugin_status "$profile"); then
+        detail "could not verify Hermes plugins in profile $(hermes_profile_label "$profile")"
+        return 1
+      fi
+      if [ "$status" != "enabled" ]; then
+        detail "research-forge is not enabled in profile $(hermes_profile_label "$profile")"
+        return 1
+      fi
     fi
-    quarantine_legacy_skills "$(hermes_skills_dir "$profile")"
-  done
+  done < <(selected_hermes_profiles)
 
   if [ "$any" = 0 ]; then
     COMPONENT_STATUS="skipped"
@@ -935,7 +980,7 @@ install_hermes() {
 }
 
 hermes_profile_label() {
-  if [ "$1" = "__current__" ] || [ -z "$1" ]; then printf 'current'; else printf '%s' "$1"; fi
+  if [ -z "$1" ]; then printf 'current'; else printf '%s' "$1"; fi
 }
 
 # --- component runner -----------------------------------------------------------
