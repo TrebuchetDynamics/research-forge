@@ -41,6 +41,12 @@ Canonical stop question: [Q-V0-018-8f442e1d](../../BLOCKERS.md#q-v0-018-8f442e1d
 
 An answer may authorize a new planning slice; it does not itself provide credentials, approve data rights, register an experiment or authorize a live campaign. No runner is started or restarted by this pass. There is no automatic round-3 continuation to stop.
 
+## Owner decision: planning remains paused
+
+On 2026-10-23 the owner selected **option 1: keep further offline benchmark planning paused**. This resolves Q-V0-018-8f442e1d and the decision-only task V0-019-ea266b81; it is not completion or scientific qualification of RF-BENCH.
+
+Keep RF-BENCH **unmet**, save no new building work or successor planning round, and preserve the V0-012 provider-input deferral and all existing live/release deferrals. No new execution, provider access, credentials, evaluation corpus, protocol change, spending, installation or publication is authorized. Resume future planning only on a new explicit owner instruction. Manually closing the answered decision record writes no coordinator receipt or verified research evidence.
+
 ## Validation and readiness
 
 The new record is an owner continuation question, deliberately not executable building work. There are no new parallel write lanes or unmet worker inputs to conceal. The preserved V0-012 is still waiting for its existing owner-supplied input, not for this question.
