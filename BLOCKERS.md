@@ -6,6 +6,14 @@
 
 - **V-B6-run — native-search qualification unavailable.** The retained worker report says Codex 0.163.0 cannot expose the provider-attempt controls required by the accepted comparison. Resume only with qualifying host-interface evidence or an explicit owner protocol decision; no replacement baseline is authorized. See the [evidence review](docs/tasks/v-b6-run-native-search-blocker.md). The task contract and hold remain unchanged.
 
+### Q-V0-018-8f442e1d — Planning stopped
+
+- Goal: RF-BENCH — still unmet after offline planning round 2 of 10.
+- Task: [V0-019-ea266b81](tasks/items/V0-019-ea266b81.md) — owner continuation question, not executable building work.
+- Evidence: [Round-2 review](docs/tasks/rf-bench-offline-round-2.md). V0-016 comparison and V0-017 public-pilot readback are delivered. Baseline search still waits on V0-012's existing provider input; convincing expanded agent-tier proof remains unqualified and live work remains owner-deferred. The current citation pipeline lacks pinned evaluation corpus/occurrence inputs; the pilot cannot be retrofitted with invented measurements.
+- Question: For unmet RF-BENCH, should planning remain paused under the existing provider/live deferrals, or which further offline benchmark outcome should be scoped next?
+- Default if no answer: Keep the goal unmet and the continuation task in Needs decision; save no successor plan. Preserve V0-012 and all owner live deferrals; no new execution, credentials, data approval or spend is authorized.
+
 <!-- pi-autowork:questions:start -->
 
 ### Q-V0-012-88342f33 — USER_INPUT — effort input — unblocks 0
