@@ -29,6 +29,40 @@ providers. Blind/score/report then preserves those failures in the joined
 dropping or adjusting their scores. This offline fixture does not qualify a
 live gateway; follow the runbook's separate outage-injection qualification.
 
+## Offline published-pilot regression check
+
+From the repository root:
+
+```sh
+go test ./benchmarks/agent-tier -run '^TestPublishedPilotReadback' -count=1
+```
+
+`TestPublishedPilotReadback` reads the committed
+[pilot package](pilot-pi-2026-10-21/) and locked `pool-a` set without modifying
+either. It rescores the public blinded answers to a temporary directory and
+compares scores and freeze receipts byte-for-byte. Test-local guards verify
+public canonical protocol/answer/score/report digest links, the registered
+schedule and unique 8-question × 2-condition × 3-repetition matrix. They recompute
+all overall/domain aggregates, paired contrasts and registered analysis sizing
+from published rows. Floating comparisons use absolute tolerance **1e-9**;
+integers, digests, booleans and nulls match exactly.
+
+The guards retain all 48 rows, including 24 failed native observations/48 failed
+native attempts, provider loss in every pair, 23 with-tools budget stops and
+unavailable citation/dedupe facets. Availability is reconciled against public
+provider events and counters; a `completed` native run is not successful retrieval.
+`TestPublishedPilotReadbackRejectsTampering` deliberately corrupts temporary
+copies to check rejection of missing/duplicate slots, changed digests, summaries,
+sizing, availability flags, counters and fabricated unavailable measurements.
+Both tests check that original package and locked-set bytes remain unchanged.
+
+This lane needs only Go and committed public data: no Pi installation,
+bubblewrap, credentials, billing input or network. It does not reconstruct the
+private condition mapping, certify historical blinding/scorer isolation, verify
+private billing or qualify a live host/provider. Reproducible arithmetic is not
+evidence of scientific validity or superiority over functioning native search;
+see the [pilot limitations](../../docs/benchmark/pilot-pi-2026-10-21.md).
+
 Keep protocols, schedules, raw results and condition mappings with the custodian.
 The scorer receives only blinded answers and locked gold, then freezes scores
 before conditions and operational counters are joined.
