@@ -264,8 +264,11 @@ run() {
   fi
   [ "$DRY_RUN" = 1 ] && return 0
   if [ "$QUIET" = 1 ]; then
-    if "$@" >>"$LOG_FILE" 2>&1; then return 0; fi
-    local status=$?
+    if "$@" >>"$LOG_FILE" 2>&1; then
+      return 0
+    else
+      local status=$?
+    fi
     err "command failed: $(quote_args "$@")"
     tail -n 5 "$LOG_FILE" >&2 || true
     return "$status"
@@ -282,8 +285,11 @@ run_in() {
   fi
   if [ "$DRY_RUN" = 1 ]; then return 0; fi
   if [ "$QUIET" = 1 ]; then
-    if ( cd "$dir" && "$@" ) >>"$LOG_FILE" 2>&1; then return 0; fi
-    local status=$?
+    if ( cd "$dir" && "$@" ) >>"$LOG_FILE" 2>&1; then
+      return 0
+    else
+      local status=$?
+    fi
     err "command failed: $(quote_args "$@")"
     tail -n 5 "$LOG_FILE" >&2 || true
     return "$status"
