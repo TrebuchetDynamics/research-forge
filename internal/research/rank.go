@@ -45,7 +45,7 @@ type RankResult struct {
 // Rank searches configured sources, scores papers and commits rankings with a receipt.
 func (s Service) Rank(ctx context.Context, opts RankOptions) (RankResult, error) {
 	topic, limit, outFile, graphPath := opts.Topic, opts.Limit, opts.Out, opts.GraphPath
-	if topic == "" {
+	if strings.TrimSpace(topic) == "" {
 		return RankResult{}, invalid("usage", "ranking topic is required")
 	}
 	if limit <= 0 {
