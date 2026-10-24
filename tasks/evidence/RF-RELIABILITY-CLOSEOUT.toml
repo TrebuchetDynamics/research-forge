@@ -1,0 +1,9 @@
+schema = 1
+task = "RF-RELIABILITY-CLOSEOUT"
+candidate = "02cbf6d8cc9a7c9398873bfa44d311265af0e299"
+integration = "3a2f88527a63ab6731c271e907c5a6213c8fd353"
+tree = "4e3244f924ced1bef876cf92fa135e1cc8885264"
+contract_hash = "c98066f20098a820e134b6ca2ea0b2d27275b2e42ce28ead60cdf24c8875272b"
+checks = ["<path>", "<path>", "--verify", "<path>", "RF-RELIABILITY-CLOSEOUT"]
+result = "pass"
+review = "passed"
