@@ -2,6 +2,8 @@
 
 Status: Accepted
 
+The original discovery and delivery sections below are historical. [The next frontier](#next-frontier--visible-input-failures-and-correct-shared-counts) records current delivery status and the follow-on engineering batch; do not reopen delivered tasks.
+
 Accepted for planning under the owner's standalone Plan For Me request, “high roi improvements”. The engineering choices below are delegated **planner's calls**, not new owner product decisions. Implementation, dispatch, installation, live calls and publication are not authorized by this planning pass.
 
 ## Brief and project model
@@ -14,7 +16,7 @@ Explicit user direction: high return on engineering effort, planning only. Inter
 
 ## Goal and traceability
 
-**RF-REPORT-SAFETY (derived engineering):** prevent misleading comparison overlap from ambiguous labels and prevent brief rendering panics on short optional timestamp metadata, preserving ordinary valid reports.
+**RF-REPORT-SAFETY (derived engineering):** prevent misleading comparison overlap from ambiguous labels and prevent brief rendering panics on short optional timestamp metadata, preserving ordinary valid reports. The follow-on derived engineering scope below extends report safety to visible input-read failures and truthful per-directory shared counts; the original two-task acceptance and history remain unchanged.
 
 | Goal → accepted interface → implementation → verification gap → task |
 | --- |
@@ -111,3 +113,74 @@ On continuation, the normal `go version` reports Go 1.26.6 successfully. The ear
 The existing runner independently committed the goal and task records in `66e58b5` and merged them into the consumer at `77c1821`. Their contracts remain unchanged; the plan document is the remaining staged file. This session has not dispatched or implemented either task. Finish this document's planning-only commit with the normal pre-commit hook, then inspect committed-store selection. Store and local-link/whitespace checks passed independently; final hook results belong to the continuation report, and new product regressions remain proposed.
 
 Update trigger: changes to the cited service guards, output shape, task disposition or commit blocker. Proposed product regressions remain unrun.
+
+## Next frontier — visible input failures and correct shared counts
+
+Status: Accepted
+
+This is the next standalone high-ROI planning batch, based on `3bbe919e358b73ed0f9534b4a78adb4a8f2ef4c9`. Its acceptance is delegated engineering scope under the repeated owner request, not permission to implement, dispatch, install or publish. The product model, normal Go environment, offline fixtures, no strategic expansion and RF-BENCH pause above still apply.
+
+### Resume and traceability
+
+**OBSERVED:** original plan delivery completed in `fc47a0a`. Both original implementation tasks are now closed with coordinator-verified receipts: [comparison labels](../../tasks/evidence/V0-022-e34bafb7.toml) (candidate `3999f16`, integration `3d0c0a2`) and [brief dates](../../tasks/evidence/V0-023-ebb3c50d.toml) (candidate `ab5d11a`, integration `f145a8f`). Current source and nearest tests contain both fixes. Receipt result/review are pass/passed; their compact checks arrays are not expanded historical command logs. Do not recreate either task or claim fresh execution of its tests from inspection. The original planning commit's full-hook pass was already reported; this batch uses a fresh normal hook at its own commit.
+
+At this discovery baseline the worktree queue has 77 records, no open tasks, nine goals, and no drafts. The repository runner is idle with no workers, waiting jobs or holds. `RF-REPORT-SAFETY` remains unmet; this batch reuses its ID, title, source, priority 26 and focus=false, without editing completed contracts or receipts. The derived engineering extension is two new truthful-report boundaries within the same public brief/compare journeys, not a new product strategy or goal-completion attestation.
+
+| Accepted behavior → source → observed gap → new task |
+| --- |
+| A brief summarizes a completed search directory ([CLI reference](../cli.md), line 99) → `Brief` in `internal/research/brief.go:63–79` → every results-file read error is ignored, so a missing file/directory read failure becomes a successful “No deduplicated records found” report → brief read-error task. |
+| Compare counts shared vs unique papers ([CLI reference](../cli.md), line 100) → `Compare` in `internal/research/compare.go:209–222` → `inThis` includes every indexed paper in the directory, including unique papers, but is printed as “shared” → shared-count task. |
+| Producer writes the required deduped artifact even with zero records → `internal/cli/source_commands.go:1489–1502`, `writeSearchBatchJSONL` before manifest/output commit → missing artifact is not the same as a readable empty artifact → preserve empty success, expose missing/read failure. |
+
+These are high-confidence source observations, not new runtime repros. INFERRED impact: quiet input-loss misleads readers and callers about available evidence; inflated shared counts misstate coverage. Both are small, offline-verifiable fixes at existing shared-service seams. No measured frequency, ROI percentage or whole-repository audit claim is made.
+
+### Decisions and executable specifications
+
+| Choice / affected task | Planner's selected behavior and reason | Alternative rejected / exact verification |
+| --- | --- | --- |
+| Missing or unreadable brief results | `Service.Brief` returns typed failure `brief_results_read_failed`, exit 1, on any `os.ReadFile` error for `results-deduped.jsonl`, before output directory creation/writes. Keep the underlying cause/path through the normal wrapping error. A valid manifest still precedes results reads. | Do not emit a success warning/empty brief or fall back to raw results: these conceal lost deduped inputs or change corpus identity. `TestBriefRejectsResultsReadFailure` proves missing and directory-at-file-path cases. |
+| Empty brief input | A readable zero-length or blank-lines-only deduped file still yields the existing successful empty report. Manifest/results count reconciliation and malformed-row policy are unchanged. | Do not equate an empty file with a missing file or add strict JSONL/schema validation. The same focused table's positive controls and `TestServiceBrief` / `TestBriefTimestampBounds` prove compatibility. |
+| Meaning of shared | Count each existing identifier-indexed union row present in the directory AND at least one other directory (`countTrue(Matches) > 1`). Unique means exactly one directory, unchanged. “In all directories” remains stricter than shared for three-plus inputs. | Do not merely rename the wrong number or count only papers present everywhere. `TestCompareSharedCounts` covers disjoint, partial and all-directory overlap. |
+| Existing count domains | Preserve the displayed total `len(s.papers)` as input-record count; shared/unique remain distinct identifiable-union counts, excluding no-ID papers and not inflating duplicate IDs. JSON result fields/membership stay unchanged. | Do not normalize DOI strings, dedupe all input metadata, redefine totals or add output fields. Duplicate-ID/no-ID controls in `TestCompareSharedCounts` explicitly pin the chosen domains. Total need not equal shared + unique for such inputs. |
+
+**Non-goals / anti-goals:** no strict-reader refactor, changed malformed/titleless-row handling, `ReadPaperResults`/draft/history/lit policy change, identifier canonicalization, manifest count validation, transaction/provenance redesign, connector work, benchmark work, live qualification, docs/help registry edits or strategic feature. Rejecting bad I/O must not create a fresh report directory or overwrite an existing report. Correcting counts must not change prior labels/membership/order. Fixes belong in shared services rather than adapters. Reversible implementation details remain with the worker.
+
+### Task A — brief read failure is not an empty corpus
+
+Touches: `internal/research/brief.go`, new `internal/research/brief_read_error_test.go`, new `internal/cli/brief_read_error_test.go`. Highest priority because false-success input loss should be visible before a report is trusted.
+
+1. Start with failing `TestBriefRejectsResultsReadFailure`: temporary valid manifest, then absent results file or directory occupying its path (deterministic even as root; do not rely on chmod). For each, require typed code/exit 1, useful filename/cause, zero result, unchanged existing output sentinel AND no absent output-parent creation. Retain unchanged manifest/input snapshots. Include readable empty/blank and valid-paper positive controls, retaining date bounds.
+2. Add the minimum read-error branch. No shared reader extraction is needed; that would change unrelated draft/compare parsing policy.
+3. Add `TestBriefResultsReadFailureCLI`: text and JSON calls preserve error code/exit 1, no success report/advice and unchanged/no output. CLI production plumbing already carries `research.Error`. Existing adapter/MCP guards remain in the full suite; no new tool or schema is needed.
+4. Red-green-refactor, focused checks and normal independent implementation review; bounded owning-path fixture repairs required by these checks are allowed without weakening them. All inputs are locally creatable temporary fixtures, not external prerequisites.
+
+Proposed/unrun check: `env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE go test ./internal/research ./internal/cli -run 'TestBriefRejectsResultsReadFailure|TestBriefResultsReadFailureCLI|TestServiceBrief|TestBriefTimestampBounds|TestExecuteBrief' -count=1`.
+
+### Task B — truthful per-directory shared summaries
+
+Touches: `internal/research/compare.go`, new `internal/research/compare_summary_test.go`, new `internal/cli/compare_summary_test.go`.
+
+1. Start with failing `TestCompareSharedCounts`, using distinct labels and temporary deduped JSONL: disjoint inputs require zero shared; mixed two-directory input requires only actual overlap; three-directory input distinguishes shared-in-two from in-all-three. For A containing AB, ABC and A-only, B containing AB and ABC, C containing ABC, expect A: 3 papers (2 shared, 1 unique), B: 2 (2,0), C: 1 (1,0), and one in all directories. Include empty input plus duplicate/no-ID records to pin existing count domains. Compare returned JSON membership against the expected unchanged union.
+2. Correct only the shared count at the existing summary seam. Keep input totals, unique counts, global overlap, labels, row order and result schema unchanged.
+3. Add `TestCompareSharedCountsCLI`: text output and `--out` use the corrected summary; JSON mode retains exact result fields/membership and writes the same corrected Markdown through `--out`. Reuse fixture helpers rather than changing the shared existing test file.
+4. Red-green-refactor, focused checks and normal independent implementation review; bounded owning-path prerequisite fixture repairs are allowed without check weakening.
+
+Proposed/unrun check: `env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE go test ./internal/research ./internal/cli -run 'TestCompareSharedCounts|TestCompareSharedCountsCLI|TestServiceCompare|TestCompareRejectsDuplicateLabelsBeforeRead|TestExecuteCompare' -count=1`.
+
+### Scheduling, Verify, Guard and closure
+
+Two independent Now lanes, A first by rank, no product dependencies. Six disjoint files; no CLI/help table or agent-doc edits and therefore no `cli-surface`/`agent-docs` resource, live or exclusive resource. Shared read-only fixture helpers do not create write conflicts. Actual ownership/capacity checks still belong to the existing coordinator. No dispatch, service restart or publication is performed here; its existing separate authority may consume committed tasks independently.
+
+Verify observable error/report semantics, not a synthetic numeric metric; direction is fewer false successes/miscounts without normal-case drift. Guard: focused selectors above and required `make check` at the execution/merged-tree gate. New tests are proposed/unrun during planning. Existing pre-commit hook runs the current suite in the normal Go environment; do not reintroduce the prior command-local offline overrides. No experiment or rolling successor: stop after saving this known frontier.
+
+Pre-mortem: permission-based negative fixture accidentally passes as root (use missing path and directory); empty results become a false failure (positive empty/blank controls); three-way shared becomes “in all” or duplicates inflate counts (distinct membership fixtures). Inputs/results shape, original delivered fixes, isolated Git environments and offline deterministic tests are invariants across both tasks.
+
+No owner-only choice remains. Deferred malformed JSONL/output-transaction concerns remain future evidence-dependent work, not hidden tasks in this batch.
+
+### Saved next-frontier handoff and decision closure
+
+- [V0-024-fb839930](../../tasks/items/V0-024-fb839930.md): Now, highest new priority; make brief input read failures visible. First action is the failing `TestBriefRejectsResultsReadFailure`.
+- [V0-025-279390b1](../../tasks/items/V0-025-279390b1.md): Now, independent second priority; truthful per-directory shared counts. First action is the failing `TestCompareSharedCounts`.
+- Existing `RF-REPORT-SAFETY` ID/goal metadata, completed IDs/history and all owner-paused work are preserved. No open questions, strategic proposals, rolling successor or live qualification task is added.
+- Fresh independent read-only builder verdict: **nothing important left**. It confirmed evidence, reachable fixtures/checks, permitted bounded prerequisite repairs and disjoint lanes. **Worker-reversible disposition:** exact local names and fixture organization remain delegated within the saved contracts. This finding/disposition is persisted in both task records; no material owner/external blocker remains. Reviewer made no implementation edits or test runs.
+- Planning readback and final checks cover the affected document and task records. A saved/selection-ready task is not implemented code. Exact validation and mandatory hook results are reported at this batch's planning commit; newly specified product regressions remain proposed until execution.
