@@ -96,7 +96,11 @@ func (s Service) Brief(opts BriefOptions) (BriefResult, error) {
 	fmt.Fprintf(&sb, "- **Deduplicated:** %d\n", manifest.Deduped)
 	fmt.Fprintf(&sb, "- **Failures:** %d\n", manifest.Failures)
 	if manifest.CreatedAt != "" {
-		fmt.Fprintf(&sb, "- **Searched:** %s\n", manifest.CreatedAt[:10])
+		date := manifest.CreatedAt
+		if len(date) > 10 {
+			date = date[:10]
+		}
+		fmt.Fprintf(&sb, "- **Searched:** %s\n", date)
 	}
 	sb.WriteString("\n")
 
