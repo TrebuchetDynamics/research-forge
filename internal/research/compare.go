@@ -41,6 +41,14 @@ func (s Service) Compare(opts CompareOptions) (CompareResult, error) {
 		return CompareResult{}, invalid("label_count_mismatch", fmt.Sprintf("got %d labels for %d dirs", len(labels), len(dirs)))
 	}
 
+	seenLabels := make(map[string]struct{}, len(labels))
+	for _, label := range labels {
+		if _, exists := seenLabels[label]; exists {
+			return CompareResult{}, invalid("duplicate_labels", fmt.Sprintf("duplicate comparison label %q; use --labels with distinct labels for each directory", label))
+		}
+		seenLabels[label] = struct{}{}
+	}
+
 	// Read deduped results from each dir
 	type dirPapers struct {
 		label  string
