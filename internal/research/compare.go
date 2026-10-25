@@ -207,10 +207,10 @@ func (s Service) Compare(opts CompareOptions) (CompareResult, error) {
 	fmt.Fprintf(&sb, "- **In all directories:** %d\n", totalOverlap)
 	fmt.Fprintf(&sb, "- **Unique to one directory:** %d\n", uniqueOnly)
 	for i, s := range sets {
-		inThis := 0
+		shared := 0
 		for _, r := range rows {
-			if r.Matches[i] {
-				inThis++
+			if r.Matches[i] && countTrue(r.Matches) > 1 {
+				shared++
 			}
 		}
 		onlyIn := 0
@@ -219,7 +219,7 @@ func (s Service) Compare(opts CompareOptions) (CompareResult, error) {
 				onlyIn++
 			}
 		}
-		fmt.Fprintf(&sb, "- **%s:** %d papers (%d shared, %d unique)\n", labels[i], len(s.papers), inThis, onlyIn)
+		fmt.Fprintf(&sb, "- **%s:** %d papers (%d shared, %d unique)\n", labels[i], len(s.papers), shared, onlyIn)
 	}
 
 	// Gap analysis
