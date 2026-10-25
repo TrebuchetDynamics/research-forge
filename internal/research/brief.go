@@ -63,16 +63,17 @@ func (s Service) Brief(opts BriefOptions) (BriefResult, error) {
 	// Read deduped results (JSONL)
 	var papers []Paper
 	dedupedData, err := os.ReadFile(filepath.Join(searchDir, "results-deduped.jsonl"))
-	if err == nil {
-		for _, line := range strings.Split(string(dedupedData), "\n") {
-			line = strings.TrimSpace(line)
-			if line == "" {
-				continue
-			}
-			var p Paper
-			if err := json.Unmarshal([]byte(line), &p); err == nil && p.Title != "" {
-				papers = append(papers, p)
-			}
+	if err != nil {
+		return BriefResult{}, failure("brief_results_read_failed", err)
+	}
+	for _, line := range strings.Split(string(dedupedData), "\n") {
+		line = strings.TrimSpace(line)
+		if line == "" {
+			continue
+		}
+		var p Paper
+		if err := json.Unmarshal([]byte(line), &p); err == nil && p.Title != "" {
+			papers = append(papers, p)
 		}
 	}
 

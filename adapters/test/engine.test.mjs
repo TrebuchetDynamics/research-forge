@@ -81,6 +81,7 @@ test('Pi native MCP exposes the current read/run tools and preserves engine JSON
   const dir = join(scratch, 'literal $(no-shell) research');
   await mkdir(dir);
   await writeFile(join(dir, 'manifest.json'), JSON.stringify({ queries: ['fixture'], sources: ['openalex'], results: 1, deduped: 1 }));
+  await writeFile(join(dir, 'results-deduped.jsonl'), JSON.stringify({ title: 'Fixture paper', year: 2026 }) + '\n');
   const result = await client.request('tools/call', { name: 'research_status', arguments: { dir } });
   const cli = await exec(join(bin, 'rforge'), ['--json', 'brief', dir]);
   assert.equal(result.result.isError ?? false, false);
