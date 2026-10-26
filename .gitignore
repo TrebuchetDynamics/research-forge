@@ -33,6 +33,8 @@ tmp/
 /opensource/clones/
 
 # Logs, generated maps, and local state
+/.pi/
+/.pi-subagents/
 *.log
 .claude/worktrees/
 .DS_Store
