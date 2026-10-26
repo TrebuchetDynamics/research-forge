@@ -18,7 +18,7 @@ import (
 
 // ProtocolSHA256 is the exact-byte digest of docs/benchmark/spec.md v1.
 // Changes to that contract require regenerating this fingerprint.
-const ProtocolSHA256 = "cb3e2eb801d09108cd3f689d9ca855ec98e94e35849c531c48d88f756708dd11"
+const ProtocolSHA256 = "1f5a1cd4a7ce62b1f063d66c9df1de9eaa3e61df4d2e7f0e0d683ceeccea9db6"
 
 type EngineOptions struct {
 	SetDir, Split, Version, Revision string

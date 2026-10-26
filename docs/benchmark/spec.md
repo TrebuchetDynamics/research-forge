@@ -22,9 +22,12 @@ Sources of requirements:
 - [Accepted plan](../verifiable-engine-plan.md#verifiable-research-engine-plan),
   especially **Planner's calls** (two tiers and independent gold) and **Owner
   answers** (leakage controls and the paired agent pilot).
-- [Task contracts](../../TODO.md#12-verifiable-research-engine-cycle): V-B3,
-  V-B4, V-B4-lock, V-B5, V-B6, V-B6-run and V-D3. Dataset approval and live spend
-  remain owner-gated; this specification does not authorize either.
+- Task contracts: [V-B3](../../tasks/items/V-B3.md),
+  [V-B4](../../tasks/items/V-B4.md), [V-B4-lock](../../tasks/items/V-B4-lock.md),
+  [V-B5](../../tasks/items/V-B5.md), [V-B6](../../tasks/items/V-B6.md),
+  [V-B6-run](../../tasks/items/V-B6-run.md) and [V-D3](../../tasks/items/V-D3.md).
+  Dataset approval and live spend remain owner-gated; this specification does not
+  authorize either.
 - [Fixture policy](../fixture-policy.md) and
   [ADR 0009](../adr/0009-verification-facets-and-provenance-levels.md).
 
