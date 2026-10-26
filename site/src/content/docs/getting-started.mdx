@@ -9,12 +9,24 @@ Use `rforge` when you are building a literature review that must be checked late
 
 ## Install
 
+Use a shell with Bash and `curl` available, and network access for the download:
+
 ```sh
-curl -fsSL https://raw.githubusercontent.com/TrebuchetDynamics/research-forge/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/TrebuchetDynamics/research-forge/main/install.sh | bash -s -- --for cli
+```
+
+This network download installs only the `rforge` CLI for your user account, by
+default in `~/.local/bin`; it does not install agent skills or host plugins and
+needs no `sudo`. Ensure that directory is on your `PATH` before running
+`rforge version`. [Agent setup is optional](https://github.com/TrebuchetDynamics/research-forge/blob/main/docs/agent-install.md).
+
+```sh
 rforge version
 ```
 
-Build from source when you already have Go 1.26+:
+Alternatively, build from source when you already have Go 1.26+ (also a network
+install). Ensure your Go binary directory (`GOBIN`, or `$(go env GOPATH)/bin` by
+default) is on your `PATH`:
 
 ```sh
 go install github.com/TrebuchetDynamics/research-forge/cmd/rforge@latest
@@ -22,17 +34,28 @@ go install github.com/TrebuchetDynamics/research-forge/cmd/rforge@latest
 
 ## Create a project
 
+Start in a writable directory with no existing `my-review` project. Run all
+following commands from that same directory; this step creates `./my-review`
+and its manifest, lockfile and provenance.
+
 ```sh
 rforge project create ./my-review --title "High entropy superconductors"
 ```
 
-## Search and import papers
+## Search and import papers (live)
+
+This query requires network access to OpenAlex. It uses a live source, not offline
+fixtures, so results and availability can change. Records are imported directly
+into the project created above; no pre-existing paper file is required.
 
 ```sh
-rforge search import --source openalex --query "high entropy superconductors" \
-  --pages 3 --project ./my-review
-rforge duplicate report --project ./my-review
+rforge --project ./my-review search import --source openalex --query "high entropy superconductors" \
+  --pages 3 --limit 20
+rforge --project ./my-review duplicate report
 ```
+
+Run duplicate inspection after import succeeds. It lists possible duplicates;
+it does not merge them or make screening decisions.
 
 ## Open the local UI
 
@@ -40,4 +63,8 @@ rforge duplicate report --project ./my-review
 rforge --project ./my-review ui
 ```
 
-The UI is local and helps browse papers, provenance, graph views, screening decisions, and evidence.
+The UI is local and helps browse papers, provenance, graph views, screening decisions, and evidence. Local UI hosting does not make source searches offline.
+
+Imported metadata is only a starting point, not a completed or validated review.
+Screening, source-backed evidence extraction and analysis require separate work;
+continue with the [core workflow](/workflow/).
