@@ -13,30 +13,48 @@ rforge --project ./my-review ui
 
 ## Search
 
+Start with a real project and human-approved question, protocol, and network/API permission. Supply `queries.txt` in your current directory (one reviewed query per line); the [core workflow](/workflow/#2-supply-queries-search-and-review-duplicates) shows how to create it. The first command below previews metadata; the project-qualified commands import records. Screen on title/abstract before acquiring PDFs.
+
 ```sh
 rforge search --source openalex --query "artificial photosynthesis"
-rforge search import --source openalex --query "artificial photosynthesis" --project ./my-review
+rforge --project ./my-review search import --source openalex --query "artificial photosynthesis"
 rforge --project ./my-review search batch --queries queries.txt --sources scholarly-fast --out ./my-review/searches --stats
 ```
 
 ## Library and dedupe
 
+After importing records, review duplicate candidates before screening:
+
 ```sh
-rforge duplicate report --project ./my-review
-rforge report build --project ./my-review --out ./my-review/report.md
+rforge --project ./my-review duplicate report
 ```
+
+## Reports
+
+`report build` creates a scaffold, not a report assembled from stored evidence, screening counts, and analysis. Keep this optional draft outside the packaged reports directory:
+
+```sh
+rforge --project ./my-review report build --out ./my-review/report-scaffold.md
+```
+
+Humans must write and approve the completed report from accepted source-backed evidence and independently validated analysis, replace empty sections and zero counts, and save the final output under `./my-review/reports/`. Do not export the scaffold as a completed review. See the [workflow's analysis and reporting limits](/workflow/#5-analyze-only-when-justified-then-review-the-report).
 
 ## Citations and graphs
 
 ```sh
-rforge citations expand --source semantic-scholar --paper <id> --direction both --depth 1 --out graph.json
+rforge --project ./my-review citations expand --source semantic-scholar --paper <id> --direction both --depth 1 --out graph.json
 rforge citations report --graph graph.json --out report.md
 rforge --project ./my-review graph papers
 ```
 
 ## Packages
 
+First complete the [human, privacy, and artifact prerequisites](/packages/#before-export) for `./my-review`. Normal export copies existing project artifacts into a package directory; it does not create missing review evidence or grant approval.
+
 ```sh
+rforge --project ./my-review package create --out ./review.rforgepkg
 rforge package audit ./review.rforgepkg
 rforge package replay ./review.rforgepkg
 ```
+
+Audit and replay verify packaged artifacts offline; they do not rerun the scientific workflow. See the [conditional real-review map](/workflow/) for the required sequence.

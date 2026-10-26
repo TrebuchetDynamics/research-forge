@@ -1,50 +1,91 @@
 ---
 title: Core workflow
-description: The shortest path from question to auditable report.
+description: A conditional map from a real review question to an auditable package.
 ---
 
-## 1. Define the review
+This is a workflow map, not a script that completes a scientific review. Use your own question, protocol, queries, records, and evidence. Continue only when the responsible humans have reviewed each prerequisite; commands do not supply scientific approval.
+
+## 1. Define the review and approve the protocol
+
+For a new project, replace the example question with your review question:
 
 ```sh
 rforge forge init --project ./my-review \
   --question "Do artificial photosynthesis catalysts improve solar fuel outcomes?"
 ```
 
-## 2. Approve gates
+For an existing project, keep its artifacts and inspect its current state rather than reinitializing it. Humans must approve the question, eligibility criteria, extraction plan, and analysis methods before proceeding. Obtain network/API permission before searching. If using the guided forge, record actual decisions at its review gates with reviewer identity and meaningful rationale; do not pre-approve later gates to advance the workflow.
+
+## 2. Supply queries, search, and review duplicates
+
+Create `queries.txt` in your current working directory from the approved search strategy, one query per line. For example, this produces an illustrative starting file, not a validated search strategy:
 
 ```sh
-rforge forge approve --project ./my-review --gate "question approval" --note accepted
-rforge forge approve --project ./my-review --gate "protocol approval" --note accepted
-rforge forge approve --project ./my-review --gate "network/API approval" --note accepted
+printf '%s\n' 'artificial photosynthesis solar fuels catalysts' > queries.txt
 ```
 
-## 3. Search, import, and dedupe
+After humans review the queries, source coverage, and search budget:
 
 ```sh
 rforge --project ./my-review search batch --queries queries.txt \
-  --sources scholarly-fast --out ./my-review/searches --stats --fetch-pdfs
-rforge duplicate report --project ./my-review
+  --sources scholarly-fast --out ./my-review/searches --stats
+rforge --project ./my-review duplicate report
 ```
 
-`--fetch-pdfs` only fetches legal open-access PDF candidates and stores text derivatives for review.
+The batch writes search results and a manifest under `./my-review/searches` and imports deduplicated records into the project library. Review failures, missing identifiers, coverage gaps, and duplicate candidates before screening. Search completion is not proof of exhaustive coverage. This step retrieves metadata, not PDFs.
 
-## 4. Screen and extract evidence
+## 3. Screen before acquiring full text
 
-Use screening commands and evidence extraction to record inclusion decisions and source-backed claims. Human approval gates remain part of the workflow; rforge stores the evidence, not unstated judgment.
+Humans screen the imported library records on title/abstract against the approved criteria. Use the project's screening commands to record include/exclude/uncertain decisions, exclusion reasons, reviewer identity, and conflict resolution for the `title_abstract` stage.
 
-## 5. Analyze and report
+Only after those decisions and human acquisition approval should you acquire legal OA copies for the included subset. Select each approved record and verify its license and shareability; do not bulk-fetch the unscreened library. A directory-based OA fetch consumes the `results.jsonl` supplied to it, so the reviewer must first prepare a screened-only input directory—it does not automatically apply project screening decisions.
+
+Assess full-text eligibility on the acquired documents and record the `full_text` decisions separately. Resolve conflicts before evidence extraction. See the [screening-before-acquisition decision](https://github.com/TrebuchetDynamics/research-forge/blob/main/docs/adr/0008-screen-on-title-abstract-before-full-text-acquisition.md) and the [full CLI reference](https://github.com/TrebuchetDynamics/research-forge/blob/main/docs/cli.md) for command options.
+
+## 4. Parse and accept source-backed evidence
+
+For full-text inclusions, configure an appropriate parser and retain parsed passages, parser/version provenance, and source offsets in `./my-review`. Define the protocol's extraction schema, then use project extraction commands to populate `data/evidence.items.json` with evidence linked to those sources. A human must validate the extracted values and support before marking evidence accepted; suggestions are not accepted evidence.
+
+Do not proceed to analysis with missing support, unresolved eligibility, or unreviewed extraction. Acquiring a PDF or generating a suggestion does not satisfy this prerequisite.
+
+## 5. Analyze only when justified, then review the report
+
+Analysis requires accepted evidence in `./my-review/data/evidence.items.json`, the fields required by the chosen effect-size calculation, and human approval of the method and settings. For a protocol that calls for standardized mean differences, the following prepares `./my-review/analysis/my-run.json` and checks evidence readiness:
 
 ```sh
-rforge analysis prepare my-run --effect raw-continuous --variance-floor 0.0025
-rforge analysis ready my-run
-rforge analysis run my-run
-rforge report build --project ./my-review --out ./my-review/report.md
+rforge --project ./my-review analysis prepare my-run --effect smd
+rforge --project ./my-review analysis ready my-run \
+  --required mean_treatment,mean_control,sd_pooled,n_treatment,n_control
 ```
 
-## 6. Package and replay
+Read the readiness findings, not just the exit code. This check inspects required-field presence on accepted evidence, not the prepared run or the scientific suitability of the calculation. Review the prepared inputs, method assumptions, and settings separately.
+
+**Current execution limit:** the CLI's `analysis run` uses a fake runner with canned heterogeneity values and fake R/metafor versions; installing R does not make that command a real statistical run. Do not use those outputs as scientific results. Continue only with independently validated real analysis, its scripts, settings, tool versions, inputs, outputs, and compatible project artifacts under `./my-review/analysis`. This map does not supply that execution/integration step. If those artifacts are unavailable, stop here. If pooling is not justified, choose an appropriate synthesis with the reviewers rather than fabricating inputs to satisfy packaging checks.
+
+**Current reporting limit:** `report build` produces a scaffold from project metadata and any explicitly supplied parsed input. It does not automatically load stored evidence, screening counts, or analysis results. To create an optional starting draft outside the packaged reports directory:
 
 ```sh
-rforge forge package-fixture --project ./my-review --out ./review.rforgepkg
+rforge --project ./my-review report build --out ./my-review/report-scaffold.md
+```
+
+Humans must author the real report using accepted evidence and validated analysis, correct the scaffold's empty sections and zero screening counts, and review claims, source traceability, limitations, and privacy. Save the completed, approved report as `./my-review/reports/report.md` (create `reports/` if needed). Do not treat the scaffold or a successful build as accepted review output. See the [current analysis/report command implementation](https://github.com/TrebuchetDynamics/research-forge/blob/main/internal/cli/cli.go) for these limits.
+
+## 6. Review privacy, export existing artifacts, and verify
+
+Before export, meet the [package prerequisites](/packages/#before-export): retain the project manifest and lockfile, real source/screening/acquisition/evidence provenance, reviewed analysis artifacts and report outputs, and explicit human package-export approval. Run a privacy/licensing review for this project:
+
+```sh
+rforge --project ./my-review oa privacy-review
+```
+
+Inspect `./my-review/data/privacy-licensing-review.json`, resolve findings, and obtain explicit reviewer approval where required, including for imported reference-manager attachments, notes, and annotations. Never substitute a canned approval. Check the shareability of all artifacts before copying them into a package.
+
+Only when these prerequisites are met, export the existing project—not synthetic fixture content:
+
+```sh
+rforge --project ./my-review package create --out ./review.rforgepkg
 rforge package audit ./review.rforgepkg
 rforge package replay ./review.rforgepkg
 ```
+
+Inspect the redaction report and audit findings before sharing. `package create` does not manufacture missing evidence or approve the review. Audit and replay are offline artifact checks, not a rerun of searches, parsers, or statistical engines, and not proof of scientific validity. See [review packages](/packages/) for their limits.

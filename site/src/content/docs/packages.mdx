@@ -13,6 +13,26 @@ A review package is the portable artifact behind a systematic review. It should 
 - Which analysis inputs, settings, warnings, and outputs produced the result?
 - Can the workflow be replayed without private local state?
 
+## Before export
+
+Use the [core workflow](/workflow/) for a conditional real-review map. Export is a handoff of existing work, not a way to complete missing scientific steps. Before creating a package from `./my-review`, verify:
+
+- **Human decisions:** the question and protocol are approved; title/abstract screening precedes legal full-text acquisition; full-text eligibility and conflicts are resolved; extraction acceptance, analysis methods, final claims, and package export have explicit human review. Do not substitute fixture artifacts or canned approvals.
+- **Project artifacts:** `rforge.project.toml` and `rforge.lock.json` exist from project initialization. Retain the real source records, import receipts, screening decisions, acquisition/license records, parsed support, accepted evidence in `data/evidence.items.json`, and provenance produced during the review. Keep independently validated real analysis inputs/outputs under `analysis/` and the human-completed, approved report under `reports/`. The current CLI analysis runner emits canned results, and the report builder emits a scaffold; neither supplies these prerequisites (see [workflow limits](/workflow/#5-analyze-only-when-justified-then-review-the-report)). Do not package fake-runner results or unfinished scaffolds as real review outputs. The current package audit expects analysis artifacts and report outputs; if analysis is not scientifically justified or compatible real artifacts are unavailable, stop rather than inventing inputs to make it pass.
+- **Privacy and licensing:** run `rforge --project ./my-review oa privacy-review`, inspect the resulting `data/privacy-licensing-review.json`, resolve findings, and obtain explicit reviewer approval where required. Imported reference-manager attachments, notes, and annotations require approved privacy/licensing review before packaging. Check licenses and shareability of every included document and derivative, and remove secrets, private paths, and reviewer-private material from shareable artifacts.
+
+These are review prerequisites, not a claim that `package create` enforces scientific completeness. It requires the project manifest and lockfile, applies its privacy gate, and copies existing artifacts. It does not generate missing evidence, analysis, or approvals.
+
+## Create from a real project
+
+After the prerequisites above are met, export to a package directory outside the source project:
+
+```sh
+rforge --project ./my-review package create --out ./review.rforgepkg
+```
+
+The `.rforgepkg` path is a directory, not a single archive file. Keep the source project available to correct findings and create a fresh export.
+
 ## Shape
 
 ```text
@@ -39,4 +59,8 @@ rforge package audit ./review.rforgepkg
 rforge package replay ./review.rforgepkg
 ```
 
-Packages exclude secrets, private paths, restricted PDFs, private reviewer notes, temporary clones, and unsafe caches unless explicitly approved and shareable.
+Both commands verify the package offline; the current replay implementation runs the same artifact audit. Checks cover integrity and referenced artifacts, including evidence/analysis links and privacy findings where applicable. They do not reissue network requests, rerun parsers or statistical engines, or certify the scientific conclusions.
+
+Inspect `redaction-report.json` and all audit findings before sharing. The exporter excludes local/restricted document directories and caches and sanitizes selected provenance and state, but copied reports, metadata, parsed text, and open-access assets still need human privacy/licensing review. Do not assume every secret, private note, or restricted derivative is automatically removed. Correct problems in the source project and re-export; a successful create alone is not a passing audit or permission to publish.
+
+Implementation references: [normal package export](https://github.com/TrebuchetDynamics/research-forge/blob/main/internal/reviewpkg/package.go) and [audit/replay](https://github.com/TrebuchetDynamics/research-forge/blob/main/internal/reviewpkg/audit.go).
