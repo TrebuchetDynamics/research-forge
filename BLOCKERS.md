@@ -8,6 +8,14 @@
 
 <!-- pi-autowork:questions:start -->
 
+### Q-V0-031-026e9f06 — USER_INPUT — effort input — unblocks 0
+
+- Task: V0-031-026e9f06 — Repair retired documentation contract links without reopening benchmark work
+- Needs: worker reported a blocker: Scope decision required: repairing docs/benchmark/spec.md necessarily changes its exact-byte SHA-256, but internal/benchmarks/engine.go:19-21 hardcodes the existing fingerprint and internal/benchmarks/record_test.go:134-139 requires it to match the current spec. A link-only edit reproduced TestEngineRecordPublication/{capture,redirect_and_retry,request_budget,URL-only_identity,Crossref_precise_onl…
+- Since: 2026-10-26T04:54:14Z
+- Answer: Answer in tasks/items/V0-031-026e9f06.md: widen `touches`, supply the input, narrow the acceptance, or add a dated `Owner decision:` note. The runner reruns it when the record changes.
+- Kind: held
+
 <!-- pi-autowork:questions:end -->
 
 ## Resolved
