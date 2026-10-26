@@ -1,6 +1,16 @@
 # V0-031 — documentation-link repair blocked by protocol identity
 
-Status: blocked; evidence review only. The [task](../../tasks/items/V0-031-026e9f06.md), its Acceptance, Checks, exclusions, Dependencies and queue position are unchanged. This review grants no code or protocol-change authority and does not release the hold.
+Status: resolved; historical evidence review. The original review below describes baseline `a81dd564f776ead0df0dde348d6d617bd5c7adfb` before the later execution ruling. It is retained to explain the original hold, not to deny the current task's explicitly amended scope.
+
+## Resolution after execution authorization
+
+The user subsequently requested completion of all six documentation tasks. The [same task](../../tasks/items/V0-031-026e9f06.md) was amended to permit only the mechanically required `ProtocolSHA256` constant refresh in `internal/benchmarks/engine.go` alongside the documented link corrections. Its typed scope, touches, exclusions, acceptance and checks explicitly record this exception; the old general no-code restriction is superseded only for that constant. No test was weakened and no historical scientific/benchmark artifact, dataset, scoring algorithm or protocol semantics was rewritten.
+
+The existing coordinator recovered the retained work and [verified completion](../../tasks/evidence/V0-031-026e9f06.toml), candidate `7c6cc9f11776467ac002ab763537394838bff437` integrated at `47242a3cf21b69723dcb7dfc957737a40342902a`. Current spec bytes and the engine constant both identify `1f5a1cd4a7ce62b1f063d66c9df1de9eaa3e61df4d2e7f0e0d683ceeccea9db6`. Exact-byte integrity and incompatible-protocol comparison checks remain intact; a newer hash does not retroactively requalify older reports or make their identities interchangeable. This is task completion, not new live/provider/benchmark authority. See [resolved blocker](../../BLOCKERS.md#v0-031--spec-link-repair-and-fingerprint-resolved).
+
+## Historical review (not current instructions)
+
+All present-tense status, digest and hold statements below apply to that original review baseline.
 
 ## Contract and retained evidence
 
@@ -27,7 +37,7 @@ Thus there is no pre-existing fingerprint defect in the current code to repair u
 
 Leave V0-031 unchanged and held. Do not drop its spec Acceptance, weaken the publication test, restore TODO.md, rewrite frozen reports/inputs, fabricate an owner decision, or treat scoped docs checks as full acceptance. Do not split an already-attempted task merely to bypass this blocker. No new benchmark work, successor task, dependency or goal qualification is added.
 
-The unresolved boundary is explicit authority to reconcile the exact-byte protocol fingerprint while making the required spec-link edit, or an approved alternative identity strategy. This review supplies neither. Existing owner pause and live/provider deferrals remain binding. See [Blockers](../../BLOCKERS.md#v0-031--spec-link-repair-crosses-an-explicit-code-exclusion).
+The unresolved boundary is explicit authority to reconcile the exact-byte protocol fingerprint while making the required spec-link edit, or an approved alternative identity strategy. This review supplies neither. Existing owner pause and live/provider deferrals remain binding. The historical blocker is now recorded under [resolved blockers](../../BLOCKERS.md#v0-031--spec-link-repair-and-fingerprint-resolved); the resolution above supersedes this earlier hold.
 
 ## Verification
 
