@@ -1,16 +1,18 @@
 # V0-012 baseline-search access review
 
+> Historical access review. V0-012-88342f33 was removed from the [current task queue](../../tasks/); its pinned contract and the disposition below are historical, not authority to resume. Further RF-BENCH planning remains [owner-paused](rf-bench-offline-round-2.md#owner-decision-planning-remains-paused).
+
 Disposition: blocked on owner-supplied provider access. The background count correction is already present; no further task-contract change or restart is justified.
 
 ## Sources
 
-- [Current task](../../tasks/items/V0-012-88342f33.md): recorded-response replay with parseable results and a non-empty bibliography, plus a three-question live smoke under the existing cap or the exact external input blocking it. Scope explicitly requires stopping when a key, allowlist or external account is the only fix.
+- [Historical task](https://github.com/TrebuchetDynamics/research-forge/blob/3fcac85048bc2c5d744d85f99cf76929562fb4e1/tasks/items/V0-012-88342f33.md): recorded-response replay with parseable results and a non-empty bibliography, plus a three-question live smoke under the existing cap or the exact external input blocking it. Scope explicitly requires stopping when a key, allowlist or external account is the only fix.
 - [Task source: Pi pilot provider loss](../benchmark/pilot-pi-2026-10-21.md#spend-provider-loss-and-budget-stops): 48 DuckDuckGo search attempts failed; all 24 without-tools observations returned empty bibliographies. These are 48 failures, not 48 baseline observations. The pilot is outage-conditioned, not a release-gate result.
 - [Accepted plan](../verifiable-engine-plan.md#owner-answers-2026-10-19-follow-up), [specification §3](../benchmark/spec.md#3-leakage-controls-and-access-separation) and [§8](../benchmark/spec.md#8-agent-tier-paired-protocol-v-b6): native search, equivalent date/leakage gates, complete nested accounting and separately registered expanded execution remain required.
 - [Custodian runbook §3](../benchmark/agent-tier.md#3-qualify-the-host-and-trusted-gateway-live-operator): actual gateway qualification includes first-429 quarantine without retry/wait; offline fixtures do not establish live qualification.
 - [Release-gate record](../../tasks/items/V-R1.md): preserve the owner's manual closure/deferral and the later baseline-qualification requirement. No expanded spend or superiority claim is authorized by the pilot.
 - Retained operational evidence in the common Git directory: `.git/autowork-execution/slot-data/V0-012-88342f33/attempt-1/report.json`, `contract.txt` and `.git/autowork-execution/slots/V0-012-88342f33.json`. The current resumed slot records baseline `8c5b34a98285505c1c455524f429984d9382eda5`, attempt 1, held with cause `blocker`. These references are not public qualification artifacts.
-- [Owner decision, 2026-10-22](../../tasks/items/V0-012-88342f33.md): execution is deferred until the owner supplies a custodian-held Brave web-search key or a usable SearXNG endpoint. Only after that input is supplied does the decision call for moving the task back to Now; V-R1 remains deferred.
+- [Historical owner decision, 2026-10-22](https://github.com/TrebuchetDynamics/research-forge/blob/3fcac85048bc2c5d744d85f99cf76929562fb4e1/tasks/items/V0-012-88342f33.md): execution is deferred until the owner supplies a custodian-held Brave web-search key or a usable SearXNG endpoint. Only after that input is supplied does the decision call for moving the task back to Now; V-R1 remains deferred.
 
 ## Observed blocker
 
