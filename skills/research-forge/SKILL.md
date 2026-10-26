@@ -179,7 +179,7 @@ rforge project create <path> --title "<title>"
 rforge project inspect <path>
 ```
 
-Creates `<path>/manifest.json`, `<path>/data/`, and `<path>/research-forge.lock.json`. All subsequent commands use `--project <path>`.
+Creates `<path>/rforge.project.toml`, `<path>/data/`, and `<path>/rforge.lock.json`. All subsequent commands use `--project <path>`.
 
 For a guided end-to-end workflow:
 
