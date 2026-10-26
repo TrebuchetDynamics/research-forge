@@ -41,7 +41,7 @@ Use it when you need to answer: **“Where did this claim come from, what was ex
 
 ```sh
 rforge project create ./my-review --title "Artificial photosynthesis review"
-rforge --project ./my-review search batch --queries queries.txt --sources scholarly-fast --out ./my-review/searches --stats
+rforge --project ./my-review search batch --query "artificial photosynthesis" --sources scholarly-fast --out ./my-review/searches --stats
 rforge duplicate report --project ./my-review
 rforge --project ./my-review ui
 ```
@@ -51,11 +51,11 @@ rforge --project ./my-review ui
 Ask Claude, Pi, Codex, OpenCode, or another coding agent to install the ResearchForge skill pack from GitHub and run the search workflow for you.
 
 ```text
-Read https://github.com/TrebuchetDynamics/research-forge/blob/main/SKILLS.md,
-install the ResearchForge skills, then use rforge to research: <your topic>
+Read https://github.com/TrebuchetDynamics/research-forge/blob/main/docs/agent-install.md,
+install ResearchForge for this host, then use the research-forge skill to research: <your topic>
 ```
 
-The pack includes the main research skill plus specialist skills for source ingestion, legal PDF/document handling, screening, evidence extraction, meta-analysis, reporting, and review-package release checks. `rforge` gives the agent tools, logs, source refs, and replayable outputs instead of an untraceable summary.
+The public pack contains `research-forge`, `lit`, `paper`, `brief`, `compare`, and `replicate`—not the repository's developer TDD skills. See [agent setup](/agent-skill/) for workflow descriptions and host-specific availability, including Hermes' methodology-only plugin. `rforge` gives the agent tools, logs, source refs, and replayable outputs instead of an untraceable summary.
 
 ## What you get
 
@@ -69,7 +69,8 @@ The pack includes the main research skill plus specialist skills for source inge
 <div class="cta-panel">
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/TrebuchetDynamics/research-forge/main/install.sh | bash
+# CLI engine only; omit --for cli for the default all-host installation.
+curl -fsSL https://raw.githubusercontent.com/TrebuchetDynamics/research-forge/main/install.sh | bash -s -- --for cli
 rforge version
 ```
 

@@ -3,48 +3,37 @@ title: Agent skill
 description: Use ResearchForge from Claude Code, Pi, Codex, OpenCode, or another agent harness.
 ---
 
-import { Card, CardGrid } from '@astrojs/starlight/components';
-
 ResearchForge ships an agent skill pack. Agents can install it from GitHub, use `rforge`, run literature searches, record provenance, expand citations, screen/extract evidence, and build auditable review artifacts.
 
 ## Ask your agent
 
 ```text
-Read https://github.com/TrebuchetDynamics/research-forge/blob/main/SKILLS.md,
-install the ResearchForge skills, then use rforge to research: <your topic>
+Read https://github.com/TrebuchetDynamics/research-forge/blob/main/docs/agent-install.md,
+install ResearchForge for this host, then use the research-forge skill to research: <your topic>
 ```
 
-This works as a generic instruction for Claude, Pi, Codex, OpenCode, and similar coding agents. If the harness supports local skills, use the install command below.
+The [canonical agent installation guide](https://github.com/TrebuchetDynamics/research-forge/blob/main/docs/agent-install.md) covers Claude Code, Codex, Pi, Hermes, and the generic skill fallback for other hosts such as OpenCode.
 
-## Install the skill pack for Claude Code or Pi
+## Install for your host
 
-```sh
-tmp=$(mktemp -d) && \
-  git clone --depth 1 https://github.com/TrebuchetDynamics/research-forge "$tmp" && \
-  mkdir -p ~/.claude/skills && \
-  cp -R "$tmp"/skills/* ~/.claude/skills/ && \
-  cp "$tmp"/SKILLS.md ~/.claude/skills/research-forge/SKILLS.md && \
-  rm -rf "$tmp"
-```
-
-The copied `SKILLS.md` is the map. Each `skills/*/SKILL.md` file is an installable agent skill.
+Follow that guide for native integration, prerequisites, verification, updates, and removal. The unified installer defaults to `--for all`: the CLI engine, public skills, and native integrations for the current user. Use `--for cli` for only the engine or `--for skills` for only the public skills. Do not keep a standalone skill copy alongside a native plugin in the same host.
 
 ## What the pack includes
 
-<CardGrid>
-  <Card title="Research workflow" icon="seti:markdown">
-    Main `research-forge` skill for topic research, provenance capture, citation expansion, and review packaging.
-  </Card>
-  <Card title="Source ingestion" icon="seti:search">
-    Scholarly source search, imports, dedupe, source refs, and connector-aware workflows.
-  </Card>
-  <Card title="Documents and screening" icon="seti:folder">
-    Legal PDF acquisition, parsing, passage extraction, include/exclude screening, and PRISMA-ready records.
-  </Card>
-  <Card title="Evidence and analysis" icon="seti:graph">
-    Extraction schemas, source-backed evidence tables, meta-analysis runs, reporting, and package replay checks.
-  </Card>
-</CardGrid>
+The public pack contains six skills:
+
+| Skill | Purpose |
+| --- | --- |
+| `research-forge` | Research methodology, provenance, verification, and human approval gates. |
+| `lit` | Literature synthesis from a research directory. |
+| `paper` | Resolve a paper by identifier or title. |
+| `brief` | Write a brief from a completed search directory. |
+| `compare` | Compare two completed search directories. |
+| `replicate` | Draft a replication plan, not execute experiments. |
+
+Claude Code, Codex, and Pi expose the methodology skill plus five explicitly invoked workflows. Hermes currently exposes only `research-forge`; see the installation guide for its separate MCP setup.
+
+The repository's [developer skill inventory](https://github.com/TrebuchetDynamics/research-forge/blob/main/SKILLS.md) also lists `research-forge-*-tdd` skills for building and maintaining ResearchForge. Those developer skills are not part of the installed public research pack.
 
 ## Use it
 
