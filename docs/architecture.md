@@ -1,9 +1,28 @@
 # Architecture overview
 
-ResearchForge keeps CLI and local web GUI behavior behind shared Go services. The CLI remains the reproducible workflow engine; the Go + HTMX web GUI visualizes project state and CLI-generated papers, diagrams, meta-analysis outputs, and report artifacts.
+ResearchForge is a local-first Go engine with CLI, stdio MCP and local Go + HTMX web entry points. The CLI remains the reproducible automation path; the web GUI presents project state and research artifacts. This is a current source tour, not a new design decision. See the [documentation map](README.md) for guide authority and the [ADRs](adr/README.md) for durable choices.
 
-- `internal/project` manages workspaces, manifests, lockfiles, and provenance.
-- `internal/library`, `internal/sources`, and `internal/search` manage scholarly metadata.
-- `internal/documents`, `internal/parsing`, and `internal/retrieval` manage legal full text and passages.
-- `internal/screening`, `internal/evidence`, `internal/analysis`, and `internal/report` support review workflows.
-- Optional services use adapter seams and mocked tests first.
+## Entry points and shared operations
+
+| Boundary | Ownership and source |
+| --- | --- |
+| CLI | [`cmd/rforge/main.go`](../cmd/rforge/main.go#L15) passes build metadata and arguments to `internal/cli`. The command layer parses options, configures connectors/backends and renders results. [`researchService`](../internal/cli/research_services.go#L10) supplies build information and connector lookup to the shared service. |
+| Research operations | [`research.Service`](../internal/research/service.go#L31) is independent of command/transport handling. Its [`Rank`](../internal/research/rank.go#L46), [`Lit`](../internal/research/lit.go#L89), [`Brief`](../internal/research/brief.go#L51), [`Compare`](../internal/research/compare.go#L29) and [`History`](../internal/research/history.go#L33) methods own those operations and their artifacts; it is not a replacement for every workflow package. |
+| Search batches and jobs | [`search.RunBatch` / `BatchHooks`](../internal/search/batch.go#L56) own dispatch, resume, deduplication, coverage and stopping policy. Callers persist/render artifacts through hooks; [`search.RunBatchJob`](../internal/search/jobs.go#L52) connects execution to durable jobs. |
+| Guided forge workflow | [`internal/forge`](../internal/forge/forge.go#L92) owns workflow states, review gates and transitions; [`RunWorkflowDAG`](../internal/forge/orchestrator.go#L71) handles the resumable workflow DAG. The CLI invokes these operations; the [state-machine contract](rforge-forge-state-machine.md) describes intended workflow semantics. |
+| MCP | [`mcp.Serve` and `Config`](../internal/mcp/server.go#L21) own the typed stdio tool surface and session jobs. [`executeMCP`](../internal/cli/mcp_command.go#L22) wires search preparation/execution and retrieval to the same CLI-host implementations; MCP also uses `research.Service` for shared operations. It is a bounded tool surface, not all CLI commands exposed over RPC. |
+| Local web GUI | [`executeUI`](../internal/cli/ui_command.go#L20) launches [`webui.NewRouter`](../internal/webui/server.go#L92) for a project. The cockpit visualizes project artifacts; the CLI remains the authoritative automation path ([ADR 0006](adr/0006-rescope-fyne-desktop-to-local-web-gui.md)). |
+| Host integrations | [`adapters/mcp.mjs`](../adapters/mcp.mjs#L1) checks engine compatibility and launches `rforge mcp serve`; stdio schemas/results stay in Go. [`adapters/pi.mjs`](../adapters/pi.mjs#L12) registers MCP and explicit workflow commands; [`hermes-plugin/__init__.py`](../hermes-plugin/__init__.py#L1) registers the methodology skill. Registration is passive, not research execution or host-owned scientific logic. |
+
+## Artifact and domain ownership
+
+- **Workspace and provenance:** [`internal/project`](../internal/project/project.go#L19) manages the project manifest, lockfile and workspace; [`internal/storage`](../internal/storage/storage.go#L30) supplies local storage. [`internal/provenance`](../internal/provenance/provenance.go#L19) owns the event ledger. [Project format](project-format.md) describes project files; [CLI search-batch documentation](cli.md) describes a search directory's separate artifacts.
+- **Scholarly metadata:** [`internal/library`](../internal/library/paper.go#L52) owns normalized paper records; [`internal/sources`](../internal/sources/sources.go#L11) supplies connectors and conversion to those records. Batch policy lives in `internal/search`, not in host plugins.
+- **Full text and retrieval:** [`internal/documents`](../internal/documents/documents.go#L22) owns document asset metadata, checksums and legal/export guards; [`internal/parsing`](../internal/parsing/parsing.go#L11) owns structured parsed documents/passages; [`internal/retrieval`](../internal/retrieval/index.go#L14) owns passage indexing/search backends.
+- **Review and reporting:** [`internal/screening`](../internal/screening/screening.go) owns screening decisions; [`internal/evidence`](../internal/evidence/evidence.go) owns extraction schemas, evidence and review transitions; [`internal/analysis`](../internal/analysis/analysis.go) owns statistical runs; [`internal/report`](../internal/report/report.go) builds report outputs. [`internal/reviewpkg`](../internal/reviewpkg/package.go#L92) creates review packages with privacy/checksum metadata; [`Audit` and `Replay`](../internal/reviewpkg/audit.go#L37) check packages under the [package contract](reproducible-review-package.md). These checks do not approve scientific conclusions.
+
+## Optional service seams and maintenance
+
+Service integration stays behind explicit interfaces: [`sources.SourceConnector`](../internal/sources/sources.go#L11), [`parsing.ParserAdapter`](../internal/parsing/parsing.go#L11), [`retrieval.SearchAdapter`](../internal/retrieval/index.go#L14), [`evidence.SuggestionAdapter`](../internal/evidence/evidence.go#L195) and [`analysis.Runner`](../internal/analysis/analysis.go#L479). Normal tests use deterministic fixtures/fakes; an interface or fixture does not qualify a live provider. See [external services](external-services.md), [fixture policy](fixture-policy.md), [outbound data flow](outbound-api-data-flow.md) and [live smoke checks](live-smoke.md).
+
+Update this tour when entry-point wiring, shared service ownership, adapter interfaces or artifact owners change. Verify the linked symbols in source, update the affected format/CLI/trust owner, and use the [documentation maintenance checks](README.md#maintenance-and-update-triggers). Preserve accepted ADRs and historical qualification receipts; source inspection is not a fresh live run.

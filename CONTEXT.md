@@ -10,7 +10,7 @@ The open, reproducible research engine for academic literature discovery, system
 
 ### `rforge`
 
-The planned command-line tool for ResearchForge workflows.
+The current command-line tool for ResearchForge workflows. See the [CLI reference](docs/cli.md) for commands and the [architecture overview](docs/architecture.md) for source ownership.
 
 ### Research project
 

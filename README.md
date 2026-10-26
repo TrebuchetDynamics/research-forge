@@ -331,6 +331,7 @@ Then ask: **“Use the research-forge skill to research: `<your question>`.”**
 
 ## Documentation and development
 
+- [Documentation map: current guides, specifications and historical evidence](./docs/README.md)
 - [Reproducible review package specification](./docs/reproducible-review-package.md)
 - [Product requirements](./RESEARCH-FORGE-PRD.md)
 - [Roadmap](./ROADMAP.md)
