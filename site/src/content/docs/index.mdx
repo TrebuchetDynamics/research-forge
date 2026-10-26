@@ -42,7 +42,7 @@ Use it when you need to answer: **“Where did this claim come from, what was ex
 ```sh
 rforge project create ./my-review --title "Artificial photosynthesis review"
 rforge --project ./my-review search batch --query "artificial photosynthesis" --sources scholarly-fast --out ./my-review/searches --stats
-rforge duplicate report --project ./my-review
+rforge --project ./my-review duplicate report
 rforge --project ./my-review ui
 ```
 
