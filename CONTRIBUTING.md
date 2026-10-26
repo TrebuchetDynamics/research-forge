@@ -15,6 +15,12 @@ Read:
 - [CHECKLIST.md](./CHECKLIST.md)
 - [SKILLS.md](./SKILLS.md)
 
+## Local prerequisites and checks
+
+Before running the core gate, have Go 1.26 (the `go.mod` toolchain is Go 1.26.6), Git, GNU Make, and Node.js >=22 available. Node is required for the adapter tests, not just the optional documentation site.
+
+Run `make check` for the local gate: Go formatting/module checks, Go and Node adapter tests, vet, TODO completion audit, inventory check, and whitespace checks. See [Developer setup](./docs/developer-setup.md) for cold-cache provisioning and the separate optional site requirements (Node >=22.12 and npm >=9.6.5).
+
 ## TDD requirement
 
 Every production-code change must follow red-green-refactor:
@@ -75,15 +81,16 @@ of faster code. See the baseline's reproduction commands and the
 
 ## Decision-gated TODOs
 
-Some `CHECKLIST.md` items require explicit owner/build decisions before implementation. The remaining known blocker is project licensing; future scope changes may add more decision-gated items. Before changing those items:
+No active owner decision currently blocks the `CHECKLIST.md` TODO checklist. Project licensing was resolved as MIT on 2026-06-13; see [Owner decisions](./docs/owner-decisions.md) for the recorded approval and completed GUI decision. This does not establish 1.0 release readiness.
 
-1. Run `make todo-audit`.
-2. Open an Owner decision issue with `.github/ISSUE_TEMPLATE/owner_decision.yml` or use `make decision-issues` to generate scaffolds.
-3. Link the approved decision in the PR.
-4. For license changes, confirm the approved SPDX identifier, exact copyright holder, approver, and approval date before adding `LICENSE`.
-5. Run `make license-decision-live-audit` to inspect issue #1 and `make license-decision-approval-gate` before implementing the license TODO.
-6. Keep `rforge decisions --check CHECKLIST.md` passing if unchecked TODOs remain.
-7. Run `rforge decisions --completion-audit CHECKLIST.md docs/todo-completion-audit.md` when changing TODO closeout evidence.
+For future decision-gated scope changes:
+
+1. Run `make todo-audit` and inspect `rforge --json decisions` for active decision IDs.
+2. Open or reuse an Owner decision issue with `.github/ISSUE_TEMPLATE/owner_decision.yml`. Use `rforge decisions --issue-body <active-decision-id>` only for an ID in the active registry; resolved IDs are rejected. The existing `make decision-issues` target still requests resolved `project_license` and is not a current onboarding command.
+3. Link the approved decision in the PR before implementation. For license changes, confirm the approved SPDX identifier, exact copyright holder, approver, and approval date before changing `LICENSE`.
+4. Preserve the live issue #1 revalidation policy: `make license-decision-live-audit` and `make license-decision-approval-gate` are required for license/release approval, not routine offline setup. See [Developer setup](./docs/developer-setup.md#license-approval-revalidation) and the [1.0 release gate](./docs/1.0-release.md).
+5. Keep `rforge decisions --check CHECKLIST.md` passing if unchecked TODOs remain.
+6. Run `make todo-completion-audit` or `rforge decisions --completion-audit CHECKLIST.md docs/todo-completion-audit.md` when changing TODO closeout evidence.
 
 ## Pull requests
 
