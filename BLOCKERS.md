@@ -6,15 +6,15 @@
 
 - **V-B6-run — native-search qualification unavailable.** The retained worker report says Codex 0.163.0 cannot expose the provider-attempt controls required by the accepted comparison. Resume only with qualifying host-interface evidence or an explicit owner protocol decision; no replacement baseline is authorized. See the [evidence review](docs/tasks/v-b6-run-native-search-blocker.md). The task contract and hold remain unchanged.
 
-### V0-031 — spec-link repair crosses an explicit code exclusion
-
-The [evidence review](docs/tasks/v0-031-contract-link-blocker.md) confirms that the current spec and engine fingerprint agree, while the retained link-only candidate changes the exact-byte protocol digest and fails publication verification. Updating `internal/benchmarks/engine.go` would also change emitted report identity and is explicitly outside the accepted docs-only contract. No pre-existing fingerprint defect justifies a maintainer code-repair exception. The task, Acceptance, Checks, Dependencies, queue position and hold remain unchanged; this review grants no code/protocol authority and does not restart the worker. No dropped-ledger proposal exists in either attempt's slot record.
-
 <!-- pi-autowork:questions:start -->
 
 <!-- pi-autowork:questions:end -->
 
 ## Resolved
+
+### V0-031 — spec-link repair and fingerprint resolved
+
+The earlier [contract-boundary review](docs/tasks/v0-031-contract-link-blocker.md) is historical, not an active hold. Under the user's subsequent instruction to complete all documentation tasks, the [task contract](tasks/items/V0-031-026e9f06.md) was explicitly narrowed to permit the required exact-byte `ProtocolSHA256` refresh alongside the link repairs. No algorithm, scientific requirement, dataset, historical report or comparison check was changed. The existing coordinator recovered the task and [verified its closure](tasks/evidence/V0-031-026e9f06.toml): candidate `7c6cc9f11776467ac002ab763537394838bff437`, integration `47242a3cf21b69723dcb7dfc957737a40342902a`, result pass/review passed. The final spec digest and engine constant both equal `1f5a1cd4a7ce62b1f063d66c9df1de9eaa3e61df4d2e7f0e0d683ceeccea9db6`. New report identities intentionally differ from older protocol identities; historical results and incompatibility checks remain untouched. RF-BENCH's pause and all live/provider deferrals remain in force.
 
 ### Q-V0-018-8f442e1d — Planning stopped
 
