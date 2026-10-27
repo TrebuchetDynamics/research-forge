@@ -9,6 +9,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync/atomic"
 	"testing"
 )
@@ -112,6 +113,77 @@ func TestSearchBatchResumePreservesRequestBudget(t *testing.T) {
 	}
 	if got.RequestsUsed != 2 || got.StopReason != "completed" {
 		t.Fatalf("resume accounting: %s", data)
+	}
+}
+
+func TestSearchBatchResumeSummaryTruthful(t *testing.T) {
+	for _, tc := range []struct {
+		name, reason                     string
+		cap, requests, records, failures int
+		retrySucceeds                    bool
+	}{
+		{name: "exhausted", reason: "budget_exhausted", cap: 2, requests: 2, records: 1, failures: 1},
+		{name: "successful retry", reason: "completed", cap: 3, requests: 3, records: 2, retrySucceeds: true},
+		{name: "failed retry", reason: "completed", cap: 3, requests: 3, records: 1, failures: 1},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			var calls atomic.Int32
+			var retrySucceeds atomic.Bool
+			server := newJobsTestServer(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				calls.Add(1)
+				query := r.URL.Query().Get("search")
+				if query == "failed" && !retrySucceeds.Load() {
+					http.Error(w, "missing", http.StatusNotFound)
+					return
+				}
+				fmt.Fprintf(w, `{"results":[{"id":"https://openalex.org/W1","doi":"https://doi.org/10.1000/%s","title":"%s"}]}`, query, query)
+			}))
+			t.Setenv("RFORGE_OPENALEX_URL", server.URL)
+			out := t.TempDir()
+			args := []string{"--query", "saved", "--query", "failed", "--sources", "openalex", "--out", out, "--continue-on-error"}
+			if code, _, stderr := runSearchBatch(t, append(args, "--max-requests", "2")...); code != 0 {
+				t.Fatalf("initial: %d %s", code, stderr)
+			}
+			before := make(map[string][]byte)
+			for _, name := range []string{"results.jsonl", "failures.jsonl"} {
+				data, err := os.ReadFile(filepath.Join(out, name))
+				if err != nil {
+					t.Fatal(err)
+				}
+				before[name] = data
+			}
+			retrySucceeds.Store(tc.retrySucceeds)
+			code, stdout, stderr := runSearchBatch(t, append(args, "--resume", "--max-requests", fmt.Sprint(tc.cap))...)
+			if code != 0 {
+				t.Fatalf("resume: %d %s", code, stderr)
+			}
+			state := readBatchState(t, out)
+			if int(calls.Load()) != tc.requests || state.RequestsUsed != tc.requests || len(state.Failures) != tc.failures || string(state.StopReason) != tc.reason {
+				t.Fatalf("calls=%d, state=%+v", calls.Load(), state)
+			}
+			papers, err := loadSearchBatchResults(filepath.Join(out, "results.jsonl"))
+			if err != nil || len(papers) != tc.records {
+				t.Fatalf("records=%d err=%v", len(papers), err)
+			}
+			if failures := readSearchBatchFailures(filepath.Join(out, "failures.jsonl")); len(failures) != tc.failures {
+				t.Fatalf("failures=%+v", failures)
+			}
+			if tc.cap == 2 {
+				for name, want := range before {
+					got, err := os.ReadFile(filepath.Join(out, name))
+					if err != nil || !bytes.Equal(got, want) {
+						t.Fatalf("exhausted resume changed %s: %s (err=%v)", name, got, err)
+					}
+				}
+			}
+			if !strings.Contains(stdout, "\nresumed from checkpoint\n") || strings.Contains(stdout, "retried") || strings.Contains(stdout, "completed pair(s)") {
+				t.Errorf("resume summary must be neutral: %s", stdout)
+			}
+			stop := fmt.Sprintf("stop: %s; requests used: %d/%d; unique records: %d\n", tc.reason, tc.requests, tc.cap, tc.records)
+			if !strings.Contains(stdout, stop) || !strings.Contains(stdout, "wrote "+out+"\n") {
+				t.Errorf("missing stop/output summary: %s", stdout)
+			}
+		})
 	}
 }
 

@@ -1568,7 +1568,7 @@ func executeSearchBatchRunContext(ctx context.Context, interruptSignal func() sy
 	fmt.Fprintf(stdout, "job: %s\n", job.Job().ID)
 	fmt.Fprintf(stdout, "searched %d querie(s) across %d source(s): %d records, %d deduped, %d failure(s), %d skipped source(s)\n", len(queries), len(batch.Sources), len(allPapers), len(deduped), failureCount, skippedCount)
 	if resuming {
-		fmt.Fprintf(stdout, "resumed from checkpoint: skipped %d completed pair(s), retried failed pair(s)\n", resumedPairs)
+		fmt.Fprintln(stdout, "resumed from checkpoint")
 	}
 	if opts.Project != "" {
 		fmt.Fprintf(stdout, "imported %d records to library; skipped %d duplicates, %d without identifiers\n", imported, skippedDuplicate, skippedNoIdentifier)
