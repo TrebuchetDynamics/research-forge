@@ -45,6 +45,8 @@ type citationMetadataWarning struct {
 func executeCitationsBuild(args []string, stdout, stderr io.Writer, opts globalOptions) int {
 	researchDir := ""
 	outFile := ""
+	scope := "downloaded"
+	const usage = "usage: rforge citations build --research-dir <dir> [--scope downloaded|discovered] [--out <file>]"
 	for i := 0; i < len(args); i++ {
 		switch args[i] {
 		case "--research-dir":
@@ -52,6 +54,12 @@ func executeCitationsBuild(args []string, stdout, stderr io.Writer, opts globalO
 				researchDir = args[i+1]
 				i++
 			}
+		case "--scope":
+			if i+1 >= len(args) || (args[i+1] != "downloaded" && args[i+1] != "discovered") {
+				return writeError(stdout, stderr, opts, 2, "usage", usage)
+			}
+			scope = args[i+1]
+			i++
 		case "--out":
 			if i+1 < len(args) {
 				outFile = args[i+1]
@@ -60,13 +68,13 @@ func executeCitationsBuild(args []string, stdout, stderr io.Writer, opts globalO
 		}
 	}
 	if researchDir == "" {
-		return writeError(stdout, stderr, opts, 2, "usage", "usage: rforge citations build --research-dir <dir> [--out <file>]")
+		return writeError(stdout, stderr, opts, 2, "usage", usage)
 	}
 	if outFile == "" {
 		outFile = filepath.Join(researchDir, "CITATIONS.md")
 	}
 
-	papers, err := collectDownloadedPapers(researchDir)
+	papers, err := collectCitationPapers(researchDir, scope)
 	if err != nil {
 		return writeError(stdout, stderr, opts, 1, "citation_discovery_failed", err.Error())
 	}
@@ -80,11 +88,15 @@ func executeCitationsBuild(args []string, stdout, stderr io.Writer, opts globalO
 	metas := make([]citationMeta, 0, len(papers))
 	warnings := []citationMetadataWarning{}
 	for _, p := range papers {
+		if scope == "discovered" {
+			metas = append(metas, p)
+			continue
+		}
 		var meta citationMeta
-		if p.arxivID != "" || arxivRe.MatchString(p.doi) {
-			arxivID := p.arxivID
+		if p.ArXivID != "" || arxivRe.MatchString(p.DOI) {
+			arxivID := p.ArXivID
 			if arxivID == "" {
-				if m := arxivRe.FindStringSubmatch(p.doi); m != nil {
+				if m := arxivRe.FindStringSubmatch(p.DOI); m != nil {
 					arxivID = m[1]
 				}
 			}
@@ -95,32 +107,37 @@ func executeCitationsBuild(args []string, stdout, stderr io.Writer, opts globalO
 			}
 			meta.IsArXiv = true
 			meta.ArXivID = arxivID
-		} else if p.doi != "" {
+		} else if p.DOI != "" {
 			var err error
-			meta, err = fetchCrossrefCitMeta(p.doi, crossrefBase)
+			meta, err = fetchCrossrefCitMeta(p.DOI, crossrefBase)
 			if err != nil {
-				warnings = append(warnings, citationMetadataWarning{Source: "crossref", Identifier: p.doi, Message: err.Error()})
+				warnings = append(warnings, citationMetadataWarning{Source: "crossref", Identifier: p.DOI, Message: err.Error()})
 			}
 			meta.IsArXiv = false
 		}
 		if meta.Title == "" {
-			meta.Title = p.title
+			meta.Title = p.Title
 		}
-		meta.DOI = p.doi
+		meta.DOI = p.DOI
 		metas = append(metas, meta)
 		if delay > 0 {
 			time.Sleep(delay)
 		}
 	}
 
-	sort.Slice(metas, func(i, j int) bool {
+	less := func(i, j int) bool {
 		ai := citFirstAuthorKey(metas[i].Authors)
 		aj := citFirstAuthorKey(metas[j].Authors)
 		if ai != aj {
 			return ai < aj
 		}
 		return metas[i].Year < metas[j].Year
-	})
+	}
+	if scope == "discovered" {
+		sort.SliceStable(metas, less)
+	} else {
+		sort.Slice(metas, less)
+	}
 	for i := range metas {
 		metas[i].Index = i + 1
 	}
@@ -147,13 +164,23 @@ func executeCitationsBuild(args []string, stdout, stderr io.Writer, opts globalO
 				ArXivID: m.ArXivID,
 			}
 		}
-		return writeJSON(stdout, 0, map[string]any{"count": len(metas), "citations": entries, "warnings": warnings})
+		data := map[string]any{"count": len(metas), "citations": entries, "warnings": warnings}
+		if scope == "discovered" {
+			data["scope"] = scope
+			data["screening_status"] = "not_assessed"
+		}
+		return writeJSON(stdout, 0, data)
 	}
 
 	var sb strings.Builder
 	sb.WriteString("# Research Citations\n\n")
-	sb.WriteString("All papers whose full text (PDF) was downloaded as part of this research program.\n")
-	sb.WriteString("Cite these works when using any insight derived from this collection.\n")
+	if scope == "discovered" {
+		sb.WriteString("**Unscreened search metadata — not evidence of inclusion or full-text review**\n\n")
+		sb.WriteString("Citations use saved local metadata only; no network enrichment or screening decisions were consulted.\n")
+	} else {
+		sb.WriteString("All papers whose full text (PDF) was downloaded as part of this research program.\n")
+		sb.WriteString("Cite these works when using any insight derived from this collection.\n")
+	}
 	sb.WriteString("Papers are numbered [1]–[N] for inline reference.\n\n")
 	fmt.Fprintf(&sb, "**Total:** %d papers\n\n", len(metas))
 	sb.WriteString("## References\n\n")
@@ -182,17 +209,11 @@ func executeCitationsBuild(args []string, stdout, stderr io.Writer, opts globalO
 	return 0
 }
 
-// collectDownloadedPapers scans all topic subdirs of researchDir and returns
-// papers whose PDF slug appears in <topic>/pdfs/.
-type downloadedPaper struct {
-	doi     string
-	arxivID string
-	title   string
-}
-
-func collectDownloadedPapers(researchDir string) ([]downloadedPaper, error) {
+// collectCitationPapers reads immediate topics in name order, keeping the first
+// record for each exact trimmed DOI-first/arXiv key. Only downloaded scope reads PDFs.
+func collectCitationPapers(researchDir, scope string) ([]citationMeta, error) {
 	seenKeys := map[string]struct{}{}
-	var papers []downloadedPaper
+	var papers []citationMeta
 
 	entries, err := os.ReadDir(researchDir)
 	if err != nil {
@@ -213,16 +234,18 @@ func collectDownloadedPapers(researchDir string) ([]downloadedPaper, error) {
 		if len(records) == 0 {
 			continue
 		}
-		pdfEntries, err := os.ReadDir(filepath.Join(researchDir, topic, "pdfs"))
-		if err != nil {
-			if os.IsNotExist(err) {
-				continue
-			}
-			return nil, fmt.Errorf("read topic %q PDFs: %w", topic, err)
-		}
 		downloaded := map[string]struct{}{}
-		for _, f := range pdfEntries {
-			downloaded[strings.TrimSuffix(f.Name(), ".pdf")] = struct{}{}
+		if scope == "downloaded" {
+			pdfEntries, err := os.ReadDir(filepath.Join(researchDir, topic, "pdfs"))
+			if err != nil {
+				if os.IsNotExist(err) {
+					continue
+				}
+				return nil, fmt.Errorf("read topic %q PDFs: %w", topic, err)
+			}
+			for _, f := range pdfEntries {
+				downloaded[strings.TrimSuffix(f.Name(), ".pdf")] = struct{}{}
+			}
 		}
 		for _, rec := range records {
 			doi := strings.TrimSpace(rec.Identifiers.DOI)
@@ -234,15 +257,28 @@ func collectDownloadedPapers(researchDir string) ([]downloadedPaper, error) {
 			if key == "" {
 				continue
 			}
-			slug := oaFetchSlug(rec)
-			if _, ok := downloaded[slug]; !ok {
-				continue
+			if scope == "downloaded" {
+				if _, ok := downloaded[oaFetchSlug(rec)]; !ok {
+					continue
+				}
 			}
 			if _, already := seenKeys[key]; already {
 				continue
 			}
 			seenKeys[key] = struct{}{}
-			papers = append(papers, downloadedPaper{doi: doi, arxivID: arxivID, title: rec.Title})
+			meta := citationMeta{DOI: doi, ArXivID: arxivID, Title: rec.Title, Year: rec.Year, Journal: rec.Venue}
+			for _, author := range rec.Authors {
+				given, family := strings.TrimSpace(author.Given), strings.TrimSpace(author.Family)
+				if family != "" {
+					if given != "" {
+						family = string([]rune(given)[0]) + ". " + family
+					}
+					meta.Authors = append(meta.Authors, family)
+				} else if given != "" {
+					meta.Authors = append(meta.Authors, given)
+				}
+			}
+			papers = append(papers, meta)
 		}
 	}
 	return papers, nil
@@ -469,6 +505,8 @@ func citFormatCitation(m citationMeta) string {
 		link = fmt.Sprintf(" [arXiv:%s](https://arxiv.org/abs/%s)", m.ArXivID, m.ArXivID)
 	} else if m.DOI != "" {
 		link = fmt.Sprintf(" [doi:%s](https://doi.org/%s)", m.DOI, m.DOI)
+	} else if m.ArXivID != "" {
+		link = fmt.Sprintf(" [arXiv:%s](https://arxiv.org/abs/%s)", m.ArXivID, m.ArXivID)
 	}
 	return fmt.Sprintf("[%d] %s, \"%s,\" %s, %s.%s", m.Index, authors, m.Title, venue, year, link)
 }

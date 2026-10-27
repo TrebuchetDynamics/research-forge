@@ -3973,8 +3973,8 @@ func helpSections() []helpSection {
 					Description: "Download open-access PDFs for all papers in <dir>/results.jsonl. Writes PDFs to <dir>/pdfs/.",
 				},
 				{
-					Usage:       "rforge citations build --research-dir <dir> [--out <file>]",
-					Description: "Generate CITATIONS.md numbered bibliography from all downloaded PDFs across topic subdirs. Fetches metadata from Crossref and arXiv.",
+					Usage:       "rforge citations build --research-dir <dir> [--scope downloaded|discovered] [--out <file>]",
+					Description: "Generate CITATIONS.md across topic subdirs. Default downloaded scope enriches PDF-backed citations via Crossref/arXiv; discovered uses only saved metadata, without network calls, and is explicitly unscreened.",
 				},
 			},
 		},
@@ -4041,8 +4041,8 @@ func helpSections() []helpSection {
 			Description: "Bibliography generation and citation graph expansion.",
 			Commands: []helpCommand{
 				{
-					Usage:       "rforge citations build --research-dir <dir> [--out <file>]",
-					Description: "Build CITATIONS.md from all downloaded PDFs across topic subdirs. Default output: <dir>/CITATIONS.md.",
+					Usage:       "rforge citations build --research-dir <dir> [--scope downloaded|discovered] [--out <file>]",
+					Description: "Build CITATIONS.md (default: <dir>/CITATIONS.md). Scope defaults to downloaded with metadata enrichment; discovered is local-only, unscreened, and not evidence of inclusion or full-text review.",
 				},
 				{
 					Usage:       "rforge citations expand --source semantic-scholar|openalex|crossref --paper <id> --direction references|citations|both --depth N --out <file>",

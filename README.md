@@ -97,10 +97,16 @@ rforge search batch --out ./research/my-topic \
 ### 3. Build a bibliography
 
 ```sh
-rforge citations build --research-dir ./research
+rforge citations build --research-dir ./research --scope discovered
 ```
 
-You now have normalized records, a deduplicated set, a failure queue, a manifest, statistics, and `research/CITATIONS.md`. After title/abstract screening, fetch legal open-access files for included papers:
+This builds `research/CITATIONS.md` from saved local metadata without network calls,
+PDFs or screening logs. It is **unscreened search metadata — not evidence of
+inclusion or full-text review**. Missing metadata is not enriched. Omitting
+`--scope` (or using `--scope downloaded`) keeps the PDF-backed default with
+Crossref/arXiv metadata enrichment. See [bibliography scopes](./docs/cli.md#bibliography-scopes).
+
+You now have normalized records, a deduplicated set, a failure queue, a manifest, statistics, and an explicitly unscreened bibliography. After title/abstract screening, fetch legal open-access files for included papers:
 
 ```sh
 rforge oa fetch --dir ./research/my-topic

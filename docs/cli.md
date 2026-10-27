@@ -13,6 +13,7 @@ Core commands:
 - `rforge search batch --queries <queries.txt> --sources all|scholarly-fast|biomedical|preprints|datasets|open|oa|openalex,crossref,... --out <dir> [--query <query>] [--limit N] [--depth quick|standard|comprehensive] [--max-requests N] [--dedupe doi,title] [--continue-on-error] [--stats] [--resume]` runs bounded multi-query/multi-source sweeps (see [search budgets](#search-budgets-and-stop-reasons)), writes raw per-source files plus `results.jsonl`, DOI/title `results-deduped.jsonl`, `results.md`, `manifest.json`, optional `search-stats.txt`, `failures.jsonl`, and an incremental `batch-state.json` checkpoint so agents do not need shell loops for resumable literature scouting. The checkpoint records every completed (query, source) pair after each network call; an interrupted sweep (SIGINT/SIGTERM/timeout — exit 130/143) keeps its partial results in the topic dir, and re-running the same command with `--resume` skips completed pairs, retries failed ones, and completes never-run ones. `rforge search stats --dir <dir>` reports checkpoint progress (`completed/failed/pending`) and prints the exact resume command when work remains
 - `rforge search import --source openalex --query <query> --pages N [--limit N] [--filter source-filter] [--preset systematic-review|open-access-review|recent-domain-map] [--from-year YYYY] [--to-year YYYY] [--type article] [--open-access true|false] [--concept C41008148] [--resume-state state.json]`
 - `rforge search related --source openalex --paper <work-id> [--limit N]`
+- `rforge citations build --research-dir <dir> [--scope downloaded|discovered] [--out <file>]` builds a numbered bibliography across immediate topic directories; default scope is PDF-backed `downloaded`, while `discovered` is explicitly unscreened and local-only (see [bibliography scopes](#bibliography-scopes))
 - `rforge citations expand --source semantic-scholar|openalex|crossref --paper <id> --direction references|citations|both --depth N [--max-records N --max-api-calls N --retry-budget N --resume-cursor <cursor> --dry-run] --out <file> [--run-state <semantic-run.json>] [--import-library]` expands citation graphs; dry-run emits a budget estimate before live expansion, and Semantic Scholar run-state files record quota/resume fields, API field restrictions, and graph budget controls
 - `rforge citations import-bibliography (--parsed <parsed.json>|--parsed-dir <dir>) --out <graph.json> --report <report.json> [--evidence <evidence.json>]` imports parsed bibliography references as citation-graph edges across one or many parsed documents and links citation spans back to passages and accepted report evidence support
 - `rforge citations domain-map --parsed-dir <dir> --out <domain-map.json> [--graph <graph.json> --label topic=label --history action:topic1,topic2:result:reviewer:reason --model <name>]` writes BERTopic-style domain-map artifacts with representative papers/passages, reviewer labels, topic merge/split history, model settings, and citation-graph links
@@ -111,6 +112,39 @@ Workflow configuration and provenance:
 - Successful `paper`, `rank`, `brief`, `compare`, `lit`, `note`, `history search`, `replicate`, and `draft` runs with the global prefix `rforge --project <path> ...` append a `cli.command` event to `provenance/events.jsonl`; append failures return nonzero instead of reporting success ([dispatch](../internal/cli/workflow_command.go)).
 - `lit` and `replicate` outputs include generation timestamps; remote metadata may also change between runs, so their outputs are not promised to be byte-reproducible.
 - Validate rank sidecars with `rforge provenance validate <file>.provenance.json` ([rank output](../internal/cli/rank_command.go), [validator](../internal/cli/provenance_command.go)).
+
+## Bibliography scopes
+
+For a bibliography before screening or PDF download:
+
+```sh
+rforge citations build --research-dir ./research --scope discovered
+```
+
+Discovered scope reads saved `results.jsonl` files in immediate topic directories,
+using only saved titles, authors, years, venues and identifiers. It makes **no
+network requests**, does not read PDF directories or screening logs, and does not
+invent missing metadata. Records without a DOI or arXiv ID are skipped. Exact,
+trimmed DOI-first/arXiv-fallback keys are deduplicated across topics; the first
+record in topic-name/file order wins without field merging. Citations sort by
+first-author surname, then year; discovered ties retain that deterministic order.
+Malformed input fails without changing output.
+
+Markdown prominently labels the bibliography **Unscreened search metadata — not
+evidence of inclusion or full-text review**. This does not approve inclusion or
+replace human review gates. An empty discovery still produces a labeled, empty
+bibliography. Default output is `<research-dir>/CITATIONS.md`; `--out` selects
+another Markdown destination, with transactional replacement and symlink protection.
+
+`rforge --json citations build --research-dir ./research --scope discovered`
+returns citations on stdout only, adding `scope: "discovered"` and
+`screening_status: "not_assessed"` alongside the existing `count`, `citations` and
+`warnings`. It never writes Markdown, even with `--out`.
+
+Omitting `--scope`, or specifying `--scope downloaded`, preserves the existing
+PDF-backed selection, Crossref/arXiv enrichment and metadata warnings. Downloaded
+scope does not itself establish screening approval either. A missing or invalid
+scope value returns usage error (exit 2) before reading inputs or changing outputs.
 
 ## Search budgets and stop reasons
 
