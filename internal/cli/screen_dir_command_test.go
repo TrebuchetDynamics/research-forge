@@ -533,6 +533,91 @@ func TestScreenDirProgressShowsCounts(t *testing.T) {
 	}
 }
 
+func TestScreenDirProgressMatchesQueueEligibility(t *testing.T) {
+	dir := makeScreenDirTopicDir(t, []map[string]any{
+		{"Title": "Decided", "Identifiers": map[string]any{"DOI": "10.1/alpha", "ArXivID": "alpha"}},
+		{"Title": "Decided duplicate", "Identifiers": map[string]any{"DOI": "10.1/alpha"}},
+		{"Title": "Pending", "Identifiers": map[string]any{"DOI": " 10.1/beta "}},
+		{"Title": "Pending duplicate", "Identifiers": map[string]any{"DOI": "10.1/beta"}},
+		{"Title": "Decided arXiv", "Identifiers": map[string]any{"ArXivID": " decided-arxiv "}},
+		{"Title": "Pending arXiv", "Identifiers": map[string]any{"DOI": " \t", "ArXivID": " pending-arxiv "}},
+		{"Title": "DOI takes precedence", "Identifiers": map[string]any{"DOI": "10.1/both", "ArXivID": "decided-arxiv"}},
+		{"Title": "PMID only", "Identifiers": map[string]any{"PMID": "12345"}},
+		{"Title": "OpenAlex only", "Identifiers": map[string]any{"DOI": " \t", "ArXivID": "\n ", "OpenAlexID": "W12345"}},
+		{"Title": "Blank decision", "Identifiers": map[string]any{"DOI": "10.1/blank"}},
+		{"Title": "Historical unknown decision", "Identifiers": map[string]any{"DOI": "10.1/unknown"}},
+	})
+	writeScreeningJSONL(t, dir, []map[string]any{
+		{"doi": "10.1/alpha", "decision": "include"},
+		{"doi": "10.1/alpha", "decision": "EXCLUDE"},
+		{"arxiv_id": "decided-arxiv", "decision": "uncertain"},
+		{"doi": "10.1/blank", "decision": ""},
+		{"doi": "10.1/unknown", "decision": "historical"},
+		{"doi": "10.1/outside-results", "decision": "include"},
+	})
+	before := map[string][]byte{}
+	for _, name := range []string{"results.jsonl", "screening.jsonl"} {
+		body, err := os.ReadFile(filepath.Join(dir, name))
+		if err != nil {
+			t.Fatal(err)
+		}
+		before[name] = body
+	}
+
+	queuePath := filepath.Join(dir, "queue.csv")
+	stdout, stderr := new(bytes.Buffer), new(bytes.Buffer)
+	if code := Execute([]string{"screen", "queue", "--dir", dir, "--out", queuePath}, stdout, stderr); code != 0 {
+		t.Fatalf("queue exit = %d: %s%s", code, stdout, stderr)
+	}
+	_, rows := readCSV(t, queuePath)
+	if len(rows) != 5 {
+		t.Fatalf("queue rows = %d, want 5 (including pending duplicates)", len(rows))
+	}
+	for _, jsonMode := range []bool{false, true} {
+		stdout.Reset()
+		stderr.Reset()
+		args := []string{"screen", "progress", "--dir", dir}
+		if jsonMode {
+			args = append([]string{"--json"}, args...)
+		}
+		if code := Execute(args, stdout, stderr); code != 0 {
+			t.Fatalf("progress (JSON=%v) exit = %d: %s%s", jsonMode, code, stdout, stderr)
+		}
+		if jsonMode {
+			var envelope struct {
+				Data map[string]int `json:"data"`
+			}
+			if err := json.Unmarshal(stdout.Bytes(), &envelope); err != nil {
+				t.Fatalf("decode progress: %v", err)
+			}
+			for key, want := range map[string]int{
+				"total": 11, "decided": 4, "included": 2, "excluded": 1, "uncertain": 1, "pending": 7,
+				"queue_pending": len(rows), "missing_identifier": 2,
+			} {
+				if got, ok := envelope.Data[key]; !ok || got != want {
+					t.Errorf("%s = %d (present=%v), want %d", key, got, ok, want)
+				}
+			}
+		} else {
+			want := "total: 11  decided: 4  pending: 7\n" +
+				"  include: 2  exclude: 1  uncertain: 1\n" +
+				"  queue_pending: 5  missing_identifier: 2\n"
+			if stdout.String() != want {
+				t.Errorf("progress text = %q, want %q", stdout.String(), want)
+			}
+		}
+		for name, body := range before {
+			after, err := os.ReadFile(filepath.Join(dir, name))
+			if err != nil {
+				t.Fatal(err)
+			}
+			if !bytes.Equal(after, body) {
+				t.Errorf("progress (JSON=%v) changed %s", jsonMode, name)
+			}
+		}
+	}
+}
+
 func TestScreenDirProgressReportsMalformedResults(t *testing.T) {
 	dir := makeScreenDirTopicDir(t, samplePapers)
 	if err := os.WriteFile(filepath.Join(dir, "results.jsonl"), []byte("{not valid JSON}\n"), 0o600); err != nil {
