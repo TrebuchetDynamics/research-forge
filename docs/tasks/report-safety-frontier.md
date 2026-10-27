@@ -184,3 +184,67 @@ No owner-only choice remains. Deferred malformed JSONL/output-transaction concer
 - Existing `RF-REPORT-SAFETY` ID/goal metadata, completed IDs/history and all owner-paused work are preserved. No open questions, strategic proposals, rolling successor or live qualification task is added.
 - Fresh independent read-only builder verdict: **nothing important left**. It confirmed evidence, reachable fixtures/checks, permitted bounded prerequisite repairs and disjoint lanes. **Worker-reversible disposition:** exact local names and fixture organization remain delegated within the saved contracts. This finding/disposition is persisted in both task records; no material owner/external blocker remains. Reviewer made no implementation edits or test runs.
 - Planning readback and final checks cover the affected document and task records. A saved/selection-ready task is not implemented code. Exact validation and mandatory hook results are reported at this batch's planning commit; newly specified product regressions remain proposed until execution.
+
+## Parse-integrity frontier — reject damaged report inputs
+
+Status: Accepted
+
+### Discovery and goal trace
+
+This standalone autonomous-discovery pass is based on `0149ef13998417c02a5dfd3d70b7d5a8c2b06c12`. It authorizes planning only. ResearchForge remains the local-first retrieval/provenance CLI and guided-review engine described in [README](../../README.md#trust-boundaries): researchers and host agents search, retain evidence, then summarize or compare it. Go shared services own report behavior; CLI adapters own argument and error presentation; JSONL search artifacts are the inputs. No new product direction is accepted here.
+
+**OBSERVED:** the current task store has 86 records (85 done, one superseded), ten goals and no open tasks or drafts. Prior report-label, date-bounds, results-read and overlap-count repairs are present in source and coordinator-verified task history; documentation closeout is delivered too. Existing RF-REPORT-SAFETY remains unmet, priority 26, with no focus change. Reuse that goal and this document, not a duplicate goal or another closeout attestation. Other unmet release, packaging, MCP and benchmark proof is not inferred complete from an empty queue. The [RF-BENCH owner pause](rf-bench-offline-round-2.md#owner-decision-planning-remains-paused) remains binding.
+
+Runtime inspection says the repository runner is running, but worker health is unavailable because journal timestamps moved backwards and its snapshot is stale. No idle/exclusivity claim can be made from that output. This pass neither restarts it nor dispatches workers. The initial tracked worktree/index are clean; the existing untracked research job state is unrelated and preserved. A separate science-tool opportunity study outside this repository is unfinished and is neither this product's accepted strategy nor a task source.
+
+| Goal → specification → implementation → verification gap → task |
+| --- |
+| Trustworthy report inputs → README failures-visible/brief/compare journeys → `internal/research/brief.go:63–78` and `compare.go:285–301` ignore JSON decode errors → existing owning tests exercise valid data and file-read errors, not malformed-row rejection → V0-033-0eda4436. |
+| Preserve other consumers → `internal/cli/compare_command.go:52–55` exposes the legacy reader to draft; `draft_command.go:215` discards its error → strictness in that exported reader would silently change draft's partial-input behavior → keep the exported reader unchanged and make strict parsing report-specific. |
+| Valid producer data → `internal/cli/source_commands.go:1490` and `writeSearchBatchJSONL` → successful producer output is JSON-encoded records; truncation/type-invalid input is not a valid empty corpus → reject decoding failures, not blank or titleless valid JSON. |
+
+These are high-confidence source observations, not newly executed corrupt-input repros. **INFERRED impact:** a truncated/malformed row between good papers disappears silently while the report succeeds, understating available evidence or overlap. No frequency, performance, scientific quality or numeric ROI claim is made. This investigation closes the earlier deferred malformed-row question for brief/compare only; previous task exclusions and receipts are historical and remain unchanged.
+
+### Selected specification and design
+
+**Planner's call:** for `Service.Brief` and `Service.Compare`, reject the first nonblank physical line that fails `json.Unmarshal` into the existing `Paper` type. Return no partial successful result and perform no report output creation/replacement. Include the input filename and one-based physical line number in the wrapped diagnostic, preserving the decode cause via `%w`; do not dump the full input row. Retain current type/field semantics, including case handling and ignored unknown fields. Do not introduce required-field/schema validation.
+
+- Brief preserves manifest-read/parse precedence and existing `brief_results_read_failed` for file I/O; decoding failure uses typed `brief_results_parse_failed`, exit 1.
+- Compare preserves usage/count/duplicate-label precedence, directory iteration order and existing `compare_read_<index>_failed`, exit 1, for either read or parse failure of that input. The filename/line diagnostic distinguishes parsing without a new result schema.
+- Empty files and blank lines still succeed. Valid titleless objects and `null` still get skipped; titled records, duplicates and identifier/count domains retain existing behavior. CRLF, trailing newline and long valid rows must not gain a default Scanner token limit.
+- Preserve bytes of all inputs and any existing output sentinel; do not create an absent output-parent directory on failure. Valid output structure, ordering, summaries and short-date fixes stay unchanged.
+
+Choose one private report-only decoder in new `internal/research/report_results.go`, taking existing file bytes plus the diagnostic path and returning papers/error. Brief keeps its current read-error branch then uses it; Compare reads each file and uses it under its existing indexed failure wrapper. Leave exported `ReadPaperResults` and its legacy draft consumer unchanged. The exact private helper name and fixture organization are worker-reversible details, not further permission gates.
+
+Rejected alternatives: warnings with success still permit callers to trust a partial corpus; strictifying exported `ReadPaperResults` affects draft's ignored-error path; schema validation rejects previously tolerated valid JSON; new CLI flags, lenient-mode APIs and ingestion redesign expand this repair unnecessarily. Reusing the decoder for history/lit/draft would need their own compatibility investigation and is excluded.
+
+### One executable task and verification
+
+[V0-033-0eda4436](../../tasks/items/V0-033-0eda4436.md), **Now**, under existing RF-REPORT-SAFETY. One cohesive outcome: report parse failure is not empty/partial success. No prerequisites; no rolling successor or strategic proposal. Expected six-file write set (the sixth is a discovered prerequisite fixture adjustment, not a second behavior):
+
+- `internal/research/brief.go`
+- `internal/research/compare.go`
+- new `internal/research/report_results.go`
+- new `internal/research/report_results_test.go`
+- new `internal/cli/report_results_test.go`
+- `internal/research/brief_read_error_test.go`: adjust the existing `readable_rows` positive fixture as specified below
+
+No command/help registries, public skills, README, manifests or lockfiles change; no cli-surface/agent-docs, exclusive or live resource is required. There is only one task, not artificial parallel layers. A future coordinator must inspect actual ownership before execution; this plan does not repair the stale runner journal.
+
+1. Begin red with proposed `TestReportResultsRejectMalformedJSONL`: Brief and Compare on synthetic temporary sessions, a good row then blanks then malformed/type-invalid row and another good row. Assert typed code/exit 1, diagnostic physical line and path, wrapped decode cause, zero result, unchanged input/output sentinel, and absent-parent preservation. Exercise corruption in Compare's first and second input. Existing manifest/duplicate-label/read-error tests retain precedence guards.
+2. In the same focused service table, preserve valid empty/blank, `null`/titleless/unknown-field, CRLF and greater-than-64-KiB titled-row controls, valid overlap/brief output and legacy `ReadPaperResults` permissiveness on good–bad–good data. Add only the private decoder and two report call-site changes needed to pass. Refactor within this seam; do not alter the legacy reader.
+3. Proposed `TestReportResultsMalformedJSONLCLI` covers both commands' text/JSON error presentation, no success report or write-advice, and unchanged/no output. No CLI production changes should be needed: `writeResearchError` already carries shared-service error codes.
+
+Proposed/unrun focused check: `env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE go test ./internal/research ./internal/cli -run 'TestReportResults|TestServiceBrief|TestServiceCompare|TestBriefRejectsResultsReadFailure|TestBriefTimestampBounds|TestCompareRejectsDuplicateLabelsBeforeRead|TestCompareSharedCounts|TestExecuteBrief|TestExecuteCompare|TestExecuteDraft' -count=1`.
+
+Guard: mandatory `make check`, under the repository's normal worker/merged-tree execution contract and independent implementation review. All inputs are locally creatable offline fixtures; bounded repairs to owning-path prerequisites required by these checks are allowed without weakening checks. Product tests named above are proposed/unrun during planning. A normal planning commit also invokes the existing full pre-commit hook; no bypass, dependency installation or implementation fix is authorized merely to make it pass.
+
+**Pre-mortem/invariants:** a globally strict reader empties draft (legacy reader unchanged plus positive permissiveness control); rejecting valid sparse data changes compatibility (empty/null/titleless/unknown/long-row controls); counting only nonblank rows misreports corruption (physical-line test with blank lines). Input/output/result schemas and previously fixed report semantics remain unchanged for valid data. Privacy/licensing/human review gates and owner pauses are unaffected.
+
+### Planning closeout
+
+No owner-only decision is needed for this bounded correctness repair. Source, compatibility, error behavior, reachable fixtures, scheduling and check choices are settled above; exact helper naming remains delegated.
+
+**Independent builder review:** nothing important left. It confirmed the exported-reader/draft boundary, typed errors, local fixtures and single-task scheduling. **Planner-resolved prerequisite:** the existing `TestBriefRejectsResultsReadFailure` positive `readable_rows` fixture currently includes `not JSON` and expects success. Replace only that malformed line with valid sparse JSON (retain `{}`/valid-paper controls and every read-error/date/output-preservation assertion). The new malformed-row test now owns rejection of that line. This is an intentional, documented report-input behavior change, not weakening an I/O guard or changing legacy readers; add this exact test path to the task's expected writes. Reviewer's other details are worker-reversible within the selected contract. No material finding remains unclassified.
+
+Planning readback/store/link/whitespace checks and the mandatory commit hook are the final gates; their actual results belong to the delivery report. New product regressions remain proposed/unrun here. Stop after one planning batch; no implementation, installation, live calls, package export, service control or push.
