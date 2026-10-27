@@ -23,7 +23,7 @@ func TestBriefRejectsResultsReadFailure(t *testing.T) {
 		{name: "manifest_first", badManifest: true, wantCode: "brief_manifest_parse_failed"},
 		{name: "empty"},
 		{name: "blank", rows: "\n \t\n"},
-		{name: "readable_rows", rows: "not JSON\n{}\n{\"title\":\"Paper\",\"year\":2026}\n", wantPapers: 1},
+		{name: "readable_rows", rows: "{\"unknown\":true}\n{}\n{\"title\":\"Paper\",\"year\":2026}\n", wantPapers: 1},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			root := t.TempDir()
