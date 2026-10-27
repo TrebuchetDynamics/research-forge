@@ -76,10 +76,7 @@ func executeScreenDirQueue(args []string, stdout, stderr io.Writer, opts globalO
 	for _, rec := range records {
 		doi := strings.TrimSpace(rec.Identifiers.DOI)
 		arxivID := strings.TrimSpace(rec.Identifiers.ArXivID)
-		key := doi
-		if key == "" {
-			key = arxivID
-		}
+		key := screenDirRecordKey(rec)
 		if key == "" || decided[key] {
 			continue
 		}
@@ -274,18 +271,32 @@ func executeScreenDirProgress(args []string, stdout, stderr io.Writer, opts glob
 		pending = 0
 	}
 
+	decidedSet := screenDirDecidedSet(entries)
+	queuePending, missingIdentifier := 0, 0
+	for _, rec := range records {
+		key := screenDirRecordKey(rec)
+		if key == "" {
+			missingIdentifier++
+		} else if !decidedSet[key] {
+			queuePending++
+		}
+	}
+
 	if opts.JSON {
 		return writeJSON(stdout, 0, map[string]any{
-			"total":     totalRecords,
-			"decided":   decided,
-			"included":  included,
-			"excluded":  excluded,
-			"uncertain": uncertain,
-			"pending":   pending,
+			"total":              totalRecords,
+			"decided":            decided,
+			"included":           included,
+			"excluded":           excluded,
+			"uncertain":          uncertain,
+			"pending":            pending,
+			"queue_pending":      queuePending,
+			"missing_identifier": missingIdentifier,
 		})
 	}
 	fmt.Fprintf(stdout, "total: %d  decided: %d  pending: %d\n", totalRecords, decided, pending)
 	fmt.Fprintf(stdout, "  include: %d  exclude: %d  uncertain: %d\n", included, excluded, uncertain)
+	fmt.Fprintf(stdout, "  queue_pending: %d  missing_identifier: %d\n", queuePending, missingIdentifier)
 	return 0
 }
 
@@ -335,12 +346,25 @@ func canonicalScreenDirDecision(value string) (string, bool) {
 	return "", false
 }
 
+// screenDirRecordKey matches queue eligibility: trimmed DOI first, then arXiv.
+func screenDirRecordKey(rec library.PaperRecord) string {
+	if doi := strings.TrimSpace(rec.Identifiers.DOI); doi != "" {
+		return doi
+	}
+	return strings.TrimSpace(rec.Identifiers.ArXivID)
+}
+
 func screenDirLoadDecided(dir string) (map[string]bool, error) {
-	decided := map[string]bool{}
 	entries, err := screenDirLoadEntries(dir)
 	if err != nil {
 		return nil, err
 	}
+	return screenDirDecidedSet(entries), nil
+}
+
+// screenDirDecidedSet preserves the queue's historical key and decision rules.
+func screenDirDecidedSet(entries []screenDirEntry) map[string]bool {
+	decided := map[string]bool{}
 	for _, e := range entries {
 		k := e.DOI
 		if k == "" {
@@ -350,7 +374,7 @@ func screenDirLoadDecided(dir string) (map[string]bool, error) {
 			decided[k] = true
 		}
 	}
-	return decided, nil
+	return decided
 }
 
 func screenDirWriteEntries(dir string, byKey map[string]screenDirEntry) error {
