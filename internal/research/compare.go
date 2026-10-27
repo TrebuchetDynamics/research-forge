@@ -56,7 +56,12 @@ func (s Service) Compare(opts CompareOptions) (CompareResult, error) {
 	}
 	sets := make([]dirPapers, len(dirs))
 	for i, d := range dirs {
-		papers, err := ReadPaperResults(d)
+		resultsPath := filepath.Join(d, "results-deduped.jsonl")
+		data, err := os.ReadFile(resultsPath)
+		if err != nil {
+			return CompareResult{}, failure(fmt.Sprintf("compare_read_%d_failed", i), err)
+		}
+		papers, err := decodeReportResults(data, resultsPath)
 		if err != nil {
 			return CompareResult{}, failure(fmt.Sprintf("compare_read_%d_failed", i), err)
 		}
