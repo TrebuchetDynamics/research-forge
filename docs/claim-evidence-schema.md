@@ -52,7 +52,7 @@ Each `EvidenceReference` contains:
   offsets or Unicode character indices. A passage hash accompanies reusable
   offsets. Do not transplant offsets between parser versions or changed content.
 
-[`parsing.ParsedDocument.ContentHash`](../internal/parsing/parsing.go) uses the
+[`parsing.ParsedDocument.ContentHash`](../internal/parsing/model/parsing.go) uses the
 same prefixed SHA-256 format over its normalized UTF-8 document text stream:
 title, abstract, each section heading and its passages, then each reference's
 display text (first nonblank title, raw text or DOI, trimmed). Fields, including
