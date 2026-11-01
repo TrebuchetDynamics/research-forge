@@ -1,144 +1,217 @@
+// Package sources is the seam for scholarly metadata connectors.
+//
+// The implementation is split by responsibility into subpackages:
+//
+//	core        normalized record model, search run and graph budget types
+//	transport   HTTP client with retry, redirect and response size limits
+//	fields      normalization helpers shared by two or more connectors
+//	adapters    one connector per scholarly source
+//	resolve     identifier-first paper resolution across adapters
+//	openaccess  legal open-access candidate and resolve-plan policy
+//
+// The declarations below re-export the subpackages so callers keep the current
+// package path and symbol names.
 package sources
 
 import (
-	"context"
-	"fmt"
-	"strings"
-
-	"github.com/TrebuchetDynamics/research-forge/internal/library"
+	"github.com/TrebuchetDynamics/research-forge/internal/sources/adapters"
+	"github.com/TrebuchetDynamics/research-forge/internal/sources/core"
+	"github.com/TrebuchetDynamics/research-forge/internal/sources/fields"
+	"github.com/TrebuchetDynamics/research-forge/internal/sources/openaccess"
+	"github.com/TrebuchetDynamics/research-forge/internal/sources/resolve"
+	"github.com/TrebuchetDynamics/research-forge/internal/sources/transport"
 )
 
-// SourceConnector searches one scholarly metadata source.
-type SourceConnector interface {
-	Name() string
-	Search(context.Context, SourceQuery) (SourceResponse, error)
-}
+type ArXivConnector = adapters.ArXivConnector
+type BASEConnector = adapters.BASEConnector
+type BioRxivConnector = adapters.BioRxivConnector
+type BioStudiesConnector = adapters.BioStudiesConnector
 
-// SourceQuery describes a scholarly metadata search request.
-type SourceQuery struct {
-	Terms      string
-	Limit      int
-	PageCursor string
-	Filters    map[string]string
-}
+var BuildOpenAccessResolvePlan = openaccess.BuildOpenAccessResolvePlan
+var BuildOpenAlexDisambiguationQueue = adapters.BuildOpenAlexDisambiguationQueue
 
-// Identifiers are normalized scholarly IDs on a source result.
-type Identifiers struct {
-	DOI               string
-	OpenAlexID        string
-	ArXivID           string
-	PMID              string
-	PMCID             string
-	CrossrefID        string
-	SemanticScholarID string
-	ADSBibcode        string
-}
+type COREConnector = openaccess.COREConnector
+type ChemRxivConnector = adapters.ChemRxivConnector
+type CiNiiConnector = adapters.CiNiiConnector
+type CitationEdge = core.CitationEdge
+type CitationGraphExpansion = core.CitationGraphExpansion
+type ClinicalTrialsConnector = adapters.ClinicalTrialsConnector
 
-// SourceRecord is a source-specific scholarly metadata result.
-type SourceRecord struct {
-	Source      string
-	SourceID    string
-	Title       string
-	Identifiers Identifiers
-	Year        int
-	Abstract    string
-	Venue       string
-	Publisher   string
-	URLs        []string
-	License     string
-	OpenAccess  bool
-	Metadata    map[string]string
-}
+var CompactSpace = fields.CompactSpace
+var CompareOpenAccessCandidates = openaccess.CompareOpenAccessCandidates
 
-// SourceResponse is the normalized response from a SourceConnector.
-type SourceResponse struct {
-	Records        []SourceRecord
-	RawRef         string
-	NextPageCursor string
-}
+type CrossrefConnector = adapters.CrossrefConnector
+type DBLPConnector = adapters.DBLPConnector
+type DOABConnector = adapters.DOABConnector
+type DOAJConnector = openaccess.DOAJConnector
 
-// PaperRecords converts source records into library PaperRecords.
-func PaperRecords(response SourceResponse) ([]library.PaperRecord, error) {
-	papers := make([]library.PaperRecord, 0, len(response.Records))
-	for _, record := range response.Records {
-		paper, err := library.NewPaperRecord(library.PaperRecordInput{
-			Title:    record.Title,
-			Abstract: record.Abstract,
-			Identifiers: library.Identifiers{
-				DOI:               record.Identifiers.DOI,
-				OpenAlexID:        record.Identifiers.OpenAlexID,
-				ArXivID:           record.Identifiers.ArXivID,
-				PMID:              record.Identifiers.PMID,
-				PMCID:             record.Identifiers.PMCID,
-				CrossrefID:        record.Identifiers.CrossrefID,
-				SemanticScholarID: record.Identifiers.SemanticScholarID,
-				ADSBibcode:        record.Identifiers.ADSBibcode,
-			},
-			Year:       record.Year,
-			Venue:      record.Venue,
-			Publisher:  record.Publisher,
-			URLs:       record.URLs,
-			License:    record.License,
-			OpenAccess: record.OpenAccess,
-			SourceRefs: []library.SourceRef{{
-				Source:        record.Source,
-				RawPayloadRef: response.RawRef,
-				Metadata:      record.Metadata,
-			}},
-		})
-		if err != nil {
-			continue
-		}
-		papers = append(papers, paper)
-	}
-	return papers, nil
-}
+var DOIURL = fields.DOIURL
 
-// RequestProvenance records what was sent to a SourceConnector.
-type RequestProvenance struct {
-	Source string
-	Query  SourceQuery
-}
+type DataCiteConnector = adapters.DataCiteConnector
+type DataverseConnector = adapters.DataverseConnector
+type DimensionsConnector = adapters.DimensionsConnector
+type DryadConnector = adapters.DryadConnector
+type ELifeConnector = adapters.ELifeConnector
+type ERICConnector = adapters.ERICConnector
 
-// ResponseProvenance records what came back from a SourceConnector.
-type ResponseProvenance struct {
-	Source      string
-	RecordCount int
-	RawRef      string
-}
+var EstimateGraphExpansionBudget = core.EstimateGraphExpansionBudget
 
-// SearchRun ties connector output to request and response Provenance metadata.
-type SearchRun struct {
-	Connector          string
-	Query              SourceQuery
-	Response           SourceResponse
-	RequestProvenance  RequestProvenance
-	ResponseProvenance ResponseProvenance
-}
+type EuropePMCConnector = adapters.EuropePMCConnector
+type FigshareConnector = adapters.FigshareConnector
 
-// RunSearch validates a query, invokes a connector, and records request/response Provenance metadata.
-func RunSearch(ctx context.Context, connector SourceConnector, query SourceQuery) (SearchRun, error) {
-	query.Terms = strings.TrimSpace(query.Terms)
-	if query.Terms == "" {
-		return SearchRun{}, fmt.Errorf("source query terms are required")
-	}
-	name := connector.Name()
-	response, err := connector.Search(ctx, query)
-	if err != nil {
-		return SearchRun{}, err
-	}
-	return SearchRun{
-		Connector: name,
-		Query:     query,
-		Response:  response,
-		RequestProvenance: RequestProvenance{
-			Source: name,
-			Query:  query,
-		},
-		ResponseProvenance: ResponseProvenance{
-			Source:      name,
-			RecordCount: len(response.Records),
-			RawRef:      response.RawRef,
-		},
-	}, nil
-}
+var FirstNonEmpty = fields.FirstNonEmpty
+
+type GBIFConnector = adapters.GBIFConnector
+type GraphExpansionBudget = core.GraphExpansionBudget
+type GraphExpansionBudgetEstimate = core.GraphExpansionBudgetEstimate
+type HALConnector = adapters.HALConnector
+
+var HTMLTagRe = fields.HTMLTagRe
+
+type HTTPClient = transport.HTTPClient
+type HTTPClientOptions = transport.HTTPClientOptions
+type HuggingFaceConnector = adapters.HuggingFaceConnector
+type Identifiers = core.Identifiers
+type InspireHEPConnector = adapters.InspireHEPConnector
+
+var IsHTTPStatus = transport.IsHTTPStatus
+var JSONScalarString = fields.JSONScalarString
+var LegalOpenAccessResolveSources = openaccess.LegalOpenAccessResolveSources
+
+type LensConnector = adapters.LensConnector
+type NASAADSConnector = adapters.NASAADSConnector
+type NASACMRConnector = adapters.NASACMRConnector
+type NBERConnector = adapters.NBERConnector
+type NTRSConnector = adapters.NTRSConnector
+
+var NewArXivConnector = adapters.NewArXivConnector
+var NewBASEConnector = adapters.NewBASEConnector
+var NewBioRxivConnector = adapters.NewBioRxivConnector
+var NewBioStudiesConnector = adapters.NewBioStudiesConnector
+var NewCOREConnector = openaccess.NewCOREConnector
+var NewChemRxivConnector = adapters.NewChemRxivConnector
+var NewCiNiiConnector = adapters.NewCiNiiConnector
+var NewClinicalTrialsConnector = adapters.NewClinicalTrialsConnector
+var NewCrossrefConnector = adapters.NewCrossrefConnector
+var NewDBLPConnector = adapters.NewDBLPConnector
+var NewDOABConnector = adapters.NewDOABConnector
+var NewDOAJConnector = openaccess.NewDOAJConnector
+var NewDataCiteConnector = adapters.NewDataCiteConnector
+var NewDataverseConnector = adapters.NewDataverseConnector
+var NewDimensionsConnector = adapters.NewDimensionsConnector
+var NewDryadConnector = adapters.NewDryadConnector
+var NewELifeConnector = adapters.NewELifeConnector
+var NewERICConnector = adapters.NewERICConnector
+var NewEuropePMCConnector = adapters.NewEuropePMCConnector
+var NewFigshareConnector = adapters.NewFigshareConnector
+var NewGBIFConnector = adapters.NewGBIFConnector
+var NewHALConnector = adapters.NewHALConnector
+var NewHTTPClient = transport.NewHTTPClient
+var NewHuggingFaceConnector = adapters.NewHuggingFaceConnector
+var NewInspireHEPConnector = adapters.NewInspireHEPConnector
+var NewLensConnector = adapters.NewLensConnector
+var NewNASAADSConnector = adapters.NewNASAADSConnector
+var NewNASAADSHTTPClient = adapters.NewNASAADSHTTPClient
+var NewNASACMRConnector = adapters.NewNASACMRConnector
+var NewNBERConnector = adapters.NewNBERConnector
+var NewNTRSConnector = adapters.NewNTRSConnector
+var NewOAPenConnector = adapters.NewOAPenConnector
+var NewOSFConnector = adapters.NewOSFConnector
+var NewOSTIConnector = adapters.NewOSTIConnector
+var NewOpenAIREConnector = adapters.NewOpenAIREConnector
+var NewOpenAlexConnector = adapters.NewOpenAlexConnector
+var NewOpenCitationsConnector = adapters.NewOpenCitationsConnector
+var NewOpenLibraryConnector = adapters.NewOpenLibraryConnector
+var NewPLOSConnector = adapters.NewPLOSConnector
+var NewPMCConnector = adapters.NewPMCConnector
+var NewPubChemConnector = adapters.NewPubChemConnector
+var NewPubMedConnector = adapters.NewPubMedConnector
+var NewPubMedConnectorWithOptions = adapters.NewPubMedConnectorWithOptions
+var NewResearchSquareConnector = adapters.NewResearchSquareConnector
+var NewResponseCache = core.NewResponseCache
+var NewSemanticScholarConnector = adapters.NewSemanticScholarConnector
+var NewSemanticScholarGraphRun = adapters.NewSemanticScholarGraphRun
+var NewUnpaywallConnector = adapters.NewUnpaywallConnector
+var NewZbMATHConnector = adapters.NewZbMATHConnector
+var NewZenodoConnector = adapters.NewZenodoConnector
+var NonEmptyStrings = fields.NonEmptyStrings
+var NormalizeArXivID = fields.NormalizeArXivID
+var NormalizeDOI = fields.NormalizeDOI
+var NormalizeGraphExpansionBudget = core.NormalizeGraphExpansionBudget
+
+type OAPenConnector = adapters.OAPenConnector
+type OAResult = resolve.OAResult
+type OSFConnector = adapters.OSFConnector
+type OSTIConnector = adapters.OSTIConnector
+type OpenAIREConnector = adapters.OpenAIREConnector
+type OpenAccessCandidate = openaccess.OpenAccessCandidate
+type OpenAccessCandidateComparison = openaccess.OpenAccessCandidateComparison
+type OpenAccessRecord = adapters.OpenAccessRecord
+type OpenAccessResolvePlan = openaccess.OpenAccessResolvePlan
+type OpenAccessResolveSource = openaccess.OpenAccessResolveSource
+type OpenAlexConnector = adapters.OpenAlexConnector
+type OpenAlexDisambiguationItem = adapters.OpenAlexDisambiguationItem
+type OpenAlexDisambiguationQueue = adapters.OpenAlexDisambiguationQueue
+type OpenAlexEntity = adapters.OpenAlexEntity
+
+var OpenAlexFilterPreset = adapters.OpenAlexFilterPreset
+
+type OpenAlexGraphQuery = adapters.OpenAlexGraphQuery
+type OpenCitationsConnector = adapters.OpenCitationsConnector
+type OpenLibraryConnector = adapters.OpenLibraryConnector
+type PLOSConnector = adapters.PLOSConnector
+type PMCConnector = adapters.PMCConnector
+
+var PaperRecords = core.PaperRecords
+
+type PaperResolution = resolve.PaperResolution
+type PubChemConnector = adapters.PubChemConnector
+type PubMedConnector = adapters.PubMedConnector
+type PubMedOptions = adapters.PubMedOptions
+
+var RedactNASAADSToken = adapters.RedactNASAADSToken
+
+type RequestProvenance = core.RequestProvenance
+type ResearchSquareConnector = adapters.ResearchSquareConnector
+type ResolutionSource = resolve.ResolutionSource
+
+var ResolvePaper = resolve.ResolvePaper
+
+type ResponseCache = core.ResponseCache
+type ResponseProvenance = core.ResponseProvenance
+
+var RunSearch = core.RunSearch
+
+type SearchRun = core.SearchRun
+type SemanticScholarConnector = adapters.SemanticScholarConnector
+
+const SemanticScholarDirectionBoth = core.SemanticScholarDirectionBoth
+const SemanticScholarDirectionCitations = core.SemanticScholarDirectionCitations
+const SemanticScholarDirectionReferences = core.SemanticScholarDirectionReferences
+
+type SemanticScholarGraphDirection = core.SemanticScholarGraphDirection
+type SemanticScholarGraphQuery = core.SemanticScholarGraphQuery
+type SemanticScholarGraphRun = adapters.SemanticScholarGraphRun
+type SemanticScholarGraphRunOptions = adapters.SemanticScholarGraphRunOptions
+type SourceConnector = core.SourceConnector
+type SourceQuery = core.SourceQuery
+type SourceRecord = core.SourceRecord
+type SourceResponse = core.SourceResponse
+
+const StopBudgetExhausted = core.StopBudgetExhausted
+const StopCompleted = core.StopCompleted
+const StopCoverageSaturated = core.StopCoverageSaturated
+const StopErrorThreshold = core.StopErrorThreshold
+const StopInterrupted = core.StopInterrupted
+
+type StopReason = core.StopReason
+
+var StripHTMLTags = fields.StripHTMLTags
+
+type UnpaywallConnector = adapters.UnpaywallConnector
+type UnsupportedFullTextSource = openaccess.UnsupportedFullTextSource
+
+var UnsupportedFullTextSources = openaccess.UnsupportedFullTextSources
+
+type ZbMATHConnector = adapters.ZbMATHConnector
+type ZenodoConnector = adapters.ZenodoConnector

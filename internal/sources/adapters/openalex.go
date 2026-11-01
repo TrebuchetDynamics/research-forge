@@ -1,0 +1,420 @@
+package adapters
+
+import (
+	"context"
+	"encoding/json"
+	"fmt"
+	"github.com/TrebuchetDynamics/research-forge/internal/sources/core"
+	"github.com/TrebuchetDynamics/research-forge/internal/sources/fields"
+	"github.com/TrebuchetDynamics/research-forge/internal/sources/transport"
+	"net/url"
+	"os"
+	"strconv"
+	"strings"
+)
+
+// OpenAlexConnector searches OpenAlex works.
+type OpenAlexConnector struct {
+	http transport.HTTPClient
+}
+
+// OpenAlexEntity is a normalized OpenAlex author or institution search result.
+type OpenAlexEntity struct {
+	Source      string            `json:"source"`
+	SourceID    string            `json:"sourceId"`
+	DisplayName string            `json:"displayName"`
+	WorksCount  int               `json:"worksCount"`
+	Metadata    map[string]string `json:"metadata,omitempty"`
+}
+
+// NewOpenAlexConnector creates an OpenAlex source connector.
+func NewOpenAlexConnector(httpClient transport.HTTPClient) OpenAlexConnector {
+	if key := strings.TrimSpace(os.Getenv("RFORGE_OPENALEX_API_KEY")); key != "" {
+		// Bearer authentication keeps credentials out of URLs and provenance.
+		// Copy headers so a client reused for another source stays unchanged.
+		headers := httpClient.Headers()
+		for name := range headers {
+			if strings.EqualFold(name, "Authorization") {
+				delete(headers, name)
+			}
+		}
+		headers["Authorization"] = "Bearer " + key
+		httpClient = httpClient.WithHeaders(headers)
+	}
+	return OpenAlexConnector{http: httpClient}
+}
+
+// Name returns the connector source name.
+func (OpenAlexConnector) Name() string { return "openalex" }
+
+// Search queries OpenAlex works and normalizes results into SourceRecords.
+func (c OpenAlexConnector) Search(ctx context.Context, query core.SourceQuery) (core.SourceResponse, error) {
+	limit := query.Limit
+	if limit <= 0 {
+		limit = 25
+	}
+	params := map[string]string{"per-page": strconv.Itoa(limit)}
+	if strings.TrimSpace(query.Terms) != "" {
+		params["search"] = query.Terms
+	}
+	if filter := strings.TrimSpace(query.Filters["filter"]); filter != "" {
+		params["filter"] = filter
+	}
+	if strings.TrimSpace(query.PageCursor) != "" {
+		params["cursor"] = strings.TrimSpace(query.PageCursor)
+	}
+	body, err := c.http.Get(ctx, "/works", params)
+	if err != nil {
+		return core.SourceResponse{}, err
+	}
+	var payload openAlexWorksResponse
+	if err := json.Unmarshal(body, &payload); err != nil {
+		return core.SourceResponse{}, err
+	}
+	records := make([]core.SourceRecord, 0, len(payload.Results))
+	for _, work := range payload.Results {
+		openAlexID := normalizeOpenAlexID(work.ID)
+		records = append(records, core.SourceRecord{
+			Source:   "openalex",
+			SourceID: openAlexID,
+			Title:    strings.TrimSpace(work.Title),
+			Identifiers: core.Identifiers{
+				DOI:        fields.NormalizeDOI(work.DOI),
+				OpenAlexID: openAlexID,
+				PMID:       strings.TrimPrefix(work.IDs.PMID, "https://pubmed.ncbi.nlm.nih.gov/"),
+				PMCID:      strings.TrimPrefix(work.IDs.PMCID, "https://www.ncbi.nlm.nih.gov/pmc/articles/"),
+			},
+			Year:       work.PublicationYear,
+			URLs:       fields.NonEmptyStrings(work.PrimaryLocation.LandingPageURL),
+			License:    strings.TrimSpace(work.PrimaryLocation.License),
+			OpenAccess: work.OpenAccess.IsOA,
+			Metadata:   openAlexWorkMetadata(work),
+		})
+	}
+	return core.SourceResponse{Records: records, RawRef: rawOpenAlexRef(params), NextPageCursor: strings.TrimSpace(payload.Meta.NextCursor)}, nil
+}
+
+// SearchAuthors queries OpenAlex authors.
+func (c OpenAlexConnector) SearchAuthors(ctx context.Context, query core.SourceQuery) ([]OpenAlexEntity, string, error) {
+	return c.searchEntities(ctx, "/authors", "openalex-author", query)
+}
+
+// SearchInstitutions queries OpenAlex institutions.
+func (c OpenAlexConnector) SearchInstitutions(ctx context.Context, query core.SourceQuery) ([]OpenAlexEntity, string, error) {
+	return c.searchEntities(ctx, "/institutions", "openalex-institution", query)
+}
+
+// SearchConcepts queries OpenAlex concepts.
+func (c OpenAlexConnector) SearchConcepts(ctx context.Context, query core.SourceQuery) ([]OpenAlexEntity, string, error) {
+	return c.searchEntities(ctx, "/concepts", "openalex-concept", query)
+}
+
+func (c OpenAlexConnector) searchEntities(ctx context.Context, path, source string, query core.SourceQuery) ([]OpenAlexEntity, string, error) {
+	limit := query.Limit
+	if limit <= 0 {
+		limit = 25
+	}
+	params := map[string]string{"per-page": strconv.Itoa(limit)}
+	if strings.TrimSpace(query.Terms) != "" {
+		params["search"] = query.Terms
+	}
+	body, err := c.http.Get(ctx, path, params)
+	if err != nil {
+		return nil, "", err
+	}
+	var payload openAlexEntitiesResponse
+	if err := json.Unmarshal(body, &payload); err != nil {
+		return nil, "", err
+	}
+	entities := make([]OpenAlexEntity, 0, len(payload.Results))
+	for _, result := range payload.Results {
+		id := normalizeOpenAlexID(result.ID)
+		entities = append(entities, OpenAlexEntity{Source: source, SourceID: id, DisplayName: fields.CompactSpace(result.DisplayName), WorksCount: result.WorksCount, Metadata: map[string]string{"ror": strings.TrimSpace(result.ROR), "country_code": strings.TrimSpace(result.CountryCode)}})
+	}
+	return entities, rawOpenAlexEntityRef(path, params), nil
+}
+
+type openAlexWorksResponse struct {
+	Meta    openAlexMeta   `json:"meta"`
+	Results []openAlexWork `json:"results"`
+}
+
+type openAlexEntitiesResponse struct {
+	Results []openAlexEntityPayload `json:"results"`
+}
+
+type openAlexEntityPayload struct {
+	ID          string `json:"id"`
+	DisplayName string `json:"display_name"`
+	WorksCount  int    `json:"works_count"`
+	ROR         string `json:"ror"`
+	CountryCode string `json:"country_code"`
+}
+
+type openAlexMeta struct {
+	NextCursor string `json:"next_cursor"`
+}
+
+type openAlexWork struct {
+	IDs struct {
+		PMID  string `json:"pmid"`
+		PMCID string `json:"pmcid"`
+	} `json:"ids"`
+	ID              string                  `json:"id"`
+	DOI             string                  `json:"doi"`
+	Title           string                  `json:"title"`
+	PublicationYear int                     `json:"publication_year"`
+	PublicationDate string                  `json:"publication_date"`
+	Type            string                  `json:"type"`
+	OpenAccess      openAlexOpenAccess      `json:"open_access"`
+	PrimaryLocation openAlexPrimaryLocation `json:"primary_location"`
+	Concepts        []openAlexConcept       `json:"concepts"`
+	RelatedWorks    []string                `json:"related_works"`
+	ReferencedWorks []string                `json:"referenced_works"`
+	PrimaryTopic    openAlexTopic           `json:"primary_topic"`
+}
+
+type openAlexOpenAccess struct {
+	IsOA     bool   `json:"is_oa"`
+	OAStatus string `json:"oa_status"`
+}
+
+type openAlexPrimaryLocation struct {
+	LandingPageURL string `json:"landing_page_url"`
+	License        string `json:"license"`
+}
+
+type openAlexConcept struct {
+	ID          string  `json:"id"`
+	DisplayName string  `json:"display_name"`
+	Score       float64 `json:"score"`
+}
+
+type openAlexTopic struct {
+	DisplayName string              `json:"display_name"`
+	Domain      openAlexTopicBucket `json:"domain"`
+	Field       openAlexTopicBucket `json:"field"`
+	Subfield    openAlexTopicBucket `json:"subfield"`
+}
+
+type openAlexTopicBucket struct {
+	DisplayName string `json:"display_name"`
+}
+
+func openAlexWorkMetadata(work openAlexWork) map[string]string {
+	metadata := map[string]string{
+		"publication_date":     strings.TrimSpace(work.PublicationDate),
+		"type":                 strings.TrimSpace(work.Type),
+		"oa_status":            strings.TrimSpace(work.OpenAccess.OAStatus),
+		"concepts":             strings.Join(openAlexConcepts(work.Concepts), "; "),
+		"concept_ids":          strings.Join(openAlexConceptIDs(work.Concepts), "; "),
+		"related_openalex_ids": strings.Join(normalizeOpenAlexIDs(work.RelatedWorks), "; "),
+	}
+	if len(work.Concepts) > 0 {
+		metadata["top_concept"] = fields.CompactSpace(work.Concepts[0].DisplayName)
+	}
+	if topic := fields.CompactSpace(work.PrimaryTopic.DisplayName); topic != "" {
+		metadata["topic"] = topic
+	}
+	if domain := fields.CompactSpace(work.PrimaryTopic.Domain.DisplayName); domain != "" {
+		metadata["domain"] = domain
+	}
+	if field := fields.CompactSpace(work.PrimaryTopic.Field.DisplayName); field != "" {
+		metadata["field"] = field
+	}
+	if subfield := fields.CompactSpace(work.PrimaryTopic.Subfield.DisplayName); subfield != "" {
+		metadata["subfield"] = subfield
+	}
+	return metadata
+}
+
+func openAlexConcepts(concepts []openAlexConcept) []string {
+	out := []string{}
+	for _, concept := range concepts {
+		name := fields.CompactSpace(concept.DisplayName)
+		if name != "" {
+			out = append(out, name)
+		}
+	}
+	return out
+}
+
+func openAlexConceptIDs(concepts []openAlexConcept) []string {
+	out := []string{}
+	for _, concept := range concepts {
+		id := normalizeOpenAlexID(concept.ID)
+		if id != "" {
+			out = append(out, id)
+		}
+	}
+	return out
+}
+
+// RelatedWorks returns related OpenAlex work IDs as lightweight discovery records.
+func (c OpenAlexConnector) RelatedWorks(ctx context.Context, workID string, limit int) (core.SourceResponse, error) {
+	workID = normalizeOpenAlexID(workID)
+	if workID == "" {
+		return core.SourceResponse{}, fmt.Errorf("openalex work id is required")
+	}
+	if limit <= 0 {
+		limit = 25
+	}
+	work, err := c.fetchWork(ctx, workID)
+	if err != nil {
+		return core.SourceResponse{}, err
+	}
+	records := []core.SourceRecord{}
+	for _, relatedID := range normalizeOpenAlexIDs(work.RelatedWorks) {
+		records = append(records, core.SourceRecord{Source: "openalex", SourceID: relatedID, Title: relatedID, Identifiers: core.Identifiers{OpenAlexID: relatedID}, Metadata: map[string]string{"discovery": "related_work", "related_to": workID}})
+		if len(records) >= limit {
+			break
+		}
+	}
+	return core.SourceResponse{Records: records, RawRef: fmt.Sprintf("openalex:/works/%s/related?limit=%d", workID, limit)}, nil
+}
+
+// OpenAlexGraphQuery describes an OpenAlex citation graph expansion.
+type OpenAlexGraphQuery struct {
+	WorkID    string
+	Limit     int
+	Direction core.SemanticScholarGraphDirection
+}
+
+// ExpandCitationGraph fetches OpenAlex references, citations, or both for one work.
+func (c OpenAlexConnector) ExpandCitationGraph(ctx context.Context, query OpenAlexGraphQuery) (core.CitationGraphExpansion, error) {
+	inputID := normalizeOpenAlexID(query.WorkID)
+	if inputID == "" {
+		return core.CitationGraphExpansion{}, fmt.Errorf("openalex work id is required")
+	}
+	limit := query.Limit
+	if limit <= 0 {
+		limit = 25
+	}
+	direction := query.Direction
+	if direction == "" {
+		direction = core.SemanticScholarDirectionBoth
+	}
+
+	// When given a DOI, resolve it to an OpenAlex Work ID via filter lookup so
+	// the cites: filter and SeedID use a proper W… identifier.
+	workID := inputID
+	var cachedWork *openAlexWork
+	if looksLikeDOI(inputID) {
+		work, err := c.fetchWork(ctx, inputID)
+		if err != nil {
+			return core.CitationGraphExpansion{}, err
+		}
+		if resolved := normalizeOpenAlexID(work.ID); resolved != "" {
+			workID = resolved
+		}
+		cachedWork = &work
+	}
+
+	expansion := core.CitationGraphExpansion{StopReason: core.StopCompleted, SeedID: workID, Records: map[string]core.SourceRecord{}, RawRef: rawOpenAlexGraphRef(workID, direction, limit)}
+	if cachedWork != nil {
+		expansion.RequestsUsed++
+	}
+	if direction == core.SemanticScholarDirectionReferences || direction == core.SemanticScholarDirectionBoth {
+		var work openAlexWork
+		var err error
+		if cachedWork != nil {
+			work = *cachedWork
+		} else {
+			expansion.RequestsUsed++
+			work, err = c.fetchWork(ctx, workID)
+			if err != nil {
+				return core.CitationGraphExpansion{}, err
+			}
+		}
+		for _, ref := range normalizeOpenAlexIDs(work.ReferencedWorks) {
+			expansion.Edges = append(expansion.Edges, core.CitationEdge{SourceID: workID, TargetID: ref})
+			expansion.Records[ref] = core.SourceRecord{Source: "openalex", SourceID: ref, Title: ref, Identifiers: core.Identifiers{OpenAlexID: ref}, Metadata: map[string]string{"graph_role": "reference"}}
+			if len(expansion.Records) >= limit {
+				break
+			}
+		}
+	}
+	if direction == core.SemanticScholarDirectionCitations || direction == core.SemanticScholarDirectionBoth {
+		expansion.RequestsUsed++
+		response, err := c.Search(ctx, core.SourceQuery{Terms: "", Limit: limit, Filters: map[string]string{"filter": "cites:" + workID}})
+		if err != nil {
+			return core.CitationGraphExpansion{}, err
+		}
+		for _, record := range response.Records {
+			if record.SourceID == "" {
+				continue
+			}
+			expansion.Edges = append(expansion.Edges, core.CitationEdge{SourceID: record.SourceID, TargetID: workID})
+			expansion.Records[record.SourceID] = record
+		}
+	}
+	return expansion, nil
+}
+
+func (c OpenAlexConnector) fetchWork(ctx context.Context, workID string) (openAlexWork, error) {
+	if looksLikeDOI(workID) {
+		return c.fetchWorkByDOI(ctx, workID)
+	}
+	body, err := c.http.Get(ctx, "/works/"+url.PathEscape(workID), map[string]string{})
+	if err != nil {
+		return openAlexWork{}, err
+	}
+	var work openAlexWork
+	if err := json.Unmarshal(body, &work); err != nil {
+		return openAlexWork{}, err
+	}
+	return work, nil
+}
+
+// fetchWorkByDOI looks up a work by DOI using a filter query, avoiding path-encoding issues.
+func (c OpenAlexConnector) fetchWorkByDOI(ctx context.Context, doi string) (openAlexWork, error) {
+	body, err := c.http.Get(ctx, "/works", map[string]string{"filter": "doi:" + doi, "per_page": "1"})
+	if err != nil {
+		return openAlexWork{}, err
+	}
+	var payload openAlexWorksResponse
+	if err := json.Unmarshal(body, &payload); err != nil {
+		return openAlexWork{}, err
+	}
+	if len(payload.Results) == 0 {
+		return openAlexWork{}, fmt.Errorf("openalex: no work found for doi %s", doi)
+	}
+	return payload.Results[0], nil
+}
+
+// looksLikeDOI returns true for bare DOIs (starts with 10. and contains /).
+func looksLikeDOI(value string) bool {
+	return strings.HasPrefix(value, "10.") && strings.Contains(value, "/")
+}
+
+func rawOpenAlexGraphRef(workID string, direction core.SemanticScholarGraphDirection, limit int) string {
+	return fmt.Sprintf("openalex:/works/%s/%s?limit=%d", workID, direction, limit)
+}
+
+func rawOpenAlexRef(params map[string]string) string {
+	return rawOpenAlexEntityRef("/works", params)
+}
+
+func rawOpenAlexEntityRef(path string, params map[string]string) string {
+	values := url.Values{}
+	for key, value := range params {
+		values.Set(key, value)
+	}
+	return fmt.Sprintf("openalex:%s?%s", path, values.Encode())
+}
+
+func normalizeOpenAlexIDs(values []string) []string {
+	out := []string{}
+	for _, value := range values {
+		if id := normalizeOpenAlexID(value); id != "" {
+			out = append(out, id)
+		}
+	}
+	return out
+}
+
+func normalizeOpenAlexID(value string) string {
+	value = strings.TrimSpace(value)
+	value = strings.TrimPrefix(value, "https://openalex.org/")
+	return value
+}

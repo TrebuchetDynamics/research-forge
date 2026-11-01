@@ -98,13 +98,13 @@ web-gui-screenshots-update:
 	RFORGE_RUN_PLAYWRIGHT=1 RFORGE_UPDATE_SCREENSHOTS=1 go test -tags playwright_e2e ./internal/webui -run TestPlaywrightScreenshotRegression -count=1 -v
 
 source-live-smoke:
-	RFORGE_RUN_LIVE_SOURCE_SMOKE=1 go test ./internal/sources -run TestOptInLiveSourceConnectorSmoke -count=1 -v
+	RFORGE_RUN_LIVE_SOURCE_SMOKE=1 go test ./internal/sources/adapters -run TestOptInLiveSourceConnectorSmoke -count=1 -v
 
 biomedical-live-smoke:
-	RFORGE_RUN_LIVE_SOURCE_SMOKE=1 go test ./internal/sources -run 'TestOptInLiveSourceConnectorSmoke/(pubmed|europepmc)' -count=1 -v
+	RFORGE_RUN_LIVE_SOURCE_SMOKE=1 go test ./internal/sources/adapters -run 'TestOptInLiveSourceConnectorSmoke/(pubmed|europepmc)' -count=1 -v
 
 semantic-scholar-live-smoke:
-	RFORGE_RUN_LIVE_SOURCE_SMOKE=1 go test ./internal/sources -run 'TestOptInLiveSourceConnectorSmoke/semantic-scholar' -count=1 -v
+	RFORGE_RUN_LIVE_SOURCE_SMOKE=1 go test ./internal/sources/adapters -run 'TestOptInLiveSourceConnectorSmoke/semantic-scholar' -count=1 -v
 
 external-e2e-artificial-photosynthesis:
 	RFORGE_EXTERNAL_E2E_DIR=/home/xel/git/artificial-photosynthesis go test ./internal/cli -run TestExternalE2EArtificialPhotosynthesisWorkspace -count=1 -v
