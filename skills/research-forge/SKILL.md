@@ -2,7 +2,7 @@
 name: research-forge
 description: Research academic or OSS topics using rforge with provenance, source coverage, human gates, and reproducible outputs. Use for literature search, OSS study, systematic review, evidence extraction, meta-analysis, or review packages.
 metadata:
-  min_rforge_version: "0.2.0"
+  min_rforge_version: "0.2.1"
   required_capabilities: "search=1,paper=1,brief=1,compare=1,provenance=1"
 ---
 
@@ -98,7 +98,7 @@ Every research report must state the selected depth, effective caps, requests us
 
 ```sh
 rforge version
-rforge capabilities --json --min-rforge-version 0.2.0 \
+rforge capabilities --json --min-rforge-version 0.2.1 \
   --require search=1 --require paper=1 --require brief=1 \
   --require compare=1 --require provenance=1
 ```
