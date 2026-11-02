@@ -17,7 +17,7 @@ Read:
 
 ## Local prerequisites and checks
 
-Before running the core gate, have Go 1.26 (the `go.mod` toolchain is Go 1.26.6), Git, GNU Make, and Node.js >=22 available. Node is required for the adapter tests, not just the optional documentation site.
+Before running the core gate, have Go 1.26 (the `go.mod` toolchain is Go 1.26.10), Git, GNU Make, and Node.js >=22 available. Node is required for the adapter tests, not just the optional documentation site.
 
 Run `make check` for the local gate: Go formatting/module checks, Go and Node adapter tests, vet, TODO completion audit, inventory check, and whitespace checks. See [Developer setup](./docs/developer-setup.md) for cold-cache provisioning and the separate optional site requirements (Node >=22.12 and npm >=9.6.5).
 
