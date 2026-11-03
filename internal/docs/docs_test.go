@@ -280,8 +280,6 @@ func TestTodoCompletionAuditMapsObjectiveToEvidence(t *testing.T) {
 		"Go + HTMX",
 		"Go HTMLX",
 		"SKILLS.md",
-		"research-forge-web-ui-tdd",
-		"skills/research-forge-web-ui-tdd/SKILL.md",
 		"Add license after owner decision",
 		"Add Go + HTMX web GUI workspace/dependencies",
 		"View CLI-generated papers, meta-analysis outputs, PRISMA/citation diagrams, and report artifacts in the web GUI",

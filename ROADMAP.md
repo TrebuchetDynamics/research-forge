@@ -439,7 +439,7 @@ Recommended first TDD slice:
 ```text
 Slice: rforge project create writes a manifest and provenance event
 Milestone: 0
-Primary skill: research-forge-foundation-tdd
+Primary skill: kit TDD skill for the slice
 Red test: project create service test expects rforge.project.toml and event log entry
 Green implementation: minimal project package and CLI command
 Refactor target: isolate project paths and test clock/ID generation
