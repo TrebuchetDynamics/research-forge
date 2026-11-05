@@ -2,7 +2,7 @@ module github.com/TrebuchetDynamics/research-forge
 
 go 1.26
 
-toolchain go1.26.6
+toolchain go1.26.10
 
 require modernc.org/sqlite v1.52.0
 

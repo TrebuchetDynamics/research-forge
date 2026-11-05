@@ -684,7 +684,7 @@ func checkTodoCompletionAudit(todoPath, auditPath string, decisions []map[string
 		return writeError(stdout, stderr, opts, 1, "todo_completion_audit_failed", "completion audit missing tracking issue references: "+strings.Join(missingAuditIssues, "; "))
 	}
 	missingCheckedEvidence := []string{}
-	for _, required := range []string{"web-gui-smoke", "SKILLS.md", "skills/research-forge-web-ui-tdd/SKILL.md", "internal/webui", "web/assets/researchforge.css"} {
+	for _, required := range []string{"web-gui-smoke", "SKILLS.md", "internal/webui", "web/assets/researchforge.css"} {
 		if !strings.Contains(audit, required) {
 			missingCheckedEvidence = append(missingCheckedEvidence, required)
 		}

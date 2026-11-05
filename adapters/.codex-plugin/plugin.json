@@ -1,6 +1,6 @@
 {
   "name": "research-forge",
-  "version": "0.1.22",
+  "version": "0.2.1",
   "description": "Retrieval-first research methodology with rforge provenance and human review gates.",
   "license": "MIT",
   "mcpServers": {

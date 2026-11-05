@@ -41,7 +41,7 @@ measured baseline. V-B3 MUST remove the hardcoded default cross-tool numbers or
 label their output `demo` and exclude it from Research-quality benchmark reports.
 The current scaffold is [cross_tool.go](../../internal/benchmarks/cross_tool.go);
 the existing connector seam is `SourceConnector.Search` / `SourceQuery` in
-[sources.go](../../internal/sources/sources.go). This specification defines new
+[sources.go](../../internal/sources/core/sources.go). This specification defines new
 artifacts rather than changing those interfaces in documentation.
 
 ## 2. Question-set package and schema
@@ -508,7 +508,7 @@ credentials). Authoring defaults: `algorithm: "source-http-v1"`, `max_retries: 2
 `timeout_ms: 10000`, `request_delay_ms: 0`, `max_retry_after_ms: 30000`,
 `max_response_bytes: 10485760`, `max_redirects: 10`. All values are stored, never
 implicitly supplied during scoring. The v1 algorithm follows the shared client
-in [http.go](../../internal/sources/http.go), with an injectable clock:
+in [http.go](../../internal/sources/transport/http.go), with an injectable clock:
 
 - Each HTTP operation has at most `1 + max_retries` attempts. Wait
   `request_delay_ms` before each attempt. Apply `timeout_ms` per attempt and the

@@ -31,7 +31,7 @@ body:
     id: skill
     attributes:
       label: Primary skill
-      placeholder: "research-forge-foundation-tdd"
+      placeholder: "kit TDD skill for the slice"
     validations:
       required: true
   - type: textarea

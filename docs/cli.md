@@ -108,7 +108,7 @@ Core commands:
 
 Workflow configuration and provenance:
 
-- `paper`, `draft`, and `replicate` use `RFORGE_UNPAYWALL_EMAIL` as the Unpaywall contact; without it, the resolver skips Unpaywall and retains available source metadata. Source endpoints honor `RFORGE_OPENALEX_URL`, `RFORGE_CROSSREF_URL`, `RFORGE_ARXIV_URL`, `RFORGE_SEMANTIC_SCHOLAR_URL`, and `RFORGE_UNPAYWALL_URL` ([resolver](../internal/sources/paper_resolver.go)).
+- `paper`, `draft`, and `replicate` use `RFORGE_UNPAYWALL_EMAIL` as the Unpaywall contact; without it, the resolver skips Unpaywall and retains available source metadata. Source endpoints honor `RFORGE_OPENALEX_URL`, `RFORGE_CROSSREF_URL`, `RFORGE_ARXIV_URL`, `RFORGE_SEMANTIC_SCHOLAR_URL`, and `RFORGE_UNPAYWALL_URL` ([resolver](../internal/sources/resolve/paper_resolver.go)).
 - Successful `paper`, `rank`, `brief`, `compare`, `lit`, `note`, `history search`, `replicate`, and `draft` runs with the global prefix `rforge --project <path> ...` append a `cli.command` event to `provenance/events.jsonl`; append failures return nonzero instead of reporting success ([dispatch](../internal/cli/workflow_command.go)).
 - `lit` and `replicate` outputs include generation timestamps; remote metadata may also change between runs, so their outputs are not promised to be byte-reproducible.
 - Validate rank sidecars with `rforge provenance validate <file>.provenance.json` ([rank output](../internal/cli/rank_command.go), [validator](../internal/cli/provenance_command.go)).
@@ -171,7 +171,7 @@ The checkpoint's `result_count` identifies the committed prefix of `results.json
 
 `citations expand --json` uses the same typed `stop_reason` and reports `requests_used`; Semantic Scholar recursive expansion no longer encodes `budget_stopped` in `rawRef`. Its `--max-api-calls` counts references and citations separately for `--direction both`.
 
-Implementation: [search service](../internal/search/batch.go), [checkpoint/resume](../internal/search/batch_state.go), and [shared stop reasons](../internal/sources/graph_budget.go). Update this section when preset values, checkpoint accounting, or stop semantics change.
+Implementation: [search service](../internal/search/batch.go), [checkpoint/resume](../internal/search/batch_state.go), and [shared stop reasons](../internal/sources/core/graph_budget.go). Update this section when preset values, checkpoint accounting, or stop semantics change.
 
 ## Persistent research jobs
 

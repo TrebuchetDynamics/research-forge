@@ -4,7 +4,7 @@
 
 Before running the local gate, make these available on `PATH`:
 
-- **Go 1.26** minimum; [`go.mod`](../go.mod) separately pins toolchain version **1.26.6**.
+- **Go 1.26** minimum; [`go.mod`](../go.mod) separately pins toolchain version **1.26.10**.
 - **Git** for repository operations and Git-backed tests.
 - **GNU Make** for the targets in [`Makefile`](../Makefile), with a POSIX shell and standard command-line utilities.
 - **Node.js >=22**, as required by the root [`package.json`](../package.json), for the adapter tests.

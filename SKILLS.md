@@ -1,58 +1,36 @@
-# ResearchForge Development Skills
+# ResearchForge Skills
 
-This repository includes project-specific Pi skills for developing ResearchForge. Every implementation skill requires TDD: write a failing test first, make it pass with the smallest production change, then refactor while tests remain green.
+## Product skill
 
-## Universal TDD rule
+[`research-forge`](./skills/research-forge/SKILL.md) runs research through `rforge`:
+literature and OSS search, screening, evidence, meta-analysis and review packages.
+Claude Code, Codex, Pi and Hermes publish it with the five workflow skills in
+[`adapters/skills/`](./adapters/skills/).
 
-For all ResearchForge development:
+## Development skills
 
-1. **Red** — create a failing test, golden fixture, or integration test that proves the missing behavior.
-2. **Green** — implement only enough production code to pass.
-3. **Refactor** — improve structure without changing behavior.
-4. **Receipt** — record the validation command and result.
+Development guidance comes from the installed [kit](https://github.com/TrebuchetDynamics/kit)
+skills, such as `writing-for-agents` and `git-commit-push`. This repository keeps no
+development skill set of its own.
 
-Production code changes that skip the red step are not accepted unless they are non-executable scaffolding, documentation, generated assets, or emergency build fixes explicitly called out as such.
-
-## Skill inventory
-
-| Skill | Use for |
-|---|---|
-| [`research-forge`](./skills/research-forge/SKILL.md) | **Agent usage skill** — auto-installs rforge if missing, then handles literature search, OSS study, systematic review, evidence extraction, meta-analysis, and reproducible review packages |
-| [`research-forge-workflow-orchestration-tdd`](./skills/research-forge-workflow-orchestration-tdd/SKILL.md) | Milestone breakdown, slice sequencing, handoffs, acceptance criteria, routing to specialist skills |
-| [`research-forge-architecture-tdd`](./skills/research-forge-architecture-tdd/SKILL.md) | Package boundaries, ADRs, shared core, service interfaces, adapter seams, dependency direction |
-| [`research-forge-foundation-tdd`](./skills/research-forge-foundation-tdd/SKILL.md) | Go module, `rforge` CLI, project workspace, manifest, lockfile, provenance, SQLite, doctor, CI |
-| [`research-forge-test-fixtures-tdd`](./skills/research-forge-test-fixtures-tdd/SKILL.md) | Mock APIs, fake projects, golden files, generated PDFs, TEI, fake git repos, analysis/report fixtures |
-| [`research-forge-scholarly-ingestion-tdd`](./skills/research-forge-scholarly-ingestion-tdd/SKILL.md) | OpenAlex, Crossref, arXiv, Unpaywall, `PaperRecord`, dedupe, import/export, library workflows |
-| [`research-forge-oss-intelligence-tdd`](./skills/research-forge-oss-intelligence-tdd/SKILL.md) | OSS repository catalog, clone workspace, license checks, study notes, OSS reports |
-| [`research-forge-document-pipeline-tdd`](./skills/research-forge-document-pipeline-tdd/SKILL.md) | Legal PDF acquisition, GROBID parsing, passage extraction, indexing, retrieval |
-| [`research-forge-screening-tdd`](./skills/research-forge-screening-tdd/SKILL.md) | Include/exclude screening, reason tags, reviewer workflow, PRISMA counts, active-learning scaffold |
-| [`research-forge-evidence-extraction-tdd`](./skills/research-forge-evidence-extraction-tdd/SKILL.md) | Extraction schemas, evidence tables, source links, validation states, LLM suggestions |
-| [`research-forge-meta-analysis-tdd`](./skills/research-forge-meta-analysis-tdd/SKILL.md) | Effect sizes, R/metafor adapter, analysis inputs, plots, heterogeneity, reproducibility |
-| [`research-forge-reporting-tdd`](./skills/research-forge-reporting-tdd/SKILL.md) | Markdown/HTML/LaTeX reports, PRISMA diagrams, evidence/citation tables, audit appendix |
-| [`research-forge-web-ui-tdd`](./skills/research-forge-web-ui-tdd/SKILL.md) | Local web GUI screens, artifact visualizations, view models, background jobs, CLI/UI parity |
-| [`research-forge-data-governance-tdd`](./skills/research-forge-data-governance-tdd/SKILL.md) | Schemas, migrations, archives, privacy defaults, copyright/OA policy, provenance retention, compatibility |
-| [`research-forge-quality-security-tdd`](./skills/research-forge-quality-security-tdd/SKILL.md) | Threat modeling, secrets, path safety, external commands, fuzzing, dependency scans, CI hardening |
-| [`research-forge-performance-tdd`](./skills/research-forge-performance-tdd/SKILL.md) | Benchmarks, large-library performance, indexing throughput, caching, UI responsiveness, memory use |
-| [`research-forge-release-packaging-tdd`](./skills/research-forge-release-packaging-tdd/SKILL.md) | Versioning, cross-platform builds, web GUI packaging, checksums, install smoke tests, release notes |
-| [`research-forge-developer-docs-tdd`](./skills/research-forge-developer-docs-tdd/SKILL.md) | CLI docs, architecture docs, ADR index, contributor guides, examples, tutorials, generated help |
+TDD stays repository policy, not a skill: [CONTRIBUTING](./CONTRIBUTING.md) requires
+red-green-refactor for every change, and `make check` is the gate. [AGENTS.md](./AGENTS.md)
+carries the same rule for agents.
 
 ## Agent research depth contract
 
-The [`research-forge`](./skills/research-forge/SKILL.md#search-depth-and-stopping) usage skill starts at **Standard** depth (`--depth standard`); Quick is only for an explicit user request. Escalate to Comprehensive when a Standard run ends with `stop_reason: budget_exhausted` without coverage saturation, or when the user asks. A completed sweep is not proof of exhaustive coverage, and `coverage_saturated` is a reason to stop rather than fill a query quota.
+The [`research-forge`](./skills/research-forge/SKILL.md#search-depth-and-stopping) skill
+starts at **Standard** depth (`--depth standard`); Quick is only for an explicit user
+request. Escalate to Comprehensive when a Standard run ends with
+`stop_reason: budget_exhausted` without coverage saturation, or when the user asks. A
+completed sweep is not proof of exhaustive coverage, and `coverage_saturated` is a
+reason to stop rather than fill a query quota.
 
-Runs report depth, effective query/source/request caps, requests used, coverage, remaining gaps, and the engine's stop reason: `completed`, `budget_exhausted`, `coverage_saturated`, `interrupted`, or `error_threshold`. Resume interruptions and address errors rather than treating them as coverage signals. The skill documents the decision workflow; [CLI search budgets](./docs/cli.md#search-budgets-and-stop-reasons) defines cap values and checkpoint accounting. Keep this guidance aligned when the engine's stop semantics change.
-
-## Recommended usage order
-
-1. Workflow orchestration TDD to pick the smallest vertical slice.
-2. Architecture TDD only when a seam or ADR-sensitive decision is needed.
-3. Test fixtures TDD before external-data/service-heavy behavior.
-4. Foundation TDD for Milestone 0.
-5. Scholarly ingestion TDD and OSS intelligence TDD for Milestones 1-2.
-6. Document pipeline TDD, screening TDD, and evidence extraction TDD for Milestones 3-5.
-7. Meta-analysis TDD and reporting TDD for Milestones 6-7.
-8. Web GUI TDD alongside each milestone for parity.
-9. Data governance, quality/security, performance, docs, and release skills whenever the slice crosses those concerns.
+Runs report depth, effective query/source/request caps, requests used, coverage,
+remaining gaps and the engine's stop reason: `completed`, `budget_exhausted`,
+`coverage_saturated`, `interrupted` or `error_threshold`. [CLI search budgets](./docs/cli.md#search-budgets-and-stop-reasons)
+defines cap values and checkpoint accounting. Keep this guidance aligned when the
+engine's stop semantics change.
 
 ## Development handoff format
 

@@ -21,7 +21,7 @@ PI_SOURCE="git:github.com/${REPO_SLUG}"
 PLUGIN_URL="https://github.com/${REPO_SLUG}"
 RAW_BASE="${RFORGE_RAW_BASE:-https://raw.githubusercontent.com/${REPO_SLUG}}"
 RELEASE_BASE="${RFORGE_RELEASE_BASE:-https://github.com/${REPO_SLUG}/releases}"
-MIN_RFORGE_VERSION="0.1.22"
+MIN_RFORGE_VERSION="0.2.1"
 REQUIRED_CAPABILITIES="search=1 paper=1 brief=1 compare=1 provenance=1 mcp=1"
 # Public, user-facing skills. Developer *-tdd skills are never installed.
 PUBLIC_SKILLS="research-forge lit paper brief compare replicate"

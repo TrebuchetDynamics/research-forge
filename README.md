@@ -1,6 +1,6 @@
 # ResearchForge
 
-**Search the literature. Keep the evidence trail.**
+![Search broadly. Keep the evidence trail. A tracked run shows 6 queries, 4 sources, 280 records and 237 unique records, with manifest.json, results-deduped.jsonl and 10 saved source failures.](./assets/readme/hero.svg)
 
 ResearchForge is an open-source command-line tool for finding papers across
 scholarly sources, combining duplicate records, and turning search results into
@@ -85,6 +85,16 @@ my-research/
 
 You can examine a [tracked search manifest](./research/open-source-project-search/manifest.json)
 and its surrounding files to see the format without running a search.
+
+## How it works
+
+![Five stages: frame the topic, search broadly, normalize the trail, screen first, cite or replay. A trace bar names manifest.json, provenance.json, checksums.sha256 and audit-report.json, and human gates stay human.](./assets/readme/workflow.svg)
+
+Five stages: frame the topic, search broadly, keep the trail, screen first,
+cite or replay. Each stage writes an ordinary file. Discovery saves the manifest,
+results and failures. Dedupe keeps one record per paper. Screening and open-access download
+add `pdfs/`. Citations and review packages add `CITATIONS.md`, `checksums.sha256`
+and `audit-report.json`.
 
 ## Scientific research examples
 

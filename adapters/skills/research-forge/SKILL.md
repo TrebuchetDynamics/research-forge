@@ -2,13 +2,13 @@
 name: research-forge
 description: Research academic or OSS topics using rforge with provenance, source coverage, human gates, and reproducible outputs. Use for literature search, OSS study, systematic review, evidence extraction, meta-analysis, or review packages.
 metadata:
-  min_rforge_version: "0.1.22"
+  min_rforge_version: "0.2.1"
   required_capabilities: "search=1,paper=1,brief=1,compare=1,provenance=1"
 ---
 
 # rforge — Academic Research Skill
 
-Use this skill to conduct academic research with `rforge` through CLI or MCP. Works in any project — rforge is a standalone tool, not a dependency of your codebase.
+`rforge` is a standalone tool, not a dependency of your codebase. Use it in any project through the CLI or the MCP tools below.
 
 Core principle: **retrieval-first, provenance-first, statistics-first, LLM-assisted**. Retrieve source metadata first, preserve exact query/source provenance, use auditable statistics where applicable, and never self-approve human review gates.
 
@@ -98,7 +98,7 @@ Every research report must state the selected depth, effective caps, requests us
 
 ```sh
 rforge version
-rforge capabilities --json --min-rforge-version 0.1.22 \
+rforge capabilities --json --min-rforge-version 0.2.1 \
   --require search=1 --require paper=1 --require brief=1 \
   --require compare=1 --require provenance=1
 ```
@@ -228,18 +228,13 @@ rforge search batch --out <dir> --queries queries.txt --sources scholarly-fast -
 # Retry only failed queries (legacy dirs without a checkpoint)
 rforge search resume --failures <dir>/failures.jsonl --out <dir> [--dry-run]
 
-# Show hit counts, library records, and checkpoint progress for a search dir
+# Hit counts, library records, checkpoint progress; run it before reporting
+# when single-source `rforge search` wrote the results
 rforge search stats --dir <dir>
 
 # Single-source search (prints results, does not save)
 rforge search --source openalex|arxiv|crossref|semantic-scholar|europepmc|pubmed \
   --query "<query>" [--from-year YYYY] [--to-year YYYY] [--open-access true|false]
-```
-
-If using individual `rforge search` commands instead of `search batch`, always run coverage stats before reporting:
-
-```sh
-rforge search stats --dir <dir>
 ```
 
 Pick 3–5 high-signal seed papers from the sweep for citation expansion: surveys, high-citation papers, Nature/Science/ACM/IEEE venues, or method-defining preprints.
@@ -372,12 +367,6 @@ rforge screen import --dir <topic-dir> --csv queue.csv [--reviewer <name>]
 # 3. Check progress
 rforge screen progress --dir <topic-dir>
 rforge screen progress --dir <topic-dir> --json   # machine-readable counts
-```
-
-**After screening, fetch PDFs for included papers only:**
-
-```sh
-rforge oa fetch --dir <topic-dir>
 ```
 
 **Project-based screening (requires --project):**
@@ -526,9 +515,8 @@ Before declaring research complete, verify:
 
 - `rforge version` was run or marked unavailable in provenance.
 - Every planned source/query has a saved result file, batch manifest, or explicit error note.
-- Source coverage stats were run and recorded, with depth, effective caps, requests used, and stop reason reported; any escalation is justified by unsaturated budget exhaustion or the user's request.
+- The reporting rule in **Search depth and stopping** holds: depth, effective caps, requests used, stop reason, coverage signal and remaining gaps are stated. Any escalation is justified by unsaturated budget exhaustion or the user's request.
 - `report.md` or the requested output exists and cites exact papers, repositories, or artifacts.
-- `provenance.json` exists, is valid JSON, and lists all outputs.
 - `rforge provenance validate <folder>/provenance.json` passes (computed level, checksums/run linkage, enum depth, string-only errors, required fields); fix failures and report legacy warnings without presenting them as verification.
 - Human-gated actions were surfaced rather than self-approved.
 

@@ -86,20 +86,6 @@ func TestLicenseDecisionBriefCoversRemainingLicenseTODO(t *testing.T) {
 	}
 }
 
-func TestWebUISkillReferencesADRAndPlan(t *testing.T) {
-	root := filepath.Join("..", "..")
-	data, err := os.ReadFile(filepath.Join(root, "skills", "research-forge-web-ui-tdd", "SKILL.md"))
-	if err != nil {
-		t.Fatalf("read web UI skill: %v", err)
-	}
-	text := string(data)
-	for _, want := range []string{"ADR 0006", "docs/web-gui-plan.md", "Go + HTMX", "HTMX", "local research cockpit", "CLI-generated"} {
-		if !strings.Contains(text, want) {
-			t.Fatalf("web UI skill missing %q", want)
-		}
-	}
-}
-
 func TestWebGUIPlanCoversRemainingWebGUITODOs(t *testing.T) {
 	root := filepath.Join("..", "..")
 	data, err := os.ReadFile(filepath.Join(root, "docs", "web-gui-plan.md"))
