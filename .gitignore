@@ -15,6 +15,9 @@
 # Go workspace/cache artifacts
 /vendor/
 coverage.out
+# Python bytecode from helper scripts and fixtures
+__pycache__/
+*.pyc
 
 # Local ResearchForge projects and temp data
 .researchforge
@@ -28,6 +31,8 @@ tmp/
 *.db-shm
 *.db-wal
 *.pre-migration.bak
+# Research job records and lock files written by rforge jobs
+/research/**/jobs/
 
 # External repository study clones
 /opensource/clones/
