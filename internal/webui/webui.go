@@ -22,6 +22,7 @@ var shellTemplate = template.Must(template.New("shell").Parse(`<!doctype html>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>ResearchForge</title>
   <script src="/assets/htmx.min.js" defer></script>
+  <script src="/assets/project-forms.js" defer></script>
   <link rel="stylesheet" href="/assets/researchforge.css">
 </head>
 <body>
