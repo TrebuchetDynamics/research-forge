@@ -10,7 +10,7 @@ fmt:
 	gofmt -w cmd internal
 
 fmt-check:
-	test -z "$(shell gofmt -l cmd internal)"
+	files=$$(gofmt -l cmd internal) && test -z "$$files"
 
 mod-tidy-check:
 	go mod tidy -diff
