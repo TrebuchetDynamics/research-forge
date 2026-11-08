@@ -2221,7 +2221,10 @@ func executeSearchRefresh(args []string, stdout, stderr io.Writer, opts globalOp
 	if err := json.Unmarshal(manifestData, &manifest); err != nil {
 		return writeError(stdout, stderr, opts, 1, "search_refresh_parse_manifest", err.Error())
 	}
-	priorDOIs := readTopicDOIs(filepath.Join(topicDir, "results-deduped.jsonl"))
+	priorDOIs, err := readTopicDOIs(filepath.Join(topicDir, "results-deduped.jsonl"))
+	if err != nil {
+		return writeError(stdout, stderr, opts, 1, "search_refresh_read_results", err.Error())
+	}
 	if dryRun {
 		if opts.JSON {
 			return writeJSON(stdout, 0, map[string]any{"queries": manifest.Queries, "sources": manifest.Sources, "limit": manifest.Limit, "priorRecords": len(priorDOIs), "priorDOIs": priorDOIs})
@@ -2335,25 +2338,29 @@ func executeSearchRefresh(args []string, stdout, stderr io.Writer, opts globalOp
 }
 
 // readTopicDOIs returns the set of DOIs recorded in a prior results-deduped.jsonl.
-func readTopicDOIs(path string) map[string]struct{} {
+func readTopicDOIs(path string) (map[string]struct{}, error) {
 	dois := map[string]struct{}{}
 	data, err := os.ReadFile(path)
 	if err != nil {
-		return dois
+		return nil, err
 	}
-	for _, line := range strings.Split(string(data), "\n") {
+	for index, line := range strings.Split(string(data), "\n") {
 		line = strings.TrimSpace(line)
 		if line == "" {
 			continue
 		}
-		var record library.PaperRecord
-		if json.Unmarshal([]byte(line), &record) == nil {
-			if doi := strings.ToLower(strings.TrimSpace(record.Identifiers.DOI)); doi != "" {
-				dois[doi] = struct{}{}
-			}
+		var record *library.PaperRecord
+		if err := json.Unmarshal([]byte(line), &record); err != nil {
+			return nil, fmt.Errorf("decode %s line %d: %w", path, index+1, err)
+		}
+		if record == nil {
+			return nil, fmt.Errorf("decode %s line %d: expected a JSON object", path, index+1)
+		}
+		if doi := strings.ToLower(strings.TrimSpace(record.Identifiers.DOI)); doi != "" {
+			dois[doi] = struct{}{}
 		}
 	}
-	return dois
+	return dois, nil
 }
 
 func paperDOIs(papers []library.PaperRecord) map[string]struct{} {
