@@ -1740,7 +1740,13 @@ func executeSearchStats(args []string, stdout, stderr io.Writer, opts globalOpti
 		return writeError(stdout, stderr, opts, 1, "results_read_failed", fmt.Sprintf("read results.jsonl: %v", libraryErr))
 	}
 
-	failures := readSearchBatchFailures(filepath.Join(dir, "failures.jsonl"))
+	failures, failuresErr := readSearchBatchFailuresStrict(filepath.Join(dir, "failures.jsonl"))
+	if failuresErr != nil {
+		return writeError(stdout, stderr, opts, 1, "search_stats_failures_read_failed", fmt.Sprintf("read failures.jsonl: %v", failuresErr))
+	}
+	if failures == nil {
+		failures = []searchBatchFailure{}
+	}
 	// Surface the incremental sweep checkpoint so interrupted batches are
 	// visible: how many pairs completed, failed, or never ran.
 	checkpoint := searchBatchCheckpointSummary(dir)
