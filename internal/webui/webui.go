@@ -116,7 +116,7 @@ var sourcePlanningTemplate = template.Must(template.New("source-planning").Parse
   <p>CLI equivalent: <code>rforge protocol plan-sources --question '{{.Question}}'</code></p>
   <p><strong>Reviewer approval required</strong> before network calls, imports, downloads, or package inclusion.</p>
   <div role="table" aria-label="Source plan preview">
-    <div role="row"><strong role="columnheader">Source</strong> <strong role="columnheader">Kind</strong> <strong role="columnheader">Dry run</strong> <strong role="columnheader">Privacy/Auth</strong></div>
+    <div role="row"><strong role="columnheader">Source</strong> <strong role="columnheader">Kind</strong> <strong role="columnheader">Dry run</strong> <strong role="columnheader">Privacy/Auth</strong> <strong role="columnheader">CLI command</strong></div>
     {{range .Sources}}
     <div role="row">
       <span role="cell">{{.Label}}</span>

@@ -201,7 +201,7 @@ var paperListTemplate = template.Must(template.New("papers").Parse(`<section ari
   </div>
   {{else}}
   <div role="table" aria-label="Readable papers">
-    <div role="row"><strong role="columnheader">Title</strong></div>
+    <div role="row"><strong role="columnheader">Title</strong> <strong role="columnheader">Authors</strong> <strong role="columnheader">Passages</strong> <strong role="columnheader">Assets</strong></div>
     {{range .Papers}}
     <div role="row">
       <span role="cell"><a href="/papers/{{.ID}}">{{.Title}}</a></span>
