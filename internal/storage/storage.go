@@ -6,6 +6,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/TrebuchetDynamics/research-forge/internal/filetxn"
 	_ "modernc.org/sqlite"
@@ -92,7 +93,7 @@ func validateRegularFileOrMissing(path, kind string) error {
 	return nil
 }
 
-// CheckExisting verifies that an existing SQLite database can answer a simple query without creating, migrating, or backing it up.
+// CheckExisting verifies that an existing SQLite database can answer a simple query and passes SQLite's integrity check without creating, migrating, or backing it up.
 func CheckExisting(path string) error {
 	if path == "" {
 		return fmt.Errorf("database path is required")
@@ -117,7 +118,37 @@ func CheckExisting(path string) error {
 	}
 	defer db.Close()
 	var one int
-	return db.QueryRow("SELECT 1").Scan(&one)
+	if err := db.QueryRow("SELECT 1").Scan(&one); err != nil {
+		return err
+	}
+	return checkIntegrity(db)
+}
+
+// checkIntegrity runs SQLite's read-only PRAGMA integrity_check on the same
+// connection, so corruption beyond the first b-tree pages is reported.
+func checkIntegrity(db *sql.DB) error {
+	rows, err := db.Query("PRAGMA integrity_check")
+	if err != nil {
+		return fmt.Errorf("sqlite integrity check failed: %w", err)
+	}
+	defer rows.Close()
+	var problems []string
+	for rows.Next() {
+		var result string
+		if err := rows.Scan(&result); err != nil {
+			return fmt.Errorf("sqlite integrity check failed: %w", err)
+		}
+		if result != "ok" {
+			problems = append(problems, result)
+		}
+	}
+	if err := rows.Err(); err != nil {
+		return fmt.Errorf("sqlite integrity check failed: %w", err)
+	}
+	if len(problems) > 0 {
+		return fmt.Errorf("sqlite integrity check failed: %s", strings.Join(problems, "; "))
+	}
+	return nil
 }
 
 // HealthCheck verifies that the database can answer a simple query.
