@@ -18,6 +18,8 @@ A package must allow an independent reviewer to answer:
 
 ## Required package layout
 
+This illustrative, non-exhaustive tree shows selected package paths, not an implementation-completeness claim. Optional artifacts appear only when present and eligible for export.
+
 ```text
 review.rforgepkg/
   manifest.json
@@ -28,30 +30,37 @@ review.rforgepkg/
   project/
     rforge.project.toml
     rforge.lock.json
+    provenance/
+      events.jsonl
     data/
-      provenance.jsonl
+      library.json
       forge-state.json
       source-plans/
       connector-capabilities.json
       identity-decisions.jsonl
       screening-audit.jsonl
-      extraction-schema.json
-      evidence.jsonl
+      evidence.schemas.json
+      evidence.items.json
       parser-manifests/
       claim-trace.json
-    library/
     documents/            # only shareable/approved assets
     parsed/
     analysis/
     reports/
 ```
 
+Current package creation uses `project/provenance/events.jsonl` for the canonical ledger. For legacy compatibility, it selects `project/data/provenance.jsonl` only when the canonical ledger is absent. An invalid canonical file does not trigger fallback. When included, the selected ledger is recorded in `provenanceRef`. See [`Create`](../internal/reviewpkg/package.go) and [`provenance.ReadRelativePath`](../internal/provenance/provenance.go).
+
+`Create` copies the extraction schema from `data/evidence.schemas.json`, accepted evidence from `data/evidence.items.json`, and the library from `data/library.json` into `project/data/`. Existing [offline fixture](../internal/reviewpkg/fixture_test.go) and [provenance-redaction](../internal/reviewpkg/provenance_redaction_test.go) tests cover synthetic package behavior, not approval to export real user data.
+
 The physical archive format may be `.tar`, `.zip`, or a directory during early development, but the logical layout and manifest semantics must remain stable.
 
 ## Required `manifest.json` fields
 
+Field names use the serialized JSON spelling from [`Manifest`](../internal/reviewpkg/package.go).
+
 - `schemaVersion`
-- `packageID`
+- `packageId`
 - `createdAt`
 - `createdBy`
 - `researchForgeVersion`
