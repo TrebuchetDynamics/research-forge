@@ -1201,6 +1201,8 @@ type searchBatchOptions struct {
 
 type searchBatchFailure = search.BatchFailure
 
+var appendSearchBatchFailure = writeJSONLine
+
 type searchBatchManifest struct {
 	search.BatchProgress
 	SchemaVersion string   `json:"schemaVersion"`
@@ -1404,7 +1406,9 @@ func executeSearchBatchRunContext(ctx context.Context, interruptSignal func() sy
 			failure := searchBatchFailure{Source: source, Error: fmt.Sprintf("%s; skipped %d queries", message, len(queries)), Skipped: true}
 			failures = append(failures, failure)
 			skippedCount++
-			_ = writeJSONLine(failuresFile, failure)
+			if err := appendSearchBatchFailure(failuresFile, failure); err != nil {
+				return failBatch("search_batch_write_failed", err.Error())
+			}
 			state.RecordFailure(failure)
 		}
 	}
@@ -1416,8 +1420,7 @@ func executeSearchBatchRunContext(ctx context.Context, interruptSignal func() sy
 		failure := searchBatchFailure{Source: source, Query: query, Error: failureErr.Error()}
 		failures = append(failures, failure)
 		failureCount++
-		_ = writeJSONLine(failuresFile, failure)
-		return nil
+		return appendSearchBatchFailure(failuresFile, failure)
 	}
 	recordCompleted := func(source, query, rawName string, papers []library.PaperRecord) error {
 		for _, paper := range papers {
