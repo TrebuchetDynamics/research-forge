@@ -77,7 +77,9 @@ build-release:
 	GOOS=windows GOARCH=amd64 go build -ldflags "$(LDFLAGS)" -o dist/rforge-windows-amd64.exe ./cmd/rforge
 
 checksums:
-	sha256sum dist/* > dist/checksums.txt
+	for file in dist/*; do \
+		if [ "$$file" != dist/checksums.txt ]; then sha256sum "$$file" || exit $$?; fi; \
+	done > dist/checksums.txt
 
 sbom:
 	go list -m -json all > dist/dependencies.json
