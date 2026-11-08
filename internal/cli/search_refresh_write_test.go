@@ -40,11 +40,7 @@ func TestSearchRefreshWriteFailure(t *testing.T) {
 						t.Fatal(err)
 					}
 					state := searchBatchState{SchemaVersion: "1", CreatedAt: "2026-07-01T00:00:00Z", Queries: queries, Sources: sourceNames, Limit: 20}
-					if variant == "sparse-append-failure" {
-						if err := os.Remove(filepath.Join(out, "results-deduped.jsonl")); err != nil {
-							t.Fatal(err)
-						}
-					} else {
+					if variant != "sparse-append-failure" {
 						if err := writeSearchBatchJSONL(filepath.Join(out, "results.jsonl"), prior); err != nil {
 							t.Fatal(err)
 						}
