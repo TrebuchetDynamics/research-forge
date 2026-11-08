@@ -85,11 +85,31 @@ var sourcePlanningTemplate = template.Must(template.New("source-planning").Parse
     <input id="source-question" name="question" value="{{.Question}}" required>
     <label for="source-type">Framework</label>
     <select id="source-type" name="type">
-      <option value="freeform">freeform</option>
-      <option value="pico">pico</option>
-      <option value="peco">peco</option>
-      <option value="spider">spider</option>
+      <option value="freeform"{{if eq .Framework "freeform"}} selected{{end}}>freeform</option>
+      <option value="pico"{{if eq .Framework "pico"}} selected{{end}}>pico</option>
+      <option value="peco"{{if eq .Framework "peco"}} selected{{end}}>peco</option>
+      <option value="spider"{{if eq .Framework "spider"}} selected{{end}}>spider</option>
     </select>
+    <label for="source-population">Population</label>
+    <input id="source-population" name="population" value="{{.Input.Population}}">
+    <label for="source-intervention">Intervention</label>
+    <input id="source-intervention" name="intervention" value="{{.Input.Intervention}}">
+    <label for="source-comparator">Comparator</label>
+    <input id="source-comparator" name="comparator" value="{{.Input.Comparator}}">
+    <label for="source-outcome">Outcome</label>
+    <input id="source-outcome" name="outcome" value="{{.Input.Outcome}}">
+    <label for="source-exposure">Exposure</label>
+    <input id="source-exposure" name="exposure" value="{{.Input.Exposure}}">
+    <label for="source-sample">Sample</label>
+    <input id="source-sample" name="sample" value="{{.Input.Sample}}">
+    <label for="source-phenomenon">Phenomenon</label>
+    <input id="source-phenomenon" name="phenomenon" value="{{.Input.Phenomenon}}">
+    <label for="source-design">Design</label>
+    <input id="source-design" name="design" value="{{.Input.Design}}">
+    <label for="source-evaluation">Evaluation</label>
+    <input id="source-evaluation" name="evaluation" value="{{.Input.Evaluation}}">
+    <label for="source-research-type">Research type</label>
+    <input id="source-research-type" name="research-type" value="{{.Input.ResearchType}}">
     <button type="submit">Preview sources</button>
   </form>
   <p>CLI equivalent: <code>rforge protocol plan-sources --question '{{.Question}}'</code></p>
@@ -612,7 +632,7 @@ func NewSourcePlanningHandler() http.Handler {
 		if question == "" {
 			question = "Does the intervention improve the outcome compared with control?"
 		}
-		plan, err := protocol.CompileSourcePlanFromQuestion(protocol.QuestionInput{
+		input := protocol.QuestionInput{
 			Framework:    r.URL.Query().Get("type"),
 			Question:     question,
 			Population:   r.URL.Query().Get("population"),
@@ -625,13 +645,18 @@ func NewSourcePlanningHandler() http.Handler {
 			Design:       r.URL.Query().Get("design"),
 			Evaluation:   r.URL.Query().Get("evaluation"),
 			ResearchType: r.URL.Query().Get("research-type"),
-		})
+		}
+		plan, err := protocol.CompileSourcePlanFromQuestion(input)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		_ = sourcePlanningTemplate.Execute(w, plan)
+		// Keep raw inputs too; compilation omits inactive components.
+		_ = sourcePlanningTemplate.Execute(w, struct {
+			protocol.SourcePlan
+			Input protocol.QuestionInput
+		}{SourcePlan: plan, Input: input})
 	})
 }
 
