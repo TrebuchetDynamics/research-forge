@@ -63,7 +63,7 @@ license-decision-live-audit:
 	gh issue view 1 --json title,state,body,comments,labels,milestone --jq 'def text: ([.body] + [.comments[].body]) | join("\n---\n"); def has_spdx: (text | test("License SPDX identifier: (MIT|Apache-2\\.0|GPL-3\\.0-(only|or-later)|AGPL-3\\.0-(only|or-later)|NOASSERTION)")); def has_holder: (text | test("Copyright holder: [^<\\n][^\\n]+")); def has_approver: (text | test("Approved by: [^<\\n][^\\n]+")); def has_date: (text | test("Approval date: [0-9]{4}-[0-9]{2}-[0-9]{2}")); {title, state, labels: [.labels[].name], milestone: (.milestone.title // null), has_spdx: has_spdx, has_holder: has_holder, has_approver: has_approver, has_date: has_date, approved: (has_spdx and has_holder and has_approver and has_date)}'
 
 license-decision-approval-gate:
-	@$(MAKE) -s license-decision-live-audit | grep -q '"approved":true' || (echo "license decision approval missing: issue #1 must report approved:true" >&2; exit 1)
+	@audit=$$($(MAKE) -s license-decision-live-audit) && printf '%s\n' "$$audit" | grep -q '"approved":true' || (echo "license decision approval missing: issue #1 must report approved:true" >&2; exit 1)
 
 install:
 	go install -ldflags "$(LDFLAGS)" ./cmd/rforge
