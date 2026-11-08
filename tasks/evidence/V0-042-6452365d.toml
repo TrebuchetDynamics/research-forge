@@ -1,0 +1,9 @@
+schema = 1
+task = "V0-042-6452365d"
+candidate = "5236b154d8c99a05f39467ab5d62cafc210e52b1"
+integration = "647477f8dfe9b0b4e179cbd1597b31a8243daf4d"
+tree = "73be5d4433a96b5985af08c0e0b4e525cbd08cc0"
+contract_hash = "c25b00112b147ef88c179e8b727f225e3cfb4c9d9a30c6531d2c22996f323cbf"
+checks = ["<path>", "<path>", "--verify", "<path>", "V0-042-6452365d"]
+result = "pass"
+review = "passed"
