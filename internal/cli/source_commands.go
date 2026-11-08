@@ -1749,7 +1749,10 @@ func executeSearchStats(args []string, stdout, stderr io.Writer, opts globalOpti
 	}
 	// Surface the incremental sweep checkpoint so interrupted batches are
 	// visible: how many pairs completed, failed, or never ran.
-	checkpoint := searchBatchCheckpointSummary(dir)
+	checkpoint, checkpointErr := searchBatchCheckpointSummary(dir)
+	if checkpointErr != nil {
+		return writeError(stdout, stderr, opts, 1, "search_stats_state_read_failed", fmt.Sprintf("read batch-state.json: %v", checkpointErr))
+	}
 	if opts.JSON {
 		payload := map[string]any{
 			"sources":          sourceCounts,
@@ -1804,11 +1807,14 @@ func executeSearchStats(args []string, stdout, stderr io.Writer, opts globalOpti
 }
 
 // searchBatchCheckpointSummary summarizes a topic dir's batch-state.json for
-// stats output. It returns nil when no checkpoint exists.
-func searchBatchCheckpointSummary(dir string) *searchBatchCheckpointSummaryResult {
+// stats output. It returns nil, nil when no checkpoint exists.
+func searchBatchCheckpointSummary(dir string) (*searchBatchCheckpointSummaryResult, error) {
 	state, exists, err := readSearchBatchState(dir)
-	if err != nil || !exists {
-		return nil
+	if err != nil {
+		return nil, err
+	}
+	if !exists {
+		return nil, nil
 	}
 	configurationErrors := map[string]string{}
 	for _, source := range state.Sources {
@@ -1826,7 +1832,7 @@ func searchBatchCheckpointSummary(dir string) *searchBatchCheckpointSummaryResul
 		Queries:      len(state.Queries),
 		Sources:      state.Sources,
 		ResumeStream: state.Interrupted || pending > 0,
-	}
+	}, nil
 }
 
 type searchBatchCheckpointSummaryResult struct {
