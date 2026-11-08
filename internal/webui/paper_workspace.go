@@ -31,7 +31,7 @@ type PaperWorkspaceView struct {
 	Sections    []parsing.Section
 	HasPDF      bool
 	Parsed      bool
-	assetStem   string
+	pdfStem     string
 }
 
 // BuildPaperWorkspace resolves one stable library record into its read-only
@@ -59,25 +59,15 @@ func BuildPaperWorkspace(projectPath, recordID string) (PaperWorkspaceView, bool
 		Tags:        libraryMetadataValue(record, "tags", "keywords"),
 		Notes:       libraryMetadataValue(record, "note"),
 	}
-	for _, stem := range workspaceAssetStems(record) {
-		parsed, ok, loadErr := BuildPaperView(projectPath, stem)
-		if loadErr != nil {
-			return PaperWorkspaceView{}, false, loadErr
-		}
-		if ok {
-			view.Parsed = true
-			view.Abstract = parsed.Abstract
-			view.Sections = parsed.Sections
-			view.HasPDF = parsed.HasPDF
-			view.assetStem = stem
-			break
-		}
-		if paperPDFAvailable(projectPath, stem) {
-			view.HasPDF = true
-			view.assetStem = stem
-			break
-		}
+	parsed, parsedFound, pdfStem, err := resolveWorkspaceAssets(projectPath, record)
+	if err != nil {
+		return PaperWorkspaceView{}, false, err
 	}
+	view.Parsed = parsedFound
+	view.Abstract = parsed.Abstract
+	view.Sections = parsed.Sections
+	view.HasPDF = pdfStem != ""
+	view.pdfStem = pdfStem
 	return view, true, nil
 }
 
@@ -112,19 +102,26 @@ func recordIDForAssetStem(projectPath, stem string) (string, bool, error) {
 }
 
 func workspaceAssetStatus(projectPath string, record library.PaperRecord) (bool, bool, error) {
+	_, parsedFound, pdfStem, err := resolveWorkspaceAssets(projectPath, record)
+	return pdfStem != "", parsedFound, err
+}
+
+func resolveWorkspaceAssets(projectPath string, record library.PaperRecord) (parsed PaperView, parsedFound bool, pdfStem string, err error) {
 	for _, stem := range workspaceAssetStems(record) {
-		parsed, ok, err := BuildPaperView(projectPath, stem)
-		if err != nil {
-			return false, false, err
+		if !parsedFound {
+			parsed, parsedFound, err = BuildPaperView(projectPath, stem)
+			if err != nil {
+				return PaperView{}, false, "", err
+			}
 		}
-		if ok {
-			return parsed.HasPDF, true, nil
+		if pdfStem == "" && paperPDFAvailable(projectPath, stem) {
+			pdfStem = stem
 		}
-		if paperPDFAvailable(projectPath, stem) {
-			return true, false, nil
+		if parsedFound && pdfStem != "" {
+			break
 		}
 	}
-	return false, false, nil
+	return parsed, parsedFound, pdfStem, nil
 }
 
 func workspaceAssetStems(record library.PaperRecord) []string {
@@ -195,11 +192,11 @@ func newPaperWorkspacePDFHandler(projectPath func() string) http.Handler {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		if !found || !view.HasPDF || view.assetStem == "" {
+		if !found || !view.HasPDF || view.pdfStem == "" {
 			http.NotFound(w, r)
 			return
 		}
-		file, ok := openPaperPDF(projectPath(), view.assetStem)
+		file, ok := openPaperPDF(projectPath(), view.pdfStem)
 		if !ok {
 			http.NotFound(w, r)
 			return
