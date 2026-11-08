@@ -14,6 +14,18 @@ import (
 )
 
 func Archive(projectPath, archivePath string) error {
+	if projectPath == "" {
+		return fmt.Errorf("archive source must be a non-empty directory path")
+	}
+	// Clean before Lstat so trailing separators or /. cannot follow a symlink root.
+	projectPath = filepath.Clean(projectPath)
+	info, err := os.Lstat(projectPath)
+	if err != nil {
+		return fmt.Errorf("archive source %q: %w", projectPath, err)
+	}
+	if !info.IsDir() {
+		return fmt.Errorf("archive source %q must be a directory, not a file or symlink", projectPath)
+	}
 	if err := guardArchiveOutputPath(projectPath, archivePath); err != nil {
 		return err
 	}
