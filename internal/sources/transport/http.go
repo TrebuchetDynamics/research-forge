@@ -61,9 +61,6 @@ func NewHTTPClient(o HTTPClientOptions) HTTPClient {
 	if o.Timeout == 0 {
 		o.Timeout = 10 * time.Second
 	}
-	if o.Sleep == nil {
-		o.Sleep = time.Sleep
-	}
 	if o.Now == nil {
 		o.Now = time.Now
 	}
@@ -216,7 +213,17 @@ func (c HTTPClient) wait(ctx context.Context, d time.Duration, retry bool) error
 		return e
 	}
 	if d > 0 {
-		c.sleep(d)
+		if c.sleep != nil {
+			c.sleep(d)
+		} else {
+			timer := time.NewTimer(d)
+			defer timer.Stop()
+			select {
+			case <-ctx.Done():
+				return ctx.Err()
+			case <-timer.C:
+			}
+		}
 	}
 	return ctx.Err()
 }
