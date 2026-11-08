@@ -536,7 +536,9 @@ func (s ArtifactDashboardState) CitationGraphSVG() template.HTML {
 	}
 	positions := map[string][2]int{}
 	var b strings.Builder
-	b.WriteString(`<svg role="img" aria-label="Citation graph visualization" viewBox="0 0 520 160" class="citation-graph-svg">`)
+	// Include the last row's label baseline and six units of bottom space.
+	height := max(160, 50+((len(s.CitationGraph.Nodes)-1)/5)*70+34+6)
+	fmt.Fprintf(&b, `<svg role="img" aria-label="Citation graph visualization" viewBox="0 0 520 %d" class="citation-graph-svg">`, height)
 	b.WriteString(`<title>Citation graph visualization</title>`)
 	for i, node := range s.CitationGraph.Nodes {
 		x := 80 + (i%5)*100
