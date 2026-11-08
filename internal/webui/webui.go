@@ -64,13 +64,13 @@ var shellTemplate = template.Must(template.New("shell").Parse(`<!doctype html>
 
 var searchTemplate = template.Must(template.New("search").Parse(`<section aria-labelledby="search-title" class="rf-card">
   <h2 id="search-title">Search papers</h2>
-  <form hx-get="/search/results" hx-target="#search-results" hx-indicator="#search-loading">
+  <form method="get" action="/search">
     <label for="query">Query</label>
     <input id="query" name="query" type="search" value="{{.Query}}">
     <fieldset>
       <legend>Sources</legend>
       {{range .Sources}}
-      <label><input type="checkbox" name="source" value="{{.}}" checked> {{.}}</label>
+      <label><input type="checkbox" name="source" value="{{.}}"{{if $.IsSourceSelected .}} checked{{end}}> {{.}}</label>
       {{end}}
     </fieldset>
     <button type="submit">Search</button>
@@ -620,11 +620,16 @@ func NewShellHandler() http.Handler {
 	})
 }
 
-// NewSearchHandler renders the HTMX search screen from the shared search view model.
+// NewSearchHandler renders the local search screen from the shared search view
+// model, echoing the submitted query and checked sources so the form round-trips
+// honestly. It never runs a search; rforge search stays the search path.
 func NewSearchHandler(state ui.SearchFormState) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		view := state
+		view.Query = r.URL.Query().Get("query")
+		view.Selected = r.URL.Query()["source"]
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		_ = searchTemplate.Execute(w, state)
+		_ = searchTemplate.Execute(w, view)
 	})
 }
 
