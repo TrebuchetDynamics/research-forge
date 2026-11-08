@@ -12,13 +12,29 @@ func NewDashboardState(title string, libraryCount int) DashboardState {
 }
 
 type SearchFormState struct {
-	Sources []string
-	Query   string
-	Loading bool
-	Error   string
+	Sources  []string
+	Selected []string
+	Query    string
+	Loading  bool
+	Error    string
 }
 
 func NewSearchFormState(sources []string) SearchFormState { return SearchFormState{Sources: sources} }
+
+// IsSourceSelected reports whether source was part of the submitted selection.
+// With no explicit selection every offered source stays checked, the form's
+// long-standing default.
+func (s SearchFormState) IsSourceSelected(source string) bool {
+	if len(s.Selected) == 0 {
+		return true
+	}
+	for _, selected := range s.Selected {
+		if selected == source {
+			return true
+		}
+	}
+	return false
+}
 
 type PaperRow struct {
 	RecordID    string

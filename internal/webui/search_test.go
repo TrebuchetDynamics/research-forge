@@ -10,9 +10,8 @@ import (
 
 func TestSearchHandlerRendersHTMXSearchScreen(t *testing.T) {
 	state := ui.NewSearchFormState([]string{"openalex", "arxiv", "crossref"})
-	state.Query = "artificial photosynthesis"
 
-	req := httptest.NewRequest("GET", "/search", nil)
+	req := httptest.NewRequest("GET", "/search?query=artificial+photosynthesis", nil)
 	rec := httptest.NewRecorder()
 
 	NewSearchHandler(state).ServeHTTP(rec, req)
@@ -23,7 +22,7 @@ func TestSearchHandlerRendersHTMXSearchScreen(t *testing.T) {
 	body := rec.Body.String()
 	for _, want := range []string{
 		"Search papers",
-		"hx-get=\"/search/results\"",
+		`<form method="get" action="/search">`,
 		"name=\"query\"",
 		"value=\"artificial photosynthesis\"",
 		"openalex",
