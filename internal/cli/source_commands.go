@@ -2179,6 +2179,8 @@ func searchResumeRawName(rawDir, source, query string, index int) string {
 	return fmt.Sprintf("search-%s-%03d-%s.txt", source, index, slug)
 }
 
+var appendSearchRefreshRecord = writeJSONLine
+
 // executeSearchRefresh re-runs the queries stored in a topic dir's manifest.json
 // and reports the DOI delta (new / unchanged / gone) versus the prior run, so
 // users can re-run a topic instead of hand-copying it to a -v2 / -wave directory.
@@ -2267,21 +2269,27 @@ func executeSearchRefresh(args []string, stdout, stderr io.Writer, opts globalOp
 			if !ok {
 				f := searchBatchFailure{Source: source, Query: query, Error: "unknown source"}
 				failures = append(failures, f)
-				_ = writeJSONLine(failuresFile, f)
+				if err := appendSearchRefreshRecord(failuresFile, f); err != nil {
+					return writeError(stdout, stderr, opts, 1, "search_refresh_write_failed", err.Error())
+				}
 				continue
 			}
 			response, searchErr := connector.Search(context.Background(), sources.SourceQuery{Terms: query, Limit: manifest.Limit, Filters: map[string]string{}})
 			if searchErr != nil {
 				f := searchBatchFailure{Source: source, Query: query, Error: searchErr.Error()}
 				failures = append(failures, f)
-				_ = writeJSONLine(failuresFile, f)
+				if err := appendSearchRefreshRecord(failuresFile, f); err != nil {
+					return writeError(stdout, stderr, opts, 1, "search_refresh_write_failed", err.Error())
+				}
 				continue
 			}
 			papers, normErr := sources.PaperRecords(response)
 			if normErr != nil {
 				f := searchBatchFailure{Source: source, Query: query, Error: normErr.Error()}
 				failures = append(failures, f)
-				_ = writeJSONLine(failuresFile, f)
+				if err := appendSearchRefreshRecord(failuresFile, f); err != nil {
+					return writeError(stdout, stderr, opts, 1, "search_refresh_write_failed", err.Error())
+				}
 				continue
 			}
 			rawName := fmt.Sprintf("search-%s-%03d-%s.txt", source, qi+1, slugifySearchBatch(query))
@@ -2290,7 +2298,9 @@ func executeSearchRefresh(args []string, stdout, stderr io.Writer, opts globalOp
 			}
 			for _, paper := range papers {
 				allPapers = append(allPapers, paper)
-				_ = writeJSONLine(resultsFile, paper)
+				if err := appendSearchRefreshRecord(resultsFile, paper); err != nil {
+					return writeError(stdout, stderr, opts, 1, "search_refresh_write_failed", err.Error())
+				}
 			}
 		}
 	}
