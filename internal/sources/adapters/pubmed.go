@@ -55,7 +55,7 @@ func (c PubMedConnector) Search(ctx context.Context, query core.SourceQuery) (co
 	esearchParams := c.withNCBIParams(map[string]string{"db": "pubmed", "term": query.Terms, "retmax": strconv.Itoa(limit), "retmode": "json"})
 	body, err := c.http.Get(ctx, "/entrez/eutils/esearch.fcgi", esearchParams)
 	if err != nil {
-		return core.SourceResponse{}, err
+		return core.SourceResponse{}, c.redactRequestError(err)
 	}
 	var search pubMedSearchResponse
 	if err := json.Unmarshal(body, &search); err != nil {
@@ -68,7 +68,7 @@ func (c PubMedConnector) Search(ctx context.Context, query core.SourceQuery) (co
 	summaryParams := c.withNCBIParams(map[string]string{"db": "pubmed", "id": strings.Join(ids, ","), "retmode": "json"})
 	summaryBody, err := c.http.Get(ctx, "/entrez/eutils/esummary.fcgi", summaryParams)
 	if err != nil {
-		return core.SourceResponse{}, err
+		return core.SourceResponse{}, c.redactRequestError(err)
 	}
 	var summary pubMedSummaryResponse
 	if err := json.Unmarshal(summaryBody, &summary); err != nil {
@@ -158,7 +158,7 @@ func (c PubMedConnector) fetchMeshTerms(ctx context.Context, ids []string) (map[
 	params := c.withNCBIParams(map[string]string{"db": "pubmed", "id": strings.Join(ids, ","), "retmode": "xml"})
 	body, err := c.http.Get(ctx, "/entrez/eutils/efetch.fcgi", params)
 	if err != nil {
-		return nil, err
+		return nil, c.redactRequestError(err)
 	}
 	var payload pubMedArticleSet
 	if err := xml.Unmarshal(body, &payload); err != nil {
@@ -191,6 +191,28 @@ type pubMedArticleXML struct {
 
 type pubMedMeshHeading struct {
 	DescriptorName string `xml:"DescriptorName"`
+}
+
+// Keep the original cause for errors.Is/As, but never render its configured key.
+// Unwrapped structured errors are not sanitized.
+type pubMedRequestError struct {
+	cause   error
+	message string
+}
+
+func (e pubMedRequestError) Error() string { return e.message }
+func (e pubMedRequestError) Unwrap() error { return e.cause }
+
+func (c PubMedConnector) redactRequestError(err error) error {
+	if c.apiKey == "" {
+		return err
+	}
+	message := strings.NewReplacer(
+		url.QueryEscape(c.apiKey), "[REDACTED]",
+		url.PathEscape(c.apiKey), "[REDACTED]",
+		c.apiKey, "[REDACTED]",
+	).Replace(err.Error())
+	return pubMedRequestError{cause: err, message: message}
 }
 
 func (c PubMedConnector) withNCBIParams(params map[string]string) map[string]string {
