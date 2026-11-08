@@ -209,6 +209,7 @@ var activeProjectTemplate = template.Must(template.New("active-project").Parse(`
     <input id="switch-path" name="path" required>
     <button type="submit">Open folder</button>
   </form>
+  <div id="project-switch-status" role="status"></div>
 </section>`))
 
 func newActiveProjectHandler(state *dashboardState) http.Handler {
