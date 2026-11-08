@@ -204,7 +204,7 @@ func newProjectArtifactsHandler(projectPath func() string) http.Handler {
 var activeProjectTemplate = template.Must(template.New("active-project").Parse(`<section aria-labelledby="active-project-title" class="rf-card">
   <h2 id="active-project-title">Active research folder</h2>
   <p id="active-project-path">{{if .}}{{.}}{{else}}No folder selected{{end}}</p>
-  <form hx-post="/projects/switch" hx-target="#active-project-path" hx-swap="outerHTML">
+  <form method="post" action="/projects/switch" hx-post="/projects/switch" hx-target="#active-project-path" hx-swap="outerHTML">
     <label for="switch-path">Switch to folder</label>
     <input id="switch-path" name="path" required>
     <button type="submit">Open folder</button>

@@ -353,7 +353,7 @@ var libraryTemplate = template.Must(template.New("library").Parse(`<section aria
 
 var projectTemplate = template.Must(template.New("project").Parse(`<section aria-labelledby="projects-title" class="rf-card">
   <h2 id="projects-title">Projects</h2>
-  <form hx-post="/projects/create" hx-target="#project-status">
+  <form method="post" action="/projects/create" hx-post="/projects/create" hx-target="#project-status">
     <h3>Create project</h3>
     <label for="project-title">Title</label>
     <input id="project-title" name="title" required>
@@ -361,7 +361,7 @@ var projectTemplate = template.Must(template.New("project").Parse(`<section aria
     <input id="project-create-path" name="path" required>
     <button type="submit">Create project</button>
   </form>
-  <form hx-post="/projects/open" hx-target="#project-status">
+  <form method="post" action="/projects/open" hx-post="/projects/open" hx-target="#project-status">
     <h3>Open project</h3>
     <label for="project-open-path">Path</label>
     <input id="project-open-path" name="path" required>
