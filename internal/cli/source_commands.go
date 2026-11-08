@@ -2221,6 +2221,22 @@ func executeSearchRefresh(args []string, stdout, stderr io.Writer, opts globalOp
 	if err := json.Unmarshal(manifestData, &manifest); err != nil {
 		return writeError(stdout, stderr, opts, 1, "search_refresh_parse_manifest", err.Error())
 	}
+	for _, field := range []struct {
+		name   string
+		values []string
+	}{
+		{"queries", manifest.Queries},
+		{"sources", manifest.Sources},
+	} {
+		if len(field.values) == 0 {
+			return writeError(stdout, stderr, opts, 1, "search_refresh_invalid_manifest", fmt.Sprintf("%s: %s must be a nonempty array", manifestPath, field.name))
+		}
+		for index, value := range field.values {
+			if strings.TrimSpace(value) == "" {
+				return writeError(stdout, stderr, opts, 1, "search_refresh_invalid_manifest", fmt.Sprintf("%s: %s[%d] must be nonblank", manifestPath, field.name, index+1))
+			}
+		}
+	}
 	priorDOIs, err := readTopicDOIs(filepath.Join(topicDir, "results-deduped.jsonl"))
 	if err != nil {
 		return writeError(stdout, stderr, opts, 1, "search_refresh_read_results", err.Error())
